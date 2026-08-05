@@ -14,7 +14,11 @@ dotenv.config({ path: path.resolve(__dirname, '..', '.env') });
 
 const app = express();
 const PORT = Number(process.env.PORT || 4000);
-const CLIENT_ORIGIN = process.env.CLIENT_ORIGIN || 'http://localhost:5173';
+const allowedOrigins = [
+  'http://localhost:5173',
+  'https://fundu52.vercel.app',
+  process.env.CLIENT_ORIGIN,
+].filter(Boolean);
 
 app.use(cors({
   origin: (origin, callback) => {
@@ -22,7 +26,7 @@ app.use(cors({
     if (/^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(origin)) {
       return callback(null, true);
     }
-    if (CLIENT_ORIGIN && origin === CLIENT_ORIGIN) {
+    if (allowedOrigins.includes(origin) || /\.vercel\.app$/.test(origin)) {
       return callback(null, true);
     }
     callback(null, true);
