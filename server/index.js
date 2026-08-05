@@ -16,7 +16,9 @@ const app = express();
 const PORT = Number(process.env.PORT || 4000);
 const allowedOrigins = [
   'http://localhost:5173',
+  'http://localhost:4000',
   'https://fundu52.vercel.app',
+  'https://fundu.onrender.com',
   process.env.CLIENT_ORIGIN,
 ].filter(Boolean);
 
@@ -26,7 +28,7 @@ app.use(cors({
     if (/^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(origin)) {
       return callback(null, true);
     }
-    if (allowedOrigins.includes(origin) || /\.vercel\.app$/.test(origin)) {
+    if (allowedOrigins.includes(origin) || /\.vercel\.app$/.test(origin) || /\.onrender\.com$/.test(origin)) {
       return callback(null, true);
     }
     callback(null, true);
