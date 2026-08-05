@@ -3,10 +3,10 @@ import { useNavigate } from 'react-router-dom';
 import {
   LayoutDashboard, Smartphone, BadgeIndianRupee, Wrench, Package,
   TrendingUp, Users, ShieldCheck, Store, UserCog, Truck, X, Plus, Edit2, Trash2,
-  Eye,
+  Eye, Star, MessageSquare, CheckCircle2,
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
-import type { Product, SellRequest, SellPriceConfig, RepairBooking, Order, SparePart, Dispatch } from '../types';
+import type { Product, SellRequest, SellPriceConfig, RepairBooking, Order, SparePart, Dispatch, Review } from '../types';
 import { PHONE_BRANDS } from '../types';
 import { db, formatINR } from '../lib/db';
 import { fetchPhoneModels } from '../lib/mobileApi';
@@ -36,7 +36,7 @@ const statusColors: Record<string, string> = {
 export default function Admin() {
   const { user, profile, loading } = useAuth();
   const navigate = useNavigate();
-  const [tab, setTab] = useState<'overview' | 'products' | 'sells' | 'pricing' | 'repairs' | 'orders' | 'parts' | 'users'>('overview');
+  const [tab, setTab] = useState<'overview' | 'products' | 'sells' | 'pricing' | 'repairs' | 'orders' | 'parts' | 'users' | 'reviews'>('overview');
   const [products, setProducts] = useState<Product[]>([]);
   const [sells, setSells] = useState<SellRequest[]>([]);
   const [sellPriceConfigs, setSellPriceConfigs] = useState<SellPriceConfig[]>([]);
@@ -45,6 +45,7 @@ export default function Admin() {
   const [parts, setParts] = useState<SparePart[]>([]);
   const [profiles, setProfiles] = useState<Array<{ id: string; full_name: string | null; phone: string | null; role: string; business_name: string | null; is_verified: boolean; created_at: string }>>([]);
   const [dispatches, setDispatches] = useState<Dispatch[]>([]);
+  const [reviews, setReviews] = useState<Review[]>([]);
   const [dataLoading, setDataLoading] = useState(true);
   const [dispatchModal, setDispatchModal] = useState<{ orderId: string } | null>(null);
   const [dispatchForm, setDispatchForm] = useState({ name: '', phone: '', notes: '' });
@@ -176,7 +177,8 @@ export default function Admin() {
       db.from('spare_parts').select('*').order('created_at', { ascending: false }),
       db.from('profiles').select('id, full_name, phone, role, business_name, is_verified, created_at').order('created_at', { ascending: false }),
       db.from('dispatches').select('*').order('created_at', { ascending: false }),
-    ]).then(([p, s, pc, r, o, sp, prof, disp]) => {
+      db.from('reviews').select('*').order('created_at', { ascending: false }),
+    ]).then(([p, s, pc, r, o, sp, prof, disp, rev]) => {
       setProducts((p.data as Product[]) ?? []);
       setSells((s.data as SellRequest[]) ?? []);
       setSellPriceConfigs((pc.data as SellPriceConfig[]) ?? []);
@@ -185,6 +187,7 @@ export default function Admin() {
       setParts((sp.data as SparePart[]) ?? []);
       setProfiles((prof.data as typeof profiles) ?? []);
       setDispatches((disp.data as Dispatch[]) ?? []);
+      setReviews((rev.data as Review[]) ?? []);
       setDataLoading(false);
     });
   }, [user]);
@@ -194,7 +197,50 @@ export default function Admin() {
   const pendingSells = sells.filter((s) => s.status === 'pending').length;
   const pendingRepairs = repairs.filter((r) => r.status === 'pending').length;
   const pendingOrders = orders.filter((o) => o.status === 'pending').length;
+  const pendingReviews = reviews.filter((r) => !r.is_approved).length;
   const revenue = orders.filter((o) => o.payment_status === 'paid').reduce((sum, o) => sum + o.total_amount, 0);
+
+  const approveAndPublishSellRequest = async (sell: SellRequest) => {
+    // Mark sell_request as accepted
+    const { error: sellErr } = await db.from('sell_requests').update({ status: 'accepted' }).eq('id', sell.id);
+    if (sellErr) { alert(sellErr.message); return; }
+    setSells((prev) => prev.map((s) => s.id === sell.id ? { ...s, status: 'accepted' } : s));
+
+    // Pre-fill Product Modal to publish into Buy Store
+    setProductForm({
+      title: `${sell.brand} ${sell.model}${sell.storage ? ` (${sell.storage})` : ''}`,
+      brand: sell.brand,
+      model: sell.model,
+      ram: sell.ram || '',
+      storage: sell.storage || '',
+      color: 'Standard',
+      condition: (['Excellent', 'Good', 'Fair'].includes(sell.condition) ? sell.condition : 'Good') as 'Excellent' | 'Good' | 'Fair',
+      price: String(sell.final_price || sell.estimated_price || 0),
+      original_price: String(Math.round((sell.final_price || sell.estimated_price || 0) * 1.25)),
+      discount_percent: '20',
+      warranty_months: '6',
+      description: `Refurbished ${sell.brand} ${sell.model} in ${sell.condition} condition. Thoroughly inspected and certified by Fundu Lucknow team.`,
+      images: 'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=800&auto=format&fit=crop&q=80',
+      is_approved: true,
+      is_featured: true,
+      stock: '1',
+    });
+    setProductModal({ product: null });
+    setTab('products');
+  };
+
+  const toggleReviewApproval = async (id: string, currentStatus: boolean) => {
+    const { error } = await db.from('reviews').update({ is_approved: !currentStatus }).eq('id', id);
+    if (error) { alert(error.message); return; }
+    setReviews((prev) => prev.map((r) => r.id === id ? { ...r, is_approved: !currentStatus } : r));
+  };
+
+  const deleteReview = async (id: string) => {
+    if (!confirm('Are you sure you want to delete this review?')) return;
+    const { error } = await db.from('reviews').delete().eq('id', id);
+    if (error) { alert(error.message); return; }
+    setReviews((prev) => prev.filter((r) => r.id !== id));
+  };
 
   const updateStatus = async (table: string, id: string, status: string) => {
     const { error } = await db.from(table).update({ status }).eq('id', id);
@@ -641,6 +687,7 @@ export default function Admin() {
     { id: 'orders', label: 'Orders', icon: Package, count: orders.length, badge: pendingOrders },
     { id: 'parts', label: 'Spare Parts', icon: Package, count: parts.length },
     { id: 'users', label: 'Users', icon: Users, count: profiles.length },
+    { id: 'reviews', label: 'Reviews', icon: MessageSquare, count: reviews.length, badge: pendingReviews },
   ] as const;
 
   return (
@@ -786,6 +833,9 @@ export default function Admin() {
                     </select>
                     <button onClick={() => openSellRequestModal(s)} className="btn-outline text-xs px-3 py-1.5">
                       <Edit2 className="h-3 w-3 mr-1" /> Edit
+                    </button>
+                    <button onClick={() => approveAndPublishSellRequest(s)} className="btn-primary text-xs px-3 py-1.5 flex items-center gap-1 bg-emerald-600 hover:bg-emerald-700">
+                      <Store className="h-3.5 w-3.5" /> Approve & List in Buy Store
                     </button>
                   </div>
                 </div>
@@ -1011,7 +1061,54 @@ export default function Admin() {
                 </div>
               </div>
             ))}
-            {profiles.length === 0 && <p className="text-sm text-ink-500">No users found.</p>}
+          </div>
+        ) : tab === 'reviews' ? (
+          <div className="space-y-3">
+            <div className="flex items-center justify-between mb-2">
+              <h3 className="font-display font-bold text-lg text-ink-900 flex items-center gap-2">
+                <MessageSquare className="h-5 w-5 text-brand-600" /> Customer Reviews ({reviews.length})
+              </h3>
+              <span className="text-xs text-ink-500 font-medium">
+                Pending Verification: <span className="font-bold text-amber-600">{pendingReviews}</span>
+              </span>
+            </div>
+            {reviews.map((r) => (
+              <div key={r.id} className="card p-4 flex flex-wrap items-center justify-between gap-4">
+                <div className="space-y-1.5 max-w-xl">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <span className="font-bold text-ink-900 text-sm">{r.reviewer_name}</span>
+                    <span className="badge bg-brand-50 text-brand-700 text-xs">{r.location || 'Lucknow'}</span>
+                    <span className="badge bg-ink-100 text-ink-700 text-xs uppercase">{r.service_type || 'General'}</span>
+                    <div className="flex items-center gap-0.5 text-amber-400">
+                      {[1, 2, 3, 4, 5].map((star) => (
+                        <Star key={star} className={`h-3.5 w-3.5 ${star <= r.rating ? 'fill-amber-400' : 'text-ink-200'}`} />
+                      ))}
+                    </div>
+                  </div>
+                  <p className="text-sm text-ink-700 leading-relaxed italic">"{r.comment}"</p>
+                  <p className="text-xs text-ink-400">
+                    Submitted on: {new Date(r.created_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
+                  </p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className={`badge ${r.is_approved ? 'bg-nature-50 text-nature-700 border border-nature-200' : 'bg-amber-50 text-amber-700 border border-amber-200'}`}>
+                    {r.is_approved ? 'Approved & Published' : 'Pending Verification'}
+                  </span>
+                  <button
+                    onClick={() => toggleReviewApproval(r.id, r.is_approved)}
+                    className={`btn-outline text-xs px-3.5 py-1.5 font-semibold ${
+                      r.is_approved ? 'border-amber-300 text-amber-700 hover:bg-amber-50' : 'border-nature-300 text-nature-700 hover:bg-nature-50'
+                    }`}
+                  >
+                    {r.is_approved ? 'Unapprove' : 'Approve & Publish'}
+                  </button>
+                  <button onClick={() => deleteReview(r.id)} className="btn-outline border-accent-300 text-xs px-3 py-1.5 text-accent-600 hover:bg-accent-50">
+                    <Trash2 className="h-3.5 w-3.5" />
+                  </button>
+                </div>
+              </div>
+            ))}
+            {reviews.length === 0 && <p className="text-sm text-ink-500 py-6 text-center card">No customer reviews submitted yet.</p>}
           </div>
         ) : null}
       </div>
