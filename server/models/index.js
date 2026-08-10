@@ -8,6 +8,8 @@ import { Order } from './Order.js';
 import { Dispatch } from './Dispatch.js';
 import { Review } from './Review.js';
 import { SupportTicket } from './SupportTicket.js';
+import { DeliveryAgent } from './DeliveryAgent.js';
+import { MasterPhone } from './MasterPhone.js';
 
 export {
   User,
@@ -20,6 +22,8 @@ export {
   Dispatch,
   Review,
   SupportTicket,
+  DeliveryAgent,
+  MasterPhone,
 };
 
 export const TABLE_MODELS = {
@@ -33,6 +37,9 @@ export const TABLE_MODELS = {
   dispatches: Dispatch,
   reviews: Review,
   support_tickets: SupportTicket,
+  delivery_agents: DeliveryAgent,
+  master_phones: MasterPhone,
+  phones: MasterPhone,
 };
 
 export const getModel = (table) => {

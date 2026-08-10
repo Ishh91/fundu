@@ -137,8 +137,8 @@ export default function Navbar() {
 
       <div className="container-page">
         <nav className="flex h-20 items-center gap-4">
-          <Link to="/" className="shrink-0">
-            <BrandLogo imageClassName="h-12 w-auto" />
+          <Link to="/" className="shrink-0 flex items-center">
+            <BrandLogo imageClassName="h-10 sm:h-12 w-auto max-w-[200px]" />
           </Link>
 
           <div className="hidden items-center gap-2 xl:flex">

@@ -23,8 +23,8 @@ export default function Footer() {
 
         <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-4">
           <div>
-            <Link to="/" className="flex items-center gap-2">
-              <BrandLogo imageClassName="h-16 w-auto" />
+            <Link to="/" className="flex items-center">
+              <BrandLogo imageClassName="h-12 sm:h-14 w-auto max-w-[220px]" />
             </Link>
             <p className="mt-3 text-sm leading-relaxed text-ink-600">
               Fundu is a mobile-phone-first marketplace focused on selling, buying, repairing, and responsibly recycling devices with doorstep support across Lucknow.

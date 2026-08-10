@@ -28,8 +28,19 @@ type Filter = {
   value: unknown;
 };
 
-const API_BASE = (import.meta.env.VITE_API_URL as string | undefined)?.replace(/\/$/, '') || 'http://localhost:4000/api';
+const resolveApiBase = () => {
+  const envUrl = import.meta.env.VITE_API_URL as string | undefined;
+  if (typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')) {
+    if (envUrl && envUrl.includes('onrender.com')) {
+      return 'http://localhost:4000/api';
+    }
+  }
+  return envUrl?.replace(/\/$/, '') || 'http://localhost:4000/api';
+};
+
+const API_BASE = resolveApiBase();
 const SESSION_KEY = 'fundu_mongo_session';
+
 const authListeners = new Set<AuthChangeHandler>();
 
 const createError = (message: string): QueryError => ({ message });
@@ -103,7 +114,7 @@ class QueryBuilder<T = unknown> implements PromiseLike<QueryResponse<T>> {
 
   private selectColumns = '*';
 
-  private sort: { field: string; ascending: boolean } | null = null;
+  private sortConfig: { field: string; ascending: boolean } | null = null;
 
   private limitCount: number | null = null;
 
@@ -131,7 +142,13 @@ class QueryBuilder<T = unknown> implements PromiseLike<QueryResponse<T>> {
   }
 
   order(field: string, options: { ascending?: boolean } = {}) {
-    this.sort = { field, ascending: options.ascending ?? true };
+    this.sortConfig = { field, ascending: options.ascending ?? true };
+    return this;
+  }
+
+  // Alias: sort({ field, ascending }) — used by Admin data fetching
+  sort(config: { field: string; ascending?: boolean }) {
+    this.sortConfig = { field: config.field, ascending: config.ascending ?? true };
     return this;
   }
 
@@ -178,7 +195,7 @@ class QueryBuilder<T = unknown> implements PromiseLike<QueryResponse<T>> {
       const params = new URLSearchParams();
       params.set('select', this.selectColumns);
       if (this.filters.length > 0) params.set('filters', JSON.stringify(this.filters));
-      if (this.sort) params.set('sort', JSON.stringify(this.sort));
+      if (this.sortConfig) params.set('sort', JSON.stringify(this.sortConfig));
       if (typeof this.limitCount === 'number') params.set('limit', String(this.limitCount));
       if (this.expectSingle) params.set('single', 'true');
       return apiRequest<T>(`/db/${this.table}?${params.toString()}`, { method: 'GET' }, true);

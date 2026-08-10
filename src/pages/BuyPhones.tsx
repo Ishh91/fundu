@@ -637,11 +637,15 @@ export default function BuyPhones() {
                             >
                               {isSuperb ? 'Superb (Like New)' : 'Good Value'}
                             </span>
-                            {product.discount_percent && (
+                            {product.offer_tag ? (
+                              <span className="absolute top-3 right-3 badge bg-amber-500 text-white text-[10px] font-black shadow-xs">
+                                {product.offer_tag}
+                              </span>
+                            ) : product.discount_percent ? (
                               <span className="absolute top-3 right-3 badge bg-accent-500 text-white text-[10px] font-extrabold">
                                 {product.discount_percent}% OFF
                               </span>
-                            )}
+                            ) : null}
                             <img
                               src={image}
                               alt={product.title}

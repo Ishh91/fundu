@@ -1,6 +1,8 @@
 import mongoose from 'mongoose';
 import bcrypt from 'bcryptjs';
 import { Product, SparePart, SellPriceConfig, User } from '../models/index.js';
+import { ensureAgentsSeeded } from '../services/dispatchService.js';
+import { ensureMasterPhonesSeeded } from './seedPhones.js';
 
 const seedProducts = [
   {
@@ -307,6 +309,9 @@ export const seedDatabase = async () => {
     });
     console.log(`Created default wholesaler user: ${wholesalerEmail}`);
   }
+
+  await ensureAgentsSeeded();
+  await ensureMasterPhonesSeeded();
 };
 
 export const connectDB = async () => {

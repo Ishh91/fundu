@@ -13,6 +13,7 @@ const productSchema = createSchema({
   original_price: { type: Number, default: null },
   discount_percent: { type: Number, default: 0 },
   warranty_months: { type: Number, default: 6 },
+  offer_tag: { type: String, default: null },
   description: { type: String, default: null },
   images: { type: [String], default: [] },
   is_approved: { type: Boolean, default: false },

@@ -41,8 +41,8 @@ export default function Register() {
     <div className="container-page py-16">
       <div className="max-w-md mx-auto">
         <div className="text-center">
-          <Link to="/" className="inline-flex items-center gap-2">
-            <BrandLogo imageClassName="h-20 w-auto" />
+          <Link to="/" className="inline-flex items-center justify-center">
+            <BrandLogo imageClassName="h-14 sm:h-16 w-auto max-w-[260px] mx-auto" />
           </Link>
           <h1 className="mt-6 font-display text-3xl font-extrabold text-ink-900">Create your account</h1>
           <p className="mt-2 text-ink-500">Join 3,100+ customers in Lucknow.</p>

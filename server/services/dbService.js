@@ -9,6 +9,7 @@ import {
   parseSort,
 } from '../utils/dbHelpers.js';
 import { isAdmin, isWholesaler, requireAuth } from '../middleware/auth.js';
+import { autoAssignDeliveryAgent } from './dispatchService.js';
 
 export const getReadScope = async (table, auth, filters) => {
   const baseFilter = buildMongoFilter(filters);
@@ -36,6 +37,10 @@ export const getReadScope = async (table, auth, filters) => {
       const orderIds = orders.map((order) => order._id.toString());
       return combineFilters(baseFilter, { order_id: { $in: orderIds } });
     }
+    case 'delivery_agents':
+    case 'master_phones':
+    case 'phones':
+      return baseFilter;
     case 'support_tickets':
       if (!auth?.sub) return baseFilter;
       return isAdmin(auth) ? baseFilter : combineFilters(baseFilter, { user_id: auth.sub });
@@ -57,18 +62,20 @@ export const getWriteScope = async (table, auth, filters) => {
     case 'products':
     case 'spare_parts':
       requireAuth(auth);
-      if (isAdmin(auth)) return baseFilter;
-      if (!isWholesaler(auth)) throw createHttpError(403, 'Wholesaler access required.');
-      return combineFilters(baseFilter, { seller_id: auth.sub });
+      if (!isAdmin(auth)) {
+        if (!isWholesaler(auth)) throw createHttpError(403, 'Wholesaler access required.');
+        return combineFilters(baseFilter, { seller_id: auth.sub });
+      }
+      return baseFilter;
     case 'sell_requests':
     case 'repair_bookings':
     case 'orders':
       if (!auth?.sub) return baseFilter;
       return isAdmin(auth) ? baseFilter : combineFilters(baseFilter, { user_id: auth.sub });
     case 'sell_price_configs':
-      requireAuth(auth);
-      if (!isAdmin(auth)) throw createHttpError(403, 'Admin access required.');
-      return baseFilter;
+    case 'delivery_agents':
+    case 'master_phones':
+    case 'phones':
     case 'dispatches':
       requireAuth(auth);
       if (!isAdmin(auth)) throw createHttpError(403, 'Admin access required.');
@@ -119,6 +126,10 @@ export const preparePayload = (table, action, input, auth) => {
       requireAuth(auth);
       if (!isAdmin(auth)) throw createHttpError(403, 'Admin access required.');
       payload.storage = payload.storage ? String(payload.storage).trim() : null;
+      return payload;
+    case 'delivery_agents':
+    case 'master_phones':
+    case 'phones':
       return payload;
     case 'orders':
       if (action === 'insert' || action === 'upsert') {
@@ -175,13 +186,68 @@ export const queryTable = async (table, { auth, filters, sort, select, single, l
 export const insertIntoTable = async (table, { auth, values, single }) => {
   const Model = getModel(table);
   const items = Array.isArray(values) ? values : [values];
-  const prepared = items.map((item) => preparePayload(table, 'insert', item, auth));
+  const preparedItems = [];
+
+  for (const item of items) {
+    const prepared = preparePayload(table, 'insert', item, auth);
+
+    // Auto-assign delivery / pickup executive for Lucknow
+    if (table === 'sell_requests' && !prepared.assigned_agent_id) {
+      const assigned = await autoAssignDeliveryAgent({
+        area: prepared.pickup_area,
+        fullAddress: prepared.pickup_address,
+        slot: prepared.pickup_slot,
+        date: prepared.pickup_date,
+        type: 'sell',
+      });
+      if (assigned.assigned_agent_id) {
+        prepared.assigned_agent_id = assigned.assigned_agent_id;
+        prepared.pickup_person_name = assigned.pickup_person_name;
+        prepared.pickup_person_phone = assigned.pickup_person_phone;
+        prepared.estimated_arrival_time = assigned.estimated_arrival_time;
+        if (prepared.status === 'pending') prepared.status = 'assigned';
+      }
+    } else if (table === 'orders' && !prepared.assigned_agent_id) {
+      const assigned = await autoAssignDeliveryAgent({
+        area: prepared.delivery_area,
+        fullAddress: prepared.delivery_address,
+        slot: prepared.delivery_slot,
+        type: 'order',
+      });
+      if (assigned.assigned_agent_id) {
+        prepared.assigned_agent_id = assigned.assigned_agent_id;
+        prepared.delivery_person_name = assigned.delivery_person_name;
+        prepared.delivery_person_phone = assigned.delivery_person_phone;
+        prepared.estimated_arrival_time = assigned.estimated_arrival_time;
+        if (prepared.status === 'pending') prepared.status = 'assigned';
+      }
+    } else if (table === 'repair_bookings' && !prepared.assigned_agent_id) {
+      const assigned = await autoAssignDeliveryAgent({
+        area: prepared.pickup_area,
+        fullAddress: prepared.pickup_address,
+        slot: prepared.pickup_slot,
+        date: prepared.pickup_date,
+        type: 'repair',
+      });
+      if (assigned.assigned_agent_id) {
+        prepared.assigned_agent_id = assigned.assigned_agent_id;
+        prepared.pickup_person_name = assigned.pickup_person_name;
+        prepared.pickup_person_phone = assigned.pickup_person_phone;
+        prepared.technician_name = assigned.pickup_person_name;
+        prepared.technician_phone = assigned.pickup_person_phone;
+        prepared.estimated_arrival_time = assigned.estimated_arrival_time;
+        if (prepared.status === 'pending') prepared.status = 'assigned';
+      }
+    }
+
+    preparedItems.push(prepared);
+  }
 
   if (table === 'profiles') {
     throw createHttpError(400, 'Profiles are created through auth registration.');
   }
 
-  const docs = await Model.insertMany(prepared);
+  const docs = await Model.insertMany(preparedItems);
   const normalized = normalizeDoc(docs);
   return single ? normalized[0] ?? null : normalized;
 };

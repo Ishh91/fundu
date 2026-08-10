@@ -11,6 +11,7 @@ export type Product = {
   original_price: number | null;
   discount_percent: number;
   warranty_months: number;
+  offer_tag?: string | null;
   description: string | null;
   images: string[];
   is_approved: boolean;
@@ -30,16 +31,36 @@ export type SellRequest = {
   storage: string | null;
   condition: string;
   imei: string | null;
+  imei_photo?: string | null;
+  device_photos?: {
+    front?: string | null;
+    back?: string | null;
+    edges?: string | null;
+    bill_box?: string | null;
+  } | null;
+  diagnostics?: {
+    screen_touch?: boolean;
+    cameras?: boolean;
+    battery_health?: string | number | null;
+    biometrics?: boolean;
+    speaker_mic?: boolean;
+    charging_port?: boolean;
+  } | null;
   accessories: string[];
   estimated_price: number | null;
   final_price: number | null;
   status: string;
   pickup_address: string | null;
+  pickup_area?: string | null;
   pickup_date: string | null;
   pickup_slot: string | null;
   notes: string | null;
+  assigned_agent_id?: string | null;
   pickup_person_name: string | null;
   pickup_person_phone: string | null;
+  estimated_arrival_time?: string | null;
+  payout_method?: string | null;
+  payout_details?: string | null;
   created_at: string;
 };
 
@@ -66,16 +87,20 @@ export type RepairBooking = {
   model: string;
   problem: string;
   problem_detail: string | null;
+  device_photos?: string[];
   estimated_cost: number | null;
   final_cost: number | null;
   status: string;
   pickup_address: string | null;
+  pickup_area?: string | null;
   pickup_date: string | null;
   pickup_slot: string | null;
+  assigned_agent_id?: string | null;
   technician_name: string | null;
   technician_phone: string | null;
   pickup_person_name: string | null;
   pickup_person_phone: string | null;
+  estimated_arrival_time?: string | null;
   tracking_id: string;
   created_at: string;
 };
@@ -96,6 +121,7 @@ export type SparePart = {
 };
 
 export type Order = {
+  items: boolean;
   id: string;
   user_id: string;
   product_id: string | null;
@@ -106,9 +132,55 @@ export type Order = {
   payment_method: string | null;
   payment_status: string;
   delivery_address: string | null;
+  delivery_area?: string | null;
   delivery_name: string | null;
   delivery_phone: string | null;
+  delivery_slot?: string | null;
+  assigned_agent_id?: string | null;
+  delivery_person_name?: string | null;
+  delivery_person_phone?: string | null;
+  estimated_arrival_time?: string | null;
+  tracking_id?: string;
   created_at: string;
+};
+
+export type DeliveryAgent = {
+  id: string;
+  name: string;
+  phone: string;
+  email?: string | null;
+  status: 'available' | 'on_delivery' | 'busy' | 'offline';
+  zones: string[];
+  current_orders_count: number;
+  max_capacity: number;
+  vehicle_type: string;
+  vehicle_number?: string | null;
+  rating: number;
+  total_completed: number;
+  is_active: boolean;
+  avatar_url?: string | null;
+  current_locality: string;
+  created_at: string;
+};
+
+export type MasterPhone = {
+  id: string;
+  brand: string;
+  model: string;
+  release_year: number;
+  ram_options: string[];
+  storage_options: string[];
+  default_mrp: number;
+  base_resale_value: number;
+  image_url: string | null;
+  popular_tag: string | null;
+  processor: string | null;
+  camera_spec: string | null;
+  battery_spec: string | null;
+  display_spec: string | null;
+  is_5g: boolean;
+  is_active: boolean;
+  created_at?: string;
 };
 
 export type Dispatch = {

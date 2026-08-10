@@ -190,6 +190,24 @@ export default function Dashboard() {
                     {s.pickup_date && <span className="text-ink-400">· {s.pickup_date} · {s.pickup_slot}</span>}
                   </div>
                 )}
+                {s.pickup_person_name && (
+                  <div className="mt-2.5 flex items-center justify-between rounded-lg bg-emerald-50/60 p-2.5 border border-emerald-100 text-xs">
+                    <div className="flex items-center gap-2">
+                      <span className="grid h-6 w-6 place-items-center rounded-full bg-emerald-100 text-emerald-700 font-bold">
+                        {s.pickup_person_name[0]}
+                      </span>
+                      <div>
+                        <p className="font-bold text-ink-900">Pickup Agent: {s.pickup_person_name}</p>
+                        <p className="text-ink-500 text-[11px]">{s.estimated_arrival_time || 'Assigned for doorstep visit'}</p>
+                      </div>
+                    </div>
+                    {s.pickup_person_phone && (
+                      <a href={`tel:${s.pickup_person_phone}`} className="btn-outline text-[11px] px-2.5 py-1 bg-white font-bold text-emerald-700">
+                        <Phone className="h-3 w-3 inline mr-1" /> Call
+                      </a>
+                    )}
+                  </div>
+                )}
               </div>
             ))}
           </div>
@@ -217,6 +235,24 @@ export default function Dashboard() {
                     <Truck className="h-4 w-4 text-brand-600" />
                     <span>{r.pickup_address}</span>
                     {r.pickup_date && <span className="text-ink-400">· {r.pickup_date} · {r.pickup_slot}</span>}
+                  </div>
+                )}
+                {r.pickup_person_name && (
+                  <div className="mt-2.5 flex items-center justify-between rounded-lg bg-emerald-50/60 p-2.5 border border-emerald-100 text-xs">
+                    <div className="flex items-center gap-2">
+                      <span className="grid h-6 w-6 place-items-center rounded-full bg-emerald-100 text-emerald-700 font-bold">
+                        {r.pickup_person_name[0]}
+                      </span>
+                      <div>
+                        <p className="font-bold text-ink-900">Repair Technician: {r.pickup_person_name}</p>
+                        <p className="text-ink-500 text-[11px]">{r.estimated_arrival_time || 'Doorstep service booked'}</p>
+                      </div>
+                    </div>
+                    {r.pickup_person_phone && (
+                      <a href={`tel:${r.pickup_person_phone}`} className="btn-outline text-[11px] px-2.5 py-1 bg-white font-bold text-emerald-700">
+                        <Phone className="h-3 w-3 inline mr-1" /> Call
+                      </a>
+                    )}
                   </div>
                 )}
               </div>

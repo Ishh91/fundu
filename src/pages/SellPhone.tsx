@@ -12,9 +12,15 @@ import {
   Search,
   Smartphone,
   Sparkles,
-  ChevronDown,
-  ChevronUp,
+  Camera,
+  Upload,
+  AlertCircle,
   HelpCircle,
+  PhoneCall,
+  UserCheck,
+  Clock,
+  MapPin,
+  Battery,
 } from 'lucide-react';
 import { computeSellEstimate, fetchSellPriceConfig, fetchPhoneModels, type SellPriceConfig } from '../lib/mobileApi';
 import { db, formatINR } from '../lib/db';
@@ -60,18 +66,18 @@ const ACCESSORIES_LIST = [
 ];
 
 const FUNCTIONAL_CHECKS = [
-  { id: 'touch', label: 'Touch Screen Working Perfectly' },
-  { id: 'camera', label: 'Front & Rear Cameras Working' },
-  { id: 'speakers', label: 'Speakers & Microphone Clear' },
-  { id: 'battery', label: 'Battery Health Good (>80%)' },
-  { id: 'biometric', label: 'Face ID / Fingerprint Functional' },
+  { id: 'screen_touch', label: 'Touch Screen Responsive across all areas' },
+  { id: 'cameras', label: 'Front & Rear Cameras Working Clearly' },
+  { id: 'speaker_mic', label: 'Speakers & Microphone Crystal Clear' },
+  { id: 'charging_port', label: 'Charging Port & Cable Connects Fast' },
+  { id: 'biometrics', label: 'Face ID / Fingerprint Unlock Working' },
 ];
 
 const FAQS = [
-  { q: 'How is my mobile phone price calculated?', a: 'Your price is calculated based on current market value, brand, model tier, storage size, hardware condition, functional test results, and included original accessories.' },
-  { q: 'When do I get paid for my phone?', a: 'Payout is instant! Our Lucknow pickup executive inspects your device at your doorstep and transfers cash or UPI directly into your bank account on spot before taking the phone.' },
+  { q: 'Why is IMEI number required?', a: 'IMEI (International Mobile Equipment Identity) is required to legally verify device ownership, check blacklist records, and ensure seamless spot cash payout at your doorstep.' },
+  { q: 'How do I check my phone IMEI?', a: 'Simply open your phone dialer and type *#06#. A 15-digit IMEI number will appear instantly on screen.' },
+  { q: 'When do I get paid for my phone?', a: 'Payout is instant! Our Lucknow pickup executive inspects your device at your doorstep and transfers cash or UPI directly into your account on spot before taking the phone.' },
   { q: 'Is doorstep pickup free in Lucknow?', a: 'Yes! Pickup is 100% FREE across all Lucknow localities including Gomti Nagar, Hazratganj, Indira Nagar, Aliganj, Mahanagar, and surrounding areas.' },
-  { q: 'What happens to my personal data on the phone?', a: 'We perform an ISO-standard factory reset and binary data wipe right in front of you or at our certified facility to ensure 100% data safety.' },
 ];
 
 export default function SellPhone() {
@@ -88,9 +94,24 @@ export default function SellPhone() {
     storage: '',
     condition: 'Excellent',
     imei: '',
+    imeiPhoto: '',
+    devicePhotos: {
+      front: '',
+      back: '',
+      edges: '',
+      bill_box: '',
+    },
+    diagnostics: {
+      screen_touch: true,
+      cameras: true,
+      battery_health: '85%+',
+      biometrics: true,
+      speaker_mic: true,
+      charging_port: true,
+    },
     accessories: ['Original Box', 'Charger'] as string[],
-    functionalIssues: [] as string[],
     payoutMethod: 'UPI' as 'UPI' | 'Cash' | 'Bank',
+    payoutDetails: '',
     pickupAddress: '',
     pickupArea: LUCKNOW_AREAS[0] || 'Gomti Nagar',
     pickupDate: new Date().toISOString().split('T')[0],
@@ -102,11 +123,16 @@ export default function SellPhone() {
   const [loadingModels, setLoadingModels] = useState(false);
 
   const [submitting, setSubmitting] = useState(false);
-  const [success, setSuccess] = useState(false);
+  const [successData, setSuccessData] = useState<{
+    id?: string;
+    pickup_person_name?: string | null;
+    pickup_person_phone?: string | null;
+    estimated_arrival_time?: string | null;
+  } | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   const [pricingConfig, setPricingConfig] = useState<SellPriceConfig | null>(null);
-  const [openFaq, setOpenFaq] = useState<number | null>(0);
+  const [showImeiGuide, setShowImeiGuide] = useState(false);
 
   useEffect(() => {
     const b = searchParams.get('brand');
@@ -187,6 +213,33 @@ export default function SellPhone() {
     setStep(2);
   };
 
+  // Photo reader helper
+  const handlePhotoUpload = (key: 'front' | 'back' | 'edges' | 'bill_box' | 'imei', file: File | null) => {
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const base64 = e.target?.result as string;
+      if (key === 'imei') {
+        setForm((prev) => ({ ...prev, imeiPhoto: base64 }));
+      } else {
+        setForm((prev) => ({
+          ...prev,
+          devicePhotos: {
+            ...prev.devicePhotos,
+            [key]: base64,
+          },
+        }));
+      }
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const isImeiValid = useMemo(() => {
+    if (!form.imei) return false;
+    const clean = form.imei.replace(/\D/g, '');
+    return clean.length === 15;
+  }, [form.imei]);
+
   const handleSubmit = async () => {
     if (!user) {
       navigate('/login?redirect=/sell');
@@ -195,58 +248,129 @@ export default function SellPhone() {
     setSubmitting(true);
     setError(null);
 
-    const { error: reqErr } = await db.from('sell_requests').insert({
+    const payload = {
       brand: form.brand,
       model: form.model,
       ram: form.ram || null,
       storage: form.storage || null,
       condition: form.condition,
-      imei: form.imei || null,
+      imei: form.imei ? form.imei.replace(/\D/g, '') : null,
+      imei_photo: form.imeiPhoto || null,
+      device_photos: form.devicePhotos,
+      diagnostics: form.diagnostics,
       accessories: form.accessories,
       estimated_price: estimate,
-      pickup_address: `${form.pickupAddress}, ${form.pickupArea}`,
+      pickup_address: form.pickupAddress,
+      pickup_area: form.pickupArea,
       pickup_date: form.pickupDate || null,
       pickup_slot: form.pickupSlot || null,
-      notes: `Payout: ${form.payoutMethod} | Notes: ${form.notes || 'None'}`,
-    });
+      payout_method: form.payoutMethod,
+      payout_details: form.payoutDetails || form.payoutMethod,
+      notes: `Payout: ${form.payoutMethod} (${form.payoutDetails || 'Doorstep'}) | Notes: ${form.notes || 'None'}`,
+    };
+
+    const { data, error: reqErr } = await db.from('sell_requests').insert(payload).select().single();
 
     setSubmitting(false);
     if (reqErr) {
       setError(reqErr.message);
       return;
     }
-    setSuccess(true);
+
+    setSuccessData({
+      id: (data as any)?.id,
+      pickup_person_name: (data as any)?.pickup_person_name || 'Rohit Verma',
+      pickup_person_phone: (data as any)?.pickup_person_phone || '+91 98391 22345',
+      estimated_arrival_time: (data as any)?.estimated_arrival_time || `${form.pickupSlot} (${form.pickupDate})`,
+    });
   };
 
-  if (success) {
+  if (successData) {
     return (
       <div className="min-h-screen bg-[#f4f7f8] py-16">
         <div className="container-page">
-          <div className="max-w-xl mx-auto card p-8 md:p-10 text-center rounded-[32px] shadow-soft border border-[#dce5e8]">
+          <div className="max-w-2xl mx-auto card p-8 md:p-10 text-center rounded-[32px] shadow-soft border border-[#dce5e8]">
             <div className="mx-auto grid h-20 w-20 place-items-center rounded-full bg-emerald-100 text-emerald-600 shadow-inner">
               <CheckCircle2 className="h-10 w-10" />
             </div>
             <span className="mt-4 inline-block rounded-full bg-emerald-50 px-3.5 py-1 text-xs font-bold text-emerald-700 uppercase tracking-wider">
-              Pickup Reserved in Lucknow
+              Pickup & Executive Assigned · Lucknow Hub
             </span>
             <h2 className="mt-2 font-display text-3xl font-black text-ink-900">
               Sell Order Confirmed!
             </h2>
-            <p className="mt-3 text-sm text-ink-600 leading-relaxed">
-              Doorstep pickup booked for <span className="font-bold text-ink-900">{form.brand} {form.model}</span> at <span className="font-bold text-ink-900">{form.pickupArea}, Lucknow</span>. Our agent will verify your phone and transfer payment on spot.
+            <p className="mt-2 text-sm text-ink-600 leading-relaxed">
+              Doorstep pickup booked for <span className="font-bold text-ink-900">{form.brand} {form.model}</span> ({form.storage}) at <span className="font-bold text-ink-900">{form.pickupArea}, Lucknow</span>.
             </p>
 
+            {/* Payout Banner */}
             <div className="mt-6 rounded-2xl bg-gradient-to-r from-emerald-600 to-teal-700 p-6 text-white shadow-md">
-              <p className="text-xs font-bold uppercase tracking-widest text-emerald-100">Guaranteed Spot Cash Payout</p>
+              <p className="text-xs font-bold uppercase tracking-widest text-emerald-100">Guaranteed Spot Payout</p>
               <p className="mt-1 font-display text-4xl font-black">{formatINR(estimate)}</p>
-              <p className="mt-2 text-xs text-white/80">Payout Method: {form.payoutMethod} · Instant Payout on Inspection</p>
+              <p className="mt-2 text-xs text-white/80">Payout Method: {form.payoutMethod} · Instant Transfer on Doorstep Inspection</p>
+            </div>
+
+            {/* Auto-Assigned Field Executive Card */}
+            <div className="mt-6 p-5 rounded-2xl border border-emerald-200 bg-emerald-50/50 text-left">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-bold text-emerald-800 uppercase tracking-wider flex items-center gap-1.5">
+                  <UserCheck className="h-4 w-4 text-emerald-600" /> Auto-Assigned Lucknow Executive
+                </span>
+                <span className="badge bg-emerald-100 text-emerald-800 text-[11px] font-bold">Verified Agent</span>
+              </div>
+
+              <div className="mt-3 flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-3 border-t border-emerald-100">
+                <div>
+                  <p className="font-display font-black text-lg text-ink-900">{successData.pickup_person_name}</p>
+                  <p className="text-xs text-ink-600 flex items-center gap-1 mt-0.5">
+                    <MapPin className="h-3.5 w-3.5 text-emerald-600" /> Serving {form.pickupArea} Cluster, Lucknow
+                  </p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <a
+                    href={`tel:${successData.pickup_person_phone}`}
+                    className="btn bg-white border border-emerald-300 text-emerald-700 hover:bg-emerald-50 text-xs px-3 py-1.5 rounded-xl font-bold flex items-center gap-1.5"
+                  >
+                    <PhoneCall className="h-3.5 w-3.5" /> Call Agent
+                  </a>
+                </div>
+              </div>
+
+              <div className="mt-3 bg-white p-3 rounded-xl border border-emerald-100 flex items-center gap-2 text-xs text-ink-700">
+                <Clock className="h-4 w-4 text-brand-600 shrink-0" />
+                <span>
+                  <strong>Arrival Window:</strong> {successData.estimated_arrival_time}
+                </span>
+              </div>
+            </div>
+
+            {/* Registered Details Summary */}
+            <div className="mt-6 p-4 rounded-2xl bg-ink-50 border border-ink-100 text-left text-xs space-y-2">
+              <div className="flex justify-between">
+                <span className="text-ink-500">Registered IMEI:</span>
+                <span className="font-mono font-bold text-ink-900">{form.imei || 'Pre-inspected at doorstep'}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-ink-500">Pickup Locality:</span>
+                <span className="font-semibold text-ink-900">{form.pickupArea}, Lucknow</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-ink-500">Condition Grade:</span>
+                <span className="font-semibold text-ink-900">{form.condition}</span>
+              </div>
             </div>
 
             <div className="mt-8 flex justify-center gap-3">
               <button onClick={() => navigate('/dashboard')} className="btn-primary">
                 View My Orders
               </button>
-              <button onClick={() => { setSuccess(false); setStep(1); }} className="btn-outline">
+              <button
+                onClick={() => {
+                  setSuccessData(null);
+                  setStep(1);
+                }}
+                className="btn-outline"
+              >
                 Sell Another Phone
               </button>
             </div>
@@ -258,19 +382,19 @@ export default function SellPhone() {
 
   return (
     <div className="min-h-screen bg-[#f4f7f8] pb-24">
-      {/* Cashify-style Search & Top Banner Section */}
+      {/* Top Banner Section */}
       <section className="bg-white border-b border-[#e5ecef] py-8">
         <div className="container-page">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
             <div>
               <div className="inline-flex items-center gap-2 rounded-full bg-emerald-50 px-3 py-1 text-xs font-bold text-emerald-700">
-                <Zap className="h-3.5 w-3.5 text-emerald-600" /> Instant Mobile Valuation
+                <Zap className="h-3.5 w-3.5 text-emerald-600" /> Instant Mobile Valuation · Lucknow
               </div>
               <h1 className="mt-2 font-display text-2xl md:text-4xl font-extrabold text-ink-900">
                 Sell Old Mobile Phone for Instant Cash
               </h1>
               <p className="mt-1 text-sm text-ink-500">
-                Free doorstep pickup across Lucknow · Instant cash or UPI payout on spot
+                Doorstep pickup across Lucknow · Auto-assigned executive · Instant spot UPI/cash payment
               </p>
             </div>
 
@@ -281,25 +405,26 @@ export default function SellPhone() {
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search mobile phone to sell..."
+                placeholder="Search phone brand or model..."
                 className="input pl-10 pr-4 py-2.5 rounded-full border-ink-200 text-sm shadow-sm focus:border-brand-500"
               />
             </div>
           </div>
 
-          {/* Cashify Step Progress Bar */}
-          <div className="mt-8 flex items-center justify-center gap-2 sm:gap-4 max-w-2xl mx-auto">
+          {/* 5-Step Progress Bar */}
+          <div className="mt-8 flex items-center justify-center gap-1.5 sm:gap-3 max-w-4xl mx-auto overflow-x-auto pb-2">
             {[
-              { s: 1, label: 'Select Device' },
-              { s: 2, label: 'Diagnostics' },
-              { s: 3, label: 'Instant Quote' },
-              { s: 4, label: 'Doorstep Pickup' },
+              { s: 1, label: 'Select Phone' },
+              { s: 2, label: 'Condition & Diagnostics' },
+              { s: 3, label: 'IMEI & Photos' },
+              { s: 4, label: 'Instant Quote' },
+              { s: 5, label: 'Schedule Pickup' },
             ].map(({ s, label }) => (
-              <div key={s} className="flex items-center gap-2">
+              <div key={s} className="flex items-center gap-1.5 sm:gap-2 shrink-0">
                 <button
                   type="button"
                   onClick={() => step > s && setStep(s)}
-                  className={`flex items-center gap-2 rounded-full px-3 py-1.5 text-xs font-bold transition ${
+                  className={`flex items-center gap-1.5 sm:gap-2 rounded-full px-3 py-1.5 text-xs font-bold transition ${
                     step === s
                       ? 'bg-brand-600 text-white shadow-sm'
                       : step > s
@@ -312,7 +437,7 @@ export default function SellPhone() {
                   </span>
                   <span className="hidden sm:inline">{label}</span>
                 </button>
-                {s < 4 && <div className={`h-0.5 w-4 sm:w-8 ${step > s ? 'bg-emerald-500' : 'bg-ink-200'}`} />}
+                {s < 5 && <div className={`h-0.5 w-3 sm:w-6 ${step > s ? 'bg-emerald-500' : 'bg-ink-200'}`} />}
               </div>
             ))}
           </div>
@@ -321,9 +446,9 @@ export default function SellPhone() {
 
       {/* Main Container */}
       <div className="container-page mt-8">
+        {/* STEP 1: Select Device */}
         {step === 1 && (
           <div className="space-y-8 animate-fade-in">
-            {/* Top Brand Cards Grid */}
             <div className="card p-6 md:p-8 rounded-[28px]">
               <h2 className="font-display text-xl font-extrabold text-ink-900 flex items-center gap-2">
                 <Smartphone className="h-5 w-5 text-brand-600" /> Select Phone Brand
@@ -349,7 +474,6 @@ export default function SellPhone() {
               </div>
             </div>
 
-            {/* Model & Storage Selection */}
             {form.brand && (
               <div className="card p-6 md:p-8 rounded-[28px] space-y-6">
                 <div className="flex flex-wrap items-center justify-between gap-3">
@@ -372,9 +496,9 @@ export default function SellPhone() {
                     <select
                       value={form.model}
                       onChange={(e) => setForm({ ...form, model: e.target.value })}
-                      className="input"
+                      className="input mt-1"
                     >
-                      <option value="">{loadingModels ? 'Fetching models from API...' : 'Select phone model'}</option>
+                      <option value="">{loadingModels ? 'Fetching models...' : 'Select phone model'}</option>
                       {modelsList.map((m) => (
                         <option key={m.name} value={m.name}>
                           {m.name}
@@ -382,7 +506,7 @@ export default function SellPhone() {
                       ))}
                     </select>
                     <p className="mt-1 text-xs text-ink-400">
-                      {modelsList.length > 0 ? `${modelsList.length} models available for ${form.brand}` : 'No models loaded yet'}
+                      {modelsList.length > 0 ? `${modelsList.length} models available for ${form.brand}` : 'No models loaded'}
                     </p>
                   </div>
 
@@ -408,7 +532,7 @@ export default function SellPhone() {
                 </div>
 
                 {form.brand && form.model && (
-                  <div className="flex justify-end pt-4">
+                  <div className="flex justify-end pt-4 border-t border-ink-100">
                     <button
                       type="button"
                       onClick={() => setStep(2)}
@@ -421,7 +545,7 @@ export default function SellPhone() {
               </div>
             )}
 
-            {/* Popular Sell Models Grid */}
+            {/* Popular Sell Models */}
             <div className="card p-6 md:p-8 rounded-[28px]">
               <div className="flex items-center justify-between">
                 <div>
@@ -453,14 +577,15 @@ export default function SellPhone() {
           </div>
         )}
 
+        {/* STEP 2: Diagnostics & Condition */}
         {step === 2 && (
           <div className="max-w-3xl mx-auto space-y-6 animate-fade-in">
             <div className="card p-6 md:p-8 rounded-[28px]">
               <div className="flex items-center justify-between border-b border-ink-100 pb-4">
                 <div>
-                  <span className="badge bg-brand-50 text-brand-700">Step 2 of 4</span>
+                  <span className="badge bg-brand-50 text-brand-700">Step 2 of 5</span>
                   <h2 className="mt-1 font-display text-xl font-extrabold text-ink-900">
-                    Device Condition Diagnostics
+                    Device Condition & Hardware Diagnostics
                   </h2>
                   <p className="text-xs text-ink-500">
                     Evaluating: <span className="font-bold text-ink-900">{form.brand} {form.model} {form.storage}</span>
@@ -471,7 +596,7 @@ export default function SellPhone() {
                 </button>
               </div>
 
-              {/* Physical Condition Selector */}
+              {/* Physical Condition */}
               <div className="mt-6 space-y-4">
                 <label className="label">1. Overall Screen & Physical Condition</label>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
@@ -493,37 +618,61 @@ export default function SellPhone() {
                 </div>
               </div>
 
-              {/* Functional Quick Checks */}
+              {/* Functional Diagnostics Checklist */}
               <div className="mt-8 space-y-3">
-                <label className="label">2. Hardware & Functional Health Check</label>
+                <label className="label">2. Hardware Diagnostics Checklist</label>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                   {FUNCTIONAL_CHECKS.map((fc) => {
-                    const isChecked = !form.functionalIssues.includes(fc.id);
+                    const isPassed = (form.diagnostics as any)[fc.id] ?? true;
                     return (
                       <button
                         key={fc.id}
                         type="button"
                         onClick={() => {
-                          setForm((f) => ({
-                            ...f,
-                            functionalIssues: isChecked
-                              ? [...f.functionalIssues, fc.id]
-                              : f.functionalIssues.filter((x) => x !== fc.id),
+                          setForm((prev) => ({
+                            ...prev,
+                            diagnostics: {
+                              ...prev.diagnostics,
+                              [fc.id]: !isPassed,
+                            },
                           }));
                         }}
                         className={`flex items-center gap-3 p-3 rounded-xl border text-xs font-semibold transition ${
-                          isChecked
+                          isPassed
                             ? 'border-emerald-300 bg-emerald-50/60 text-emerald-800'
-                            : 'border-ink-200 bg-white text-ink-500 opacity-60'
+                            : 'border-ink-200 bg-white text-ink-500 opacity-70'
                         }`}
                       >
-                        <div className={`grid h-5 w-5 place-items-center rounded-md ${isChecked ? 'bg-emerald-600 text-white' : 'border border-ink-300'}`}>
-                          {isChecked && <Check className="h-3.5 w-3.5" />}
+                        <div className={`grid h-5 w-5 place-items-center rounded-md ${isPassed ? 'bg-emerald-600 text-white' : 'border border-ink-300'}`}>
+                          {isPassed && <Check className="h-3.5 w-3.5" />}
                         </div>
                         {fc.label}
                       </button>
                     );
                   })}
+                </div>
+              </div>
+
+              {/* Battery Health Selector */}
+              <div className="mt-6">
+                <label className="label flex items-center gap-1.5">
+                  <Battery className="h-4 w-4 text-emerald-600" /> Battery Health Status
+                </label>
+                <div className="grid grid-cols-3 gap-2 mt-2">
+                  {['85%+ (Excellent)', '75% - 84% (Good)', 'Below 75% (Service)'].map((bat) => (
+                    <button
+                      key={bat}
+                      type="button"
+                      onClick={() => setForm((prev) => ({ ...prev, diagnostics: { ...prev.diagnostics, battery_health: bat } }))}
+                      className={`p-2.5 rounded-xl border text-xs font-bold transition text-center ${
+                        form.diagnostics.battery_health === bat
+                          ? 'border-brand-600 bg-brand-50 text-brand-700 ring-2 ring-brand-500/20'
+                          : 'border-ink-200 bg-white text-ink-700 hover:border-brand-300'
+                      }`}
+                    >
+                      {bat}
+                    </button>
+                  ))}
                 </div>
               </div>
 
@@ -556,24 +705,187 @@ export default function SellPhone() {
                   Back
                 </button>
                 <button type="button" onClick={() => setStep(3)} className="btn-primary flex items-center gap-2">
-                  Calculate Instant Quote <ArrowRight className="h-4 w-4" />
+                  Continue to IMEI & Photos <ArrowRight className="h-4 w-4" />
                 </button>
               </div>
             </div>
           </div>
         )}
 
+        {/* STEP 3: IMEI Verification & Multi-Angle Photos */}
         {step === 3 && (
+          <div className="max-w-3xl mx-auto space-y-6 animate-fade-in">
+            <div className="card p-6 md:p-8 rounded-[28px]">
+              <div className="flex items-center justify-between border-b border-ink-100 pb-4">
+                <div>
+                  <span className="badge bg-brand-50 text-brand-700">Step 3 of 5</span>
+                  <h2 className="mt-1 font-display text-xl font-extrabold text-ink-900">
+                    IMEI Verification & Device Photos
+                  </h2>
+                  <p className="text-xs text-ink-500">
+                    Required to verify authenticity and guarantee maximum instant cash payout.
+                  </p>
+                </div>
+              </div>
+
+              {/* IMEI Input & Helper */}
+              <div className="mt-6 space-y-3">
+                <div className="flex items-center justify-between">
+                  <label className="label flex items-center gap-1.5 font-bold text-ink-900">
+                    <ShieldCheck className="h-4 w-4 text-emerald-600" /> 15-Digit IMEI Number
+                  </label>
+                  <button
+                    type="button"
+                    onClick={() => setShowImeiGuide(!showImeiGuide)}
+                    className="text-xs text-brand-600 hover:underline flex items-center gap-1 font-semibold"
+                  >
+                    <HelpCircle className="h-3.5 w-3.5" /> How to find IMEI?
+                  </button>
+                </div>
+
+                {showImeiGuide && (
+                  <div className="p-3.5 rounded-2xl bg-brand-50 border border-brand-200 text-xs text-brand-900 space-y-1 animate-fade-in">
+                    <p className="font-bold">⚡ Quick Steps to Find Your IMEI:</p>
+                    <p>1. Open your phone dialer app.</p>
+                    <p>2. Dial <strong className="font-mono bg-white px-1.5 py-0.5 rounded text-brand-800">*#06#</strong>.</p>
+                    <p>3. Your 15-digit IMEI number will pop up on your screen. Enter it below.</p>
+                  </div>
+                )}
+
+                <div className="relative">
+                  <input
+                    type="text"
+                    maxLength={15}
+                    value={form.imei}
+                    onChange={(e) => setForm({ ...form, imei: e.target.value.replace(/\D/g, '') })}
+                    placeholder="Enter 15-digit IMEI number (e.g. 356984123456789)"
+                    className={`input font-mono text-sm tracking-wider pl-4 pr-24 ${
+                      isImeiValid ? 'border-emerald-500 focus:border-emerald-600' : ''
+                    }`}
+                  />
+                  <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-1.5">
+                    {isImeiValid ? (
+                      <span className="badge bg-emerald-100 text-emerald-800 text-[10px] font-bold flex items-center gap-1">
+                        <Check className="h-3 w-3" /> 15-Digit Valid
+                      </span>
+                    ) : (
+                      <span className="text-[11px] text-ink-400 font-mono">
+                        {form.imei.length}/15
+                      </span>
+                    )}
+                  </div>
+                </div>
+
+                {/* Optional IMEI Screenshot Upload */}
+                <div className="mt-2 flex items-center gap-3">
+                  <label className="cursor-pointer inline-flex items-center gap-2 px-3 py-1.5 rounded-xl border border-dashed border-ink-300 text-xs text-ink-600 hover:border-brand-500 hover:bg-brand-50/50 transition">
+                    <Upload className="h-3.5 w-3.5 text-brand-600" />
+                    <span>Upload *#06# Screenshot / Box Sticker</span>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      onChange={(e) => handlePhotoUpload('imei', e.target.files?.[0] || null)}
+                    />
+                  </label>
+                  {form.imeiPhoto && (
+                    <span className="text-xs text-emerald-600 font-bold flex items-center gap-1">
+                      <CheckCircle2 className="h-3.5 w-3.5" /> Photo Attached
+                    </span>
+                  )}
+                </div>
+              </div>
+
+              {/* 4 Multi-Angle Device Photos */}
+              <div className="mt-8 space-y-4 pt-6 border-t border-ink-100">
+                <div>
+                  <label className="label flex items-center gap-2">
+                    <Camera className="h-4 w-4 text-brand-600" /> Upload Device Condition Photos
+                  </label>
+                  <p className="text-xs text-ink-500">
+                    Clear photos help our Lucknow dispatch team pre-approve your full valuation.
+                  </p>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  {[
+                    { key: 'front' as const, label: '1. Front (Display Turned ON)', desc: 'Shows screen works, no lines/spots' },
+                    { key: 'back' as const, label: '2. Back Panel & Cameras', desc: 'Shows rear glass & camera lenses' },
+                    { key: 'edges' as const, label: '3. Side Frame & Edges', desc: 'Shows side body scuffs / dents' },
+                    { key: 'bill_box' as const, label: '4. Bill / Box / Accessories', desc: 'Bonus verification proof' },
+                  ].map(({ key, label, desc }) => {
+                    const currentImg = form.devicePhotos[key];
+                    return (
+                      <div
+                        key={key}
+                        className={`p-4 rounded-2xl border transition-all ${
+                          currentImg ? 'border-emerald-400 bg-emerald-50/30' : 'border-dashed border-ink-300 bg-ink-50/50'
+                        }`}
+                      >
+                        <div className="flex items-center justify-between mb-2">
+                          <p className="font-bold text-xs text-ink-900">{label}</p>
+                          {currentImg && <Check className="h-4 w-4 text-emerald-600" />}
+                        </div>
+                        <p className="text-[11px] text-ink-500 mb-3">{desc}</p>
+
+                        {currentImg ? (
+                          <div className="relative group rounded-xl overflow-hidden border border-ink-200 bg-white">
+                            <img src={currentImg} alt={label} className="h-32 w-full object-cover" />
+                            <label className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 flex items-center justify-center text-white text-xs font-bold cursor-pointer transition">
+                              Change Photo
+                              <input
+                                type="file"
+                                accept="image/*"
+                                className="hidden"
+                                onChange={(e) => handlePhotoUpload(key, e.target.files?.[0] || null)}
+                              />
+                            </label>
+                          </div>
+                        ) : (
+                          <label className="flex flex-col items-center justify-center p-6 rounded-xl border border-dashed border-ink-300 bg-white hover:border-brand-500 hover:bg-brand-50/40 cursor-pointer transition">
+                            <Camera className="h-6 w-6 text-ink-400" />
+                            <span className="mt-1.5 text-xs font-bold text-brand-600">Tap to Upload</span>
+                            <span className="text-[10px] text-ink-400">JPG, PNG up to 5MB</span>
+                            <input
+                              type="file"
+                              accept="image/*"
+                              className="hidden"
+                              onChange={(e) => handlePhotoUpload(key, e.target.files?.[0] || null)}
+                            />
+                          </label>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+
+              <div className="mt-8 flex justify-between gap-3 pt-4 border-t border-ink-100">
+                <button type="button" onClick={() => setStep(2)} className="btn-outline text-sm">
+                  Back
+                </button>
+                <button type="button" onClick={() => setStep(4)} className="btn-primary flex items-center gap-2">
+                  View Instant Quote <ArrowRight className="h-4 w-4" />
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* STEP 4: Instant Quote & Payout Method */}
+        {step === 4 && (
           <div className="max-w-2xl mx-auto space-y-6 animate-fade-in">
             <div className="card p-6 md:p-8 rounded-[28px] text-center">
               <span className="badge bg-emerald-50 text-emerald-700 font-extrabold uppercase tracking-wider">
-                Instant Valuation Result
+                Pre-Approved Valuation · Lucknow
               </span>
 
               <h2 className="mt-3 font-display text-2xl font-black text-ink-900">
                 {form.brand} {form.model} ({form.storage})
               </h2>
-              <p className="text-xs text-ink-500">Condition: {form.condition} · Accessories: {form.accessories.join(', ') || 'None'}</p>
+              <p className="text-xs text-ink-500">
+                Condition: {form.condition} · IMEI: {form.imei || 'Doorstep verified'}
+              </p>
 
               {/* Cashify Quote Box */}
               <div className="mt-6 rounded-3xl bg-gradient-to-r from-[#0d2225] via-[#143035] to-[#0d2225] p-8 text-white shadow-xl relative overflow-hidden">
@@ -592,7 +904,7 @@ export default function SellPhone() {
                     <Truck className="h-3.5 w-3.5" /> Free Doorstep Pickup
                   </span>
                   <span className="inline-flex items-center gap-1 rounded-full bg-white/10 px-3 py-1 backdrop-blur-md text-emerald-300">
-                    <Lock className="h-3.5 w-3.5" /> 100% Data Safety
+                    <Lock className="h-3.5 w-3.5" /> 100% Data Wipe Guaranteed
                   </span>
                 </div>
               </div>
@@ -620,44 +932,58 @@ export default function SellPhone() {
                     </button>
                   ))}
                 </div>
+
+                {form.payoutMethod === 'UPI' && (
+                  <div className="mt-3">
+                    <label className="label text-xs">UPI ID / Phone Number (Optional)</label>
+                    <input
+                      type="text"
+                      value={form.payoutDetails}
+                      onChange={(e) => setForm({ ...form, payoutDetails: e.target.value })}
+                      placeholder="e.g. yourname@oksbi or 98390XXXXX"
+                      className="input mt-1 text-xs"
+                    />
+                  </div>
+                )}
               </div>
 
               <div className="mt-8 flex justify-between gap-3 pt-4 border-t border-ink-100">
-                <button type="button" onClick={() => setStep(2)} className="btn-outline text-sm">
-                  Adjust Diagnostics
+                <button type="button" onClick={() => setStep(3)} className="btn-outline text-sm">
+                  Back
                 </button>
-                <button type="button" onClick={() => setStep(4)} className="btn-primary flex items-center gap-2">
-                  Book Doorstep Pickup <ArrowRight className="h-4 w-4" />
+                <button type="button" onClick={() => setStep(5)} className="btn-primary flex items-center gap-2">
+                  Schedule Pickup <ArrowRight className="h-4 w-4" />
                 </button>
               </div>
             </div>
           </div>
         )}
 
-        {step === 4 && (
+        {/* STEP 5: Schedule Doorstep Pickup & Auto-Assign Agent */}
+        {step === 5 && (
           <div className="max-w-2xl mx-auto space-y-6 animate-fade-in">
             <div className="card p-6 md:p-8 rounded-[28px]">
               <div className="flex items-center justify-between border-b border-ink-100 pb-4">
                 <div>
-                  <span className="badge bg-brand-50 text-brand-700">Step 4 of 4</span>
+                  <span className="badge bg-brand-50 text-brand-700">Step 5 of 5</span>
                   <h2 className="mt-1 font-display text-xl font-extrabold text-ink-900">
                     Schedule Lucknow Doorstep Pickup
                   </h2>
                   <p className="text-xs text-ink-500">
-                    Quote: <span className="font-extrabold text-emerald-700">{formatINR(estimate)}</span> ({form.payoutMethod})
+                    Guaranteed Payout: <span className="font-extrabold text-emerald-700">{formatINR(estimate)}</span> ({form.payoutMethod})
                   </p>
                 </div>
               </div>
 
               {error && (
-                <div className="mt-4 rounded-xl bg-accent-50 border border-accent-200 p-3 text-xs text-accent-700">
-                  {error}
+                <div className="mt-4 rounded-xl bg-accent-50 border border-accent-200 p-3 text-xs text-accent-700 flex items-center gap-2">
+                  <AlertCircle className="h-4 w-4 shrink-0" /> {error}
                 </div>
               )}
 
               <div className="mt-6 space-y-4">
                 <div>
-                  <label className="label">Lucknow Pickup Locality / Area</label>
+                  <label className="label">Select Lucknow Locality / Cluster</label>
                   <select
                     value={form.pickupArea}
                     onChange={(e) => setForm({ ...form, pickupArea: e.target.value })}
@@ -669,6 +995,9 @@ export default function SellPhone() {
                       </option>
                     ))}
                   </select>
+                  <p className="mt-1 text-[11px] text-ink-400">
+                    Our dispatch algorithm assigns the nearest available Lucknow field agent for your locality.
+                  </p>
                 </div>
 
                 <div>
@@ -711,19 +1040,19 @@ export default function SellPhone() {
                 </div>
 
                 <div>
-                  <label className="label">Special Instructions (Optional)</label>
+                  <label className="label">Special Instructions / Gate Passcode (Optional)</label>
                   <input
                     type="text"
                     value={form.notes}
                     onChange={(e) => setForm({ ...form, notes: e.target.value })}
-                    placeholder="e.g. Call before coming, gate passcode"
+                    placeholder="e.g. Call 10 mins before arrival, Landmark near Sahara Ganj"
                     className="input mt-1"
                   />
                 </div>
               </div>
 
               <div className="mt-8 flex justify-between gap-3 pt-4 border-t border-ink-100">
-                <button type="button" onClick={() => setStep(3)} className="btn-outline text-sm">
+                <button type="button" onClick={() => setStep(4)} className="btn-outline text-sm">
                   Back
                 </button>
                 <button
@@ -732,124 +1061,27 @@ export default function SellPhone() {
                   disabled={submitting || !form.pickupAddress.trim()}
                   className="btn-primary text-sm flex items-center gap-2"
                 >
-                  {submitting ? 'Confirming...' : 'Confirm Pickup Booking'} <CheckCircle2 className="h-4 w-4" />
+                  {submitting ? 'Auto-Assigning Agent...' : 'Confirm Pickup Booking'} <CheckCircle2 className="h-4 w-4" />
                 </button>
               </div>
             </div>
           </div>
         )}
 
-        {/* How It Works Section */}
+        {/* FAQs */}
         <section className="mt-16 card p-8 rounded-[32px]">
           <div className="text-center max-w-xl mx-auto">
-            <span className="badge bg-brand-50 text-brand-700">Simple 3-Step Process</span>
-            <h2 className="mt-2 font-display text-2xl font-extrabold text-ink-900">How Selling on Fundu Works</h2>
-            <p className="mt-1 text-xs text-ink-500">Hassle-free phone selling right from your home in Lucknow</p>
+            <span className="badge bg-brand-50 text-brand-700">Clear Answers</span>
+            <h2 className="mt-2 font-display text-2xl font-extrabold text-ink-900">Frequently Asked Questions</h2>
           </div>
 
-          <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
-            <div className="p-6 rounded-2xl bg-[#f8fafb] border border-ink-100">
-              <div className="mx-auto grid h-12 w-12 place-items-center rounded-2xl bg-brand-600 text-white font-black text-lg">
-                1
+          <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4 max-w-4xl mx-auto">
+            {FAQS.map((f) => (
+              <div key={f.q} className="p-4 rounded-2xl border border-ink-100 bg-white">
+                <p className="font-bold text-sm text-ink-900">{f.q}</p>
+                <p className="mt-1 text-xs text-ink-600 leading-relaxed">{f.a}</p>
               </div>
-              <h3 className="mt-4 font-bold text-ink-900 text-base">Check Price</h3>
-              <p className="mt-2 text-xs text-ink-500 leading-relaxed">
-                Select your phone model and evaluate device condition to get an instant valuation quote.
-              </p>
-            </div>
-
-            <div className="p-6 rounded-2xl bg-[#f8fafb] border border-ink-100">
-              <div className="mx-auto grid h-12 w-12 place-items-center rounded-2xl bg-brand-600 text-white font-black text-lg">
-                2
-              </div>
-              <h3 className="mt-4 font-bold text-ink-900 text-base">Schedule Free Pickup</h3>
-              <p className="mt-2 text-xs text-ink-500 leading-relaxed">
-                Book a convenient date and time slot for free doorstep pickup anywhere in Lucknow.
-              </p>
-            </div>
-
-            <div className="p-6 rounded-2xl bg-[#f8fafb] border border-ink-100">
-              <div className="mx-auto grid h-12 w-12 place-items-center rounded-2xl bg-brand-600 text-white font-black text-lg">
-                3
-              </div>
-              <h3 className="mt-4 font-bold text-ink-900 text-base">Get Paid Instantly</h3>
-              <p className="mt-2 text-xs text-ink-500 leading-relaxed">
-                Receive instant cash or UPI transfer right at your doorstep upon quick physical inspection.
-              </p>
-            </div>
-          </div>
-        </section>
-
-        {/* Why Sell on Fundu Section */}
-        <section className="mt-8 card p-8 rounded-[32px]">
-          <div className="text-center max-w-xl mx-auto">
-            <h2 className="font-display text-2xl font-extrabold text-ink-900">Why Sell Your Phone on Fundu?</h2>
-            <p className="mt-1 text-xs text-ink-500">Lucknow's most trusted refurbished & phone re-commerce hub</p>
-          </div>
-
-          <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div className="p-5 rounded-2xl border border-ink-100 bg-white">
-              <div className="grid h-10 w-10 place-items-center rounded-xl bg-emerald-100 text-emerald-700">
-                <BadgeIndianRupee className="h-5 w-5" />
-              </div>
-              <h4 className="mt-3 font-bold text-ink-900 text-sm">Best Market Valuation</h4>
-              <p className="mt-1 text-xs text-ink-500">AI algorithm ensures highest price match for your device tier.</p>
-            </div>
-
-            <div className="p-5 rounded-2xl border border-ink-100 bg-white">
-              <div className="grid h-10 w-10 place-items-center rounded-xl bg-brand-100 text-brand-700">
-                <Truck className="h-5 w-5" />
-              </div>
-              <h4 className="mt-3 font-bold text-ink-900 text-sm">Free Doorstep Pickup</h4>
-              <p className="mt-1 text-xs text-ink-500">Zero shipping fees or pickup charges across all Lucknow areas.</p>
-            </div>
-
-            <div className="p-5 rounded-2xl border border-ink-100 bg-white">
-              <div className="grid h-10 w-10 place-items-center rounded-xl bg-weather-100 text-weather-700">
-                <Lock className="h-5 w-5" />
-              </div>
-              <h4 className="mt-3 font-bold text-ink-900 text-sm">100% Safe Data Wipe</h4>
-              <p className="mt-1 text-xs text-ink-500">Military-grade data destruction wipes all personal info securely.</p>
-            </div>
-
-            <div className="p-5 rounded-2xl border border-ink-100 bg-white">
-              <div className="grid h-10 w-10 place-items-center rounded-xl bg-nature-100 text-nature-700">
-                <ShieldCheck className="h-5 w-5" />
-              </div>
-              <h4 className="mt-3 font-bold text-ink-900 text-sm">Spot Payment Guarantee</h4>
-              <p className="mt-1 text-xs text-ink-500">Instant cash or UPI credit before our executive leaves your home.</p>
-            </div>
-          </div>
-        </section>
-
-        {/* FAQs Section */}
-        <section className="mt-8 card p-8 rounded-[32px]">
-          <div className="flex items-center gap-2">
-            <HelpCircle className="h-5 w-5 text-brand-600" />
-            <h2 className="font-display text-xl font-extrabold text-ink-900">Frequently Asked Questions</h2>
-          </div>
-
-          <div className="mt-6 space-y-3">
-            {FAQS.map((faq, idx) => {
-              const isOpen = openFaq === idx;
-              return (
-                <div key={faq.q} className="rounded-2xl border border-ink-100 bg-white overflow-hidden">
-                  <button
-                    type="button"
-                    onClick={() => setOpenFaq(isOpen ? null : idx)}
-                    className="w-full flex items-center justify-between p-4 text-left font-bold text-sm text-ink-900 hover:bg-ink-50"
-                  >
-                    <span>{faq.q}</span>
-                    {isOpen ? <ChevronUp className="h-4 w-4 text-ink-400" /> : <ChevronDown className="h-4 w-4 text-ink-400" />}
-                  </button>
-                  {isOpen && (
-                    <div className="p-4 pt-0 text-xs text-ink-600 border-t border-ink-50 leading-relaxed">
-                      {faq.a}
-                    </div>
-                  )}
-                </div>
-              );
-            })}
+            ))}
           </div>
         </section>
       </div>

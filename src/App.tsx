@@ -51,7 +51,9 @@ function MainLayout() {
           <Route path="/register" element={<Register />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/admin" element={<Admin />} />
+          <Route path="/admin/:subtab" element={<Admin />} />
           <Route path="/wholesaler" element={<Wholesaler />} />
+
           <Route path="/profile" element={<Profile />} />
           <Route path="/checkout" element={<Checkout />} />
           <Route path="/payment" element={<Payment />} />
