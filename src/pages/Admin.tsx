@@ -44,6 +44,7 @@ import AdminDeliveryAgents from './admin/AdminDeliveryAgents';
 import AdminSpareParts from './admin/AdminSpareParts';
 import AdminUsers from './admin/AdminUsers';
 import AdminReviews from './admin/AdminReviews';
+import AdminHeroPosters from './admin/AdminHeroPosters';
 
 export default function Admin() {
   const { user, profile, loading } = useAuth();
@@ -103,6 +104,7 @@ export default function Admin() {
         'agents',
         'products',
         'pricing',
+        'banners',
         'parts',
         'users',
         'reviews',
@@ -822,6 +824,7 @@ export default function Admin() {
                 {tab === 'orders' && 'Store Customer Orders'}
                 {tab === 'products' && 'Refurbished Store Inventory'}
                 {tab === 'agents' && 'Lucknow Delivery Fleet'}
+                {tab === 'banners' && 'Hero Section Posters & Banners'}
                 {tab === 'parts' && 'Spare Parts & OEM Components'}
                 {tab === 'users' && 'User Accounts & Roles'}
                 {tab === 'reviews' && 'Customer Reviews & Moderation'}
@@ -1084,6 +1087,10 @@ export default function Admin() {
               onOpenAgentModal={() => setAgentModalOpen(true)}
               onToggleStatus={toggleAgentStatus}
             />
+          )}
+
+          {tab === 'banners' && (
+            <AdminHeroPosters />
           )}
 
           {tab === 'parts' && (

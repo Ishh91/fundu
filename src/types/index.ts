@@ -272,6 +272,22 @@ export type HomeHeroSlide = {
   statValue?: string;
 };
 
+export type HeroPoster = {
+  id: string;
+  eyebrow: string;
+  title: string;
+  description: string;
+  primaryLabel: string;
+  primaryHref: string;
+  secondaryLabel: string;
+  secondaryHref: string;
+  accent: string;
+  image: string;
+  bullets: string[];
+  is_active: boolean;
+  sort_order?: number;
+};
+
 export type HomeHighlight = {
   title: string;
   text: string;

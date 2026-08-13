@@ -14,6 +14,7 @@ import {
   MessageSquare,
   MapPin,
   ExternalLink,
+  Image as ImageIcon,
 } from 'lucide-react';
 import type { AdminTab } from './adminTypes';
 
@@ -96,6 +97,14 @@ export default function AdminSidebar({
       badge: `${counts.agents} Active`,
       badgeColor: 'bg-emerald-600 text-white',
       path: '/admin/agents',
+    },
+    {
+      id: 'banners' as AdminTab,
+      label: 'Hero Posters',
+      icon: ImageIcon,
+      badge: 'Live',
+      badgeColor: 'bg-teal-600 text-white',
+      path: '/admin/banners',
     },
     { id: 'parts' as AdminTab, label: 'Spare Parts', icon: Wrench, path: '/admin?tab=parts' },
     { id: 'users' as AdminTab, label: 'Users & Roles', icon: Users, path: '/admin?tab=users' },

@@ -8,6 +8,7 @@ import type {
   Review,
   DeliveryAgent,
   MasterPhone,
+  HeroPoster,
 } from '../../types';
 
 export type {
@@ -20,6 +21,7 @@ export type {
   Review,
   DeliveryAgent,
   MasterPhone,
+  HeroPoster,
 };
 
 export type AdminTab =
@@ -31,6 +33,7 @@ export type AdminTab =
   | 'agents'
   | 'products'
   | 'pricing'
+  | 'banners'
   | 'parts'
   | 'users'
   | 'reviews';
