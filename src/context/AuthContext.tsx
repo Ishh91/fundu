@@ -20,6 +20,10 @@ type AuthContextValue = {
   signUp: (email: string, password: string, fullName: string, phone: string) => Promise<{ error: string | null }>;
   signOut: () => Promise<void>;
   refreshProfile: () => Promise<void>;
+  /** Send OTP to a phone number. Returns devOtp string in dev mode. */
+  sendOtp: (phone: string) => Promise<{ error: string | null; devOtp?: string }>;
+  /** Verify OTP and complete login (auto-registers new users). */
+  verifyOtp: (phone: string, otp: string) => Promise<{ error: string | null; isNewUser?: boolean }>;
 };
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
@@ -79,6 +83,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return { error: null };
   };
 
+  const sendOtp = async (phone: string) => {
+    const { data, error } = await db.auth.sendOtp(phone);
+    if (error) return { error: error.message };
+    return { error: null, devOtp: data?.devOtp };
+  };
+
+  const verifyOtp = async (phone: string, otp: string) => {
+    const { data, error } = await db.auth.verifyOtp(phone, otp);
+    if (error) return { error: error.message };
+    if (!data?.session) return { error: 'Login failed. Please try again.' };
+    // Auth state change listener will update session/user/profile
+    return { error: null, isNewUser: data.isNewUser };
+  };
+
   const signOut = async () => {
     await db.auth.signOut();
     setProfile(null);
@@ -91,7 +109,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   return (
-    <AuthContext.Provider value={{ session, user, profile, loading, signIn, signUp, signOut, refreshProfile }}>
+    <AuthContext.Provider value={{ session, user, profile, loading, signIn, signUp, signOut, refreshProfile, sendOtp, verifyOtp }}>
       {children}
     </AuthContext.Provider>
   );
@@ -102,3 +120,6 @@ export function useAuth() {
   if (!ctx) throw new Error('useAuth must be used within AuthProvider');
   return ctx;
 }
+
+
+

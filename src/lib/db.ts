@@ -262,6 +262,10 @@ type AuthApi = {
     };
   }) => AuthResponse<{ session: Session; user: User }>;
   signOut: () => AuthResponse<null>;
+  /** Send OTP to a phone number. In dev mode returns devOtp in data. */
+  sendOtp: (phone: string) => Promise<QueryResponse<{ message: string; devOtp?: string }>>;
+  /** Verify OTP and log in (auto-creates account if new user). */
+  verifyOtp: (phone: string, otp: string) => AuthResponse<{ session: Session; user: User; isNewUser: boolean }>;
 };
 
 export const auth: AuthApi = {
@@ -341,6 +345,39 @@ export const auth: AuthApi = {
     writeSession(null);
     notifyAuthChange('SIGNED_OUT', null);
     return { data: null, error: null };
+  },
+
+  async sendOtp(phone) {
+    return apiRequest<{ message: string; devOtp?: string }>('/auth/otp/send', {
+      method: 'POST',
+      body: JSON.stringify({ phone }),
+    }, false);
+  },
+
+  async verifyOtp(phone, otp) {
+    const response = await apiRequest<{ session: Session; profile: unknown; isNewUser: boolean }>(
+      '/auth/otp/verify',
+      {
+        method: 'POST',
+        body: JSON.stringify({ phone, otp }),
+      },
+      false,
+    );
+
+    if (response.error || !response.data?.session) {
+      return { data: null, error: response.error || createError('OTP verification failed.') };
+    }
+
+    writeSession(response.data.session);
+    notifyAuthChange('SIGNED_IN', response.data.session);
+    return {
+      data: {
+        session: response.data.session,
+        user: response.data.session.user,
+        isNewUser: response.data.isNewUser ?? false,
+      },
+      error: null,
+    };
   },
 };
 

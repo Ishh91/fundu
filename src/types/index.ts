@@ -1,4 +1,4 @@
-export type Product = {
+-export type Product = {
   id: string;
   title: string;
   brand: string;
@@ -81,6 +81,9 @@ export type SellPriceConfig = {
 };
 
 export type RepairBooking = {
+  [x: string]: any;
+  delivery_person_name: string;
+  delivery_person_phone: any;
   id: string;
   user_id: string;
   brand: string;
@@ -106,6 +109,7 @@ export type RepairBooking = {
 };
 
 export type SparePart = {
+  model: any;
   id: string;
   title: string;
   brand: string | null;
@@ -164,6 +168,7 @@ export type DeliveryAgent = {
 };
 
 export type MasterPhone = {
+  [x: string]: string;
   id: string;
   brand: string;
   model: string;
