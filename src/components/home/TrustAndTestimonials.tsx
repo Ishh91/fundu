@@ -1,69 +1,91 @@
 import { useEffect, useState } from 'react';
-import { ArrowLeft, ArrowRight, IndianRupee, Smartphone, Quote, MessageSquarePlus, Star } from 'lucide-react';
+import {
+  ArrowLeft,
+  ArrowRight,
+  IndianRupee,
+  Smartphone,
+  Quote,
+  MessageSquarePlus,
+  Star,
+  ShieldCheck,
+  CheckCircle2,
+} from 'lucide-react';
 import { db } from '../../lib/db';
 import type { Review } from '../../types';
 import ReviewModal from '../ReviewModal';
 
-const trustStats = [
+const TRUST_STATS = [
   {
     icon: IndianRupee,
-    value: '₹14.2 Cr.',
+    value: '₹14.2 Cr.+',
     label: 'Instant Cash Paid in Lucknow',
   },
   {
     icon: Smartphone,
     value: '25,000+',
-    label: 'Devices Serviced & Delivered',
+    label: 'Phones Serviced & Delivered',
+  },
+  {
+    icon: Star,
+    value: '4.8 / 5.0',
+    label: 'Verified Lucknow Rating',
   },
 ];
 
-const defaultTestimonials = [
+const DEFAULT_LUCKNOW_TESTIMONIALS = [
   {
-    quote: 'Sold off my phone very easily in Gomti Nagar and got instant payout on spot. Best experience so far.',
+    quote:
+      'Sold my iPhone 13 right from my flat in Gomti Nagar. The executive arrived within 2 hours, checked the screen and transferred the full UPI payment immediately.',
     name: 'Tarun Singh Verma',
     location: 'Gomti Nagar, Lucknow',
-    avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80',
+    service: 'Sold iPhone 13',
     rating: 5,
   },
   {
-    quote: 'Well trained staff and free doorstep pickup in Hazratganj. Overall positive experience selling my phone.',
+    quote:
+      'Bought a refurbished Galaxy S22 at Hazratganj. Flawless condition, genuine battery health, and got 6 months warranty card on delivery. Super impressed!',
     name: 'Karan Sharma',
     location: 'Hazratganj, Lucknow',
-    avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80',
+    service: 'Bought Galaxy S22',
     rating: 5,
   },
   {
-    quote: 'No complaints! Bought a refurbished iPhone 13 at Indira Nagar branch with 6 months warranty.',
-    name: 'Abhiyash',
+    quote:
+      'Screen replacement done at my doorstep in Indira Nagar in just 25 minutes! The technician replaced the display right in front of me with genuine warranty.',
+    name: 'Abhiyash Srivastava',
     location: 'Indira Nagar, Lucknow',
-    avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&auto=format&fit=crop&q=80',
+    service: 'Screen Repair',
     rating: 5,
   },
   {
-    quote: 'Doorstep repair in Aliganj was super fast. Display replacement done within 30 mins.',
+    quote:
+      'Doorstep phone evaluation in Aliganj was extremely transparent. No unfair bargaining like local markets. Got exact quoted price paid to GPay instantly.',
     name: 'Vinit Kumar',
     location: 'Aliganj, Lucknow',
-    avatar: 'https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?w=100&auto=format&fit=crop&q=80',
+    service: 'Sold OnePlus Nord',
     rating: 5,
   },
   {
-    quote: 'Awesome doorstep service in Mahanagar! Evaluation was fair and UPI payout came within 5 minutes.',
+    quote:
+      'Super fast battery replacement service in Mahanagar. My iPhone was dying in 2 hours, now it lasts whole day. 6-month warranty included.',
     name: 'Neha Gupta',
     location: 'Mahanagar, Lucknow',
-    avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&auto=format&fit=crop&q=80',
+    service: 'Battery Replacement',
     rating: 5,
   },
 ];
 
-const partnerBrands = [
-  { name: 'Mi', logoText: 'mi' },
-  { name: 'Vijay Sales', logoText: 'vijay sales' },
-  { name: 'Reliance Digital', logoText: 'reliancedigital' },
-  { name: 'HP', logoText: 'hp' },
-  { name: 'Paytm', logoText: 'paytm' },
-  { name: 'Nokia', logoText: 'NOKIA' },
-  { name: 'OnePlus', logoText: 'ONEPLUS' },
-  { name: 'Dell', logoText: 'DELL' },
+const BRAND_PARTNERS = [
+  'Apple',
+  'Samsung',
+  'OnePlus',
+  'Xiaomi',
+  'Vivo',
+  'Oppo',
+  'Google',
+  'Realme',
+  'Motorola',
+  'Nothing',
 ];
 
 export default function TrustAndTestimonials() {
@@ -88,13 +110,13 @@ export default function TrustAndTestimonials() {
       quote: r.comment,
       name: r.reviewer_name,
       location: r.location || 'Lucknow',
-      avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(r.reviewer_name)}`,
+      service: r.phone_model ? `Serviced ${r.phone_model}` : 'Verified Customer',
       rating: r.rating || 5,
     })),
-    ...defaultTestimonials,
+    ...DEFAULT_LUCKNOW_TESTIMONIALS,
   ];
 
-  const visibleCount = 4;
+  const visibleCount = 3;
 
   const handleNext = () => {
     setStartIndex((prev) => (prev + 1) % Math.max(1, allTestimonials.length - visibleCount + 1));
@@ -105,113 +127,122 @@ export default function TrustAndTestimonials() {
   };
 
   return (
-    <section className="bg-[#0f1214] pt-12 text-white overflow-hidden">
+    <section className="bg-[#0f172a] py-10 text-white overflow-hidden">
       <div className="container-page">
-        {/* Header section with Stats */}
-        <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
+        {/* Header & Stats Strip */}
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 border-b border-gray-800 pb-8">
           <div>
-            <span className="text-xs font-bold uppercase tracking-[0.2em] text-teal-400">Verified Customer Reviews</span>
-            <h2 className="mt-1 max-w-2xl font-display text-3xl font-extrabold leading-tight md:text-4xl">
-              Trusted by 25,000+ Lucknow Customers
+            <span className="rounded-full bg-teal-500/20 border border-teal-500/30 px-3 py-1 text-xs font-extrabold uppercase tracking-widest text-teal-400">
+              Verified Lucknow Feedback
+            </span>
+            <h2 className="mt-2 font-display text-2xl sm:text-3xl font-black text-white">
+              Trusted by 25,000+ Customers Across Lucknow
             </h2>
+            <p className="mt-1 text-xs sm:text-sm text-gray-400">
+              Read authentic reviews from buyers, sellers, and repair clients in Lucknow.
+            </p>
           </div>
 
-          <div className="flex flex-wrap items-center gap-3 shrink-0">
-            {trustStats.map((stat) => {
+          <div className="flex flex-wrap items-center gap-3">
+            {TRUST_STATS.map((stat, idx) => {
               const Icon = stat.icon;
               return (
                 <div
-                  key={stat.label}
-                  className="flex items-center gap-3 rounded-2xl border border-white/10 bg-[#1c2226] px-4 py-3 min-w-[170px]"
+                  key={idx}
+                  className="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/5 px-4 py-2.5 backdrop-blur-sm"
                 >
-                  <div className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-white/10 text-white">
-                    <Icon className="h-5 w-5" />
+                  <div className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-teal-500/20 text-teal-400">
+                    <Icon className="h-4.5 w-4.5" />
                   </div>
                   <div>
-                    <p className="text-lg font-bold text-white leading-snug">{stat.value}</p>
-                    <p className="text-xs text-white/60 font-medium">{stat.label}</p>
+                    <p className="text-base font-black text-white leading-tight">{stat.value}</p>
+                    <p className="text-[11px] text-gray-400 font-medium">{stat.label}</p>
                   </div>
                 </div>
               );
             })}
+
             <button
               type="button"
               onClick={() => setReviewModalOpen(true)}
-              className="btn-primary py-3 px-5 text-xs font-semibold rounded-2xl flex items-center gap-2 bg-gradient-to-r from-teal-500 to-emerald-600 hover:from-teal-600 hover:to-emerald-700 text-white shadow-lg"
+              className="inline-flex items-center gap-2 rounded-2xl bg-teal-500 hover:bg-teal-600 px-4 py-3 text-xs font-bold text-white shadow-lg transition"
             >
-              <MessageSquarePlus className="h-4 w-4" /> Write a Review
+              <MessageSquarePlus className="h-4 w-4" />
+              <span>Write a Review</span>
             </button>
           </div>
         </div>
 
-        {/* Testimonials Carousel */}
-        <div className="relative mt-10 pb-12">
-          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+        {/* Testimonials Carousel Cards */}
+        <div className="mt-8 relative">
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {allTestimonials.slice(startIndex, startIndex + visibleCount).map((item, idx) => (
               <div
                 key={`${item.name}-${idx}`}
-                className="flex flex-col justify-between rounded-[24px] bg-white p-6 text-ink-900 shadow-lg min-h-[260px] transition hover:translate-y-[-2px]"
+                className="flex flex-col justify-between rounded-2xl bg-white/5 border border-white/10 p-5 backdrop-blur-md transition hover:border-teal-500/50 hover:bg-white/10"
               >
                 <div>
                   <div className="flex items-center justify-between">
-                    <Quote className="h-8 w-8 text-[#4cd2c4] fill-[#4cd2c4]/20 rotate-180" />
-                    <div className="flex gap-0.5 text-amber-400">
-                      {Array.from({ length: item.rating || 5 }).map((_, index) => (
-                        <Star key={index} className="h-3.5 w-3.5 fill-current" />
+                    <div className="flex gap-1 text-amber-400">
+                      {Array.from({ length: item.rating || 5 }).map((_, i) => (
+                        <Star key={i} className="h-4 w-4 fill-current" />
                       ))}
                     </div>
+                    <span className="rounded-full bg-teal-500/20 px-2.5 py-0.5 text-[10px] font-bold text-teal-300">
+                      {item.service}
+                    </span>
                   </div>
-                  <p className="mt-3 text-sm font-medium leading-relaxed text-ink-700">
+
+                  <p className="mt-4 text-xs sm:text-sm leading-relaxed text-gray-200 font-medium">
                     "{item.quote}"
                   </p>
                 </div>
 
-                <div className="mt-6 flex items-center gap-3">
-                  <img
-                    src={item.avatar}
-                    alt={item.name}
-                    className="h-11 w-11 rounded-full object-cover border-2 border-brand-100 bg-ink-50"
-                  />
-                  <div>
-                    <h3 className="text-sm font-bold text-ink-900 leading-tight">{item.name}</h3>
-                    <p className="text-xs text-ink-400 font-medium">{item.location}</p>
+                <div className="mt-6 pt-4 border-t border-white/10 flex items-center justify-between">
+                  <div className="flex items-center gap-2.5">
+                    <div className="grid h-9 w-9 place-items-center rounded-full bg-teal-500/30 text-teal-300 font-bold text-xs border border-teal-500/40">
+                      {item.name.charAt(0)}
+                    </div>
+                    <div>
+                      <h4 className="text-xs font-bold text-white">{item.name}</h4>
+                      <p className="text-[11px] text-gray-400 font-medium">{item.location}</p>
+                    </div>
                   </div>
+                  <CheckCircle2 className="h-4 w-4 text-emerald-400" title="Verified Customer" />
                 </div>
               </div>
             ))}
           </div>
 
-          {/* Navigation Controls */}
-          <div className="absolute -right-3 top-1/2 -translate-y-1/2 flex gap-2 z-10 hidden md:flex">
-            {startIndex > 0 && (
-              <button
-                type="button"
-                onClick={handlePrev}
-                className="grid h-11 w-11 place-items-center rounded-full border border-gray-200 bg-white text-ink-800 shadow-md transition hover:bg-gray-50"
-                aria-label="Previous Testimonials"
-              >
-                <ArrowLeft className="h-5 w-5" />
-              </button>
-            )}
-            {startIndex < allTestimonials.length - visibleCount && (
-              <button
-                type="button"
-                onClick={handleNext}
-                className="grid h-11 w-11 place-items-center rounded-full border border-gray-200 bg-white text-ink-800 shadow-md transition hover:bg-gray-50"
-                aria-label="Next Testimonials"
-              >
-                <ArrowRight className="h-5 w-5" />
-              </button>
-            )}
+          {/* Navigation buttons */}
+          <div className="mt-6 flex items-center justify-end gap-2">
+            <button
+              type="button"
+              onClick={handlePrev}
+              disabled={startIndex === 0}
+              className="grid h-8 w-8 place-items-center rounded-full border border-white/20 bg-white/5 text-white transition hover:bg-white/20 disabled:opacity-30 disabled:cursor-not-allowed"
+              aria-label="Previous"
+            >
+              <ArrowLeft className="h-4 w-4" />
+            </button>
+            <button
+              type="button"
+              onClick={handleNext}
+              disabled={startIndex >= allTestimonials.length - visibleCount}
+              className="grid h-8 w-8 place-items-center rounded-full border border-white/20 bg-white/5 text-white transition hover:bg-white/20 disabled:opacity-30 disabled:cursor-not-allowed"
+              aria-label="Next"
+            >
+              <ArrowRight className="h-4 w-4" />
+            </button>
           </div>
         </div>
       </div>
 
+      {/* Review Modal */}
       <ReviewModal
         isOpen={reviewModalOpen}
         onClose={() => setReviewModalOpen(false)}
         onSuccess={() => {
-          // Re-fetch approved reviews
           db.from('reviews')
             .select('*')
             .eq('is_approved', true)
@@ -224,31 +255,21 @@ export default function TrustAndTestimonials() {
         }}
       />
 
-      {/* Partner Brands Strip (Running Marquee Style) */}
-      <div className="bg-[#18bdb0] py-5 overflow-hidden">
+      {/* Brand Partners Marquee Strip */}
+      <div className="mt-10 bg-teal-600 py-3.5 overflow-hidden">
         <div className="flex whitespace-nowrap marquee-track">
-          {[...partnerBrands, ...partnerBrands, ...partnerBrands, ...partnerBrands].map((brand, index) => (
+          {[
+            ...BRAND_PARTNERS,
+            ...BRAND_PARTNERS,
+            ...BRAND_PARTNERS,
+            ...BRAND_PARTNERS,
+          ].map((b, i) => (
             <div
-              key={`${brand.name}-${index}`}
-              className="flex items-center gap-2 text-white font-extrabold tracking-tight px-8 md:px-12"
+              key={`${b}-${i}`}
+              className="flex items-center gap-3 px-8 text-white font-black tracking-wider text-sm uppercase opacity-90"
             >
-              {brand.logoText === 'mi' ? (
-                <span className="rounded-lg bg-white px-2 py-0.5 text-xs font-black text-[#18bdb0] uppercase tracking-wider">
-                  mi
-                </span>
-              ) : brand.logoText === 'hp' ? (
-                <span className="rounded-full border-2 border-white px-2 py-0.5 text-xs font-black italic">
-                  hp
-                </span>
-              ) : brand.logoText === 'DELL' ? (
-                <span className="rounded-full border-2 border-white px-2.5 py-1 text-xs font-black uppercase">
-                  DELL
-                </span>
-              ) : (
-                <span className="text-lg md:text-xl font-black uppercase tracking-wider opacity-95">
-                  {brand.logoText}
-                </span>
-              )}
+              <span>{b}</span>
+              <span className="h-1.5 w-1.5 rounded-full bg-white/50" />
             </div>
           ))}
         </div>

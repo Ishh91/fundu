@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import {
   Menu,
@@ -30,6 +30,8 @@ import {
   syncAllIndianPhonesToDbApi,
   addCustomIndianPhoneApi,
 } from '../lib/mobileApi';
+import { soundNotifier } from '../lib/soundAlert';
+import AdminLiveNotifier, { LiveNotification } from '../components/admin/AdminLiveNotifier';
 
 // Sub-page modular components
 import AdminSidebar from './admin/AdminSidebar';
@@ -55,6 +57,10 @@ export default function Admin() {
   // Tab state derived from URL or params
   const [tab, setTab] = useState<AdminTab>('overview');
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
+
+  // Live Notification alerts
+  const [activeNotifications, setActiveNotifications] = useState<LiveNotification[]>([]);
+  const isInitialLoad = useRef(true);
 
   // Data Stores
   const [products, setProducts] = useState<Product[]>([]);
@@ -308,6 +314,102 @@ export default function Admin() {
     } finally {
       setDataLoading(false);
     }
+  };
+
+  // Real-time Background Lead Listener with Audio Chimes
+  useEffect(() => {
+    if (!user || profile?.role !== 'admin') return;
+
+    const pollInterval = setInterval(async () => {
+      try {
+        const [sellsRes, repairsRes, ordersRes] = await Promise.all([
+          db.from('sell_requests').select('*').sort({ field: 'created_at', ascending: false }).limit(5),
+          db.from('repair_bookings').select('*').sort({ field: 'created_at', ascending: false }).limit(5),
+          db.from('orders').select('*').sort({ field: 'created_at', ascending: false }).limit(5),
+        ]);
+
+        if (sellsRes.data && Array.isArray(sellsRes.data) && sellsRes.data.length > 0) {
+          const freshSells = sellsRes.data as SellRequest[];
+          if (!isInitialLoad.current && sells.length > 0 && freshSells[0].id !== sells[0]?.id) {
+            const newest = freshSells[0];
+            const newNotif: LiveNotification = {
+              id: newest.id,
+              type: 'sell',
+              title: `${newest.brand} ${newest.model}`,
+              subtitle: `Estimated Valuation: ₹${newest.estimated_price?.toLocaleString('en-IN') || '—'}`,
+              locality: newest.pickup_area || 'Lucknow',
+              amount: newest.estimated_price,
+              timestamp: new Date(),
+              tabTarget: 'sells',
+            };
+            setActiveNotifications((prev) => [newNotif, ...prev.slice(0, 3)]);
+            soundNotifier.playChime('sell');
+            setSells(freshSells);
+          }
+        }
+
+        if (repairsRes.data && Array.isArray(repairsRes.data) && repairsRes.data.length > 0) {
+          const freshRepairs = repairsRes.data as RepairBooking[];
+          if (!isInitialLoad.current && repairs.length > 0 && freshRepairs[0].id !== repairs[0]?.id) {
+            const newest = freshRepairs[0];
+            const newNotif: LiveNotification = {
+              id: newest.id,
+              type: 'repair',
+              title: `${newest.brand} ${newest.model}`,
+              subtitle: `Problem: ${newest.problem}`,
+              locality: newest.pickup_area || 'Lucknow',
+              amount: newest.estimated_cost,
+              timestamp: new Date(),
+              tabTarget: 'repairs',
+            };
+            setActiveNotifications((prev) => [newNotif, ...prev.slice(0, 3)]);
+            soundNotifier.playChime('repair');
+            setRepairs(freshRepairs);
+          }
+        }
+
+        if (ordersRes.data && Array.isArray(ordersRes.data) && ordersRes.data.length > 0) {
+          const freshOrders = ordersRes.data as Order[];
+          if (!isInitialLoad.current && orders.length > 0 && freshOrders[0].id !== orders[0]?.id) {
+            const newest = freshOrders[0];
+            const newNotif: LiveNotification = {
+              id: newest.id,
+              type: 'order',
+              title: `Order #${newest.id.slice(0, 8).toUpperCase()}`,
+              subtitle: `Total Amount: ₹${newest.total_amount?.toLocaleString('en-IN')}`,
+              locality: newest.delivery_area || 'Lucknow',
+              amount: newest.total_amount,
+              timestamp: new Date(),
+              tabTarget: 'orders',
+            };
+            setActiveNotifications((prev) => [newNotif, ...prev.slice(0, 3)]);
+            soundNotifier.playChime('order');
+            setOrders(freshOrders);
+          }
+        }
+
+        isInitialLoad.current = false;
+      } catch (err) {
+        // silent polling catch
+      }
+    }, 8000);
+
+    return () => clearInterval(pollInterval);
+  }, [user, profile, sells, repairs, orders]);
+
+  const handleSimulateTestAlert = () => {
+    const mockLead: LiveNotification = {
+      id: `test_${Date.now()}`,
+      type: 'sell',
+      title: 'Apple iPhone 14 Pro Max (256GB)',
+      subtitle: 'Excellent Condition • Box & Charger available',
+      locality: 'Gomti Nagar, Lucknow',
+      amount: 68500,
+      timestamp: new Date(),
+      tabTarget: 'sells',
+    };
+    setActiveNotifications((prev) => [mockLead, ...prev.slice(0, 3)]);
+    soundNotifier.playChime('sell');
   };
 
   // Status Updaters
@@ -837,6 +939,19 @@ export default function Admin() {
           </div>
 
           <div className="flex items-center gap-3">
+            {/* Live Audio Chime & Lead Alert Manager */}
+            <AdminLiveNotifier
+              activeNotifications={activeNotifications}
+              onDismiss={(id) => setActiveNotifications((prev) => prev.filter((n) => n.id !== id))}
+              onNavigateTab={(targetTab, itemId) => {
+                setTab(targetTab);
+                if (targetTab === 'sells' && itemId) setSelectedSellId(itemId);
+                if (targetTab === 'repairs' && itemId) setSelectedRepairId(itemId);
+                if (targetTab === 'orders' && itemId) setSelectedOrderId(itemId);
+              }}
+              onSimulateTestAlert={handleSimulateTestAlert}
+            />
+
             <div className="hidden sm:flex items-center gap-2 px-3 py-1 rounded-full bg-ink-100 text-ink-700 text-xs font-semibold">
               <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
               <span>Admin: {user?.email}</span>

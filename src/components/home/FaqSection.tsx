@@ -1,69 +1,174 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ChevronDown, Clock3, FileText, HelpCircle, Truck } from 'lucide-react';
-import { HOME_FAQS } from '../../data/siteContent';
+import { ChevronDown, HelpCircle, PhoneCall, BadgeIndianRupee, Store, Wrench, ArrowRight } from 'lucide-react';
+
+const FAQ_CATEGORIES = [
+  { id: 'all', label: 'All FAQs' },
+  { id: 'sell', label: 'Selling Phone', icon: BadgeIndianRupee },
+  { id: 'buy', label: 'Buying Refurbished', icon: Store },
+  { id: 'repair', label: 'Doorstep Repair', icon: Wrench },
+];
+
+const DETAILED_FAQS = [
+  {
+    category: 'sell',
+    q: 'How does Fundu calculate the resale value of my old phone?',
+    a: 'Our smart valuation algorithm evaluates your device model, storage, screen touch status, physical condition, battery health, and original accessories (bill/box/charger) against real-time Lucknow market demand to give you the highest guaranteed price.',
+  },
+  {
+    category: 'sell',
+    q: 'When and how do I receive payment for selling my phone in Lucknow?',
+    a: 'Payment is 100% instant! Our Lucknow pickup executive inspects your device at your doorstep and transfers UPI (Google Pay, PhonePe, Paytm), IMPS Bank Transfer, or Cash into your hands on the spot before leaving.',
+  },
+  {
+    category: 'sell',
+    q: 'Is doorstep pickup really free across all Lucknow localities?',
+    a: 'Yes, 100% free! Whether you are located in Gomti Nagar, Hazratganj, Indira Nagar, Aliganj, Mahanagar, Ashiyana, or any other area in Lucknow, there are zero pickup or convenience fees.',
+  },
+  {
+    category: 'sell',
+    q: 'Why is IMEI verification needed when selling?',
+    a: 'IMEI verification ensures legal compliance, verifies device ownership, and confirms that the device is not blacklisted or reported lost, ensuring safety for all parties.',
+  },
+  {
+    category: 'buy',
+    q: 'What is the 32-Point Quality Inspection for refurbished phones?',
+    a: 'Every refurbished phone on Fundu undergoes a 32-point technical audit covering display pixels, touch responsiveness, front & rear cameras, speaker, microphone, battery health (minimum 85%+), Wi-Fi, Face ID / fingerprint unlock, and port connectivity.',
+  },
+  {
+    category: 'buy',
+    q: 'What warranty is provided on refurbished smartphones?',
+    a: 'All refurbished phones come with a 6-month comprehensive replacement warranty backed by Fundu, along with dedicated customer support across Lucknow.',
+  },
+  {
+    category: 'buy',
+    q: 'What is the difference between Superb, Good, and Fair conditions?',
+    a: 'Superb means flawless/like-new condition with minimal to zero visible scratches. Good has minor micro-scratches on the body but perfect display. Fair has visible signs of previous usage with 100% fully functional hardware.',
+  },
+  {
+    category: 'repair',
+    q: 'How does 30-minute doorstep mobile repair work in Lucknow?',
+    a: 'You select your mobile brand, model, and issue (e.g. cracked screen or dead battery). Our certified technician arrives at your chosen home or office slot with specialized tools and repairs the phone right in front of you within 20-30 minutes.',
+  },
+  {
+    category: 'repair',
+    q: 'What warranty do I get on doorstep screen and battery replacements?',
+    a: 'Screen and battery replacements come with up to 6 months of replacement warranty. If you face any touch or display issues within the warranty period, we fix it for free.',
+  },
+  {
+    category: 'repair',
+    q: 'Are the spare parts used during repair genuine and tested?',
+    a: 'Yes! We only use grade-A certified, OEM-compliant, and rigorously tested replacement screens, batteries, charging ports, and camera lenses.',
+  },
+];
 
 export default function FaqSection() {
-  const [faqOpen, setFaqOpen] = useState(0);
+  const [activeCategory, setActiveCategory] = useState('all');
+  const [openIndex, setOpenIndex] = useState<number | null>(0);
+
+  const filteredFaqs =
+    activeCategory === 'all'
+      ? DETAILED_FAQS
+      : DETAILED_FAQS.filter((f) => f.category === activeCategory);
 
   return (
-    <section className="container-page py-12">
-      <div className="grid gap-6 lg:grid-cols-[0.88fr_1.12fr]">
-        <div className="rounded-[28px] border border-[#dce5e8] bg-white p-8 shadow-soft">
-          <div className="inline-flex items-center gap-2 rounded-full bg-brand-50 px-3 py-1 text-xs font-semibold text-brand-700">
-            <HelpCircle className="h-3.5 w-3.5" /> Help & FAQ
-          </div>
-          <h2 className="mt-4 font-display text-3xl font-extrabold text-ink-900">Questions users ask before they convert</h2>
-          <p className="mt-3 text-sm leading-7 text-ink-600">
-            Pricing, pickup, warranty, repair, aur account-related doubts ko homepage par hi visible rakhna trust build karta hai.
-          </p>
-          <div className="mt-6 flex flex-wrap gap-3">
-            <Link to="/sell" className="btn rounded-full bg-brand-500 px-5 py-3 text-white hover:bg-brand-600">
-              Sell Your Phone
-            </Link>
-            <Link to="/contact" className="btn rounded-full border border-[#dce5e8] bg-white px-5 py-3 text-ink-900 hover:border-brand-300 hover:text-brand-700">
-              Contact Support
-            </Link>
-          </div>
-
-          <div className="mt-8 grid gap-3">
-            {[
-              { icon: Clock3, label: 'Quick response guidance' },
-              { icon: Truck, label: 'Pickup and doorstep support' },
-              { icon: FileText, label: 'Invoice and document help' },
-            ].map((item) => (
-              <div key={item.label} className="flex items-center gap-3 rounded-2xl bg-[#f7fbfb] px-4 py-3 text-sm font-medium text-ink-700">
-                <item.icon className="h-4 w-4 text-brand-600" />
-                {item.label}
+    <section className="container-page py-8">
+      <div className="rounded-3xl border border-gray-200 bg-white p-6 sm:p-8 md:p-10 shadow-sm">
+        <div className="grid gap-8 lg:grid-cols-[0.85fr_1.15fr]">
+          {/* Left Summary Box */}
+          <div className="flex flex-col justify-between rounded-2xl bg-[#f8fafc] p-6 border border-gray-200">
+            <div>
+              <div className="inline-flex items-center gap-1.5 rounded-full bg-teal-50 px-3 py-1 text-xs font-extrabold uppercase tracking-wider text-teal-700">
+                <HelpCircle className="h-3.5 w-3.5" />
+                Frequently Asked Questions
               </div>
-            ))}
-          </div>
-        </div>
+              <h2 className="mt-3 font-display text-2xl sm:text-3xl font-extrabold text-gray-900">
+                Everything You Need to Know About Fundu
+              </h2>
+              <p className="mt-2 text-xs sm:text-sm text-gray-600 leading-relaxed">
+                Got questions about selling, buying refurbished, or booking doorstep repair in Lucknow? We've got you covered.
+              </p>
 
-        <div className="space-y-4">
-          {HOME_FAQS.map((faq, index) => {
-            const open = faqOpen === index;
-            return (
-              <div key={faq.question} className="rounded-[24px] border border-[#dce5e8] bg-white p-5 shadow-soft">
-                <button
-                  type="button"
-                  onClick={() => setFaqOpen(open ? -1 : index)}
-                  className="flex w-full items-start justify-between gap-4 text-left"
+              {/* Category selector pills */}
+              <div className="mt-6 flex flex-wrap gap-2">
+                {FAQ_CATEGORIES.map((cat) => (
+                  <button
+                    key={cat.id}
+                    type="button"
+                    onClick={() => {
+                      setActiveCategory(cat.id);
+                      setOpenIndex(0);
+                    }}
+                    className={`rounded-xl px-3.5 py-2 text-xs font-bold transition ${
+                      activeCategory === cat.id
+                        ? 'bg-teal-500 text-white shadow-sm'
+                        : 'bg-white border border-gray-200 text-gray-700 hover:border-teal-300'
+                    }`}
+                  >
+                    {cat.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Helpline Box */}
+            <div className="mt-8 rounded-xl bg-white p-4 border border-gray-200">
+              <p className="text-xs font-bold text-gray-900">Still have questions?</p>
+              <p className="text-xs text-gray-500 mt-0.5">
+                Our Lucknow support desk is available 7 days a week (9 AM - 9 PM).
+              </p>
+              <div className="mt-3 flex items-center justify-between">
+                <a
+                  href="tel:+919876543210"
+                  className="inline-flex items-center gap-1.5 text-xs font-bold text-teal-700 hover:text-teal-800"
                 >
-                  <div className="flex items-start gap-3">
-                    <div className="grid h-10 w-10 place-items-center rounded-2xl bg-brand-50 text-brand-700">
-                      <HelpCircle className="h-5 w-5" />
-                    </div>
-                    <div>
-                      <h3 className="font-semibold text-ink-900">{faq.question}</h3>
-                      {open ? <p className="mt-2 text-sm leading-7 text-ink-500">{faq.answer}</p> : null}
-                    </div>
-                  </div>
-                  <ChevronDown className={`h-5 w-5 shrink-0 text-ink-400 transition ${open ? 'rotate-180' : ''}`} />
-                </button>
+                  <PhoneCall className="h-3.5 w-3.5" /> Call +91 98765 43210
+                </a>
+                <Link
+                  to="/contact"
+                  className="inline-flex items-center gap-1 text-xs font-bold text-gray-700 hover:text-teal-600"
+                >
+                  Contact Form <ArrowRight className="h-3 w-3" />
+                </Link>
               </div>
-            );
-          })}
+            </div>
+          </div>
+
+          {/* Right Accordion List */}
+          <div className="space-y-3">
+            {filteredFaqs.map((faq, index) => {
+              const isOpen = openIndex === index;
+              return (
+                <div
+                  key={index}
+                  className={`rounded-2xl border transition-all duration-200 ${
+                    isOpen
+                      ? 'border-teal-400 bg-teal-50/20 shadow-sm'
+                      : 'border-gray-200 bg-white hover:border-gray-300'
+                  }`}
+                >
+                  <button
+                    type="button"
+                    onClick={() => setOpenIndex(isOpen ? null : index)}
+                    className="flex w-full items-start justify-between gap-4 p-4 text-left"
+                  >
+                    <span className="text-sm font-bold text-gray-900 leading-snug">{faq.q}</span>
+                    <ChevronDown
+                      className={`h-4 w-4 shrink-0 text-gray-400 transition-transform duration-200 mt-0.5 ${
+                        isOpen ? 'rotate-180 text-teal-600' : ''
+                      }`}
+                    />
+                  </button>
+
+                  {isOpen && (
+                    <div className="px-4 pb-4 pt-1 text-xs leading-relaxed text-gray-600 border-t border-teal-100/60 mt-1">
+                      {faq.a}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
         </div>
       </div>
     </section>

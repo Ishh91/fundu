@@ -4,11 +4,12 @@ import {
   LayoutDashboard, Smartphone, BadgeIndianRupee, Wrench, Package,
   Truck, Clock, LogOut, User, Phone, MapPin, Calendar, CheckCircle2,
   Circle, AlertCircle, ChevronRight, Banknote, ShieldCheck, Star,
-  RefreshCw, ArrowRight, CreditCard, Boxes,
+  RefreshCw, ArrowRight, CreditCard, Boxes, Navigation,
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { db, formatINR } from '../lib/db';
 import type { SellRequest, RepairBooking, Order, Dispatch } from '../types';
+import LiveExecutiveTracker from '../components/LiveExecutiveTracker';
 
 /* ── Status helpers ─────────────────────────────────────────── */
 const STATUS_META: Record<string, { color: string; dot: string; label: string }> = {
@@ -87,23 +88,56 @@ function InfoRow({ icon: Icon, label, value, accent }: { icon: typeof MapPin; la
 }
 
 /* ── Agent card ── */
-function AgentCard({ name, phone, label, eta }: { name: string; phone?: string | null; label: string; eta?: string | null }) {
+function AgentCard({
+  name,
+  phone,
+  label,
+  eta,
+  onTrackMap,
+}: {
+  name: string;
+  phone?: string | null;
+  label: string;
+  eta?: string | null;
+  onTrackMap?: () => void;
+}) {
   return (
-    <div className="mt-3 flex items-center justify-between rounded-xl bg-emerald-50 border border-emerald-100 px-3 py-2.5">
+    <div className="mt-3 flex flex-wrap items-center justify-between gap-2 rounded-2xl bg-emerald-50 border border-emerald-200/80 p-3 shadow-sm">
       <div className="flex items-center gap-2.5">
-        <div className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-emerald-100 text-emerald-700 text-sm font-bold">
+        <div className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-emerald-600 text-white text-sm font-black shadow-sm">
           {name[0].toUpperCase()}
         </div>
         <div>
-          <p className="text-xs font-bold text-ink-900">{label}: {name}</p>
-          {eta && <p className="text-[11px] text-ink-500">{eta}</p>}
+          <div className="flex items-center gap-1.5">
+            <p className="text-xs font-bold text-ink-900">{label}: {name}</p>
+            <span className="rounded-md bg-emerald-100 px-1.5 py-0.2 text-[9px] font-bold text-emerald-800">
+              Verified
+            </span>
+          </div>
+          {eta && <p className="text-[11px] text-ink-500 font-medium">{eta}</p>}
         </div>
       </div>
-      {phone && (
-        <a href={`tel:${phone}`} className="inline-flex items-center gap-1 rounded-lg border border-emerald-200 bg-white px-2.5 py-1 text-[11px] font-bold text-emerald-700 hover:bg-emerald-50 transition-colors">
-          <Phone className="h-3 w-3" /> Call
-        </a>
-      )}
+      <div className="flex items-center gap-2">
+        {onTrackMap && (
+          <button
+            type="button"
+            onClick={onTrackMap}
+            className="inline-flex items-center gap-1.5 rounded-xl bg-teal-600 hover:bg-teal-700 px-3 py-1.5 text-xs font-black text-white shadow-sm transition active:scale-95"
+          >
+            <span className="h-2 w-2 rounded-full bg-emerald-300 animate-ping" />
+            <Navigation className="h-3.5 w-3.5" />
+            <span>Track Live Map</span>
+          </button>
+        )}
+        {phone && (
+          <a
+            href={`tel:${phone}`}
+            className="inline-flex items-center gap-1 rounded-xl border border-emerald-300 bg-white px-2.5 py-1.5 text-[11px] font-bold text-emerald-700 hover:bg-emerald-50 transition-colors shadow-sm"
+          >
+            <Phone className="h-3 w-3" /> Call
+          </a>
+        )}
+      </div>
     </div>
   );
 }
@@ -118,6 +152,17 @@ export default function Dashboard() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [dispatches, setDispatches] = useState<Dispatch[]>([]);
   const [dataLoading, setDataLoading] = useState(true);
+
+  // Live Executive GPS Map Tracker Modal State
+  const [trackerModal, setTrackerModal] = useState<{
+    isOpen: boolean;
+    locality: string;
+    executiveName?: string | null;
+    executivePhone?: string | null;
+    orderType: 'sell' | 'repair' | 'buy';
+    deviceInfo: string;
+    trackingId?: string;
+  } | null>(null);
 
   useEffect(() => {
     if (!loading && !user) navigate('/login?redirect=/dashboard');
@@ -253,13 +298,20 @@ export default function Dashboard() {
             <p className="mt-3 text-sm">Fetching your activity…</p>
           </div>
         ) : tab === 'overview' ? (
-          <OverviewTab sells={sells} repairs={repairs} orders={orders} dispatches={dispatches} onTabChange={setTab} />
+          <OverviewTab
+            sells={sells}
+            repairs={repairs}
+            orders={orders}
+            dispatches={dispatches}
+            onTabChange={setTab}
+            onOpenTracker={handleOpenTracker}
+          />
         ) : tab === 'sells' ? (
-          <SellsTab sells={sells} />
+          <SellsTab sells={sells} onOpenTracker={handleOpenTracker} />
         ) : tab === 'repairs' ? (
-          <RepairsTab repairs={repairs} />
+          <RepairsTab repairs={repairs} onOpenTracker={handleOpenTracker} />
         ) : (
-          <OrdersTab orders={orders} dispatches={dispatches} />
+          <OrdersTab orders={orders} dispatches={dispatches} onOpenTracker={handleOpenTracker} />
         )}
       </div>
 
@@ -293,6 +345,20 @@ export default function Dashboard() {
           </Link>
         </div>
       </div>
+
+      {/* ── Live GPS Executive Tracker Modal ── */}
+      {trackerModal && (
+        <LiveExecutiveTracker
+          isOpen={trackerModal.isOpen}
+          onClose={() => setTrackerModal(null)}
+          locality={trackerModal.locality}
+          executiveName={trackerModal.executiveName}
+          executivePhone={trackerModal.executivePhone}
+          orderType={trackerModal.orderType}
+          deviceInfo={trackerModal.deviceInfo}
+          trackingId={trackerModal.trackingId}
+        />
+      )}
     </div>
   );
 }
@@ -458,18 +524,32 @@ function SummaryCard<T extends { id: string }>({
 /* ═══════════════════════════════════════════════════════════════
    SELLS TAB
 ═══════════════════════════════════════════════════════════════ */
-function SellsTab({ sells }: { sells: SellRequest[] }) {
+function SellsTab({
+  sells,
+  onOpenTracker,
+}: {
+  sells: SellRequest[];
+  onOpenTracker?: (item: any) => void;
+}) {
   if (sells.length === 0) {
     return <EmptyState icon={BadgeIndianRupee} title="No sell requests yet" desc="Sell your old phone at the best price with free doorstep pickup anywhere in Lucknow." cta={{ to: '/sell', label: 'Sell Your Phone' }} />;
   }
   return (
     <div className="space-y-4">
-      {sells.map((s) => <SellCard key={s.id} sell={s} />)}
+      {sells.map((s) => (
+        <SellCard key={s.id} sell={s} onOpenTracker={onOpenTracker} />
+      ))}
     </div>
   );
 }
 
-function SellCard({ sell: s }: { sell: SellRequest }) {
+function SellCard({
+  sell: s,
+  onOpenTracker,
+}: {
+  sell: SellRequest;
+  onOpenTracker?: (item: any) => void;
+}) {
   const isTerminal = ['completed', 'cancelled', 'rejected'].includes(s.status);
   return (
     <div className="card p-5">
@@ -542,6 +622,16 @@ function SellCard({ sell: s }: { sell: SellRequest }) {
           phone={s.pickup_person_phone}
           label="Pickup Agent"
           eta={s.estimated_arrival_time}
+          onTrackMap={() =>
+            onOpenTracker?.({
+              locality: s.pickup_area || s.pickup_address,
+              executiveName: s.pickup_person_name,
+              executivePhone: s.pickup_person_phone,
+              orderType: 'sell',
+              deviceInfo: `${s.brand} ${s.model}`,
+              trackingId: s.id.slice(0, 8).toUpperCase(),
+            })
+          }
         />
       )}
     </div>
@@ -551,18 +641,32 @@ function SellCard({ sell: s }: { sell: SellRequest }) {
 /* ═══════════════════════════════════════════════════════════════
    REPAIRS TAB
 ═══════════════════════════════════════════════════════════════ */
-function RepairsTab({ repairs }: { repairs: RepairBooking[] }) {
+function RepairsTab({
+  repairs,
+  onOpenTracker,
+}: {
+  repairs: RepairBooking[];
+  onOpenTracker?: (item: any) => void;
+}) {
   if (repairs.length === 0) {
     return <EmptyState icon={Wrench} title="No repair bookings yet" desc="Book a doorstep repair — free pickup & drop anywhere in Lucknow." cta={{ to: '/repair', label: 'Book a Repair' }} />;
   }
   return (
     <div className="space-y-4">
-      {repairs.map((r) => <RepairCard key={r.id} repair={r} />)}
+      {repairs.map((r) => (
+        <RepairCard key={r.id} repair={r} onOpenTracker={onOpenTracker} />
+      ))}
     </div>
   );
 }
 
-function RepairCard({ repair: r }: { repair: RepairBooking }) {
+function RepairCard({
+  repair: r,
+  onOpenTracker,
+}: {
+  repair: RepairBooking;
+  onOpenTracker?: (item: any) => void;
+}) {
   const isTerminal = ['completed', 'cancelled'].includes(r.status);
   return (
     <div className="card p-5">
@@ -615,6 +719,16 @@ function RepairCard({ repair: r }: { repair: RepairBooking }) {
           phone={r.pickup_person_phone}
           label="Repair Technician"
           eta={r.estimated_arrival_time}
+          onTrackMap={() =>
+            onOpenTracker?.({
+              locality: r.pickup_area || r.pickup_address,
+              executiveName: r.pickup_person_name,
+              executivePhone: r.pickup_person_phone,
+              orderType: 'repair',
+              deviceInfo: `${r.brand} ${r.model} (${r.problem})`,
+              trackingId: r.tracking_id,
+            })
+          }
         />
       )}
     </div>
@@ -624,7 +738,15 @@ function RepairCard({ repair: r }: { repair: RepairBooking }) {
 /* ═══════════════════════════════════════════════════════════════
    ORDERS TAB
 ═══════════════════════════════════════════════════════════════ */
-function OrdersTab({ orders, dispatches }: { orders: Order[]; dispatches: Dispatch[] }) {
+function OrdersTab({
+  orders,
+  dispatches,
+  onOpenTracker,
+}: {
+  orders: Order[];
+  dispatches: Dispatch[];
+  onOpenTracker?: (item: any) => void;
+}) {
   if (orders.length === 0) {
     return <EmptyState icon={Package} title="No orders yet" desc="Browse certified refurbished phones with warranty." cta={{ to: '/buy', label: 'Browse Phones' }} />;
   }
@@ -632,13 +754,21 @@ function OrdersTab({ orders, dispatches }: { orders: Order[]; dispatches: Dispat
     <div className="space-y-4">
       {orders.map((o) => {
         const disp = dispatches.find((d) => d.order_id === o.id);
-        return <OrderCard key={o.id} order={o} dispatch={disp} />;
+        return <OrderCard key={o.id} order={o} dispatch={disp} onOpenTracker={onOpenTracker} />;
       })}
     </div>
   );
 }
 
-function OrderCard({ order: o, dispatch: disp }: { order: Order; dispatch?: Dispatch }) {
+function OrderCard({
+  order: o,
+  dispatch: disp,
+  onOpenTracker,
+}: {
+  order: Order;
+  dispatch?: Dispatch;
+  onOpenTracker?: (item: any) => void;
+}) {
   const isTerminal = ['delivered', 'cancelled'].includes(o.status);
   const effectiveStatus = disp?.status ?? o.status;
   return (
@@ -698,9 +828,30 @@ function OrderCard({ order: o, dispatch: disp }: { order: Order; dispatch?: Disp
                 </p>
               </div>
             </div>
-            <a href={`tel:${disp.delivery_person_phone}`} className="inline-flex items-center gap-1 rounded-lg border border-brand-200 bg-white px-2.5 py-1 text-[11px] font-bold text-brand-700 hover:bg-brand-50 transition-colors">
-              <Phone className="h-3 w-3" /> Call
-            </a>
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() =>
+                  onOpenTracker?.({
+                    locality: o.delivery_area || o.delivery_address,
+                    executiveName: disp.delivery_person_name,
+                    executivePhone: disp.delivery_person_phone,
+                    orderType: 'buy',
+                    deviceInfo: `Order #${o.id.slice(0, 8).toUpperCase()}`,
+                    trackingId: o.tracking_id,
+                  })
+                }
+                className="inline-flex items-center gap-1 rounded-lg bg-teal-600 px-2.5 py-1 text-[11px] font-bold text-white shadow-sm hover:bg-teal-700 transition"
+              >
+                <Navigation className="h-3 w-3" /> Track Map
+              </button>
+              <a
+                href={`tel:${disp.delivery_person_phone}`}
+                className="inline-flex items-center gap-1 rounded-lg border border-brand-200 bg-white px-2.5 py-1 text-[11px] font-bold text-brand-700 hover:bg-brand-50 transition-colors"
+              >
+                <Phone className="h-3 w-3" /> Call
+              </a>
+            </div>
           </div>
           {disp.notes && <p className="mt-2 text-xs text-ink-500 italic">"{disp.notes}"</p>}
           {disp.dispatched_at && (

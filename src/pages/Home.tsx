@@ -5,7 +5,9 @@ import {
   HeroSection,
   PopularBrands,
   BestDeals,
+  RepairShowcase,
   SellFlow,
+  WhyChooseFundu,
   TrustAndTestimonials,
   FaqSection,
   TrendingArticles,
@@ -16,8 +18,7 @@ export default function Home() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    db
-      .from<Product[]>('products')
+    db.from<Product[]>('products')
       .select('*')
       .eq('is_approved', true)
       .order('is_featured', { ascending: false })
@@ -29,14 +30,32 @@ export default function Home() {
   }, []);
 
   return (
-    <div className="bg-[#f6f7fb]">
+    <div className="bg-[#f8fafc] min-h-screen">
+      {/* 1. Hero & Top Service Cards */}
       <HeroSection />
+
+      {/* 2. Popular Brands Directory */}
       <PopularBrands />
+
+      {/* 3. Refurbished Mobiles Best Deals */}
       <BestDeals products={products} loading={loading} />
+
+      {/* 4. Doorstep Mobile Repair Hub in Lucknow */}
+      <RepairShowcase />
+
+      {/* 5. How Fundu Works (Sell / Buy / Repair) */}
       <SellFlow />
+
+      {/* 6. Why Choose Fundu & Lucknow Coverage */}
+      <WhyChooseFundu />
+
+      {/* 7. Verified Lucknow Testimonials & Reviews */}
       <TrustAndTestimonials />
-      {/* <OffersAndReviews /> */}
+
+      {/* 8. Categorized FAQs */}
       <FaqSection />
+
+      {/* 9. Trending Mobile Guides & Articles */}
       <TrendingArticles />
     </div>
   );

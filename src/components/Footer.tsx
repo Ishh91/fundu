@@ -1,93 +1,178 @@
 import { Link } from 'react-router-dom';
-import { ArrowRight, Mail, Phone, MapPin, Truck, ShieldCheck, Wrench, FileText, Store, Recycle } from 'lucide-react';
+import {
+  ArrowRight,
+  Mail,
+  Phone,
+  MapPin,
+  Truck,
+  ShieldCheck,
+  Wrench,
+  BadgeIndianRupee,
+  Store,
+  CheckCircle2,
+} from 'lucide-react';
 import BrandLogo from './BrandLogo';
+import { LUCKNOW_LOCALITIES } from './Navbar';
 
 export default function Footer() {
   return (
-    <footer className="mt-20 border-t border-ink-200 bg-ink-50">
-      <div className="container-page py-12">
-        <div className="mb-10 rounded-[34px] bg-[linear-gradient(135deg,_rgba(108,99,255,0.98),_rgba(71,61,163,0.98))] px-6 py-7 text-white shadow-card md:flex md:items-center md:justify-between">
-          <div className="max-w-2xl">
-            <p className="text-sm font-bold uppercase tracking-[0.24em] text-brand-900">Ready to start?</p>
-            <h3 className="mt-2 font-display text-2xl font-extrabold md:text-3xl">Get phone value, browse deals, or book repair from one place.</h3>
+    <footer className="border-t border-gray-200 bg-white">
+      {/* Top Cashify Style Action Banner */}
+      <div className="bg-gradient-to-r from-[#0f2d30] via-[#0d5953] to-[#14c8ba] py-8 text-white">
+        <div className="container-page flex flex-col md:flex-row items-center justify-between gap-5">
+          <div>
+            <span className="rounded-full bg-white/20 px-3 py-1 text-[11px] font-extrabold uppercase tracking-wider text-white">
+              Lucknow Mobile Hub
+            </span>
+            <h3 className="mt-2 font-display text-2xl sm:text-3xl font-black">
+              Sell Old Phone, Buy Refurbished or Repair at Doorstep.
+            </h3>
+            <p className="mt-1 text-xs sm:text-sm text-teal-100 font-medium">
+              Free doorstep pickup, spot cash/UPI payment & 6 months warranty across Lucknow.
+            </p>
           </div>
-          <div className="mt-5 flex flex-wrap gap-3 md:mt-0">
-            <Link to="/sell" className="btn border border-white/15 bg-ink-50 px-5 py-3 text-ink-900 hover:bg-ink-200">
-              Sell Your Phone <ArrowRight className="h-4 w-4" />
+
+          <div className="flex flex-wrap items-center gap-3">
+            <Link
+              to="/sell"
+              className="inline-flex items-center gap-2 rounded-xl bg-white px-5 py-3 text-xs font-extrabold text-gray-900 shadow-md hover:bg-teal-50 transition active:scale-95"
+            >
+              <span>Sell Phone Now</span>
+              <ArrowRight className="h-4 w-4 text-teal-600" />
             </Link>
-            <Link to="/buy" className="btn border border-white/20 bg-white/5 px-5 py-3 text-white hover:bg-white/10">
-              Browse Phones
+            <Link
+              to="/repair"
+              className="inline-flex items-center gap-2 rounded-xl bg-teal-500 hover:bg-teal-600 px-5 py-3 text-xs font-bold text-white shadow-md transition"
+            >
+              <Wrench className="h-4 w-4" />
+              <span>Book Doorstep Repair</span>
             </Link>
           </div>
         </div>
+      </div>
 
-        <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-4">
-          <div>
-            <Link to="/" className="flex items-center">
-              <BrandLogo imageClassName="h-12 sm:h-14 w-auto max-w-[220px]" />
+      {/* Main Footer Links */}
+      <div className="container-page py-12">
+        <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
+          {/* Col 1: About Fundu */}
+          <div className="space-y-4">
+            <Link to="/" className="inline-block">
+              <BrandLogo imageClassName="h-10 sm:h-12 w-auto max-w-[190px]" />
             </Link>
-            <p className="mt-3 text-sm leading-relaxed text-ink-600">
-              Fundu is a mobile-phone-first marketplace focused on selling, buying, repairing, and responsibly recycling devices with doorstep support across Lucknow.
+            <p className="text-xs leading-relaxed text-gray-500">
+              Fundu is Lucknow's dedicated smartphone re-commerce platform. We simplify selling old mobiles, buying certified refurbished devices, and getting doorstep phone repairs done in 30 minutes.
             </p>
-            <div className="mt-4 flex flex-wrap gap-2">
-              <span className="badge bg-brand-50 text-brand-700"><Truck className="h-3 w-3" /> Free Pickup</span>
-              <span className="badge bg-accent-50 text-accent-700"><ShieldCheck className="h-3 w-3" /> Warranty</span>
-              <span className="badge bg-nature-50 text-nature-700"><Wrench className="h-3 w-3" /> Expert Repair</span>
+            <div className="flex flex-wrap gap-2 pt-1">
+              <span className="inline-flex items-center gap-1 rounded-md bg-teal-50 px-2 py-1 text-[11px] font-bold text-teal-700">
+                <Truck className="h-3 w-3" /> Free Pickup
+              </span>
+              <span className="inline-flex items-center gap-1 rounded-md bg-emerald-50 px-2 py-1 text-[11px] font-bold text-emerald-700">
+                <ShieldCheck className="h-3 w-3" /> 6M Warranty
+              </span>
+              <span className="inline-flex items-center gap-1 rounded-md bg-amber-50 px-2 py-1 text-[11px] font-bold text-amber-700">
+                <Wrench className="h-3 w-3" /> 30-Min Repair
+              </span>
             </div>
           </div>
 
+          {/* Col 2: Services in Lucknow */}
           <div>
-            <h4 className="font-display text-sm font-bold uppercase tracking-wider text-ink-900">Services</h4>
-            <ul className="mt-3 space-y-2 text-sm text-ink-600">
-              <li><Link to="/sell" className="hover:text-brand-700">Sell Your Phone</Link></li>
-              <li><Link to="/buy" className="hover:text-brand-700">Buy Refurbished Phones</Link></li>
-              <li><Link to="/repair" className="hover:text-brand-700">Phone Repair</Link></li>
-              <li><Link to="/store" className="hover:text-brand-700">Our Exclusive Store</Link></li>
-              <li><Link to="/recycle" className="hover:text-brand-700">Recycle Phones</Link></li>
+            <h4 className="font-display text-xs font-black uppercase tracking-wider text-gray-900">
+              Services in Lucknow
+            </h4>
+            <ul className="mt-4 space-y-2.5 text-xs font-semibold text-gray-600">
+              <li>
+                <Link to="/sell" className="hover:text-teal-600 flex items-center gap-1.5">
+                  <BadgeIndianRupee className="h-3.5 w-3.5 text-teal-600" /> Sell Used Mobile for Cash
+                </Link>
+              </li>
+              <li>
+                <Link to="/buy" className="hover:text-teal-600 flex items-center gap-1.5">
+                  <Store className="h-3.5 w-3.5 text-teal-600" /> Buy Refurbished iPhones & Androids
+                </Link>
+              </li>
+              <li>
+                <Link to="/repair" className="hover:text-teal-600 flex items-center gap-1.5">
+                  <Wrench className="h-3.5 w-3.5 text-teal-600" /> Doorstep Screen Replacement
+                </Link>
+              </li>
+              <li>
+                <Link to="/repair?issue=battery" className="hover:text-teal-600 flex items-center gap-1.5">
+                  <Wrench className="h-3.5 w-3.5 text-teal-600" /> Doorstep Battery Replacement
+                </Link>
+              </li>
+              <li>
+                <Link to="/store" className="hover:text-teal-600 flex items-center gap-1.5">
+                  <Store className="h-3.5 w-3.5 text-teal-600" /> Fundu Exclusive Store
+                </Link>
+              </li>
             </ul>
           </div>
 
+          {/* Col 3: Lucknow Localities Covered */}
           <div>
-            <h4 className="font-display text-sm font-bold uppercase tracking-wider text-ink-900">Explore</h4>
-            <ul className="mt-3 space-y-2 text-sm text-ink-600">
-              <li><Link to="/document-doctor" className="inline-flex items-center gap-2 hover:text-brand-700"><FileText className="h-4 w-4" /> Document Doctor</Link></li>
-              <li><Link to="/partner" className="hover:text-brand-700">Business With Us</Link></li>
-              <li><Link to="/brand" className="hover:text-brand-700">Brand Hub</Link></li>
-              <li><Link to="/articles" className="hover:text-brand-700">Trending Articles</Link></li>
-              <li><Link to="/buy-laptop" className="hover:text-brand-700">Buy Laptop (Coming Soon)</Link></li>
-            </ul>
+            <h4 className="font-display text-xs font-black uppercase tracking-wider text-gray-900">
+              Lucknow Localities
+            </h4>
+            <div className="mt-4 grid grid-cols-2 gap-x-2 gap-y-1.5 text-xs text-gray-500 font-medium">
+              {LUCKNOW_LOCALITIES.slice(0, 10).map((loc) => (
+                <span key={loc} className="flex items-center gap-1 truncate">
+                  <CheckCircle2 className="h-3 w-3 text-teal-600 shrink-0" />
+                  {loc}
+                </span>
+              ))}
+            </div>
+            <p className="mt-3 text-[11px] font-bold text-teal-700">
+              + All other Lucknow pin codes supported!
+            </p>
           </div>
 
+          {/* Col 4: Lucknow Reach & Helpdesk */}
           <div>
-            <h4 className="font-display text-sm font-bold uppercase tracking-wider text-ink-900">Reach Us</h4>
-            <ul className="mt-3 space-y-3 text-sm text-ink-600">
-              <li className="flex items-start gap-2">
-                <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-brand-600" />
+            <h4 className="font-display text-xs font-black uppercase tracking-wider text-gray-900">
+              Lucknow Helpline
+            </h4>
+            <ul className="mt-4 space-y-3 text-xs text-gray-600 font-medium">
+              <li className="flex items-start gap-2.5">
+                <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-teal-600" />
                 <span>Hazratganj, Lucknow, Uttar Pradesh 226001</span>
               </li>
-              <li className="flex items-center gap-2">
-                <Phone className="h-4 w-4 shrink-0 text-brand-600" />
-                <a href="tel:+919876543210" className="hover:text-brand-700">CUG: +91 98765 43210</a>
+              <li className="flex items-center gap-2.5">
+                <Phone className="h-4 w-4 shrink-0 text-teal-600" />
+                <a href="tel:+919876543210" className="font-bold text-gray-900 hover:text-teal-600">
+                  +91 98765 43210 (9 AM - 9 PM)
+                </a>
               </li>
-              <li className="flex items-center gap-2">
-                <Mail className="h-4 w-4 shrink-0 text-brand-600" />
-                <a href="mailto:hello@fundu.in" className="hover:text-brand-700">hello@fundu.in</a>
+              <li className="flex items-center gap-2.5">
+                <Mail className="h-4 w-4 shrink-0 text-teal-600" />
+                <a href="mailto:hello@fundu.in" className="hover:text-teal-600">
+                  hello@fundu.in
+                </a>
               </li>
-              <li className="flex items-center gap-2">
-                <Store className="h-4 w-4 shrink-0 text-brand-600" />
-                <Link to="/store" className="hover:text-brand-700">Exclusive store collections</Link>
-              </li>
-              <li className="flex items-center gap-2">
-                <Recycle className="h-4 w-4 shrink-0 text-brand-600" />
-                <Link to="/recycle" className="hover:text-brand-700">Recycling guidance</Link>
+              <li className="pt-1">
+                <Link
+                  to="/partner"
+                  className="inline-flex items-center gap-1.5 rounded-lg bg-teal-50 px-3 py-1.5 text-xs font-bold text-teal-800 hover:bg-teal-100"
+                >
+                  Partner With Us in Lucknow →
+                </Link>
               </li>
             </ul>
           </div>
         </div>
 
-        <div className="mt-10 flex flex-col items-center justify-between gap-3 border-t border-ink-200 pt-6 text-xs text-ink-400 sm:flex-row">
-          <p>© {new Date().getFullYear()} Fundu. Made for Lucknow.</p>
-          <p>Privacy · Terms · Warranty Policy</p>
+        {/* Bottom Strip */}
+        <div className="mt-12 flex flex-col sm:flex-row items-center justify-between gap-4 border-t border-gray-100 pt-6 text-xs text-gray-500 font-medium">
+          <p>© {new Date().getFullYear()} Fundu Technologies Pvt. Ltd. Exclusively for Lucknow.</p>
+          <div className="flex items-center gap-4 text-xs">
+            <Link to="/about" className="hover:text-teal-600">About Us</Link>
+            <span>•</span>
+            <Link to="/contact" className="hover:text-teal-600">Contact</Link>
+            <span>•</span>
+            <Link to="/articles" className="hover:text-teal-600">Guides</Link>
+            <span>•</span>
+            <span>100% Data Safe</span>
+          </div>
         </div>
       </div>
     </footer>
