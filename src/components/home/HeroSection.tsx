@@ -3,60 +3,14 @@ import { Link } from 'react-router-dom';
 import {
   ArrowLeft,
   ArrowRight,
-  BadgeIndianRupee,
   ShieldCheck,
   Sparkles,
-  Store,
   Wrench,
   Truck,
   Zap,
   CheckCircle2,
-  MapPin,
-  ChevronRight,
 } from 'lucide-react';
 import { useHeroPosters } from '../../lib/heroBanners';
-
-const CASHIFY_SERVICE_CARDS = [
-  {
-    id: 'sell',
-    title: 'Sell Old Phone',
-    subtitle: 'Instant Price Quote',
-    tag: 'Highest Cash',
-    tagColor: 'bg-emerald-500 text-white',
-    desc: 'Free doorstep pickup across Lucknow & instant cash/UPI on spot.',
-    href: '/sell',
-    icon: BadgeIndianRupee,
-    iconBg: 'bg-emerald-100/80 text-emerald-700',
-    btnText: 'Sell Phone',
-    btnColor: 'bg-emerald-600 hover:bg-emerald-700 text-white',
-  },
-  {
-    id: 'buy',
-    title: 'Buy Refurbished Phone',
-    subtitle: '32-Point Quality Check',
-    tag: '6M Warranty',
-    tagColor: 'bg-teal-600 text-white',
-    desc: 'Certified phones with battery confidence & free same-day Lucknow delivery.',
-    href: '/buy',
-    icon: Store,
-    iconBg: 'bg-teal-100/80 text-teal-700',
-    btnText: 'Browse Store',
-    btnColor: 'bg-teal-600 hover:bg-teal-700 text-white',
-  },
-  {
-    id: 'repair',
-    title: 'Repair Phone',
-    subtitle: 'Doorstep in 30 Mins',
-    tag: 'Genuine Parts',
-    tagColor: 'bg-amber-500 text-white',
-    desc: 'Screen, battery, and camera fixed right at your home or office in Lucknow.',
-    href: '/repair',
-    icon: Wrench,
-    iconBg: 'bg-amber-100/80 text-amber-700',
-    btnText: 'Book Repair',
-    btnColor: 'bg-amber-600 hover:bg-amber-700 text-white',
-  },
-];
 
 const TRUST_PILLARS_STRIP = [
   { icon: Zap, label: 'Instant Spot Payment on Pickup' },
@@ -98,49 +52,6 @@ export default function HeroSection() {
   return (
     <section className="bg-[#f8fafc] py-5 sm:py-7 border-b border-gray-200">
       <div className="container-page space-y-6">
-        {/* Top 3 Core Cashify Action Cards */}
-        <div className="grid gap-4 sm:grid-cols-3">
-          {CASHIFY_SERVICE_CARDS.map((card) => {
-            const Icon = card.icon;
-            return (
-              <div
-                key={card.id}
-                className="group relative flex flex-col justify-between rounded-2xl border border-gray-200 bg-white p-5 shadow-sm transition-all duration-200 hover:-translate-y-1 hover:border-teal-400 hover:shadow-lg"
-              >
-                <div>
-                  <div className="flex items-center justify-between">
-                    <div className={`grid h-12 w-12 place-items-center rounded-xl ${card.iconBg}`}>
-                      <Icon className="h-6 w-6" />
-                    </div>
-                    <span className={`rounded-full px-2.5 py-1 text-[11px] font-extrabold uppercase tracking-wide ${card.tagColor}`}>
-                      {card.tag}
-                    </span>
-                  </div>
-
-                  <h3 className="mt-4 text-lg font-extrabold text-gray-900 group-hover:text-teal-700 transition">
-                    {card.title}
-                  </h3>
-                  <p className="text-xs font-semibold text-teal-600 mt-0.5">{card.subtitle}</p>
-                  <p className="mt-2 text-xs leading-relaxed text-gray-500">{card.desc}</p>
-                </div>
-
-                <div className="mt-5 pt-3 border-t border-gray-100 flex items-center justify-between">
-                  <span className="text-[11px] font-bold text-gray-400 flex items-center gap-1">
-                    <MapPin className="h-3 w-3 text-teal-600" /> Lucknow Only
-                  </span>
-                  <Link
-                    to={card.href}
-                    className={`inline-flex items-center gap-1.5 rounded-xl px-4 py-2 text-xs font-bold shadow-sm transition ${card.btnColor}`}
-                  >
-                    <span>{card.btnText}</span>
-                    <ChevronRight className="h-3.5 w-3.5" />
-                  </Link>
-                </div>
-              </div>
-            );
-          })}
-        </div>
-
         {/* Dynamic Promotional Hero Carousel Banner */}
         <div className="overflow-hidden rounded-3xl border border-gray-200/80 bg-white shadow-md">
           <div
