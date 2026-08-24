@@ -1,4 +1,16 @@
 const resolveApiBase = () => {
+  if (typeof window !== 'undefined') {
+    const hostname = window.location.hostname;
+    const isLocal = hostname === 'localhost' || hostname === '127.0.0.1';
+    if (!isLocal) {
+      const envUrl = import.meta.env.VITE_API_URL as string | undefined;
+      if (envUrl && !envUrl.includes('localhost') && !envUrl.includes('127.0.0.1')) {
+        return envUrl.trim().replace(/\/$/, '');
+      }
+      return 'https://fundu.onrender.com/api';
+    }
+  }
+
   const envUrl = import.meta.env.VITE_API_URL as string | undefined;
   if (envUrl && envUrl.trim()) {
     return envUrl.trim().replace(/\/$/, '');
