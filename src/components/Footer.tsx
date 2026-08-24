@@ -62,7 +62,7 @@ export default function Footer() {
           {/* Col 1: About Fundu */}
           <div className="space-y-4">
             <Link to="/" className="inline-block">
-              <BrandLogo imageClassName="h-10 sm:h-12 w-auto max-w-[190px]" />
+              <BrandLogo imageClassName="h-11 sm:h-14 md:h-16 w-auto max-w-[240px] sm:max-w-[290px] md:max-w-[320px]" />
             </Link>
             <p className="text-xs leading-relaxed text-slate-600 font-medium">
               Fundu is Lucknow's dedicated smartphone re-commerce platform. We simplify selling old mobiles, buying certified refurbished devices, and getting doorstep phone repairs done in 30 minutes.

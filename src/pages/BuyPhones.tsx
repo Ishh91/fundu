@@ -390,7 +390,7 @@ export default function BuyPhones() {
       </section>
 
       {/* STANDALONE STICKY 3-STEP REFURBISHED BUYING PROGRESS BAR */}
-      <div className="sticky top-[60px] md:top-[108px] z-40 bg-white/95 backdrop-blur-md border-b border-gray-200 shadow-md py-3 px-4 transition-all">
+      <div className="sticky top-[64px] md:top-[116px] z-40 bg-white/95 backdrop-blur-md border-b border-gray-200 shadow-md py-3 px-4 transition-all">
         <div className="flex items-center justify-center flex-wrap sm:flex-nowrap gap-2 sm:gap-4 max-w-4xl mx-auto overflow-x-auto scrollbar-hide no-scrollbar py-1">
           {[
             { s: 1, label: '1. Select Refurbished Model' },

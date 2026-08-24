@@ -16,7 +16,7 @@ export default function Register() {
     <div className="container-page py-16">
       <div className="max-w-md mx-auto text-center">
         <Link to="/" className="inline-flex items-center justify-center">
-          <BrandLogo imageClassName="h-14 sm:h-16 w-auto max-w-[260px] mx-auto" />
+          <BrandLogo imageClassName="h-11 sm:h-14 md:h-16 w-auto max-w-[240px] sm:max-w-[290px] md:max-w-[320px] mx-auto filter drop-shadow-xs" />
         </Link>
 
         <div className="mt-8 card p-8">

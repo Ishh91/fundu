@@ -147,7 +147,7 @@ export default function Login() {
         {/* Logo */}
         <div className="text-center">
           <Link to="/" className="inline-flex items-center justify-center">
-            <BrandLogo imageClassName="h-14 sm:h-16 w-auto max-w-[260px] mx-auto" />
+            <BrandLogo imageClassName="h-11 sm:h-14 md:h-16 w-auto max-w-[240px] sm:max-w-[290px] md:max-w-[320px] mx-auto filter drop-shadow-xs" />
           </Link>
           <h1 className="mt-6 font-display text-3xl font-extrabold text-ink-900">
             {step === 'phone' ? 'Welcome back' : 'Enter OTP'}

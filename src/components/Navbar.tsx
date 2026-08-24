@@ -294,12 +294,12 @@ export default function Navbar() {
         {/* TOP ROW: LOGO | LOCATION | EXPANDED PILL SEARCH BAR | CART | LOGIN PILL */}
         {/* ========================================================================= */}
         <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex h-16 sm:h-18 items-center justify-between gap-3 md:gap-6">
+          <div className="flex h-16 sm:h-18 md:h-20 items-center justify-between gap-3 md:gap-6">
 
             {/* 1. Left: Brand Logo & Location Selector */}
             <div className="flex items-center gap-3 sm:gap-6 shrink-0">
               <Link to="/" className="flex items-center shrink-0" aria-label="Fundu Home">
-                <BrandLogo imageClassName="h-9 sm:h-11 w-auto max-w-[160px] sm:max-w-[180px]" />
+                <BrandLogo imageClassName="h-11 sm:h-14 md:h-16 w-auto max-w-[240px] sm:max-w-[290px] md:max-w-[320px] filter drop-shadow-xs transition-transform duration-200 hover:scale-102" />
               </Link>
 
               {/* Location Selector (Lucknow) */}
