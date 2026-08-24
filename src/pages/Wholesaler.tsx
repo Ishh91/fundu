@@ -11,7 +11,7 @@ import { PHONE_BRANDS } from '../types';
 import { db, formatINR } from '../lib/db';
 
 export default function Wholesaler() {
-  const { user, profile, loading, refreshProfile } = useAuth();
+  const { user, profile, loading, refreshProfile, signOut } = useAuth();
   const navigate = useNavigate();
 
   // Tab State
@@ -313,6 +313,34 @@ export default function Wholesaler() {
 
   return (
     <div className="min-h-screen bg-[#f4f7f8] pb-24">
+      {/* Standalone Wholesaler B2B Top Header */}
+      <header className="sticky top-0 z-40 bg-[#0f172a] text-white shadow-md">
+        <div className="container-page flex items-center justify-between py-3.5">
+          <div className="flex items-center gap-3">
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-brand-500 font-extrabold text-white text-lg shadow-sm">
+              F
+            </div>
+            <div>
+              <span className="font-extrabold text-lg tracking-tight text-white">Fundu <span className="text-brand-400 text-xs uppercase px-2 py-0.5 rounded-full bg-brand-900/60 font-bold border border-brand-700">Wholesaler B2B</span></span>
+              <p className="text-[10px] text-slate-400 font-medium">Lucknow Refurbished & Bulk Hardware Portal</p>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-4">
+            <div className="hidden sm:flex flex-col text-right">
+              <span className="text-xs font-bold text-slate-200">{profile?.business_name || profile?.full_name || 'Wholesaler Partner'}</span>
+              <span className="text-[10px] text-emerald-400 font-semibold">Lucknow Hub Active</span>
+            </div>
+            <button
+              onClick={() => signOut()}
+              className="inline-flex items-center gap-1.5 rounded-xl bg-slate-800 px-3 py-1.5 text-xs font-bold text-slate-300 hover:bg-rose-900/50 hover:text-rose-200 border border-slate-700 transition"
+            >
+              Sign Out
+            </button>
+          </div>
+        </div>
+      </header>
+
       {/* Top Header Card */}
       <div className="bg-white border-b border-[#e5ecef] py-8">
         <div className="container-page">

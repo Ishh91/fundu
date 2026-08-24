@@ -28,18 +28,24 @@ import BrandHub from './pages/BrandHub';
 import Recycle from './pages/Recycle';
 import Articles from './pages/Articles';
 import LaptopComingSoon from './pages/LaptopComingSoon';
-
 import ProductDetail from './pages/ProductDetail';
+import AdminLogin from './pages/AdminLogin';
+import WholesalerLogin from './pages/WholesalerLogin';
+import DeliveryLogin from './pages/DeliveryLogin';
 
 function MainLayout() {
   const location = useLocation();
-  const isAdminPath = location.pathname.startsWith('/admin');
+  const isAdminPath = location.pathname.startsWith('/admin') || location.pathname.startsWith('/admin-login');
   const isDeliveryPath =
     location.pathname.startsWith('/delivery') ||
     location.pathname.startsWith('/rider') ||
     location.pathname.startsWith('/fleet-desk') ||
-    location.pathname.startsWith('/rider-login');
-  const isStandaloneApp = isAdminPath || isDeliveryPath;
+    location.pathname.startsWith('/rider-login') ||
+    location.pathname.startsWith('/delivery-login');
+  const isWholesalerPath =
+    location.pathname.startsWith('/wholesaler') ||
+    location.pathname.startsWith('/wholesaler-login');
+  const isStandaloneApp = isAdminPath || isDeliveryPath || isWholesalerPath;
 
   return (
     <div className="flex min-h-screen flex-col">
@@ -57,15 +63,25 @@ function MainLayout() {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/dashboard" element={<Dashboard />} />
+
+          {/* Admin Dedicated Routes */}
           <Route path="/admin" element={<Admin />} />
           <Route path="/admin/:subtab" element={<Admin />} />
+          <Route path="/admin-login" element={<AdminLogin />} />
+          <Route path="/admin/login" element={<AdminLogin />} />
+
+          {/* Wholesaler B2B Dedicated Routes */}
           <Route path="/wholesaler" element={<Wholesaler />} />
+          <Route path="/wholesaler-login" element={<WholesalerLogin />} />
+          <Route path="/wholesaler/login" element={<WholesalerLogin />} />
           
           {/* Private Delivery & Rider Portal Routes */}
           <Route path="/fleet-desk" element={<DeliveryAgentPortal />} />
-          <Route path="/rider-login" element={<DeliveryAgentPortal />} />
           <Route path="/delivery" element={<DeliveryAgentPortal />} />
           <Route path="/rider" element={<DeliveryAgentPortal />} />
+          <Route path="/rider-login" element={<DeliveryLogin />} />
+          <Route path="/delivery-login" element={<DeliveryLogin />} />
+          <Route path="/delivery/login" element={<DeliveryLogin />} />
 
           <Route path="/profile" element={<Profile />} />
           <Route path="/checkout" element={<Checkout />} />

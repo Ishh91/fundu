@@ -10,6 +10,10 @@ import {
   MessageSquare,
   Truck,
   CheckCircle2,
+  Share2,
+  Mail,
+  ExternalLink,
+  Lock,
 } from 'lucide-react';
 import type { Profile, WholesaleInventory, WholesaleOrder } from '../../types';
 import { db, formatINR } from '../../lib/db';
@@ -47,6 +51,113 @@ export default function AdminWholesalers() {
     stock: '1',
     imei: '',
   });
+
+  // Add Wholesaler Modal State
+  const [addVendorModal, setAddVendorModal] = useState(false);
+  const [addVendorForm, setAddVendorForm] = useState({
+    businessName: '',
+    fullName: '',
+    email: '',
+    phone: '',
+    password: 'Partner@123456',
+    creditLimit: '200000',
+    gstNumber: '',
+  });
+  const [addVendorSubmitting, setAddVendorSubmitting] = useState(false);
+
+  // Share Credentials Modal State
+  const [shareCredModal, setShareCredModal] = useState<{
+    vendor: Partial<Profile>;
+    password?: string;
+  } | null>(null);
+
+  const getWhatsAppShareLink = (vendor: Partial<Profile>, pass?: string) => {
+    const rawPhone = (vendor.phone || '9839122345').replace(/\D/g, '');
+    const targetPhone = rawPhone.length === 10 ? `91${rawPhone}` : rawPhone;
+    const loginUrl = `${window.location.origin}/wholesaler-login`;
+    const passwordText = pass || 'Partner@123456';
+
+    const message = `🏢 *FUNDU LUCKNOW B2B WHOLESALER PORTAL*\n\n` +
+      `Hi *${vendor.full_name || vendor.business_name || 'Partner'}* (*${vendor.business_name || 'Wholesale Partner'}*),\n` +
+      `Your B2B Wholesaler Partner Account is active!\n\n` +
+      `🌐 *Login Portal:* ${loginUrl}\n` +
+      `📧 *Login Email:* ${vendor.email || vendor.phone}\n` +
+      `🔑 *Secret Passcode:* ${passwordText}\n` +
+      `💳 *Approved Khata Limit:* ${formatINR(vendor.credit_limit || 200000)}\n\n` +
+      `Login to browse lot inventories, place B2B orders, and check Khata balance on Fundu Lucknow!`;
+
+    return `https://wa.me/${targetPhone}?text=${encodeURIComponent(message)}`;
+  };
+
+  const getEmailShareLink = (vendor: Partial<Profile>, pass?: string) => {
+    const loginUrl = `${window.location.origin}/wholesaler-login`;
+    const passwordText = pass || 'Partner@123456';
+    const emailTo = vendor.email || '';
+    const subject = `Fundu Lucknow B2B Wholesaler Login Credentials`;
+    const body = `Hi ${vendor.full_name || vendor.business_name || 'Wholesaler Partner'},\n\n` +
+      `Your Fundu B2B Wholesaler Partner account has been activated.\n\n` +
+      `Login Portal: ${loginUrl}\n` +
+      `Email: ${vendor.email || vendor.phone}\n` +
+      `Password: ${passwordText}\n` +
+      `Approved Khata Limit: ${formatINR(vendor.credit_limit || 200000)}\n\n` +
+      `Welcome to Fundu Lucknow Refurbished & Bulk Hardware Clearing!`;
+
+    return `mailto:${emailTo}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+  };
+
+  const handleAddVendor = async () => {
+    if (!addVendorForm.businessName || !addVendorForm.email || !addVendorForm.phone) {
+      alert('Please fill business name, email and phone number.');
+      return;
+    }
+
+    setAddVendorSubmitting(true);
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_URL || 'https://fundu.onrender.com/api'}/auth/register`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: addVendorForm.email.trim(),
+          password: addVendorForm.password || 'Partner@123456',
+          fullName: addVendorForm.fullName || addVendorForm.businessName,
+          phone: addVendorForm.phone.trim(),
+          role: 'wholesaler',
+          businessName: addVendorForm.businessName.trim(),
+          creditLimit: Number(addVendorForm.creditLimit) || 200000,
+          gstNumber: addVendorForm.gstNumber.trim() || null,
+        }),
+      });
+
+      const json = await response.json();
+      if (json.error) throw new Error(json.error.message || json.error);
+
+      alert(`✅ Wholesaler Partner "${addVendorForm.businessName}" created successfully!`);
+      const newVendor = json.data?.profile || {
+        business_name: addVendorForm.businessName,
+        full_name: addVendorForm.fullName,
+        email: addVendorForm.email,
+        phone: addVendorForm.phone,
+        credit_limit: Number(addVendorForm.creditLimit) || 200000,
+      };
+
+      setAddVendorModal(false);
+      setShareCredModal({ vendor: newVendor, password: addVendorForm.password || 'Partner@123456' });
+      setAddVendorForm({
+        businessName: '',
+        fullName: '',
+        email: '',
+        phone: '',
+        password: 'Partner@123456',
+        creditLimit: '200000',
+        gstNumber: '',
+      });
+      await fetchData();
+    } catch (err) {
+      alert(err instanceof Error ? err.message : 'Failed to create wholesaler account');
+    } finally {
+      setAddVendorSubmitting(false);
+    }
+  };
 
   const fetchData = async () => {
     setLoading(true);
@@ -279,15 +390,23 @@ export default function AdminWholesalers() {
       {/* ── SUBTAB 1: VENDORS & KHATA LEDGER ── */}
       {activeSubtab === 'vendors' && (
         <div className="space-y-4">
-          <div className="card p-3 rounded-2xl bg-white flex items-center gap-2 max-w-md shadow-xs">
-            <Search className="h-4 w-4 text-ink-400 shrink-0 ml-1" />
-            <input
-              type="text"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search partner by business name, mobile..."
-              className="w-full text-xs bg-transparent border-none focus:outline-none text-ink-900 font-medium"
-            />
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+            <div className="card p-3 rounded-2xl bg-white flex items-center gap-2 max-w-md shadow-xs flex-1">
+              <Search className="h-4 w-4 text-ink-400 shrink-0 ml-1" />
+              <input
+                type="text"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder="Search partner by business name, mobile..."
+                className="w-full text-xs bg-transparent border-none focus:outline-none text-ink-900 font-medium"
+              />
+            </div>
+            <button
+              onClick={() => setAddVendorModal(true)}
+              className="btn-primary text-xs flex items-center justify-center gap-1.5 py-3 px-4 shadow-sm"
+            >
+              <Plus className="h-4 w-4" /> Add New Wholesaler Partner
+            </button>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -347,6 +466,17 @@ export default function AdminWholesalers() {
                       className="btn-outline text-xs px-3 py-2 text-ink-700"
                     >
                       Set Limit
+                    </button>
+                  </div>
+
+                  {/* Share Login Credentials */}
+                  <div className="pt-2 border-t border-ink-100 flex items-center justify-between text-[11px]">
+                    <span className="text-ink-500 font-medium">Portal Access:</span>
+                    <button
+                      onClick={() => setShareCredModal({ vendor })}
+                      className="inline-flex items-center gap-1 text-brand-600 font-bold hover:underline"
+                    >
+                      <Share2 className="h-3 w-3 text-brand-500" /> Share Credentials & Link
                     </button>
                   </div>
                 </div>
@@ -707,6 +837,189 @@ export default function AdminWholesalers() {
               </button>
               <button onClick={handleAddInventory} className="btn-primary text-xs">
                 Save to Wholesale
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ── ADD NEW WHOLESALER PARTNER MODAL ── */}
+      {addVendorModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-ink-900/60 backdrop-blur-xs p-4">
+          <div className="card w-full max-w-lg p-6 bg-white rounded-2xl shadow-2xl space-y-4">
+            <div className="flex items-center justify-between pb-2 border-b border-ink-100">
+              <div className="flex items-center gap-2">
+                <div className="p-2 rounded-xl bg-amber-50 text-amber-600">
+                  <Building2 className="h-5 w-5" />
+                </div>
+                <div>
+                  <h3 className="font-display font-bold text-ink-900">Register New Wholesaler Partner</h3>
+                  <p className="text-xs text-ink-500">Provide business details & login passcode for Lucknow B2B</p>
+                </div>
+              </div>
+              <button onClick={() => setAddVendorModal(false)} className="text-ink-400 hover:text-ink-700">
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+
+            <div className="grid grid-cols-2 gap-3 text-xs">
+              <div className="col-span-2 sm:col-span-1">
+                <label className="font-semibold text-ink-700 block mb-1">Business / Shop Name *</label>
+                <input
+                  type="text"
+                  required
+                  value={addVendorForm.businessName}
+                  onChange={(e) => setAddVendorForm({ ...addVendorForm, businessName: e.target.value })}
+                  placeholder="e.g. Gomti Nagar Mobile Hub"
+                  className="input text-xs w-full"
+                />
+              </div>
+
+              <div className="col-span-2 sm:col-span-1">
+                <label className="font-semibold text-ink-700 block mb-1">Owner / Contact Name</label>
+                <input
+                  type="text"
+                  value={addVendorForm.fullName}
+                  onChange={(e) => setAddVendorForm({ ...addVendorForm, fullName: e.target.value })}
+                  placeholder="e.g. Amit Sharma"
+                  className="input text-xs w-full"
+                />
+              </div>
+
+              <div className="col-span-2 sm:col-span-1">
+                <label className="font-semibold text-ink-700 block mb-1">Business Email *</label>
+                <input
+                  type="email"
+                  required
+                  value={addVendorForm.email}
+                  onChange={(e) => setAddVendorForm({ ...addVendorForm, email: e.target.value })}
+                  placeholder="amit.mobiles@gmail.com"
+                  className="input text-xs w-full font-mono"
+                />
+              </div>
+
+              <div className="col-span-2 sm:col-span-1">
+                <label className="font-semibold text-ink-700 block mb-1">Mobile Number *</label>
+                <input
+                  type="text"
+                  required
+                  value={addVendorForm.phone}
+                  onChange={(e) => setAddVendorForm({ ...addVendorForm, phone: e.target.value })}
+                  placeholder="9839122345"
+                  className="input text-xs w-full font-mono"
+                />
+              </div>
+
+              <div className="col-span-2 sm:col-span-1">
+                <label className="font-semibold text-ink-700 block mb-1">Login Password *</label>
+                <input
+                  type="text"
+                  required
+                  value={addVendorForm.password}
+                  onChange={(e) => setAddVendorForm({ ...addVendorForm, password: e.target.value })}
+                  placeholder="Partner@123456"
+                  className="input text-xs w-full font-mono"
+                />
+              </div>
+
+              <div className="col-span-2 sm:col-span-1">
+                <label className="font-semibold text-ink-700 block mb-1">Approved Credit Limit (₹)</label>
+                <input
+                  type="number"
+                  value={addVendorForm.creditLimit}
+                  onChange={(e) => setAddVendorForm({ ...addVendorForm, creditLimit: e.target.value })}
+                  placeholder="200000"
+                  className="input text-xs w-full font-bold"
+                />
+              </div>
+
+              <div className="col-span-2">
+                <label className="font-semibold text-ink-700 block mb-1">GSTIN Number (Optional)</label>
+                <input
+                  type="text"
+                  value={addVendorForm.gstNumber}
+                  onChange={(e) => setAddVendorForm({ ...addVendorForm, gstNumber: e.target.value })}
+                  placeholder="09AAAAA0000A1Z5"
+                  className="input text-xs w-full font-mono uppercase"
+                />
+              </div>
+            </div>
+
+            <div className="flex justify-end gap-2 pt-2 border-t border-ink-100">
+              <button onClick={() => setAddVendorModal(false)} className="btn-outline text-xs">
+                Cancel
+              </button>
+              <button
+                onClick={handleAddVendor}
+                disabled={addVendorSubmitting}
+                className="btn-primary text-xs flex items-center gap-1.5"
+              >
+                {addVendorSubmitting ? 'Registering...' : 'Create & Generate Credentials'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ── SHARE CREDENTIALS MODAL (WHATSAPP & MAILTO) ── */}
+      {shareCredModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-ink-900/60 backdrop-blur-xs p-4">
+          <div className="card w-full max-w-md p-6 bg-white rounded-2xl shadow-2xl space-y-4">
+            <div className="flex items-center justify-between pb-2 border-b border-ink-100">
+              <div className="flex items-center gap-2">
+                <div className="p-2 rounded-xl bg-emerald-50 text-emerald-600">
+                  <Share2 className="h-5 w-5" />
+                </div>
+                <div>
+                  <h3 className="font-display font-bold text-ink-900">Share Login & Link</h3>
+                  <p className="text-xs text-ink-500">Send direct access details to Wholesaler Partner</p>
+                </div>
+              </div>
+              <button onClick={() => setShareCredModal(null)} className="text-ink-400 hover:text-ink-700">
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+
+            <div className="bg-ink-50 p-4 rounded-xl space-y-2 border border-ink-100 text-xs font-mono">
+              <div className="flex justify-between">
+                <span className="text-ink-500">Partner:</span>
+                <span className="font-bold text-ink-900">{shareCredModal.vendor.business_name || shareCredModal.vendor.full_name}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-ink-500">Portal URL:</span>
+                <span className="font-bold text-brand-600 truncate">{window.location.origin}/wholesaler-login</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-ink-500">Email ID:</span>
+                <span className="font-bold text-ink-900">{shareCredModal.vendor.email || shareCredModal.vendor.phone}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-ink-500">Password:</span>
+                <span className="font-black text-emerald-700">{shareCredModal.password || 'Partner@123456'}</span>
+              </div>
+            </div>
+
+            <div className="space-y-2 pt-2">
+              <a
+                href={getWhatsAppShareLink(shareCredModal.vendor, shareCredModal.password)}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full flex items-center justify-center gap-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs py-3 shadow-sm transition"
+              >
+                <MessageSquare className="h-4 w-4" /> Send via WhatsApp Direct
+              </a>
+
+              <a
+                href={getEmailShareLink(shareCredModal.vendor, shareCredModal.password)}
+                className="w-full flex items-center justify-center gap-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs py-3 shadow-sm transition"
+              >
+                <Mail className="h-4 w-4" /> Send via Email (Mailto)
+              </a>
+            </div>
+
+            <div className="pt-2 text-right">
+              <button onClick={() => setShareCredModal(null)} className="btn-outline text-xs px-4">
+                Close
               </button>
             </div>
           </div>
