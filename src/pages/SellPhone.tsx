@@ -455,20 +455,22 @@ export default function SellPhone() {
               </h2>
               <p className="mt-1 text-xs text-ink-500">Pick your phone manufacturer to view exact models</p>
 
-              <div className="mt-6 grid grid-cols-2 sm:grid-cols-5 gap-3 md:gap-4">
+              <div className="mt-6 grid grid-cols-2 sm:grid-cols-5 gap-3.5 md:gap-4">
                 {BRAND_CARDS.map((item) => (
                   <button
                     key={item.name}
                     type="button"
                     onClick={() => handleBrandSelect(item.name)}
-                    className={`flex flex-col items-center justify-center p-4 rounded-2xl border transition-all ${
+                    className={`group relative flex flex-col items-center justify-center p-5 rounded-2xl border transition-all duration-300 active:scale-95 cursor-pointer ${
                       form.brand === item.name
-                        ? 'border-brand-600 bg-brand-50/80 shadow-md ring-2 ring-brand-500/20'
-                        : 'border-ink-200 bg-white hover:border-brand-300 hover:shadow-sm'
+                        ? 'border-[#00a896] bg-teal-50/90 shadow-lg shadow-teal-500/10 ring-2 ring-[#00a896]/30 -translate-y-1'
+                        : 'border-gray-200/90 bg-white hover:border-[#00a896] hover:bg-teal-50/40 hover:shadow-xl hover:shadow-teal-500/10 hover:-translate-y-1.5'
                     }`}
                   >
-                    <img src={item.logo} alt={item.name} className="h-12 w-12 object-contain rounded-lg" />
-                    <span className="mt-2 text-sm font-bold text-ink-900">{item.name}</span>
+                    <div className="overflow-hidden rounded-xl p-2 bg-gray-50/80 group-hover:bg-white group-hover:shadow-xs transition-all duration-300">
+                      <img src={item.logo} alt={item.name} className="h-12 w-12 object-contain rounded-lg group-hover:scale-110 transition-transform duration-300" />
+                    </div>
+                    <span className="mt-2.5 text-sm font-extrabold text-gray-900 group-hover:text-[#00a896] transition-colors duration-200">{item.name}</span>
                   </button>
                 ))}
               </div>
@@ -496,7 +498,7 @@ export default function SellPhone() {
                     <select
                       value={form.model}
                       onChange={(e) => setForm({ ...form, model: e.target.value })}
-                      className="input mt-1"
+                      className="input mt-1 focus:border-[#00a896] transition-colors"
                     >
                       <option value="">{loadingModels ? 'Fetching models...' : 'Select phone model'}</option>
                       {modelsList.map((m) => (
@@ -518,10 +520,10 @@ export default function SellPhone() {
                           key={stg}
                           type="button"
                           onClick={() => setForm({ ...form, storage: stg })}
-                          className={`rounded-xl px-4 py-2 text-xs font-bold transition ${
+                          className={`rounded-xl px-4 py-2 text-xs font-bold transition-all duration-200 active:scale-95 cursor-pointer ${
                             form.storage === stg
-                              ? 'bg-brand-600 text-white shadow-sm'
-                              : 'border border-ink-200 bg-white text-ink-700 hover:border-brand-400'
+                              ? 'bg-[#00a896] text-white shadow-md shadow-teal-500/20 scale-105'
+                              : 'border border-gray-200 bg-white text-gray-700 hover:border-[#00a896] hover:bg-teal-50/50 hover:scale-102'
                           }`}
                         >
                           {stg}
@@ -536,7 +538,7 @@ export default function SellPhone() {
                     <button
                       type="button"
                       onClick={() => setStep(2)}
-                      className="btn-primary flex items-center gap-2"
+                      className="btn-primary flex items-center gap-2 hover:scale-102 active:scale-95 transition-transform"
                     >
                       Continue to Diagnostics <ArrowRight className="h-4 w-4" />
                     </button>
@@ -562,12 +564,14 @@ export default function SellPhone() {
                     key={item.model}
                     type="button"
                     onClick={() => handleQuickModelSelect(item)}
-                    className="flex flex-col items-center p-3 rounded-2xl border border-ink-100 bg-white hover:border-brand-400 hover:shadow-md transition text-center"
+                    className="group flex flex-col items-center p-4 rounded-2xl border border-gray-200/90 bg-white hover:border-[#00a896] hover:bg-teal-50/20 hover:shadow-xl hover:shadow-teal-500/10 hover:-translate-y-1.5 transition-all duration-300 text-center active:scale-95 cursor-pointer"
                   >
-                    <img src={item.image} alt={item.model} className="h-20 w-20 object-contain rounded-lg" />
-                    <p className="mt-2 text-xs font-bold text-ink-900 truncate w-full">{item.model}</p>
-                    <p className="text-[10px] text-ink-500">{item.storage}</p>
-                    <span className="mt-1.5 badge bg-emerald-50 text-emerald-700 font-extrabold">
+                    <div className="overflow-hidden rounded-xl p-1 group-hover:scale-105 transition-transform duration-300">
+                      <img src={item.image} alt={item.model} className="h-20 w-20 object-contain rounded-lg" />
+                    </div>
+                    <p className="mt-2 text-xs font-bold text-gray-900 group-hover:text-[#00a896] transition-colors truncate w-full">{item.model}</p>
+                    <p className="text-[10px] text-gray-500 font-semibold">{item.storage}</p>
+                    <span className="mt-1.5 badge bg-emerald-50 text-emerald-700 font-extrabold group-hover:bg-[#00a896] group-hover:text-white transition-colors duration-200">
                       Up to {formatINR(item.price)}
                     </span>
                   </button>
@@ -605,14 +609,14 @@ export default function SellPhone() {
                       key={c.id}
                       type="button"
                       onClick={() => setForm({ ...form, condition: c.id })}
-                      className={`p-4 rounded-2xl border text-left transition ${
+                      className={`p-4 rounded-2xl border text-left transition-all duration-300 active:scale-95 cursor-pointer ${
                         form.condition === c.id
-                          ? 'border-brand-600 bg-brand-50/80 ring-2 ring-brand-500/20'
-                          : 'border-ink-200 bg-white hover:border-ink-300'
+                          ? 'border-[#00a896] bg-teal-50/90 shadow-md ring-2 ring-[#00a896]/30 -translate-y-1'
+                          : 'border-gray-200 bg-white hover:border-[#00a896] hover:bg-teal-50/30 hover:shadow-xl hover:shadow-teal-500/10 hover:-translate-y-1'
                       }`}
                     >
-                      <p className="font-bold text-sm text-ink-900">{c.label}</p>
-                      <p className="mt-1 text-xs text-ink-500 leading-relaxed">{c.desc}</p>
+                      <p className="font-extrabold text-sm text-gray-900">{c.label}</p>
+                      <p className="mt-1 text-xs text-gray-500 leading-relaxed">{c.desc}</p>
                     </button>
                   ))}
                 </div>
@@ -637,13 +641,13 @@ export default function SellPhone() {
                             },
                           }));
                         }}
-                        className={`flex items-center gap-3 p-3 rounded-xl border text-xs font-semibold transition ${
+                        className={`flex items-center gap-3 p-3.5 rounded-xl border text-xs font-bold transition-all duration-200 active:scale-95 cursor-pointer ${
                           isPassed
-                            ? 'border-emerald-300 bg-emerald-50/60 text-emerald-800'
-                            : 'border-ink-200 bg-white text-ink-500 opacity-70'
+                            ? 'border-emerald-400 bg-emerald-50/80 text-emerald-800 shadow-xs hover:bg-emerald-100/80'
+                            : 'border-gray-200 bg-white text-gray-500 opacity-70 hover:opacity-100 hover:border-emerald-400 hover:bg-emerald-50/30'
                         }`}
                       >
-                        <div className={`grid h-5 w-5 place-items-center rounded-md ${isPassed ? 'bg-emerald-600 text-white' : 'border border-ink-300'}`}>
+                        <div className={`grid h-5 w-5 place-items-center rounded-md transition-colors ${isPassed ? 'bg-emerald-600 text-white' : 'border border-gray-300'}`}>
                           {isPassed && <Check className="h-3.5 w-3.5" />}
                         </div>
                         {fc.label}
@@ -664,10 +668,10 @@ export default function SellPhone() {
                       key={bat}
                       type="button"
                       onClick={() => setForm((prev) => ({ ...prev, diagnostics: { ...prev.diagnostics, battery_health: bat } }))}
-                      className={`p-2.5 rounded-xl border text-xs font-bold transition text-center ${
+                      className={`p-2.5 rounded-xl border text-xs font-bold transition-all duration-200 active:scale-95 cursor-pointer ${
                         form.diagnostics.battery_health === bat
-                          ? 'border-brand-600 bg-brand-50 text-brand-700 ring-2 ring-brand-500/20'
-                          : 'border-ink-200 bg-white text-ink-700 hover:border-brand-300'
+                          ? 'border-[#00a896] bg-teal-50 text-[#00a896] ring-2 ring-[#00a896]/20 shadow-xs'
+                          : 'border-gray-200 bg-white text-gray-700 hover:border-[#00a896] hover:bg-teal-50/40 hover:scale-102'
                       }`}
                     >
                       {bat}
@@ -687,10 +691,10 @@ export default function SellPhone() {
                         key={acc.id}
                         type="button"
                         onClick={() => toggleAccessory(acc.id)}
-                        className={`rounded-full px-4 py-2 text-xs font-bold border transition ${
+                        className={`rounded-full px-4 py-2 text-xs font-bold border transition-all duration-200 active:scale-95 cursor-pointer ${
                           isSel
-                            ? 'border-brand-600 bg-brand-600 text-white shadow-sm'
-                            : 'border-ink-200 bg-white text-ink-700 hover:border-brand-300'
+                            ? 'border-[#00a896] bg-[#00a896] text-white shadow-md shadow-teal-500/20 scale-105'
+                            : 'border-gray-200 bg-white text-gray-700 hover:border-[#00a896] hover:bg-teal-50/50 hover:shadow-xs hover:scale-102'
                         }`}
                       >
                         {acc.label} <span className="opacity-80 font-normal">{acc.bonus}</span>
@@ -1077,9 +1081,9 @@ export default function SellPhone() {
 
           <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4 max-w-4xl mx-auto">
             {FAQS.map((f) => (
-              <div key={f.q} className="p-4 rounded-2xl border border-ink-100 bg-white">
-                <p className="font-bold text-sm text-ink-900">{f.q}</p>
-                <p className="mt-1 text-xs text-ink-600 leading-relaxed">{f.a}</p>
+              <div key={f.q} className="p-5 rounded-2xl border border-gray-200/90 bg-white hover:border-[#00a896] hover:bg-teal-50/20 hover:shadow-lg hover:shadow-teal-500/10 hover:-translate-y-1 transition-all duration-300">
+                <p className="font-extrabold text-sm text-gray-900">{f.q}</p>
+                <p className="mt-1.5 text-xs text-gray-600 leading-relaxed">{f.a}</p>
               </div>
             ))}
           </div>
