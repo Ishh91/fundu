@@ -42,21 +42,29 @@ export default function HeroSection() {
       <div className="container-page space-y-5">
         {/* Full Edge-to-Edge Custom Poster Carousel */}
         <div className="relative group/hero overflow-hidden rounded-[28px] sm:rounded-[36px] border border-white/80 bg-slate-900 shadow-[0_24px_60px_rgba(15,23,42,0.12)] backdrop-blur-xl">
-          {/* Main Slide Poster (Clickable) */}
+          {/* Main Slide Poster (Clickable & Responsive per Device) */}
           <Link
             key={currentIndex}
             to={currentSlide.primaryHref || '/sell'}
-            className="block relative w-full overflow-hidden aspect-[16/9] sm:aspect-[21/9] lg:aspect-[24/9] min-h-[220px] sm:min-h-[320px] md:min-h-[380px] lg:min-h-[420px] animate-fade-in group cursor-pointer"
+            className="block relative w-full overflow-hidden animate-fade-in group cursor-pointer bg-slate-950"
           >
-            <img
-              src={currentSlide.image}
-              alt={currentSlide.title || 'Fundu Lucknow Poster'}
-              className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.02]"
-              onError={(e) => {
-                (e.target as HTMLImageElement).src =
-                  'https://placehold.co/1400x550?text=Fundu+Poster+Banner';
-              }}
-            />
+            <picture className="w-full h-auto block">
+              {currentSlide.image_mobile && (
+                <source media="(max-width: 639px)" srcSet={currentSlide.image_mobile} />
+              )}
+              {currentSlide.image_tablet && (
+                <source media="(min-width: 640px) and (max-width: 1023px)" srcSet={currentSlide.image_tablet} />
+              )}
+              <img
+                src={currentSlide.image}
+                alt={currentSlide.title || 'Fundu Lucknow Poster'}
+                className="w-full h-auto max-h-[620px] object-contain sm:object-cover transition-transform duration-700 group-hover:scale-[1.01] mx-auto block"
+                onError={(e) => {
+                  (e.target as HTMLImageElement).src =
+                    'https://placehold.co/1400x550?text=Fundu+Poster+Banner';
+                }}
+              />
+            </picture>
           </Link>
 
           {/* Floating Left Navigation Button */}

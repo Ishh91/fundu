@@ -239,42 +239,51 @@ export default function Navbar() {
     setActiveDropdown((prev) => (prev === name ? null : name));
   };
 
+  const isAdminRole = profile?.role === 'admin';
+  const isWholesalerRole = profile?.role === 'wholesaler';
+  const isDeliveryRole = profile?.role === 'delivery' || profile?.role === 'rider';
+
   const authLinks = (
     <>
-      <Link
-        to="/dashboard"
-        className="flex items-center gap-2.5 rounded-xl px-4 py-2.5 text-sm font-semibold text-gray-700 hover:bg-teal-50 hover:text-teal-700 transition"
-      >
-        <LayoutDashboard className="h-4 w-4 text-teal-600" /> My Orders & Bookings
-      </Link>
-      <Link
-        to="/profile"
-        className="flex items-center gap-2.5 rounded-xl px-4 py-2.5 text-sm font-semibold text-gray-700 hover:bg-teal-50 hover:text-teal-700 transition"
-      >
-        <User className="h-4 w-4 text-teal-600" /> Account Profile
-      </Link>
-      {profile?.role === 'admin' && (
+      {isAdminRole ? (
         <Link
           to="/admin"
-          className="flex items-center gap-2.5 rounded-xl px-4 py-2.5 text-sm font-semibold text-purple-700 bg-purple-50 hover:purple-100 transition"
+          className="flex items-center gap-2.5 rounded-xl px-4 py-2.5 text-sm font-bold text-purple-700 bg-purple-50 hover:bg-purple-100 transition"
         >
-          <LayoutDashboard className="h-4 w-4" /> Admin Console
+          <LayoutDashboard className="h-4 w-4 text-purple-600" /> Admin Console
         </Link>
+      ) : (
+        <>
+          <Link
+            to="/dashboard"
+            className="flex items-center gap-2.5 rounded-xl px-4 py-2.5 text-sm font-semibold text-gray-700 hover:bg-teal-50 hover:text-teal-700 transition"
+          >
+            <LayoutDashboard className="h-4 w-4 text-teal-600" /> My Orders & Bookings
+          </Link>
+          <Link
+            to="/profile"
+            className="flex items-center gap-2.5 rounded-xl px-4 py-2.5 text-sm font-semibold text-gray-700 hover:bg-teal-50 hover:text-teal-700 transition"
+          >
+            <User className="h-4 w-4 text-teal-600" /> Account Profile
+          </Link>
+          {isWholesalerRole && (
+            <Link
+              to="/wholesaler"
+              className="flex items-center gap-2.5 rounded-xl px-4 py-2.5 text-sm font-semibold text-amber-700 bg-amber-50 hover:bg-amber-100 transition"
+            >
+              <Building2 className="h-4 w-4 text-amber-600" /> Wholesaler Hub
+            </Link>
+          )}
+          {isDeliveryRole && (
+            <Link
+              to="/delivery"
+              className="flex items-center gap-2.5 rounded-xl px-4 py-2.5 text-sm font-semibold text-emerald-700 bg-emerald-50 hover:bg-emerald-100 transition"
+            >
+              <Truck className="h-4 w-4 text-emerald-600" /> Field Rider Portal
+            </Link>
+          )}
+        </>
       )}
-      {profile?.role === 'wholesaler' && (
-        <Link
-          to="/wholesaler"
-          className="flex items-center gap-2.5 rounded-xl px-4 py-2.5 text-sm font-semibold text-amber-700 bg-amber-50 hover:bg-amber-100 transition"
-        >
-          <Building2 className="h-4 w-4" /> Wholesaler Hub
-        </Link>
-      )}
-      <Link
-        to="/delivery"
-        className="flex items-center gap-2.5 rounded-xl px-4 py-2.5 text-sm font-semibold text-emerald-700 bg-emerald-50 hover:bg-emerald-100 transition"
-      >
-        <Truck className="h-4 w-4" /> Field Rider Portal
-      </Link>
     </>
   );
 

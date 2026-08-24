@@ -12,6 +12,7 @@ import {
   ShieldAlert,
   Lock,
   LogIn,
+  LogOut,
   Truck,
   ShieldCheck,
 } from 'lucide-react';
@@ -1134,9 +1135,21 @@ export default function Admin() {
               onSimulateTestAlert={handleSimulateTestAlert}
             />
 
-            <div className="hidden sm:flex items-center gap-2 px-3 py-1 rounded-full bg-ink-100 text-ink-700 text-xs font-semibold">
-              <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
-              <span>Admin: {user?.email}</span>
+            <div className="flex items-center gap-2">
+              <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full bg-ink-100 text-ink-700 text-xs font-semibold">
+                <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
+                <span>Admin: {user?.email}</span>
+              </div>
+              <button
+                type="button"
+                onClick={() => {
+                  signOut();
+                  navigate('/admin-login');
+                }}
+                className="inline-flex items-center gap-1.5 rounded-xl bg-rose-50 border border-rose-200 px-3 py-1.5 text-xs font-bold text-rose-700 hover:bg-rose-100 active:scale-95 transition-all shadow-xs"
+              >
+                <LogOut className="h-3.5 w-3.5" /> Sign Out
+              </button>
             </div>
           </div>
         </header>

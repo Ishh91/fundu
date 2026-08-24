@@ -32,6 +32,7 @@ const QUICK_LINKS = [
   { label: '🔧 Phone Repair (/repair)', value: '/repair' },
   { label: '🏬 Spare Parts Store (/store)', value: '/store' },
   { label: '🤝 Partner with Fundu (/partner)', value: '/partner' },
+  { label: '🎉 Celebrating Festival & Deals (/festival)', value: '/festival' },
 ];
 
 export default function AdminHeroPosters() {
@@ -45,11 +46,13 @@ export default function AdminHeroPosters() {
   const [showSizeGuide, setShowSizeGuide] = useState(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
-  // Form State for Custom Poster Upload
+  // Form State for Custom Poster Upload (3 Device Options)
   const [form, setForm] = useState({
     title: '',
     primaryHref: '/sell',
-    image: '',
+    image: '', // Laptop / Desktop
+    image_tablet: '', // Tablet / iPad
+    image_mobile: '', // Mobile Phone
     originalImage: '',
     is_bg_removed: false,
     is_active: true,
@@ -68,6 +71,8 @@ export default function AdminHeroPosters() {
       title: '',
       primaryHref: '/sell',
       image: '',
+      image_tablet: '',
+      image_mobile: '',
       originalImage: '',
       is_bg_removed: false,
       is_active: true,
@@ -81,6 +86,8 @@ export default function AdminHeroPosters() {
       title: poster.title || '',
       primaryHref: poster.primaryHref || '/sell',
       image: poster.image || '',
+      image_tablet: poster.image_tablet || '',
+      image_mobile: poster.image_mobile || '',
       originalImage: poster.image || '',
       is_bg_removed: false,
       is_active: poster.is_active !== false,
@@ -121,7 +128,7 @@ export default function AdminHeroPosters() {
     showToast('Poster order updated');
   };
 
-  const handleImageFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleDeviceFileUpload = (device: 'desktop' | 'tablet' | 'mobile') => (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
@@ -134,13 +141,16 @@ export default function AdminHeroPosters() {
     reader.onload = (event) => {
       if (typeof event.target?.result === 'string') {
         const rawData = event.target!.result as string;
-        setForm((prev) => ({
-          ...prev,
-          image: rawData,
-          originalImage: rawData,
-          is_bg_removed: false,
-        }));
-        showToast('Poster graphic selected! 🖼️');
+        setForm((prev) => {
+          if (device === 'desktop') {
+            return { ...prev, image: rawData, originalImage: rawData, is_bg_removed: false };
+          } else if (device === 'tablet') {
+            return { ...prev, image_tablet: rawData };
+          } else {
+            return { ...prev, image_mobile: rawData };
+          }
+        });
+        showToast(`Selected ${device} poster graphic! 🖼️`);
       }
     };
     reader.readAsDataURL(file);
@@ -208,6 +218,8 @@ export default function AdminHeroPosters() {
         secondaryHref: '',
         accent: 'from-[#0a2f32] to-[#86dedd]',
         image: form.image.trim(),
+        image_tablet: form.image_tablet.trim() || undefined,
+        image_mobile: form.image_mobile.trim() || undefined,
         bullets: [],
         is_active: form.is_active,
         is_full_banner: true,
@@ -599,61 +611,123 @@ export default function AdminHeroPosters() {
                 />
               </div>
 
-              {/* Upload Graphic */}
-              <div className="space-y-2">
+              {/* 3 DEVICE POSTER GRAPHIC UPLOADS */}
+              <div className="space-y-4 pt-2 border-t border-slate-100">
                 <div className="flex items-center justify-between">
-                  <label className="block text-xs font-bold text-slate-900">
-                    Poster Banner Graphic (File or URL) <span className="text-red-500">*</span>
-                  </label>
-                  <span className="text-[10px] text-teal-700 font-extrabold">Recommended: 1920 × 750 px</span>
+                  <h4 className="text-xs font-black uppercase tracking-wider text-slate-800 flex items-center gap-1.5">
+                    <span>📱 3 Device Poster Graphics (Responsive Upload)</span>
+                  </h4>
+                  <span className="text-[10px] text-teal-700 font-extrabold bg-teal-50 px-2 py-0.5 rounded-md border border-teal-200">
+                    Auto-Adjusts Height Per Screen
+                  </span>
                 </div>
-                <div className="flex gap-2">
-                  <input
-                    type="text"
-                    required
-                    value={form.image}
-                    onChange={(e) =>
-                      setForm({
-                        ...form,
-                        image: e.target.value,
-                        originalImage: e.target.value,
-                        is_bg_removed: false,
-                      })
-                    }
-                    placeholder="Paste image link or upload from computer"
-                    className="input text-xs flex-1"
-                  />
-                  <label className="btn text-xs px-4 py-2.5 rounded-xl border border-teal-400 bg-teal-600 font-bold text-white hover:bg-teal-700 cursor-pointer flex items-center gap-1.5 shrink-0 shadow-sm">
-                    <Upload className="h-4 w-4" />
-                    <span>Upload Image</span>
-                    <input type="file" accept="image/*" onChange={handleImageFileUpload} className="hidden" />
-                  </label>
+
+                {/* 1. Laptop / Desktop Poster */}
+                <div className="p-3.5 bg-slate-50 rounded-2xl border border-slate-200 space-y-2">
+                  <div className="flex items-center justify-between">
+                    <label className="block text-xs font-bold text-slate-900 flex items-center gap-1.5">
+                      <Monitor className="h-4 w-4 text-teal-600" />
+                      <span>1. Laptop & Desktop Poster (Default)</span> <span className="text-red-500">*</span>
+                    </label>
+                    <span className="text-[10px] text-slate-500 font-extrabold">Wide Aspect ~2.5:1 (1920×750 px)</span>
+                  </div>
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      required
+                      value={form.image}
+                      onChange={(e) =>
+                        setForm({
+                          ...form,
+                          image: e.target.value,
+                          originalImage: e.target.value,
+                          is_bg_removed: false,
+                        })
+                      }
+                      placeholder="Paste Desktop poster URL or upload"
+                      className="input text-xs flex-1"
+                    />
+                    <label className="btn text-xs px-3.5 py-2 rounded-xl border border-teal-400 bg-teal-600 font-bold text-white hover:bg-teal-700 cursor-pointer flex items-center gap-1.5 shrink-0 shadow-xs">
+                      <Upload className="h-3.5 w-3.5" />
+                      <span>Upload Desktop</span>
+                      <input type="file" accept="image/*" onChange={handleDeviceFileUpload('desktop')} className="hidden" />
+                    </label>
+                  </div>
+                </div>
+
+                {/* 2. Tablet / iPad Poster */}
+                <div className="p-3.5 bg-slate-50 rounded-2xl border border-slate-200 space-y-2">
+                  <div className="flex items-center justify-between">
+                    <label className="block text-xs font-bold text-slate-900 flex items-center gap-1.5">
+                      <Tablet className="h-4 w-4 text-teal-600" />
+                      <span>2. Tablet & iPad Poster</span> <span className="text-[10px] font-bold text-slate-400">(Optional - falls back to Desktop)</span>
+                    </label>
+                    <span className="text-[10px] text-slate-500 font-extrabold">Aspect ~2.4:1 (1440×600 px)</span>
+                  </div>
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      value={form.image_tablet}
+                      onChange={(e) => setForm({ ...form, image_tablet: e.target.value })}
+                      placeholder="Paste Tablet poster URL or upload (Optional)"
+                      className="input text-xs flex-1"
+                    />
+                    <label className="btn text-xs px-3.5 py-2 rounded-xl border border-teal-400 bg-teal-600 font-bold text-white hover:bg-teal-700 cursor-pointer flex items-center gap-1.5 shrink-0 shadow-xs">
+                      <Upload className="h-3.5 w-3.5" />
+                      <span>Upload Tablet</span>
+                      <input type="file" accept="image/*" onChange={handleDeviceFileUpload('tablet')} className="hidden" />
+                    </label>
+                  </div>
+                </div>
+
+                {/* 3. Mobile Phone Poster */}
+                <div className="p-3.5 bg-slate-50 rounded-2xl border border-slate-200 space-y-2">
+                  <div className="flex items-center justify-between">
+                    <label className="block text-xs font-bold text-slate-900 flex items-center gap-1.5">
+                      <Smartphone className="h-4 w-4 text-teal-600" />
+                      <span>3. Mobile Phone Poster</span> <span className="text-[10px] font-bold text-slate-400">(Optional - falls back to Desktop)</span>
+                    </label>
+                    <span className="text-[10px] text-slate-500 font-extrabold">Aspect 16:9 / 4:3 (1080×608 px)</span>
+                  </div>
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      value={form.image_mobile}
+                      onChange={(e) => setForm({ ...form, image_mobile: e.target.value })}
+                      placeholder="Paste Mobile poster URL or upload (Optional)"
+                      className="input text-xs flex-1"
+                    />
+                    <label className="btn text-xs px-3.5 py-2 rounded-xl border border-teal-400 bg-teal-600 font-bold text-white hover:bg-teal-700 cursor-pointer flex items-center gap-1.5 shrink-0 shadow-xs">
+                      <Upload className="h-3.5 w-3.5" />
+                      <span>Upload Mobile</span>
+                      <input type="file" accept="image/*" onChange={handleDeviceFileUpload('mobile')} className="hidden" />
+                    </label>
+                  </div>
                 </div>
 
                 {/* BACKGROUND REMOVAL OPTION & LIVE PREVIEW */}
                 {form.image && (
-                  <div className="mt-3 p-3.5 bg-slate-50 rounded-2xl border border-slate-200/90 space-y-3">
+                  <div className="mt-3 p-3.5 bg-slate-900 rounded-2xl text-white space-y-3 shadow-md">
                     <div className="flex items-center justify-between gap-3">
                       <div>
-                        <span className="text-xs font-bold text-slate-900 block">
+                        <span className="text-xs font-bold block">
                           Background Mode:
                         </span>
-                        <p className="text-[11px] text-slate-500">
+                        <p className="text-[11px] text-slate-300">
                           {form.is_bg_removed
                             ? '✂️ Transparent Cutout (Background removed)'
                             : '🖼️ Original Background (Full Poster)'}
                         </p>
                       </div>
 
-                      {/* 1-Click Background Toggle Button */}
                       <button
                         type="button"
                         disabled={isRemovingBg}
                         onClick={handleToggleRemoveBg}
                         className={`text-xs px-3.5 py-2 rounded-xl font-bold flex items-center gap-1.5 shadow-xs transition active:scale-95 cursor-pointer ${
                           form.is_bg_removed
-                            ? 'bg-slate-200 hover:bg-slate-300 text-slate-800 border border-slate-300'
-                            : 'bg-teal-600 hover:bg-teal-700 text-white'
+                            ? 'bg-slate-700 hover:bg-slate-600 text-white border border-slate-500'
+                            : 'bg-teal-500 hover:bg-teal-400 text-slate-950 font-black'
                         }`}
                       >
                         <Wand2 className={`h-3.5 w-3.5 ${isRemovingBg ? 'animate-spin' : ''}`} />
@@ -661,7 +735,7 @@ export default function AdminHeroPosters() {
                           {isRemovingBg
                             ? 'Removing...'
                             : form.is_bg_removed
-                            ? '↺ Revert to Original'
+                            ? '↺ Revert Original'
                             : '✂️ Remove Background'}
                         </span>
                       </button>
@@ -671,8 +745,8 @@ export default function AdminHeroPosters() {
                     <div
                       className={`overflow-hidden rounded-xl p-2 flex flex-col items-center justify-center border-2 border-dashed ${
                         form.is_bg_removed
-                          ? 'bg-[radial-gradient(#cbd5e1_1px,transparent_1px)] [background-size:12px_12px] bg-slate-100 border-teal-400'
-                          : 'bg-slate-900 border-slate-300'
+                          ? 'bg-[radial-gradient(#cbd5e1_1px,transparent_1px)] [background-size:12px_12px] bg-slate-800 border-teal-400'
+                          : 'bg-slate-950 border-slate-700'
                       }`}
                     >
                       <img
@@ -684,10 +758,10 @@ export default function AdminHeroPosters() {
                             'https://placehold.co/1200x500?text=Invalid+Image+URL';
                         }}
                       />
-                      <span className="mt-2 text-[10px] text-slate-600 font-bold">
+                      <span className="mt-2 text-[10px] text-slate-400 font-bold">
                         {form.is_bg_removed
                           ? '✓ Transparent PNG Ready (Floats over website gradient)'
-                          : '✓ Full Edge-to-Edge Poster Banner'}
+                          : '✓ Full Edge-to-Edge Poster Banner (Auto Height Adjust)'}
                       </span>
                     </div>
                   </div>

@@ -16,7 +16,9 @@ import {
   ExternalLink,
   Image as ImageIcon,
   Building2,
+  LogOut,
 } from 'lucide-react';
+import { useAuth } from '../../context/AuthContext';
 import type { AdminTab } from './adminTypes';
 
 type AdminSidebarProps = {
@@ -42,24 +44,42 @@ export default function AdminSidebar({
   onCloseMobile,
 }: AdminSidebarProps) {
   const navigate = useNavigate();
+  const { signOut } = useAuth();
 
   const menuItems = [
     { id: 'overview' as AdminTab, label: 'Overview', icon: LayoutDashboard, path: '/admin' },
     {
-      id: 'sells' as AdminTab,
-      label: 'Sell Requests',
-      icon: BadgeIndianRupee,
-      badge: counts.sells > 0 ? String(counts.sells) : undefined,
-      badgeColor: 'bg-amber-500 text-white',
-      path: '/admin/sells',
+      id: 'wholesalers' as AdminTab,
+      label: 'B2B & Vendor Khata',
+      icon: Building2,
+      badge: 'Lucknow B2B',
+      badgeColor: 'bg-teal-600 text-white',
+      path: '/admin/wholesalers',
     },
     {
-      id: 'repairs' as AdminTab,
-      label: 'Repair Bookings',
-      icon: Wrench,
-      badge: counts.repairs > 0 ? String(counts.repairs) : undefined,
-      badgeColor: 'bg-purple-500 text-white',
-      path: '/admin/repairs',
+      id: 'orders' as AdminTab,
+      label: 'Customer Orders',
+      icon: Package,
+      badge: counts.orders > 0 ? String(counts.orders) : undefined,
+      badgeColor: 'bg-blue-600 text-white',
+      path: '/admin/orders',
+    },
+    { id: 'reviews' as AdminTab, label: 'Customer Reviews', icon: MessageSquare, path: '/admin?tab=reviews' },
+    {
+      id: 'agents' as AdminTab,
+      label: 'Delivery Fleet',
+      icon: Truck,
+      badge: `${counts.agents} Active`,
+      badgeColor: 'bg-emerald-600 text-white',
+      path: '/admin/agents',
+    },
+    {
+      id: 'banners' as AdminTab,
+      label: 'Hero Posters',
+      icon: ImageIcon,
+      badge: 'Live',
+      badgeColor: 'bg-teal-600 text-white',
+      path: '/admin/banners',
     },
     {
       id: 'catalog' as AdminTab,
@@ -76,6 +96,23 @@ export default function AdminSidebar({
       path: '/admin/pricing',
     },
     {
+      id: 'repairs' as AdminTab,
+      label: 'Repair Bookings',
+      icon: Wrench,
+      badge: counts.repairs > 0 ? String(counts.repairs) : undefined,
+      badgeColor: 'bg-purple-500 text-white',
+      path: '/admin/repairs',
+    },
+    {
+      id: 'sells' as AdminTab,
+      label: 'Sell Requests',
+      icon: BadgeIndianRupee,
+      badge: counts.sells > 0 ? String(counts.sells) : undefined,
+      badgeColor: 'bg-amber-500 text-white',
+      path: '/admin/sells',
+    },
+    { id: 'parts' as AdminTab, label: 'Spare Parts', icon: Wrench, path: '/admin?tab=parts' },
+    {
       id: 'products' as AdminTab,
       label: 'Store Inventory',
       icon: Store,
@@ -83,41 +120,7 @@ export default function AdminSidebar({
       badgeColor: 'bg-brand-600 text-white',
       path: '/admin/products',
     },
-    {
-      id: 'orders' as AdminTab,
-      label: 'Customer Orders',
-      icon: Package,
-      badge: counts.orders > 0 ? String(counts.orders) : undefined,
-      badgeColor: 'bg-blue-600 text-white',
-      path: '/admin/orders',
-    },
-    {
-      id: 'agents' as AdminTab,
-      label: 'Delivery Fleet',
-      icon: Truck,
-      badge: `${counts.agents} Active`,
-      badgeColor: 'bg-emerald-600 text-white',
-      path: '/admin/agents',
-    },
-    {
-      id: 'wholesalers' as AdminTab,
-      label: 'B2B & Vendor Khata',
-      icon: Building2,
-      badge: 'Lucknow B2B',
-      badgeColor: 'bg-teal-600 text-white',
-      path: '/admin/wholesalers',
-    },
-    {
-      id: 'banners' as AdminTab,
-      label: 'Hero Posters',
-      icon: ImageIcon,
-      badge: 'Live',
-      badgeColor: 'bg-teal-600 text-white',
-      path: '/admin/banners',
-    },
-    { id: 'parts' as AdminTab, label: 'Spare Parts', icon: Wrench, path: '/admin?tab=parts' },
     { id: 'users' as AdminTab, label: 'Users & Roles', icon: Users, path: '/admin?tab=users' },
-    { id: 'reviews' as AdminTab, label: 'Customer Reviews', icon: MessageSquare, path: '/admin?tab=reviews' },
   ];
 
   const handleItemClick = (item: typeof menuItems[0]) => {
@@ -208,6 +211,17 @@ export default function AdminSidebar({
           <span>Wholesaler Hub</span>
           <ExternalLink className="h-3.5 w-3.5" />
         </Link>
+        <button
+          onClick={() => {
+            signOut();
+            navigate('/admin-login');
+          }}
+          className="flex w-full items-center justify-between rounded-xl px-3 py-2 text-xs font-bold text-rose-700 bg-rose-50 hover:bg-rose-100 border border-rose-200/60 transition mt-1 cursor-pointer"
+        >
+          <span className="flex items-center gap-1.5">
+            <LogOut className="h-3.5 w-3.5" /> Sign Out Admin
+          </span>
+        </button>
       </div>
     </div>
   );

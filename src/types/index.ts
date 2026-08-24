@@ -371,6 +371,8 @@ export type HeroPoster = {
   secondaryHref: string;
   accent: string;
   image: string;
+  image_tablet?: string;
+  image_mobile?: string;
   bullets: string[];
   is_active: boolean;
   sort_order?: number;

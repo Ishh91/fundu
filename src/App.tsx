@@ -45,7 +45,11 @@ function MainLayout() {
   const isWholesalerPath =
     location.pathname.startsWith('/wholesaler') ||
     location.pathname.startsWith('/wholesaler-login');
+  const isProfilePath =
+    location.pathname.startsWith('/profile') ||
+    location.pathname.startsWith('/dashboard');
   const isStandaloneApp = isAdminPath || isDeliveryPath || isWholesalerPath;
+  const hideFooter = isStandaloneApp || isProfilePath;
 
   return (
     <div className="flex min-h-screen flex-col">
@@ -89,6 +93,7 @@ function MainLayout() {
           <Route path="/order-success" element={<OrderSuccess />} />
           <Route path="/document-doctor" element={<DocumentDoctor />} />
           <Route path="/partner" element={<PartnerProgram />} />
+          <Route path="/festival" element={<BuyPhones />} />
           <Route path="/store" element={<FunduStore />} />
           <Route path="/brand" element={<BrandHub />} />
           <Route path="/recycle" element={<Recycle />} />
@@ -97,7 +102,7 @@ function MainLayout() {
           <Route path="*" element={<NotFound />} />
         </Routes>
       </main>
-      {!isStandaloneApp && <Footer />}
+      {!hideFooter && <Footer />}
     </div>
   );
 }

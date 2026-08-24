@@ -14,6 +14,7 @@ import {
   Mail,
   ExternalLink,
   Lock,
+  Trash2,
 } from 'lucide-react';
 import type { Profile, WholesaleInventory, WholesaleOrder } from '../../types';
 import { db, formatINR } from '../../lib/db';
@@ -156,6 +157,24 @@ export default function AdminWholesalers() {
       alert(err instanceof Error ? err.message : 'Failed to create wholesaler account');
     } finally {
       setAddVendorSubmitting(false);
+    }
+  };
+
+  const handleDeleteVendor = async (vendor: Profile) => {
+    const name = vendor.business_name || vendor.full_name || 'this wholesaler partner';
+    if (!window.confirm(`Are you sure you want to remove Wholesaler Partner "${name}"?\n\nThis will remove their B2B wholesaler account and portal access.`)) {
+      return;
+    }
+
+    try {
+      await db.from('profiles').delete().eq('id', vendor.id);
+      await db.from('users').delete().eq('id', vendor.id);
+
+      alert(`🗑️ Wholesaler Partner "${name}" removed successfully!`);
+      setVendors((prev) => prev.filter((v) => v.id !== vendor.id));
+    } catch (err) {
+      console.error('Failed to delete wholesaler partner:', err);
+      alert('Failed to remove wholesaler partner.');
     }
   };
 
@@ -469,14 +488,19 @@ export default function AdminWholesalers() {
                     </button>
                   </div>
 
-                  {/* Share Login Credentials */}
-                  <div className="pt-2 border-t border-ink-100 flex items-center justify-between text-[11px]">
-                    <span className="text-ink-500 font-medium">Portal Access:</span>
+                  {/* Share Credentials & Remove Wholesaler */}
+                  <div className="pt-2 border-t border-ink-100 flex items-center justify-between text-[11px] gap-2">
                     <button
                       onClick={() => setShareCredModal({ vendor })}
                       className="inline-flex items-center gap-1 text-brand-600 font-bold hover:underline"
                     >
-                      <Share2 className="h-3 w-3 text-brand-500" /> Share Credentials & Link
+                      <Share2 className="h-3 w-3 text-brand-500" /> Share Credentials
+                    </button>
+                    <button
+                      onClick={() => handleDeleteVendor(vendor)}
+                      className="inline-flex items-center gap-1 text-rose-600 font-bold hover:bg-rose-50 px-2 py-1 rounded-lg transition cursor-pointer"
+                    >
+                      <Trash2 className="h-3 w-3 text-rose-500" /> Remove Partner
                     </button>
                   </div>
                 </div>
