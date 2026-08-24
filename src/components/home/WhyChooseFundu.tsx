@@ -52,7 +52,7 @@ const WHY_CHOOSE_PILLARS = [
 export default function WhyChooseFundu() {
   return (
     <section className="container-page py-8">
-      <div className="rounded-3xl border border-gray-200 bg-[#f8fafc] p-6 sm:p-8 md:p-10 shadow-sm">
+      <div className="rounded-3xl border border-white/80 bg-white/85 p-6 sm:p-8 md:p-10 shadow-[0_16px_40px_rgba(0,0,0,0.04)] backdrop-blur-xl">
         {/* Header */}
         <div className="text-center max-w-2xl mx-auto">
           <span className="rounded-full bg-teal-50 border border-teal-200 px-3 py-1 text-xs font-extrabold uppercase tracking-wider text-teal-700">

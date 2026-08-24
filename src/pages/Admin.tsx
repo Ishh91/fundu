@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
+import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import {
   Menu,
   X,
@@ -9,6 +9,11 @@ import {
   MapPin,
   Tag,
   Wrench,
+  ShieldAlert,
+  Lock,
+  LogIn,
+  Truck,
+  ShieldCheck,
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import type {
@@ -47,12 +52,33 @@ import AdminSpareParts from './admin/AdminSpareParts';
 import AdminUsers from './admin/AdminUsers';
 import AdminReviews from './admin/AdminReviews';
 import AdminHeroPosters from './admin/AdminHeroPosters';
+import AdminWholesalers from './admin/AdminWholesalers';
 
 export default function Admin() {
-  const { user, profile, loading } = useAuth();
+  const { user, profile, loading, signIn } = useAuth();
   const navigate = useNavigate();
   const { subtab } = useParams<{ subtab?: string }>();
   const [searchParams] = useSearchParams();
+
+  // Admin Login Form State
+  const [adminEmail, setAdminEmail] = useState('admin@fundu.in');
+  const [adminPassword, setAdminPassword] = useState('Admin@123456');
+  const [adminLoginLoading, setAdminLoginLoading] = useState(false);
+  const [adminLoginError, setAdminLoginError] = useState<string | null>(null);
+
+  const handleAdminSignIn = async (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
+    setAdminLoginLoading(true);
+    setAdminLoginError(null);
+    try {
+      const res = await signIn(adminEmail, adminPassword);
+      if (res.error) throw new Error(res.error);
+    } catch (err: any) {
+      setAdminLoginError(err?.message || 'Invalid admin credentials');
+    } finally {
+      setAdminLoginLoading(false);
+    }
+  };
 
   // Tab state derived from URL or params
   const [tab, setTab] = useState<AdminTab>('overview');
@@ -107,6 +133,7 @@ export default function Admin() {
         'sells',
         'orders',
         'repairs',
+        'wholesalers',
         'agents',
         'products',
         'pricing',
@@ -133,9 +160,10 @@ export default function Admin() {
     name: '',
     phone: '',
     email: '',
+    login_pin: 'Rider@123',
     zones: ['Gomti Nagar', 'Hazratganj', 'Aliganj', 'Indira Nagar'] as string[],
-    vehicle_type: 'Bike',
-    vehicle_number: '',
+    vehicle_type: 'Hero Splendor (Bike)',
+    vehicle_number: 'UP 32 BK 4421',
     max_capacity: 6,
     status: 'available' as 'available' | 'offline',
     current_locality: 'Gomti Nagar, Lucknow',
@@ -299,7 +327,7 @@ export default function Admin() {
       else if (agentsRes.data) setAgents(agentsRes.data as DeliveryAgent[]);
 
       if (masterPhonesRes.error) errors.push(`master_phones: ${masterPhonesRes.error.message}`);
-      else if (masterPhonesRes.data && masterPhonesRes.data.length > 0) {
+      else if (Array.isArray(masterPhonesRes.data) && masterPhonesRes.data.length > 0) {
         setMasterPhones(masterPhonesRes.data as MasterPhone[]);
       }
 
@@ -568,7 +596,7 @@ export default function Admin() {
       if (res.error) throw new Error(res.error);
       alert(`🎉 Successfully synced ${res.count || ALL_INDIAN_PHONES_CATALOG.length} smartphones into database!`);
       const { data } = await db.from('master_phones').select('*');
-      if (data && data.length > 0) {
+      if (Array.isArray(data) && data.length > 0) {
         setMasterPhones(data as MasterPhone[]);
       }
     } catch (err: any) {
@@ -818,26 +846,73 @@ export default function Admin() {
   };
 
   const saveDeliveryAgent = async () => {
+    if (!agentForm.name.trim() || !agentForm.phone.trim()) {
+      alert('⚠️ Please enter delivery partner full name and phone number.');
+      return;
+    }
     setAgentSaving(true);
     try {
+      const generatedRiderId = `LKO-RIDER-${Math.floor(1000 + Math.random() * 9000)}`;
+      const generatedEmail =
+        agentForm.email.trim() ||
+        `rider.${agentForm.name.toLowerCase().replace(/[^a-z0-9]/g, '')}@fundu.in`;
+      const loginPin = agentForm.login_pin.trim() || 'Rider@123';
+
       const payload = {
         name: agentForm.name.trim(),
         phone: agentForm.phone.trim(),
-        email: agentForm.email.trim() || null,
+        email: generatedEmail,
+        login_pin: loginPin,
+        rider_id: generatedRiderId,
         zones: agentForm.zones,
         vehicle_type: agentForm.vehicle_type,
-        vehicle_number: agentForm.vehicle_number.trim() || null,
+        vehicle_number: agentForm.vehicle_number.trim() || 'UP 32 BK 4421',
         max_capacity: Number(agentForm.max_capacity) || 6,
         status: agentForm.status,
         current_locality: agentForm.current_locality,
         current_orders_count: 0,
         rating: 4.9,
       };
+
       const { data, error } = await db.from('delivery_agents').insert(payload).select('*').single();
       if (error) throw error;
+
+      // Also create login account in database
+      await db.from('users').insert({
+        email: generatedEmail,
+        password: loginPin,
+        full_name: agentForm.name.trim(),
+        phone: agentForm.phone.trim(),
+        role: 'delivery',
+        is_verified: true,
+      });
+
       setAgents((prev) => [data as DeliveryAgent, ...prev]);
       setAgentModalOpen(false);
-      alert(`🎉 Registered ${payload.name} as verified Lucknow delivery partner!`);
+
+      const secretUrl = `${window.location.origin}/fleet-desk`;
+      const waText =
+        `🎉 *WELCOME TO FUNDU DISPATCH FLEET - RIDER ID ISSUED*\n\n` +
+        `👤 *Agent Name:* ${agentForm.name}\n` +
+        `🆔 *Rider ID:* ${generatedRiderId}\n` +
+        `📧 *Login Email:* ${generatedEmail}\n` +
+        `🔑 *Secret Passcode:* ${loginPin}\n` +
+        `📍 *Assigned Zone:* ${agentForm.current_locality}\n` +
+        `🔗 *Private Fleet Portal URL:* ${secretUrl}\n\n` +
+        `Please log in on the private fleet portal and keep GPS online for doorstep pickups.`;
+
+      const waUrl = `https://wa.me/91${agentForm.phone.replace(/\D/g, '')}?text=${encodeURIComponent(waText)}`;
+
+      alert(
+        `🎉 Delivery Partner Account Created Successfully!\n\n` +
+        `🆔 Rider ID: ${generatedRiderId}\n` +
+        `📧 Login Email: ${generatedEmail}\n` +
+        `🔑 Secret Login Passcode: ${loginPin}\n` +
+        `🔗 Private Fleet Desk: ${secretUrl}\n\n` +
+        `Opening WhatsApp briefing link to send to ${agentForm.name}...`
+      );
+
+      window.open(waUrl, '_blank');
     } catch (err: any) {
       alert(err?.message || 'Failed to register delivery partner');
     } finally {
@@ -876,6 +951,112 @@ export default function Admin() {
       setCustomPhoneSaving(false);
     }
   };
+
+  // 1. DELIVERY PARTNER STRICT BLOCK
+  if (profile?.role === 'delivery' || profile?.role === 'rider' || (user as any)?.role === 'delivery') {
+    return (
+      <div className="min-h-screen bg-slate-950 text-white flex flex-col items-center justify-center p-4 font-sans">
+        <div className="w-full max-w-md bg-slate-900 border border-red-500/40 rounded-3xl p-8 text-center space-y-5 shadow-2xl animate-fade-in">
+          <div className="w-16 h-16 rounded-2xl bg-red-500/10 text-red-400 grid place-items-center mx-auto border border-red-500/20 shadow-inner">
+            <ShieldAlert className="h-8 w-8" />
+          </div>
+          <div className="space-y-2">
+            <h2 className="font-display font-black text-2xl text-red-400">Access Restricted</h2>
+            <p className="text-xs text-slate-300">
+              Delivery Partner & Rider accounts are strictly not permitted to view or manage the Central Admin Console.
+            </p>
+          </div>
+          <div className="p-3.5 rounded-2xl bg-slate-800/80 border border-slate-700 text-left text-xs text-slate-300 space-y-1">
+            <p className="font-bold text-slate-200">Current Logged-in Account:</p>
+            <p className="text-slate-400 font-mono">{user?.email || (user as any)?.phone || 'Delivery Agent'}</p>
+            <span className="badge bg-amber-500/20 text-amber-300 font-bold text-[10px] uppercase">
+              Role: Delivery Partner
+            </span>
+          </div>
+          <div className="pt-2">
+            <Link
+              to="/delivery"
+              className="btn bg-brand-500 hover:bg-brand-600 text-slate-950 font-black px-5 py-3 rounded-2xl w-full flex items-center justify-center gap-2 shadow-lg text-xs"
+            >
+              <Truck className="h-4 w-4" /> Go to Field Rider Portal
+            </Link>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // 2. ADMIN AUTHENTICATION GATE (If not logged in as Admin)
+  if (!user || profile?.role !== 'admin') {
+    return (
+      <div className="min-h-screen bg-slate-950 text-white flex flex-col items-center justify-center p-4 font-sans">
+        <div className="w-full max-w-md bg-slate-900 border border-slate-800 rounded-3xl p-8 shadow-2xl space-y-6 animate-fade-in">
+          <div className="text-center space-y-2">
+            <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-brand-600 to-teal-500 text-white grid place-items-center mx-auto shadow-lg">
+              <Lock className="h-7 w-7" />
+            </div>
+            <h1 className="font-display text-2xl font-black">Fundu Central Admin</h1>
+            <p className="text-xs text-slate-400">
+              Restricted management console for Lucknow Operations.
+            </p>
+          </div>
+
+          {adminLoginError && (
+            <div className="p-3 rounded-2xl bg-red-500/10 border border-red-500/30 text-red-300 text-xs flex items-center gap-2">
+              <ShieldAlert className="h-4 w-4 shrink-0" />
+              <span>{adminLoginError}</span>
+            </div>
+          )}
+
+          <form onSubmit={handleAdminSignIn} className="space-y-4 text-xs">
+            <div>
+              <label className="font-bold text-slate-300 mb-1 block">Admin Email Address</label>
+              <input
+                type="email"
+                required
+                value={adminEmail}
+                onChange={(e) => setAdminEmail(e.target.value)}
+                placeholder="admin@fundu.in"
+                className="input bg-slate-800 border-slate-700 text-white text-xs w-full"
+              />
+            </div>
+
+            <div>
+              <label className="font-bold text-slate-300 mb-1 block">Admin Password</label>
+              <input
+                type="password"
+                required
+                value={adminPassword}
+                onChange={(e) => setAdminPassword(e.target.value)}
+                placeholder="••••••••"
+                className="input bg-slate-800 border-slate-700 text-white text-xs w-full"
+              />
+            </div>
+
+            <button
+              type="submit"
+              disabled={adminLoginLoading}
+              className="btn bg-brand-500 hover:bg-brand-600 text-slate-950 font-black text-xs py-3 rounded-2xl w-full flex items-center justify-center gap-2 shadow-lg"
+            >
+              <LogIn className="h-4 w-4" />
+              {adminLoginLoading ? 'Authenticating Admin...' : 'Sign In as Administrator'}
+            </button>
+          </form>
+
+          <div className="p-3.5 rounded-2xl bg-slate-800/60 border border-slate-700/60 text-xs text-slate-400 space-y-1">
+            <p className="font-bold text-slate-300">Default Admin Credentials:</p>
+            <p>Email: <span className="font-mono text-brand-400">admin@fundu.in</span></p>
+            <p>Password: <span className="font-mono text-brand-400">Admin@123456</span></p>
+          </div>
+
+          <div className="pt-2 border-t border-slate-800 flex items-center justify-between text-xs text-slate-400">
+            <Link to="/" className="hover:text-white">← Main Store</Link>
+            <Link to="/delivery" className="text-teal-400 hover:underline">Field Rider Portal →</Link>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   if (loading || dataLoading) {
     return (
@@ -925,6 +1106,7 @@ export default function Admin() {
                 {tab === 'pricing' && 'Pricing Valuation Rules'}
                 {tab === 'orders' && 'Store Customer Orders'}
                 {tab === 'products' && 'Refurbished Store Inventory'}
+                {tab === 'wholesalers' && 'B2B Wholesalers & Vendor Khata'}
                 {tab === 'agents' && 'Lucknow Delivery Fleet'}
                 {tab === 'banners' && 'Hero Section Posters & Banners'}
                 {tab === 'parts' && 'Spare Parts & OEM Components'}
@@ -1204,6 +1386,10 @@ export default function Admin() {
             />
           )}
 
+          {tab === 'wholesalers' && (
+            <AdminWholesalers />
+          )}
+
           {tab === 'banners' && (
             <AdminHeroPosters />
           )}
@@ -1217,7 +1403,7 @@ export default function Admin() {
                 if (part) {
                   setPartForm({
                     title: part.title,
-                    brand: part.brand,
+                    brand: part.brand || 'Apple',
                     model: part.model,
                     category: part.category,
                     price: String(part.price),
@@ -1568,42 +1754,102 @@ export default function Admin() {
         </div>
       )}
 
-      {/* MODAL 4: ADD DELIVERY AGENT */}
+      {/* MODAL 4: ADD DELIVERY AGENT & ISSUE RIDER ID */}
       {agentModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-ink-900/50 p-4 overflow-y-auto">
-          <div className="card w-full max-w-md p-6 my-4 space-y-4 bg-white shadow-2xl">
+          <div className="card w-full max-w-lg p-6 my-4 space-y-4 bg-white shadow-2xl rounded-3xl">
             <div className="flex items-center justify-between pb-3 border-b border-ink-100">
-              <h3 className="font-display text-lg font-bold text-ink-900">Register Delivery Partner</h3>
+              <div>
+                <span className="badge bg-brand-50 text-brand-700 font-bold text-[10px] uppercase">
+                  Lucknow Dispatch Fleet
+                </span>
+                <h3 className="font-display text-lg font-black text-ink-900 mt-0.5">
+                  Register Partner & Issue Rider ID
+                </h3>
+              </div>
               <button onClick={() => setAgentModalOpen(false)} className="text-ink-400 hover:text-ink-700">
                 <X className="h-5 w-5" />
               </button>
             </div>
 
-            <div className="space-y-3">
-              <div>
-                <label className="label text-xs">Partner Full Name</label>
-                <input
-                  type="text"
-                  value={agentForm.name}
-                  onChange={(e) => setAgentForm({ ...agentForm, name: e.target.value })}
-                  placeholder="e.g. Rahul Verma"
-                  className="input text-xs font-bold"
-                />
+            <div className="space-y-3 text-xs">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label className="label text-xs">Partner Full Name *</label>
+                  <input
+                    type="text"
+                    required
+                    value={agentForm.name}
+                    onChange={(e) => setAgentForm({ ...agentForm, name: e.target.value })}
+                    placeholder="e.g. Ankit Sharma"
+                    className="input text-xs font-bold"
+                  />
+                </div>
+
+                <div>
+                  <label className="label text-xs">Mobile Number (WhatsApp) *</label>
+                  <input
+                    type="text"
+                    required
+                    value={agentForm.phone}
+                    onChange={(e) => setAgentForm({ ...agentForm, phone: e.target.value })}
+                    placeholder="e.g. +91 98391 22345"
+                    className="input text-xs font-bold"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 bg-slate-50 p-3.5 rounded-2xl border border-slate-200/80">
+                <div>
+                  <label className="label text-xs font-bold text-slate-800">Login Email ID</label>
+                  <input
+                    type="email"
+                    value={agentForm.email}
+                    onChange={(e) => setAgentForm({ ...agentForm, email: e.target.value })}
+                    placeholder="e.g. rider.ankit@fundu.in"
+                    className="input text-xs font-mono bg-white"
+                  />
+                </div>
+
+                <div>
+                  <label className="label text-xs font-bold text-slate-800">Secret Login PIN / Passcode *</label>
+                  <input
+                    type="text"
+                    required
+                    value={agentForm.login_pin}
+                    onChange={(e) => setAgentForm({ ...agentForm, login_pin: e.target.value })}
+                    placeholder="e.g. Rider@123"
+                    className="input text-xs font-mono font-bold bg-white text-emerald-800"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label className="label text-xs">Vehicle Type & Model</label>
+                  <input
+                    type="text"
+                    value={agentForm.vehicle_type}
+                    onChange={(e) => setAgentForm({ ...agentForm, vehicle_type: e.target.value })}
+                    placeholder="e.g. Hero Splendor (Bike)"
+                    className="input text-xs font-medium"
+                  />
+                </div>
+
+                <div>
+                  <label className="label text-xs">Vehicle Reg. Number (UP 32)</label>
+                  <input
+                    type="text"
+                    value={agentForm.vehicle_number}
+                    onChange={(e) => setAgentForm({ ...agentForm, vehicle_number: e.target.value })}
+                    placeholder="e.g. UP 32 BK 4421"
+                    className="input text-xs font-bold font-mono"
+                  />
+                </div>
               </div>
 
               <div>
-                <label className="label text-xs">Phone Number</label>
-                <input
-                  type="text"
-                  value={agentForm.phone}
-                  onChange={(e) => setAgentForm({ ...agentForm, phone: e.target.value })}
-                  placeholder="e.g. +91 9876543210"
-                  className="input text-xs font-bold"
-                />
-              </div>
-
-              <div>
-                <label className="label text-xs">Primary Lucknow Locality</label>
+                <label className="label text-xs">Primary Lucknow Operational Zone</label>
                 <select
                   value={agentForm.current_locality}
                   onChange={(e) => setAgentForm({ ...agentForm, current_locality: e.target.value })}
@@ -1616,14 +1862,21 @@ export default function Admin() {
                   ))}
                 </select>
               </div>
+
+              <div className="p-3 rounded-2xl bg-amber-50 border border-amber-200 text-amber-900 text-[11px] flex items-center gap-2">
+                <ShieldCheck className="h-4 w-4 text-amber-600 shrink-0" />
+                <span>
+                  Admin will provision credentials for private route: <strong className="font-mono text-amber-950">/fleet-desk</strong>. A WhatsApp briefing with login link will be generated automatically.
+                </span>
+              </div>
             </div>
 
             <div className="flex justify-end gap-2 pt-3 border-t border-ink-100">
               <button onClick={() => setAgentModalOpen(false)} className="btn-outline text-xs">
                 Cancel
               </button>
-              <button onClick={saveDeliveryAgent} disabled={agentSaving} className="btn-primary text-xs">
-                {agentSaving ? 'Registering...' : 'Register Partner'}
+              <button onClick={saveDeliveryAgent} disabled={agentSaving} className="btn-primary text-xs bg-brand-600 hover:bg-brand-700 font-bold px-4 py-2">
+                {agentSaving ? 'Provisioning ID...' : '🚀 Issue Rider ID & Provision Account'}
               </button>
             </div>
           </div>

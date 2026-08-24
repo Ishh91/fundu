@@ -20,7 +20,7 @@ export default function TrendingArticles() {
           <Link
             key={article.title}
             to={article.href}
-            className="rounded-[24px] border border-[#dce5e8] bg-white p-6 shadow-soft transition hover:-translate-y-1 hover:border-brand-200 hover:shadow-card"
+            className="rounded-3xl border border-white/80 bg-white/85 p-6 shadow-[0_12px_32px_rgba(0,0,0,0.04)] backdrop-blur-xl transition hover:-translate-y-1 hover:shadow-xl"
           >
             <p className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.2em] text-brand-700">
               <TrendingUp className="h-3.5 w-3.5" /> {article.category}

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import {
   BadgeIndianRupee,
   Search,
@@ -8,14 +8,14 @@ import {
   MapPin,
   Camera,
   ExternalLink,
-  CheckCircle2,
   Clock,
   UserCheck,
-  Zap,
+  Building2,
+  MessageSquare,
 } from 'lucide-react';
 import type { SellRequest, DeliveryAgent, MasterPhone } from './adminTypes';
 import { statusColors } from './adminTypes';
-import { formatINR } from '../../lib/db';
+import { db, formatINR } from '../../lib/db';
 
 type AdminSellRequestsProps = {
   sells: SellRequest[];
@@ -43,6 +43,40 @@ export default function AdminSellRequests({
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
 
+  const handleTransferToWholesale = async (sell: SellRequest) => {
+    try {
+      const cost = sell.final_price || sell.estimated_price || 15000;
+      const wholesalePrice = Math.round(cost + 1200);
+      const retailPrice = Math.round(cost + 4000);
+
+      const { error } = await db.from('wholesale_inventories').insert({
+        brand: sell.brand,
+        model: sell.model,
+        storage: sell.storage || '128 GB',
+        condition: sell.condition || 'Grade A',
+        wholesale_price: wholesalePrice,
+        retail_price: retailPrice,
+        stock: 1,
+        imei: sell.imei || null,
+        source_sell_request_id: sell.id,
+        status: 'available',
+      });
+
+      if (error) throw error;
+      alert(`🎉 Successfully transferred ${sell.brand} ${sell.model} to B2B Wholesale Inventory at ${formatINR(wholesalePrice)}!`);
+    } catch (err: any) {
+      alert(err?.message || 'Failed to transfer to wholesale inventory');
+    }
+  };
+
+  const getWhatsAppLink = (sell: SellRequest) => {
+    const phone = (sell as any).phone || (sell as any).contact_phone || '9839100000';
+    const text = `Hi, this is Fundu Lucknow regarding your sell request #${sell.id.slice(0, 8)} for ${sell.brand} ${sell.model}. Your pickup executive ${sell.pickup_person_name || 'is on the way'}. Guaranteed Spot Payout: ${formatINR(sell.estimated_price || 0)}.`;
+    const cleanPhone = String(phone).replace(/\D/g, '');
+    const fullPhone = cleanPhone.length === 10 ? `91${cleanPhone}` : cleanPhone;
+    return `https://wa.me/${fullPhone}?text=${encodeURIComponent(text)}`;
+  };
+
   const filteredSells = sells.filter((s) => {
     const matchesSearch = `${s.brand} ${s.model} ${s.pickup_address || ''} ${s.imei || ''} ${s.pickup_area || ''}`
       .toLowerCase()
@@ -52,6 +86,27 @@ export default function AdminSellRequests({
   });
 
   const selectedSell = sells.find((s) => s.id === selectedSellId) || filteredSells[0] || null;
+
+  const getExecutiveTaskWhatsAppLink = (sell: SellRequest, agentPhone?: string) => {
+    const rawPhone = (agentPhone || sell.pickup_person_phone || '9839122345').replace(/\D/g, '');
+    const targetPhone = rawPhone.length === 10 ? `91${rawPhone}` : rawPhone;
+    const text = `🚀 *NEW FUNDU PICKUP TASK ASSIGNED*\n\n` +
+      `📋 *Request ID:* #${sell.id.slice(0, 8).toUpperCase()}\n` +
+      `👤 *Customer Name:* ${(sell as any).full_name || (sell as any).customer_name || 'Customer'}\n` +
+      `📞 *Customer Phone:* ${(sell as any).phone || (sell as any).customer_phone || (sell.payout_details ?? 'N/A')}\n` +
+      `📍 *Pickup Address:* ${sell.pickup_address || 'Lucknow'}\n` +
+      `🏙️ *Locality:* ${sell.pickup_area || 'Lucknow'}\n` +
+      `⏰ *Pickup Slot:* ${sell.pickup_date || ''} (${sell.pickup_slot || ''})\n\n` +
+      `📱 *DEVICE SPECIFICATIONS & QUOTATION:*\n` +
+      `• *Device:* ${sell.brand} ${sell.model} (${sell.storage || '128GB'})\n` +
+      `• *Declared Condition:* ${sell.condition}\n` +
+      `• *Estimated Spot Payout:* ₹${(sell.estimated_price || 0).toLocaleString('en-IN')}\n` +
+      `• *Payout Method:* ${sell.payout_method || 'UPI on spot inspection'}\n` +
+      `• *IMEI:* ${sell.imei || 'Perform *#06# doorstep check'}\n` +
+      `• *Accessories with Phone:* ${sell.accessories?.join(', ') || 'None'}\n\n` +
+      `🔍 *Inspection Guidelines:* Verify display touch, battery health, cameras, and physical edges before processing spot payout in Lucknow.`;
+    return `https://wa.me/${targetPhone}?text=${encodeURIComponent(text)}`;
+  };
 
   return (
     <div className="space-y-6">
@@ -205,7 +260,7 @@ export default function AdminSellRequests({
                     onChange={(e) => onUpdateStatus(selectedSell.id, e.target.value)}
                     className="input text-xs py-1.5 px-3 bg-white font-bold"
                   >
-                    {['pending', 'assigned', 'pickup_scheduled', 'picked_up', 'inspected', 'accepted', 'completed', 'rejected'].map((st) => (
+                    {['pending', 'assigned', 'pickup_scheduled', 'inspection_submitted', 'price_offered', 'picked_up', 'inspected', 'accepted', 'completed', 'rejected'].map((st) => (
                       <option key={st} value={st}>
                         {st.replace('_', ' ').toUpperCase()}
                       </option>
@@ -225,10 +280,51 @@ export default function AdminSellRequests({
                     }}
                     className="btn-primary text-xs px-3 py-1.5 flex items-center gap-1.5 bg-emerald-600 hover:bg-emerald-700 font-bold shadow-xs"
                   >
-                    <Store className="h-3.5 w-3.5" /> Approve & List in Store
+                    <Store className="h-3.5 w-3.5" /> List in Store
                   </button>
+
+                  <button
+                    onClick={() => handleTransferToWholesale(selectedSell)}
+                    className="btn-primary text-xs px-3 py-1.5 flex items-center gap-1.5 bg-teal-600 hover:bg-teal-700 font-bold shadow-xs"
+                  >
+                    <Building2 className="h-3.5 w-3.5" /> Send to B2B Wholesale
+                  </button>
+
+                  <a
+                    href={getWhatsAppLink(selectedSell)}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="btn bg-[#25D366] text-white hover:bg-[#20bd5a] text-xs px-3 py-1.5 flex items-center gap-1.5 font-bold shadow-xs rounded-xl"
+                  >
+                    <MessageSquare className="h-3.5 w-3.5" /> WhatsApp Customer
+                  </a>
                 </div>
               </div>
+
+              {/* Rider Inspection Approval Alert */}
+              {selectedSell.status === 'inspection_submitted' && (
+                <div className="p-4 rounded-2xl bg-amber-50 border border-amber-200 flex flex-wrap items-center justify-between gap-3">
+                  <div>
+                    <span className="badge bg-amber-200 text-amber-900 font-bold text-[10px] uppercase">
+                      🚨 Field Executive Doorstep Inspection Ready
+                    </span>
+                    <p className="font-bold text-amber-950 text-sm mt-1">
+                      Rider has uploaded 4 live photos & verified IMEI. Proposed Spot Payout: <span className="font-black text-emerald-800">{formatINR(selectedSell.final_price || selectedSell.estimated_price || 0)}</span>
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => {
+                        onUpdateStatus(selectedSell.id, 'confirmed');
+                        alert(`✅ Spot Payout of ${formatINR(selectedSell.final_price || selectedSell.estimated_price || 0)} approved for ${selectedSell.brand} ${selectedSell.model}!\nDelivery Executive portal has received live clearance.`);
+                      }}
+                      className="btn bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs px-4 py-2 rounded-xl shadow-xs"
+                    >
+                      ✅ Approve Spot Payout ({formatINR(selectedSell.final_price || selectedSell.estimated_price || 0)})
+                    </button>
+                  </div>
+                </div>
+              )}
 
               {/* Price & Payout Summary */}
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 bg-ink-50 p-4 rounded-2xl">
@@ -368,6 +464,15 @@ export default function AdminSellRequests({
                         ))}
                       </select>
                     </div>
+
+                    <a
+                      href={getExecutiveTaskWhatsAppLink(selectedSell)}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="mt-3 btn bg-[#25D366] text-white hover:bg-[#20bd5a] text-xs px-3 py-2 flex items-center justify-center gap-1.5 font-bold shadow-xs rounded-xl w-full"
+                    >
+                      <MessageSquare className="h-3.5 w-3.5" /> Send Job Briefing to Executive on WhatsApp
+                    </a>
                   </div>
                 </div>
               </div>

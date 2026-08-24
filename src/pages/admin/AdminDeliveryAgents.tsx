@@ -150,6 +150,68 @@ export default function AdminDeliveryAgents({
                 </div>
               </div>
 
+              <div className="p-4 rounded-2xl bg-slate-900 text-white text-xs space-y-3 shadow-md">
+                <div className="flex items-center justify-between">
+                  <span className="badge bg-brand-500 text-slate-950 font-black text-[10px] uppercase">
+                    🔒 Private Fleet Login Credentials
+                  </span>
+                  <span className="text-[11px] text-slate-400 font-mono">
+                    Secret Route: <strong className="text-emerald-400">/fleet-desk</strong>
+                  </span>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 bg-slate-800/80 p-3 rounded-xl border border-slate-700 font-mono text-[11px]">
+                  <div>
+                    <span className="text-slate-400 text-[10px] block">RIDER OFFICIAL ID:</span>
+                    <span className="font-bold text-brand-400">
+                      {selectedAgent.rider_id || 'LKO-RIDER-' + selectedAgent.id.slice(0, 4).toUpperCase()}
+                    </span>
+                  </div>
+                  <div>
+                    <span className="text-slate-400 text-[10px] block">LOGIN EMAIL:</span>
+                    <span className="font-bold text-white">
+                      {selectedAgent.email || selectedAgent.name.toLowerCase().replace(/\s+/g, '') + '@fundu.in'}
+                    </span>
+                  </div>
+                  <div>
+                    <span className="text-slate-400 text-[10px] block">SECRET PASSCODE:</span>
+                    <span className="font-bold text-emerald-400">{selectedAgent.login_pin || 'Rider@123'}</span>
+                  </div>
+                  <div>
+                    <span className="text-slate-400 text-[10px] block">STATUS:</span>
+                    <span className="font-bold text-teal-300">Active & Verified Fleet</span>
+                  </div>
+                </div>
+
+                <div className="flex flex-wrap items-center gap-2 pt-1">
+                  <a
+                    href={`https://wa.me/91${selectedAgent.phone.replace(/\D/g, '')}?text=${encodeURIComponent(
+                      `🎉 *FUNDU DISPATCH FLEET - RIDER CREDENTIALS*\n\n` +
+                      `👤 *Name:* ${selectedAgent.name}\n` +
+                      `🆔 *Rider ID:* ${selectedAgent.rider_id || 'LKO-RIDER-' + selectedAgent.id.slice(0, 4).toUpperCase()}\n` +
+                      `📧 *Login Email:* ${selectedAgent.email || selectedAgent.name.toLowerCase().replace(/\s+/g, '') + '@fundu.in'}\n` +
+                      `🔑 *Secret Passcode:* ${selectedAgent.login_pin || 'Rider@123'}\n` +
+                      `🔗 *Private Fleet Portal:* ${window.location.origin}/fleet-desk\n\n` +
+                      `Please log in on the private fleet desk and keep your GPS online.`
+                    )}`}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="btn bg-[#25D366] hover:bg-[#20bd5a] text-white text-xs px-3.5 py-2 font-bold rounded-xl flex items-center gap-1.5 shadow-xs"
+                  >
+                    <PhoneCall className="h-3.5 w-3.5" /> 📲 WhatsApp Credentials to Partner
+                  </a>
+
+                  <a
+                    href="/fleet-desk"
+                    target="_blank"
+                    rel="noreferrer"
+                    className="btn bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs px-3 py-2 font-bold rounded-xl flex items-center gap-1.5"
+                  >
+                    <Truck className="h-3.5 w-3.5 text-brand-400" /> Open Private Rider Desk
+                  </a>
+                </div>
+              </div>
+
               <div className="p-4 rounded-2xl bg-emerald-50/60 border border-emerald-200 text-xs">
                 <p className="font-bold text-emerald-900 flex items-center gap-1.5">
                   <MapPin className="h-4 w-4 text-emerald-600" /> Operational Lucknow Localities

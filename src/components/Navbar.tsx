@@ -24,6 +24,7 @@ import {
   X,
   Check,
   Clock,
+  Truck,
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
@@ -228,10 +229,10 @@ export default function Navbar() {
   // Autocomplete matching models
   const matchingModels = search.trim()
     ? PHONE_LOOKUP_CATALOG.filter(
-        (p) =>
-          p.model.toLowerCase().includes(search.toLowerCase()) ||
-          p.brand.toLowerCase().includes(search.toLowerCase())
-      ).slice(0, 5)
+      (p) =>
+        p.model.toLowerCase().includes(search.toLowerCase()) ||
+        p.brand.toLowerCase().includes(search.toLowerCase())
+    ).slice(0, 5)
     : [];
 
   const toggleDropdown = (name: string) => {
@@ -268,6 +269,12 @@ export default function Navbar() {
           <Building2 className="h-4 w-4" /> Wholesaler Hub
         </Link>
       )}
+      <Link
+        to="/delivery"
+        className="flex items-center gap-2.5 rounded-xl px-4 py-2.5 text-sm font-semibold text-emerald-700 bg-emerald-50 hover:bg-emerald-100 transition"
+      >
+        <Truck className="h-4 w-4" /> Field Rider Portal
+      </Link>
     </>
   );
 
@@ -279,7 +286,7 @@ export default function Navbar() {
         {/* ========================================================================= */}
         <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex h-16 sm:h-18 items-center justify-between gap-3 md:gap-6">
-            
+
             {/* 1. Left: Brand Logo & Location Selector */}
             <div className="flex items-center gap-3 sm:gap-6 shrink-0">
               <Link to="/" className="flex items-center shrink-0" aria-label="Fundu Home">
@@ -427,7 +434,7 @@ export default function Navbar() {
 
             {/* 3. Right: Shopping Cart Icon & Solid Teal Pill Login Button */}
             <div className="flex items-center gap-3 sm:gap-4 shrink-0">
-              
+
               {/* Mobile Location Badge */}
               <button
                 type="button"
@@ -595,15 +602,14 @@ export default function Navbar() {
         <div ref={dropdownRef} className="border-t border-gray-100 bg-white relative hidden lg:block">
           <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
             <nav className="flex items-center justify-between text-[13px] font-semibold text-gray-700 h-11">
-              
+
               {/* All Mega Menu */}
               <div className="relative">
                 <button
                   type="button"
                   onClick={() => toggleDropdown('all')}
-                  className={`flex items-center gap-1.5 py-2 font-bold transition-colors cursor-pointer ${
-                    activeDropdown === 'all' ? 'text-[#00a896]' : 'text-gray-900 hover:text-[#00a896]'
-                  }`}
+                  className={`flex items-center gap-1.5 py-2 font-bold transition-colors cursor-pointer ${activeDropdown === 'all' ? 'text-[#00a896]' : 'text-gray-900 hover:text-[#00a896]'
+                    }`}
                 >
                   <span>All</span>
                   <ChevronDown className={`h-3 w-3 transition-transform duration-200 ${activeDropdown === 'all' ? 'rotate-180 text-[#00a896]' : 'text-gray-400'}`} />
@@ -688,9 +694,8 @@ export default function Navbar() {
                 <button
                   type="button"
                   onClick={() => toggleDropdown('sell-phone')}
-                  className={`flex items-center gap-1 py-2 transition-colors cursor-pointer ${
-                    activeDropdown === 'sell-phone' ? 'text-[#00a896]' : 'hover:text-[#00a896]'
-                  }`}
+                  className={`flex items-center gap-1 py-2 transition-colors cursor-pointer ${activeDropdown === 'sell-phone' ? 'text-[#00a896]' : 'hover:text-[#00a896]'
+                    }`}
                 >
                   <span>Sell Phone</span>
                   <ChevronDown className={`h-3 w-3 transition-transform duration-200 ${activeDropdown === 'sell-phone' ? 'rotate-180 text-[#00a896]' : 'text-gray-400'}`} />
@@ -729,9 +734,8 @@ export default function Navbar() {
                 <button
                   type="button"
                   onClick={() => toggleDropdown('buy-refurbished')}
-                  className={`flex items-center gap-1 py-2 transition-colors cursor-pointer ${
-                    activeDropdown === 'buy-refurbished' ? 'text-[#00a896]' : 'hover:text-[#00a896]'
-                  }`}
+                  className={`flex items-center gap-1 py-2 transition-colors cursor-pointer ${activeDropdown === 'buy-refurbished' ? 'text-[#00a896]' : 'hover:text-[#00a896]'
+                    }`}
                 >
                   <span>Buy Refurbished</span>
                   <ChevronDown className={`h-3 w-3 transition-transform duration-200 ${activeDropdown === 'buy-refurbished' ? 'rotate-180 text-[#00a896]' : 'text-gray-400'}`} />
@@ -814,9 +818,8 @@ export default function Navbar() {
                 <button
                   type="button"
                   onClick={() => toggleDropdown('our-stores')}
-                  className={`flex items-center gap-1.5 py-2 font-bold transition-colors cursor-pointer ${
-                    activeDropdown === 'our-stores' ? 'text-[#00a896]' : 'text-gray-900 hover:text-[#00a896]'
-                  }`}
+                  className={`flex items-center gap-1.5 py-2 font-bold transition-colors cursor-pointer ${activeDropdown === 'our-stores' ? 'text-[#00a896]' : 'text-gray-900 hover:text-[#00a896]'
+                    }`}
                 >
                   <MapPin className="h-3.5 w-3.5 text-[#00a896]" />
                   <span>Our Stores</span>
@@ -1084,11 +1087,10 @@ export default function Navbar() {
                       key={loc}
                       type="button"
                       onClick={() => handleSelectLocality(loc)}
-                      className={`flex items-center justify-between rounded-xl p-2.5 text-left text-xs font-bold transition cursor-pointer ${
-                        isSelected
+                      className={`flex items-center justify-between rounded-xl p-2.5 text-left text-xs font-bold transition cursor-pointer ${isSelected
                           ? 'border-2 border-[#00a896] bg-teal-50 text-teal-900 shadow-sm'
                           : 'border border-gray-200 bg-white text-gray-700 hover:border-teal-300 hover:bg-teal-50/40'
-                      }`}
+                        }`}
                     >
                       <span>{loc}</span>
                       {isSelected && <Check className="h-4 w-4 text-[#00a896]" />}

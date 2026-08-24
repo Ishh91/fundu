@@ -19,6 +19,13 @@ export default {
         display: ['Sora', 'Plus Jakarta Sans', 'sans-serif'],
       },
       colors: {
+        canva: {
+          mint: '#86dedd',
+          seafoam: '#bfebe1',
+          sky: '#9ac0dd',
+          ice: '#c0e7e4',
+          aqua: '#a2e5e2',
+        },
         brand: {
           50: '#edfdfa',
           100: '#d6faf4',

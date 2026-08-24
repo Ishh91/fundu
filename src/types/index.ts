@@ -125,7 +125,7 @@ export type SparePart = {
 };
 
 export type Order = {
-  items: boolean;
+  items?: any[];
   id: string;
   user_id: string;
   product_id: string | null;
@@ -144,6 +144,15 @@ export type Order = {
   delivery_person_name?: string | null;
   delivery_person_phone?: string | null;
   estimated_arrival_time?: string | null;
+  customer_notes?: string | null;
+  admin_reply?: string | null;
+  support_messages?: Array<{
+    sender: 'customer' | 'admin';
+    message: string;
+    timestamp: string;
+  }>;
+  dispatched_at?: string | null;
+  delivered_at?: string | null;
   tracking_id?: string;
   created_at: string;
 };
@@ -153,7 +162,9 @@ export type DeliveryAgent = {
   name: string;
   phone: string;
   email?: string | null;
-  status: 'available' | 'on_delivery' | 'busy' | 'offline';
+  rider_id?: string | null;
+  login_pin?: string | null;
+  status: 'available' | 'on_delivery' | 'busy' | 'offline' | string;
   zones: string[];
   current_orders_count: number;
   max_capacity: number;
@@ -168,7 +179,7 @@ export type DeliveryAgent = {
 };
 
 export type MasterPhone = {
-  [x: string]: string;
+  [x: string]: any;
   id: string;
   brand: string;
   model: string;
@@ -219,10 +230,87 @@ export type Profile = {
   phone: string | null;
   role: 'customer' | 'wholesaler' | 'admin';
   business_name: string | null;
+  gst_number?: string | null;
+  credit_limit?: number;
+  outstanding_balance?: number;
+  is_b2b_approved?: boolean;
   is_verified: boolean;
   avatar_url: string | null;
   created_at: string;
   updated_at: string;
+};
+
+export type WholesaleInventory = {
+  id: string;
+  brand: string;
+  model: string;
+  ram: string | null;
+  storage: string | null;
+  color: string | null;
+  condition: 'Flawless' | 'Grade A' | 'Grade B' | 'Grade C' | 'Excellent' | 'Good' | 'Fair';
+  imei: string | null;
+  wholesale_price: number;
+  retail_price: number | null;
+  stock: number;
+  status: 'available' | 'reserved' | 'sold';
+  source_sell_request_id?: string | null;
+  device_photos: string[];
+  diagnostics?: {
+    screen?: string;
+    battery_health?: string;
+    body_condition?: string;
+    cameras?: string;
+  };
+  notes?: string | null;
+  created_at: string;
+};
+
+export type WholesaleOrderItem = {
+  inventory_id?: string | null;
+  brand: string;
+  model: string;
+  storage?: string | null;
+  condition?: string;
+  quantity: number;
+  unit_price: number;
+  total_price: number;
+  imei?: string | null;
+};
+
+export type WholesaleOrder = {
+  id: string;
+  vendor_id: string;
+  vendor_name: string;
+  vendor_phone: string;
+  business_name?: string | null;
+  items: WholesaleOrderItem[];
+  total_amount: number;
+  payment_method: 'cash' | 'credit' | 'bank_transfer' | 'upi';
+  payment_status: 'paid' | 'credit_due' | 'partially_paid';
+  status: 'pending' | 'confirmed' | 'dispatched' | 'delivered' | 'cancelled';
+  notes?: string | null;
+  delivery_address: string;
+  dispatch_details?: {
+    dispatched_at?: string | null;
+    delivered_at?: string | null;
+    tracking_note?: string | null;
+  };
+  created_at: string;
+};
+
+export type VendorLedger = {
+  id: string;
+  vendor_id: string;
+  vendor_name?: string | null;
+  type: 'credit_purchase' | 'cash_repayment' | 'credit_limit_set' | 'credit_adjustment';
+  amount: number;
+  balance_before: number;
+  balance_after: number;
+  reference_order_id?: string | null;
+  payment_mode?: string;
+  notes?: string | null;
+  recorded_by?: string;
+  created_at: string;
 };
 
 export type SiteContentBlockKey =
@@ -286,6 +374,7 @@ export type HeroPoster = {
   bullets: string[];
   is_active: boolean;
   sort_order?: number;
+  is_full_banner?: boolean;
 };
 
 export type HomeHighlight = {

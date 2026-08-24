@@ -5,8 +5,12 @@ export type Profile = {
   id: string;
   full_name: string | null;
   phone: string | null;
-  role: 'customer' | 'wholesaler' | 'admin';
+  role: 'customer' | 'wholesaler' | 'admin' | 'delivery' | 'rider';
   business_name: string | null;
+  gst_number?: string | null;
+  credit_limit?: number;
+  outstanding_balance?: number;
+  is_b2b_approved?: boolean;
   is_verified: boolean;
   avatar_url: string | null;
 };

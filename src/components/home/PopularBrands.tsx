@@ -69,7 +69,7 @@ export default function PopularBrands() {
 
   return (
     <section className="container-page py-8">
-      <div className="rounded-3xl border border-gray-200 bg-white p-6 sm:p-8 shadow-sm">
+      <div className="rounded-3xl border border-white/80 bg-white/85 p-6 sm:p-8 md:p-10 shadow-[0_16px_40px_rgba(0,0,0,0.04)] backdrop-blur-xl">
         {/* Header & Tabs */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-gray-100 pb-5">
           <div>

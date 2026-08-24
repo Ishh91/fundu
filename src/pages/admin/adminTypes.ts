@@ -30,6 +30,7 @@ export type AdminTab =
   | 'sells'
   | 'orders'
   | 'repairs'
+  | 'wholesalers'
   | 'agents'
   | 'products'
   | 'pricing'

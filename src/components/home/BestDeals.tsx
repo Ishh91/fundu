@@ -145,14 +145,14 @@ export default function BestDeals({ products, loading }: BestDealsProps) {
               item.condition === 'Excellent'
                 ? 'Superb'
                 : item.condition === 'Good'
-                ? 'Good'
-                : 'Fair';
+                  ? 'Good'
+                  : 'Fair';
             const gradeColor =
               item.condition === 'Excellent'
                 ? 'bg-emerald-500 text-white'
                 : item.condition === 'Good'
-                ? 'bg-teal-600 text-white'
-                : 'bg-amber-500 text-white';
+                  ? 'bg-teal-600 text-white'
+                  : 'bg-amber-500 text-white';
 
             const emiAmount = Math.round(item.price / 12);
 
@@ -247,7 +247,7 @@ export default function BestDeals({ products, loading }: BestDealsProps) {
                       </Link>
                       <button
                         type="button"
-                        onClick={() => addToCart(item, 'phone')}
+                        onClick={() => addToCart(item, 1)}
                         className="grid h-8 w-8 place-items-center rounded-xl border border-gray-200 bg-white text-gray-700 hover:border-teal-400 hover:text-teal-700 transition shadow-sm"
                         title="Add to Cart"
                       >

@@ -15,6 +15,7 @@ import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
 import Admin from './pages/Admin';
 import Wholesaler from './pages/Wholesaler';
+import DeliveryAgentPortal from './pages/DeliveryAgentPortal';
 import Profile from './pages/Profile';
 import Checkout from './pages/Checkout';
 import Payment from './pages/Payment';
@@ -33,10 +34,16 @@ import ProductDetail from './pages/ProductDetail';
 function MainLayout() {
   const location = useLocation();
   const isAdminPath = location.pathname.startsWith('/admin');
+  const isDeliveryPath =
+    location.pathname.startsWith('/delivery') ||
+    location.pathname.startsWith('/rider') ||
+    location.pathname.startsWith('/fleet-desk') ||
+    location.pathname.startsWith('/rider-login');
+  const isStandaloneApp = isAdminPath || isDeliveryPath;
 
   return (
     <div className="flex min-h-screen flex-col">
-      {!isAdminPath && <Navbar />}
+      {!isStandaloneApp && <Navbar />}
       <main className="flex-1">
         <Routes>
           <Route path="/" element={<Home />} />
@@ -53,6 +60,12 @@ function MainLayout() {
           <Route path="/admin" element={<Admin />} />
           <Route path="/admin/:subtab" element={<Admin />} />
           <Route path="/wholesaler" element={<Wholesaler />} />
+          
+          {/* Private Delivery & Rider Portal Routes */}
+          <Route path="/fleet-desk" element={<DeliveryAgentPortal />} />
+          <Route path="/rider-login" element={<DeliveryAgentPortal />} />
+          <Route path="/delivery" element={<DeliveryAgentPortal />} />
+          <Route path="/rider" element={<DeliveryAgentPortal />} />
 
           <Route path="/profile" element={<Profile />} />
           <Route path="/checkout" element={<Checkout />} />
@@ -68,7 +81,7 @@ function MainLayout() {
           <Route path="*" element={<NotFound />} />
         </Routes>
       </main>
-      {!isAdminPath && <Footer />}
+      {!isStandaloneApp && <Footer />}
     </div>
   );
 }

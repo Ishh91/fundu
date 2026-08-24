@@ -13,6 +13,7 @@ import {
   ChevronUp,
   HelpCircle,
   RotateCcw,
+  MessageSquare,
 } from 'lucide-react';
 import { useSearchParams, useNavigate, Link } from 'react-router-dom';
 import { db, formatINR } from '../lib/db';
@@ -207,79 +208,6 @@ const BUYER_FAQS = [
   { q: 'What is the 7-day replacement policy?', a: 'If you encounter any technical issue with your phone within 7 days of delivery, we will replace it free of cost or provide a full refund.' },
 ];
 
-function generateSearchedProducts(query: string, brandFilter: string): Product[] {
-  const q = (query || brandFilter).trim();
-  if (!q) return [];
-
-  const brandNames = ['Apple', 'Samsung', 'OnePlus', 'Xiaomi', 'Vivo', 'Realme', 'Google', 'Oppo'];
-  const detectedBrand = brandNames.find((b) => q.toLowerCase().includes(b.toLowerCase())) || brandFilter || 'Refurbished';
-  const cleanTitle = q.charAt(0).toUpperCase() + q.slice(1);
-
-  const imagesByBrand: Record<string, string[]> = {
-    Apple: ['https://images.unsplash.com/photo-1632661674596-df8be070a5c5?auto=format&fit=crop&q=80&w=800'],
-    Samsung: ['https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?auto=format&fit=crop&q=80&w=800'],
-    OnePlus: ['https://images.unsplash.com/photo-1580910051074-3eb694886505?auto=format&fit=crop&q=80&w=800'],
-    Google: ['https://images.unsplash.com/photo-1598327105666-5b89351aff97?auto=format&fit=crop&q=80&w=800'],
-    Xiaomi: ['https://images.unsplash.com/photo-1565849904461-04a58ad377e0?auto=format&fit=crop&q=80&w=800'],
-  };
-
-  const selectedImages = imagesByBrand[detectedBrand] ?? ['https://images.unsplash.com/photo-1592750475338-74b7b21085ab?auto=format&fit=crop&q=80&w=800'];
-
-  let basePrice = 24999;
-  const qLower = q.toLowerCase();
-  if (qLower.includes('pro max') || qLower.includes('ultra') || qLower.includes('fold')) basePrice = 54999;
-  else if (qLower.includes('pro') || qLower.includes('s23') || qLower.includes('14')) basePrice = 42999;
-  else if (qLower.includes('13') || qLower.includes('s22') || qLower.includes('pixel')) basePrice = 32999;
-  else if (qLower.includes('redmi') || qLower.includes('nord') || qLower.includes('v27')) basePrice = 16999;
-
-  return [
-    {
-      id: `dyn-search-1-${q}`,
-      title: `${cleanTitle} (128 GB)`,
-      brand: detectedBrand,
-      model: cleanTitle,
-      seller_id: 'fundu-official',
-      ram: '6 GB',
-      storage: '128 GB',
-      color: 'Default',
-      condition: 'Excellent',
-      price: basePrice,
-      original_price: Math.round(basePrice * 1.45),
-      discount_percent: 31,
-      warranty_months: 6,
-      description: `Certified refurbished ${cleanTitle}. Passed 32-point inspection, battery health guaranteed above 88%. 6-month Fundu warranty.`,
-      images: selectedImages,
-      is_approved: true,
-      is_featured: true,
-      stock: 4,
-      sold_count: 8,
-      created_at: new Date().toISOString(),
-    },
-    {
-      id: `dyn-search-2-${q}`,
-      title: `${cleanTitle} (256 GB)`,
-      brand: detectedBrand,
-      model: cleanTitle,
-      seller_id: 'fundu-official',
-      ram: '8 GB',
-      storage: '256 GB',
-      color: 'Pro Edition',
-      condition: 'Good',
-      price: basePrice + 4000,
-      original_price: Math.round((basePrice + 4000) * 1.4),
-      discount_percent: 28,
-      warranty_months: 6,
-      description: `Refurbished ${cleanTitle} (256 GB). Fully tested and verified with complete accessories in Lucknow.`,
-      images: [...selectedImages].reverse(),
-      is_approved: true,
-      is_featured: false,
-      stock: 3,
-      sold_count: 5,
-      created_at: new Date().toISOString(),
-    },
-  ];
-}
-
 export default function BuyPhones() {
   const { user } = useAuth();
   const { setCartItem } = useCart();
@@ -331,43 +259,63 @@ export default function BuyPhones() {
     if (b) setSelectedBrand(b);
   }, [searchParams]);
 
+  const handleResetFilters = () => {
+    setSelectedBrand('All');
+    setLookupModel('');
+    setLookupStorage('');
+    setGradeFilter('All');
+    setPricePreset(0);
+    setMaxPrice(100000);
+    setSelectedStorage('');
+    setSearch('');
+  };
+
   const filteredProducts = useMemo(() => {
     const preset = PRICE_PRESETS[pricePreset];
     let list = products.filter((p) => {
+      // 1. Search text input match
       const matchSearch =
         !search ||
         p.title.toLowerCase().includes(search.toLowerCase()) ||
         p.brand.toLowerCase().includes(search.toLowerCase()) ||
         p.model.toLowerCase().includes(search.toLowerCase());
 
+      // 2. Brand match (from Brand Pills or PhoneLookup)
       const matchBrand =
         selectedBrand === 'All' || !selectedBrand || p.brand.toLowerCase() === selectedBrand.toLowerCase();
 
+      // 3. Model match (from PhoneLookup)
+      const matchModel =
+        !lookupModel ||
+        p.model.toLowerCase().includes(lookupModel.toLowerCase()) ||
+        p.title.toLowerCase().includes(lookupModel.toLowerCase()) ||
+        lookupModel.toLowerCase().includes(p.model.toLowerCase());
+
+      // 4. Grade condition match
       const matchGrade =
         gradeFilter === 'All' ||
         (gradeFilter === 'Superb' && p.condition === 'Excellent') ||
         (gradeFilter === 'Good' && p.condition === 'Good') ||
         (gradeFilter === 'Fair' && p.condition === 'Fair');
 
+      // 5. Storage match (from Sidebar or PhoneLookup)
+      const effectiveStorage = selectedStorage || lookupStorage;
       const matchStorage =
-        !selectedStorage || p.storage?.toLowerCase().includes(selectedStorage.toLowerCase());
+        !effectiveStorage || p.storage?.toLowerCase().includes(effectiveStorage.toLowerCase());
 
+      // 6. Price range match
       const matchPreset = p.price >= preset.min && p.price <= preset.max;
       const matchMaxPrice = p.price <= maxPrice;
 
-      return matchSearch && matchBrand && matchGrade && matchStorage && matchPreset && matchMaxPrice;
+      return matchSearch && matchBrand && matchModel && matchGrade && matchStorage && matchPreset && matchMaxPrice;
     });
-
-    if (list.length === 0 && (search || (selectedBrand && selectedBrand !== 'All') || lookupModel)) {
-      return generateSearchedProducts(search || lookupModel, selectedBrand !== 'All' ? selectedBrand : '');
-    }
 
     if (sortBy === 'low') list = [...list].sort((a, b) => a.price - b.price);
     if (sortBy === 'high') list = [...list].sort((a, b) => b.price - a.price);
     if (sortBy === 'discount') list = [...list].sort((a, b) => (b.discount_percent || 0) - (a.discount_percent || 0));
 
     return list;
-  }, [products, search, selectedBrand, gradeFilter, selectedStorage, pricePreset, maxPrice, sortBy, lookupModel]);
+  }, [products, search, selectedBrand, lookupModel, gradeFilter, selectedStorage, lookupStorage, pricePreset, maxPrice, sortBy]);
 
   const handleAddToCart = (product: Product) => {
     setCartItem({ type: 'product', item: product, quantity: 1 });
@@ -509,14 +457,7 @@ export default function BuyPhones() {
                 </h3>
                 <button
                   type="button"
-                  onClick={() => {
-                    setSelectedBrand('All');
-                    setGradeFilter('All');
-                    setPricePreset(0);
-                    setMaxPrice(100000);
-                    setSelectedStorage('');
-                    setSearch('');
-                  }}
+                  onClick={handleResetFilters}
                   className="text-xs text-brand-600 hover:underline font-bold"
                 >
                   Reset All
@@ -587,7 +528,7 @@ export default function BuyPhones() {
           <main className="space-y-6">
             <div className="flex items-center justify-between">
               <p className="text-xs font-bold text-ink-500">
-                Showing <span className="text-ink-900">{filteredProducts.length}</span> certified refurbished phones in Lucknow
+                Showing <span className="text-ink-900 font-extrabold">{filteredProducts.length}</span> certified refurbished phones in Lucknow
               </p>
             </div>
 
@@ -598,22 +539,176 @@ export default function BuyPhones() {
                 ))}
               </div>
             ) : filteredProducts.length === 0 ? (
-              <div className="card p-12 text-center rounded-[28px]">
-                <Smartphone className="mx-auto h-12 w-12 text-ink-300" />
-                <h3 className="mt-4 font-display text-lg font-bold text-ink-900">No refurbished phones match criteria</h3>
-                <p className="mt-1 text-xs text-ink-500">Try adjusting your brand, grade, or price filters.</p>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setSelectedBrand('All');
-                    setGradeFilter('All');
-                    setPricePreset(0);
-                    setSearch('');
-                  }}
-                  className="mt-4 btn-primary text-xs"
-                >
-                  Clear Filters
-                </button>
+              <div className="space-y-8 animate-fade-in">
+                {/* Clean, Informative No-Match State Card */}
+                <div className="card p-8 sm:p-12 text-center rounded-[32px] bg-white border border-ink-100/90 shadow-soft-sm space-y-4">
+                  <div className="mx-auto grid h-20 w-20 place-items-center rounded-3xl bg-amber-50 text-amber-600 border border-amber-200/80 shadow-inner">
+                    <Search className="h-10 w-10 text-amber-600" />
+                  </div>
+                  
+                  <div className="max-w-md mx-auto">
+                    <div className="inline-flex items-center gap-1.5 rounded-full bg-amber-100/80 px-3 py-1 text-xs font-black text-amber-800">
+                      <span>No Exact Match in Stock</span>
+                    </div>
+                    
+                    <h3 className="mt-3 font-display text-xl sm:text-2xl font-black text-ink-900">
+                      No phones found matching "{lookupModel || search || (selectedBrand !== 'All' ? selectedBrand : '') || 'your filters'}"
+                    </h3>
+                    
+                    <p className="mt-2 text-xs sm:text-sm text-ink-500 leading-relaxed">
+                      We currently don't have this specific device in our certified refurbished Lucknow inventory. Our stock refreshes daily!
+                    </p>
+                  </div>
+
+                  {/* Active filters chips preview */}
+                  <div className="flex flex-wrap justify-center items-center gap-2 pt-2">
+                    {selectedBrand !== 'All' && (
+                      <span className="badge bg-ink-100 text-ink-700 text-xs">Brand: {selectedBrand}</span>
+                    )}
+                    {lookupModel && (
+                      <span className="badge bg-brand-100 text-brand-800 text-xs">Model: {lookupModel}</span>
+                    )}
+                    {lookupStorage && (
+                      <span className="badge bg-ink-100 text-ink-700 text-xs">Storage: {lookupStorage}</span>
+                    )}
+                    {search && (
+                      <span className="badge bg-ink-100 text-ink-700 text-xs">Search: "{search}"</span>
+                    )}
+                  </div>
+
+                  {/* Action Buttons */}
+                  <div className="pt-3 flex flex-wrap items-center justify-center gap-3">
+                    <button
+                      type="button"
+                      onClick={handleResetFilters}
+                      className="btn-primary text-xs px-5 py-2.5 rounded-xl font-bold shadow-md flex items-center gap-2"
+                    >
+                      <RotateCcw className="h-4 w-4" /> Clear Filters & View All Phones
+                    </button>
+
+                    <a
+                      href={`https://wa.me/919839122345?text=${encodeURIComponent(
+                        `Hi Fundu Lucknow, I am looking for ${lookupModel || search || selectedBrand || 'a refurbished phone'} in Lucknow. Please notify me when it is in stock!`
+                      )}`}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="btn bg-[#25D366] text-white hover:bg-[#20bd5a] text-xs px-4 py-2.5 rounded-xl font-bold flex items-center gap-1.5 shadow-sm"
+                    >
+                      <MessageSquare className="h-4 w-4" /> Request on WhatsApp
+                    </a>
+
+                    <Link
+                      to="/sell"
+                      className="btn-outline text-xs px-4 py-2.5 rounded-xl font-bold flex items-center gap-1.5"
+                    >
+                      <span>Sell Your Old Phone</span>
+                    </Link>
+                  </div>
+                </div>
+
+                {/* Recommendations: Available Top Refurbished Phones in Lucknow */}
+                {products.length > 0 && (
+                  <div className="space-y-4 pt-4">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <h4 className="font-display font-black text-lg text-ink-900">
+                          Popular Certified Refurbished Phones in Stock
+                        </h4>
+                        <p className="text-xs text-ink-500">Ready for same-day doorstep delivery across Lucknow</p>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={handleResetFilters}
+                        className="text-xs font-bold text-brand-600 hover:underline"
+                      >
+                        View all ({products.length}) →
+                      </button>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+                      {products.slice(0, 3).map((product) => {
+                        const image = product.images?.[0] || 'https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=600&auto=format&fit=crop&q=80';
+                        const isSuperb = product.condition === 'Excellent';
+
+                        return (
+                          <div
+                            key={product.id}
+                            className="card p-5 rounded-[24px] flex flex-col justify-between hover:shadow-soft-lg transition-all duration-200 border border-ink-100 group bg-white"
+                          >
+                            <div>
+                              <Link to={`/product/${product.id}`} className="block">
+                                <div className="relative rounded-2xl bg-[#f8fafb] p-4 flex justify-center items-center overflow-hidden">
+                                  <span
+                                    className={`absolute top-3 left-3 badge text-[10px] font-extrabold ${
+                                      isSuperb ? 'bg-emerald-600 text-white' : 'bg-weather-600 text-white'
+                                    }`}
+                                  >
+                                    {isSuperb ? 'Superb (Like New)' : 'Good Value'}
+                                  </span>
+                                  {product.discount_percent && (
+                                    <span className="absolute top-3 right-3 badge bg-accent-500 text-white text-[10px] font-extrabold">
+                                      {product.discount_percent}% OFF
+                                    </span>
+                                  )}
+                                  <img
+                                    src={image}
+                                    alt={product.title}
+                                    className="h-44 w-full object-contain group-hover:scale-105 transition-transform duration-300"
+                                    loading="lazy"
+                                  />
+                                </div>
+                              </Link>
+
+                              <div className="mt-4">
+                                <Link to={`/product/${product.id}`}>
+                                  <h3 className="font-display font-extrabold text-sm text-ink-900 group-hover:text-brand-600 transition truncate">
+                                    {product.title}
+                                  </h3>
+                                </Link>
+                                <p className="text-xs text-ink-500 mt-0.5">
+                                  {[product.storage, product.color].filter(Boolean).join(' · ')}
+                                </p>
+                              </div>
+                            </div>
+
+                            <div className="mt-4 pt-3 border-t border-ink-100/60">
+                              <div className="flex items-baseline justify-between mb-3">
+                                <div>
+                                  <span className="font-display text-lg font-black text-ink-900">
+                                    {formatINR(product.price)}
+                                  </span>
+                                  {product.original_price && (
+                                    <span className="ml-2 text-xs text-ink-400 line-through">
+                                      {formatINR(product.original_price)}
+                                    </span>
+                                  )}
+                                </div>
+                              </div>
+
+                              <div className="flex gap-2">
+                                <button
+                                  type="button"
+                                  onClick={() => handleBuyNow(product)}
+                                  className="btn-primary text-xs flex-1 py-2 rounded-xl font-bold bg-brand-600 hover:bg-brand-700"
+                                >
+                                  Buy Now
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() => handleAddToCart(product)}
+                                  className="grid h-9 w-9 place-items-center rounded-xl border border-ink-200 bg-white text-ink-700 hover:border-brand-500 hover:text-brand-600 transition shrink-0"
+                                  title="Add to cart"
+                                >
+                                  <ShoppingCart className="h-4 w-4" />
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
               </div>
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">

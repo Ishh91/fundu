@@ -73,10 +73,10 @@ export default function FaqSection() {
 
   return (
     <section className="container-page py-8">
-      <div className="rounded-3xl border border-gray-200 bg-white p-6 sm:p-8 md:p-10 shadow-sm">
+      <div className="rounded-3xl border border-white/80 bg-white/85 p-6 sm:p-8 md:p-10 shadow-[0_16px_40px_rgba(0,0,0,0.04)] backdrop-blur-xl">
         <div className="grid gap-8 lg:grid-cols-[0.85fr_1.15fr]">
           {/* Left Summary Box */}
-          <div className="flex flex-col justify-between rounded-2xl bg-[#f8fafc] p-6 border border-gray-200">
+          <div className="flex flex-col justify-between rounded-2xl bg-white/80 p-6 border border-white/90 shadow-sm">
             <div>
               <div className="inline-flex items-center gap-1.5 rounded-full bg-teal-50 px-3 py-1 text-xs font-extrabold uppercase tracking-wider text-teal-700">
                 <HelpCircle className="h-3.5 w-3.5" />

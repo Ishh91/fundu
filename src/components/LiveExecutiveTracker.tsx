@@ -109,6 +109,14 @@ export default function LiveExecutiveTracker({
       ? '30-Min Doorstep Screen/Battery Repair'
       : 'Refurbished Phone Delivery';
 
+  const isAssigned = Boolean(
+    executiveName &&
+    !executiveName.toLowerCase().includes('auto-dispatch') &&
+    !executiveName.toLowerCase().includes('auto-assign') &&
+    !executiveName.toLowerCase().includes('field executive') &&
+    executiveName !== 'Pending Rider'
+  );
+
   return (
     <div className="fixed inset-0 z-50 grid place-items-center bg-black/70 p-3 sm:p-4 backdrop-blur-md animate-fade-in overflow-y-auto">
       <div className="relative w-full max-w-2xl rounded-3xl bg-white shadow-2xl border border-gray-100 overflow-hidden my-auto">
@@ -122,10 +130,14 @@ export default function LiveExecutiveTracker({
             <div>
               <div className="flex items-center gap-2">
                 <h3 className="font-display font-black text-base sm:text-lg">
-                  Live Executive Tracking
+                  {isAssigned ? 'Live Executive Tracking' : 'Dispatch Assignment in Progress'}
                 </h3>
-                <span className="rounded-full bg-emerald-500/20 border border-emerald-500/40 px-2 py-0.5 text-[10px] font-extrabold uppercase tracking-wider text-emerald-300">
-                  GPS Active
+                <span className={`rounded-full px-2 py-0.5 text-[10px] font-extrabold uppercase tracking-wider ${
+                  isAssigned
+                    ? 'bg-emerald-500/20 border border-emerald-500/40 text-emerald-300'
+                    : 'bg-amber-500/20 border border-amber-500/40 text-amber-300 animate-pulse'
+                }`}>
+                  {isAssigned ? 'GPS Active' : 'Admin Assigning Rider'}
                 </span>
               </div>
               <p className="text-xs text-teal-200">
@@ -175,14 +187,14 @@ export default function LiveExecutiveTracker({
           </svg>
 
           {/* Static Landmark Labels in Lucknow */}
-          <div className="absolute left-6 top-6 rounded-md bg-white/10 px-2 py-1 text-[10px] font-bold text-gray-300 backdrop-blur-sm border border-white/10">
-            📍 Lucknow Hub (Hazratganj)
+          <div className="absolute left-4 top-4 rounded-md bg-black/60 px-2 py-1 text-[10px] font-bold text-gray-300 backdrop-blur-sm border border-white/10">
+            📍 Lucknow Central Hub (Hazratganj)
           </div>
-          <div className="absolute right-6 top-10 rounded-md bg-white/10 px-2 py-1 text-[10px] font-bold text-teal-300 backdrop-blur-sm border border-white/10">
+          <div className="absolute right-4 top-4 rounded-md bg-black/60 px-2 py-1 text-[10px] font-bold text-teal-300 backdrop-blur-sm border border-white/10">
             🏙️ Gomti Riverfront
           </div>
-          <div className="absolute right-8 bottom-6 rounded-md bg-white/10 px-2 py-1 text-[10px] font-bold text-gray-300 backdrop-blur-sm border border-white/10">
-            🛣️ Shaheed Path Corridor
+          <div className="absolute right-4 bottom-4 rounded-md bg-black/60 px-2 py-1 text-[10px] font-bold text-gray-300 backdrop-blur-sm border border-white/10">
+            🛣️ Shaheed Path Express
           </div>
 
           {/* Trajectory Route Line */}
@@ -192,63 +204,92 @@ export default function LiveExecutiveTracker({
               y1={`${startPos.y}%`}
               x2={`${targetPos.x}%`}
               y2={`${targetPos.y}%`}
-              stroke="#14c8ba"
+              stroke={isAssigned ? '#14c8ba' : '#38bdf8'}
               strokeWidth="4"
               strokeDasharray="6,6"
               className="animate-pulse"
             />
           </svg>
 
+          {/* Start Hub Pin (Hazratganj) */}
+          <div
+            className="absolute -translate-x-1/2 -translate-y-1/2 z-10 flex flex-col items-center pointer-events-none"
+            style={{ left: `${startPos.x}%`, top: `${startPos.y}%` }}
+          >
+            <div className="h-3 w-3 rounded-full bg-cyan-400 border border-white shadow-md" />
+          </div>
+
           {/* Destination Pin (Customer Address) */}
           <div
             className="absolute -translate-x-1/2 -translate-y-1/2 z-20 flex flex-col items-center"
             style={{ left: `${targetPos.x}%`, top: `${targetPos.y}%` }}
           >
+            {/* Label placed ABOVE the marker to prevent collision */}
+            <div className="absolute -top-8 left-1/2 -translate-x-1/2 whitespace-nowrap z-30">
+              <span className="rounded-md bg-[#042f2e]/95 px-2 py-0.5 text-[10px] font-black text-emerald-300 shadow-xl border border-emerald-500/50 backdrop-blur-xs">
+                🏠 Your Doorstep ({targetPos.label.split(',')[0]})
+              </span>
+            </div>
+
             <div className="relative">
               <span className="absolute -inset-2 rounded-full bg-emerald-400/40 animate-ping" />
               <div className="grid h-8 w-8 place-items-center rounded-full bg-emerald-500 text-white shadow-xl border-2 border-white">
                 <MapPin className="h-4 w-4" />
               </div>
             </div>
-            <span className="mt-1 rounded-md bg-black/80 px-2 py-0.5 text-[10px] font-extrabold text-emerald-300 shadow-md whitespace-nowrap border border-emerald-500/30">
-              Your Doorstep ({targetPos.label.split(',')[0]})
-            </span>
           </div>
 
           {/* Live Moving Bike / Executive Marker */}
-          <div
-            className="absolute -translate-x-1/2 -translate-y-1/2 z-30 flex flex-col items-center transition-all duration-1000 ease-linear"
-            style={{ left: `${currentX}%`, top: `${currentY}%` }}
-          >
-            <div className="relative">
-              <span className="absolute -inset-3 rounded-full bg-teal-400/40 animate-pulse" />
-              <div className="grid h-9 w-9 place-items-center rounded-full bg-gradient-to-tr from-teal-600 to-cyan-400 text-white shadow-2xl border-2 border-white">
-                <Navigation className="h-4.5 w-4.5 rotate-45" />
+          {isAssigned ? (
+            <div
+              className="absolute -translate-x-1/2 -translate-y-1/2 z-30 flex flex-col items-center transition-all duration-1000 ease-linear"
+              style={{ left: `${currentX}%`, top: `${currentY}%` }}
+            >
+              <div className="relative">
+                <span className="absolute -inset-3 rounded-full bg-teal-400/40 animate-pulse" />
+                <div className="grid h-9 w-9 place-items-center rounded-full bg-gradient-to-tr from-teal-600 to-cyan-400 text-white shadow-2xl border-2 border-white">
+                  <Navigation className="h-4.5 w-4.5 rotate-45" />
+                </div>
+              </div>
+              
+              {/* Label placed BELOW the marker to avoid overlap */}
+              <div className="absolute top-10 left-1/2 -translate-x-1/2 whitespace-nowrap z-30">
+                <div className="flex items-center gap-1 rounded-full bg-[#0f172a]/95 border border-teal-400 px-2.5 py-0.5 text-[10px] font-black text-white shadow-xl">
+                  <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-ping" />
+                  <span>{executiveName?.split(' ')[0]} (On Bike)</span>
+                </div>
               </div>
             </div>
-            <div className="mt-1 flex items-center gap-1 rounded-full bg-teal-900/90 border border-teal-400 px-2.5 py-0.5 text-[10px] font-black text-white shadow-lg whitespace-nowrap">
-              <span className="h-2 w-2 rounded-full bg-emerald-400 animate-ping" />
-              <span>{executiveName?.split(' ')[0]} (On Bike)</span>
+          ) : (
+            <div className="absolute inset-0 grid place-items-center bg-black/40 backdrop-blur-xs z-30 pointer-events-none">
+              <div className="rounded-2xl bg-black/80 border border-teal-500/40 p-4 text-center text-white max-w-xs shadow-2xl space-y-1">
+                <p className="text-xs font-black text-teal-300">⚡ Order Verified at Hazratganj Hub</p>
+                <p className="text-[11px] text-gray-300">
+                  Admin is assigning certified rider for doorstep pickup/delivery in {targetPos.label.split(',')[0]}.
+                </p>
+              </div>
             </div>
-          </div>
+          )}
 
           {/* Live Telemetry Float Box */}
-          <div className="absolute left-4 bottom-4 rounded-2xl bg-black/70 backdrop-blur-md p-3 text-white border border-white/10 flex items-center gap-4 text-xs shadow-xl">
-            <div>
-              <p className="text-[10px] font-bold uppercase text-teal-400">Live ETA</p>
-              <p className="text-sm font-black">{etaMins} mins</p>
+          {isAssigned && (
+            <div className="absolute left-4 bottom-4 rounded-2xl bg-black/80 backdrop-blur-md p-3 text-white border border-white/10 flex items-center gap-4 text-xs shadow-xl z-30">
+              <div>
+                <p className="text-[10px] font-bold uppercase text-teal-400">Live ETA</p>
+                <p className="text-sm font-black">{etaMins} mins</p>
+              </div>
+              <div className="h-6 w-px bg-white/20" />
+              <div>
+                <p className="text-[10px] font-bold uppercase text-gray-400">Distance</p>
+                <p className="text-sm font-bold">{distanceKm} km</p>
+              </div>
+              <div className="h-6 w-px bg-white/20" />
+              <div>
+                <p className="text-[10px] font-bold uppercase text-gray-400">Speed</p>
+                <p className="text-sm font-bold">{speed} km/h</p>
+              </div>
             </div>
-            <div className="h-6 w-px bg-white/20" />
-            <div>
-              <p className="text-[10px] font-bold uppercase text-gray-400">Distance</p>
-              <p className="text-sm font-bold">{distanceKm} km</p>
-            </div>
-            <div className="h-6 w-px bg-white/20" />
-            <div>
-              <p className="text-[10px] font-bold uppercase text-gray-400">Speed</p>
-              <p className="text-sm font-bold">{speed} km/h</p>
-            </div>
-          </div>
+          )}
         </div>
 
         {/* Executive Profile & Quick Actions */}
@@ -330,6 +371,42 @@ export default function LiveExecutiveTracker({
                 #{trackingId}
               </span>
             )}
+          </div>
+
+          {/* ══════════════════════════════════════════════════════════
+              CONNECT WITH ADMIN DESK IN TRACKING
+             ══════════════════════════════════════════════════════════ */}
+          <div className="rounded-2xl bg-gradient-to-r from-slate-900 via-teal-950 to-slate-900 text-white p-4 space-y-3">
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <div>
+                <p className="text-xs font-black text-teal-300 flex items-center gap-1.5">
+                  <Sparkles className="h-3.5 w-3.5" /> Need Delivery Assistance? Connect with Admin
+                </p>
+                <p className="text-[11px] text-gray-300 mt-0.5">
+                  Direct support from Lucknow Central Desk for route updates or address change.
+                </p>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <a
+                  href={`https://wa.me/919839122345?text=${encodeURIComponent(
+                    `Hi Fundu Admin, I am currently tracking my ${actionText} (#${trackingId || 'LIVE'}) for ${deviceInfo} in ${locality || 'Lucknow'}. Please assist me with live delivery updates.`
+                  )}`}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-flex items-center gap-1.5 rounded-xl bg-[#25D366] hover:bg-[#20bd5a] text-white px-3 py-1.5 text-xs font-bold transition shadow-sm"
+                >
+                  <span>WhatsApp Admin</span>
+                </a>
+                <a
+                  href="tel:+919839122345"
+                  className="inline-flex items-center gap-1.5 rounded-xl bg-white/15 hover:bg-white/25 text-white px-3 py-1.5 text-xs font-bold transition border border-white/20"
+                >
+                  <Phone className="h-3.5 w-3.5 text-teal-400" />
+                  <span>Call Desk</span>
+                </a>
+              </div>
+            </div>
           </div>
         </div>
       </div>

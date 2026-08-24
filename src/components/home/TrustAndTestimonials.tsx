@@ -110,7 +110,7 @@ export default function TrustAndTestimonials() {
       quote: r.comment,
       name: r.reviewer_name,
       location: r.location || 'Lucknow',
-      service: r.phone_model ? `Serviced ${r.phone_model}` : 'Verified Customer',
+      service: (r as any).phone_model ? `Serviced ${(r as any).phone_model}` : 'Verified Customer',
       rating: r.rating || 5,
     })),
     ...DEFAULT_LUCKNOW_TESTIMONIALS,
@@ -127,8 +127,8 @@ export default function TrustAndTestimonials() {
   };
 
   return (
-    <section className="bg-[#0f172a] py-10 text-white overflow-hidden">
-      <div className="container-page">
+    <section className="container-page py-8">
+      <div className="rounded-3xl border border-slate-700/60 bg-slate-900/95 p-6 sm:p-8 md:p-10 shadow-[0_20px_50px_rgba(15,23,42,0.18)] backdrop-blur-xl text-white overflow-hidden">
         {/* Header & Stats Strip */}
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 border-b border-gray-800 pb-8">
           <div>
@@ -208,7 +208,9 @@ export default function TrustAndTestimonials() {
                       <p className="text-[11px] text-gray-400 font-medium">{item.location}</p>
                     </div>
                   </div>
-                  <CheckCircle2 className="h-4 w-4 text-emerald-400" title="Verified Customer" />
+                  <span title="Verified Customer">
+                    <CheckCircle2 className="h-4 w-4 text-emerald-400" />
+                  </span>
                 </div>
               </div>
             ))}

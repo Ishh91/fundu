@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
-import { Package, Search, Truck, MapPin, PhoneCall, MessageCircle, CreditCard, ShoppingBag } from 'lucide-react';
+import { useState } from 'react';
+import { Package, Search, Truck, MapPin, PhoneCall, MessageCircle, CreditCard, ShoppingBag, MessageSquare, Send } from 'lucide-react';
 import type { Order, DeliveryAgent } from './adminTypes';
 import { statusColors } from './adminTypes';
-import { formatINR } from '../../lib/db';
+import { db, formatINR } from '../../lib/db';
 
 type AdminOrdersProps = {
   orders: Order[];
@@ -23,6 +23,31 @@ export default function AdminOrders({
 }: AdminOrdersProps) {
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
+  const [adminReplyText, setAdminReplyText] = useState('');
+
+  const handleSendAdminReply = async (order: Order) => {
+    if (!adminReplyText.trim()) return;
+    try {
+      const newMsg = {
+        sender: 'admin' as const,
+        message: adminReplyText.trim(),
+        timestamp: new Date().toISOString(),
+      };
+      const existing = Array.isArray(order.support_messages) ? order.support_messages : [];
+      const updated = [...existing, newMsg];
+      const { error } = await db.from('orders').update({
+        support_messages: updated,
+        admin_reply: adminReplyText.trim(),
+      }).eq('id', order.id);
+      if (error) throw error;
+      order.support_messages = updated;
+      order.admin_reply = adminReplyText.trim();
+      setAdminReplyText('');
+      alert('🎉 Reply posted to customer tracking view!');
+    } catch (err: any) {
+      alert(err?.message || 'Failed to send reply');
+    }
+  };
 
   const filteredOrders = orders.filter((o) => {
     const matchesSearch = `${o.delivery_name || ''} ${o.id} ${o.delivery_phone || ''} ${o.delivery_address || ''}`
@@ -31,6 +56,40 @@ export default function AdminOrders({
     const matchesStatus = statusFilter === 'all' || o.status.toLowerCase() === statusFilter.toLowerCase();
     return matchesSearch && matchesStatus;
   });
+
+  const getWhatsAppDispatchLink = (order: Order) => {
+    const phone = order.delivery_phone ? order.delivery_phone.replace(/\D/g, '') : '9839122345';
+    const targetPhone = phone.length === 10 ? `91${phone}` : phone;
+    const text = `🎉 *FUNDU LUCKNOW DISPATCH UPDATE*\n\n` +
+      `Hi *${order.delivery_name || 'Customer'}*,\n` +
+      `Your refurbished order *#${order.id.slice(0, 8).toUpperCase()}* is dispatched with our certified executive *${order.delivery_person_name || 'Rohit'}*.\n\n` +
+      `📍 *Delivery To:* ${order.delivery_address || 'Lucknow'}\n` +
+      `💰 *Total Amount:* ₹${order.total_amount?.toLocaleString('en-IN')}\n` +
+      `💳 *Payment Method:* ${order.payment_method || 'COD'}\n\n` +
+      `You can track your executive live on your Fundu Dashboard!`;
+    return `https://wa.me/${targetPhone}?text=${encodeURIComponent(text)}`;
+  };
+
+  const getDeliveryPartnerJobWhatsAppLink = (order: Order, agentPhone?: string) => {
+    const rawPhone = (agentPhone || order.delivery_person_phone || '9839122345').replace(/\D/g, '');
+    const targetPhone = rawPhone.length === 10 ? `91${rawPhone}` : rawPhone;
+    const itemsSummary =
+      order.items?.map((it: any) => `• ${it.title || 'Refurbished Device'} (Qty: ${it.quantity || 1}) - ₹${it.price || 0}`).join('\n') ||
+      `• Certified Refurbished Device - ₹${order.total_amount || 0}`;
+    const text = `📦 *NEW FUNDU DELIVERY DISPATCH ASSIGNED*\n\n` +
+      `📋 *Order ID:* #${order.id.slice(0, 8).toUpperCase()}\n` +
+      `👤 *Customer Name:* ${order.delivery_name || 'Customer'}\n` +
+      `📞 *Customer Phone:* ${order.delivery_phone || 'N/A'}\n` +
+      `📍 *Delivery Address:* ${order.delivery_address || 'Lucknow'}\n` +
+      `🏙️ *Locality:* ${order.delivery_area || 'Lucknow'}\n` +
+      `⏰ *Delivery Slot:* ${order.delivery_slot || 'Today Same-Day Express'}\n\n` +
+      `🛍️ *ORDER ITEMS & PAYMENT:*\n` +
+      `${itemsSummary}\n` +
+      `• *Total Payable:* ₹${(order.total_amount || 0).toLocaleString('en-IN')}\n` +
+      `• *Payment Mode:* ${order.payment_method || 'COD'} (${order.payment_status || 'Prepaid/Pending'})\n\n` +
+      `🚚 *Instructions:* Collect payment (if COD) and hand over verified sealed package to customer doorstep in Lucknow.`;
+    return `https://wa.me/${targetPhone}?text=${encodeURIComponent(text)}`;
+  };
 
   const selectedOrder = orders.find((o) => o.id === selectedOrderId) || filteredOrders[0] || null;
 
@@ -157,7 +216,7 @@ export default function AdminOrders({
                   </h2>
                 </div>
 
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 flex-wrap">
                   <select
                     value={selectedOrder.status}
                     onChange={(e) => onUpdateStatus(selectedOrder.id, e.target.value)}
@@ -169,6 +228,15 @@ export default function AdminOrders({
                       </option>
                     ))}
                   </select>
+
+                  <a
+                    href={getWhatsAppDispatchLink(selectedOrder)}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="btn bg-[#25D366] text-white hover:bg-[#20bd5a] text-xs px-3 py-1.5 flex items-center gap-1.5 font-bold shadow-xs rounded-xl"
+                  >
+                    <MessageCircle className="h-3.5 w-3.5" /> WhatsApp Dispatch Alert
+                  </a>
                 </div>
               </div>
 
@@ -274,6 +342,80 @@ export default function AdminOrders({
                       ))}
                     </select>
                   </div>
+                </div>
+
+                <a
+                  href={getDeliveryPartnerJobWhatsAppLink(selectedOrder)}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="btn bg-[#25D366] text-white hover:bg-[#20bd5a] text-xs px-3 py-2 flex items-center justify-center gap-1.5 font-bold shadow-xs rounded-xl w-full"
+                >
+                  <MessageSquare className="h-3.5 w-3.5" /> Send Order Job Briefing to Executive on WhatsApp
+                </a>
+              </div>
+
+              {/* Customer Live Tracking Inquiries & Notes */}
+              <div className="p-4 rounded-2xl bg-teal-50/70 border border-teal-200 space-y-3">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-bold text-teal-900 flex items-center gap-1.5">
+                    <MessageSquare className="h-4 w-4 text-teal-600" /> Customer Tracking Instructions & Live Chat
+                  </span>
+                  <span className="rounded-full bg-teal-200/60 px-2 py-0.5 text-[10px] font-black text-teal-800">
+                    Live Support
+                  </span>
+                </div>
+
+                {selectedOrder.customer_notes ? (
+                  <div className="p-3 bg-white rounded-xl border border-teal-100 text-xs">
+                    <p className="text-[10px] font-bold uppercase text-ink-400">Latest Customer Note:</p>
+                    <p className="font-semibold text-ink-800 mt-0.5">"{selectedOrder.customer_notes}"</p>
+                  </div>
+                ) : (
+                  <p className="text-xs text-teal-700 italic">No special instructions from customer yet.</p>
+                )}
+
+                {/* Messages conversation thread */}
+                {Array.isArray(selectedOrder.support_messages) && selectedOrder.support_messages.length > 0 && (
+                  <div className="space-y-1.5 max-h-36 overflow-y-auto pr-1">
+                    {selectedOrder.support_messages.map((m: any, idx: number) => (
+                      <div
+                        key={idx}
+                        className={`p-2 rounded-xl text-xs ${
+                          m.sender === 'admin'
+                            ? 'bg-brand-100/70 text-brand-900 ml-6 text-right'
+                            : 'bg-white text-ink-900 mr-6 border border-ink-100'
+                        }`}
+                      >
+                        <div className="flex items-center justify-between gap-2 mb-0.5">
+                          <span className="font-bold text-[10px]">
+                            {m.sender === 'admin' ? 'Fundu Admin (You)' : 'Customer'}
+                          </span>
+                          <span className="text-[9px] text-ink-400">
+                            {new Date(m.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                          </span>
+                        </div>
+                        <p>{m.message}</p>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {/* Reply Form */}
+                <div className="pt-2 flex gap-2">
+                  <input
+                    type="text"
+                    placeholder="Type reply or delivery update to customer..."
+                    value={adminReplyText}
+                    onChange={(e) => setAdminReplyText(e.target.value)}
+                    className="input text-xs bg-white flex-1"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => handleSendAdminReply(selectedOrder)}
+                    className="btn-primary text-xs px-3.5 py-1.5 bg-teal-600 hover:bg-teal-700 font-bold flex items-center gap-1 shadow-xs"
+                  >
+                    <Send className="h-3.5 w-3.5" /> Reply Customer
+                  </button>
                 </div>
               </div>
             </div>

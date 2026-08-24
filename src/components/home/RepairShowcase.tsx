@@ -114,11 +114,10 @@ export default function RepairShowcase() {
               <div
                 key={srv.id}
                 onClick={() => setSelectedIssue(srv.id)}
-                className={`cursor-pointer rounded-2xl border p-4 transition-all duration-200 flex flex-col justify-between ${
-                  isSelected
+                className={`cursor-pointer rounded-2xl border p-4 transition-all duration-200 flex flex-col justify-between ${isSelected
                     ? 'border-2 border-teal-500 bg-teal-50/40 shadow-md'
                     : 'border-gray-200 bg-[#f8fafc] hover:border-teal-300 hover:bg-white'
-                }`}
+                  }`}
               >
                 <div>
                   <div className="flex items-center justify-between">

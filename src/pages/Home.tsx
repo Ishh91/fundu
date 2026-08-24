@@ -30,7 +30,7 @@ export default function Home() {
   }, []);
 
   return (
-    <div className="bg-[#f8fafc] min-h-screen">
+    <div className="min-h-screen">
       {/* 1. Hero & Top Service Cards */}
       <HeroSection />
 
@@ -60,3 +60,5 @@ export default function Home() {
     </div>
   );
 }
+
+

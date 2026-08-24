@@ -1,21 +1,19 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
-  ArrowLeft,
-  ArrowRight,
   ShieldCheck,
-  Sparkles,
-  Wrench,
   Truck,
   Zap,
-  CheckCircle2,
+  Wrench,
+  ChevronLeft,
+  ChevronRight,
 } from 'lucide-react';
 import { useHeroPosters } from '../../lib/heroBanners';
 
 const TRUST_PILLARS_STRIP = [
-  { icon: Zap, label: 'Instant Spot Payment on Pickup' },
+  { icon: Zap, label: 'Instant Spot Cash/UPI Payment on Pickup' },
   { icon: Truck, label: 'Free Doorstep Service across all Lucknow Localities' },
-  { icon: ShieldCheck, label: '32-Point Certified Quality Inspection' },
+  { icon: ShieldCheck, label: '32-Point Certified Device Audit & Warranty' },
   { icon: Wrench, label: '30-Minute Screen & Battery Doorstep Repair' },
 ];
 
@@ -29,7 +27,7 @@ export default function HeroSection() {
     if (slidesCount <= 1) return;
     const timer = window.setInterval(() => {
       setActiveSlide((current) => (current + 1) % slidesCount);
-    }, 5000);
+    }, 5500);
 
     return () => window.clearInterval(timer);
   }, [slidesCount]);
@@ -39,155 +37,83 @@ export default function HeroSection() {
 
   if (!currentSlide) return null;
 
-  const isCustomGradient =
-    currentSlide.accent?.includes('gradient') || currentSlide.accent?.startsWith('#');
-  const gradientClass =
-    !isCustomGradient && currentSlide.accent
-      ? `bg-gradient-to-r ${currentSlide.accent}`
-      : !isCustomGradient
-      ? 'bg-gradient-to-r from-[#0f4044] via-[#0d6e67] to-[#14c8ba]'
-      : '';
-  const gradientStyle = isCustomGradient ? { background: currentSlide.accent } : undefined;
-
   return (
-    <section className="bg-[#f8fafc] py-5 sm:py-7 border-b border-gray-200">
-      <div className="container-page space-y-6">
-        {/* Dynamic Promotional Hero Carousel Banner */}
-        <div className="overflow-hidden rounded-3xl border border-gray-200/80 bg-white shadow-md">
-          <div
-            className={`grid min-h-[320px] md:min-h-[350px] gap-6 ${gradientClass} p-6 sm:p-8 md:p-10 text-white md:grid-cols-[1.1fr_0.9fr] items-center relative overflow-hidden`}
-            style={gradientStyle}
+    <section className="py-5 sm:py-8">
+      <div className="container-page space-y-5">
+        {/* Full Edge-to-Edge Custom Poster Carousel */}
+        <div className="relative group/hero overflow-hidden rounded-[28px] sm:rounded-[36px] border border-white/80 bg-slate-900 shadow-[0_24px_60px_rgba(15,23,42,0.12)] backdrop-blur-xl">
+          {/* Main Slide Poster (Clickable) */}
+          <Link
+            key={currentIndex}
+            to={currentSlide.primaryHref || '/sell'}
+            className="block relative w-full overflow-hidden aspect-[16/9] sm:aspect-[21/9] lg:aspect-[24/9] min-h-[220px] sm:min-h-[320px] md:min-h-[380px] lg:min-h-[420px] animate-fade-in group cursor-pointer"
           >
-            {/* Background geometric accents */}
-            <div className="absolute right-0 top-0 h-96 w-96 rounded-full bg-white/5 blur-3xl pointer-events-none" />
-            <div className="absolute left-1/3 bottom-0 h-64 w-64 rounded-full bg-teal-400/10 blur-2xl pointer-events-none" />
+            <img
+              src={currentSlide.image}
+              alt={currentSlide.title || 'Fundu Lucknow Poster'}
+              className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.02]"
+              onError={(e) => {
+                (e.target as HTMLImageElement).src =
+                  'https://placehold.co/1400x550?text=Fundu+Poster+Banner';
+              }}
+            />
+          </Link>
 
-            <div className="relative z-10 flex flex-col justify-center">
-              {currentSlide.eyebrow && (
-                <div className="flex items-center gap-2">
-                  <span className="inline-flex items-center gap-1.5 rounded-full bg-white/20 px-3 py-1 text-[11px] font-extrabold uppercase tracking-widest text-white backdrop-blur-sm border border-white/20">
-                    <Sparkles className="h-3 w-3 text-amber-300" />
-                    {currentSlide.eyebrow}
-                  </span>
-                  <span className="hidden sm:inline-block rounded-full bg-emerald-400/30 border border-emerald-400/40 px-2.5 py-0.5 text-[11px] font-bold text-emerald-100">
-                    📍 Lucknow Exclusive
-                  </span>
-                </div>
-              )}
+          {/* Floating Left Navigation Button */}
+          {slidesCount > 1 && (
+            <button
+              type="button"
+              onClick={() => setActiveSlide((currentIndex - 1 + slidesCount) % slidesCount)}
+              className="absolute left-3 sm:left-6 top-1/2 -translate-y-1/2 z-30 flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-full bg-slate-950/40 hover:bg-white text-white hover:text-slate-950 backdrop-blur-xl border border-white/40 shadow-2xl transition-all duration-300 hover:scale-110 active:scale-95 cursor-pointer"
+              aria-label="Previous Slide"
+            >
+              <ChevronLeft className="h-5 w-5 sm:h-6 sm:w-6" />
+            </button>
+          )}
 
-              <h1 className="mt-3.5 font-display text-3xl sm:text-4xl lg:text-5xl font-black leading-tight tracking-tight drop-shadow-sm">
-                {currentSlide.title}
-              </h1>
+          {/* Floating Right Navigation Button */}
+          {slidesCount > 1 && (
+            <button
+              type="button"
+              onClick={() => setActiveSlide((currentIndex + 1) % slidesCount)}
+              className="absolute right-3 sm:right-6 top-1/2 -translate-y-1/2 z-30 flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-full bg-slate-950/40 hover:bg-white text-white hover:text-slate-950 backdrop-blur-xl border border-white/40 shadow-2xl transition-all duration-300 hover:scale-110 active:scale-95 cursor-pointer"
+              aria-label="Next Slide"
+            >
+              <ChevronRight className="h-5 w-5 sm:h-6 sm:w-6" />
+            </button>
+          )}
 
-              {currentSlide.description && (
-                <p className="mt-3.5 max-w-xl text-sm sm:text-base leading-relaxed text-white/90 font-medium">
-                  {currentSlide.description}
-                </p>
-              )}
-
-              {/* Bullet points */}
-              {currentSlide.bullets && currentSlide.bullets.length > 0 && (
-                <div className="mt-5 flex flex-wrap gap-2">
-                  {currentSlide.bullets.map((bullet, idx) => (
-                    <span
-                      key={`${bullet}-${idx}`}
-                      className="inline-flex items-center gap-1.5 rounded-full bg-black/20 border border-white/20 px-3 py-1 text-xs font-semibold text-white/95"
-                    >
-                      <CheckCircle2 className="h-3.5 w-3.5 text-teal-300 shrink-0" />
-                      {bullet}
-                    </span>
-                  ))}
-                </div>
-              )}
-
-              {/* CTA Action Buttons */}
-              <div className="mt-6 flex flex-wrap items-center gap-3">
-                {currentSlide.primaryLabel && (
-                  <Link
-                    to={currentSlide.primaryHref || '/sell'}
-                    className="inline-flex items-center gap-2 rounded-xl bg-white px-6 py-3 text-sm font-extrabold text-gray-900 shadow-xl hover:bg-teal-50 hover:text-teal-900 transition active:scale-95"
-                  >
-                    <span>{currentSlide.primaryLabel}</span>
-                    <ArrowRight className="h-4 w-4 text-teal-600" />
-                  </Link>
-                )}
-                {currentSlide.secondaryLabel && (
-                  <Link
-                    to={currentSlide.secondaryHref || '#'}
-                    className="inline-flex items-center gap-2 rounded-xl border border-white/30 bg-white/10 backdrop-blur-sm px-5 py-3 text-sm font-bold text-white hover:bg-white/20 transition"
-                  >
-                    {currentSlide.secondaryLabel}
-                  </Link>
-                )}
-              </div>
-            </div>
-
-            {/* Poster Image */}
-            <div className="relative z-10 flex items-center justify-center md:justify-end">
-              {currentSlide.image ? (
-                <img
-                  src={currentSlide.image}
-                  alt={currentSlide.title}
-                  className="h-[220px] sm:h-[260px] md:h-[290px] w-auto max-w-full object-contain drop-shadow-[0_20px_35px_rgba(0,0,0,0.35)] transition-all duration-500 hover:scale-105"
-                />
-              ) : (
-                <div className="h-[220px] w-[260px] rounded-2xl bg-white/10 grid place-items-center text-white/50">
-                  Fundu Lucknow
-                </div>
-              )}
-            </div>
-          </div>
-
-          {/* Slider Controls */}
-          <div className="flex items-center justify-between border-t border-gray-100 bg-white px-6 py-3.5">
-            <div className="flex items-center gap-2">
-              {activePosters.map((slide, index) => (
+          {/* Bottom Centered Pagination Indicator Pills */}
+          {slidesCount > 1 && (
+            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-30 flex items-center gap-2 rounded-full bg-slate-950/50 backdrop-blur-lg px-3.5 py-1.5 border border-white/20 shadow-lg">
+              {activePosters.map((_, index) => (
                 <button
-                  key={slide.id || index}
+                  key={index}
                   type="button"
                   onClick={() => setActiveSlide(index)}
-                  className={`h-2 rounded-full transition-all duration-300 ${
+                  className={`h-2 rounded-full transition-all duration-300 cursor-pointer ${
                     index === currentIndex
-                      ? 'w-7 bg-teal-500'
-                      : 'w-2 bg-gray-300 hover:bg-gray-400'
+                      ? 'w-7 bg-[#86dedd] shadow-[0_0_12px_#86dedd]'
+                      : 'w-2 bg-white/50 hover:bg-white'
                   }`}
                   aria-label={`Go to slide ${index + 1}`}
                 />
               ))}
             </div>
-
-            <div className="flex items-center gap-2">
-              <button
-                type="button"
-                onClick={() => setActiveSlide((currentIndex - 1 + slidesCount) % slidesCount)}
-                className="grid h-8 w-8 place-items-center rounded-full border border-gray-200 bg-white text-gray-700 transition hover:border-teal-400 hover:text-teal-700 shadow-sm"
-                aria-label="Previous slide"
-              >
-                <ArrowLeft className="h-4 w-4" />
-              </button>
-              <button
-                type="button"
-                onClick={() => setActiveSlide((currentIndex + 1) % slidesCount)}
-                className="grid h-8 w-8 place-items-center rounded-full border border-gray-200 bg-white text-gray-700 transition hover:border-teal-400 hover:text-teal-700 shadow-sm"
-                aria-label="Next slide"
-              >
-                <ArrowRight className="h-4 w-4" />
-              </button>
-            </div>
-          </div>
+          )}
         </div>
 
-        {/* Cashify Trust & Lucknow Doorstep Strip */}
-        <div className="rounded-2xl border border-gray-200 bg-white p-4 shadow-sm">
+        {/* Lucknow Exclusive Trust Pillars Strip */}
+        <div className="rounded-3xl border border-white/80 bg-white/85 p-4 sm:p-5 shadow-[0_12px_32px_rgba(0,0,0,0.04)] backdrop-blur-xl">
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
             {TRUST_PILLARS_STRIP.map((item, idx) => {
               const Icon = item.icon;
               return (
                 <div
                   key={idx}
-                  className="flex items-center gap-3 rounded-xl bg-[#f8fafc] p-3 text-xs font-bold text-gray-800 border border-gray-100"
+                  className="flex items-center gap-3 rounded-2xl bg-white/80 p-3 text-xs font-bold text-slate-800 border border-white/90 shadow-sm"
                 >
-                  <div className="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-teal-100 text-teal-700">
+                  <div className="grid h-8 w-8 shrink-0 place-items-center rounded-xl bg-[#c0e7e4] text-[#0d5955]">
                     <Icon className="h-4 w-4" />
                   </div>
                   <span className="leading-snug">{item.label}</span>

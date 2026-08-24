@@ -15,6 +15,7 @@ import {
   MapPin,
   ExternalLink,
   Image as ImageIcon,
+  Building2,
 } from 'lucide-react';
 import type { AdminTab } from './adminTypes';
 
@@ -97,6 +98,14 @@ export default function AdminSidebar({
       badge: `${counts.agents} Active`,
       badgeColor: 'bg-emerald-600 text-white',
       path: '/admin/agents',
+    },
+    {
+      id: 'wholesalers' as AdminTab,
+      label: 'B2B & Vendor Khata',
+      icon: Building2,
+      badge: 'Lucknow B2B',
+      badgeColor: 'bg-teal-600 text-white',
+      path: '/admin/wholesalers',
     },
     {
       id: 'banners' as AdminTab,
@@ -186,10 +195,17 @@ export default function AdminSidebar({
           <ExternalLink className="h-3.5 w-3.5" />
         </Link>
         <Link
-          to="/dashboard"
-          className="flex items-center justify-between rounded-xl px-3 py-2 text-xs font-semibold text-ink-500 hover:bg-ink-100 hover:text-ink-900"
+          to="/delivery"
+          className="flex items-center justify-between rounded-xl px-3 py-2 text-xs font-bold text-teal-700 bg-teal-50 hover:bg-teal-100"
         >
-          <span>User Dashboard</span>
+          <span>Field Rider Portal</span>
+          <ExternalLink className="h-3.5 w-3.5" />
+        </Link>
+        <Link
+          to="/wholesaler"
+          className="flex items-center justify-between rounded-xl px-3 py-2 text-xs font-bold text-purple-700 bg-purple-50 hover:bg-purple-100"
+        >
+          <span>Wholesaler Hub</span>
           <ExternalLink className="h-3.5 w-3.5" />
         </Link>
       </div>

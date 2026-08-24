@@ -4,12 +4,14 @@ import {
   LayoutDashboard, Smartphone, BadgeIndianRupee, Wrench, Package,
   Truck, Clock, LogOut, User, Phone, MapPin, Calendar, CheckCircle2,
   Circle, AlertCircle, ChevronRight, Banknote, ShieldCheck, Star,
-  RefreshCw, ArrowRight, CreditCard, Boxes, Navigation,
+  RefreshCw, ArrowRight, CreditCard, Boxes, Navigation, Eye, MessageSquare,
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { db, formatINR } from '../lib/db';
 import type { SellRequest, RepairBooking, Order, Dispatch } from '../types';
 import LiveExecutiveTracker from '../components/LiveExecutiveTracker';
+import OrderDetailsModal from '../components/OrderDetailsModal';
+import ReviewModal from '../components/ReviewModal';
 
 /* ── Status helpers ─────────────────────────────────────────── */
 const STATUS_META: Record<string, { color: string; dot: string; label: string }> = {
@@ -164,6 +166,37 @@ export default function Dashboard() {
     trackingId?: string;
   } | null>(null);
 
+  // Detailed Order Inspector Modal
+  const [selectedOrderDetails, setSelectedOrderDetails] = useState<{ order: Order; dispatch?: Dispatch } | null>(null);
+  const [reviewModalOpen, setReviewModalOpen] = useState(false);
+
+  const handleOpenTracker = (item: any) => {
+    setTrackerModal({
+      isOpen: true,
+      locality: item.locality || 'Lucknow',
+      executiveName: item.executiveName || item.pickup_person_name || item.delivery_person_name || 'Field Executive',
+      executivePhone: item.executivePhone || item.pickup_person_phone || item.delivery_person_phone || '+91 98391 22345',
+      orderType: item.orderType || (item.type as any) || 'buy',
+      deviceInfo: item.deviceInfo || `${item.brand || ''} ${item.model || ''}`.trim() || 'Device',
+      trackingId: item.trackingId || item.id,
+    });
+  };
+
+  const refreshOrders = () => {
+    if (!user) return;
+    db.from('orders').select('*').eq('user_id', user.id).order('created_at', { ascending: false })
+      .then(({ data }) => {
+        const orderList = (data as Order[]) ?? [];
+        setOrders(orderList);
+        if (selectedOrderDetails) {
+          const updated = orderList.find((o) => o.id === selectedOrderDetails.order.id);
+          if (updated) {
+            setSelectedOrderDetails((prev) => prev ? { ...prev, order: updated } : null);
+          }
+        }
+      });
+  };
+
   useEffect(() => {
     if (!loading && !user) navigate('/login?redirect=/dashboard');
     if (!loading && user && profile && profile.role === 'admin') navigate('/admin');
@@ -305,13 +338,20 @@ export default function Dashboard() {
             dispatches={dispatches}
             onTabChange={setTab}
             onOpenTracker={handleOpenTracker}
+            onViewOrderDetails={(order, dispatch) => setSelectedOrderDetails({ order, dispatch })}
           />
         ) : tab === 'sells' ? (
           <SellsTab sells={sells} onOpenTracker={handleOpenTracker} />
         ) : tab === 'repairs' ? (
           <RepairsTab repairs={repairs} onOpenTracker={handleOpenTracker} />
         ) : (
-          <OrdersTab orders={orders} dispatches={dispatches} onOpenTracker={handleOpenTracker} />
+          <OrdersTab
+            orders={orders}
+            dispatches={dispatches}
+            onOpenTracker={handleOpenTracker}
+            onViewOrderDetails={(order, dispatch) => setSelectedOrderDetails({ order, dispatch })}
+            onOpenReviewModal={() => setReviewModalOpen(true)}
+          />
         )}
       </div>
 
@@ -359,6 +399,26 @@ export default function Dashboard() {
           trackingId={trackerModal.trackingId}
         />
       )}
+
+      {/* ── Complete Order Inspector Details Modal ── */}
+      {selectedOrderDetails && (
+        <OrderDetailsModal
+          isOpen={Boolean(selectedOrderDetails)}
+          onClose={() => setSelectedOrderDetails(null)}
+          order={selectedOrderDetails.order}
+          dispatch={selectedOrderDetails.dispatch}
+          onOpenTracker={handleOpenTracker}
+          onOpenReviewModal={() => setReviewModalOpen(true)}
+          onOrderUpdated={refreshOrders}
+        />
+      )}
+
+      {/* ── Review & Rating Modal ── */}
+      <ReviewModal
+        isOpen={reviewModalOpen}
+        onClose={() => setReviewModalOpen(false)}
+        defaultServiceType="buy"
+      />
     </div>
   );
 }
@@ -367,10 +427,12 @@ export default function Dashboard() {
    OVERVIEW TAB
 ═══════════════════════════════════════════════════════════════ */
 function OverviewTab({
-  sells, repairs, orders, dispatches, onTabChange,
+  sells, repairs, orders, dispatches, onTabChange, onOpenTracker: _onOpenTracker, onViewOrderDetails: _onViewOrderDetails,
 }: {
   sells: SellRequest[]; repairs: RepairBooking[]; orders: Order[];
   dispatches: Dispatch[]; onTabChange: (t: 'sells' | 'repairs' | 'orders') => void;
+  onOpenTracker?: (item: any) => void;
+  onViewOrderDetails?: (order: Order, dispatch?: Dispatch) => void;
 }) {
   const activeItems = [
     ...sells.filter((s) => !['completed', 'cancelled', 'rejected'].includes(s.status)).slice(0, 2).map((s) => ({
@@ -742,10 +804,14 @@ function OrdersTab({
   orders,
   dispatches,
   onOpenTracker,
+  onViewOrderDetails,
+  onOpenReviewModal,
 }: {
   orders: Order[];
   dispatches: Dispatch[];
   onOpenTracker?: (item: any) => void;
+  onViewOrderDetails?: (order: Order, dispatch?: Dispatch) => void;
+  onOpenReviewModal?: () => void;
 }) {
   if (orders.length === 0) {
     return <EmptyState icon={Package} title="No orders yet" desc="Browse certified refurbished phones with warranty." cta={{ to: '/buy', label: 'Browse Phones' }} />;
@@ -754,7 +820,16 @@ function OrdersTab({
     <div className="space-y-4">
       {orders.map((o) => {
         const disp = dispatches.find((d) => d.order_id === o.id);
-        return <OrderCard key={o.id} order={o} dispatch={disp} onOpenTracker={onOpenTracker} />;
+        return (
+          <OrderCard
+            key={o.id}
+            order={o}
+            dispatch={disp}
+            onOpenTracker={onOpenTracker}
+            onViewOrderDetails={onViewOrderDetails}
+            onOpenReviewModal={onOpenReviewModal}
+          />
+        );
       })}
     </div>
   );
@@ -764,10 +839,14 @@ function OrderCard({
   order: o,
   dispatch: disp,
   onOpenTracker,
+  onViewOrderDetails,
+  onOpenReviewModal,
 }: {
   order: Order;
   dispatch?: Dispatch;
   onOpenTracker?: (item: any) => void;
+  onViewOrderDetails?: (order: Order, dispatch?: Dispatch) => void;
+  onOpenReviewModal?: () => void;
 }) {
   const isTerminal = ['delivered', 'cancelled'].includes(o.status);
   const effectiveStatus = disp?.status ?? o.status;
@@ -866,6 +945,59 @@ function OrderCard({
           )}
         </div>
       )}
+
+      {/* Action Buttons Bar */}
+      <div className="mt-4 pt-3 border-t border-ink-100 flex flex-wrap items-center justify-between gap-2.5">
+        <div className="flex items-center gap-2 flex-wrap">
+          <button
+            type="button"
+            onClick={() => onViewOrderDetails?.(o, disp)}
+            className="btn-primary text-xs px-3.5 py-1.5 flex items-center gap-1.5 bg-brand-600 hover:bg-brand-700 font-bold shadow-xs"
+          >
+            <Eye className="h-3.5 w-3.5" /> View Full Order Details
+          </button>
+
+          {!isTerminal && (
+            <button
+              type="button"
+              onClick={() =>
+                onOpenTracker?.({
+                  locality: o.delivery_area || o.delivery_address,
+                  executiveName: disp?.delivery_person_name || o.delivery_person_name,
+                  executivePhone: disp?.delivery_person_phone || o.delivery_person_phone,
+                  orderType: 'buy',
+                  deviceInfo: `Order #${o.id.slice(0, 8).toUpperCase()}`,
+                  trackingId: o.tracking_id,
+                })
+              }
+              className="btn-outline text-xs px-3 py-1.5 flex items-center gap-1.5 border-teal-500 text-teal-700 hover:bg-teal-50 font-bold"
+            >
+              <Navigation className="h-3.5 w-3.5 text-teal-600" /> Live GPS Tracker
+            </button>
+          )}
+
+          <a
+            href={`https://wa.me/919839122345?text=${encodeURIComponent(
+              `Hi Fundu Admin, I have a query regarding my Order #${o.id.slice(0, 8).toUpperCase()} for delivery in Lucknow. Status: ${effectiveStatus}. Please assist.`
+            )}`}
+            target="_blank"
+            rel="noreferrer"
+            className="btn text-xs px-3 py-1.5 bg-[#25D366] text-white hover:bg-[#20bd5a] flex items-center gap-1.5 rounded-xl font-bold shadow-xs"
+          >
+            <MessageSquare className="h-3.5 w-3.5" /> WhatsApp Support
+          </a>
+        </div>
+
+        {isTerminal && effectiveStatus === 'delivered' && (
+          <button
+            type="button"
+            onClick={() => onOpenReviewModal?.()}
+            className="btn-outline text-xs px-3 py-1.5 flex items-center gap-1.5 border-emerald-500 text-emerald-700 hover:bg-emerald-50 font-bold"
+          >
+            <Star className="h-3.5 w-3.5 text-amber-500 fill-amber-500" /> Rate & Review
+          </button>
+        )}
+      </div>
     </div>
   );
 }

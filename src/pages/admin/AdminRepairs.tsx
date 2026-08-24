@@ -11,6 +11,7 @@ import {
   FileText,
   Truck,
   Sparkles,
+  MessageSquare,
 } from 'lucide-react';
 import type { RepairBooking, DeliveryAgent } from './adminTypes';
 import { statusColors } from './adminTypes';
@@ -57,6 +58,25 @@ export default function AdminRepairs({
       onUpdateRepairCost(selectedRepair.id, num);
       setEditingCost(false);
     }
+  };
+
+  const getTechnicianJobWhatsAppLink = (repair: RepairBooking, agentPhone?: string) => {
+    const rawPhone = (agentPhone || repair.delivery_person_phone || '9839122345').replace(/\D/g, '');
+    const targetPhone = rawPhone.length === 10 ? `91${rawPhone}` : rawPhone;
+    const text = `🔧 *NEW FUNDU REPAIR SERVICE ASSIGNED*\n\n` +
+      `📋 *Booking ID:* ${repair.tracking_id || repair.id.slice(0, 8).toUpperCase()}\n` +
+      `👤 *Customer Name:* ${repair.user_name || 'Customer'}\n` +
+      `📞 *Customer Phone:* ${repair.user_phone || 'N/A'}\n` +
+      `📍 *Address:* ${repair.pickup_address || 'Lucknow'}\n` +
+      `🏙️ *Locality:* ${repair.locality || 'Lucknow'}\n` +
+      `⏰ *Preferred Slot:* ${repair.pickup_date || ''} (${repair.pickup_slot || ''})\n\n` +
+      `📱 *DEVICE & ISSUE DETAILS:*\n` +
+      `• *Device:* ${repair.brand} ${repair.model}\n` +
+      `• *Problem Reported:* ${repair.problem}\n` +
+      `• *Details:* ${repair.problem_detail || 'Standard diagnostic test required'}\n` +
+      `• *Estimated Repair Cost:* ₹${(repair.estimated_cost || 0).toLocaleString('en-IN')}\n\n` +
+      `🛠️ *Service Type:* ${repair.repair_type === 'doorstep' ? '30-Min Doorstep Repair with Tool-Kit' : 'Pickup & Drop to Hazratganj Lab'}`;
+    return `https://wa.me/${targetPhone}?text=${encodeURIComponent(text)}`;
   };
 
   return (
@@ -339,6 +359,15 @@ export default function AdminRepairs({
                     </div>
                   )}
                 </div>
+
+                <a
+                  href={getTechnicianJobWhatsAppLink(selectedRepair)}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="btn bg-[#25D366] text-white hover:bg-[#20bd5a] text-xs px-3 py-2 flex items-center justify-center gap-1.5 font-bold shadow-xs rounded-xl w-full"
+                >
+                  <MessageSquare className="h-3.5 w-3.5" /> Send Repair Job Briefing to Technician on WhatsApp
+                </a>
               </div>
             </div>
           ) : (

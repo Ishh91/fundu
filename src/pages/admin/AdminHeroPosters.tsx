@@ -10,54 +10,28 @@ import {
   ArrowDown,
   RotateCcw,
   Sparkles,
-  Check,
   ExternalLink,
   Upload,
-  Layers,
-  Palette,
   Link as LinkIcon,
-  Tag,
+  CheckCircle2,
+  Wand2,
+  Monitor,
+  Smartphone,
+  Tablet,
+  Info,
+  Layers,
+  HelpCircle,
 } from 'lucide-react';
 import type { HeroPoster } from './adminTypes';
-import { useHeroPosters } from '../../lib/heroBanners';
+import { useHeroPosters, DEFAULT_HERO_POSTERS } from '../../lib/heroBanners';
+import { removeImageBackground } from '../../lib/imageUtils';
 
-const GRADIENT_PRESETS = [
-  { label: 'Teal Brand (Default)', value: 'from-[#4cd2c4] to-[#18bdb0]', preview: 'bg-gradient-to-r from-[#4cd2c4] to-[#18bdb0]' },
-  { label: 'Fresh Mint', value: 'from-[#58dbcf] to-[#1db8aa]', preview: 'bg-gradient-to-r from-[#58dbcf] to-[#1db8aa]' },
-  { label: 'Deep Emerald', value: 'from-[#10b981] to-[#047857]', preview: 'bg-gradient-to-r from-[#10b981] to-[#047857]' },
-  { label: 'Ocean Blue', value: 'from-[#0ea5e9] to-[#2563eb]', preview: 'bg-gradient-to-r from-[#0ea5e9] to-[#2563eb]' },
-  { label: 'Royal Violet', value: 'from-[#8b5cf6] to-[#6366f1]', preview: 'bg-gradient-to-r from-[#8b5cf6] to-[#6366f1]' },
-  { label: 'Sunset Amber', value: 'from-[#f59e0b] to-[#ea580c]', preview: 'bg-gradient-to-r from-[#f59e0b] to-[#ea580c]' },
-  { label: 'Midnight Dark', value: 'from-[#0f172a] to-[#1e293b]', preview: 'bg-gradient-to-r from-[#0f172a] to-[#1e293b]' },
-];
-
-const PRESET_POSTER_IMAGES = [
-  {
-    label: 'Sell Phone Ad (Man with Cash & Phone)',
-    url: 'https://coresg-normal.trae.ai/api/ide/v1/text_to_image?prompt=' +
-      encodeURIComponent('photorealistic Indian man holding smartphone and cash wallet, premium teal ecommerce banner, realistic advertising, clean studio lighting, full body, modern Indian tech ad') +
-      '&image_size=portrait_4_3',
-  },
-  {
-    label: 'Refurbished Phones (Smartphones Showcase)',
-    url: 'https://coresg-normal.trae.ai/api/ide/v1/text_to_image?prompt=' +
-      encodeURIComponent('photorealistic premium smartphones arranged for ecommerce banner, teal gradient backdrop, glossy lighting, realistic ad photography, clean modern composition') +
-      '&image_size=portrait_4_3',
-  },
-  {
-    label: 'Repair Technician (Mobile Repair Ad)',
-    url: 'https://coresg-normal.trae.ai/api/ide/v1/text_to_image?prompt=' +
-      encodeURIComponent('photorealistic mobile repair technician with smartphone, premium teal service banner, realistic Indian ecommerce ad, clean lighting and sharp modern composition') +
-      '&image_size=portrait_4_3',
-  },
-  {
-    label: 'iPhone Festive Deal',
-    url: 'https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=800&auto=format&fit=crop&q=80',
-  },
-  {
-    label: 'Tech Lifestyle (Modern Gadgets)',
-    url: 'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=800&auto=format&fit=crop&q=80',
-  },
+const QUICK_LINKS = [
+  { label: '📱 Sell Old Phone (/sell)', value: '/sell' },
+  { label: '🛍️ Buy Refurbished (/buy)', value: '/buy' },
+  { label: '🔧 Phone Repair (/repair)', value: '/repair' },
+  { label: '🏬 Spare Parts Store (/store)', value: '/store' },
+  { label: '🤝 Partner with Fundu (/partner)', value: '/partner' },
 ];
 
 export default function AdminHeroPosters() {
@@ -67,21 +41,17 @@ export default function AdminHeroPosters() {
   const [modalOpen, setModalOpen] = useState(false);
   const [editingPoster, setEditingPoster] = useState<HeroPoster | null>(null);
   const [saving, setSaving] = useState(false);
+  const [isRemovingBg, setIsRemovingBg] = useState(false);
+  const [showSizeGuide, setShowSizeGuide] = useState(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
-  // Form State for Add / Edit
+  // Form State for Custom Poster Upload
   const [form, setForm] = useState({
-    eyebrow: '',
     title: '',
-    description: '',
-    primaryLabel: 'Check Value',
     primaryHref: '/sell',
-    secondaryLabel: 'How it Works',
-    secondaryHref: '#sell-flow',
-    accent: 'from-[#4cd2c4] to-[#18bdb0]',
     image: '',
-    bulletInput: '',
-    bullets: ['Doorstep pickup', 'Fast payment'] as string[],
+    originalImage: '',
+    is_bg_removed: false,
     is_active: true,
   });
 
@@ -90,23 +60,16 @@ export default function AdminHeroPosters() {
     window.setTimeout(() => setToastMessage(null), 3500);
   };
 
-  const activePosterList = posters;
   const currentPreviewPoster = posters.find((p) => p.id === selectedPosterId) || posters[0] || null;
 
   const handleOpenAdd = () => {
     setEditingPoster(null);
     setForm({
-      eyebrow: 'New Offer',
-      title: 'Get the best deal for your smartphone in Lucknow',
-      description: 'Instant cash payment and doorstep service with 100% data safety guaranteed.',
-      primaryLabel: 'Sell Now',
+      title: '',
       primaryHref: '/sell',
-      secondaryLabel: 'Explore Store',
-      secondaryHref: '/buy',
-      accent: 'from-[#4cd2c4] to-[#18bdb0]',
-      image: PRESET_POSTER_IMAGES[0].url,
-      bulletInput: '',
-      bullets: ['Doorstep pickup', 'Best price in Lucknow', 'Instant UPI/Cash'],
+      image: '',
+      originalImage: '',
+      is_bg_removed: false,
       is_active: true,
     });
     setModalOpen(true);
@@ -115,17 +78,11 @@ export default function AdminHeroPosters() {
   const handleOpenEdit = (poster: HeroPoster) => {
     setEditingPoster(poster);
     setForm({
-      eyebrow: poster.eyebrow,
-      title: poster.title,
-      description: poster.description,
-      primaryLabel: poster.primaryLabel,
-      primaryHref: poster.primaryHref,
-      secondaryLabel: poster.secondaryLabel || '',
-      secondaryHref: poster.secondaryHref || '',
-      accent: poster.accent || 'from-[#4cd2c4] to-[#18bdb0]',
-      image: poster.image,
-      bulletInput: '',
-      bullets: poster.bullets || [],
+      title: poster.title || '',
+      primaryHref: poster.primaryHref || '/sell',
+      image: poster.image || '',
+      originalImage: poster.image || '',
+      is_bg_removed: false,
       is_active: poster.is_active !== false,
     });
     setModalOpen(true);
@@ -161,51 +118,80 @@ export default function AdminHeroPosters() {
     copy.splice(newIndex, 0, movedItem);
 
     await savePosters(copy);
-    showToast('Poster reordered');
-  };
-
-  const handleAddBullet = () => {
-    if (!form.bulletInput.trim()) return;
-    setForm((prev) => ({
-      ...prev,
-      bullets: [...prev.bullets, prev.bulletInput.trim()],
-      bulletInput: '',
-    }));
-  };
-
-  const handleRemoveBullet = (index: number) => {
-    setForm((prev) => ({
-      ...prev,
-      bullets: prev.bullets.filter((_, i) => i !== index),
-    }));
+    showToast('Poster order updated');
   };
 
   const handleImageFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    if (file.size > 2 * 1024 * 1024) {
-      alert('Image size exceeds 2MB. Please choose a smaller file or paste a web URL.');
+    if (file.size > 10 * 1024 * 1024) {
+      alert('Poster size exceeds 10MB. Please choose a compressed web graphic.');
       return;
     }
 
     const reader = new FileReader();
     reader.onload = (event) => {
       if (typeof event.target?.result === 'string') {
-        setForm((prev) => ({ ...prev, image: event.target!.result as string }));
+        const rawData = event.target!.result as string;
+        setForm((prev) => ({
+          ...prev,
+          image: rawData,
+          originalImage: rawData,
+          is_bg_removed: false,
+        }));
+        showToast('Poster graphic selected! 🖼️');
       }
     };
     reader.readAsDataURL(file);
   };
 
+  // Background Removal Toggle Handler
+  const handleToggleRemoveBg = async () => {
+    if (!form.image && !form.originalImage) {
+      alert('Please upload or provide a poster graphic first.');
+      return;
+    }
+
+    // If background is already removed, restore original
+    if (form.is_bg_removed) {
+      setForm((prev) => ({
+        ...prev,
+        image: prev.originalImage || prev.image,
+        is_bg_removed: false,
+      }));
+      showToast('Restored original poster background ↺');
+      return;
+    }
+
+    // Otherwise, remove background
+    setIsRemovingBg(true);
+    try {
+      const source = form.originalImage || form.image;
+      const transparentDataUrl = await removeImageBackground(source);
+      setForm((prev) => ({
+        ...prev,
+        originalImage: prev.originalImage || prev.image,
+        image: transparentDataUrl,
+        is_bg_removed: true,
+      }));
+      showToast('Background removed! Transparent cutout ready ✨');
+    } catch (err) {
+      console.error('Failed to remove background:', err);
+      alert('Could not remove background from this graphic. Ensure image URL is accessible.');
+    } finally {
+      setIsRemovingBg(false);
+    }
+  };
+
   const handleSaveForm = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!form.title.trim()) {
-      alert('Please enter a poster title.');
+      alert('Please enter a poster title or campaign name.');
       return;
     }
     if (!form.image.trim()) {
-      alert('Please provide a poster image URL or upload an image.');
+      alert('Please upload a poster graphic or paste an image URL.');
       return;
     }
 
@@ -213,17 +199,18 @@ export default function AdminHeroPosters() {
     try {
       const posterData: HeroPoster = {
         id: editingPoster?.id || `poster-${Date.now()}`,
-        eyebrow: form.eyebrow.trim(),
+        eyebrow: 'Featured',
         title: form.title.trim(),
-        description: form.description.trim(),
-        primaryLabel: form.primaryLabel.trim(),
-        primaryHref: form.primaryHref.trim() || '/',
-        secondaryLabel: form.secondaryLabel.trim(),
-        secondaryHref: form.secondaryHref.trim() || '#',
-        accent: form.accent,
+        description: '',
+        primaryLabel: 'Check Offer',
+        primaryHref: form.primaryHref.trim() || '/sell',
+        secondaryLabel: '',
+        secondaryHref: '',
+        accent: 'from-[#0a2f32] to-[#86dedd]',
         image: form.image.trim(),
-        bullets: form.bullets,
+        bullets: [],
         is_active: form.is_active,
+        is_full_banner: true,
         sort_order: editingPoster?.sort_order || posters.length + 1,
       };
 
@@ -237,7 +224,7 @@ export default function AdminHeroPosters() {
       await savePosters(updatedPosters);
       setSelectedPosterId(posterData.id);
       setModalOpen(false);
-      showToast(editingPoster ? 'Poster updated successfully!' : 'New poster added successfully!');
+      showToast(editingPoster ? 'Poster updated successfully!' : 'New poster banner added!');
     } catch (err) {
       console.error(err);
       alert('Failed to save poster.');
@@ -247,118 +234,199 @@ export default function AdminHeroPosters() {
   };
 
   const handleResetDefaults = async () => {
-    if (!window.confirm('Reset all hero posters back to default factory banners? Any custom changes will be overwritten.')) return;
+    if (!window.confirm('Reset all hero posters to default Fundu Lucknow banners?')) return;
     await resetPosters();
     setSelectedPosterId(null);
-    showToast('Hero posters reset to defaults');
+    showToast('Reset to default poster banners');
   };
+
+  if (loading) {
+    return (
+      <div className="p-8 text-center">
+        <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-teal-500 border-r-transparent" />
+        <p className="mt-2 text-xs text-slate-500 font-bold">Loading Custom Posters...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
-      {/* Toast notification */}
+      {/* Toast Alert */}
       {toastMessage && (
-        <div className="fixed top-5 right-5 z-50 flex items-center gap-2 rounded-2xl bg-ink-900 px-4 py-3 text-xs font-bold text-white shadow-2xl animate-fade-in border border-ink-700">
-          <Check className="h-4 w-4 text-emerald-400" />
+        <div className="fixed bottom-6 right-6 z-50 rounded-2xl bg-slate-900 text-white px-5 py-3 text-xs font-bold shadow-2xl flex items-center gap-2 border border-slate-700 animate-bounce">
+          <Sparkles className="h-4 w-4 text-teal-400" />
           <span>{toastMessage}</span>
         </div>
       )}
 
-      {/* Header Banner */}
-      <div className="card p-6 rounded-[28px] bg-gradient-to-r from-brand-600/15 via-teal-500/10 to-emerald-500/15 border border-brand-200/80 flex flex-wrap items-center justify-between gap-4">
+      {/* Header Bar */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white/90 backdrop-blur-xl p-6 rounded-3xl border border-slate-200/80 shadow-sm">
         <div>
-          <div className="inline-flex items-center gap-2 rounded-full bg-brand-100 px-3 py-1 text-xs font-black text-brand-800">
-            <ImageIcon className="h-3.5 w-3.5" /> Homepage Hero Management
-          </div>
-          <h2 className="mt-2 font-display text-2xl font-black text-ink-900">Hero Section Posters & Banners</h2>
-          <p className="mt-1 text-xs text-ink-600">
-            Update slide images, promotional titles, CTA buttons, background gradients, and perks shown on the main homepage.
+          <h2 className="text-xl font-black text-slate-900 flex items-center gap-2">
+            <ImageIcon className="h-6 w-6 text-teal-600" />
+            <span>Custom Hero Poster Banners</span>
+          </h2>
+          <p className="text-xs text-slate-500 mt-1 font-medium">
+            Upload your custom Canva/Photoshop poster banners. Display edge-to-edge on homepage carousel with optional background removal.
           </p>
         </div>
 
-        <div className="flex items-center gap-2.5">
+        <div className="flex items-center gap-2 flex-wrap">
           <button
-            onClick={handleResetDefaults}
-            className="btn rounded-xl border border-ink-200 bg-white px-3.5 py-2 text-xs font-bold text-ink-700 hover:bg-ink-50 shadow-xs flex items-center gap-1.5"
-            title="Reset to initial default posters"
+            type="button"
+            onClick={() => setShowSizeGuide(true)}
+            className="btn text-xs px-3.5 py-2 rounded-xl border border-teal-200 bg-teal-50 text-teal-800 font-bold hover:bg-teal-100 flex items-center gap-1.5 cursor-pointer"
           >
-            <RotateCcw className="h-3.5 w-3.5 text-ink-500" /> Reset Defaults
+            <HelpCircle className="h-4 w-4 text-teal-600" />
+            <span>📐 Exact Device Sizes</span>
           </button>
+
           <button
-            onClick={handleOpenAdd}
-            className="btn-primary text-xs px-4 py-2 flex items-center gap-1.5 bg-brand-600 hover:bg-brand-700 font-bold shadow-sm shadow-brand-500/30"
+            type="button"
+            onClick={handleResetDefaults}
+            className="btn text-xs px-3.5 py-2 rounded-xl border border-slate-200 bg-white text-slate-700 font-bold hover:bg-slate-50 flex items-center gap-1.5 cursor-pointer"
           >
-            <Plus className="h-3.5 w-3.5" /> Add New Poster
+            <RotateCcw className="h-3.5 w-3.5 text-slate-500" />
+            <span>Reset Defaults</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={handleOpenAdd}
+            className="btn-primary text-xs px-4 py-2.5 rounded-xl flex items-center gap-1.5 font-bold shadow-md cursor-pointer"
+          >
+            <Plus className="h-4 w-4" />
+            <span>Upload New Poster</span>
           </button>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-        {/* Left Column: List of Posters */}
+      {/* DEVICE SIZES GUIDE BANNER (Quick Reference) */}
+      <div className="rounded-3xl border border-teal-200/80 bg-gradient-to-r from-teal-50/70 via-cyan-50/70 to-emerald-50/70 p-5 shadow-xs">
+        <div className="flex items-center justify-between gap-4 mb-3">
+          <div className="flex items-center gap-2 text-teal-950">
+            <span className="text-lg">📐</span>
+            <h3 className="text-xs font-black uppercase tracking-wider">
+              Exact Poster Banner Sizes for Canva / Photoshop
+            </h3>
+          </div>
+          <button
+            type="button"
+            onClick={() => setShowSizeGuide(!showSizeGuide)}
+            className="text-xs font-extrabold text-teal-700 hover:underline cursor-pointer"
+          >
+            {showSizeGuide ? 'Hide Full Guide' : 'Expand Full Details →'}
+          </button>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          {/* Desktop */}
+          <div className="bg-white/90 rounded-2xl p-3.5 border border-teal-100 shadow-2xs">
+            <div className="flex items-center gap-2 text-slate-900 font-extrabold text-xs">
+              <Monitor className="h-4 w-4 text-teal-600" />
+              <span>Desktop / Laptop (Full HD)</span>
+            </div>
+            <p className="text-base font-black text-teal-700 mt-1">1920 × 750 px</p>
+            <p className="text-[11px] text-slate-500 mt-0.5">
+              Aspect: <b>2.5:1</b> (Safe Text Zone: Center 1200px)
+            </p>
+          </div>
+
+          {/* Tablet */}
+          <div className="bg-white/90 rounded-2xl p-3.5 border border-teal-100 shadow-2xs">
+            <div className="flex items-center gap-2 text-slate-900 font-extrabold text-xs">
+              <Tablet className="h-4 w-4 text-teal-600" />
+              <span>iPad & Tablets</span>
+            </div>
+            <p className="text-base font-black text-teal-700 mt-1">1440 × 600 px</p>
+            <p className="text-[11px] text-slate-500 mt-0.5">
+              Aspect: <b>2.4:1</b> (Medium widescreen)
+            </p>
+          </div>
+
+          {/* Mobile */}
+          <div className="bg-white/90 rounded-2xl p-3.5 border border-teal-100 shadow-2xs">
+            <div className="flex items-center gap-2 text-slate-900 font-extrabold text-xs">
+              <Smartphone className="h-4 w-4 text-teal-600" />
+              <span>Mobile Devices (All Phones)</span>
+            </div>
+            <p className="text-base font-black text-teal-700 mt-1">1080 × 608 px</p>
+            <p className="text-[11px] text-slate-500 mt-0.5">
+              Aspect: <b>16:9</b> (Keep text 10% away from edges)
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* Main 2-Column Workspace */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        {/* Left Column: List of Uploaded Posters */}
         <div className="lg:col-span-5 space-y-3">
           <div className="flex items-center justify-between px-1">
-            <h3 className="text-xs font-black uppercase tracking-wider text-ink-500">
-              Active Slides ({posters.filter((p) => p.is_active !== false).length} / {posters.length})
-            </h3>
-            <span className="text-[11px] font-semibold text-ink-400">Drag/order or toggle</span>
+            <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">
+              Live Slides ({posters.length})
+            </span>
+            <span className="text-[11px] text-teal-700 font-bold">
+              {posters.filter((p) => p.is_active !== false).length} Active
+            </span>
           </div>
 
           <div className="space-y-2.5">
             {posters.map((poster, index) => {
               const isSelected = (selectedPosterId || posters[0]?.id) === poster.id;
+              const isActive = poster.is_active !== false;
+
               return (
                 <div
                   key={poster.id}
                   onClick={() => setSelectedPosterId(poster.id)}
-                  className={`card p-4 rounded-2xl cursor-pointer transition-all ${
+                  className={`group relative overflow-hidden rounded-2xl border transition-all cursor-pointer p-3.5 ${
                     isSelected
-                      ? 'border-brand-600 bg-brand-50/70 shadow-md ring-2 ring-brand-500/20'
-                      : 'bg-white hover:border-brand-300 hover:shadow-xs'
+                      ? 'border-teal-500 bg-teal-50/50 shadow-md ring-2 ring-teal-500/20'
+                      : 'border-slate-200/80 bg-white hover:border-slate-300 hover:shadow-sm'
                   }`}
                 >
                   <div className="flex items-center gap-3">
                     {/* Thumbnail */}
-                    <div className="h-14 w-14 rounded-xl bg-ink-100 overflow-hidden shrink-0 border border-ink-200/60 relative group">
+                    <div className="relative h-14 w-24 shrink-0 overflow-hidden rounded-xl bg-slate-900 border border-slate-200">
                       <img
                         src={poster.image}
-                        alt=""
-                        className="h-full w-full object-contain bg-white p-1"
+                        alt={poster.title}
+                        className="h-full w-full object-cover"
                         onError={(e) => {
                           (e.target as HTMLImageElement).src =
-                            'https://placehold.co/100x100?text=No+Image';
+                            'https://placehold.co/200x120?text=Poster';
                         }}
                       />
+                      {!isActive && (
+                        <div className="absolute inset-0 bg-black/60 grid place-items-center text-[10px] text-white font-bold">
+                          Hidden
+                        </div>
+                      )}
                     </div>
 
-                    {/* Meta */}
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2">
-                        <span className="text-[10px] font-extrabold uppercase tracking-wider px-2 py-0.5 rounded-full bg-ink-100 text-ink-700">
-                          {poster.eyebrow || `Slide #${index + 1}`}
+                    {/* Info */}
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-center gap-1.5">
+                        <span className="text-[10px] font-extrabold text-teal-700 bg-teal-100/80 px-2 py-0.5 rounded-full">
+                          Slide #{index + 1}
                         </span>
-                        {poster.is_active === false ? (
-                          <span className="inline-flex items-center gap-0.5 text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-100 text-amber-800">
-                            <EyeOff className="h-2.5 w-2.5" /> Inactive
-                          </span>
-                        ) : (
-                          <span className="inline-flex items-center gap-0.5 text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800">
-                            <Eye className="h-2.5 w-2.5" /> Live
-                          </span>
-                        )}
+                        <span className="text-[10px] font-medium text-slate-400 truncate">
+                          ➔ {poster.primaryHref || '/sell'}
+                        </span>
                       </div>
-
-                      <h4 className="font-bold text-xs text-ink-900 truncate mt-1">{poster.title}</h4>
-                      <p className="text-[11px] text-ink-500 truncate mt-0.5">
-                        CTA: <span className="font-semibold text-ink-700">{poster.primaryLabel}</span> ({poster.primaryHref})
-                      </p>
+                      <h4 className="font-extrabold text-xs text-slate-900 truncate mt-1">
+                        {poster.title || 'Untitled Poster'}
+                      </h4>
                     </div>
 
-                    {/* Quick Actions */}
+                    {/* Actions */}
                     <div className="flex items-center gap-1 shrink-0">
                       <button
                         type="button"
                         onClick={(e) => handleMove(index, 'up', e)}
                         disabled={index === 0}
-                        className="p-1 rounded-lg text-ink-400 hover:text-ink-900 hover:bg-ink-100 disabled:opacity-30"
+                        className="p-1 rounded-lg text-slate-400 hover:bg-slate-100 disabled:opacity-30"
                         title="Move Up"
                       >
                         <ArrowUp className="h-3.5 w-3.5" />
@@ -367,7 +435,7 @@ export default function AdminHeroPosters() {
                         type="button"
                         onClick={(e) => handleMove(index, 'down', e)}
                         disabled={index === posters.length - 1}
-                        className="p-1 rounded-lg text-ink-400 hover:text-ink-900 hover:bg-ink-100 disabled:opacity-30"
+                        className="p-1 rounded-lg text-slate-400 hover:bg-slate-100 disabled:opacity-30"
                         title="Move Down"
                       >
                         <ArrowDown className="h-3.5 w-3.5" />
@@ -375,14 +443,12 @@ export default function AdminHeroPosters() {
                       <button
                         type="button"
                         onClick={(e) => handleToggleActive(poster.id, e)}
-                        className={`p-1.5 rounded-lg transition ${
-                          poster.is_active !== false
-                            ? 'text-emerald-600 hover:bg-emerald-50'
-                            : 'text-ink-400 hover:bg-ink-100'
+                        className={`p-1 rounded-lg ${
+                          isActive ? 'text-teal-600 hover:bg-teal-50' : 'text-slate-400 hover:bg-slate-100'
                         }`}
-                        title={poster.is_active !== false ? 'Hide from homepage' : 'Show on homepage'}
+                        title={isActive ? 'Deactivate' : 'Activate'}
                       >
-                        {poster.is_active !== false ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}
+                        {isActive ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}
                       </button>
                       <button
                         type="button"
@@ -390,16 +456,16 @@ export default function AdminHeroPosters() {
                           e.stopPropagation();
                           handleOpenEdit(poster);
                         }}
-                        className="p-1.5 rounded-lg text-brand-600 hover:bg-brand-50"
-                        title="Edit poster"
+                        className="p-1 rounded-lg text-slate-600 hover:bg-slate-100"
+                        title="Edit Poster"
                       >
                         <Edit2 className="h-4 w-4" />
                       </button>
                       <button
                         type="button"
                         onClick={(e) => handleDelete(poster.id, e)}
-                        className="p-1.5 rounded-lg text-red-500 hover:bg-red-50"
-                        title="Delete poster"
+                        className="p-1 rounded-lg text-red-500 hover:bg-red-50"
+                        title="Delete Poster"
                       >
                         <Trash2 className="h-4 w-4" />
                       </button>
@@ -411,400 +477,399 @@ export default function AdminHeroPosters() {
           </div>
         </div>
 
-        {/* Right Column: Live Interactive Preview */}
+        {/* Right Column: Full Edge-to-Edge Poster Live Preview */}
         <div className="lg:col-span-7 space-y-4 sticky top-6">
           <div className="flex items-center justify-between px-1">
-            <h3 className="text-xs font-black uppercase tracking-wider text-ink-500 flex items-center gap-1.5">
-              <Sparkles className="h-3.5 w-3.5 text-brand-600" /> Live Homepage Hero Preview
+            <h3 className="text-xs font-black uppercase tracking-wider text-slate-600 flex items-center gap-1.5">
+              <Sparkles className="h-3.5 w-3.5 text-teal-600" /> Live Homepage Hero Poster Preview
             </h3>
             {currentPreviewPoster && (
               <button
                 onClick={() => handleOpenEdit(currentPreviewPoster)}
-                className="btn text-xs px-3 py-1.5 rounded-xl border border-brand-300 bg-brand-50 text-brand-700 font-bold hover:bg-brand-100 flex items-center gap-1"
+                className="btn text-xs px-3 py-1.5 rounded-xl border border-teal-300 bg-teal-50 text-teal-700 font-bold hover:bg-teal-100 flex items-center gap-1 cursor-pointer"
               >
-                <Edit2 className="h-3 w-3" /> Edit This Poster
+                <Edit2 className="h-3 w-3" /> Edit Poster
               </button>
             )}
           </div>
 
           {currentPreviewPoster ? (
-            <div className="card overflow-hidden rounded-[28px] border border-[#dce5e8] bg-white shadow-soft">
-              {/* The Hero Banner Preview */}
-              <div
-                className={`grid min-h-[300px] gap-6 bg-gradient-to-r ${currentPreviewPoster.accent || 'from-[#4cd2c4] to-[#18bdb0]'} px-6 py-8 text-white md:grid-cols-[1.1fr_0.9fr]`}
-              >
-                <div className="flex flex-col justify-center">
-                  {currentPreviewPoster.eyebrow && (
-                    <span className="inline-flex w-fit items-center rounded-full bg-white/15 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.24em] text-white/90">
-                      {currentPreviewPoster.eyebrow}
-                    </span>
-                  )}
-                  <h1 className="mt-4 font-display text-2xl md:text-3xl font-extrabold leading-tight">
-                    {currentPreviewPoster.title}
-                  </h1>
-                  {currentPreviewPoster.description && (
-                    <p className="mt-3 text-xs leading-6 text-white/90 md:text-sm">
-                      {currentPreviewPoster.description}
-                    </p>
-                  )}
+            <div className="overflow-hidden rounded-[28px] border border-white/80 bg-white/90 shadow-xl backdrop-blur-xl">
+              {/* The Edge-to-Edge Poster Graphic */}
+              <div className="relative w-full overflow-hidden min-h-[260px] sm:min-h-[320px] bg-slate-900 flex items-center justify-center group">
+                <img
+                  src={currentPreviewPoster.image}
+                  alt={currentPreviewPoster.title}
+                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                  onError={(e) => {
+                    (e.target as HTMLImageElement).src =
+                      'https://placehold.co/1200x500?text=Custom+Poster+Preview';
+                  }}
+                />
 
-                  <div className="mt-5 flex flex-wrap gap-2.5">
-                    <span className="inline-block rounded-xl bg-white px-5 py-2.5 text-xs font-bold text-ink-900 shadow-md">
-                      {currentPreviewPoster.primaryLabel || 'Primary Button'}
-                    </span>
-                    {currentPreviewPoster.secondaryLabel && (
-                      <span className="inline-block rounded-xl border border-white/25 bg-white/10 px-5 py-2.5 text-xs font-semibold text-white">
-                        {currentPreviewPoster.secondaryLabel}
-                      </span>
-                    )}
-                  </div>
-
-                  {currentPreviewPoster.bullets && currentPreviewPoster.bullets.length > 0 && (
-                    <div className="mt-5 flex flex-wrap gap-1.5">
-                      {currentPreviewPoster.bullets.map((b, i) => (
-                        <span
-                          key={i}
-                          className="rounded-full border border-white/20 bg-white/10 px-2.5 py-1 text-[10px] font-semibold text-white"
-                        >
-                          {b}
-                        </span>
-                      ))}
-                    </div>
-                  )}
+                {/* Floating Preview Overlay */}
+                <div className="absolute top-3 left-3 rounded-full bg-slate-950/70 backdrop-blur-md px-3 py-1 text-[11px] font-bold text-white border border-white/20 flex items-center gap-1.5">
+                  <CheckCircle2 className="h-3.5 w-3.5 text-teal-400" />
+                  <span>{currentPreviewPoster.title || 'Fundu Custom Poster'}</span>
                 </div>
 
-                <div className="relative flex items-end justify-center">
-                  <img
-                    src={currentPreviewPoster.image}
-                    alt={currentPreviewPoster.title}
-                    className="h-[200px] w-auto max-w-full object-contain drop-shadow-[0_16px_24px_rgba(0,0,0,0.25)]"
-                    onError={(e) => {
-                      (e.target as HTMLImageElement).src =
-                        'https://placehold.co/400x300?text=Poster+Preview+Image';
-                    }}
-                  />
+                <div className="absolute bottom-3 right-3 rounded-full bg-teal-500/90 backdrop-blur-md px-3.5 py-1 text-xs font-black text-slate-950 shadow-lg flex items-center gap-1">
+                  <LinkIcon className="h-3.5 w-3.5" />
+                  <span>Click Target: {currentPreviewPoster.primaryHref || '/'}</span>
                 </div>
               </div>
 
-              {/* Banner Details & Meta Card */}
-              <div className="p-5 bg-[#fafcfc] border-t border-ink-100 flex flex-col gap-3">
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
-                  <div className="bg-white p-2.5 rounded-xl border border-ink-100">
-                    <span className="text-[10px] text-ink-400 font-bold uppercase">Target Link</span>
-                    <p className="font-semibold text-ink-800 truncate mt-0.5">{currentPreviewPoster.primaryHref}</p>
+              {/* Meta Card */}
+              <div className="p-5 bg-slate-50 border-t border-slate-200/80 flex flex-col gap-3">
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 text-xs">
+                  <div className="bg-white p-3 rounded-xl border border-slate-200">
+                    <span className="text-[10px] text-slate-400 font-bold uppercase block">Campaign Name</span>
+                    <p className="font-bold text-slate-900 truncate mt-0.5">{currentPreviewPoster.title}</p>
                   </div>
-                  <div className="bg-white p-2.5 rounded-xl border border-ink-100">
-                    <span className="text-[10px] text-ink-400 font-bold uppercase">Secondary Link</span>
-                    <p className="font-semibold text-ink-800 truncate mt-0.5">{currentPreviewPoster.secondaryHref || 'None'}</p>
+                  <div className="bg-white p-3 rounded-xl border border-slate-200">
+                    <span className="text-[10px] text-slate-400 font-bold uppercase block">Target Click Link</span>
+                    <p className="font-bold text-teal-700 truncate mt-0.5">{currentPreviewPoster.primaryHref}</p>
                   </div>
-                  <div className="bg-white p-2.5 rounded-xl border border-ink-100">
-                    <span className="text-[10px] text-ink-400 font-bold uppercase">Visibility</span>
-                    <p className="font-semibold text-ink-800 mt-0.5">
-                      {currentPreviewPoster.is_active !== false ? '🟢 Active' : '⚪ Inactive'}
+                  <div className="bg-white p-3 rounded-xl border border-slate-200">
+                    <span className="text-[10px] text-slate-400 font-bold uppercase block">Homepage Visibility</span>
+                    <p className="font-bold text-slate-900 mt-0.5">
+                      {currentPreviewPoster.is_active !== false ? '🟢 Live on Homepage' : '⚪ Hidden'}
                     </p>
-                  </div>
-                  <div className="bg-white p-2.5 rounded-xl border border-ink-100">
-                    <span className="text-[10px] text-ink-400 font-bold uppercase">Perks Count</span>
-                    <p className="font-semibold text-ink-800 mt-0.5">{currentPreviewPoster.bullets?.length || 0} badges</p>
                   </div>
                 </div>
 
-                <div className="text-[11px] text-ink-500 flex items-center gap-1.5">
-                  <ExternalLink className="h-3.5 w-3.5 text-brand-600" />
+                <div className="text-[11px] text-slate-500 flex items-center gap-1.5">
+                  <ExternalLink className="h-3.5 w-3.5 text-teal-600" />
                   <span>
-                    Any changes saved here immediately update the live homepage carousel.
+                    When a visitor clicks this banner on the homepage, they are directed straight to <b>{currentPreviewPoster.primaryHref}</b>.
                   </span>
                 </div>
               </div>
             </div>
           ) : (
-            <div className="card p-12 text-center bg-white rounded-3xl">
-              <ImageIcon className="h-10 w-10 text-ink-300 mx-auto" />
-              <p className="font-bold text-sm text-ink-700 mt-3">No poster selected</p>
+            <div className="p-12 text-center bg-white rounded-3xl border border-slate-200">
+              <ImageIcon className="h-10 w-10 text-slate-300 mx-auto" />
+              <p className="font-bold text-sm text-slate-700 mt-3">No poster selected</p>
               <button onClick={handleOpenAdd} className="btn-primary text-xs px-4 py-2 mt-4 inline-flex items-center gap-1">
-                <Plus className="h-3.5 w-3.5" /> Add your first poster
+                <Plus className="h-3.5 w-3.5" /> Upload your first poster
               </button>
             </div>
           )}
         </div>
       </div>
 
-      {/* Add / Edit Poster Modal */}
+      {/* Upload / Edit Poster Modal with Background Removal Option */}
       {modalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-ink-900/60 backdrop-blur-xs p-4 overflow-y-auto">
-          <div className="w-full max-w-2xl bg-white rounded-3xl shadow-2xl border border-ink-100 overflow-hidden my-8">
-            <div className="flex items-center justify-between px-6 py-4 border-b border-ink-100 bg-ink-50/50">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/60 backdrop-blur-xs p-4 overflow-y-auto">
+          <div className="w-full max-w-xl bg-white rounded-3xl shadow-2xl border border-slate-200 overflow-hidden my-8 animate-fade-in">
+            <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100 bg-slate-50/80">
               <div className="flex items-center gap-2">
-                <div className="grid h-8 w-8 place-items-center rounded-xl bg-brand-50 text-brand-700">
-                  <ImageIcon className="h-4 w-4" />
+                <div className="grid h-9 w-9 place-items-center rounded-xl bg-teal-50 text-teal-700">
+                  <ImageIcon className="h-5 w-5" />
                 </div>
                 <div>
-                  <h3 className="font-display font-extrabold text-ink-900 text-base">
-                    {editingPoster ? 'Edit Hero Poster' : 'Create New Hero Poster'}
+                  <h3 className="font-display font-extrabold text-slate-900 text-base">
+                    {editingPoster ? 'Edit Custom Poster' : 'Upload New Custom Poster'}
                   </h3>
-                  <p className="text-[11px] text-ink-500">Configure visual asset, copy, CTA buttons, and styling</p>
+                  <p className="text-[11px] text-slate-500">Upload your graphic with background control</p>
                 </div>
               </div>
               <button
                 type="button"
                 onClick={() => setModalOpen(false)}
-                className="rounded-xl p-1.5 text-ink-400 hover:bg-ink-100 hover:text-ink-700"
+                className="rounded-xl p-1.5 text-slate-400 hover:bg-slate-100 hover:text-slate-700 cursor-pointer"
               >
                 ✕
               </button>
             </div>
 
-            <form onSubmit={handleSaveForm} className="p-6 space-y-5 max-h-[75vh] overflow-y-auto">
-              {/* Poster Image Section */}
-              <div className="space-y-2">
-                <label className="block text-xs font-bold text-ink-800">
-                  Poster Image (URL or Upload) <span className="text-red-500">*</span>
+            <form onSubmit={handleSaveForm} className="p-6 space-y-5">
+              {/* Campaign Title */}
+              <div>
+                <label className="block text-xs font-bold text-slate-900 mb-1">
+                  Poster Campaign Name <span className="text-red-500">*</span>
                 </label>
+                <input
+                  type="text"
+                  required
+                  value={form.title}
+                  onChange={(e) => setForm({ ...form, title: e.target.value })}
+                  placeholder="e.g. Festive Sell Offer Banner Lucknow"
+                  className="input text-xs"
+                />
+              </div>
+
+              {/* Upload Graphic */}
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <label className="block text-xs font-bold text-slate-900">
+                    Poster Banner Graphic (File or URL) <span className="text-red-500">*</span>
+                  </label>
+                  <span className="text-[10px] text-teal-700 font-extrabold">Recommended: 1920 × 750 px</span>
+                </div>
                 <div className="flex gap-2">
                   <input
                     type="text"
                     required
                     value={form.image}
-                    onChange={(e) => setForm({ ...form, image: e.target.value })}
-                    placeholder="https://... image url or paste link"
+                    onChange={(e) =>
+                      setForm({
+                        ...form,
+                        image: e.target.value,
+                        originalImage: e.target.value,
+                        is_bg_removed: false,
+                      })
+                    }
+                    placeholder="Paste image link or upload from computer"
                     className="input text-xs flex-1"
                   />
-                  <label className="btn text-xs px-3 py-2 rounded-xl border border-ink-200 bg-white font-semibold text-ink-700 hover:bg-ink-50 cursor-pointer flex items-center gap-1 shrink-0">
-                    <Upload className="h-3.5 w-3.5 text-ink-500" />
-                    <span>Upload</span>
+                  <label className="btn text-xs px-4 py-2.5 rounded-xl border border-teal-400 bg-teal-600 font-bold text-white hover:bg-teal-700 cursor-pointer flex items-center gap-1.5 shrink-0 shadow-sm">
+                    <Upload className="h-4 w-4" />
+                    <span>Upload Image</span>
                     <input type="file" accept="image/*" onChange={handleImageFileUpload} className="hidden" />
                   </label>
                 </div>
 
-                {/* Preset Quick Images */}
-                <div className="space-y-1 pt-1">
-                  <span className="text-[10px] font-bold text-ink-400 uppercase">Or select from curated ad presets:</span>
-                  <div className="flex flex-wrap gap-1.5">
-                    {PRESET_POSTER_IMAGES.map((preset, idx) => (
+                {/* BACKGROUND REMOVAL OPTION & LIVE PREVIEW */}
+                {form.image && (
+                  <div className="mt-3 p-3.5 bg-slate-50 rounded-2xl border border-slate-200/90 space-y-3">
+                    <div className="flex items-center justify-between gap-3">
+                      <div>
+                        <span className="text-xs font-bold text-slate-900 block">
+                          Background Mode:
+                        </span>
+                        <p className="text-[11px] text-slate-500">
+                          {form.is_bg_removed
+                            ? '✂️ Transparent Cutout (Background removed)'
+                            : '🖼️ Original Background (Full Poster)'}
+                        </p>
+                      </div>
+
+                      {/* 1-Click Background Toggle Button */}
                       <button
-                        key={idx}
                         type="button"
-                        onClick={() => setForm({ ...form, image: preset.url })}
-                        className={`text-[11px] px-2.5 py-1 rounded-lg border font-medium transition ${
-                          form.image === preset.url
-                            ? 'bg-brand-50 border-brand-500 text-brand-700 font-bold'
-                            : 'bg-white border-ink-200 text-ink-600 hover:border-brand-300'
+                        disabled={isRemovingBg}
+                        onClick={handleToggleRemoveBg}
+                        className={`text-xs px-3.5 py-2 rounded-xl font-bold flex items-center gap-1.5 shadow-xs transition active:scale-95 cursor-pointer ${
+                          form.is_bg_removed
+                            ? 'bg-slate-200 hover:bg-slate-300 text-slate-800 border border-slate-300'
+                            : 'bg-teal-600 hover:bg-teal-700 text-white'
                         }`}
                       >
-                        {preset.label}
+                        <Wand2 className={`h-3.5 w-3.5 ${isRemovingBg ? 'animate-spin' : ''}`} />
+                        <span>
+                          {isRemovingBg
+                            ? 'Removing...'
+                            : form.is_bg_removed
+                            ? '↺ Revert to Original'
+                            : '✂️ Remove Background'}
+                        </span>
                       </button>
-                    ))}
-                  </div>
-                </div>
+                    </div>
 
-                {/* Live Image Preview in form */}
-                {form.image && (
-                  <div className="mt-2 flex items-center gap-3 p-2 bg-ink-50 rounded-xl border border-ink-100">
-                    <img
-                      src={form.image}
-                      alt="Preview"
-                      className="h-14 w-20 object-contain rounded-lg bg-white p-1 border border-ink-200"
-                      onError={(e) => {
-                        (e.target as HTMLImageElement).src =
-                          'https://placehold.co/100x100?text=Invalid+Image';
-                      }}
-                    />
-                    <div className="text-[11px] text-ink-600">
-                      <span className="font-bold text-ink-800">Poster Image Selected</span>
-                      <p className="text-[10px] text-ink-400 truncate max-w-sm">{form.image}</p>
+                    {/* Preview Box */}
+                    <div
+                      className={`overflow-hidden rounded-xl p-2 flex flex-col items-center justify-center border-2 border-dashed ${
+                        form.is_bg_removed
+                          ? 'bg-[radial-gradient(#cbd5e1_1px,transparent_1px)] [background-size:12px_12px] bg-slate-100 border-teal-400'
+                          : 'bg-slate-900 border-slate-300'
+                      }`}
+                    >
+                      <img
+                        src={form.image}
+                        alt="Preview"
+                        className="max-h-48 w-full object-contain rounded-lg"
+                        onError={(e) => {
+                          (e.target as HTMLImageElement).src =
+                            'https://placehold.co/1200x500?text=Invalid+Image+URL';
+                        }}
+                      />
+                      <span className="mt-2 text-[10px] text-slate-600 font-bold">
+                        {form.is_bg_removed
+                          ? '✓ Transparent PNG Ready (Floats over website gradient)'
+                          : '✓ Full Edge-to-Edge Poster Banner'}
+                      </span>
                     </div>
                   </div>
                 )}
               </div>
 
-              {/* Title & Badge */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                <div className="md:col-span-1">
-                  <label className="block text-xs font-bold text-ink-800 mb-1">Badge / Eyebrow</label>
-                  <input
-                    type="text"
-                    value={form.eyebrow}
-                    onChange={(e) => setForm({ ...form, eyebrow: e.target.value })}
-                    placeholder="e.g. Sell old phone"
-                    className="input text-xs"
-                  />
-                </div>
-                <div className="md:col-span-2">
-                  <label className="block text-xs font-bold text-ink-800 mb-1">
-                    Headline Title <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    type="text"
-                    required
-                    value={form.title}
-                    onChange={(e) => setForm({ ...form, title: e.target.value })}
-                    placeholder="e.g. Best place to sell your old phone"
-                    className="input text-xs"
-                  />
-                </div>
-              </div>
-
-              {/* Description */}
+              {/* Target Link */}
               <div>
-                <label className="block text-xs font-bold text-ink-800 mb-1">Description / Subtext</label>
-                <textarea
-                  rows={2}
-                  value={form.description}
-                  onChange={(e) => setForm({ ...form, description: e.target.value })}
-                  placeholder="Get instant resale value, free doorstep pickup, and quick payment..."
-                  className="input text-xs"
-                />
-              </div>
-
-              {/* Primary & Secondary CTA */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3 p-3.5 bg-ink-50/60 rounded-2xl border border-ink-100">
-                <div>
-                  <label className="block text-xs font-bold text-ink-800 mb-1">Primary Button Label</label>
-                  <input
-                    type="text"
-                    value={form.primaryLabel}
-                    onChange={(e) => setForm({ ...form, primaryLabel: e.target.value })}
-                    placeholder="e.g. Sell Now"
-                    className="input text-xs"
-                  />
-                  <input
-                    type="text"
-                    value={form.primaryHref}
-                    onChange={(e) => setForm({ ...form, primaryHref: e.target.value })}
-                    placeholder="e.g. /sell"
-                    className="input text-xs mt-1.5"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-xs font-bold text-ink-800 mb-1">Secondary Button Label</label>
-                  <input
-                    type="text"
-                    value={form.secondaryLabel}
-                    onChange={(e) => setForm({ ...form, secondaryLabel: e.target.value })}
-                    placeholder="e.g. How it Works"
-                    className="input text-xs"
-                  />
-                  <input
-                    type="text"
-                    value={form.secondaryHref}
-                    onChange={(e) => setForm({ ...form, secondaryHref: e.target.value })}
-                    placeholder="e.g. #sell-flow"
-                    className="input text-xs mt-1.5"
-                  />
-                </div>
-              </div>
-
-              {/* Accent Gradient Picker */}
-              <div className="space-y-2">
-                <label className="block text-xs font-bold text-ink-800">
-                  Background Theme / Gradient
+                <label className="block text-xs font-bold text-slate-900 mb-1">
+                  Target Click Link (Where user goes when clicking poster) <span className="text-red-500">*</span>
                 </label>
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                  {GRADIENT_PRESETS.map((preset) => (
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-2">
+                  {QUICK_LINKS.map((quickLink) => (
                     <button
-                      key={preset.value}
+                      key={quickLink.value}
                       type="button"
-                      onClick={() => setForm({ ...form, accent: preset.value })}
-                      className={`p-2 rounded-xl border text-left flex items-center gap-2 transition ${
-                        form.accent === preset.value
-                          ? 'border-brand-600 ring-2 ring-brand-500/20 bg-brand-50/50'
-                          : 'border-ink-200 hover:border-brand-300 bg-white'
+                      onClick={() => setForm({ ...form, primaryHref: quickLink.value })}
+                      className={`text-xs py-1.5 px-3 rounded-xl border font-bold text-left transition cursor-pointer ${
+                        form.primaryHref === quickLink.value
+                          ? 'bg-teal-600 text-white border-teal-600 shadow-sm'
+                          : 'bg-slate-50 text-slate-700 border-slate-200 hover:border-teal-400'
                       }`}
                     >
-                      <div className={`h-4 w-4 rounded-full ${preset.preview} shrink-0`} />
-                      <span className="text-[10px] font-bold text-ink-800 truncate">{preset.label}</span>
+                      {quickLink.label}
                     </button>
                   ))}
                 </div>
                 <input
                   type="text"
-                  value={form.accent}
-                  onChange={(e) => setForm({ ...form, accent: e.target.value })}
-                  placeholder="Custom gradient classes, e.g. from-[#4cd2c4] to-[#18bdb0]"
-                  className="input text-xs mt-1"
+                  required
+                  value={form.primaryHref}
+                  onChange={(e) => setForm({ ...form, primaryHref: e.target.value })}
+                  placeholder="e.g. /sell or /store or https://..."
+                  className="input text-xs"
                 />
               </div>
 
-              {/* Bullets / Highlights */}
-              <div className="space-y-2">
-                <label className="block text-xs font-bold text-ink-800">
-                  Perks / Tag Badges (e.g. Doorstep pickup, Warranty-backed)
-                </label>
-                <div className="flex gap-2">
-                  <input
-                    type="text"
-                    value={form.bulletInput}
-                    onChange={(e) => setForm({ ...form, bulletInput: e.target.value })}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter') {
-                        e.preventDefault();
-                        handleAddBullet();
-                      }
-                    }}
-                    placeholder="Add a badge item and click Add..."
-                    className="input text-xs flex-1"
-                  />
-                  <button
-                    type="button"
-                    onClick={handleAddBullet}
-                    className="btn text-xs px-3 py-2 rounded-xl bg-ink-100 hover:bg-ink-200 text-ink-800 font-bold"
-                  >
-                    Add
-                  </button>
-                </div>
-
-                <div className="flex flex-wrap gap-1.5 pt-1">
-                  {form.bullets.map((item, idx) => (
-                    <span
-                      key={idx}
-                      className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-brand-50 text-brand-800 text-[11px] font-bold border border-brand-200"
-                    >
-                      {item}
-                      <button
-                        type="button"
-                        onClick={() => handleRemoveBullet(idx)}
-                        className="text-brand-500 hover:text-brand-900 ml-0.5"
-                      >
-                        ✕
-                      </button>
-                    </span>
-                  ))}
-                </div>
-              </div>
-
               {/* Active Toggle */}
-              <div className="flex items-center justify-between p-3 rounded-xl bg-ink-50 border border-ink-100">
+              <div className="flex items-center justify-between p-3 rounded-2xl bg-slate-50 border border-slate-200">
                 <div>
-                  <span className="text-xs font-bold text-ink-900">Show on Live Homepage</span>
-                  <p className="text-[10px] text-ink-500">If enabled, this slide will rotate in the hero carousel</p>
+                  <span className="text-xs font-bold text-slate-900">Show on Live Homepage</span>
+                  <p className="text-[10px] text-slate-500">Enable this poster in the hero slider rotation</p>
                 </div>
                 <input
                   type="checkbox"
                   checked={form.is_active}
                   onChange={(e) => setForm({ ...form, is_active: e.target.checked })}
-                  className="h-5 w-5 accent-brand-600 rounded cursor-pointer"
+                  className="h-5 w-5 accent-teal-600 rounded cursor-pointer"
                 />
               </div>
 
-              {/* Submit Buttons */}
-              <div className="flex items-center justify-end gap-2.5 pt-3 border-t border-ink-100">
+              {/* Submit / Save */}
+              <div className="flex items-center justify-end gap-2.5 pt-3 border-t border-slate-100">
                 <button
                   type="button"
                   onClick={() => setModalOpen(false)}
-                  className="btn rounded-xl px-4 py-2 text-xs font-bold text-ink-600 hover:bg-ink-100"
+                  className="btn rounded-xl px-4 py-2 text-xs font-bold text-slate-600 hover:bg-slate-100 cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={saving}
-                  className="btn-primary text-xs px-5 py-2 font-bold bg-brand-600 hover:bg-brand-700 shadow-md shadow-brand-500/30 flex items-center gap-1.5"
+                  className="btn-primary rounded-xl px-6 py-2 text-xs font-bold shadow-md cursor-pointer flex items-center gap-1.5"
                 >
-                  {saving ? 'Saving...' : editingPoster ? 'Update Poster' : 'Add Poster'}
+                  {saving ? 'Saving...' : editingPoster ? 'Update Poster' : 'Add Poster to Slider'}
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* FULL DEVICE SIZE GUIDE MODAL */}
+      {showSizeGuide && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/60 backdrop-blur-xs p-4 overflow-y-auto">
+          <div className="w-full max-w-2xl bg-white rounded-3xl shadow-2xl border border-slate-200 overflow-hidden my-8 animate-fade-in">
+            <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100 bg-teal-50/70">
+              <div className="flex items-center gap-2">
+                <span className="text-xl">📐</span>
+                <div>
+                  <h3 className="font-display font-extrabold text-slate-900 text-base">
+                    Full Poster Sizing Guide for All Devices
+                  </h3>
+                  <p className="text-[11px] text-slate-500">Exact pixel dimensions & aspect ratios for Canva & Photoshop</p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowSizeGuide(false)}
+                className="rounded-xl p-1.5 text-slate-400 hover:bg-slate-100 hover:text-slate-700 cursor-pointer"
+              >
+                ✕
+              </button>
+            </div>
+
+            <div className="p-6 space-y-5">
+              {/* Gold Standard */}
+              <div className="p-4 rounded-2xl bg-teal-600 text-white shadow-md">
+                <span className="text-[10px] font-extrabold uppercase tracking-widest bg-white/20 px-2.5 py-0.5 rounded-full inline-block mb-1">
+                  ⭐ Master Recommended Standard
+                </span>
+                <h4 className="text-lg font-black mt-1">1920 × 750 Pixels (Aspect 2.5:1)</h4>
+                <p className="text-xs text-teal-50 mt-1 leading-relaxed">
+                  Design your Canva canvas at <b>1920 × 750 px</b>. This single master size scales smoothly across all Desktops, Laptops, Tablets, and Smartphones without distortion!
+                </p>
+              </div>
+
+              {/* Device Table Breakdown */}
+              <div className="space-y-3">
+                <h4 className="text-xs font-black uppercase tracking-wider text-slate-600">
+                  Device-by-Device Dimensions Breakdown:
+                </h4>
+
+                <div className="space-y-2.5 text-xs">
+                  <div className="flex items-center justify-between p-3 rounded-xl bg-slate-50 border border-slate-200">
+                    <div className="flex items-center gap-2.5">
+                      <Monitor className="h-4 w-4 text-teal-600" />
+                      <div>
+                        <span className="font-bold text-slate-900 block">Desktop / Large Screens</span>
+                        <span className="text-[11px] text-slate-500">1920px+ width screens</span>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <span className="font-black text-teal-700 text-sm">1920 × 750 px</span>
+                      <span className="text-[10px] text-slate-400 block">Aspect Ratio 2.5:1</span>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center justify-between p-3 rounded-xl bg-slate-50 border border-slate-200">
+                    <div className="flex items-center gap-2.5">
+                      <Tablet className="h-4 w-4 text-teal-600" />
+                      <div>
+                        <span className="font-bold text-slate-900 block">Laptops & iPads / Tablets</span>
+                        <span className="text-[11px] text-slate-500">768px to 1440px screens</span>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <span className="font-black text-teal-700 text-sm">1440 × 600 px</span>
+                      <span className="text-[10px] text-slate-400 block">Aspect Ratio 2.4:1</span>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center justify-between p-3 rounded-xl bg-slate-50 border border-slate-200">
+                    <div className="flex items-center gap-2.5">
+                      <Smartphone className="h-4 w-4 text-teal-600" />
+                      <div>
+                        <span className="font-bold text-slate-900 block">Mobile Phones</span>
+                        <span className="text-[11px] text-slate-500">Android & iPhones (360px - 480px)</span>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <span className="font-black text-teal-700 text-sm">1080 × 608 px</span>
+                      <span className="text-[10px] text-slate-400 block">Aspect Ratio 16:9</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Canva Pro Tips */}
+              <div className="p-4 rounded-2xl bg-amber-50/80 border border-amber-200/80 text-xs text-amber-900 space-y-1.5">
+                <div className="flex items-center gap-1.5 font-bold text-amber-950">
+                  <Sparkles className="h-4 w-4 text-amber-600" />
+                  <span>Canva / Photoshop Design Pro-Tips:</span>
+                </div>
+                <ul className="list-disc pl-4 space-y-1 text-[11px] text-amber-800">
+                  <li><b>Safe Zone:</b> Keep your main headline text, phone graphics, and discount badges centered in the middle <b>1200 × 550 px</b> zone.</li>
+                  <li><b>File Format:</b> Export as <b>JPG</b> (Quality 85%) or <b>PNG</b> for crisp rendering.</li>
+                  <li><b>Background Removal:</b> If you upload a product photo, click the <b>✂️ Remove Background</b> button in the upload popup to convert it to a transparent cutout instantly.</li>
+                </ul>
+              </div>
+
+              <div className="flex justify-end pt-2">
+                <button
+                  type="button"
+                  onClick={() => setShowSizeGuide(false)}
+                  className="btn-primary rounded-xl px-5 py-2 text-xs font-bold shadow-md cursor-pointer"
+                >
+                  Got It!
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       )}
