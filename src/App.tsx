@@ -32,6 +32,7 @@ import ProductDetail from './pages/ProductDetail';
 import AdminLogin from './pages/AdminLogin';
 import WholesalerLogin from './pages/WholesalerLogin';
 import DeliveryLogin from './pages/DeliveryLogin';
+import SEO from './components/SEO';
 
 function MainLayout() {
   const location = useLocation();
@@ -53,6 +54,7 @@ function MainLayout() {
 
   return (
     <div className="flex min-h-screen flex-col">
+      <SEO />
       {!isStandaloneApp && <Navbar />}
       <main className="flex-1">
         <Routes>

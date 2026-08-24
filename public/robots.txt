@@ -1,0 +1,30 @@
+User-agent: *
+Allow: /
+Allow: /buy
+Allow: /sell
+Allow: /repair
+Allow: /spare-parts
+Allow: /about
+Allow: /contact
+Allow: /articles
+Allow: /document-doctor
+Allow: /partner
+Allow: /store
+Allow: /brand
+Allow: /recycle
+
+# Block Admin and Private Portals from Search Engines
+Disallow: /admin
+Disallow: /admin/*
+Disallow: /admin-login
+Disallow: /wholesaler
+Disallow: /wholesaler/*
+Disallow: /wholesaler-login
+Disallow: /delivery
+Disallow: /delivery/*
+Disallow: /delivery-login
+Disallow: /fleet-desk
+Disallow: /rider
+Disallow: /rider-login
+
+Sitemap: https://thefundu.com/sitemap.xml
