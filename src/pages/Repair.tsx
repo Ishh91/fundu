@@ -292,38 +292,40 @@ export default function Repair() {
               />
             </div>
           </div>
-
-          {/* Step Progress Tracker Bar */}
-          <div className="mt-8 flex items-center justify-center gap-2 sm:gap-4 max-w-2xl mx-auto">
-            {[
-              { s: 1, label: 'Select Phone' },
-              { s: 2, label: 'Select Issue' },
-              { s: 3, label: 'Upfront Quote' },
-              { s: 4, label: 'Doorstep Booking' },
-            ].map(({ s, label }) => (
-              <div key={s} className="flex items-center gap-2">
-                <button
-                  type="button"
-                  onClick={() => step > s && setStep(s)}
-                  className={`flex items-center gap-2 rounded-full px-3 py-1.5 text-xs font-bold transition ${
-                    step === s
-                      ? 'bg-brand-600 text-white shadow-sm'
-                      : step > s
-                      ? 'bg-emerald-100 text-emerald-700 cursor-pointer'
-                      : 'bg-ink-100 text-ink-400 cursor-not-allowed'
-                  }`}
-                >
-                  <span className="grid h-5 w-5 place-items-center rounded-full bg-white/20 text-xs font-extrabold">
-                    {step > s ? <Check className="h-3.5 w-3.5" /> : s}
-                  </span>
-                  <span className="hidden sm:inline">{label}</span>
-                </button>
-                {s < 4 && <div className={`h-0.5 w-4 sm:w-8 ${step > s ? 'bg-emerald-500' : 'bg-ink-200'}`} />}
-              </div>
-            ))}
-          </div>
         </div>
       </section>
+
+      {/* STANDALONE STICKY 4-STEP PROGRESS TRACKER BAR */}
+      <div className="sticky top-[60px] md:top-[108px] z-40 bg-white/95 backdrop-blur-md border-b border-gray-200 shadow-md py-3 px-4 transition-all">
+        <div className="flex items-center justify-center flex-wrap sm:flex-nowrap gap-2 sm:gap-4 max-w-4xl mx-auto overflow-x-auto scrollbar-hide no-scrollbar py-1">
+          {[
+            { s: 1, label: 'Select Phone' },
+            { s: 2, label: 'Select Issue' },
+            { s: 3, label: 'Upfront Quote' },
+            { s: 4, label: 'Doorstep Booking' },
+          ].map(({ s, label }) => (
+            <div key={s} className="flex items-center gap-2 shrink-0">
+              <button
+                type="button"
+                onClick={() => step > s && setStep(s)}
+                className={`flex items-center gap-2 rounded-full px-3.5 py-1.5 text-xs font-bold transition-all duration-200 ${
+                  step === s
+                    ? 'bg-[#00a896] text-white shadow-sm'
+                    : step > s
+                    ? 'bg-emerald-100 text-emerald-700 hover:bg-emerald-200 cursor-pointer'
+                    : 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                }`}
+              >
+                <span className="grid h-5 w-5 place-items-center rounded-full bg-white/25 text-xs font-black">
+                  {step > s ? <Check className="h-3.5 w-3.5" /> : s}
+                </span>
+                <span className="whitespace-nowrap font-extrabold">{label}</span>
+              </button>
+              {s < 4 && <div className={`h-0.5 w-3 sm:w-6 rounded-full ${step > s ? 'bg-emerald-500' : 'bg-gray-200'}`} />}
+            </div>
+          ))}
+        </div>
+      </div>
 
       {/* Main Container */}
       <div className="container-page mt-8">

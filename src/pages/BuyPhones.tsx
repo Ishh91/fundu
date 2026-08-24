@@ -376,10 +376,10 @@ export default function BuyPhones() {
                 key={b.name}
                 type="button"
                 onClick={() => setSelectedBrand(b.name)}
-                className={`flex items-center gap-1.5 rounded-full px-4 py-2 text-xs font-bold whitespace-nowrap transition ${
+                className={`flex items-center gap-1.5 rounded-full px-4 py-2 text-xs font-bold whitespace-nowrap transition-all duration-200 ${
                   selectedBrand === b.name
-                    ? 'bg-brand-600 text-white shadow-sm ring-2 ring-brand-500/20'
-                    : 'border border-ink-200 bg-white text-ink-700 hover:border-brand-300'
+                    ? 'bg-[#00a896] text-white shadow-sm ring-2 ring-[#00a896]/20'
+                    : 'border border-gray-200 bg-white text-gray-700 hover:border-[#00a896] hover:bg-teal-50/40'
                 }`}
               >
                 <span>{b.icon}</span> {b.name}
@@ -388,6 +388,27 @@ export default function BuyPhones() {
           </div>
         </div>
       </section>
+
+      {/* STANDALONE STICKY 3-STEP REFURBISHED BUYING PROGRESS BAR */}
+      <div className="sticky top-[60px] md:top-[108px] z-40 bg-white/95 backdrop-blur-md border-b border-gray-200 shadow-md py-3 px-4 transition-all">
+        <div className="flex items-center justify-center flex-wrap sm:flex-nowrap gap-2 sm:gap-4 max-w-4xl mx-auto overflow-x-auto scrollbar-hide no-scrollbar py-1">
+          {[
+            { s: 1, label: '1. Select Refurbished Model' },
+            { s: 2, label: '2. 32-Point Inspection & 6M Warranty' },
+            { s: 3, label: '3. Free Lucknow Doorstep Delivery' },
+          ].map(({ s, label }) => (
+            <div key={s} className="flex items-center gap-2 shrink-0">
+              <div className="flex items-center gap-2 rounded-full bg-teal-50 border border-teal-200/80 px-3.5 py-1.5 text-xs font-extrabold text-[#00a896]">
+                <span className="grid h-4 w-4 place-items-center rounded-full bg-[#00a896] text-white text-[10px]">
+                  ✓
+                </span>
+                <span className="whitespace-nowrap">{label}</span>
+              </div>
+              {s < 3 && <div className="h-0.5 w-3 sm:w-6 rounded-full bg-teal-400" />}
+            </div>
+          ))}
+        </div>
+      </div>
 
       {/* Main Container: Sidebar + Product Grid */}
       <div className="container-page mt-8">
