@@ -56,7 +56,7 @@ import AdminHeroPosters from './admin/AdminHeroPosters';
 import AdminWholesalers from './admin/AdminWholesalers';
 
 export default function Admin() {
-  const { user, profile, loading, signIn } = useAuth();
+  const { user, profile, loading, signIn, signOut } = useAuth();
   const navigate = useNavigate();
   const { subtab } = useParams<{ subtab?: string }>();
   const [searchParams] = useSearchParams();
