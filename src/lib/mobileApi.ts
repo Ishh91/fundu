@@ -319,6 +319,106 @@ export function getDynamicFallbackConfig(brand: string, model: string, storage: 
   };
 }
 
+export type CashifyDiagnosticParams = {
+  screenCondition?: 'flawless' | 'scratches' | 'cracked';
+  bodyCondition?: 'flawless' | 'scratches' | 'dents_bent';
+  canMakeCalls?: boolean;
+  underWarranty?: boolean;
+  defects?: string[];
+  accessories?: string[];
+};
+
+export type ValuationBreakdown = {
+  basePrice: number;
+  screenDeduction: number;
+  bodyDeduction: number;
+  callDeduction: number;
+  defectDeductionTotal: number;
+  defectsBreakdown: Array<{ name: string; amount: number }>;
+  warrantyBonus: number;
+  accessoriesBonus: number;
+  finalEstimate: number;
+};
+
+export function computeDetailedCashifyValuation(
+  config: SellPriceConfig | null,
+  params: CashifyDiagnosticParams,
+  fallbackBrand = '',
+  fallbackModel = '',
+  fallbackStorage = ''
+): ValuationBreakdown {
+  const activeConfig = config ?? getDynamicFallbackConfig(fallbackBrand, fallbackModel, fallbackStorage);
+  const basePrice = Math.round(activeConfig.base_price * 0.85);
+
+  let screenDeduction = 0;
+  if (params.screenCondition === 'scratches') screenDeduction = Math.round(basePrice * 0.12);
+  else if (params.screenCondition === 'cracked') screenDeduction = Math.round(basePrice * 0.35);
+
+  let bodyDeduction = 0;
+  if (params.bodyCondition === 'scratches') bodyDeduction = Math.round(basePrice * 0.08);
+  else if (params.bodyCondition === 'dents_bent') bodyDeduction = Math.round(basePrice * 0.22);
+
+  let callDeduction = 0;
+  if (params.canMakeCalls === false) callDeduction = Math.round(basePrice * 0.20);
+
+  let warrantyBonus = 0;
+  if (params.underWarranty === true) warrantyBonus = Math.round(basePrice * 0.08);
+
+  const defectsBreakdown: Array<{ name: string; amount: number }> = [];
+  let defectDeductionTotal = 0;
+
+  const defectRates: Record<string, { label: string; rate: number }> = {
+    cameras: { label: 'Front / Rear Camera Issue', rate: 0.10 },
+    battery: { label: 'Battery Degradation / Service', rate: 0.08 },
+    speaker_mic: { label: 'Speaker / Microphone Fault', rate: 0.07 },
+    charging_port: { label: 'Charging Port Fault', rate: 0.06 },
+    biometrics: { label: 'Fingerprint / Face ID Sensor Fault', rate: 0.10 },
+    network: { label: 'Wi-Fi / Bluetooth Connectivity Issue', rate: 0.08 },
+  };
+
+  if (Array.isArray(params.defects)) {
+    params.defects.forEach((defectKey) => {
+      const def = defectRates[defectKey];
+      if (def) {
+        const amt = Math.round(basePrice * def.rate);
+        defectsBreakdown.push({ name: def.label, amount: amt });
+        defectDeductionTotal += amt;
+      }
+    });
+  }
+
+  let accessoriesBonus = 0;
+  if (Array.isArray(params.accessories)) {
+    if (params.accessories.includes('Original Box')) accessoriesBonus += 400;
+    if (params.accessories.includes('Charger')) accessoriesBonus += 400;
+    if (params.accessories.includes('Bill')) accessoriesBonus += 300;
+  }
+
+  const calculatedTotal =
+    basePrice -
+    screenDeduction -
+    bodyDeduction -
+    callDeduction -
+    defectDeductionTotal +
+    warrantyBonus +
+    accessoriesBonus;
+
+  const floorPrice = Math.max(500, Math.round(basePrice * 0.15));
+  const finalEstimate = Math.max(floorPrice, Math.round(calculatedTotal));
+
+  return {
+    basePrice,
+    screenDeduction,
+    bodyDeduction,
+    callDeduction,
+    defectDeductionTotal,
+    defectsBreakdown,
+    warrantyBonus,
+    accessoriesBonus,
+    finalEstimate,
+  };
+}
+
 export function computeSellEstimate(
   config: SellPriceConfig | null,
   condition: string,
@@ -380,6 +480,97 @@ export async function addCustomIndianPhoneApi(payload: Record<string, any>) {
     throw new Error(err.error?.message || 'Failed to add custom phone model');
   }
   return response.json();
+}
+
+/**
+ * GSMArena Unofficial API Integration
+ * Live endpoints for device specifications, high-res photos, and brand catalogs
+ */
+const GSMARENA_BASE = 'https://phone-specs-api.azharimm.dev/v2';
+
+export type GsmArenaSearchResult = {
+  brand: string;
+  phone_name: string;
+  slug: string;
+  image: string;
+};
+
+export type GsmArenaDeviceDetail = {
+  brand: string;
+  phone_name: string;
+  thumbnail: string;
+  phone_images: string[];
+  release_date?: string;
+  dimension?: string;
+  os?: string;
+  storage?: string;
+  specifications: Array<{
+    title: string;
+    specs: Array<{ key: string; val: string[] }>;
+  }>;
+};
+
+export async function fetchGsmArenaSearch(query: string): Promise<GsmArenaSearchResult[]> {
+  if (!query || query.trim().length < 2) return [];
+  try {
+    const res = await fetch(`${GSMARENA_BASE}/search?q=${encodeURIComponent(query)}`);
+    if (res.ok) {
+      const json = await res.json();
+      if (json.status && json.data && Array.isArray(json.data.phones)) {
+        return json.data.phones;
+      }
+    }
+  } catch {
+    // Fall through to active backend API if GSMArena mirror is down
+  }
+
+  try {
+    const res = await fetch(`${API_BASE}/mobile/autocomplete?q=${encodeURIComponent(query)}&limit=10`);
+    if (res.ok) {
+      const json = await res.json();
+      if (json.data && Array.isArray(json.data)) {
+        return json.data.map((item: any) => ({
+          brand: item.brand || '',
+          phone_name: item.name || item.full_name || '',
+          slug: (item.name || '').toLowerCase().replace(/\s+/g, '-'),
+          image: item.image_url || 'https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=150&auto=format&fit=crop&q=80',
+        }));
+      }
+    }
+  } catch {
+    return [];
+  }
+  return [];
+}
+
+export async function fetchGsmArenaDeviceDetails(slug: string): Promise<GsmArenaDeviceDetail | null> {
+  if (!slug) return null;
+  try {
+    const res = await fetch(`${GSMARENA_BASE}/${encodeURIComponent(slug)}`);
+    if (!res.ok) return null;
+    const json = await res.json();
+    if (json.status && json.data) {
+      return json.data as GsmArenaDeviceDetail;
+    }
+    return null;
+  } catch {
+    return null;
+  }
+}
+
+export async function fetchGsmArenaBrandModels(brandSlug: string): Promise<GsmArenaSearchResult[]> {
+  if (!brandSlug) return [];
+  try {
+    const res = await fetch(`${GSMARENA_BASE}/brands/${encodeURIComponent(brandSlug)}`);
+    if (!res.ok) return [];
+    const json = await res.json();
+    if (json.status && json.data && Array.isArray(json.data.phones)) {
+      return json.data.phones;
+    }
+    return [];
+  } catch {
+    return [];
+  }
 }
 
 

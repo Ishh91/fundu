@@ -3,6 +3,7 @@ import { Package, Search, Truck, MapPin, PhoneCall, MessageCircle, CreditCard, S
 import type { Order, DeliveryAgent } from './adminTypes';
 import { statusColors } from './adminTypes';
 import { db, formatINR } from '../../lib/db';
+import CustomerDetailsModal from '../../components/CustomerDetailsModal';
 
 type AdminOrdersProps = {
   orders: Order[];
@@ -24,6 +25,7 @@ export default function AdminOrders({
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [adminReplyText, setAdminReplyText] = useState('');
+  const [customerModalData, setCustomerModalData] = useState<any>(null);
 
   const handleSendAdminReply = async (order: Order) => {
     if (!adminReplyText.trim()) return;
@@ -217,6 +219,13 @@ export default function AdminOrders({
                 </div>
 
                 <div className="flex items-center gap-2 flex-wrap">
+                  <button
+                    onClick={() => setCustomerModalData({ ...selectedOrder, type: 'order' })}
+                    className="btn-outline text-xs px-3 py-1.5 text-teal-700 border-teal-200 hover:bg-teal-50 flex items-center gap-1.5 font-bold shadow-xs rounded-xl"
+                  >
+                    <MessageCircle className="h-3.5 w-3.5 text-teal-600" /> Customer Details
+                  </button>
+
                   <select
                     value={selectedOrder.status}
                     onChange={(e) => onUpdateStatus(selectedOrder.id, e.target.value)}
@@ -427,6 +436,13 @@ export default function AdminOrders({
           )}
         </div>
       </div>
+
+      {/* CUSTOMER FULL DETAILS MODAL */}
+      <CustomerDetailsModal
+        isOpen={Boolean(customerModalData)}
+        onClose={() => setCustomerModalData(null)}
+        customer={customerModalData}
+      />
     </div>
   );
 }

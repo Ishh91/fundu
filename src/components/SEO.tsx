@@ -68,6 +68,22 @@ export default function SEO({ title, description }: SEOProps) {
 
     let ogDesc = document.querySelector('meta[property="og:description"]');
     if (ogDesc) ogDesc.setAttribute('content', finalDescription);
+
+    // Geo Meta Tags for Lucknow Hyper-localization (26.8467, 80.9462)
+    const setMeta = (name: string, content: string) => {
+      let tag = document.querySelector(`meta[name="${name}"]`);
+      if (!tag) {
+        tag = document.createElement('meta');
+        tag.setAttribute('name', name);
+        document.head.appendChild(tag);
+      }
+      tag.setAttribute('content', content);
+    };
+
+    setMeta('geo.region', 'IN-UP');
+    setMeta('geo.placename', 'Lucknow');
+    setMeta('geo.position', '26.8467;80.9462');
+    setMeta('ICBM', '26.8467, 80.9462');
   }, [location.pathname, title, description]);
 
   return null;

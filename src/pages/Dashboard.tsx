@@ -638,6 +638,59 @@ function SellCard({
         </div>
       </div>
 
+      {/* Vendor Physical Inspection Valuation Quote Alert Card */}
+      {s.vendor_quote_price && (
+        <div className="mt-4 p-4 rounded-2xl bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200/80 shadow-xs space-y-3">
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <div>
+              <span className="badge bg-blue-600 text-white text-[10px] font-bold">🏬 Physical Inspection Quote</span>
+              <p className="font-display text-lg font-black text-blue-900 mt-1">
+                Vendor Offered Valuation: {formatINR(s.vendor_quote_price)}
+              </p>
+              {s.vendor_notes && <p className="text-xs text-blue-800 italic mt-0.5">"{s.vendor_notes}"</p>}
+            </div>
+            <div>
+              {s.vendor_quote_status === 'user_accepted' ? (
+                <span className="badge bg-emerald-600 text-white font-bold text-xs px-3 py-1">✓ Valuation Accepted & Paid</span>
+              ) : s.vendor_quote_status === 'user_rejected' ? (
+                <span className="badge bg-rose-600 text-white font-bold text-xs px-3 py-1">Declined</span>
+              ) : (
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={async () => {
+                      try {
+                        const { error } = await db.from('sell_requests').update({
+                          vendor_quote_status: 'user_accepted',
+                          status: 'completed',
+                          final_price: s.vendor_quote_price,
+                        }).eq('id', s.id);
+                        if (error) throw error;
+                        alert(`🎉 Valuation of ${formatINR(s.vendor_quote_price)} accepted! Payment processed via Vendor limit to your website account.`);
+                        window.location.reload();
+                      } catch (err) {
+                        alert(err instanceof Error ? err.message : 'Failed to accept quote');
+                      }
+                    }}
+                    className="btn bg-emerald-600 hover:bg-emerald-700 text-white text-xs px-3 py-1.5 font-bold rounded-xl shadow-xs"
+                  >
+                    Accept Valuation & Receive Payment
+                  </button>
+                  <button
+                    onClick={async () => {
+                      await db.from('sell_requests').update({ vendor_quote_status: 'user_rejected' }).eq('id', s.id);
+                      window.location.reload();
+                    }}
+                    className="btn-outline text-xs px-3 py-1.5 text-rose-600 border-rose-200"
+                  >
+                    Decline
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Progress */}
       {!isTerminal && <ProgressTrack steps={SELL_STEPS} current={s.status} />}
 
@@ -761,6 +814,46 @@ function RepairCard({
         <span className="text-xs text-ink-500">Tracking ID:</span>
         <span className="font-mono font-bold text-brand-700 text-sm">{r.tracking_id}</span>
       </div>
+
+      {/* Vendor Repair Quotation Alert Card */}
+      {r.vendor_quotation_amount && (
+        <div className="mt-4 p-4 rounded-2xl bg-gradient-to-r from-purple-50 to-teal-50 border border-purple-200/80 shadow-xs space-y-3">
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <div>
+              <span className="badge bg-purple-600 text-white text-[10px] font-bold">🏬 Vendor Repair Quotation Uploaded</span>
+              <p className="font-display text-lg font-black text-purple-900 mt-1">
+                Total Repair Quotation: {formatINR(r.vendor_quotation_amount)}
+              </p>
+              {r.vendor_quotation_details && <p className="text-xs text-purple-800 font-medium mt-0.5">"{r.vendor_quotation_details}"</p>}
+            </div>
+            <div>
+              {r.quotation_status === 'paid' || r.status === 'paid' ? (
+                <span className="badge bg-emerald-600 text-white font-bold text-xs px-3 py-1">✓ Quotation Paid & Confirmed</span>
+              ) : (
+                <button
+                  onClick={async () => {
+                    try {
+                      const { error } = await db.from('repair_bookings').update({
+                        quotation_status: 'paid',
+                        status: 'paid',
+                        final_cost: r.vendor_quotation_amount,
+                      }).eq('id', r.id);
+                      if (error) throw error;
+                      alert(`🎉 Paid ${formatINR(r.vendor_quotation_amount)} for repair quotation! Vendor notified to complete repair.`);
+                      window.location.reload();
+                    } catch (err) {
+                      alert(err instanceof Error ? err.message : 'Failed to pay repair quotation');
+                    }
+                  }}
+                  className="btn bg-purple-600 hover:bg-purple-700 text-white text-xs px-4 py-2 font-bold rounded-xl shadow-xs"
+                >
+                  Pay & Confirm Repair ({formatINR(r.vendor_quotation_amount)})
+                </button>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Progress */}
       {!isTerminal && <ProgressTrack steps={REPAIR_STEPS} current={r.status} />}

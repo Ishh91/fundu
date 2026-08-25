@@ -122,7 +122,7 @@ const REPAIR_FAQS = [
 ];
 
 export default function Repair() {
-  const { user } = useAuth();
+  const { user, profile } = useAuth();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
 
@@ -197,12 +197,16 @@ export default function Repair() {
     const { data, error: reqErr } = await db
       .from<{ tracking_id: string }>('repair_bookings')
       .insert({
+        customer_name: profile?.full_name || null,
+        customer_phone: profile?.phone || null,
+        customer_email: user?.email || null,
         brand: form.brand,
         model: form.model,
         problem: selectedIssue?.label ?? 'General Repair',
         problem_detail: form.problemDetail || null,
         estimated_cost: selectedIssue?.cost ?? 1499,
-        pickup_address: `${form.pickupAddress}, ${form.pickupArea}`,
+        pickup_address: form.pickupAddress,
+        pickup_area: form.pickupArea,
         pickup_date: form.pickupDate || null,
         pickup_slot: form.pickupSlot || null,
       })

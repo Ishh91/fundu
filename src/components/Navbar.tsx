@@ -240,7 +240,7 @@ export default function Navbar() {
   };
 
   const isAdminRole = profile?.role === 'admin';
-  const isWholesalerRole = profile?.role === 'wholesaler';
+  const isVendorRole = profile?.role === 'vendor' || profile?.role === 'wholesaler';
   const isDeliveryRole = profile?.role === 'delivery' || profile?.role === 'rider';
 
   const authLinks = (
@@ -266,12 +266,12 @@ export default function Navbar() {
           >
             <User className="h-4 w-4 text-teal-600" /> Account Profile
           </Link>
-          {isWholesalerRole && (
+          {isVendorRole && (
             <Link
-              to="/wholesaler"
-              className="flex items-center gap-2.5 rounded-xl px-4 py-2.5 text-sm font-semibold text-amber-700 bg-amber-50 hover:bg-amber-100 transition"
+              to="/vendor"
+              className="flex items-center gap-2.5 rounded-xl px-4 py-2.5 text-sm font-semibold text-brand-700 bg-brand-50 hover:bg-brand-100 transition"
             >
-              <Building2 className="h-4 w-4 text-amber-600" /> Wholesaler Hub
+              <Building2 className="h-4 w-4 text-brand-600" /> Vendor Partner Portal
             </Link>
           )}
           {isDeliveryRole && (

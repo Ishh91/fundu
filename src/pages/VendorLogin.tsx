@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { Truck, Lock, Mail, AlertCircle, ArrowRight, ShieldCheck, MapPin } from 'lucide-react';
+import { Building2, Lock, Mail, AlertCircle, ArrowRight, ShieldCheck, MapPin } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
-export default function DeliveryLogin() {
+export default function VendorLogin() {
   const { signIn, user, profile, loading: authLoading } = useAuth();
   const navigate = useNavigate();
 
@@ -32,27 +32,27 @@ export default function DeliveryLogin() {
     if (result.error) {
       setError(result.error);
     } else {
-      navigate('/delivery');
+      navigate('/vendor');
     }
   };
 
   return (
-    <div className="min-h-screen bg-[#081325] text-white flex flex-col justify-center items-center px-4 py-12">
+    <div className="min-h-screen bg-[#0f172a] text-white flex flex-col justify-center items-center px-4 py-12">
       <div className="w-full max-w-md space-y-6">
         {/* Brand Header */}
         <div className="text-center space-y-2">
-          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-emerald-500 text-slate-950 font-black text-2xl shadow-lg shadow-emerald-500/20">
-            <Truck className="h-8 w-8 text-slate-950" />
+          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-brand-500 text-white font-black text-2xl shadow-lg shadow-brand-500/20">
+            <Building2 className="h-8 w-8 text-white" />
           </div>
-          <div className="inline-flex items-center gap-1.5 rounded-full bg-slate-900 border border-slate-800 px-3 py-1 text-xs font-mono text-emerald-400">
-            <ShieldCheck className="h-3.5 w-3.5" /> Doorstep Executive & Rider Desk
+          <div className="inline-flex items-center gap-1.5 rounded-full bg-slate-900 border border-slate-800 px-3 py-1 text-xs font-mono text-brand-400">
+            <ShieldCheck className="h-3.5 w-3.5" /> Official Vendor Partner Portal
           </div>
           <h1 className="font-display text-2xl md:text-3xl font-black text-white">
-            Delivery Executive Portal
+            Vendor Partner Login
           </h1>
           <p className="text-xs text-slate-400 flex items-center justify-center gap-1">
             <MapPin className="h-3.5 w-3.5 text-emerald-400" />
-            Lucknow Doorstep Device Inspection & Express Pickups
+            Lucknow Mobile Buyback & Repair Service Hub
           </p>
         </div>
 
@@ -65,14 +65,14 @@ export default function DeliveryLogin() {
             </div>
           )}
 
-          <div className="p-3 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 text-[11px] leading-relaxed">
-            <span className="font-bold">🔑 Field Rider Passcode:</span> Use the rider email / executive ID and password issued by Central Operations.
+          <div className="p-3 rounded-2xl bg-brand-500/10 border border-brand-500/20 text-brand-300 text-[11px] leading-relaxed">
+            <span className="font-bold">🔑 Admin Provided Account:</span> Enter the Vendor email and passcode assigned to your shop by Fundu Central Admin.
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <label className="block text-xs font-bold text-slate-300 mb-1.5">
-                Rider ID / Executive Email
+                Assigned Vendor Email
               </label>
               <div className="relative">
                 <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-500" />
@@ -81,15 +81,15 @@ export default function DeliveryLogin() {
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="rider@fundu.in"
-                  className="w-full rounded-2xl bg-slate-950 border border-slate-800 text-white pl-10 pr-4 py-3 text-xs font-mono focus:border-emerald-500 focus:outline-none transition"
+                  placeholder="vendor@fundu.in"
+                  className="w-full rounded-2xl bg-slate-950 border border-slate-800 text-white pl-10 pr-4 py-3 text-xs font-mono focus:border-brand-500 focus:outline-none transition"
                 />
               </div>
             </div>
 
             <div>
               <label className="block text-xs font-bold text-slate-300 mb-1.5">
-                Rider Security Passcode
+                Vendor Secret Passcode
               </label>
               <div className="relative">
                 <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-500" />
@@ -99,7 +99,7 @@ export default function DeliveryLogin() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••••••"
-                  className="w-full rounded-2xl bg-slate-950 border border-slate-800 text-white pl-10 pr-4 py-3 text-xs font-mono focus:border-emerald-500 focus:outline-none transition"
+                  className="w-full rounded-2xl bg-slate-950 border border-slate-800 text-white pl-10 pr-4 py-3 text-xs font-mono focus:border-brand-500 focus:outline-none transition"
                 />
               </div>
             </div>
@@ -107,13 +107,13 @@ export default function DeliveryLogin() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full flex items-center justify-center gap-2 rounded-2xl bg-emerald-500 hover:bg-emerald-600 active:scale-[0.99] text-slate-950 py-3.5 text-xs font-black shadow-lg shadow-emerald-500/20 transition disabled:opacity-50"
+              className="w-full flex items-center justify-center gap-2 rounded-2xl bg-brand-500 hover:bg-brand-600 active:scale-[0.99] text-white py-3.5 text-xs font-black shadow-lg shadow-brand-500/20 transition disabled:opacity-50"
             >
               {loading ? (
-                <span>Authenticating Rider...</span>
+                <span>Authenticating Vendor...</span>
               ) : (
                 <>
-                  <span>Sign In to Executive Portal</span>
+                  <span>Sign In to Vendor Portal</span>
                   <ArrowRight className="h-4 w-4" />
                 </>
               )}
@@ -121,10 +121,10 @@ export default function DeliveryLogin() {
           </form>
 
           <div className="pt-2 text-center border-t border-slate-800 text-[11px] text-slate-500 space-x-2">
-            <span>Lucknow Operations · </span>
+            <span>Lucknow Vendor Network · </span>
             <Link to="/admin-login" className="text-brand-400 hover:underline">Admin Login</Link>
             <span>·</span>
-            <Link to="/wholesaler-login" className="text-amber-400 hover:underline">Wholesaler Login</Link>
+            <Link to="/rider-login" className="text-emerald-400 hover:underline">Delivery Login</Link>
           </div>
         </div>
       </div>

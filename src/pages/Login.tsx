@@ -8,10 +8,19 @@ const OTP_LENGTH = 6;
 const RESEND_COOLDOWN = 60; // seconds
 
 export default function Login() {
-  const { sendOtp, verifyOtp, signIn } = useAuth();
+  const { sendOtp, verifyOtp, signIn, user, profile, loading: authLoading } = useAuth();
   const navigate = useNavigate();
   const [params] = useSearchParams();
   const redirect = params.get('redirect') || '/dashboard';
+
+  useEffect(() => {
+    if (!authLoading && user) {
+      if (profile?.role === 'admin') navigate('/admin');
+      else if (profile?.role === 'vendor' || profile?.role === 'wholesaler') navigate('/vendor');
+      else if (profile?.role === 'delivery' || profile?.role === 'rider') navigate('/delivery');
+      else navigate(redirect);
+    }
+  }, [user, profile, authLoading, navigate, redirect]);
 
   /* ── Step 1 — Phone ── */
   const [phone, setPhone] = useState('');

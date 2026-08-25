@@ -36,7 +36,7 @@ declare global {
 
 export default function Payment() {
   const { cartItem, deliveryDetails, clearCart } = useCart();
-  const { user } = useAuth();
+  const { user, profile } = useAuth();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState<'cod' | 'razorpay' | null>(null);
@@ -57,6 +57,9 @@ export default function Payment() {
     try {
       const orderData = {
         user_id: user?.id,
+        customer_name: deliveryDetails.name || profile?.full_name || null,
+        customer_phone: deliveryDetails.phone || profile?.phone || null,
+        customer_email: user?.email || null,
         product_id: cartItem.type === 'product' ? cartItem.item.id : null,
         spare_part_id: cartItem.type === 'spare_part' ? cartItem.item.id : null,
         quantity: cartItem.quantity,
@@ -65,6 +68,7 @@ export default function Payment() {
         payment_method: paymentMethod,
         payment_status: paymentStatus,
         delivery_address: `${deliveryDetails.address}, ${deliveryDetails.area}`,
+        delivery_area: deliveryDetails.area,
         delivery_name: deliveryDetails.name,
         delivery_phone: deliveryDetails.phone
       };

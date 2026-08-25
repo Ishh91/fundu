@@ -25,6 +25,9 @@ export type Product = {
 export type SellRequest = {
   id: string;
   user_id: string;
+  customer_name?: string | null;
+  customer_phone?: string | null;
+  customer_email?: string | null;
   brand: string;
   model: string;
   ram: string | null;
@@ -61,6 +64,14 @@ export type SellRequest = {
   estimated_arrival_time?: string | null;
   payout_method?: string | null;
   payout_details?: string | null;
+  assigned_vendor_id?: string | null;
+  forwarded_to_vendor?: boolean;
+  vendor_quote_price?: number | null;
+  vendor_notes?: string | null;
+  vendor_quote_status?: 'none' | 'pending_inspection' | 'quoted' | 'user_accepted' | 'user_rejected' | 'completed' | string;
+  commission_percent?: number;
+  commission_amount?: number | null;
+  paid_via_vendor_limit?: boolean;
   created_at: string;
 };
 
@@ -86,6 +97,9 @@ export type RepairBooking = {
   delivery_person_phone: any;
   id: string;
   user_id: string;
+  customer_name?: string | null;
+  customer_phone?: string | null;
+  customer_email?: string | null;
   brand: string;
   model: string;
   problem: string;
@@ -105,6 +119,14 @@ export type RepairBooking = {
   pickup_person_phone: string | null;
   estimated_arrival_time?: string | null;
   tracking_id: string;
+  assigned_vendor_id?: string | null;
+  forwarded_to_vendor?: boolean;
+  vendor_quotation_amount?: number | null;
+  vendor_quotation_details?: string | null;
+  quotation_status?: 'none' | 'pending_quote' | 'quoted' | 'user_accepted' | 'user_rejected' | 'paid' | string;
+  commission_percent?: number;
+  commission_amount?: number | null;
+  vendor_payout_amount?: number | null;
   created_at: string;
 };
 
@@ -128,6 +150,9 @@ export type Order = {
   items?: any[];
   id: string;
   user_id: string;
+  customer_name?: string | null;
+  customer_phone?: string | null;
+  customer_email?: string | null;
   product_id: string | null;
   spare_part_id: string | null;
   quantity: number;
@@ -228,8 +253,9 @@ export type Profile = {
   id: string;
   full_name: string | null;
   phone: string | null;
-  role: 'customer' | 'wholesaler' | 'admin';
+  role: 'customer' | 'vendor' | 'wholesaler' | 'admin';
   business_name: string | null;
+  vendor_location?: string | null;
   gst_number?: string | null;
   credit_limit?: number;
   outstanding_balance?: number;
@@ -302,7 +328,15 @@ export type VendorLedger = {
   id: string;
   vendor_id: string;
   vendor_name?: string | null;
-  type: 'credit_purchase' | 'cash_repayment' | 'credit_limit_set' | 'credit_adjustment';
+  type:
+    | 'credit_purchase'
+    | 'cash_repayment'
+    | 'credit_limit_set'
+    | 'credit_adjustment'
+    | 'sell_buyback_payout'
+    | 'sell_commission_fee'
+    | 'repair_earning'
+    | 'repair_commission_fee';
   amount: number;
   balance_before: number;
   balance_after: number;

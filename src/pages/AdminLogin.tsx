@@ -1,11 +1,20 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { ShieldCheck, Lock, Mail, AlertCircle, ArrowRight, Building2 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
 export default function AdminLogin() {
-  const { signIn } = useAuth();
+  const { signIn, user, profile, loading: authLoading } = useAuth();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!authLoading && user) {
+      if (profile?.role === 'admin') navigate('/admin');
+      else if (profile?.role === 'vendor' || profile?.role === 'wholesaler') navigate('/vendor');
+      else if (profile?.role === 'delivery' || profile?.role === 'rider') navigate('/delivery');
+      else navigate('/dashboard');
+    }
+  }, [user, profile, authLoading, navigate]);
 
   const [email, setEmail] = useState('admin@fundu.in');
   const [password, setPassword] = useState('Admin@123456');

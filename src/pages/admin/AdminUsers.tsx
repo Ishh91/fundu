@@ -22,6 +22,7 @@ import {
 import type { Order, SellRequest, RepairBooking } from './adminTypes';
 import { statusColors } from './adminTypes';
 import { formatINR } from '../../lib/db';
+import CustomerDetailsModal from '../../components/CustomerDetailsModal';
 
 type UserProfile = {
   id: string;
@@ -57,6 +58,7 @@ export default function AdminUsers({
   const [search, setSearch] = useState('');
   const [roleFilter, setRoleFilter] = useState('All');
   const [activityTab, setActivityTab] = useState<'all' | 'sells' | 'orders' | 'repairs'>('all');
+  const [customerModalData, setCustomerModalData] = useState<any>(null);
 
   const filteredUsers = profiles.filter((u) => {
     const matchesSearch = `${u.full_name || ''} ${u.phone || ''} ${u.business_name || ''} ${u.role} ${u.id}`
@@ -212,6 +214,20 @@ export default function AdminUsers({
                 </div>
 
                 <div className="flex items-center gap-2 flex-wrap">
+                  <button
+                    onClick={() =>
+                      setCustomerModalData({
+                        user_id: selectedUser.id,
+                        customer_name: selectedUser.full_name,
+                        customer_phone: selectedUser.phone,
+                        type: 'user',
+                      })
+                    }
+                    className="btn-outline text-xs px-3 py-1.5 font-bold rounded-xl text-teal-700 border-teal-200 hover:bg-teal-50 flex items-center gap-1.5 shadow-xs"
+                  >
+                    <UserCog className="h-3.5 w-3.5 text-teal-600" /> Full Inspection Profile
+                  </button>
+
                   <a
                     href={getWhatsAppUserLink(selectedUser)}
                     target="_blank"
@@ -474,6 +490,13 @@ export default function AdminUsers({
           )}
         </div>
       </div>
+
+      {/* CUSTOMER FULL DETAILS MODAL */}
+      <CustomerDetailsModal
+        isOpen={Boolean(customerModalData)}
+        onClose={() => setCustomerModalData(null)}
+        customer={customerModalData}
+      />
     </div>
   );
 }

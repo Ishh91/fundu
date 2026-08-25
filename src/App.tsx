@@ -6,6 +6,7 @@ import Footer from './components/Footer';
 import Home from './pages/Home';
 import BuyPhones from './pages/BuyPhones';
 import SellPhone from './pages/SellPhone';
+import SellBrandPage from './pages/SellBrandPage';
 import Repair from './pages/Repair';
 import SpareParts from './pages/SpareParts';
 import About from './pages/About';
@@ -14,6 +15,7 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
 import Admin from './pages/Admin';
+import Vendor from './pages/Vendor';
 import Wholesaler from './pages/Wholesaler';
 import DeliveryAgentPortal from './pages/DeliveryAgentPortal';
 import Profile from './pages/Profile';
@@ -30,6 +32,7 @@ import Articles from './pages/Articles';
 import LaptopComingSoon from './pages/LaptopComingSoon';
 import ProductDetail from './pages/ProductDetail';
 import AdminLogin from './pages/AdminLogin';
+import VendorLogin from './pages/VendorLogin';
 import WholesalerLogin from './pages/WholesalerLogin';
 import DeliveryLogin from './pages/DeliveryLogin';
 import SEO from './components/SEO';
@@ -43,13 +46,15 @@ function MainLayout() {
     location.pathname.startsWith('/fleet-desk') ||
     location.pathname.startsWith('/rider-login') ||
     location.pathname.startsWith('/delivery-login');
-  const isWholesalerPath =
+  const isVendorPath =
+    location.pathname.startsWith('/vendor') ||
+    location.pathname.startsWith('/vendor-login') ||
     location.pathname.startsWith('/wholesaler') ||
     location.pathname.startsWith('/wholesaler-login');
   const isProfilePath =
     location.pathname.startsWith('/profile') ||
     location.pathname.startsWith('/dashboard');
-  const isStandaloneApp = isAdminPath || isDeliveryPath || isWholesalerPath;
+  const isStandaloneApp = isAdminPath || isDeliveryPath || isVendorPath;
   const hideFooter = isStandaloneApp || isProfilePath;
 
   return (
@@ -62,6 +67,11 @@ function MainLayout() {
           <Route path="/buy" element={<BuyPhones />} />
           <Route path="/product/:id" element={<ProductDetail />} />
           <Route path="/sell" element={<SellPhone />} />
+          <Route path="/sell/:brandSlug" element={<SellBrandPage />} />
+          <Route path="/sell/:brandSlug/:modelSlug" element={<SellPhone />} />
+          <Route path="/sell-old-mobile-phone" element={<SellPhone />} />
+          <Route path="/sell-old-mobile-phone/sell-:brandSlug" element={<SellBrandPage />} />
+          <Route path="/sell-old-mobile-phone/sell-:brandSlug/sell-:modelSlug" element={<SellPhone />} />
           <Route path="/repair" element={<Repair />} />
           <Route path="/spare-parts" element={<SpareParts />} />
           <Route path="/about" element={<About />} />
@@ -76,7 +86,10 @@ function MainLayout() {
           <Route path="/admin-login" element={<AdminLogin />} />
           <Route path="/admin/login" element={<AdminLogin />} />
 
-          {/* Wholesaler B2B Dedicated Routes */}
+          {/* Vendor Dedicated Routes */}
+          <Route path="/vendor" element={<Vendor />} />
+          <Route path="/vendor-login" element={<VendorLogin />} />
+          <Route path="/vendor/login" element={<VendorLogin />} />
           <Route path="/wholesaler" element={<Wholesaler />} />
           <Route path="/wholesaler-login" element={<WholesalerLogin />} />
           <Route path="/wholesaler/login" element={<WholesalerLogin />} />

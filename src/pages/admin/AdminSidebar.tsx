@@ -50,9 +50,9 @@ export default function AdminSidebar({
     { id: 'overview' as AdminTab, label: 'Overview', icon: LayoutDashboard, path: '/admin' },
     {
       id: 'wholesalers' as AdminTab,
-      label: 'B2B & Vendor Khata',
+      label: 'Vendors & 10% Commission',
       icon: Building2,
-      badge: 'Lucknow B2B',
+      badge: 'Vendor Network',
       badgeColor: 'bg-teal-600 text-white',
       path: '/admin/wholesalers',
     },
@@ -205,10 +205,10 @@ export default function AdminSidebar({
           <ExternalLink className="h-3.5 w-3.5" />
         </Link>
         <Link
-          to="/wholesaler"
+          to="/vendor"
           className="flex items-center justify-between rounded-xl px-3 py-2 text-xs font-bold text-purple-700 bg-purple-50 hover:bg-purple-100"
         >
-          <span>Wholesaler Hub</span>
+          <span>Vendor Partner Hub</span>
           <ExternalLink className="h-3.5 w-3.5" />
         </Link>
         <button

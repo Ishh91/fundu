@@ -16,6 +16,7 @@ import {
 import type { SellRequest, DeliveryAgent, MasterPhone } from './adminTypes';
 import { statusColors } from './adminTypes';
 import { db, formatINR } from '../../lib/db';
+import CustomerDetailsModal from '../../components/CustomerDetailsModal';
 
 type AdminSellRequestsProps = {
   sells: SellRequest[];
@@ -42,6 +43,7 @@ export default function AdminSellRequests({
 }: AdminSellRequestsProps) {
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
+  const [customerModalData, setCustomerModalData] = useState<any>(null);
 
   const handleTransferToWholesale = async (sell: SellRequest) => {
     try {
@@ -290,6 +292,13 @@ export default function AdminSellRequests({
                     <Building2 className="h-3.5 w-3.5" /> Send to B2B Wholesale
                   </button>
 
+                  <button
+                    onClick={() => setCustomerModalData({ ...selectedSell, type: 'sell' })}
+                    className="btn-outline text-xs px-3 py-1.5 text-teal-700 border-teal-200 hover:bg-teal-50 flex items-center gap-1.5 font-bold shadow-xs rounded-xl"
+                  >
+                    <UserCheck className="h-3.5 w-3.5 text-teal-600" /> Customer Details
+                  </button>
+
                   <a
                     href={getWhatsAppLink(selectedSell)}
                     target="_blank"
@@ -488,6 +497,13 @@ export default function AdminSellRequests({
           )}
         </div>
       </div>
+
+      {/* CUSTOMER FULL DETAILS MODAL */}
+      <CustomerDetailsModal
+        isOpen={Boolean(customerModalData)}
+        onClose={() => setCustomerModalData(null)}
+        customer={customerModalData}
+      />
     </div>
   );
 }

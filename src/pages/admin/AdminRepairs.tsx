@@ -16,6 +16,7 @@ import {
 import type { RepairBooking, DeliveryAgent } from './adminTypes';
 import { statusColors } from './adminTypes';
 import { formatINR } from '../../lib/db';
+import CustomerDetailsModal from '../../components/CustomerDetailsModal';
 
 type AdminRepairsProps = {
   repairs: RepairBooking[];
@@ -40,6 +41,7 @@ export default function AdminRepairs({
   const [statusFilter, setStatusFilter] = useState('all');
   const [editingCost, setEditingCost] = useState(false);
   const [costInput, setCostInput] = useState('');
+  const [customerModalData, setCustomerModalData] = useState<any>(null);
 
   const filteredRepairs = repairs.filter((r) => {
     const matchesSearch = `${r.brand} ${r.model} ${r.tracking_id} ${r.problem} ${r.pickup_address || ''}`
@@ -229,6 +231,13 @@ export default function AdminRepairs({
                 </div>
 
                 <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => setCustomerModalData({ ...selectedRepair, type: 'repair' })}
+                    className="btn-outline text-xs px-3 py-1.5 text-teal-700 border-teal-200 hover:bg-teal-50 flex items-center gap-1.5 font-bold shadow-xs rounded-xl"
+                  >
+                    <UserCheck className="h-3.5 w-3.5 text-teal-600" /> Customer Details
+                  </button>
+
                   <select
                     value={selectedRepair.status}
                     onChange={(e) => onUpdateStatus(selectedRepair.id, e.target.value)}
@@ -381,6 +390,13 @@ export default function AdminRepairs({
           )}
         </div>
       </div>
+
+      {/* CUSTOMER FULL DETAILS MODAL */}
+      <CustomerDetailsModal
+        isOpen={Boolean(customerModalData)}
+        onClose={() => setCustomerModalData(null)}
+        customer={customerModalData}
+      />
     </div>
   );
 }
