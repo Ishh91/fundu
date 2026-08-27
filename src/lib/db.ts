@@ -79,18 +79,19 @@ const notifyAuthChange = (event: 'SIGNED_IN' | 'SIGNED_OUT' | 'TOKEN_REFRESHED',
 };
 
 const apiRequest = async <T>(path: string, init: RequestInit = {}, useAuth = true): Promise<QueryResponse<T>> => {
+  const session = readSession();
+  const headers = new Headers(init.headers || {});
+
+  if (!headers.has('Content-Type') && init.body) {
+    headers.set('Content-Type', 'application/json');
+  }
+
+  if (useAuth && session?.access_token) {
+    headers.set('Authorization', `Bearer ${session.access_token}`);
+  }
+
+  // 1. Try Primary API_BASE (http://localhost:4000/api)
   try {
-    const session = readSession();
-    const headers = new Headers(init.headers || {});
-
-    if (!headers.has('Content-Type') && init.body) {
-      headers.set('Content-Type', 'application/json');
-    }
-
-    if (useAuth && session?.access_token) {
-      headers.set('Authorization', `Bearer ${session.access_token}`);
-    }
-
     const response = await fetch(`${API_BASE}${path}`, {
       ...init,
       headers,
@@ -104,9 +105,24 @@ const apiRequest = async <T>(path: string, init: RequestInit = {}, useAuth = tru
 
     return { data: (payload?.data ?? null) as T | null, error: null };
   } catch (error) {
+    // 2. If localhost connection refused, fallback to remote server
+    if (API_BASE.includes('localhost') || API_BASE.includes('127.0.0.1')) {
+      try {
+        const remoteBase = (import.meta.env.VITE_API_URL as string | undefined)?.trim().replace(/\/$/, '') || 'https://fundu.onrender.com/api';
+        const response = await fetch(`${remoteBase}${path}`, { ...init, headers });
+        const payload = await response.json().catch(() => null);
+
+        if (response.ok) {
+          return { data: (payload?.data ?? null) as T | null, error: null };
+        }
+      } catch {
+        // Silent catch for remote fallback
+      }
+    }
+
     return {
       data: null,
-      error: createError(error instanceof Error ? error.message : 'Network request failed.'),
+      error: createError('Backend server is starting up. Please try again in 5 seconds.'),
     };
   }
 };

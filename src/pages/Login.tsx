@@ -22,9 +22,10 @@ export default function Login() {
     }
   }, [user, profile, authLoading, navigate, redirect]);
 
-  /* ── Step 1 — Phone ── */
+  /* ── Step 1 — Phone & Password ── */
   const [phone, setPhone] = useState('');
-  const [step, setStep] = useState<'phone' | 'otp'>('phone');
+  const [password, setPassword] = useState('');
+  const [step, setStep] = useState<'credentials' | 'otp'>('credentials');
   const [devOtp, setDevOtp] = useState<string | null>(null);
 
   /* ── Step 2 — OTP ── */
@@ -56,7 +57,7 @@ export default function Login() {
     }, 1000);
   };
 
-  /* ── Send OTP ── */
+  /* ── Send OTP (Step 1 Submit) ── */
   const handleSendOtp = async (e: React.FormEvent) => {
     e.preventDefault();
     const cleaned = phone.replace(/\D/g, '');
@@ -64,8 +65,22 @@ export default function Login() {
       setError('Please enter a valid 10-digit mobile number.');
       return;
     }
+    if (!password || password.length < 6) {
+      setError('Please enter your account password (min 6 characters).');
+      return;
+    }
     setLoading(true);
     setError(null);
+
+    // 1. Verify credentials first if password login route
+    const authRes = await signIn(cleaned, password);
+    if (authRes.error) {
+      setLoading(false);
+      setError(authRes.error);
+      return;
+    }
+
+    // 2. Trigger Phone & Email OTP
     const result = await sendOtp(cleaned);
     setLoading(false);
     if (result.error) { setError(result.error); return; }
@@ -159,11 +174,11 @@ export default function Login() {
             <BrandLogo imageClassName="h-11 sm:h-14 md:h-16 w-auto max-w-[240px] sm:max-w-[290px] md:max-w-[320px] mx-auto filter drop-shadow-xs" />
           </Link>
           <h1 className="mt-6 font-display text-3xl font-extrabold text-ink-900">
-            {step === 'phone' ? 'Welcome back' : 'Enter OTP'}
+            {step === 'credentials' ? 'Welcome back' : 'Enter OTP'}
           </h1>
           <p className="mt-2 text-ink-500">
-            {step === 'phone'
-              ? 'Sign in with your mobile number — no password needed.'
+            {step === 'credentials'
+              ? 'Sign in with your mobile number and password.'
               : `We sent a 6-digit OTP to +91 ${formatPhone(phone)}`}
           </p>
         </div>
@@ -183,9 +198,9 @@ export default function Login() {
           </div>
         )}
 
-        {/* ── Step 1: Phone number ── */}
-        {step === 'phone' && !showAdminForm && (
-          <form onSubmit={handleSendOtp} className="mt-8 card p-6 md:p-8" style={{ animation: 'panel-rise 0.3s ease-out' }}>
+        {/* ── Step 1: Mobile & Password ── */}
+        {step === 'credentials' && !showAdminForm && (
+          <form onSubmit={handleSendOtp} className="mt-8 card p-6 md:p-8 space-y-4" style={{ animation: 'panel-rise 0.3s ease-out' }}>
             <div>
               <label className="label">Mobile Number</label>
               <div className="flex rounded-xl border border-ink-200 overflow-hidden focus-within:border-brand-500 focus-within:ring-4 focus-within:ring-brand-500/10 bg-white transition-all">
@@ -209,13 +224,28 @@ export default function Login() {
               </div>
             </div>
 
+            <div>
+              <label className="label">Password</label>
+              <input
+                type="password"
+                required
+                value={password}
+                onChange={(e) => {
+                  setPassword(e.target.value);
+                  setError(null);
+                }}
+                placeholder="••••••••"
+                className="input"
+              />
+            </div>
+
             <button
               type="submit"
               id="send-otp-btn"
-              disabled={loading || phone.replace(/\D/g, '').length !== 10}
+              disabled={loading || phone.replace(/\D/g, '').length !== 10 || password.length < 6}
               className="mt-6 btn-primary w-full"
             >
-              {loading ? 'Sending OTP…' : 'Get OTP'} <ArrowRight className="h-4 w-4" />
+              {loading ? 'Verifying & Sending OTP…' : 'Continue to OTP'} <ArrowRight className="h-4 w-4" />
             </button>
 
             <p className="mt-5 text-center text-sm text-ink-500">
@@ -224,8 +254,8 @@ export default function Login() {
 
             <button
               type="button"
-              onClick={() => { setShowAdminForm(true); setError(null); }}
-              className="mt-3 w-full text-center text-xs text-ink-400 hover:text-ink-600 transition-colors"
+              onClick={() => navigate('/admin-login')}
+              className="mt-3 w-full text-center text-xs text-brand-600 font-bold hover:text-brand-800 transition-colors"
             >
               Admin login →
             </button>
@@ -233,7 +263,7 @@ export default function Login() {
         )}
 
         {/* ── Admin email+password form ── */}
-        {step === 'phone' && showAdminForm && (
+        {step === 'credentials' && showAdminForm && (
           <form onSubmit={handleAdminLogin} className="mt-8 card p-6 md:p-8" style={{ animation: 'panel-rise 0.3s ease-out' }}>
             <button
               type="button"
