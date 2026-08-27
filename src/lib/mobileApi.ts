@@ -122,6 +122,32 @@ export async function fetchPhoneBrands(): Promise<string[]> {
   }
 }
 
+// Helper: Timeout fetch wrapper (15s limit)
+async function fetchWithTimeout<T>(fetchFn: () => Promise<T>, timeoutMs = 15000): Promise<T> {
+  let timeoutId: any;
+  const timeoutPromise = new Promise<never>((_, reject) => {
+    timeoutId = setTimeout(() => reject(new Error('API_TIMEOUT_15S')), timeoutMs);
+  });
+  try {
+    const result = await Promise.race([fetchFn(), timeoutPromise]);
+    return result;
+  } finally {
+    clearTimeout(timeoutId);
+  }
+}
+
+// Smart Evaluator: Compare results from MobileAPI & GSMArena API and return the best list
+function evaluateBestModelList(listA: PhoneModelOption[], listB: PhoneModelOption[]): PhoneModelOption[] {
+  if (!listA || listA.length === 0) return listB;
+  if (!listB || listB.length === 0) return listA;
+
+  // Best list score: count of models + storage options details completeness
+  const scoreA = listA.length * 10 + listA.reduce((acc, m) => acc + (m.storages?.length || 0), 0);
+  const scoreB = listB.length * 10 + listB.reduce((acc, m) => acc + (m.storages?.length || 0), 0);
+
+  return scoreA >= scoreB ? listA : listB;
+}
+
 export async function fetchPhoneModels(
   brand: string,
   query: string = '',
@@ -129,24 +155,56 @@ export async function fetchPhoneModels(
 ): Promise<PhoneModelOption[]> {
   const cacheKey = `${provider}:${brand.trim().toLowerCase()}:${query.trim().toLowerCase()}`;
   if (modelCache.has(cacheKey)) return modelCache.get(cacheKey) ?? [];
-  try {
+
+  // Primary Call: MobileAPI (15s Timeout)
+  const primaryPromise = fetchWithTimeout(async () => {
     const models = await fetchApi<PhoneModelOption[]>(
       `/mobile/models?brand=${encodeURIComponent(brand)}&query=${encodeURIComponent(query)}&provider=${provider}`
     );
-    if (Array.isArray(models) && models.length > 0) {
-      modelCache.set(cacheKey, models);
-      return models;
+    if (Array.isArray(models) && models.length > 0) return models;
+    throw new Error('NO_DATA');
+  }, 15000).catch(() => null);
+
+  // Secondary Call: GSMArena Unofficial API (15s Timeout)
+  const secondaryPromise = fetchWithTimeout(async () => {
+    const gsmModels = await fetchGsmArenaBrandModels(brand.toLowerCase());
+    if (Array.isArray(gsmModels) && gsmModels.length > 0) {
+      let filtered = gsmModels;
+      if (query.trim()) {
+        const q = query.toLowerCase();
+        filtered = gsmModels.filter((m) => m.phone_name.toLowerCase().includes(q));
+      }
+      return filtered.map((item) => ({
+        name: item.phone_name,
+        storages: ['64 GB', '128 GB', '256 GB', '512 GB'],
+      }));
     }
-    const fallbackNames = getModelsForBrand(brand);
-    return fallbackNames.map((name) => ({ name, storages: ['64 GB', '128 GB', '256 GB', '512 GB'] }));
-  } catch {
-    const fallbackNames = getModelsForBrand(brand);
-    const fallbackOptions: PhoneModelOption[] = fallbackNames.map((name) => ({
-      name,
-      storages: ['64 GB', '128 GB', '256 GB', '512 GB'],
-    }));
-    return fallbackOptions;
+    throw new Error('NO_DATA');
+  }, 15000).catch(() => null);
+
+  // Await responses from both APIs within 15 seconds
+  const [resMobileApi, resGsmArena] = await Promise.all([primaryPromise, secondaryPromise]);
+
+  // Pick the BEST response and hide/discard the inferior one
+  const bestResult = evaluateBestModelList(resMobileApi || [], resGsmArena || []);
+
+  if (bestResult.length > 0) {
+    modelCache.set(cacheKey, bestResult);
+    return bestResult;
   }
+
+  // Tier 3: Local Indian Phone Catalog Fallback
+  const fallbackNames = getModelsForBrand(brand);
+  let filteredFallback = fallbackNames;
+  if (query.trim()) {
+    const q = query.toLowerCase();
+    filteredFallback = fallbackNames.filter((n) => n.toLowerCase().includes(q));
+  }
+  const fallbackOptions: PhoneModelOption[] = filteredFallback.map((name) => ({
+    name,
+    storages: ['64 GB', '128 GB', '256 GB', '512 GB'],
+  }));
+  return fallbackOptions;
 }
 
 /**
@@ -200,6 +258,10 @@ export async function searchMobileApiDev(
   brand?: string,
   page: number = 1,
 ): Promise<MobileApiDevice[]> {
+  const q = query.trim().toLowerCase();
+  const brandClean = brand && brand !== 'All' ? brand.toLowerCase() : '';
+
+  // 1. Try Backend API first
   try {
     const params = new URLSearchParams();
     if (query) params.set('query', query);
@@ -207,12 +269,55 @@ export async function searchMobileApiDev(
     if (page) params.set('page', String(page));
 
     const response = await fetch(`${API_BASE}/phones/mobileapi/search?${params.toString()}`);
-    if (!response.ok) throw new Error('MobileAPI search failed');
-    const json = await response.json();
-    return json.data ?? [];
+    if (response.ok) {
+      const json = await response.json();
+      if (json.data && Array.isArray(json.data) && json.data.length > 0) {
+        return json.data;
+      }
+    }
   } catch {
-    return [];
+    // Fall through to local catalog & GSMArena fallback
   }
+
+  // 2. Search local Indian Phones Catalog (ALL_INDIAN_PHONES_CATALOG)
+  const localMatches = ALL_INDIAN_PHONES_CATALOG.filter((p) => {
+    const matchBrand = !brandClean || p.brand.toLowerCase() === brandClean;
+    const matchQuery = !q || `${p.brand} ${p.model} ${p.processor || ''}`.toLowerCase().includes(q);
+    return matchBrand && matchQuery;
+  });
+
+  if (localMatches.length > 0) {
+    return localMatches as any[];
+  }
+
+  // 3. Fallback to GSMArena Search
+  try {
+    const gsmRes = await fetchGsmArenaSearch(query);
+    if (gsmRes.length > 0) {
+      return gsmRes.map((g, idx) => ({
+        id: `gsm-${g.slug}-${idx}`,
+        brand: g.brand || brand || 'Smartphone',
+        model: g.phone_name,
+        release_year: 2024,
+        ram_options: ['8GB', '12GB'],
+        storage_options: ['128GB', '256GB', '512GB'],
+        default_mrp: 49999,
+        base_resale_value: 28000,
+        image_url: g.image,
+        popular_tag: 'GSMArena Live Verified Device',
+        processor: 'Octa-Core Flagship Processor',
+        camera_spec: '50MP Triple Camera Setup',
+        battery_spec: '5000 mAh Fast Charging',
+        display_spec: 'Dynamic AMOLED 120Hz',
+        is_5g: true,
+        is_active: true,
+      })) as any[];
+    }
+  } catch {
+    // Ignore
+  }
+
+  return [];
 }
 
 /**

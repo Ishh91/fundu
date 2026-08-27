@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { Truck, Search, Plus, MapPin, PhoneCall, CheckCircle2 } from 'lucide-react';
-import type { DeliveryAgent } from './adminTypes';
+import { Truck, Search, Plus, MapPin, PhoneCall, CheckCircle2, Package, Smartphone, Wrench, Navigation } from 'lucide-react';
+import type { DeliveryAgent, Order, SellRequest, RepairBooking } from './adminTypes';
 
 type AdminDeliveryAgentsProps = {
   agents: DeliveryAgent[];
@@ -8,6 +8,9 @@ type AdminDeliveryAgentsProps = {
   onSelectAgent: (id: string) => void;
   onOpenAgentModal: () => void;
   onToggleStatus: (agent: DeliveryAgent) => void;
+  orders?: Order[];
+  sellRequests?: SellRequest[];
+  repairs?: RepairBooking[];
 };
 
 export default function AdminDeliveryAgents({
@@ -16,6 +19,9 @@ export default function AdminDeliveryAgents({
   onSelectAgent,
   onOpenAgentModal,
   onToggleStatus,
+  orders = [],
+  sellRequests = [],
+  repairs = [],
 }: AdminDeliveryAgentsProps) {
   const [search, setSearch] = useState('');
 
@@ -24,6 +30,30 @@ export default function AdminDeliveryAgents({
   );
 
   const selectedAgent = agents.find((ag) => ag.id === selectedAgentId) || filteredAgents[0] || null;
+
+  const agentOrders = selectedAgent
+    ? orders.filter(
+        (o) =>
+          o.assigned_agent_id === selectedAgent.id ||
+          (o.delivery_person_name && o.delivery_person_name.toLowerCase().includes(selectedAgent.name.toLowerCase()))
+      )
+    : [];
+
+  const agentSells = selectedAgent
+    ? sellRequests.filter(
+        (s) =>
+          s.assigned_agent_id === selectedAgent.id ||
+          ((s as any).pickup_person_name && (s as any).pickup_person_name.toLowerCase().includes(selectedAgent.name.toLowerCase()))
+      )
+    : [];
+
+  const agentRepairs = selectedAgent
+    ? repairs.filter(
+        (r) =>
+          r.assigned_agent_id === selectedAgent.id ||
+          (r.delivery_person_name && r.delivery_person_name.toLowerCase().includes(selectedAgent.name.toLowerCase()))
+      )
+    : [];
 
   return (
     <div className="space-y-6">
@@ -223,6 +253,67 @@ export default function AdminDeliveryAgents({
                     </span>
                   ))}
                 </div>
+              </div>
+
+              {/* ASSIGNED TASKS SUMMARY BOX */}
+              <div className="p-4 rounded-2xl bg-blue-50/60 border border-blue-200 text-xs space-y-3">
+                <div className="flex items-center justify-between">
+                  <p className="font-black text-blue-950 flex items-center gap-1.5 text-sm">
+                    <Package className="h-4 w-4 text-blue-600" />
+                    Orders Assigned to {selectedAgent.name} ({agentOrders.length + agentSells.length + agentRepairs.length})
+                  </p>
+                  <span className="badge bg-blue-600 text-white font-bold text-[10px]">
+                    Live Executive Queue
+                  </span>
+                </div>
+
+                {agentOrders.length === 0 && agentSells.length === 0 && agentRepairs.length === 0 ? (
+                  <p className="text-slate-500 font-medium py-2">No active orders assigned to {selectedAgent.name} currently.</p>
+                ) : (
+                  <div className="space-y-2 max-h-60 overflow-y-auto pr-1">
+                    {/* Store Orders */}
+                    {agentOrders.map((o) => (
+                      <div key={o.id} className="p-3 rounded-xl bg-white border border-blue-200 flex items-center justify-between">
+                        <div>
+                          <div className="flex items-center gap-1.5">
+                            <span className="badge bg-teal-100 text-teal-800 font-bold text-[10px]">Store Order</span>
+                            <span className="font-bold text-slate-900">#{o.id.slice(0, 8).toUpperCase()}</span>
+                          </div>
+                          <p className="text-slate-600 mt-0.5">{o.delivery_name || 'Customer'} · {o.delivery_address || 'Lucknow'}</p>
+                        </div>
+                        <span className="font-black text-brand-700">₹{(o.total_amount || 0).toLocaleString('en-IN')}</span>
+                      </div>
+                    ))}
+
+                    {/* Sell Request Pickups */}
+                    {agentSells.map((s) => (
+                      <div key={s.id} className="p-3 rounded-xl bg-white border border-amber-200 flex items-center justify-between">
+                        <div>
+                          <div className="flex items-center gap-1.5">
+                            <span className="badge bg-amber-100 text-amber-800 font-bold text-[10px]">Sell Pickup</span>
+                            <span className="font-bold text-slate-900">#{s.id.slice(0, 8).toUpperCase()}</span>
+                          </div>
+                          <p className="text-slate-600 mt-0.5">{s.brand} {s.model} · {s.pickup_address || s.pickup_area || 'Lucknow'}</p>
+                        </div>
+                        <span className="font-black text-emerald-700">₹{(s.final_price || s.estimated_price || 0).toLocaleString('en-IN')}</span>
+                      </div>
+                    ))}
+
+                    {/* Doorstep Repairs */}
+                    {agentRepairs.map((r) => (
+                      <div key={r.id} className="p-3 rounded-xl bg-white border border-purple-200 flex items-center justify-between">
+                        <div>
+                          <div className="flex items-center gap-1.5">
+                            <span className="badge bg-purple-100 text-purple-800 font-bold text-[10px]">Doorstep Repair</span>
+                            <span className="font-bold text-slate-900">#{r.id.slice(0, 8).toUpperCase()}</span>
+                          </div>
+                          <p className="text-slate-600 mt-0.5">{r.brand} {r.model} · {r.problem}</p>
+                        </div>
+                        <span className="font-black text-purple-800">₹{(r.final_cost || r.estimated_cost || 0).toLocaleString('en-IN')}</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
             </div>
           ) : (

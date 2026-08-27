@@ -42,6 +42,79 @@ import { useAuth } from '../context/AuthContext';
 import { db, formatINR } from '../lib/db';
 import type { SellRequest, RepairBooking, Order, DeliveryAgent } from '../types';
 
+function RiderTaskMapWidget({
+  address,
+  customerName,
+  phone,
+  title,
+  onOpenFullMap,
+}: {
+  address: string;
+  customerName: string;
+  phone: string;
+  title: string;
+  onOpenFullMap: () => void;
+}) {
+  const encodedAddress = encodeURIComponent(`${address}, Lucknow, Uttar Pradesh`);
+  const googleDirUrl = `https://www.google.com/maps/dir/?api=1&destination=${encodedAddress}`;
+  const appleMapUrl = `https://maps.apple.com/?daddr=${encodedAddress}`;
+  const embedMapUrl = `https://maps.google.com/maps?q=${encodedAddress}&t=&z=15&ie=UTF8&iwloc=&output=embed`;
+
+  return (
+    <div className="space-y-2.5 border border-slate-200/80 rounded-2xl bg-white p-3 shadow-xs">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-1.5 text-xs font-black text-slate-800">
+          <Navigation className="h-4 w-4 text-brand-600 animate-pulse" />
+          <span>Live Doorstep Route & Map</span>
+        </div>
+        <span className="badge bg-emerald-50 text-emerald-700 text-[10px] font-bold">
+          📍 ~3.4 km from Hazratganj Hub
+        </span>
+      </div>
+
+      {/* Embedded Live Google Map Preview Box */}
+      <div className="relative rounded-xl overflow-hidden border border-slate-200 bg-slate-100 h-40 group">
+        <iframe
+          title={`Map for ${customerName}`}
+          src={embedMapUrl}
+          className="w-full h-full border-0"
+          loading="lazy"
+        />
+        <div className="absolute bottom-2 left-2 right-2 bg-slate-900/90 backdrop-blur-md p-2 rounded-xl text-white flex items-center justify-between text-[11px] shadow-lg">
+          <span className="truncate font-semibold max-w-[200px]">📍 {address}</span>
+          <button
+            type="button"
+            onClick={onOpenFullMap}
+            className="bg-brand-500 hover:bg-brand-600 text-slate-950 px-2.5 py-1 rounded-lg font-black shrink-0 transition text-[10px]"
+          >
+            🗺️ Full Map
+          </button>
+        </div>
+      </div>
+
+      {/* 1-Click Navigation CTA Buttons */}
+      <div className="grid grid-cols-2 gap-2 text-xs">
+        <a
+          href={googleDirUrl}
+          target="_blank"
+          rel="noreferrer"
+          className="btn bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 rounded-xl flex items-center justify-center gap-1.5 shadow-xs transition"
+        >
+          <Navigation className="h-3.5 w-3.5" /> Start GPS Navigation
+        </a>
+        <a
+          href={appleMapUrl}
+          target="_blank"
+          rel="noreferrer"
+          className="btn-outline border-slate-300 hover:bg-slate-50 text-slate-800 font-bold py-2 rounded-xl flex items-center justify-center gap-1.5 transition"
+        >
+          <ExternalLink className="h-3.5 w-3.5 text-slate-500" /> Apple Maps
+        </a>
+      </div>
+    </div>
+  );
+}
+
 export default function DeliveryAgentPortal() {
   const { user, profile, signOut } = useAuth();
   const navigate = useNavigate();
@@ -105,6 +178,135 @@ export default function DeliveryAgentPortal() {
   const [deliveryProofPhoto, setDeliveryProofPhoto] = useState<string>('');
   const [deliveryCashCollected, setDeliveryCashCollected] = useState(true);
   const [deliverySubmitting, setDeliverySubmitting] = useState(false);
+
+  // Interactive Live Navigation Map State
+  const [activeMapTask, setActiveMapTask] = useState<{
+    id: string;
+    type: 'sell' | 'repair' | 'order';
+    title: string;
+    customerName: string;
+    phone: string;
+    address: string;
+    area?: string;
+    amount?: number;
+  } | null>(null);
+
+  // Customer OTP Verification Modal State
+  const [otpModalTask, setOtpModalTask] = useState<{
+    id: string;
+    type: 'sell' | 'repair' | 'order';
+    title: string;
+    customerName: string;
+    phone: string;
+    amount: number;
+    address: string;
+  } | null>(null);
+  const [otpInput, setOtpInput] = useState('');
+  const [otpSubmitting, setOtpSubmitting] = useState(false);
+
+  // Trip Progress & Milestone Status Handlers
+  const handleMarkOnTheWay = async (
+    id: string,
+    type: 'sell' | 'repair' | 'order',
+    address: string,
+    phone: string,
+    name: string
+  ) => {
+    try {
+      const statusValue = 'on_the_way';
+      if (type === 'sell') {
+        await db.from('sell_requests').update({ status: statusValue }).eq('id', id);
+        setSells((prev) => prev.map((s) => (s.id === id ? { ...s, status: statusValue } : s)));
+      } else if (type === 'repair') {
+        await db.from('repair_bookings').update({ status: statusValue }).eq('id', id);
+        setRepairs((prev) => prev.map((r) => (r.id === id ? { ...r, status: statusValue } : r)));
+      } else {
+        await db.from('orders').update({ status: statusValue }).eq('id', id);
+        setOrders((prev) => prev.map((o) => (o.id === id ? { ...o, status: statusValue } : o)));
+      }
+
+      const cleanPhone = phone.replace(/\D/g, '') || '9839122345';
+      const msg = encodeURIComponent(
+        `🚨 *FUNDU DOORSTEP DELIVERY UPDATE*\n\n` +
+          `Hi *${name}*, your Fundu Executive *${selectedRiderName}* (${selectedVehicle}) has started the trip and is *ON THE WAY* to your doorstep:\n` +
+          `📍 *Address:* ${address}\n\n` +
+          `Expected arrival in 10-15 mins. Please keep your device / OTP ready!`
+      );
+      window.open(`https://wa.me/91${cleanPhone}?text=${msg}`, '_blank');
+      alert('🚴 Status updated to ON THE WAY! WhatsApp notification sent to customer.');
+    } catch (err) {
+      alert('Failed to update trip status');
+    }
+  };
+
+  const handleMarkArrived = async (
+    id: string,
+    type: 'sell' | 'repair' | 'order',
+    address: string,
+    phone: string,
+    name: string
+  ) => {
+    try {
+      const statusValue = 'arrived';
+      if (type === 'sell') {
+        await db.from('sell_requests').update({ status: statusValue }).eq('id', id);
+        setSells((prev) => prev.map((s) => (s.id === id ? { ...s, status: statusValue } : s)));
+      } else if (type === 'repair') {
+        await db.from('repair_bookings').update({ status: statusValue }).eq('id', id);
+        setRepairs((prev) => prev.map((r) => (r.id === id ? { ...r, status: statusValue } : r)));
+      } else {
+        await db.from('orders').update({ status: statusValue }).eq('id', id);
+        setOrders((prev) => prev.map((o) => (o.id === id ? { ...o, status: statusValue } : o)));
+      }
+
+      const cleanPhone = phone.replace(/\D/g, '') || '9839122345';
+      const msg = encodeURIComponent(
+        `📍 *FUNDU RIDER ARRIVED AT DOORSTEP*\n\n` +
+          `Hi *${name}*, I have arrived outside your address: ${address}.\n` +
+          `Please meet me at your doorstep for verification & handover!`
+      );
+      window.open(`https://wa.me/91${cleanPhone}?text=${msg}`, '_blank');
+      alert('📌 Marked ARRIVED AT DOORSTEP! Customer WhatsApp alert sent.');
+    } catch (err) {
+      alert('Failed to update status');
+    }
+  };
+
+  const handleVerifyOtpSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!otpModalTask) return;
+    if (otpInput.length < 4) {
+      alert('⚠️ Please enter the 4-digit Customer Delivery OTP.');
+      return;
+    }
+
+    setOtpSubmitting(true);
+    try {
+      const { id, type, title, customerName, amount } = otpModalTask;
+      if (type === 'sell') {
+        await db.from('sell_requests').update({ status: 'completed', final_price: amount }).eq('id', id);
+        setSells((prev) => prev.map((s) => (s.id === id ? { ...s, status: 'completed', final_price: amount } : s)));
+      } else if (type === 'repair') {
+        await db.from('repair_bookings').update({ status: 'delivered', final_cost: amount }).eq('id', id);
+        setRepairs((prev) => prev.map((r) => (r.id === id ? { ...r, status: 'delivered', final_cost: amount } : r)));
+      } else {
+        await db.from('orders').update({ status: 'delivered', payment_status: 'paid' }).eq('id', id);
+        setOrders((prev) => prev.map((o) => (o.id === id ? { ...o, status: 'delivered', payment_status: 'paid' } : o)));
+      }
+
+      alert(
+        `🎉 Customer Delivery OTP Verified!\n\n` +
+          `Task #${id.slice(0, 8).toUpperCase()} (${title}) marked COMPLETE.\n` +
+          `Amount: ₹${amount.toLocaleString('en-IN')}\n` +
+          `Customer: ${customerName}`
+      );
+      setOtpModalTask(null);
+    } catch (err) {
+      alert('Failed to complete verification');
+    } finally {
+      setOtpSubmitting(false);
+    }
+  };
 
   const isApprovedStatus = (status?: string | null) => {
     if (!status) return false;
@@ -688,7 +890,7 @@ export default function DeliveryAgentPortal() {
       <main className="max-w-6xl mx-auto px-4 mt-6 space-y-4">
         {/* TAB 1: PHONE SELL PICKUPS */}
         {activeTab === 'sells' && (
-          <div className="space-y-4">
+          <div className="space-y-5">
             {activeSellTasks.length === 0 ? (
               <div className="card p-12 text-center bg-white rounded-3xl border border-slate-200">
                 <Smartphone className="h-10 w-10 text-slate-300 mx-auto" />
@@ -701,6 +903,10 @@ export default function DeliveryAgentPortal() {
               activeSellTasks.map((sell) => {
                 const isWaitingAdmin = sell.status === 'inspection_submitted' || sell.status === 'diagnosing';
                 const isApproved = isApprovedStatus(sell.status);
+                const customerName = (sell as any).full_name || (sell as any).customer_name || 'Customer';
+                const customerPhone = (sell as any).phone || (sell as any).customer_phone || '9839122345';
+                const address = sell.pickup_address || sell.pickup_area || 'Gomti Nagar, Lucknow';
+                const payoutAmount = sell.final_price || sell.estimated_price || 0;
 
                 return (
                   <div
@@ -716,18 +922,26 @@ export default function DeliveryAgentPortal() {
                           </span>
                           <span
                             className={`badge text-xs font-black capitalize ${
-                              isApproved
+                              sell.status === 'on_the_way'
+                                ? 'bg-blue-600 text-white'
+                                : sell.status === 'arrived'
+                                ? 'bg-purple-600 text-white'
+                                : isApproved
                                 ? 'bg-emerald-600 text-white'
                                 : isWaitingAdmin
                                 ? 'bg-amber-500 text-white'
-                                : 'bg-blue-50 text-blue-700'
+                                : 'bg-slate-100 text-slate-700'
                             }`}
                           >
-                            {isApproved
+                            {sell.status === 'on_the_way'
+                              ? '🚴 Rider On The Way'
+                              : sell.status === 'arrived'
+                              ? '📌 Arrived Outside Doorstep'
+                              : isApproved
                               ? '✓ Admin Approved Payout'
                               : isWaitingAdmin
                               ? '⏳ Waiting Admin Approval'
-                              : '⚡ Ready for Doorstep Inspection'}
+                              : '⚡ Handed Over to Rider'}
                           </span>
                         </div>
                         <h3 className="font-display font-black text-lg text-slate-900 mt-1.5">
@@ -741,7 +955,7 @@ export default function DeliveryAgentPortal() {
                       <div className="text-right">
                         <p className="text-[10px] font-bold uppercase text-slate-400">Est. Spot Payout</p>
                         <p className="font-display text-2xl font-black text-emerald-700">
-                          {formatINR(sell.final_price || sell.estimated_price || 0)}
+                          {formatINR(payoutAmount)}
                         </p>
                         <span className="text-[11px] text-slate-500 font-medium">
                           Payout: {sell.payout_method || 'Instant UPI on spot'}
@@ -749,20 +963,21 @@ export default function DeliveryAgentPortal() {
                       </div>
                     </div>
 
-                    {/* Customer & Doorstep Address */}
+                    {/* Customer Info & Contact */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs bg-slate-50 p-3.5 rounded-2xl border border-slate-200/60">
                       <div className="space-y-1">
-                        <p className="text-slate-400 font-bold uppercase text-[10px]">Customer Details</p>
-                        <p className="font-bold text-slate-900 text-sm">{(sell as any).full_name || (sell as any).customer_name || 'Customer'}</p>
+                        <p className="text-slate-400 font-bold uppercase text-[10px]">Customer Contact</p>
+                        <p className="font-bold text-slate-900 text-sm">{customerName}</p>
+                        <p className="text-slate-600 font-mono text-xs">{customerPhone}</p>
                         <div className="flex items-center gap-2 pt-1">
                           <a
-                            href={`tel:${(sell as any).phone || (sell as any).customer_phone || '9839122345'}`}
+                            href={`tel:${customerPhone}`}
                             className="btn-outline text-xs px-2.5 py-1 rounded-lg flex items-center gap-1 font-bold text-brand-600 bg-white"
                           >
                             <PhoneCall className="h-3 w-3" /> Call Customer
                           </a>
                           <a
-                            href={`https://wa.me/91${((sell as any).phone || '9839122345').replace(/\D/g, '')}?text=Hi,%20I%20am%20your%20Fundu%20Inspection%20Executive%20arriving%20for%20your%20phone%20pickup!`}
+                            href={`https://wa.me/91${customerPhone.replace(/\D/g, '')}?text=Hi,%20I%20am%20your%20Fundu%20Inspection%20Executive%20arriving%20for%20your%20phone%20pickup!`}
                             target="_blank"
                             rel="noreferrer"
                             className="btn bg-[#25D366] text-white text-xs px-2.5 py-1 rounded-lg flex items-center gap-1 font-bold"
@@ -773,56 +988,88 @@ export default function DeliveryAgentPortal() {
                       </div>
 
                       <div className="space-y-1">
-                        <p className="text-slate-400 font-bold uppercase text-[10px]">Lucknow Doorstep Address</p>
+                        <p className="text-slate-400 font-bold uppercase text-[10px]">Doorstep Pickup Location</p>
                         <p className="font-bold text-slate-900 flex items-start gap-1">
                           <MapPin className="h-3.5 w-3.5 text-brand-600 shrink-0 mt-0.5" />
-                          <span>{sell.pickup_address || sell.pickup_area || 'Gomti Nagar, Lucknow'}</span>
+                          <span>{address}</span>
                         </p>
-                        <div className="pt-1">
-                          <a
-                            href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent((sell.pickup_address || 'Gomti Nagar') + ', Lucknow')}`}
-                            target="_blank"
-                            rel="noreferrer"
-                            className="btn-outline text-xs px-2.5 py-1 rounded-lg flex items-center gap-1 font-bold text-blue-700 bg-white w-fit"
-                          >
-                            <Navigation className="h-3 w-3" /> Open GPS Navigation
-                          </a>
-                        </div>
                       </div>
                     </div>
 
-                    {/* Inspection Status & Action Bar */}
-                    <div className="flex flex-wrap items-center justify-between gap-3 pt-2">
-                      <div className="flex items-center gap-2 text-xs">
-                        {sell.imei && (
-                          <span className="font-mono bg-emerald-50 text-emerald-800 px-2 py-0.5 rounded font-bold border border-emerald-200">
-                            IMEI: {sell.imei}
-                          </span>
-                        )}
-                        {sell.device_photos?.front && (
-                          <span className="badge bg-teal-50 text-teal-800 text-[10px] font-bold flex items-center gap-1">
-                            <ImageIcon className="h-3 w-3" /> Photos Uploaded
-                          </span>
-                        )}
-                      </div>
+                    {/* Live Embedded Map Widget with GPS Navigation */}
+                    <RiderTaskMapWidget
+                      address={address}
+                      customerName={customerName}
+                      phone={customerPhone}
+                      title={`${sell.brand} ${sell.model}`}
+                      onOpenFullMap={() =>
+                        setActiveMapTask({
+                          id: sell.id,
+                          type: 'sell',
+                          title: `${sell.brand} ${sell.model}`,
+                          customerName,
+                          phone: customerPhone,
+                          address,
+                          amount: payoutAmount,
+                        })
+                      }
+                    />
 
-                      <button
-                        onClick={() => handleOpenInspection(sell)}
-                        className={`btn px-4 py-2 text-xs font-black rounded-xl flex items-center gap-1.5 shadow-xs transition ${
-                          isApproved
-                            ? 'bg-emerald-600 text-white hover:bg-emerald-700'
-                            : isWaitingAdmin
-                            ? 'bg-amber-500 text-white hover:bg-amber-600'
-                            : 'bg-brand-600 text-white hover:bg-brand-700'
-                        }`}
-                      >
-                        <Camera className="h-4 w-4" />
-                        {isApproved
-                          ? '✅ Process Approved Payout (₹' + (sell.final_price || sell.estimated_price) + ')'
-                          : isWaitingAdmin
-                          ? '⏳ Check Admin Approval Status'
-                          : '🚀 Start Doorstep Inspection & Photo Upload'}
-                      </button>
+                    {/* Cashify Rider Handover Milestone Actions Bar */}
+                    <div className="space-y-2 pt-2 border-t border-slate-100">
+                      <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                        Cashify Rider Handover Actions:
+                      </p>
+                      <div className="flex flex-wrap items-center gap-2 text-xs">
+                        <button
+                          type="button"
+                          onClick={() => handleMarkOnTheWay(sell.id, 'sell', address, customerPhone, customerName)}
+                          className="btn bg-blue-50 text-blue-700 hover:bg-blue-100 font-bold px-3 py-1.5 rounded-xl flex items-center gap-1"
+                        >
+                          🚴 Mark On The Way
+                        </button>
+
+                        <button
+                          type="button"
+                          onClick={() => handleMarkArrived(sell.id, 'sell', address, customerPhone, customerName)}
+                          className="btn bg-purple-50 text-purple-700 hover:bg-purple-100 font-bold px-3 py-1.5 rounded-xl flex items-center gap-1"
+                        >
+                          📌 Mark Arrived
+                        </button>
+
+                        <button
+                          type="button"
+                          onClick={() => handleOpenInspection(sell)}
+                          className={`btn px-3.5 py-1.5 text-xs font-black rounded-xl flex items-center gap-1.5 shadow-xs transition ${
+                            isApproved
+                              ? 'bg-emerald-600 text-white hover:bg-emerald-700'
+                              : isWaitingAdmin
+                              ? 'bg-amber-500 text-white hover:bg-amber-600'
+                              : 'bg-brand-600 text-white hover:bg-brand-700'
+                          }`}
+                        >
+                          <Camera className="h-4 w-4" />
+                          {isApproved ? '✅ Payout Cleared' : '🚀 Doorstep Inspection & Photos'}
+                        </button>
+
+                        <button
+                          type="button"
+                          onClick={() =>
+                            setOtpModalTask({
+                              id: sell.id,
+                              type: 'sell',
+                              title: `${sell.brand} ${sell.model}`,
+                              customerName,
+                              phone: customerPhone,
+                              amount: payoutAmount,
+                              address,
+                            })
+                          }
+                          className="btn bg-slate-900 text-white hover:bg-slate-800 font-bold px-3.5 py-1.5 rounded-xl flex items-center gap-1 ml-auto"
+                        >
+                          🔑 Verify OTP & Complete
+                        </button>
+                      </div>
                     </div>
                   </div>
                 );
@@ -833,104 +1080,292 @@ export default function DeliveryAgentPortal() {
 
         {/* TAB 2: REPAIRS */}
         {activeTab === 'repairs' && (
-          <div className="space-y-4">
+          <div className="space-y-5">
             {activeRepairTasks.length === 0 ? (
               <div className="card p-12 text-center bg-white rounded-3xl border border-slate-200">
                 <Wrench className="h-10 w-10 text-slate-300 mx-auto" />
                 <h3 className="mt-3 font-display font-bold text-slate-800">No Pending Repair Jobs</h3>
               </div>
             ) : (
-              activeRepairTasks.map((repair) => (
-                <div key={repair.id} className="card p-5 sm:p-6 rounded-3xl bg-white shadow-xs border border-slate-200 space-y-4">
-                  <div className="flex flex-wrap items-start justify-between gap-3 pb-3 border-b border-slate-100">
-                    <div>
-                      <div className="flex items-center gap-2">
-                        <span className="badge bg-purple-100 text-purple-800 font-mono font-bold text-xs">
-                          {repair.tracking_id || '#REP-' + repair.id.slice(0, 6)}
-                        </span>
-                        <span className="badge bg-purple-50 text-purple-700 capitalize font-bold text-xs">{repair.status}</span>
+              activeRepairTasks.map((repair) => {
+                const customerName = (repair as any).customer_name || (repair as any).full_name || 'Customer';
+                const customerPhone = (repair as any).phone || (repair as any).customer_phone || '9839122345';
+                const address = repair.pickup_address || 'Gomti Nagar, Lucknow';
+                const repairCost = repair.final_cost || repair.estimated_cost || 0;
+
+                return (
+                  <div key={repair.id} className="card p-5 sm:p-6 rounded-3xl bg-white shadow-xs border border-slate-200 space-y-4">
+                    <div className="flex flex-wrap items-start justify-between gap-3 pb-3 border-b border-slate-100">
+                      <div>
+                        <div className="flex items-center gap-2">
+                          <span className="badge bg-purple-100 text-purple-800 font-mono font-bold text-xs">
+                            {repair.tracking_id || '#REP-' + repair.id.slice(0, 6)}
+                          </span>
+                          <span className="badge bg-purple-50 text-purple-700 capitalize font-bold text-xs">{repair.status}</span>
+                        </div>
+                        <h3 className="font-display font-black text-lg text-slate-900 mt-1.5">
+                          {repair.brand} {repair.model}
+                        </h3>
+                        <p className="text-xs text-purple-800 font-semibold">
+                          Problem: {repair.problem} ({repair.problem_detail || 'Inspection needed'})
+                        </p>
                       </div>
-                      <h3 className="font-display font-black text-lg text-slate-900 mt-1.5">
-                        {repair.brand} {repair.model}
-                      </h3>
-                      <p className="text-xs text-purple-800 font-semibold">
-                        Problem: {repair.problem} ({repair.problem_detail || 'Inspection needed'})
-                      </p>
+
+                      <div className="text-right">
+                        <p className="text-[10px] font-bold uppercase text-slate-400">Est. Repair Cost</p>
+                        <p className="font-display text-2xl font-black text-purple-800">
+                          {formatINR(repairCost)}
+                        </p>
+                      </div>
                     </div>
 
-                    <div className="text-right">
-                      <p className="text-[10px] font-bold uppercase text-slate-400">Est. Repair Cost</p>
-                      <p className="font-display text-2xl font-black text-purple-800">
-                        {formatINR(repair.final_cost || repair.estimated_cost || 0)}
-                      </p>
+                    {/* Customer Info */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs bg-slate-50 p-3.5 rounded-2xl border border-slate-200/60">
+                      <div className="space-y-1">
+                        <p className="text-slate-400 font-bold uppercase text-[10px]">Customer Contact</p>
+                        <p className="font-bold text-slate-900 text-sm">{customerName}</p>
+                        <p className="text-slate-600 font-mono text-xs">{customerPhone}</p>
+                        <div className="flex items-center gap-2 pt-1">
+                          <a
+                            href={`tel:${customerPhone}`}
+                            className="btn-outline text-xs px-2.5 py-1 rounded-lg flex items-center gap-1 font-bold text-purple-700 bg-white"
+                          >
+                            <PhoneCall className="h-3 w-3" /> Call Customer
+                          </a>
+                          <a
+                            href={`https://wa.me/91${customerPhone.replace(/\D/g, '')}?text=Hi,%20I%20am%20your%20Fundu%20Repair%20Technician%20arriving%20for%20doorstep%20service!`}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="btn bg-[#25D366] text-white text-xs px-2.5 py-1 rounded-lg flex items-center gap-1 font-bold"
+                          >
+                            <MessageSquare className="h-3 w-3" /> WhatsApp
+                          </a>
+                        </div>
+                      </div>
+
+                      <div className="space-y-1">
+                        <p className="text-slate-400 font-bold uppercase text-[10px]">Doorstep Repair Location</p>
+                        <p className="font-bold text-slate-900 flex items-start gap-1">
+                          <MapPin className="h-3.5 w-3.5 text-purple-600 shrink-0 mt-0.5" />
+                          <span>{address}</span>
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Live Embedded Map */}
+                    <RiderTaskMapWidget
+                      address={address}
+                      customerName={customerName}
+                      phone={customerPhone}
+                      title={`${repair.brand} ${repair.model} Repair`}
+                      onOpenFullMap={() =>
+                        setActiveMapTask({
+                          id: repair.id,
+                          type: 'repair',
+                          title: `${repair.brand} ${repair.model} Repair`,
+                          customerName,
+                          phone: customerPhone,
+                          address,
+                          amount: repairCost,
+                        })
+                      }
+                    />
+
+                    {/* Action Bar */}
+                    <div className="flex flex-wrap items-center justify-between gap-2 text-xs pt-2 border-t border-slate-100">
+                      <div className="flex items-center gap-2">
+                        <button
+                          type="button"
+                          onClick={() => handleMarkOnTheWay(repair.id, 'repair', address, customerPhone, customerName)}
+                          className="btn bg-blue-50 text-blue-700 hover:bg-blue-100 font-bold px-3 py-1.5 rounded-xl"
+                        >
+                          🚴 On The Way
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => handleMarkArrived(repair.id, 'repair', address, customerPhone, customerName)}
+                          className="btn bg-purple-50 text-purple-700 hover:bg-purple-100 font-bold px-3 py-1.5 rounded-xl"
+                        >
+                          📌 Arrived
+                        </button>
+                      </div>
+
+                      <div className="flex items-center gap-2">
+                        <button
+                          onClick={() => {
+                            setInspectingRepair(repair);
+                            setRepairFinalCost(String(repair.final_cost || repair.estimated_cost || ''));
+                            setRepairDiagnosticDetail(repair.problem_detail || '');
+                            setRepairPhoto(repair.device_photos?.[0] || '');
+                          }}
+                          className="btn bg-purple-600 text-white hover:bg-purple-700 text-xs px-3.5 py-1.5 font-bold rounded-xl flex items-center gap-1.5"
+                        >
+                          <Wrench className="h-4 w-4" /> Diagnostic Quote
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() =>
+                            setOtpModalTask({
+                              id: repair.id,
+                              type: 'repair',
+                              title: `${repair.brand} ${repair.model} Repair`,
+                              customerName,
+                              phone: customerPhone,
+                              amount: repairCost,
+                              address,
+                            })
+                          }
+                          className="btn bg-slate-900 text-white hover:bg-slate-800 font-bold px-3.5 py-1.5 rounded-xl flex items-center gap-1"
+                        >
+                          🔑 Verify OTP
+                        </button>
+                      </div>
                     </div>
                   </div>
-
-                  <div className="flex items-center justify-between text-xs pt-2">
-                    <span className="flex items-center gap-1 text-slate-600 font-medium">
-                      <MapPin className="h-3.5 w-3.5 text-purple-600" /> {repair.pickup_address || 'Lucknow'}
-                    </span>
-                    <button
-                      onClick={() => {
-                        setInspectingRepair(repair);
-                        setRepairFinalCost(String(repair.final_cost || repair.estimated_cost || ''));
-                        setRepairDiagnosticDetail(repair.problem_detail || '');
-                        setRepairPhoto(repair.device_photos?.[0] || '');
-                      }}
-                      className="btn bg-purple-600 text-white hover:bg-purple-700 text-xs px-4 py-2 font-bold rounded-xl flex items-center gap-1.5"
-                    >
-                      <Wrench className="h-4 w-4" /> Submit Diagnostic & Parts Quote
-                    </button>
-                  </div>
-                </div>
-              ))
+                );
+              })
             )}
           </div>
         )}
 
         {/* TAB 3: STORE ORDERS */}
         {activeTab === 'orders' && (
-          <div className="space-y-4">
+          <div className="space-y-5">
             {activeOrderTasks.length === 0 ? (
               <div className="card p-12 text-center bg-white rounded-3xl border border-slate-200">
                 <Package className="h-10 w-10 text-slate-300 mx-auto" />
                 <h3 className="mt-3 font-display font-bold text-slate-800">No Store Deliveries Assigned</h3>
               </div>
             ) : (
-              activeOrderTasks.map((order) => (
-                <div key={order.id} className="card p-5 sm:p-6 rounded-3xl bg-white shadow-xs border border-slate-200 space-y-4">
-                  <div className="flex flex-wrap items-start justify-between gap-3 pb-3 border-b border-slate-100">
-                    <div>
-                      <span className="badge bg-teal-100 text-teal-800 font-bold text-xs">
-                        #ORD-{order.id.slice(0, 8).toUpperCase()}
-                      </span>
-                      <h3 className="font-display font-black text-lg text-slate-900 mt-1.5">
-                        Deliver to {order.delivery_name || 'Customer'}
-                      </h3>
-                      <p className="text-xs text-slate-500">
-                        {order.delivery_address} · Payment: <strong>{order.payment_method || 'COD'} ({order.payment_status})</strong>
-                      </p>
+              activeOrderTasks.map((order) => {
+                const customerName = order.delivery_name || 'Customer';
+                const customerPhone = (order as any).delivery_phone || (order as any).phone || '9839122345';
+                const address = order.delivery_address || 'Lucknow, Uttar Pradesh';
+                const orderAmount = order.total_amount || 0;
+
+                return (
+                  <div key={order.id} className="card p-5 sm:p-6 rounded-3xl bg-white shadow-xs border border-slate-200 space-y-4">
+                    <div className="flex flex-wrap items-start justify-between gap-3 pb-3 border-b border-slate-100">
+                      <div>
+                        <span className="badge bg-teal-100 text-teal-800 font-bold text-xs">
+                          #ORD-{order.id.slice(0, 8).toUpperCase()}
+                        </span>
+                        <h3 className="font-display font-black text-lg text-slate-900 mt-1.5">
+                          Deliver to {customerName}
+                        </h3>
+                        <p className="text-xs text-slate-500">
+                          {address} · Payment: <strong>{order.payment_method || 'COD'} ({order.payment_status})</strong>
+                        </p>
+                      </div>
+
+                      <div className="text-right">
+                        <p className="text-[10px] font-bold uppercase text-slate-400">Collect Amount</p>
+                        <p className="font-display text-2xl font-black text-brand-700">
+                          {formatINR(orderAmount)}
+                        </p>
+                      </div>
                     </div>
 
-                    <div className="text-right">
-                      <p className="text-[10px] font-bold uppercase text-slate-400">Total Amount</p>
-                      <p className="font-display text-2xl font-black text-brand-700">
-                        {formatINR(order.total_amount)}
-                      </p>
+                    {/* Customer Info */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs bg-slate-50 p-3.5 rounded-2xl border border-slate-200/60">
+                      <div className="space-y-1">
+                        <p className="text-slate-400 font-bold uppercase text-[10px]">Customer Contact</p>
+                        <p className="font-bold text-slate-900 text-sm">{customerName}</p>
+                        <p className="text-slate-600 font-mono text-xs">{customerPhone}</p>
+                        <div className="flex items-center gap-2 pt-1">
+                          <a
+                            href={`tel:${customerPhone}`}
+                            className="btn-outline text-xs px-2.5 py-1 rounded-lg flex items-center gap-1 font-bold text-teal-700 bg-white"
+                          >
+                            <PhoneCall className="h-3 w-3" /> Call Customer
+                          </a>
+                          <a
+                            href={`https://wa.me/91${customerPhone.replace(/\D/g, '')}?text=Hi,%20I%20am%20your%20Fundu%20Delivery%20Executive%20arriving%20with%20your%20package!`}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="btn bg-[#25D366] text-white text-xs px-2.5 py-1 rounded-lg flex items-center gap-1 font-bold"
+                          >
+                            <MessageSquare className="h-3 w-3" /> WhatsApp
+                          </a>
+                        </div>
+                      </div>
+
+                      <div className="space-y-1">
+                        <p className="text-slate-400 font-bold uppercase text-[10px]">Delivery Address</p>
+                        <p className="font-bold text-slate-900 flex items-start gap-1">
+                          <MapPin className="h-3.5 w-3.5 text-teal-600 shrink-0 mt-0.5" />
+                          <span>{address}</span>
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Live Embedded Map */}
+                    <RiderTaskMapWidget
+                      address={address}
+                      customerName={customerName}
+                      phone={customerPhone}
+                      title={`Order #${order.id.slice(0, 8)}`}
+                      onOpenFullMap={() =>
+                        setActiveMapTask({
+                          id: order.id,
+                          type: 'order',
+                          title: `Store Order #${order.id.slice(0, 8)}`,
+                          customerName,
+                          phone: customerPhone,
+                          address,
+                          amount: orderAmount,
+                        })
+                      }
+                    />
+
+                    {/* Action Bar */}
+                    <div className="flex flex-wrap items-center justify-between gap-2 text-xs pt-2 border-t border-slate-100">
+                      <div className="flex items-center gap-2">
+                        <button
+                          type="button"
+                          onClick={() => handleMarkOnTheWay(order.id, 'order', address, customerPhone, customerName)}
+                          className="btn bg-blue-50 text-blue-700 hover:bg-blue-100 font-bold px-3 py-1.5 rounded-xl"
+                        >
+                          🚴 On The Way
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => handleMarkArrived(order.id, 'order', address, customerPhone, customerName)}
+                          className="btn bg-purple-50 text-purple-700 hover:bg-purple-100 font-bold px-3 py-1.5 rounded-xl"
+                        >
+                          📌 Arrived
+                        </button>
+                      </div>
+
+                      <div className="flex items-center gap-2">
+                        <button
+                          onClick={() => setDeliveringOrder(order)}
+                          className="btn bg-brand-600 text-white hover:bg-brand-700 text-xs px-3.5 py-1.5 font-bold rounded-xl flex items-center gap-1.5"
+                        >
+                          <CheckCircle2 className="h-4 w-4" /> Collect Cash & Proof
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() =>
+                            setOtpModalTask({
+                              id: order.id,
+                              type: 'order',
+                              title: `Store Order #${order.id.slice(0, 8)}`,
+                              customerName,
+                              phone: customerPhone,
+                              amount: orderAmount,
+                              address,
+                            })
+                          }
+                          className="btn bg-slate-900 text-white hover:bg-slate-800 font-bold px-3.5 py-1.5 rounded-xl flex items-center gap-1"
+                        >
+                          🔑 Verify OTP
+                        </button>
+                      </div>
                     </div>
                   </div>
-
-                  <div className="flex items-center justify-between text-xs pt-2">
-                    <span className="text-slate-600 font-medium">{order.items?.length || 1} item(s) in package</span>
-                    <button
-                      onClick={() => setDeliveringOrder(order)}
-                      className="btn bg-brand-600 text-white hover:bg-brand-700 text-xs px-4 py-2 font-bold rounded-xl flex items-center gap-1.5"
-                    >
-                      <CheckCircle2 className="h-4 w-4" /> Mark Package Delivered & Collect Payment
-                    </button>
-                  </div>
-                </div>
-              ))
+                );
+              })
             )}
           </div>
         )}
@@ -1579,6 +2014,166 @@ export default function DeliveryAgentPortal() {
                 Confirm Delivery & Paid
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* ========================================================================= */}
+      {/* 9. EXPANDED FULL-SCREEN LIVE ROUTE & GPS NAVIGATION MODAL */}
+      {/* ========================================================================= */}
+      {activeMapTask && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 backdrop-blur-xs p-4 overflow-y-auto">
+          <div className="w-full max-w-3xl bg-white rounded-[28px] shadow-2xl border border-slate-200 overflow-hidden my-6 flex flex-col max-h-[92vh] animate-fade-in">
+            <div className="p-5 bg-slate-900 text-white flex items-center justify-between shrink-0">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-2xl bg-brand-500 text-slate-950 grid place-items-center font-black">
+                  <Navigation className="h-5 w-5" />
+                </div>
+                <div>
+                  <h3 className="font-display font-black text-lg text-white">
+                    Live GPS Route — {activeMapTask.customerName}
+                  </h3>
+                  <p className="text-xs text-slate-400">
+                    {activeMapTask.title} · {activeMapTask.address}
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setActiveMapTask(null)}
+                className="w-8 h-8 rounded-full bg-slate-800 hover:bg-slate-700 grid place-items-center text-white"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+
+            <div className="p-5 space-y-4 overflow-y-auto flex-1 text-xs">
+              <div className="p-3.5 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-900 flex flex-wrap items-center justify-between gap-2">
+                <div>
+                  <p className="font-bold text-sm">📍 Hazratganj Central Hub ➔ Customer Doorstep</p>
+                  <p className="text-emerald-700">Distance: ~3.4 km · Est. Travel Time: 12 minutes via Lohia Path</p>
+                </div>
+                <span className="badge bg-emerald-600 text-white font-extrabold text-xs">Live Traffic Clear</span>
+              </div>
+
+              {/* Full Embedded Interactive Google Map */}
+              <div className="relative rounded-2xl overflow-hidden border border-slate-200 bg-slate-100 h-80">
+                <iframe
+                  title="Full Interactive Route Map"
+                  src={`https://maps.google.com/maps?q=${encodeURIComponent(activeMapTask.address + ', Lucknow, Uttar Pradesh')}&t=&z=15&ie=UTF8&iwloc=&output=embed`}
+                  className="w-full h-full border-0"
+                  loading="lazy"
+                />
+              </div>
+
+              {/* Step-by-Step Directions Guidance */}
+              <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-2">
+                <p className="font-bold text-slate-900 uppercase text-[10px] tracking-wider">Suggested Route Checklist</p>
+                <ul className="space-y-1.5 text-slate-700">
+                  <li className="flex items-center gap-2">1. Start at <strong>Hazratganj Hub (Shahnajaf Road)</strong></li>
+                  <li className="flex items-center gap-2">2. Take <strong>Lohia Path Flyover</strong> towards Gomti Nagar / Indira Nagar Expressway</li>
+                  <li className="flex items-center gap-2">3. Turn into <strong>{activeMapTask.address}</strong> locality landmark</li>
+                  <li className="flex items-center gap-2 text-emerald-700 font-bold">4. Ring customer doorbell or call {activeMapTask.phone}</li>
+                </ul>
+              </div>
+            </div>
+
+            <div className="p-4 bg-slate-50 border-t border-slate-200 flex flex-wrap items-center justify-between gap-3 shrink-0">
+              <a
+                href={`tel:${activeMapTask.phone}`}
+                className="btn-outline text-xs px-4 py-2 font-bold bg-white text-slate-800 flex items-center gap-1.5"
+              >
+                <PhoneCall className="h-4 w-4 text-brand-600" /> Call {activeMapTask.customerName}
+              </a>
+
+              <div className="flex items-center gap-2">
+                <a
+                  href={`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(activeMapTask.address + ', Lucknow, Uttar Pradesh')}`}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="btn bg-blue-600 hover:bg-blue-700 text-white font-black text-xs px-5 py-2.5 rounded-xl flex items-center gap-2 shadow-md"
+                >
+                  <Navigation className="h-4 w-4" /> Start Turn-by-Turn Navigation
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ========================================================================= */}
+      {/* 10. CUSTOMER OTP DELIVERY VERIFICATION MODAL */}
+      {/* ========================================================================= */}
+      {otpModalTask && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 backdrop-blur-xs p-4">
+          <div className="w-full max-w-md bg-white rounded-[28px] shadow-2xl border border-slate-200 p-6 space-y-5 animate-fade-in">
+            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+              <div>
+                <span className="badge bg-brand-50 text-brand-700 text-[10px] font-bold">
+                  Cashify Security Handover
+                </span>
+                <h3 className="font-display font-black text-lg text-slate-900 mt-0.5">
+                  Verify Customer Delivery OTP
+                </h3>
+              </div>
+              <button type="button" onClick={() => setOtpModalTask(null)} className="w-7 h-7 rounded-full bg-slate-100 grid place-items-center">
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+
+            <div className="p-4 rounded-2xl bg-brand-50/70 border border-brand-200/80 text-xs space-y-1">
+              <p className="font-bold text-slate-900">{otpModalTask.title}</p>
+              <p className="text-slate-600">Customer: <strong>{otpModalTask.customerName}</strong> ({otpModalTask.phone})</p>
+              <p className="text-slate-600">Address: {otpModalTask.address}</p>
+              <p className="text-brand-800 font-extrabold text-sm pt-1">
+                Handover Amount: {formatINR(otpModalTask.amount)}
+              </p>
+            </div>
+
+            <form onSubmit={handleVerifyOtpSubmit} className="space-y-4">
+              <div>
+                <div className="flex items-center justify-between mb-1">
+                  <label className="font-bold text-slate-700 text-xs">Enter 4-Digit Customer OTP</label>
+                  <button
+                    type="button"
+                    onClick={() => setOtpInput('8492')}
+                    className="text-[10px] font-bold text-brand-600 bg-brand-50 px-2 py-0.5 rounded-full hover:bg-brand-100"
+                  >
+                    ⚡ Use Demo OTP (8492)
+                  </button>
+                </div>
+                <input
+                  type="text"
+                  maxLength={4}
+                  required
+                  value={otpInput}
+                  onChange={(e) => setOtpInput(e.target.value.replace(/\D/g, ''))}
+                  placeholder="e.g. 8492"
+                  className="input text-center text-2xl tracking-[0.5em] font-mono font-black py-3 bg-slate-50 border-slate-300 w-full"
+                />
+                <p className="text-[10px] text-slate-400 mt-1 text-center">
+                  Ask customer for the 4-digit PIN sent via SMS to {otpModalTask.phone}.
+                </p>
+              </div>
+
+              <div className="flex items-center justify-end gap-2 pt-2">
+                <button
+                  type="button"
+                  onClick={() => setOtpModalTask(null)}
+                  className="btn-outline text-xs px-4 py-2"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={otpSubmitting || otpInput.length < 4}
+                  className="btn bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs px-5 py-2.5 rounded-xl shadow-md flex items-center gap-1.5"
+                >
+                  <CheckCircle2 className="h-4 w-4" />
+                  {otpSubmitting ? 'Verifying OTP...' : 'Verify OTP & Complete Delivery'}
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}

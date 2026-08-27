@@ -191,6 +191,12 @@ export default function Repair() {
       navigate('/login?redirect=/repair');
       return;
     }
+
+    if (profile && profile.role !== 'customer') {
+      setError(`Access Restricted: You are logged in as ${profile.role.toUpperCase()}. Vendor, Delivery, and Admin accounts cannot book customer repair services.`);
+      return;
+    }
+
     setSubmitting(true);
     setError(null);
 

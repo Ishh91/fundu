@@ -9,7 +9,7 @@ import { db, formatINR } from '../lib/db';
 const categories = ['All', 'Screens', 'Battery', 'Charging Ports', 'Back Glass', 'Camera', 'Speaker', 'Other'];
 
 export default function SpareParts() {
-  const { user } = useAuth();
+  const { user, profile } = useAuth();
   const { setCartItem } = useCart();
   const navigate = useNavigate();
   const [parts, setParts] = useState<SparePart[]>([]);
@@ -86,7 +86,7 @@ export default function SpareParts() {
                 ) : (
                   <div className="grid h-full place-items-center"><Package className="h-12 w-12 text-ink-300" /></div>
                 )}
-                <span className="absolute left-3 top-3 badge border border-ink-200 bg-ink-100/90 text-ink-700">{p.category}</span>
+                <span className="absolute left-3 top-3 z-10 pointer-events-none badge border border-ink-200 bg-ink-100/90 text-ink-700">{p.category}</span>
               </div>
               <div className="p-4">
                 {p.brand && <p className="text-xs font-semibold text-brand-600">{p.brand}</p>}
@@ -101,6 +101,10 @@ export default function SpareParts() {
                 </div>
                 <button
                   onClick={() => {
+                    if (profile && profile.role !== 'customer') {
+                      alert(`Access Restricted: You are logged in as ${profile.role.toUpperCase()}. Vendor, Delivery, and Admin accounts cannot place orders.`);
+                      return;
+                    }
                     if (user) {
                       setCartItem({
                         type: 'spare_part',

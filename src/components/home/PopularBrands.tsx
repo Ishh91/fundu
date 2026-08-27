@@ -132,7 +132,7 @@ export default function PopularBrands() {
                 to={targetHref}
                 className="group relative flex flex-col items-center justify-between rounded-2xl border border-gray-100 bg-[#f8fafc] p-4 text-center transition-all duration-200 hover:-translate-y-1 hover:border-teal-400 hover:bg-white hover:shadow-md"
               >
-                <span className="absolute left-2.5 top-2.5 rounded-md bg-white border border-gray-100 px-2 py-0.5 text-[10px] font-bold text-gray-500 group-hover:text-teal-600 group-hover:border-teal-200">
+                <span className="absolute left-2.5 top-2.5 z-10 pointer-events-none rounded-md bg-white border border-gray-100 px-2 py-0.5 text-[10px] font-bold text-gray-500 group-hover:text-teal-600 group-hover:border-teal-200">
                   {data.tag}
                 </span>
 

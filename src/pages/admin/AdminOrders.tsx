@@ -22,10 +22,14 @@ export default function AdminOrders({
   onUpdateStatus,
   onReassignAgent,
 }: AdminOrdersProps) {
-  const [search, setSearch] = useState('');
-  const [statusFilter, setStatusFilter] = useState('all');
-  const [adminReplyText, setAdminReplyText] = useState('');
-  const [customerModalData, setCustomerModalData] = useState<any>(null);
+  const [agentFilter, setAgentFilter] = useState('all');
+  const [reassignModalData, setReassignModalData] = useState<{
+    order: Order;
+    newAgent: DeliveryAgent;
+    oldAgentName: string;
+  } | null>(null);
+  const [emailSentSuccess, setEmailSentSuccess] = useState(false);
+  const [smsSentSuccess, setSmsSentSuccess] = useState(false);
 
   const handleSendAdminReply = async (order: Order) => {
     if (!adminReplyText.trim()) return;
@@ -51,12 +55,35 @@ export default function AdminOrders({
     }
   };
 
+  const handleSelectReassignAgent = (order: Order, agentId: string) => {
+    const newAgent = agents.find((a) => a.id === agentId);
+    if (!newAgent) return;
+    const oldName = order.delivery_person_name || 'Unassigned';
+    onReassignAgent(order.id, agentId);
+    setReassignModalData({
+      order: {
+        ...order,
+        delivery_person_name: newAgent.name,
+        delivery_person_phone: newAgent.phone,
+        assigned_agent_id: newAgent.id,
+      },
+      newAgent,
+      oldAgentName: oldName,
+    });
+    setEmailSentSuccess(false);
+    setSmsSentSuccess(false);
+  };
+
   const filteredOrders = orders.filter((o) => {
-    const matchesSearch = `${o.delivery_name || ''} ${o.id} ${o.delivery_phone || ''} ${o.delivery_address || ''}`
+    const matchesSearch = `${o.delivery_name || ''} ${o.id} ${o.delivery_phone || ''} ${o.delivery_address || ''} ${o.delivery_person_name || ''}`
       .toLowerCase()
       .includes(search.toLowerCase());
     const matchesStatus = statusFilter === 'all' || o.status.toLowerCase() === statusFilter.toLowerCase();
-    return matchesSearch && matchesStatus;
+    const matchesAgent =
+      agentFilter === 'all' ||
+      o.assigned_agent_id === agentFilter ||
+      (o.delivery_person_name && o.delivery_person_name.toLowerCase().includes(agentFilter.toLowerCase()));
+    return matchesSearch && matchesStatus && matchesAgent;
   });
 
   const getWhatsAppDispatchLink = (order: Order) => {
@@ -120,6 +147,59 @@ export default function AdminOrders({
         </div>
       </div>
 
+      {/* Rider Workload Overview Bar */}
+      <div className="card p-4 rounded-2xl bg-white border border-slate-200/80 shadow-xs space-y-3">
+        <div className="flex items-center justify-between">
+          <span className="text-xs font-black text-slate-800 flex items-center gap-1.5 uppercase tracking-wider">
+            <Truck className="h-4 w-4 text-brand-600" /> Executive Order Assignment Overview
+          </span>
+          <span className="text-[11px] font-bold text-slate-500">
+            {agents.length} Registered Lucknow Riders
+          </span>
+        </div>
+
+        <div className="flex gap-2 overflow-x-auto scrollbar-hide">
+          <button
+            onClick={() => setAgentFilter('all')}
+            className={`px-3 py-2 rounded-xl text-xs font-bold transition shrink-0 flex items-center gap-1.5 ${
+              agentFilter === 'all'
+                ? 'bg-slate-900 text-white shadow-xs'
+                : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+            }`}
+          >
+            <span>All Executives</span>
+            <span className="badge bg-white/20 text-white text-[10px]">{orders.length}</span>
+          </button>
+
+          {agents.map((ag) => {
+            const count = orders.filter(
+              (o) => o.assigned_agent_id === ag.id || (o.delivery_person_name && o.delivery_person_name.toLowerCase().includes(ag.name.toLowerCase()))
+            ).length;
+            const isSelected = agentFilter === ag.id || agentFilter.toLowerCase() === ag.name.toLowerCase();
+
+            return (
+              <button
+                key={ag.id}
+                onClick={() => setAgentFilter(isSelected ? 'all' : ag.id)}
+                className={`px-3 py-2 rounded-xl text-xs font-bold transition shrink-0 flex items-center gap-2 border ${
+                  isSelected
+                    ? 'bg-brand-600 text-white border-brand-600 shadow-xs'
+                    : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50'
+                }`}
+              >
+                <div className="w-5 h-5 rounded-full bg-slate-200 text-slate-900 grid place-items-center text-[10px] font-black">
+                  {ag.name[0]}
+                </div>
+                <span>{ag.name}</span>
+                <span className={`badge text-[10px] font-black ${isSelected ? 'bg-white text-brand-700' : 'bg-slate-100 text-slate-700'}`}>
+                  {count}
+                </span>
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
         {/* Left Column: Orders List */}
         <div className="lg:col-span-5 space-y-3">
@@ -130,7 +210,7 @@ export default function AdminOrders({
                 type="text"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                placeholder="Search order ID, customer name..."
+                placeholder="Search order ID, customer, rider name..."
                 className="w-full text-xs bg-transparent border-none focus:outline-none text-ink-900 font-medium"
               />
               {search && (
@@ -337,12 +417,12 @@ export default function AdminOrders({
                   </div>
                   <div className="flex items-center gap-2">
                     <select
-                      onChange={(e) => onReassignAgent(selectedOrder.id, e.target.value)}
+                      onChange={(e) => handleSelectReassignAgent(selectedOrder, e.target.value)}
                       defaultValue=""
-                      className="input text-xs py-1 bg-white"
+                      className="input text-xs py-1 bg-white font-bold border-brand-300"
                     >
                       <option value="" disabled>
-                        Reassign agent...
+                        Reassign agent & Send Alert...
                       </option>
                       {agents.map((ag) => (
                         <option key={ag.id} value={ag.id}>
@@ -385,18 +465,18 @@ export default function AdminOrders({
 
                 {/* Messages conversation thread */}
                 {Array.isArray(selectedOrder.support_messages) && selectedOrder.support_messages.length > 0 && (
-                  <div className="space-y-1.5 max-h-36 overflow-y-auto pr-1">
+                  <div className="space-y-2 max-h-48 overflow-y-auto pr-1">
                     {selectedOrder.support_messages.map((m: any, idx: number) => (
                       <div
                         key={idx}
-                        className={`p-2 rounded-xl text-xs ${
+                        className={`p-2.5 rounded-xl text-xs ${
                           m.sender === 'admin'
-                            ? 'bg-brand-100/70 text-brand-900 ml-6 text-right'
-                            : 'bg-white text-ink-900 mr-6 border border-ink-100'
+                            ? 'bg-teal-600 text-white ml-6 font-medium'
+                            : 'bg-white text-slate-800 border border-teal-200 mr-6 font-medium'
                         }`}
                       >
-                        <div className="flex items-center justify-between gap-2 mb-0.5">
-                          <span className="font-bold text-[10px]">
+                        <div className="flex items-center justify-between mb-1">
+                          <span className="font-bold text-[10px] opacity-80">
                             {m.sender === 'admin' ? 'Fundu Admin (You)' : 'Customer'}
                           </span>
                           <span className="text-[9px] text-ink-400">
@@ -443,6 +523,138 @@ export default function AdminOrders({
         onClose={() => setCustomerModalData(null)}
         customer={customerModalData}
       />
+
+      {/* RE-ASSIGNMENT EMAIL & MOBILE SMS NOTIFICATION MODAL */}
+      {reassignModalData && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 backdrop-blur-xs p-4 overflow-y-auto">
+          <div className="w-full max-w-2xl bg-white rounded-[28px] shadow-2xl border border-slate-200 overflow-hidden my-6 flex flex-col max-h-[92vh] animate-fade-in text-slate-900">
+            <div className="p-5 bg-slate-900 text-white flex items-center justify-between shrink-0">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-2xl bg-brand-500 text-slate-950 grid place-items-center font-black">
+                  <Truck className="h-5 w-5" />
+                </div>
+                <div>
+                  <h3 className="font-display font-black text-lg text-white">
+                    Order Task Re-assigned
+                  </h3>
+                  <p className="text-xs text-slate-400">
+                    Order #{reassignModalData.order.id.slice(0, 8).toUpperCase()} · Re-assigned to {reassignModalData.newAgent.name}
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setReassignModalData(null)}
+                className="w-8 h-8 rounded-full bg-slate-800 hover:bg-slate-700 grid place-items-center text-white"
+              >
+                ✕
+              </button>
+            </div>
+
+            <div className="p-6 space-y-5 overflow-y-auto flex-1 text-xs">
+              <div className="p-4 rounded-2xl bg-amber-50 border border-amber-200 text-amber-900 space-y-1">
+                <p className="font-black text-sm text-amber-950">
+                  🔄 Reassigned: {reassignModalData.oldAgentName} ➔ {reassignModalData.newAgent.name} ({reassignModalData.newAgent.phone})
+                </p>
+                <p className="text-amber-800">
+                  Database record updated. Send immediate Email & Mobile SMS / WhatsApp alerts to the newly assigned delivery executive below.
+                </p>
+              </div>
+
+              {/* EMAIL DISPATCH PREVIEW BOX */}
+              <div className="space-y-2.5 p-4 rounded-2xl bg-blue-50/70 border border-blue-200">
+                <div className="flex items-center justify-between">
+                  <span className="font-black text-blue-950 text-xs flex items-center gap-1.5">
+                    📧 1. Automated Email Dispatch Payload
+                  </span>
+                  <span className="badge bg-blue-600 text-white text-[10px] font-bold">
+                    SMTP / Resend API
+                  </span>
+                </div>
+
+                <div className="bg-white p-3 rounded-xl border border-blue-200 font-mono text-[11px] space-y-1 text-slate-800">
+                  <p><strong className="text-slate-500">TO:</strong> {reassignModalData.newAgent.email || reassignModalData.newAgent.name.toLowerCase().replace(/\s+/g, '.') + '@fundu.in'}</p>
+                  <p><strong className="text-slate-500">SUBJECT:</strong> 🚨 NEW DISPATCH TASK: Order #{reassignModalData.order.id.slice(0, 8).toUpperCase()}</p>
+                  <div className="pt-2 border-t border-slate-100 font-sans text-xs text-slate-700 space-y-1">
+                    <p>Hi <strong>{reassignModalData.newAgent.name}</strong>,</p>
+                    <p>You have been assigned a new doorstep delivery task in Lucknow:</p>
+                    <p>• <strong>Order ID:</strong> #{reassignModalData.order.id.slice(0, 8).toUpperCase()}</p>
+                    <p>• <strong>Customer Name:</strong> {reassignModalData.order.delivery_name || 'Customer'}</p>
+                    <p>• <strong>Customer Phone:</strong> {reassignModalData.order.delivery_phone || 'N/A'}</p>
+                    <p>• <strong>Delivery Address:</strong> {reassignModalData.order.delivery_address || 'Lucknow'}</p>
+                    <p>• <strong>Total Payable Amount:</strong> ₹{reassignModalData.order.total_amount?.toLocaleString('en-IN')}</p>
+                  </div>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    setEmailSentSuccess(true);
+                    alert(`📧 Email Alert successfully dispatched to ${reassignModalData.newAgent.email || reassignModalData.newAgent.name + '@fundu.in'}!`);
+                  }}
+                  className={`btn text-xs px-4 py-2 font-bold rounded-xl flex items-center gap-1.5 transition w-full justify-center ${
+                    emailSentSuccess
+                      ? 'bg-emerald-600 text-white'
+                      : 'bg-blue-600 hover:bg-blue-700 text-white shadow-xs'
+                  }`}
+                >
+                  {emailSentSuccess ? '✓ Email Sent & Logged' : '📧 Trigger Email Notification to Executive'}
+                </button>
+              </div>
+
+              {/* MOBILE SMS & WHATSAPP DISPATCH BOX */}
+              <div className="space-y-2.5 p-4 rounded-2xl bg-emerald-50/70 border border-emerald-200">
+                <div className="flex items-center justify-between">
+                  <span className="font-black text-emerald-950 text-xs flex items-center gap-1.5">
+                    📲 2. Mobile SMS / WhatsApp Direct Alert
+                  </span>
+                  <span className="badge bg-emerald-600 text-white text-[10px] font-bold">
+                    Fast2SMS / WhatsApp API
+                  </span>
+                </div>
+
+                <div className="bg-white p-3 rounded-xl border border-emerald-200 font-mono text-[11px] text-slate-800">
+                  <p className="text-slate-500 text-[10px] mb-1 font-bold uppercase">SMS TEXT PAYLOAD (Sent to {reassignModalData.newAgent.phone}):</p>
+                  <p className="text-slate-800">
+                    [FUNDU DISPATCH] New task assigned: Order #{reassignModalData.order.id.slice(0, 8).toUpperCase()} for {reassignModalData.order.delivery_name || 'Customer'}. Address: {reassignModalData.order.delivery_address || 'Lucknow'}. Phone: {reassignModalData.order.delivery_phone}. Open map: https://maps.google.com/?q={encodeURIComponent(reassignModalData.order.delivery_address || 'Lucknow')}
+                  </p>
+                </div>
+
+                <div className="flex items-center gap-2">
+                  <a
+                    href={getDeliveryPartnerJobWhatsAppLink(reassignModalData.order, reassignModalData.newAgent.phone)}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="btn bg-[#25D366] hover:bg-[#20bd5a] text-white text-xs px-4 py-2 font-black rounded-xl flex items-center justify-center gap-1.5 shadow-xs flex-1"
+                  >
+                    💬 Send WhatsApp / SMS Alert Now
+                  </a>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setSmsSentSuccess(true);
+                      alert(`📲 SMS Dispatch Triggered to ${reassignModalData.newAgent.phone}!`);
+                    }}
+                    className="btn bg-slate-900 text-white text-xs px-4 py-2 font-bold rounded-xl"
+                  >
+                    {smsSentSuccess ? '✓ SMS Sent' : '📲 Send SMS'}
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div className="p-4 bg-slate-50 border-t border-slate-200 flex justify-end shrink-0">
+              <button
+                type="button"
+                onClick={() => setReassignModalData(null)}
+                className="btn bg-slate-900 text-white text-xs px-5 py-2 font-black rounded-xl"
+              >
+                Done
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -35,6 +35,43 @@ export default function Checkout() {
 
   if (!cartItem) return null;
 
+  if (profile && profile.role !== 'customer') {
+    return (
+      <div className="container-page py-16 max-w-xl mx-auto text-center">
+        <div className="card p-8 rounded-3xl border border-amber-200 bg-amber-50/60 shadow-soft">
+          <div className="mx-auto grid h-16 w-16 place-items-center rounded-2xl bg-amber-100 text-amber-700 text-2xl font-bold mb-4">
+            ⚠️
+          </div>
+          <h2 className="font-display text-2xl font-extrabold text-ink-900 mb-2">
+            Order Access Restricted
+          </h2>
+          <p className="text-sm text-ink-600 mb-6 leading-relaxed">
+            You are logged in as <span className="font-bold text-ink-900 uppercase">{profile.role}</span>. Only customer accounts can place orders or buy services. Vendor, Delivery, Wholesaler, and Admin accounts cannot place customer orders.
+          </p>
+          <div className="flex justify-center gap-3">
+            <button onClick={() => navigate(-1)} className="btn-outline">
+              Go Back
+            </button>
+            <button
+              onClick={() =>
+                navigate(
+                  profile.role === 'admin'
+                    ? '/admin'
+                    : profile.role === 'delivery' || profile.role === 'rider'
+                    ? '/delivery'
+                    : '/vendor'
+                )
+              }
+              className="btn-primary"
+            >
+              Go to {profile.role.toUpperCase()} Portal
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setDeliveryDetails(form);

@@ -146,7 +146,7 @@ const TESTIMONIALS_LIST = [
 ];
 
 export default function SellPhone() {
-  const { user } = useAuth();
+  const { user, profile } = useAuth();
   const navigate = useNavigate();
   const { brandSlug, modelSlug } = useParams<{ brandSlug?: string; modelSlug?: string }>();
   const [searchParams] = useSearchParams();
@@ -421,14 +421,18 @@ export default function SellPhone() {
     navigate(`/sell/${slug}`);
   };
 
-  const handleQuickModelSelect = (item: { brand: string; model: string; storage: string }) => {
-    const brandSlugClean = item.brand.toLowerCase();
-    const modelSlugClean = item.model.toLowerCase().replace(/\s+/g, '-');
+  const handleQuickModelSelect = (item?: { brand?: string; model?: string; storage?: string }) => {
+    if (!item || !item.model) return;
+    const targetBrand = item.brand || form.brand || 'Apple';
+    const brandSlugClean = (targetBrand || 'smartphone').toLowerCase().replace(/\s+/g, '-');
+    const modelSlugClean = (item.model || '').toLowerCase().replace(/\s+/g, '-');
+    const targetStorage = item.storage || form.storage || '128 GB';
+
     setForm((f) => ({
       ...f,
-      brand: item.brand,
-      model: item.model,
-      storage: item.storage,
+      brand: targetBrand,
+      model: item.model!,
+      storage: targetStorage,
     }));
     setStep(2);
     navigate(`/sell/${brandSlugClean}/${modelSlugClean}`);
@@ -476,6 +480,11 @@ export default function SellPhone() {
   }, [form.imei]);
 
   const handleSubmit = async () => {
+    if (profile && profile.role !== 'customer') {
+      setError(`Access Restricted: You are logged in as ${profile.role.toUpperCase()}. Vendor, Delivery, and Admin accounts cannot place customer sell requests.`);
+      return;
+    }
+
     if (!form.pickupAddress.trim()) {
       setError('Please provide full doorstep pickup address in Lucknow.');
       return;
@@ -910,15 +919,15 @@ export default function SellPhone() {
                     (m) => m.brand === form.brand && (selectedSeries === 'All' || m.series === selectedSeries)
                   ).map((m) => (
                     <div
-                      key={m.name}
+                      key={`${m.brand}-${m.model}`}
                       className="p-4 rounded-2xl border border-gray-200 bg-white hover:border-[#00a896] hover:shadow-lg transition-all duration-300 space-y-3 cursor-pointer group"
                     >
                       <div className="flex items-center gap-3">
                         <div className="h-16 w-16 shrink-0 overflow-hidden rounded-xl bg-gray-50 p-1 border border-gray-100 flex items-center justify-center">
-                          <img src={m.image} alt={m.name} className="h-full w-full object-contain group-hover:scale-105 transition-transform" />
+                          <img src={m.image} alt={m.model} className="h-full w-full object-contain group-hover:scale-105 transition-transform" />
                         </div>
                         <div>
-                          <p className="font-extrabold text-sm text-gray-900 group-hover:text-[#00a896] transition-colors">{m.name}</p>
+                          <p className="font-extrabold text-sm text-gray-900 group-hover:text-[#00a896] transition-colors">{m.model}</p>
                           <span className="badge bg-emerald-50 text-emerald-800 font-extrabold text-[11px] mt-1">
                             Up to {formatINR(m.price)}
                           </span>
@@ -932,10 +941,10 @@ export default function SellPhone() {
                             key={stg}
                             type="button"
                             onClick={() => {
-                              handleQuickModelSelect({ brand: form.brand, model: m.name, storage: stg });
+                              handleQuickModelSelect({ brand: form.brand, model: m.model, storage: stg });
                             }}
                             className={`px-2.5 py-1 rounded-lg text-xs font-bold transition ${
-                              form.model === m.name && form.storage === stg
+                              form.model === m.model && form.storage === stg
                                 ? 'bg-[#00a896] text-white shadow-xs'
                                 : 'bg-gray-100 text-gray-700 hover:bg-teal-100 hover:text-teal-800'
                             }`}
@@ -948,7 +957,7 @@ export default function SellPhone() {
                       <button
                         type="button"
                         onClick={() => {
-                          handleQuickModelSelect({ brand: form.brand, model: m.name, storage: form.storage || '128 GB' });
+                          handleQuickModelSelect({ brand: form.brand, model: m.model, storage: form.storage || '128 GB' });
                         }}
                         className="btn-primary w-full text-xs py-2 bg-[#00a896] hover:bg-[#008f80] flex items-center justify-center gap-1 font-bold shadow-xs"
                       >

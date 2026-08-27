@@ -209,7 +209,7 @@ const BUYER_FAQS = [
 ];
 
 export default function BuyPhones() {
-  const { user } = useAuth();
+  const { user, profile } = useAuth();
   const { setCartItem } = useCart();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -318,10 +318,18 @@ export default function BuyPhones() {
   }, [products, search, selectedBrand, lookupModel, gradeFilter, selectedStorage, lookupStorage, pricePreset, maxPrice, sortBy]);
 
   const handleAddToCart = (product: Product) => {
+    if (profile && profile.role !== 'customer') {
+      alert(`Access Restricted: You are logged in as ${profile.role.toUpperCase()}. Vendor, Delivery, and Admin accounts cannot place orders.`);
+      return;
+    }
     setCartItem({ type: 'product', item: product, quantity: 1 });
   };
 
   const handleBuyNow = (product: Product) => {
+    if (profile && profile.role !== 'customer') {
+      alert(`Access Restricted: You are logged in as ${profile.role.toUpperCase()}. Vendor, Delivery, and Admin accounts cannot place orders.`);
+      return;
+    }
     setCartItem({ type: 'product', item: product, quantity: 1 });
     if (user) {
       navigate('/checkout');
@@ -660,14 +668,14 @@ export default function BuyPhones() {
                               <Link to={`/product/${product.id}`} className="block">
                                 <div className="relative rounded-2xl bg-[#f8fafb] p-4 flex justify-center items-center overflow-hidden">
                                   <span
-                                    className={`absolute top-3 left-3 badge text-[10px] font-extrabold ${
+                                    className={`absolute top-3 left-3 z-10 pointer-events-none badge text-[10px] font-extrabold ${
                                       isSuperb ? 'bg-emerald-600 text-white' : 'bg-weather-600 text-white'
                                     }`}
                                   >
                                     {isSuperb ? 'Superb (Like New)' : 'Good Value'}
                                   </span>
                                   {product.discount_percent && (
-                                    <span className="absolute top-3 right-3 badge bg-accent-500 text-white text-[10px] font-extrabold">
+                                    <span className="absolute top-3 right-3 z-10 pointer-events-none badge bg-accent-500 text-white text-[10px] font-extrabold">
                                       {product.discount_percent}% OFF
                                     </span>
                                   )}
@@ -747,18 +755,18 @@ export default function BuyPhones() {
                         <Link to={`/product/${product.id}`} className="block">
                           <div className="relative rounded-2xl bg-[#f8fafb] p-4 flex justify-center items-center overflow-hidden">
                             <span
-                              className={`absolute top-3 left-3 badge text-[10px] font-extrabold ${
+                              className={`absolute top-3 left-3 z-10 pointer-events-none badge text-[10px] font-extrabold ${
                                 isSuperb ? 'bg-emerald-600 text-white' : 'bg-weather-600 text-white'
                               }`}
                             >
                               {isSuperb ? 'Superb (Like New)' : 'Good Value'}
                             </span>
                             {product.offer_tag ? (
-                              <span className="absolute top-3 right-3 badge bg-amber-500 text-white text-[10px] font-black shadow-xs">
+                              <span className="absolute top-3 right-3 z-10 pointer-events-none badge bg-amber-500 text-white text-[10px] font-black shadow-xs">
                                 {product.offer_tag}
                               </span>
                             ) : product.discount_percent ? (
-                              <span className="absolute top-3 right-3 badge bg-accent-500 text-white text-[10px] font-extrabold">
+                              <span className="absolute top-3 right-3 z-10 pointer-events-none badge bg-accent-500 text-white text-[10px] font-extrabold">
                                 {product.discount_percent}% OFF
                               </span>
                             ) : null}

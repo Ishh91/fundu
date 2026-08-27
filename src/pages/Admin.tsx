@@ -1396,6 +1396,9 @@ export default function Admin() {
               onSelectAgent={(id) => setSelectedAgentId(id)}
               onOpenAgentModal={() => setAgentModalOpen(true)}
               onToggleStatus={toggleAgentStatus}
+              orders={orders}
+              sellRequests={sellRequests}
+              repairs={repairs}
             />
           )}
 

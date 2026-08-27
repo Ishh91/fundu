@@ -164,13 +164,13 @@ export default function BestDeals({ products, loading }: BestDealsProps) {
                 {/* Top Badges */}
                 <div className="relative aspect-[4/3] bg-[#f8fafc] overflow-hidden p-4 flex items-center justify-center">
                   <span
-                    className={`absolute left-3 top-3 z-10 rounded-full px-2.5 py-0.5 text-[10px] font-extrabold uppercase tracking-wide ${gradeColor}`}
+                    className={`absolute left-3 top-3 z-10 pointer-events-none rounded-full px-2.5 py-0.5 text-[10px] font-extrabold uppercase tracking-wide ${gradeColor}`}
                   >
                     Grade: {gradeText}
                   </span>
 
                   {item.discount_percent > 0 && (
-                    <span className="absolute right-3 top-3 z-10 rounded-full bg-orange-500 px-2.5 py-0.5 text-[10px] font-extrabold text-white shadow-sm">
+                    <span className="absolute right-3 top-3 z-10 pointer-events-none rounded-full bg-orange-500 px-2.5 py-0.5 text-[10px] font-extrabold text-white shadow-sm">
                       {item.discount_percent}% OFF
                     </span>
                   )}
