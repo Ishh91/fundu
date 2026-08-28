@@ -325,33 +325,15 @@ export default function Register() {
         {/* ── STEP 2: Email OTP Input ── */}
         {step === 'otp' && (
           <form onSubmit={handleVerifyOtpAndSignup} className="mt-8 card p-6 md:p-8 space-y-5">
-            <div className="p-4 rounded-2xl bg-teal-50 border border-teal-200 text-teal-900 text-xs space-y-2.5">
+            <div className="p-4 rounded-2xl bg-teal-50 border border-teal-200 text-teal-900 text-xs space-y-1.5">
               <div className="flex items-center justify-between font-bold">
                 <span className="flex items-center gap-1.5 text-teal-950">
                   <Mail className="h-4 w-4 text-teal-600" /> Email OTP Verification Code
                 </span>
-                <span className="badge bg-teal-600 text-white text-[10px]">EmailJS & Live Code</span>
               </div>
               <p>
-                Verification code dispatched to <strong>{email}</strong>. Check your inbox or spam folder.
+                We have sent a 6-digit verification code to <strong>{email}</strong>. Please check your email inbox or spam folder.
               </p>
-              {activeOtp && (
-                <div className="p-2.5 rounded-xl bg-white border border-teal-300 flex items-center justify-between text-xs">
-                  <div>
-                    <span className="text-[10px] text-slate-500 font-bold uppercase block">Generated OTP Code:</span>
-                    <span className="font-mono text-base font-black text-teal-700 tracking-wider">{activeOtp}</span>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setDigits(activeOtp.split(''));
-                    }}
-                    className="px-3 py-1.5 rounded-lg bg-teal-600 hover:bg-teal-700 text-white font-black text-xs transition cursor-pointer"
-                  >
-                    ⚡ Auto-Fill Code
-                  </button>
-                </div>
-              )}
             </div>
 
             <label className="label text-center block font-bold">Enter 6-Digit Email Verification Code</label>
