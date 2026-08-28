@@ -24,6 +24,7 @@ import {
 import type { Profile, WholesaleInventory, WholesaleOrder, SellRequest, RepairBooking, VendorLedger } from '../../types';
 import { db, formatINR } from '../../lib/db';
 import { statusColors } from './adminTypes';
+import { sendEmailOtpCode } from '../../lib/freeNotifyService';
 
 export default function AdminVendors() {
   const [activeSubtab, setActiveSubtab] = useState<'vendors' | 'assign-sell' | 'assign-repair' | 'commissions'>('vendors');
@@ -75,12 +76,11 @@ export default function AdminVendors() {
 
     const message = `🏬 *FUNDU LUCKNOW VENDOR PARTNER PORTAL*\n\n` +
       `Hi *${vendor.full_name || vendor.business_name || 'Vendor'}* (*${vendor.business_name || 'Vendor Partner'}*),\n` +
-      `Your Official Vendor Account is active!\n\n` +
+      `Your Official Vendor Account is created! Please check your email for the EmailJS Verification OTP code to verify your account.\n\n` +
       `🌐 *Login Portal:* ${loginUrl}\n` +
       `📧 *Login Email:* ${vendor.email || vendor.phone}\n` +
-      `🔑 *Secret Passcode:* ${passwordText}\n` +
-      `💳 *Approved Credit Limit:* ${formatINR(vendor.credit_limit || 200000)}\n\n` +
-      `Login to receive mobile sell leads, upload repair quotations, and check 10% commission ledgers!`;
+      `🔑 *Passcode:* ${passwordText}\n` +
+      `💳 *Approved Credit Limit:* ${formatINR(vendor.credit_limit || 200000)}`;
 
     return `https://wa.me/${targetPhone}?text=${encodeURIComponent(message)}`;
   };
@@ -89,14 +89,14 @@ export default function AdminVendors() {
     const loginUrl = `${window.location.origin}/vendor-login`;
     const passwordText = pass || 'Vendor@123456';
     const emailTo = vendor.email || '';
-    const subject = `Fundu Lucknow Vendor Account Credentials`;
+    const subject = `Fundu Lucknow Vendor Account Created — Verification Required`;
     const body = `Hi ${vendor.full_name || vendor.business_name || 'Vendor Partner'},\n\n` +
-      `Your Fundu Vendor Partner account has been activated.\n\n` +
+      `Your Fundu Vendor Partner account has been created.\n\n` +
       `Login Portal: ${loginUrl}\n` +
       `Email: ${vendor.email || vendor.phone}\n` +
       `Password: ${passwordText}\n` +
       `Approved Credit Limit: ${formatINR(vendor.credit_limit || 200000)}\n\n` +
-      `Welcome to Fundu Lucknow Mobile Buyback & Repair Network!`;
+      `Please enter the Email Verification OTP sent to your email to verify and activate your account.`;
 
     return `mailto:${emailTo}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
   };
@@ -108,6 +108,8 @@ export default function AdminVendors() {
     }
 
     setAddVendorSubmitting(true);
+    const generatedOtp = Math.floor(100000 + Math.random() * 900000).toString();
+
     try {
       const response = await fetch(`${import.meta.env.VITE_API_URL || 'https://fundu.onrender.com/api'}/auth/register`, {
         method: 'POST',
@@ -121,13 +123,21 @@ export default function AdminVendors() {
           businessName: addVendorForm.businessName.trim(),
           creditLimit: Number(addVendorForm.creditLimit) || 200000,
           gstNumber: addVendorForm.gstNumber.trim() || null,
+          is_verified: false, // Requires email OTP verification
         }),
       });
 
       const json = await response.json();
       if (json.error) throw new Error(json.error.message || json.error);
 
-      alert(`✅ Vendor Partner "${addVendorForm.businessName}" created successfully!`);
+      // Dispatch Email Verification OTP via EmailJS
+      try {
+        await sendEmailOtpCode(addVendorForm.email.trim(), generatedOtp, addVendorForm.fullName || addVendorForm.businessName);
+      } catch (otpErr) {
+        console.error('Vendor Email OTP dispatch notice:', otpErr);
+      }
+
+      alert(`✅ Vendor Partner "${addVendorForm.businessName}" created!\n📧 Verification Email OTP (${generatedOtp}) sent to ${addVendorForm.email} via EmailJS.`);
       const newVendor = json.data?.profile || {
         business_name: addVendorForm.businessName,
         full_name: addVendorForm.fullName,
@@ -451,19 +461,46 @@ export default function AdminVendors() {
                     </button>
                   </div>
 
-                  {/* Share Credentials & Remove */}
-                  <div className="pt-2 border-t border-ink-100 flex items-center justify-between text-[11px] gap-2">
+                  {/* Share Credentials, Resend Email OTP & Delete Vendor */}
+                  <div className="pt-2 border-t border-ink-100 flex items-center justify-between text-[11px] gap-2 flex-wrap">
                     <button
                       onClick={() => setShareCredModal({ vendor })}
                       className="inline-flex items-center gap-1 text-brand-600 font-bold hover:underline"
                     >
-                      <Share2 className="h-3 w-3 text-brand-500" /> Share Credentials
+                      <Share2 className="h-3 w-3 text-brand-500" /> Share Access
                     </button>
+
                     <button
-                      onClick={() => handleDeleteVendor(vendor)}
-                      className="inline-flex items-center gap-1 text-rose-600 font-bold hover:bg-rose-50 px-2 py-1 rounded-lg transition cursor-pointer"
+                      onClick={async () => {
+                        const email = (vendor as any).email || `${vendor.phone}@fundu.in`;
+                        const otp = Math.floor(100000 + Math.random() * 900000).toString();
+                        try {
+                          await sendEmailOtpCode(email, otp, vendor.full_name || vendor.business_name || 'Vendor');
+                          alert(`📧 Verification Email OTP (${otp}) sent to ${email} via EmailJS!`);
+                        } catch {
+                          alert('Failed to send EmailJS OTP.');
+                        }
+                      }}
+                      className="inline-flex items-center gap-1 text-teal-700 font-bold hover:underline"
                     >
-                      <Trash2 className="h-3 w-3 text-rose-500" /> Remove Vendor
+                      <Mail className="h-3 w-3 text-teal-600" /> Send Email OTP
+                    </button>
+
+                    <button
+                      onClick={async () => {
+                        const name = vendor.business_name || vendor.full_name || 'Vendor';
+                        if (!window.confirm(`⚠️ Are you sure you want to PERMANENTLY DELETE vendor "${name}"?`)) return;
+                        try {
+                          await db.from('profiles').delete().eq('id', vendor.id);
+                          setVendors((prev) => prev.filter((v) => v.id !== vendor.id));
+                          alert(`✅ Vendor "${name}" deleted successfully.`);
+                        } catch {
+                          alert('Failed to delete vendor.');
+                        }
+                      }}
+                      className="inline-flex items-center gap-1 text-rose-600 font-bold hover:underline"
+                    >
+                      <Trash2 className="h-3 w-3 text-rose-500" /> Delete Vendor
                     </button>
                   </div>
                 </div>

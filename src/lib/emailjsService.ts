@@ -19,8 +19,16 @@ export async function sendEmailJSOTP(email: string, otp: string, userName: strin
   try {
     const templateParams = {
       to_email: email,
+      email: email,
+      to: email,
+      user_email: email,
+      recipient: email,
+      recipient_email: email,
       to_name: userName,
+      user_name: userName,
+      name: userName,
       otp_code: otp,
+      otp: otp,
       app_name: 'Fundu',
       reply_to: 'support@fundu.com',
     };
@@ -47,7 +55,14 @@ export async function sendEmailJSWelcome(email: string, userName: string = 'User
   try {
     const templateParams = {
       to_email: email,
+      email: email,
+      to: email,
+      user_email: email,
+      recipient: email,
+      recipient_email: email,
       to_name: userName,
+      user_name: userName,
+      name: userName,
       app_name: 'Fundu',
       login_url: `${window.location.origin}/login`,
       dashboard_url: `${window.location.origin}/dashboard`,
