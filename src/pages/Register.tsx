@@ -2,8 +2,9 @@ import React, { useState, useRef, useEffect, KeyboardEvent, ClipboardEvent } fro
 import { Link, useNavigate } from 'react-router-dom';
 import { Phone, Mail, Lock, User as UserIcon, ArrowRight, CheckCircle2, ShieldCheck, RefreshCw, AlertCircle, Sparkles } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import { db } from '../lib/db';
 import BrandLogo from '../components/BrandLogo';
-import { sendFreeEmailResend } from '../lib/freeNotifyService';
+import { sendEmailOtpCode, sendWelcomeEmail } from '../lib/freeNotifyService';
 
 const OTP_LENGTH = 6;
 const RESEND_COOLDOWN = 60;
@@ -113,23 +114,13 @@ export default function Register() {
 
     setDevOtp(otpResult.devOtp ?? null);
 
-    // 2. Trigger Confirmation Email via Resend API to user's email
+    // 2. Trigger Real Verification Email to user's email address
     try {
-      const emailPayload = {
-        orderId: 'VERIFY-' + Math.random().toString(36).substring(2, 8).toUpperCase(),
-        agentName: fullName || 'User',
-        agentPhone: cleanedPhone,
-        agentEmail: email,
-        customerName: fullName || 'Customer',
-        customerPhone: cleanedPhone,
-        deliveryAddress: 'Lucknow Account Verification',
-        totalAmount: 0,
-      };
-
-      sendFreeEmailResend(emailPayload, import.meta.env.VITE_RESEND_API_KEY || '');
+      const emailOtp = otpResult.devOtp || Math.floor(100000 + Math.random() * 900000).toString();
+      await sendEmailOtpCode(email.trim(), emailOtp, fullName.trim() || 'User');
       setEmailSentStatus(true);
     } catch (emailErr) {
-      console.error('Email dispatch error:', emailErr);
+      console.error('Email verification dispatch error:', emailErr);
     }
 
     setStep('otp');

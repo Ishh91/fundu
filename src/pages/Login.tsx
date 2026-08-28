@@ -248,14 +248,17 @@ export default function Login() {
               {loading ? 'Verifying & Sending OTP…' : 'Continue to OTP'} <ArrowRight className="h-4 w-4" />
             </button>
 
-            <p className="mt-5 text-center text-sm text-ink-500">
-              New user? No worries — account will be created automatically.
-            </p>
+            <div className="mt-5 text-center text-sm text-ink-600">
+              Don't have an account?{' '}
+              <Link to="/register" className="font-bold text-brand-600 hover:text-brand-700 underline">
+                Create Account (Register)
+              </Link>
+            </div>
 
             <button
               type="button"
               onClick={() => navigate('/admin-login')}
-              className="mt-3 w-full text-center text-xs text-brand-600 font-bold hover:text-brand-800 transition-colors"
+              className="mt-3 w-full text-center text-xs text-ink-400 hover:text-ink-600 transition-colors"
             >
               Admin login →
             </button>

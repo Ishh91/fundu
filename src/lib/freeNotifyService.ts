@@ -98,7 +98,7 @@ export async function sendFreeEmailResend(
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            from: 'Fundu Dispatch <onboarding@resend.dev>',
+            from: 'Fundu Verification <onboarding@resend.dev>',
             to: recipientEmail,
             subject: `🚨 NEW TASK ASSIGNED: Order #${payload.orderId.slice(0, 8).toUpperCase()}`,
             html: emailHtml,
@@ -142,12 +142,23 @@ export async function sendFreeEmailResend(
   return { success: true, simulated: true, recipient: recipientEmail };
 }
 
+import { sendEmailJSOTP, sendEmailJSWelcome } from './emailjsService';
+
 /**
- * Zero-DLT Resend Email OTP Dispatcher
- * Sends a 6-digit OTP code directly to user email via Resend API (Zero DLT required).
+ * EmailJS & Resend OTP Dispatcher
+ * Sends a 6-digit OTP code directly to user email via EmailJS or backend API.
  */
 export async function sendEmailOtpCode(email: string, otp: string, userName?: string) {
   const recipientEmail = email || 'trustiqueassist0003@gmail.com';
+  const name = userName || 'User';
+
+  // 1. Try EmailJS Browser SDK
+  const emailjsResult = await sendEmailJSOTP(recipientEmail, otp, name);
+  if (emailjsResult.success && !emailjsResult.simulated) {
+    return emailjsResult;
+  }
+
+  // 2. Fallback to local/Render backend endpoint
   const targetUrl =
     typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
       ? 'http://localhost:4000/api/email/send-otp'
@@ -157,7 +168,7 @@ export async function sendEmailOtpCode(email: string, otp: string, userName?: st
     const res = await fetch(targetUrl, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email: recipientEmail, otp, userName }),
+      body: JSON.stringify({ email: recipientEmail, otp, userName: name }),
     });
     if (res.ok) {
       return await res.json();
@@ -168,6 +179,16 @@ export async function sendEmailOtpCode(email: string, otp: string, userName?: st
 
   console.log(`🔑 [Email OTP Code Dispatched] To: ${recipientEmail} → OTP: ${otp}`);
   return { success: true, simulated: true, recipient: recipientEmail, otp };
+}
+
+/**
+ * EmailJS Welcome Email Dispatcher
+ * Sends Welcome email upon successful registration/verification.
+ */
+export async function sendWelcomeEmail(email: string, userName?: string) {
+  const recipientEmail = email || 'trustiqueassist0003@gmail.com';
+  const name = userName || 'User';
+  return await sendEmailJSWelcome(recipientEmail, name);
 }
 
 /**
