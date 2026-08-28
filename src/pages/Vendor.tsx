@@ -279,7 +279,9 @@ export default function Vendor() {
                 <Building2 className="h-3.5 w-3.5" /> Official Vendor Hub · Lucknow
               </div>
               <h1 className="mt-2 font-display text-2xl md:text-3xl font-extrabold text-ink-900">
-                {profile?.business_name || profile?.full_name || 'Vendor Partner'} Portal
+                {profile?.business_name && profile.business_name !== 'Fundu Admin'
+                  ? `${profile.business_name} Vendor Portal`
+                  : 'Fundu Partner Vendor Portal'}
               </h1>
               <p className="mt-1 text-xs md:text-sm text-ink-500 flex items-center gap-1.5">
                 <MapPin className="h-3.5 w-3.5 text-emerald-600" />
@@ -318,30 +320,34 @@ export default function Vendor() {
             </div>
           </div>
 
-          {/* Main Vendor Navigation Tabs */}
-          <div className="mt-8 flex gap-2 border-b border-ink-100 overflow-x-auto scrollbar-hide">
+          {/* Main Vendor Navigation Tabs - Responsive 4-Column Card Grid */}
+          <div className="mt-6 grid grid-cols-2 lg:grid-cols-4 gap-2.5 border-b border-ink-100 pb-4">
             {[
               {
                 id: 'sell-leads',
-                label: '1. Mobile Buyback Leads',
+                label: '1. Buyback Leads',
+                sublabel: 'Customer Sell Requests',
                 icon: Smartphone,
                 badge: `${assignedSellLeads.filter((s) => s.vendor_quote_status !== 'completed').length} Pending`,
               },
               {
                 id: 'repair-leads',
-                label: '2. Repair Leads & Quotations',
+                label: '2. Repair Leads',
+                sublabel: 'Quotes & Doorstep Repairs',
                 icon: Wrench,
                 badge: `${assignedRepairLeads.filter((r) => r.quotation_status !== 'paid').length} Pending`,
               },
               {
                 id: 'wallet-khata',
-                label: '3. Vendor Wallet & 10% Commission Ledger',
+                label: '3. Wallet & Khata',
+                sublabel: '10% Commission Ledger',
                 icon: CreditCard,
-                badge: outstandingBalance > 0 ? `₹${outstandingBalance.toLocaleString('en-IN')} Balance` : 'Clear',
+                badge: outstandingBalance > 0 ? `₹${outstandingBalance.toLocaleString('en-IN')}` : 'Clear',
               },
               {
                 id: 'b2b-procurement',
-                label: '4. Buy Phone Lots (Bulk Catalog)',
+                label: '4. Buy Phone Lots',
+                sublabel: 'Bulk Wholesale Catalog',
                 icon: Package,
                 badge: `${filteredInventory.length} In Hub`,
               },
@@ -352,16 +358,25 @@ export default function Vendor() {
                 <button
                   key={t.id}
                   onClick={() => setActiveTab(t.id as any)}
-                  className={`flex items-center gap-2 px-4 py-3 text-xs md:text-sm font-bold border-b-2 whitespace-nowrap transition-colors ${
-                    isActive ? 'border-brand-600 text-brand-700 bg-brand-50/30' : 'border-transparent text-ink-500 hover:text-ink-900'
+                  className={`flex items-center justify-between gap-2 p-3 sm:p-3.5 rounded-2xl border text-left transition cursor-pointer ${
+                    isActive
+                      ? 'bg-slate-900 text-white border-slate-900 shadow-md'
+                      : 'bg-white text-slate-800 border-slate-200 hover:bg-slate-50'
                   }`}
                 >
-                  <Icon className="h-4 w-4" />
-                  <span>{t.label}</span>
+                  <div className="flex items-center gap-2.5 min-w-0">
+                    <div className={`p-2 rounded-xl shrink-0 ${isActive ? 'bg-brand-500 text-slate-950 font-black' : 'bg-slate-100 text-slate-600'}`}>
+                      <Icon className="h-4 w-4" />
+                    </div>
+                    <div className="min-w-0">
+                      <p className="font-extrabold text-xs sm:text-sm truncate">{t.label}</p>
+                      <p className={`text-[10px] font-medium truncate ${isActive ? 'text-slate-300' : 'text-slate-500'}`}>{t.sublabel}</p>
+                    </div>
+                  </div>
                   {t.badge && (
                     <span
-                      className={`text-[10px] px-2 py-0.5 rounded-full font-extrabold ${
-                        isActive ? 'bg-brand-600 text-white' : 'bg-ink-100 text-ink-600'
+                      className={`text-[10px] px-2 py-0.5 rounded-full font-black shrink-0 ${
+                        isActive ? 'bg-brand-400 text-slate-950' : 'bg-slate-100 text-slate-700'
                       }`}
                     >
                       {t.badge}
@@ -402,10 +417,35 @@ export default function Vendor() {
             {dataLoading ? (
               <div className="card p-12 text-center text-ink-500 font-bold">Loading Assigned Buyback Leads...</div>
             ) : assignedSellLeads.length === 0 ? (
-              <div className="card p-12 text-center bg-white rounded-2xl">
+              <div className="card p-12 text-center bg-white rounded-2xl space-y-3">
                 <Smartphone className="h-10 w-10 text-ink-300 mx-auto" />
-                <h3 className="mt-3 font-display font-bold text-ink-800">No Mobile Sell Leads Assigned Yet</h3>
-                <p className="text-xs text-ink-500 mt-1">When Fundu Admin forwards customer mobile sell requests to your shop, they will appear here.</p>
+                <h3 className="font-display font-bold text-ink-800 text-lg">No Mobile Sell Leads Assigned Yet</h3>
+                <p className="text-xs text-ink-500 max-w-md mx-auto">
+                  When Fundu Admin forwards customer mobile sell requests to your shop, they will appear here. Click below to generate a test lead for demonstration:
+                </p>
+                <button
+                  type="button"
+                  onClick={async () => {
+                    const { error } = await db.from('sell_requests').insert({
+                      brand: 'Apple',
+                      model: 'iPhone 13',
+                      storage: '128GB',
+                      condition: 'Excellent',
+                      estimated_price: 32500,
+                      customer_name: 'Siddharth Roy',
+                      customer_phone: '+91 98391 88990',
+                      pickup_address: 'Hazratganj Main Market, Lucknow',
+                      pickup_area: 'Hazratganj',
+                      assigned_vendor_id: user.id,
+                      status: 'assigned',
+                    });
+                    if (error) alert(error.message);
+                    else fetchData();
+                  }}
+                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-brand-600 hover:bg-brand-700 text-white font-black text-xs shadow-md transition cursor-pointer"
+                >
+                  ⚡ Assign Real Test Buyback Lead to My Store
+                </button>
               </div>
             ) : (
               <div className="space-y-4">
