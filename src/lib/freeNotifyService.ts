@@ -89,28 +89,24 @@ export async function sendFreeEmailResend(
     </div>
   `;
 
-  // 1. Try local Node backend if running on localhost
-  if (typeof window !== 'undefined') {
-    const hostname = window.location.hostname;
-    if (hostname === 'localhost' || hostname === '127.0.0.1') {
-      try {
-        const res = await fetch('http://localhost:4000/api/email/send', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            from: 'Fundu Verification <onboarding@resend.dev>',
-            to: recipientEmail,
-            subject: `🚨 NEW TASK ASSIGNED: Order #${payload.orderId.slice(0, 8).toUpperCase()}`,
-            html: emailHtml,
-          }),
-        });
-        if (res.ok) {
-          return await res.json();
-        }
-      } catch {
-        // Silent catch if local server is not running
-      }
+  // 1. Try Node backend API endpoint
+  const apiBase = (import.meta.env.VITE_API_URL as string | undefined) || 'https://fundu.onrender.com/api';
+  try {
+    const res = await fetch(`${apiBase.replace(/\/$/, '')}/email/send`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        from: 'Fundu Verification <onboarding@resend.dev>',
+        to: recipientEmail,
+        subject: `🚨 NEW TASK ASSIGNED: Order #${payload.orderId.slice(0, 8).toUpperCase()}`,
+        html: emailHtml,
+      }),
+    });
+    if (res.ok) {
+      return await res.json();
     }
+  } catch {
+    // Fallthrough to Resend API
   }
 
   // 2. Try direct Resend API call if API Key is available
@@ -158,11 +154,9 @@ export async function sendEmailOtpCode(email: string, otp: string, userName?: st
     return emailjsResult;
   }
 
-  // 2. Fallback to local/Render backend endpoint
-  const targetUrl =
-    typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
-      ? 'http://localhost:4000/api/email/send-otp'
-      : 'https://fundu.onrender.com/api/email/send-otp';
+  // 2. Fallback to Render backend API endpoint
+  const apiBase = (import.meta.env.VITE_API_URL as string | undefined) || 'https://fundu.onrender.com/api';
+  const targetUrl = `${apiBase.replace(/\/$/, '')}/email/send-otp`;
 
   try {
     const res = await fetch(targetUrl, {

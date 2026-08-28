@@ -341,7 +341,7 @@ export default function Admin() {
         setFetchError(`Backend errors: ${errors.join(', ')}`);
       }
     } catch (err) {
-      const msg = err instanceof Error ? err.message : 'Network error — is the backend running on localhost:4000?';
+      const msg = err instanceof Error ? err.message : 'Network error — unable to connect to backend server.';
       console.error('[Admin] Failed to load admin data:', msg);
       setFetchError(msg);
     } finally {

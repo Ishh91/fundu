@@ -100,23 +100,12 @@ export default function Login() {
     try {
       // 1. Check if Email is registered in database BEFORE sending OTP
       // 1. Check if Email is registered in database BEFORE sending OTP
-      const primaryUrl = 'http://localhost:4000/api/auth/check-email';
-      const renderUrl = 'https://fundu.onrender.com/api/auth/check-email';
-
-      let checkRes;
-      try {
-        checkRes = await fetch(primaryUrl, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email: cleanEmail }),
-        });
-      } catch {
-        checkRes = await fetch(renderUrl, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email: cleanEmail }),
-        });
-      }
+      const baseUrl = (import.meta.env.VITE_API_URL as string | undefined) || 'https://fundu.onrender.com/api';
+      const checkRes = await fetch(`${baseUrl.replace(/\/$/, '')}/auth/check-email`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: cleanEmail }),
+      });
 
       const checkJson = await checkRes.json();
       if (!checkJson.data?.exists) {
