@@ -892,12 +892,34 @@ export default function DeliveryAgentPortal() {
         {activeTab === 'sells' && (
           <div className="space-y-5">
             {activeSellTasks.length === 0 ? (
-              <div className="card p-12 text-center bg-white rounded-3xl border border-slate-200">
+              <div className="card p-12 text-center bg-white rounded-3xl border border-slate-200 space-y-3">
                 <Smartphone className="h-10 w-10 text-slate-300 mx-auto" />
-                <h3 className="mt-3 font-display font-bold text-slate-800">No Pending Sell Pickups</h3>
-                <p className="text-xs text-slate-500 mt-1">
-                  New doorstep old phone sell requests assigned by Admin will appear here in real-time.
+                <h3 className="font-display font-black text-slate-800 text-lg">No Pending Sell Pickups</h3>
+                <p className="text-xs text-slate-500 max-w-md mx-auto">
+                  Doorstep trade-in sell requests assigned by Admin appear here in real-time. Click below to generate a live trade-in task to test full inspection & payout:
                 </p>
+                <button
+                  type="button"
+                  onClick={async () => {
+                    const { error } = await db.from('sell_requests').insert({
+                      brand: 'Apple',
+                      model: 'iPhone 14 Pro',
+                      storage: '256GB',
+                      condition: 'Good',
+                      estimated_price: 48500,
+                      customer_name: 'Ananya Sharma',
+                      customer_phone: '+91 98391 11223',
+                      pickup_address: 'Flat 402, Shalimar Gallant, Mahanagar',
+                      pickup_area: 'Mahanagar',
+                      status: 'assigned',
+                    });
+                    if (error) alert(error.message);
+                    else fetchData();
+                  }}
+                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#00a896] hover:bg-teal-600 text-white font-black text-xs shadow-md transition cursor-pointer"
+                >
+                  ⚡ Create Real Test Trade-in Task for Demonstration
+                </button>
               </div>
             ) : (
               activeSellTasks.map((sell) => {
@@ -1082,9 +1104,33 @@ export default function DeliveryAgentPortal() {
         {activeTab === 'repairs' && (
           <div className="space-y-5">
             {activeRepairTasks.length === 0 ? (
-              <div className="card p-12 text-center bg-white rounded-3xl border border-slate-200">
+              <div className="card p-12 text-center bg-white rounded-3xl border border-slate-200 space-y-3">
                 <Wrench className="h-10 w-10 text-slate-300 mx-auto" />
-                <h3 className="mt-3 font-display font-bold text-slate-800">No Pending Repair Jobs</h3>
+                <h3 className="font-display font-black text-slate-800 text-lg">No Pending Repair Jobs</h3>
+                <p className="text-xs text-slate-500 max-w-md mx-auto">
+                  Doorstep phone repair bookings assigned by Admin appear here in real-time. Click below to generate a live repair task to test diagnostics:
+                </p>
+                <button
+                  type="button"
+                  onClick={async () => {
+                    const { error } = await db.from('repair_bookings').insert({
+                      brand: 'Samsung',
+                      model: 'Galaxy S23 Ultra',
+                      problem: 'Display Replacement & Touch Sensor',
+                      estimated_cost: 6500,
+                      customer_name: 'Rahul Gupta',
+                      customer_phone: '+91 98391 44556',
+                      pickup_address: 'Plot 12, Vibhuti Khand, Gomti Nagar',
+                      pickup_area: 'Gomti Nagar',
+                      status: 'assigned',
+                    });
+                    if (error) alert(error.message);
+                    else fetchData();
+                  }}
+                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-700 text-white font-black text-xs shadow-md transition cursor-pointer"
+                >
+                  ⚡ Create Real Test Repair Task for Demonstration
+                </button>
               </div>
             ) : (
               activeRepairTasks.map((repair) => {
@@ -1232,9 +1278,33 @@ export default function DeliveryAgentPortal() {
         {activeTab === 'orders' && (
           <div className="space-y-5">
             {activeOrderTasks.length === 0 ? (
-              <div className="card p-12 text-center bg-white rounded-3xl border border-slate-200">
+              <div className="card p-12 text-center bg-white rounded-3xl border border-slate-200 space-y-3">
                 <Package className="h-10 w-10 text-slate-300 mx-auto" />
-                <h3 className="mt-3 font-display font-bold text-slate-800">No Store Deliveries Assigned</h3>
+                <h3 className="font-display font-black text-slate-800 text-lg">No Store Deliveries Assigned</h3>
+                <p className="text-xs text-slate-500 max-w-md mx-auto">
+                  Store product delivery orders assigned by Admin appear here in real-time. Click below to generate a live delivery order task to test OTP & cash collection:
+                </p>
+                <button
+                  type="button"
+                  onClick={async () => {
+                    const { error } = await db.from('orders').insert({
+                      items: [{ title: 'OnePlus 11R 5G (Sonic Black, 128GB)', price: 28999, quantity: 1 }],
+                      total_amount: 28999,
+                      delivery_name: 'Priya Verma',
+                      delivery_phone: '+91 98391 77889',
+                      delivery_address: 'House 55, Aliganj Main Road',
+                      delivery_area: 'Aliganj',
+                      payment_method: 'cod',
+                      payment_status: 'pending',
+                      status: 'assigned',
+                    });
+                    if (error) alert(error.message);
+                    else fetchData();
+                  }}
+                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs shadow-md transition cursor-pointer"
+                >
+                  ⚡ Create Real Test Delivery Order Task for Demonstration
+                </button>
               </div>
             ) : (
               activeOrderTasks.map((order) => {
