@@ -1401,7 +1401,7 @@ export default function Admin() {
               onOpenAgentModal={() => setAgentModalOpen(true)}
               onToggleStatus={toggleAgentStatus}
               orders={orders}
-              sellRequests={sellRequests}
+              sellRequests={sells}
               repairs={repairs}
             />
           )}
