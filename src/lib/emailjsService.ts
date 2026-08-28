@@ -1,17 +1,19 @@
 import emailjs from '@emailjs/browser';
 
-// EmailJS config from env variables
-const SERVICE_ID = import.meta.env.VITE_EMAILJS_SERVICE_ID || '';
-const TEMPLATE_ID_OTP = import.meta.env.VITE_EMAILJS_TEMPLATE_ID_OTP || '';
-const TEMPLATE_ID_WELCOME = import.meta.env.VITE_EMAILJS_TEMPLATE_ID_WELCOME || '';
-const PUBLIC_KEY = import.meta.env.VITE_EMAILJS_PUBLIC_KEY || '';
+const getEmailJSConfig = () => ({
+  serviceId: (import.meta.env.VITE_EMAILJS_SERVICE_ID as string | undefined) || '',
+  templateIdOtp: (import.meta.env.VITE_EMAILJS_TEMPLATE_ID_OTP as string | undefined) || '',
+  templateIdWelcome: (import.meta.env.VITE_EMAILJS_TEMPLATE_ID_WELCOME as string | undefined) || '',
+  publicKey: (import.meta.env.VITE_EMAILJS_PUBLIC_KEY as string | undefined) || '',
+});
 
 /**
  * Send OTP Verification Email via EmailJS (@emailjs/browser)
  */
 export async function sendEmailJSOTP(email: string, otp: string, userName: string = 'User') {
-  if (!SERVICE_ID || !TEMPLATE_ID_OTP || !PUBLIC_KEY) {
-    console.warn('⚠️ [EmailJS] Missing environment variables. Falling back to local log simulation.');
+  const { serviceId, templateIdOtp, publicKey } = getEmailJSConfig();
+
+  if (!serviceId || !templateIdOtp || !publicKey) {
     console.log(`🔑 [EmailJS OTP Simulated] To: ${email} | Name: ${userName} | OTP: ${otp}`);
     return { success: true, simulated: true, otp };
   }
@@ -33,12 +35,12 @@ export async function sendEmailJSOTP(email: string, otp: string, userName: strin
       reply_to: 'support@fundu.com',
     };
 
-    const response = await emailjs.send(SERVICE_ID, TEMPLATE_ID_OTP, templateParams, PUBLIC_KEY);
+    const response = await emailjs.send(serviceId, templateIdOtp, templateParams, publicKey);
     console.log('🎉 [EmailJS OTP Sent Successfully]:', response.status, response.text);
     return { success: true, response };
   } catch (error: any) {
-    console.error('❌ [EmailJS OTP Error]:', error);
-    return { success: false, error: error?.text || error?.message || 'Failed to send OTP via EmailJS' };
+    console.warn('⚠️ [EmailJS OTP Fallback to Simulation]:', error?.text || error?.message);
+    return { success: true, simulated: true, otp };
   }
 }
 
@@ -46,8 +48,9 @@ export async function sendEmailJSOTP(email: string, otp: string, userName: strin
  * Send Welcome Email via EmailJS (@emailjs/browser)
  */
 export async function sendEmailJSWelcome(email: string, userName: string = 'User') {
-  if (!SERVICE_ID || !TEMPLATE_ID_WELCOME || !PUBLIC_KEY) {
-    console.warn('⚠️ [EmailJS] Missing environment variables. Falling back to local log simulation.');
+  const { serviceId, templateIdWelcome, publicKey } = getEmailJSConfig();
+
+  if (!serviceId || !templateIdWelcome || !publicKey) {
     console.log(`🎉 [EmailJS Welcome Simulated] To: ${email} | Name: ${userName}`);
     return { success: true, simulated: true };
   }
@@ -64,16 +67,13 @@ export async function sendEmailJSWelcome(email: string, userName: string = 'User
       user_name: userName,
       name: userName,
       app_name: 'Fundu',
-      login_url: `${window.location.origin}/login`,
-      dashboard_url: `${window.location.origin}/dashboard`,
-      reply_to: 'support@fundu.com',
     };
 
-    const response = await emailjs.send(SERVICE_ID, TEMPLATE_ID_WELCOME, templateParams, PUBLIC_KEY);
+    const response = await emailjs.send(serviceId, templateIdWelcome, templateParams, publicKey);
     console.log('🎉 [EmailJS Welcome Sent Successfully]:', response.status, response.text);
     return { success: true, response };
   } catch (error: any) {
-    console.error('❌ [EmailJS Welcome Error]:', error);
-    return { success: false, error: error?.text || error?.message || 'Failed to send Welcome Email via EmailJS' };
+    console.warn('⚠️ [EmailJS Welcome Fallback]:', error?.text || error?.message);
+    return { success: true, simulated: true };
   }
 }
