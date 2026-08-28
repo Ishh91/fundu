@@ -118,33 +118,33 @@ export const LUCKNOW_STORES = [
 ];
 
 const PHONE_BRANDS = [
-  { name: 'Apple', tag: 'Top Value', icon: '🍎' },
-  { name: 'Samsung', tag: 'Instant Cash', icon: '📱' },
-  { name: 'OnePlus', tag: 'High Demand', icon: '⚡' },
-  { name: 'Xiaomi', tag: 'Best Price', icon: '🔥' },
-  { name: 'Realme', tag: 'Popular', icon: '✨' },
-  { name: 'Vivo', tag: 'Doorstep', icon: '📸' },
-  { name: 'Oppo', tag: 'Doorstep', icon: '🎯' },
-  { name: 'Google', tag: 'Pixel Series', icon: '🌐' },
-  { name: 'Nothing', tag: 'Trending', icon: '💡' },
-  { name: 'Motorola', tag: 'Moto Care', icon: '📦' },
+  { name: 'Apple', tag: 'Premium' },
+  { name: 'Samsung', tag: 'Flagship' },
+  { name: 'OnePlus', tag: 'High Demand' },
+  { name: 'Xiaomi', tag: 'Range' },
+  { name: 'Realme', tag: 'Affordable' },
+  { name: 'Vivo', tag: 'Affordable' },
+  { name: 'Oppo', tag: 'Affordable' },
+  { name: 'Google', tag: 'Pixel Series' },
+  { name: 'Nothing', tag: 'Trending' },
+  { name: 'Motorola', tag: 'Series' },
 ];
 
 const BUY_REFURBISHED_HIGHLIGHTS = [
   {
-    title: 'Refurbished iPhones',
+    title: 'iPhones',
     desc: 'iPhone 11 to 15 Pro Max with 6M warranty',
     to: '/buy?brand=Apple',
     badge: '32-Point Inspected',
   },
   {
-    title: 'Samsung Galaxy Series',
+    title: 'Samsung',
     desc: 'S21, S22, S23, S24 & Fold/Flip series',
     to: '/buy?brand=Samsung',
     badge: 'Best Cameras',
   },
   {
-    title: 'OnePlus & Flagship Killers',
+    title: 'OnePlus',
     desc: 'OnePlus 9 to 12R at unbelievable prices',
     to: '/buy?brand=OnePlus',
     badge: 'Fast Charging',
@@ -558,8 +558,12 @@ export default function Navbar() {
                     onClick={() => setProfileOpen((prev) => !prev)}
                     className="flex items-center gap-2 rounded-full border border-gray-200 bg-white px-3 py-1.5 text-sm font-bold text-gray-700 hover:border-[#00a896] shadow-sm transition"
                   >
-                    <span className="grid h-7 w-7 place-items-center rounded-full bg-teal-50 text-teal-700">
-                      <User className="h-3.5 w-3.5" />
+                    <span className="grid h-7 w-7 place-items-center rounded-full bg-teal-50 text-teal-700 overflow-hidden shrink-0 border border-teal-200">
+                      {profile?.avatar_url ? (
+                        <img src={profile.avatar_url} alt="Profile Avatar" className="h-full w-full object-cover" />
+                      ) : (
+                        <User className="h-3.5 w-3.5" />
+                      )}
                     </span>
                     <span className="max-w-[100px] truncate hidden sm:inline-block">
                       {profile?.full_name || user.email?.split('@')[0]}
@@ -646,7 +650,7 @@ export default function Navbar() {
 
                     <div>
                       <h4 className="text-xs font-extrabold uppercase tracking-wider text-gray-400 mb-3 flex items-center gap-1.5">
-                        <Store className="h-3.5 w-3.5 text-[#00a896]" /> Buy Refurbished
+                        <Store className="h-3.5 w-3.5 text-[#00a896]" /> Buy Phone
                       </h4>
                       <ul className="space-y-2 text-xs">
                         <li>
@@ -725,8 +729,8 @@ export default function Navbar() {
                           to={`/sell?brand=${encodeURIComponent(b.name)}`}
                           className="flex items-center justify-between p-2 rounded-xl hover:bg-gray-50 border border-gray-100 transition group"
                         >
-                          <span className="text-xs font-bold text-gray-800 group-hover:text-[#00a896] flex items-center gap-2">
-                            <span>{b.icon}</span> {b.name}
+                          <span className="text-xs font-bold text-gray-800 group-hover:text-[#00a896]">
+                            {b.name}
                           </span>
                           <span className="text-[10px] font-semibold text-teal-700 bg-teal-50 px-2 py-0.5 rounded-md">
                             {b.tag}
@@ -746,14 +750,14 @@ export default function Navbar() {
                   className={`flex items-center gap-1 py-2 transition-colors cursor-pointer ${activeDropdown === 'buy-refurbished' ? 'text-[#00a896]' : 'hover:text-[#00a896]'
                     }`}
                 >
-                  <span>Buy Refurbished</span>
+                  <span>Buy Phone</span>
                   <ChevronDown className={`h-3 w-3 transition-transform duration-200 ${activeDropdown === 'buy-refurbished' ? 'rotate-180 text-[#00a896]' : 'text-gray-400'}`} />
                 </button>
 
                 {activeDropdown === 'buy-refurbished' && (
                   <div className="absolute left-0 top-full mt-1 w-[420px] rounded-2xl border border-gray-200 bg-white p-4 shadow-2xl z-50 animate-fade-in">
                     <div className="flex items-center justify-between pb-2 border-b border-gray-100 mb-3">
-                      <span className="text-xs font-bold text-gray-900">Certified Refurbished Phones</span>
+                      <span className="text-xs font-bold text-gray-900">Certified Phones</span>
                       <Link to="/buy" className="text-xs font-bold text-[#00a896] hover:underline">
                         All Deals →
                       </Link>

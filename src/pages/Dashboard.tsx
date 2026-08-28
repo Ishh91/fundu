@@ -253,8 +253,12 @@ export default function Dashboard() {
       {/* ── Header ── */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="flex items-center gap-3">
-          <div className="grid h-12 w-12 place-items-center rounded-xl bg-brand-100 text-brand-700">
-            <User className="h-6 w-6" />
+          <div className="grid h-12 w-12 place-items-center rounded-xl bg-teal-50 text-teal-700 overflow-hidden border border-teal-200 shrink-0">
+            {profile?.avatar_url ? (
+              <img src={profile.avatar_url} alt="User Avatar" className="h-full w-full object-cover" />
+            ) : (
+              <User className="h-6 w-6" />
+            )}
           </div>
           <div>
             <h1 className="font-display text-2xl font-extrabold text-ink-900">Hi, {displayName} 👋</h1>

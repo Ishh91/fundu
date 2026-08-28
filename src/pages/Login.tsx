@@ -9,7 +9,7 @@ export default function Login() {
   const { signIn, user, profile, loading: authLoading } = useAuth();
   const navigate = useNavigate();
   const [params] = useSearchParams();
-  const redirect = params.get('redirect') || '/dashboard';
+  const redirect = params.get('redirect') || '/';
 
   /* ── Unified Credentials State ── */
   const [identifier, setIdentifier] = useState('');
@@ -90,16 +90,24 @@ export default function Login() {
 
     try {
       // 1. Check if Email is registered in database BEFORE sending OTP
-      const checkUrl =
-        typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
-          ? 'http://localhost:4000/api/auth/check-email'
-          : 'https://fundu.onrender.com/api/auth/check-email';
+      // 1. Check if Email is registered in database BEFORE sending OTP
+      const primaryUrl = 'http://localhost:4000/api/auth/check-email';
+      const renderUrl = 'https://fundu.onrender.com/api/auth/check-email';
 
-      const checkRes = await fetch(checkUrl, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: cleanEmail }),
-      });
+      let checkRes;
+      try {
+        checkRes = await fetch(primaryUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: cleanEmail }),
+        });
+      } catch {
+        checkRes = await fetch(renderUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: cleanEmail }),
+        });
+      }
 
       const checkJson = await checkRes.json();
       if (!checkJson.data?.exists) {
@@ -141,19 +149,29 @@ export default function Login() {
     setResetError(null);
 
     try {
-      const targetUrl =
-        typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
-          ? 'http://localhost:4000/api/auth/reset-password'
-          : 'https://fundu.onrender.com/api/auth/reset-password';
+      const primaryUrl = 'http://localhost:4000/api/auth/reset-password';
+      const renderUrl = 'https://fundu.onrender.com/api/auth/reset-password';
 
-      const response = await fetch(targetUrl, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          email: resetEmail.trim().toLowerCase(),
-          newPassword: newPassword,
-        }),
-      });
+      let response;
+      try {
+        response = await fetch(primaryUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            email: resetEmail.trim().toLowerCase(),
+            newPassword: newPassword,
+          }),
+        });
+      } catch {
+        response = await fetch(renderUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            email: resetEmail.trim().toLowerCase(),
+            newPassword: newPassword,
+          }),
+        });
+      }
 
       const json = await response.json();
       if (json.error) {
