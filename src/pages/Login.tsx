@@ -72,7 +72,16 @@ export default function Login() {
       return;
     }
 
-    navigate(redirect);
+    const role = (authRes.profile?.role as string) || (profile?.role as string);
+    if (role === 'admin') {
+      navigate('/admin');
+    } else if (role === 'vendor' || role === 'wholesaler') {
+      navigate('/vendor');
+    } else if (role === 'delivery' || role === 'rider') {
+      navigate('/delivery');
+    } else {
+      navigate(redirect);
+    }
   };
 
   /* ── Step 1: Send Reset Password EmailJS OTP ── */

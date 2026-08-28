@@ -72,8 +72,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const signIn = async (email: string, password: string) => {
-    const { error } = await db.auth.signInWithPassword({ email, password });
-    return { error: error?.message ?? null };
+    const { data, error } = await db.auth.signInWithPassword({ email, password });
+    if (error) return { error: error?.message ?? null, user: null, profile: null };
+    const prof = data?.user ? await fetchProfile(data.user.id) : null;
+    return { error: null, user: data?.user, profile: prof };
   };
 
   const signUp = async (email: string, password: string, fullName: string, phone: string) => {
