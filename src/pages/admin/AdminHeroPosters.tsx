@@ -572,9 +572,9 @@ export default function AdminHeroPosters() {
 
       {/* Upload / Edit Poster Modal with Background Removal Option */}
       {modalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/60 backdrop-blur-xs p-4 overflow-y-auto">
-          <div className="w-full max-w-xl bg-white rounded-3xl shadow-2xl border border-slate-200 overflow-hidden my-8 animate-fade-in">
-            <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100 bg-slate-50/80">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/70 backdrop-blur-md p-4 sm:p-6 overflow-hidden">
+          <div className="w-full max-w-xl max-h-[88vh] bg-white rounded-3xl shadow-2xl border border-slate-200 overflow-hidden flex flex-col my-auto animate-fade-in">
+            <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100 bg-slate-50/90 shrink-0">
               <div className="flex items-center gap-2">
                 <div className="grid h-9 w-9 place-items-center rounded-xl bg-teal-50 text-teal-700">
                   <ImageIcon className="h-5 w-5" />
@@ -595,7 +595,7 @@ export default function AdminHeroPosters() {
               </button>
             </div>
 
-            <form onSubmit={handleSaveForm} className="p-6 space-y-5">
+            <form onSubmit={handleSaveForm} className="flex-1 overflow-y-auto p-6 space-y-5">
               {/* Campaign Title */}
               <div>
                 <label className="block text-xs font-bold text-slate-900 mb-1">
@@ -837,9 +837,9 @@ export default function AdminHeroPosters() {
 
       {/* FULL DEVICE SIZE GUIDE MODAL */}
       {showSizeGuide && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/60 backdrop-blur-xs p-4 overflow-y-auto">
-          <div className="w-full max-w-2xl bg-white rounded-3xl shadow-2xl border border-slate-200 overflow-hidden my-8 animate-fade-in">
-            <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100 bg-teal-50/70">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/70 backdrop-blur-md p-4 sm:p-6 overflow-hidden">
+          <div className="w-full max-w-2xl max-h-[88vh] bg-white rounded-3xl shadow-2xl border border-slate-200 overflow-hidden flex flex-col my-auto animate-fade-in">
+            <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100 bg-teal-50/70 shrink-0">
               <div className="flex items-center gap-2">
                 <span className="text-xl">📐</span>
                 <div>
@@ -858,7 +858,7 @@ export default function AdminHeroPosters() {
               </button>
             </div>
 
-            <div className="p-6 space-y-5">
+            <div className="flex-1 overflow-y-auto p-6 space-y-5">
               {/* Gold Standard */}
               <div className="p-4 rounded-2xl bg-teal-600 text-white shadow-md">
                 <span className="text-[10px] font-extrabold uppercase tracking-widest bg-white/20 px-2.5 py-0.5 rounded-full inline-block mb-1">

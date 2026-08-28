@@ -65,19 +65,7 @@ export default function DeliveryLogin() {
             </div>
           )}
 
-          <div className="p-3 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 text-[11px] leading-relaxed space-y-2">
-            <div><span className="font-bold">🔑 Field Rider Passcode:</span> Use the rider email / executive ID and password issued by Central Operations.</div>
-            <button
-              type="button"
-              onClick={() => {
-                setEmail('rider@fundu.in');
-                setPassword('Rider@123456');
-              }}
-              className="w-full text-center py-1.5 px-3 rounded-xl bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 text-[11px] font-bold border border-emerald-500/30 transition cursor-pointer"
-            >
-              ⚡ Quick Fill Demo Rider (rider@fundu.in)
-            </button>
-          </div>
+
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>

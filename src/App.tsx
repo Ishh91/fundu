@@ -36,6 +36,7 @@ import VendorLogin from './pages/VendorLogin';
 import WholesalerLogin from './pages/WholesalerLogin';
 import DeliveryLogin from './pages/DeliveryLogin';
 import SEO from './components/SEO';
+import VipLoginModal from './components/VipLoginModal';
 
 // Security Guard for Role-based Protected Routes
 function ProtectedRoute({
@@ -89,12 +90,14 @@ function MainLayout() {
   const isProfilePath =
     location.pathname.startsWith('/profile') ||
     location.pathname.startsWith('/dashboard');
-  const isStandaloneApp = isAdminPath || isDeliveryPath || isVendorPath;
+  const isAuthPage = location.pathname === '/login' || location.pathname === '/register';
+  const isStandaloneApp = isAdminPath || isDeliveryPath || isVendorPath || isAuthPage;
   const hideFooter = isStandaloneApp || isProfilePath;
 
   return (
     <div className="flex min-h-screen flex-col">
       <SEO />
+      <VipLoginModal />
       {!isStandaloneApp && <Navbar />}
       <main className="flex-1">
         <Routes>

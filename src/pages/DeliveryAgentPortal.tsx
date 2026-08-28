@@ -695,39 +695,7 @@ export default function DeliveryAgentPortal() {
             </button>
           </form>
 
-          <div className="space-y-2 pt-2 border-t border-slate-700/80">
-            <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
-              Or 1-Click Fast Login (Verified Lucknow Fleet):
-            </p>
 
-            <div className="grid grid-cols-1 gap-2">
-              {[
-                { name: 'Rohit Verma', phone: '+91 98391 22345', vehicle: 'Hero Splendor (UP 32 AB 1234)', zone: 'Gomti Nagar & Hazratganj' },
-                { name: 'Amit Shukla', phone: '+91 94150 78912', vehicle: 'Honda Activa (UP 32 CD 5678)', zone: 'Hazratganj & Mahanagar' },
-                { name: 'Vikas Yadav', phone: '+91 87654 32109', vehicle: 'Bajaj Pulsar (UP 32 EF 9012)', zone: 'Aliganj & Indira Nagar' },
-              ].map((r) => (
-                <button
-                  key={r.name}
-                  type="button"
-                  onClick={() => {
-                    setSelectedRiderName(r.name);
-                    setSelectedRiderPhone(r.phone);
-                    setSelectedVehicle(r.vehicle);
-                    setIsLoggedInAsRider(true);
-                  }}
-                  className="w-full p-2.5 rounded-xl bg-slate-700/50 hover:bg-brand-500 hover:text-slate-950 text-left transition border border-slate-600 group text-xs flex items-center justify-between"
-                >
-                  <div>
-                    <p className="font-bold">{r.name}</p>
-                    <p className="text-[10px] text-slate-400 group-hover:text-slate-900">{r.vehicle} · {r.zone}</p>
-                  </div>
-                  <span className="badge bg-slate-800 text-brand-300 text-[9px] group-hover:bg-slate-950 group-hover:text-white font-bold">
-                    Quick Access →
-                  </span>
-                </button>
-              ))}
-            </div>
-          </div>
 
           <div className="pt-2 border-t border-slate-700/80 flex items-center justify-between text-xs text-slate-400">
             <Link to="/" className="hover:text-white font-medium">
