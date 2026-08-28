@@ -72,7 +72,7 @@ export default function Login() {
       return;
     }
 
-    const role = (authRes.profile?.role as string) || (profile?.role as string);
+    const role = ((authRes as any).profile?.role as string) || (profile?.role as string);
     if (role === 'admin') {
       navigate('/admin');
     } else if (role === 'vendor' || role === 'wholesaler') {
