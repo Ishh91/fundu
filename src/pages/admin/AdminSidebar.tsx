@@ -153,10 +153,10 @@ export default function AdminSidebar({
   };
 
   const navContent = (
-    <div className="flex h-full flex-col justify-between p-4 overflow-y-auto">
+    <div className="flex min-h-full flex-col justify-between p-4">
       <div className="space-y-5">
         {/* Brand Header */}
-        <div className="flex items-center justify-between px-1 pt-1">
+        <div className="flex items-center justify-between px-1 pt-1 sticky top-0 bg-white z-10 pb-2 border-b border-gray-100">
           <Link to="/" className="flex items-center gap-2.5">
             <div className="grid h-10 w-10 place-items-center rounded-2xl bg-gradient-to-tr from-brand-600 to-brand-500 text-white shadow-md shadow-brand-500/30">
               <Smartphone className="h-5 w-5" />
@@ -226,7 +226,7 @@ export default function AdminSidebar({
       </div>
 
       {/* Bottom Footer Links */}
-      <div className="space-y-2 pt-4 border-t border-ink-100">
+      <div className="space-y-2 pt-4 border-t border-ink-100 mt-6">
         <Link
           to="/"
           className="flex items-center justify-between rounded-xl px-3 py-2 text-xs font-semibold text-ink-500 hover:bg-ink-100 hover:text-ink-900"
@@ -265,15 +265,15 @@ export default function AdminSidebar({
 
   return (
     <>
-      {/* Desktop Persistent Sidebar */}
-      <aside className="hidden lg:flex w-64 flex-col fixed inset-y-0 left-0 z-30 bg-white border-r border-[#e5ecef] shadow-xs">
+      {/* Desktop Persistent Scrollable Sidebar */}
+      <aside className="hidden lg:flex w-64 flex-col fixed inset-y-0 left-0 z-30 bg-white border-r border-[#e5ecef] shadow-xs overflow-y-auto max-h-screen">
         {navContent}
       </aside>
 
       {/* Mobile Drawer */}
       {mobileOpen && (
         <div className="fixed inset-0 z-50 flex lg:hidden bg-ink-900/50 backdrop-blur-xs">
-          <div className="w-72 bg-white shadow-2xl h-full">{navContent}</div>
+          <div className="w-72 bg-white shadow-2xl h-full overflow-y-auto">{navContent}</div>
           <div className="flex-1" onClick={onCloseMobile} />
         </div>
       )}
