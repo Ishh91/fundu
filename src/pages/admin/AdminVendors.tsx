@@ -78,7 +78,7 @@ export default function AdminVendors() {
       `Hi *${vendor.full_name || vendor.business_name || 'Vendor'}* (*${vendor.business_name || 'Vendor Partner'}*),\n` +
       `Your Official Vendor Account is created! Please check your email for the EmailJS Verification OTP code to verify your account.\n\n` +
       `🌐 *Login Portal:* ${loginUrl}\n` +
-      `📧 *Login Email:* ${vendor.email || vendor.phone}\n` +
+      `📧 *Login Email:* ${(vendor as any).email || vendor.phone}\n` +
       `🔑 *Passcode:* ${passwordText}\n` +
       `💳 *Approved Credit Limit:* ${formatINR(vendor.credit_limit || 200000)}`;
 
@@ -88,12 +88,12 @@ export default function AdminVendors() {
   const getEmailShareLink = (vendor: Partial<Profile>, pass?: string) => {
     const loginUrl = `${window.location.origin}/vendor-login`;
     const passwordText = pass || 'Vendor@123456';
-    const emailTo = vendor.email || '';
+    const emailTo = (vendor as any).email || '';
     const subject = `Fundu Lucknow Vendor Account Created — Verification Required`;
     const body = `Hi ${vendor.full_name || vendor.business_name || 'Vendor Partner'},\n\n` +
       `Your Fundu Vendor Partner account has been created.\n\n` +
       `Login Portal: ${loginUrl}\n` +
-      `Email: ${vendor.email || vendor.phone}\n` +
+      `Email: ${(vendor as any).email || vendor.phone}\n` +
       `Password: ${passwordText}\n` +
       `Approved Credit Limit: ${formatINR(vendor.credit_limit || 200000)}\n\n` +
       `Please enter the Email Verification OTP sent to your email to verify and activate your account.`;
@@ -738,7 +738,7 @@ export default function AdminVendors() {
             </div>
 
             <div className="p-3 bg-ink-50 rounded-xl space-y-1 text-xs">
-              <p>Email: <strong>{shareCredModal.vendor.email}</strong></p>
+              <p>Email: <strong>{(shareCredModal.vendor as any).email || shareCredModal.vendor.phone}</strong></p>
               <p>Passcode: <strong>{shareCredModal.password || 'Vendor@123456'}</strong></p>
               <p>Limit: <strong>{formatINR(shareCredModal.vendor.credit_limit || 200000)}</strong></p>
             </div>

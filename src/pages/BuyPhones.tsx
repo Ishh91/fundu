@@ -20,7 +20,6 @@ import { db, formatINR } from '../lib/db';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
 import type { Product } from '../types';
-import PhoneLookup from '../components/PhoneLookup';
 
 const BRAND_PILLS = [
   { name: 'All', icon: '📱' },
@@ -356,24 +355,43 @@ export default function BuyPhones() {
               </p>
             </div>
 
-            {/* Top Search Bar */}
-            <div className="relative w-full md:w-96">
-              <Search className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-ink-400" />
-              <input
-                type="text"
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                placeholder="Search refurbished phones (iPhone 14, S23)..."
-                className="input pl-10 pr-4 py-2.5 rounded-full border-ink-200 text-sm shadow-sm focus:border-brand-500"
-              />
-              {search && (
-                <button
-                  onClick={() => setSearch('')}
-                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-ink-400 hover:text-ink-700"
-                >
-                  <X className="h-4 w-4" />
-                </button>
-              )}
+            {/* Enhanced Prominent Working Search Bar */}
+            <div className="relative w-full md:w-[480px]">
+              <div className="relative">
+                <Search className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-[#00a896]" />
+                <input
+                  type="text"
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  placeholder="Search phone to buy — iPhone 15, S24, Pixel 8..."
+                  className="w-full bg-[#f1f5f9] hover:bg-gray-100 focus:bg-white focus:ring-2 focus:ring-[#00a896]/30 focus:border-[#00a896] border border-gray-200 pl-11 pr-10 py-3 rounded-full text-sm font-semibold text-gray-800 outline-none shadow-xs transition-all"
+                />
+                {search && (
+                  <button
+                    type="button"
+                    onClick={() => setSearch('')}
+                    className="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-700 bg-gray-200 hover:bg-gray-300 rounded-full p-1 transition"
+                    title="Clear search"
+                  >
+                    <X className="h-3.5 w-3.5" />
+                  </button>
+                )}
+              </div>
+
+              {/* Quick Search Tag Chips */}
+              <div className="mt-2.5 flex flex-wrap items-center gap-1.5 text-xs">
+                <span className="font-bold text-gray-400 text-[11px] uppercase tracking-wider">Popular:</span>
+                {['iPhone 15', 'iPhone 14', 'Galaxy S24', 'OnePlus 12', 'Pixel 8'].map((term) => (
+                  <button
+                    key={term}
+                    type="button"
+                    onClick={() => setSearch(term)}
+                    className="rounded-full bg-gray-100 px-2.5 py-0.5 text-[11px] font-semibold text-gray-600 hover:bg-teal-50 hover:text-[#00a896] transition"
+                  >
+                    {term}
+                  </button>
+                ))}
+              </div>
             </div>
           </div>
 
@@ -420,21 +438,6 @@ export default function BuyPhones() {
 
       {/* Main Container: Sidebar + Product Grid */}
       <div className="container-page mt-8">
-        {/* Compact Phone Lookup Tool */}
-        <section className="mb-6">
-          <PhoneLookup
-            brand={selectedBrand === 'All' ? '' : selectedBrand}
-            model={lookupModel}
-            storage={lookupStorage}
-            onBrandChange={(b) => setSelectedBrand(b || 'All')}
-            onModelChange={setLookupModel}
-            onStorageChange={setLookupStorage}
-            title="Find & Filter Refurbished Phones"
-            description="Pick brand, model, and storage variant to narrow down available stock."
-            actionLabel="Apply Lookup"
-            compact
-          />
-        </section>
 
         {/* Refurbished Condition Grade Tabs */}
         <div className="card p-3 rounded-2xl mb-6 flex flex-wrap items-center justify-between gap-3">

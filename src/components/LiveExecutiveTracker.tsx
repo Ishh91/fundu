@@ -48,7 +48,7 @@ export default function LiveExecutiveTracker({
   isOpen,
   onClose,
   locality,
-  executiveName = 'Rohit Verma',
+  executiveName = 'Vikas Yadav',
   executivePhone = '+91 98391 22345',
   orderType,
   deviceInfo,
@@ -59,6 +59,7 @@ export default function LiveExecutiveTracker({
   const [distanceKm, setDistanceKm] = useState(2.8); // km
   const [etaMins, setEtaMins] = useState(14);
   const [statusStep, setStatusStep] = useState<'dispatched' | 'on_the_way' | 'nearby' | 'arrived'>('on_the_way');
+  const [userGps, setUserGps] = useState<{ lat: number; lng: number } | null>(null);
 
   // Match target locality
   const cleanLoc = locality ? locality.toLowerCase().trim() : 'gomti nagar';
@@ -67,6 +68,20 @@ export default function LiveExecutiveTracker({
 
   // Starting hub (Hazratganj central dispatch hub)
   const startPos = { x: 48, y: 52 };
+
+  // Fetch Real World Device GPS coordinates
+  useEffect(() => {
+    if (!isOpen) return;
+    if ('geolocation' in navigator) {
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          setUserGps({ lat: pos.coords.latitude, lng: pos.coords.longitude });
+        },
+        () => {},
+        { enableHighAccuracy: true, timeout: 5000 }
+      );
+    }
+  }, [isOpen]);
 
   // Animate moving marker along path
   useEffect(() => {

@@ -22,6 +22,10 @@ export default function AdminOrders({
   onUpdateStatus,
   onReassignAgent,
 }: AdminOrdersProps) {
+  const [search, setSearch] = useState('');
+  const [statusFilter, setStatusFilter] = useState('all');
+  const [adminReplyText, setAdminReplyText] = useState('');
+  const [customerModalData, setCustomerModalData] = useState<any>(null);
   const [agentFilter, setAgentFilter] = useState('all');
   const [reassignModalData, setReassignModalData] = useState<{
     order: Order;
