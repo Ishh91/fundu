@@ -703,15 +703,28 @@ export default function Navbar() {
               </div>
 
               {/* Sell Phone Dropdown */}
-              <div className="relative">
+              <div className="relative flex items-center gap-1 py-2">
+                <Link
+                  to="/sell"
+                  className={`transition-colors font-bold ${
+                    activeDropdown === 'sell-phone' || location.pathname === '/sell'
+                      ? 'text-[#00a896]'
+                      : 'hover:text-[#00a896]'
+                  }`}
+                >
+                  Sell Phone
+                </Link>
                 <button
                   type="button"
                   onClick={() => toggleDropdown('sell-phone')}
-                  className={`flex items-center gap-1 py-2 transition-colors cursor-pointer ${activeDropdown === 'sell-phone' ? 'text-[#00a896]' : 'hover:text-[#00a896]'
-                    }`}
+                  className="p-1 hover:text-[#00a896] cursor-pointer"
+                  title="Toggle Sell Brands Menu"
                 >
-                  <span>Sell Phone</span>
-                  <ChevronDown className={`h-3 w-3 transition-transform duration-200 ${activeDropdown === 'sell-phone' ? 'rotate-180 text-[#00a896]' : 'text-gray-400'}`} />
+                  <ChevronDown
+                    className={`h-3 w-3 transition-transform duration-200 ${
+                      activeDropdown === 'sell-phone' ? 'rotate-180 text-[#00a896]' : 'text-gray-400'
+                    }`}
+                  />
                 </button>
 
                 {activeDropdown === 'sell-phone' && (
@@ -743,15 +756,28 @@ export default function Navbar() {
               </div>
 
               {/* Buy Refurbished Dropdown */}
-              <div className="relative">
+              <div className="relative flex items-center gap-1 py-2">
+                <Link
+                  to="/buy"
+                  className={`transition-colors font-bold ${
+                    activeDropdown === 'buy-refurbished' || location.pathname === '/buy'
+                      ? 'text-[#00a896]'
+                      : 'hover:text-[#00a896]'
+                  }`}
+                >
+                  Buy Phone
+                </Link>
                 <button
                   type="button"
                   onClick={() => toggleDropdown('buy-refurbished')}
-                  className={`flex items-center gap-1 py-2 transition-colors cursor-pointer ${activeDropdown === 'buy-refurbished' ? 'text-[#00a896]' : 'hover:text-[#00a896]'
-                    }`}
+                  className="p-1 hover:text-[#00a896] cursor-pointer"
+                  title="Toggle Certified Phones Menu"
                 >
-                  <span>Buy Phone</span>
-                  <ChevronDown className={`h-3 w-3 transition-transform duration-200 ${activeDropdown === 'buy-refurbished' ? 'rotate-180 text-[#00a896]' : 'text-gray-400'}`} />
+                  <ChevronDown
+                    className={`h-3 w-3 transition-transform duration-200 ${
+                      activeDropdown === 'buy-refurbished' ? 'rotate-180 text-[#00a896]' : 'text-gray-400'
+                    }`}
+                  />
                 </button>
 
                 {activeDropdown === 'buy-refurbished' && (

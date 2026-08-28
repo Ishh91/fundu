@@ -1158,6 +1158,91 @@ export default function Admin() {
           </div>
         </header>
 
+        {/* Quick Action Hub Bar */}
+        <div className="px-4 lg:px-8 py-3 bg-gradient-to-r from-teal-900 to-slate-900 border-b border-teal-800 text-white flex flex-wrap items-center justify-between gap-3 shadow-inner">
+          <div className="flex items-center gap-2">
+            <span className="text-xs font-black tracking-wide text-teal-300 uppercase flex items-center gap-1">
+              ⚡ Admin Quick Actions:
+            </span>
+          </div>
+
+          <div className="flex items-center gap-2 flex-wrap">
+            <button
+              type="button"
+              onClick={() => {
+                setTab('products');
+                setProductForm({
+                  title: '',
+                  brand: '',
+                  model: '',
+                  ram: '',
+                  storage: '',
+                  color: '',
+                  condition: 'Excellent',
+                  price: '',
+                  original_price: '',
+                  discount_percent: '0',
+                  offer_tag: '🔥 Hot Deal',
+                  warranty_months: '6',
+                  description: '',
+                  images: '',
+                  is_approved: true,
+                  is_featured: false,
+                  stock: '1',
+                });
+                setProductModal({ product: null });
+              }}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#00a896] hover:bg-teal-600 text-white text-xs font-extrabold shadow-sm transition cursor-pointer"
+            >
+              <Plus className="h-3.5 w-3.5" /> Add Store Product
+            </button>
+
+            <button
+              type="button"
+              onClick={() => {
+                setTab('catalog');
+                setCustomPhoneModalOpen(true);
+              }}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-teal-300 border border-teal-500/30 text-xs font-bold transition cursor-pointer"
+            >
+              <Plus className="h-3.5 w-3.5" /> Add Phone to Catalog
+            </button>
+
+            <button
+              type="button"
+              onClick={() => {
+                setTab('agents');
+                setAgentModalOpen(true);
+              }}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-800/80 hover:bg-emerald-700 text-emerald-200 border border-emerald-500/30 text-xs font-bold transition cursor-pointer"
+            >
+              <Plus className="h-3.5 w-3.5" /> Add Delivery Agent
+            </button>
+
+            <button
+              type="button"
+              onClick={() => {
+                setTab('parts');
+                setPartForm({
+                  title: '',
+                  brand: 'Apple',
+                  model: '',
+                  category: 'Screen / Display',
+                  price: '',
+                  stock: '5',
+                  description: '',
+                  images: '',
+                  is_approved: true,
+                });
+                setPartModal({ part: null });
+              }}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-purple-900/80 hover:bg-purple-800 text-purple-200 border border-purple-500/30 text-xs font-bold transition cursor-pointer"
+            >
+              <Plus className="h-3.5 w-3.5" /> Add Spare Part
+            </button>
+          </div>
+        </div>
+
         {/* Tab Sub-Page Renderers */}
         {fetchError && (
           <div className="px-4 lg:px-8 py-2 bg-red-50 border-b border-red-200 flex items-center gap-3 text-red-700 text-xs font-semibold">

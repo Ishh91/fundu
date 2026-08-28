@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import {
   Wrench,
@@ -20,11 +20,19 @@ import {
   Monitor,
   Camera,
   Volume2,
+  Cpu,
+  Wifi,
+  ScanFace,
+  Vibrate,
+  SlidersHorizontal,
+  X,
+  Lock,
+  FileCode,
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { LUCKNOW_AREAS } from '../types';
 import { db, formatINR } from '../lib/db';
-import { fetchPhoneModels } from '../lib/mobileApi';
+import { fetchPhoneModels, searchMobileApiDev } from '../lib/mobileApi';
 
 const BRAND_CARDS = [
   { name: 'Apple', logo: 'https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=150&auto=format&fit=crop&q=80' },
@@ -42,66 +50,111 @@ const BRAND_CARDS = [
 const REPAIR_ISSUES = [
   {
     id: 'screen',
-    label: 'Screen / Display Replacement',
+    label: 'Screen & Display Replacement',
     icon: Monitor,
-    desc: 'Glass cracked, touch unresponsive, or lines on screen',
+    desc: 'Cracked glass, touch dead, black screen, OLED lines or flickering',
     cost: 2999,
     warranty: '6 Months Warranty',
     time: '30 Mins Doorstep',
   },
   {
     id: 'battery',
-    label: 'Battery Replacement',
+    label: 'Battery Replacement & Health Check',
     icon: BatteryCharging,
-    desc: 'Fast draining, battery swelling, or phone heating',
+    desc: 'Fast draining, battery swelling, phone heating, health < 75%',
     cost: 1499,
     warranty: '6 Months Warranty',
     time: '20 Mins Doorstep',
   },
   {
     id: 'charging',
-    label: 'Charging Port Repair',
+    label: 'Charging Port & Sub-board IC',
     icon: Zap,
-    desc: 'Loose charger connection or slow charging speed',
+    desc: 'Loose charger connection, slow charging, port liquid detected',
     cost: 699,
     warranty: '3 Months Warranty',
     time: '25 Mins Doorstep',
   },
   {
     id: 'speaker',
-    label: 'Mic & Speaker Repair',
+    label: 'Mic, Receiver & Speaker Repair',
     icon: Volume2,
-    desc: 'No sound during calls, distorted audio, or mic mute',
+    desc: 'No sound on calls, muted microphone, crackling speaker audio',
     cost: 599,
     warranty: '3 Months Warranty',
     time: '20 Mins Doorstep',
   },
   {
     id: 'camera',
-    label: 'Camera Lens Repair',
+    label: 'Front & Rear Camera Repair',
     icon: Camera,
-    desc: 'Blurry photos, broken camera glass, or focus issue',
+    desc: 'Blurry camera focus, cracked glass lens, camera app black screen',
     cost: 1299,
     warranty: '6 Months Warranty',
     time: '30 Mins Doorstep',
   },
   {
     id: 'backglass',
-    label: 'Back Glass Repair',
+    label: 'Back Glass & Body Chassis Replacement',
     icon: Smartphone,
-    desc: 'Shattered or cracked rear glass panel',
+    desc: 'Shattered rear glass panel, bended metal frame, loose back cover',
     cost: 1199,
     warranty: '3 Months Warranty',
     time: '40 Mins Doorstep',
   },
   {
     id: 'motherboard',
-    label: 'Water Damage & Diagnostics',
-    icon: Wrench,
-    desc: 'Phone won\'t turn on or dropped in water',
+    label: 'Water Damage & Motherboard IC Repair',
+    icon: Cpu,
+    desc: 'Dead phone, liquid/water damage, power IC short circuit diagnostics',
     cost: 499,
-    warranty: 'Inspection & Quote',
+    warranty: 'Lab Diagnostics',
     time: '24 Hr Lab Repair',
+  },
+  {
+    id: 'software',
+    label: 'Software Recovery & OS Flashing',
+    icon: FileCode,
+    desc: 'Stuck on Apple/Android logo, boot loop error, pattern/PIN unlock',
+    cost: 399,
+    warranty: 'Data Safe Protocol',
+    time: '20 Mins Doorstep',
+  },
+  {
+    id: 'buttons',
+    label: 'Power, Volume & Fingerprint Sensor',
+    icon: SlidersHorizontal,
+    desc: 'Stuck power button, volume keys not working, Touch ID sensor',
+    cost: 499,
+    warranty: '3 Months Warranty',
+    time: '25 Mins Doorstep',
+  },
+  {
+    id: 'faceid',
+    label: 'Face ID & TrueDepth Sensor Repair',
+    icon: ScanFace,
+    desc: 'Face ID disabled error, TrueDepth camera alignment, proximity sensor',
+    cost: 1499,
+    warranty: '6 Months Warranty',
+    time: '45 Mins Doorstep',
+  },
+  {
+    id: 'network',
+    label: 'Network, SIM & Wi-Fi IC Repair',
+    icon: Wifi,
+    desc: 'No SIM signal / searching, grayed out Wi-Fi / Bluetooth toggle',
+    cost: 1199,
+    warranty: '3 Months Warranty',
+    time: '45 Mins Doorstep',
+  },
+  {
+    id: 'haptics',
+    label: 'Vibration Motor & Taptic Engine',
+    icon: Vibrate,
+    desc: 'No vibration alerts during calls, haptic feedback engine failure',
+    cost: 399,
+    warranty: '3 Months Warranty',
+    time: '20 Mins Doorstep',
   },
 ];
 
@@ -126,8 +179,36 @@ export default function Repair() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
 
-  const [step, setStep] = useState(1);
+  const stepFromUrl = parseInt(searchParams.get('step') || '1', 10);
+  const step = isNaN(stepFromUrl) || stepFromUrl < 1 || stepFromUrl > 5 ? 1 : stepFromUrl;
+
+  const modelSectionRef = useRef<HTMLDivElement>(null);
+
+  const goToStep = (nextStep: number, extraParams: Record<string, string> = {}) => {
+    const newParams = new URLSearchParams();
+    newParams.set('step', String(nextStep));
+    const targetBrand = extraParams.brand || form.brand;
+    const targetModel = extraParams.model || form.model;
+    const targetIssue = extraParams.issue || selectedIssueId;
+    const targetTracking = extraParams.trackingId || trackingId;
+
+    if (targetBrand) newParams.set('brand', targetBrand);
+    if (targetModel) newParams.set('model', targetModel);
+    if (targetIssue) newParams.set('issue', targetIssue);
+    if (targetTracking) newParams.set('trackingId', targetTracking);
+
+    Object.entries(extraParams).forEach(([k, v]) => {
+      if (v) newParams.set(k, v);
+    });
+    window.scrollTo({ top: 120, behavior: 'smooth' });
+    navigate(`/repair?${newParams.toString()}`);
+  };
+
   const [searchQuery, setSearchQuery] = useState('');
+  const [liveSearchResults, setLiveSearchResults] = useState<Array<{ brand: string; model: string }>>([]);
+  const [isSearchingLive, setIsSearchingLive] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
+
   const [selectedIssueId, setSelectedIssueId] = useState<string>('screen');
   const [form, setForm] = useState({
     brand: '',
@@ -141,6 +222,7 @@ export default function Repair() {
   });
 
   const [modelsList, setModelsList] = useState<Array<{ name: string; storages: string[] }>>([]);
+  const [modelFilter, setModelFilter] = useState('');
   const [loadingModels, setLoadingModels] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -149,9 +231,19 @@ export default function Repair() {
 
   const selectedIssue = REPAIR_ISSUES.find((i) => i.id === selectedIssueId) ?? REPAIR_ISSUES[0];
 
+  const filteredModelsList = useMemo(() => {
+    if (!modelFilter.trim()) return modelsList;
+    const q = modelFilter.toLowerCase().trim();
+    return modelsList.filter((m) => m.name.toLowerCase().includes(q));
+  }, [modelsList, modelFilter]);
+
+  // Sync params from URL subpage routing
   useEffect(() => {
     const b = searchParams.get('brand');
     const m = searchParams.get('model');
+    const issue = searchParams.get('issue');
+    const tid = searchParams.get('trackingId');
+
     if (b || m) {
       setForm((cur) => ({
         ...cur,
@@ -159,7 +251,53 @@ export default function Repair() {
         model: m ?? cur.model,
       }));
     }
+    if (issue) {
+      setSelectedIssueId(issue);
+    }
+    if (tid) {
+      setTrackingId(tid);
+    }
   }, [searchParams]);
+
+  // Live Mobile Device Search Effect across all 31,500+ phones
+  useEffect(() => {
+    if (!searchQuery.trim()) {
+      setLiveSearchResults([]);
+      setSearchOpen(false);
+      return;
+    }
+
+    setIsSearchingLive(true);
+    setSearchOpen(true);
+    const q = searchQuery.toLowerCase().trim();
+
+    searchMobileApiDev(searchQuery)
+      .then((results) => {
+        const items = results.map((r: any) => ({ brand: r.brand, model: r.model }));
+        if (items.length > 0) {
+          setLiveSearchResults(items.slice(0, 8));
+        } else {
+          const fallback = POPULAR_REPAIR_MODELS.filter((m) =>
+            `${m.brand} ${m.model}`.toLowerCase().includes(q)
+          ).map((m) => ({ brand: m.brand, model: m.model }));
+          setLiveSearchResults(fallback);
+        }
+      })
+      .catch(() => {
+        const fallback = POPULAR_REPAIR_MODELS.filter((m) =>
+          `${m.brand} ${m.model}`.toLowerCase().includes(q)
+        ).map((m) => ({ brand: m.brand, model: m.model }));
+        setLiveSearchResults(fallback);
+      })
+      .finally(() => setIsSearchingLive(false));
+  }, [searchQuery]);
+
+  const handleSelectPhoneForRepair = (brandName: string, modelName: string) => {
+    setForm((f) => ({ ...f, brand: brandName, model: modelName }));
+    setSearchQuery('');
+    setSearchOpen(false);
+    goToStep(2, { brand: brandName, model: modelName });
+  };
 
   useEffect(() => {
     if (!form.brand) {
@@ -175,6 +313,8 @@ export default function Repair() {
 
   const handleBrandSelect = (brandName: string) => {
     setForm((f) => ({ ...f, brand: brandName, model: '' }));
+    window.scrollTo({ top: 120, behavior: 'smooth' });
+    navigate(`/repair?brand=${encodeURIComponent(brandName)}&step=1`);
   };
 
   const handleQuickModelSelect = (item: typeof POPULAR_REPAIR_MODELS[0]) => {
@@ -183,7 +323,7 @@ export default function Repair() {
       brand: item.brand,
       model: item.model,
     }));
-    setStep(2);
+    goToStep(2, { brand: item.brand, model: item.model });
   };
 
   const handleSubmit = async () => {
@@ -203,6 +343,7 @@ export default function Repair() {
     const { data, error: reqErr } = await db
       .from<{ tracking_id: string }>('repair_bookings')
       .insert({
+        user_id: user.id,
         customer_name: profile?.full_name || null,
         customer_phone: profile?.phone || null,
         customer_email: user?.email || null,
@@ -215,6 +356,7 @@ export default function Repair() {
         pickup_area: form.pickupArea,
         pickup_date: form.pickupDate || null,
         pickup_slot: form.pickupSlot || null,
+        status: 'pending',
       })
       .select()
       .single();
@@ -225,7 +367,7 @@ export default function Repair() {
       return;
     }
     setTrackingId(data?.tracking_id ?? '');
-    setStep(5); // Confirmation Step
+    goToStep(5, { trackingId: data?.tracking_id ?? '' }); // Confirmation Step
   };
 
   if (step === 5) {
@@ -262,7 +404,7 @@ export default function Repair() {
               <button onClick={() => navigate('/dashboard')} className="btn-primary">
                 Track My Repair
               </button>
-              <button onClick={() => { setStep(1); setSelectedIssueId('screen'); }} className="btn-outline">
+              <button onClick={() => { goToStep(1); setSelectedIssueId('screen'); }} className="btn-outline">
                 Book Another Repair
               </button>
             </div>
@@ -290,16 +432,72 @@ export default function Repair() {
               </p>
             </div>
 
-            {/* Quick Model Search */}
-            <div className="relative w-full md:w-80">
-              <Search className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-ink-400" />
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search mobile model for repair..."
-                className="input pl-10 pr-4 py-2.5 rounded-full border-ink-200 text-sm shadow-sm focus:border-brand-500"
-              />
+            {/* Live Autocomplete Model Search across all 31,500+ phones */}
+            <div className="relative w-full md:w-96">
+              <div className="relative">
+                <Search className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-ink-400" />
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onFocus={() => searchQuery.trim() && setSearchOpen(true)}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="Search any phone model (e.g. iPhone 15, S24, Pixel 8)..."
+                  className="input pl-10 pr-9 py-2.5 rounded-full border-ink-200 text-xs sm:text-sm shadow-sm focus:border-[#00a896] bg-white font-medium"
+                />
+                {searchQuery && (
+                  <button
+                    type="button"
+                    onClick={() => { setSearchQuery(''); setSearchOpen(false); }}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 p-1"
+                  >
+                    <X className="h-3.5 w-3.5" />
+                  </button>
+                )}
+              </div>
+
+              {/* Autocomplete Results Dropdown */}
+              {searchOpen && searchQuery.trim() && (
+                <div className="absolute left-0 right-0 top-full mt-2 rounded-2xl border border-gray-200 bg-white p-3 shadow-2xl z-50 animate-fade-in max-h-80 overflow-y-auto">
+                  {isSearchingLive ? (
+                    <div className="p-4 text-center text-xs font-bold text-teal-700 flex items-center justify-center gap-2">
+                      <Sparkles className="h-4 w-4 animate-spin text-[#00a896]" /> Searching all phones in catalog...
+                    </div>
+                  ) : liveSearchResults.length > 0 ? (
+                    <div className="space-y-1">
+                      <p className="px-2 py-1 text-[10px] font-extrabold uppercase tracking-wider text-gray-400">
+                        Select Device to Repair
+                      </p>
+                      {liveSearchResults.map((phone, idx) => (
+                        <button
+                          key={`${phone.brand}-${phone.model}-${idx}`}
+                          type="button"
+                          onClick={() => handleSelectPhoneForRepair(phone.brand, phone.model)}
+                          className="flex items-center justify-between w-full p-2.5 rounded-xl hover:bg-teal-50/80 transition text-left group border border-transparent hover:border-teal-200"
+                        >
+                          <div className="flex items-center gap-2.5">
+                            <div className="grid h-8 w-8 place-items-center rounded-lg bg-teal-100/70 text-[#00a896]">
+                              <Smartphone className="h-4 w-4" />
+                            </div>
+                            <div>
+                              <p className="text-xs font-bold text-gray-900 group-hover:text-[#00a896]">
+                                {phone.model}
+                              </p>
+                              <p className="text-[11px] text-gray-400 font-semibold">{phone.brand}</p>
+                            </div>
+                          </div>
+                          <span className="text-[10px] font-extrabold text-[#00a896] bg-teal-100/60 px-2 py-1 rounded-md group-hover:bg-[#00a896] group-hover:text-white transition">
+                            Select Issue →
+                          </span>
+                        </button>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="p-4 text-center text-xs text-gray-500">
+                      No exact phone match found. Try typing brand or model name (e.g. <strong className="text-gray-800">Galaxy S24</strong>).
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -317,7 +515,7 @@ export default function Repair() {
             <div key={s} className="flex items-center gap-2 shrink-0">
               <button
                 type="button"
-                onClick={() => step > s && setStep(s)}
+                onClick={() => step > s && goToStep(s)}
                 className={`flex items-center gap-2 rounded-full px-3.5 py-1.5 text-xs font-bold transition-all duration-200 ${
                   step === s
                     ? 'bg-[#00a896] text-white shadow-sm'
@@ -341,103 +539,213 @@ export default function Repair() {
       <div className="container-page mt-8">
         {step === 1 && (
           <div className="space-y-8 animate-fade-in">
-            {/* Brand Selection Cards */}
-            <div className="card p-6 md:p-8 rounded-[28px]">
-              <h2 className="font-display text-xl font-extrabold text-ink-900 flex items-center gap-2">
-                <Smartphone className="h-5 w-5 text-brand-600" /> Select Phone Brand to Repair
-              </h2>
-              <p className="mt-1 text-xs text-ink-500">Pick your phone manufacturer to view repair costs</p>
+            {form.brand ? (
+              /* DEDICATED BRAND MODEL SELECTION ULTRA-PREMIUM SUBPAGE */
+              <div ref={modelSectionRef} className="space-y-6 animate-fade-in">
+                {/* Hero Banner Header */}
+                <div className="relative overflow-hidden rounded-[28px] bg-gradient-to-r from-slate-900 via-teal-950 to-emerald-950 p-6 sm:p-8 text-white shadow-xl">
+                  {/* Subtle Glowing Background Accents */}
+                  <div className="absolute -right-10 -top-10 h-64 w-64 rounded-full bg-teal-500/20 blur-3xl pointer-events-none" />
+                  <div className="absolute -left-10 -bottom-10 h-48 w-48 rounded-full bg-emerald-500/10 blur-2xl pointer-events-none" />
 
-              <div className="mt-6 grid grid-cols-2 sm:grid-cols-5 gap-3 md:gap-4">
-                {BRAND_CARDS.map((item) => (
-                  <button
-                    key={item.name}
-                    type="button"
-                    onClick={() => handleBrandSelect(item.name)}
-                    className={`flex flex-col items-center justify-center p-4 rounded-2xl border transition-all ${
-                      form.brand === item.name
-                        ? 'border-brand-600 bg-brand-50/80 shadow-md ring-2 ring-brand-500/20'
-                        : 'border-ink-200 bg-white hover:border-brand-300 hover:shadow-sm'
-                    }`}
-                  >
-                    <img src={item.logo} alt={item.name} className="h-12 w-12 object-contain rounded-lg" />
-                    <span className="mt-2 text-sm font-bold text-ink-900">{item.name}</span>
-                  </button>
-                ))}
-              </div>
-            </div>
+                  <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
+                    <div className="flex items-start sm:items-center gap-4">
+                      {BRAND_CARDS.find((b) => b.name.toLowerCase() === form.brand.toLowerCase())?.logo ? (
+                        <div className="h-14 w-14 sm:h-16 sm:w-16 rounded-2xl bg-white/10 backdrop-blur-md p-2.5 border border-white/20 flex items-center justify-center shrink-0 shadow-lg">
+                          <img
+                            src={BRAND_CARDS.find((b) => b.name.toLowerCase() === form.brand.toLowerCase())?.logo}
+                            alt={form.brand}
+                            className="h-full w-full object-contain"
+                          />
+                        </div>
+                      ) : (
+                        <div className="h-14 w-14 sm:h-16 sm:w-16 rounded-2xl bg-white/10 backdrop-blur-md p-2.5 border border-white/20 flex items-center justify-center shrink-0 shadow-lg text-teal-400">
+                          <Smartphone className="h-8 w-8" />
+                        </div>
+                      )}
+                      <div>
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <span className="badge bg-teal-400/20 text-teal-300 border border-teal-400/30 text-xs font-bold px-3 py-1">
+                            Official Doorstep Repair Catalog
+                          </span>
+                          <span className="badge bg-emerald-400/20 text-emerald-300 border border-emerald-400/30 text-xs font-bold px-3 py-1">
+                            6-Month Parts Guarantee
+                          </span>
+                        </div>
+                        <h2 className="mt-2 font-display text-2xl sm:text-3xl md:text-4xl font-black text-white tracking-tight">
+                          {form.brand} Repair Models
+                        </h2>
+                        <p className="text-xs sm:text-sm text-slate-300 mt-1 max-w-xl">
+                          Select your exact model below for instant upfront repair quotes and doorstep technician dispatch in Lucknow.
+                        </p>
+                      </div>
+                    </div>
 
-            {/* Model Selector */}
-            {form.brand && (
-              <div className="card p-6 md:p-8 rounded-[28px] space-y-6">
-                <div className="flex flex-wrap items-center justify-between gap-3">
-                  <div>
-                    <span className="badge bg-brand-50 text-brand-700">Selected Brand: {form.brand}</span>
-                    <h3 className="mt-2 font-display text-xl font-extrabold text-ink-900">Select Exact Model</h3>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() => setForm((f) => ({ ...f, brand: '', model: '' }))}
-                    className="text-xs text-brand-600 hover:underline font-semibold"
-                  >
-                    Change Brand
-                  </button>
-                </div>
-
-                <div>
-                  <label className="label">Select Model</label>
-                  <select
-                    value={form.model}
-                    onChange={(e) => setForm({ ...form, model: e.target.value })}
-                    className="input max-w-md"
-                  >
-                    <option value="">{loadingModels ? 'Fetching models from API...' : 'Select phone model'}</option>
-                    {modelsList.map((m) => (
-                      <option key={m.name} value={m.name}>
-                        {m.name}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                {form.brand && form.model && (
-                  <div className="flex justify-end pt-4">
                     <button
                       type="button"
-                      onClick={() => setStep(2)}
-                      className="btn-primary flex items-center gap-2"
+                      onClick={() => {
+                        setForm((f) => ({ ...f, brand: '', model: '' }));
+                        navigate('/repair?step=1');
+                      }}
+                      className="inline-flex items-center justify-center gap-2 text-xs sm:text-sm font-extrabold text-white bg-white/10 hover:bg-white/20 border border-white/20 backdrop-blur-md px-5 py-3 rounded-2xl transition-all shadow-md shrink-0 self-start md:self-auto"
                     >
-                      Select Repair Issue <ArrowRight className="h-4 w-4" />
+                      ← Back to All Brands
                     </button>
+                  </div>
+                </div>
+
+                {/* Filter & Controls Toolbar */}
+                <div className="card p-4 sm:p-5 rounded-[22px] border border-gray-200/80 bg-white shadow-sm flex flex-col sm:flex-row items-center justify-between gap-4">
+                  <div className="relative w-full sm:w-80 md:w-96">
+                    <Search className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+                    <input
+                      type="text"
+                      value={modelFilter}
+                      onChange={(e) => setModelFilter(e.target.value)}
+                      placeholder={`Search ${form.brand} models (e.g. ${form.brand} 15, S23)...`}
+                      className="input pl-10 pr-9 py-2.5 rounded-xl text-xs sm:text-sm border-gray-200 bg-gray-50/50 focus:bg-white focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-all"
+                    />
+                    {modelFilter && (
+                      <button
+                        type="button"
+                        onClick={() => setModelFilter('')}
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-400 hover:text-gray-600 font-bold"
+                      >
+                        ✕
+                      </button>
+                    )}
+                  </div>
+
+                  <div className="flex items-center gap-3 w-full sm:w-auto justify-between sm:justify-end">
+                    <span className="text-xs font-bold text-gray-500">
+                      Showing <strong className="text-gray-900">{filteredModelsList.length}</strong> models
+                    </span>
+                    <span className="h-4 w-px bg-gray-200 hidden sm:block" />
+                    <span className="text-[11px] font-bold text-teal-700 bg-teal-50 px-3 py-1 rounded-lg border border-teal-100">
+                      ⚡ Doorstep Service Available
+                    </span>
+                  </div>
+                </div>
+
+                {/* Direct Models Grid View */}
+                {loadingModels ? (
+                  <div className="card p-16 text-center rounded-[28px] border border-teal-100 bg-teal-50/20">
+                    <Sparkles className="h-8 w-8 animate-spin text-[#00a896] mx-auto mb-3" />
+                    <p className="text-sm font-bold text-teal-900">Fetching all certified {form.brand} models...</p>
+                    <p className="text-xs text-teal-600 mt-1">Checking stock & repair parts availability</p>
+                  </div>
+                ) : filteredModelsList.length === 0 ? (
+                  <div className="card p-12 text-center rounded-[28px] border border-gray-200 bg-white">
+                    <Smartphone className="h-10 w-10 text-gray-300 mx-auto mb-2" />
+                    <p className="text-sm font-bold text-gray-800">No models found matching "{modelFilter}"</p>
+                    <p className="text-xs text-gray-500 mt-1">Try clearing your search or typing a different model name</p>
+                    <button
+                      type="button"
+                      onClick={() => setModelFilter('')}
+                      className="mt-4 btn-outline text-xs py-2 px-4 inline-flex items-center gap-1.5"
+                    >
+                      Clear Search Filter
+                    </button>
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3.5 sm:gap-4 max-h-[580px] overflow-y-auto pr-1">
+                    {filteredModelsList.map((m) => (
+                      <button
+                        key={m.name}
+                        type="button"
+                        onClick={() => handleSelectPhoneForRepair(form.brand, m.name)}
+                        className="group relative flex flex-col items-center justify-between p-4 sm:p-5 rounded-2xl border border-gray-200/90 bg-white hover:border-[#00a896] hover:shadow-xl hover:-translate-y-1 transition-all duration-300 text-center cursor-pointer overflow-hidden"
+                      >
+                        {/* Top Subtle Pill */}
+                        <span className="text-[10px] font-extrabold text-teal-700 bg-teal-50 group-hover:bg-teal-600 group-hover:text-white transition-colors px-2 py-0.5 rounded-full mb-3">
+                          Lucknow Express
+                        </span>
+
+                        <div className="grid h-12 w-12 sm:h-14 sm:w-14 place-items-center rounded-2xl bg-gradient-to-br from-teal-50 to-emerald-50 text-[#00a896] group-hover:from-[#00a896] group-hover:to-teal-600 group-hover:text-white transition-all duration-300 shadow-xs">
+                          <Smartphone className="h-6 w-6 sm:h-7 sm:w-7" />
+                        </div>
+
+                        <p className="mt-3 text-xs sm:text-sm font-black text-gray-900 group-hover:text-[#00a896] line-clamp-2 transition-colors">
+                          {m.name}
+                        </p>
+
+                        <div className="mt-4 w-full py-2 px-3 rounded-xl bg-slate-900 text-white font-extrabold text-xs group-hover:bg-[#00a896] transition-all flex items-center justify-center gap-1 shadow-sm">
+                          Select Issue <ArrowRight className="h-3.5 w-3.5 group-hover:translate-x-1 transition-transform" />
+                        </div>
+                      </button>
+                    ))}
                   </div>
                 )}
               </div>
+            ) : (
+              /* BRAND SELECTION GRID (Shown when no brand is selected) */
+              <>
+                <div className="card p-6 md:p-8 rounded-[28px] border border-gray-200/80 bg-white shadow-sm">
+                  <div className="flex items-center justify-between border-b border-gray-100 pb-4">
+                    <div>
+                      <span className="badge bg-teal-50 text-teal-800 font-extrabold text-xs">
+                        Step 1: Pick Manufacturer
+                      </span>
+                      <h2 className="mt-2 font-display text-xl sm:text-2xl font-black text-ink-900 flex items-center gap-2">
+                        <Smartphone className="h-6 w-6 text-[#00a896]" /> Select Phone Brand to Repair
+                      </h2>
+                      <p className="mt-1 text-xs text-ink-500">Choose your phone manufacturer to explore dedicated model repair catalogs</p>
+                    </div>
+                  </div>
+
+                  <div className="mt-6 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3.5 md:gap-4">
+                    {BRAND_CARDS.map((item) => (
+                      <button
+                        key={item.name}
+                        type="button"
+                        onClick={() => handleBrandSelect(item.name)}
+                        className="group relative flex flex-col items-center justify-center p-5 rounded-2xl border border-gray-200/90 bg-white hover:border-[#00a896] hover:shadow-xl hover:-translate-y-1 transition-all duration-300 cursor-pointer overflow-hidden"
+                      >
+                        <div className="h-14 w-14 p-2 rounded-2xl bg-gray-50 group-hover:bg-teal-50 transition-colors flex items-center justify-center">
+                          <img src={item.logo} alt={item.name} className="h-full w-full object-contain" />
+                        </div>
+                        <span className="mt-3 text-sm font-black text-ink-900 group-hover:text-[#00a896] transition-colors">{item.name}</span>
+                        <span className="mt-1 text-[11px] font-bold text-gray-400 group-hover:text-[#00a896] transition-colors flex items-center gap-0.5">
+                          View Models <ArrowRight className="h-3 w-3 group-hover:translate-x-0.5 transition-transform" />
+                        </span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Popular Repair Models Grid */}
+                <div className="card p-6 md:p-8 rounded-[28px] border border-gray-200/80 bg-white shadow-sm">
+                  <div className="flex items-center justify-between border-b border-gray-100 pb-4">
+                    <div>
+                      <span className="badge bg-amber-50 text-amber-800 font-extrabold text-xs">
+                        Popular Choices in Lucknow
+                      </span>
+                      <h3 className="mt-2 font-display text-lg sm:text-xl font-black text-ink-900 flex items-center gap-2">
+                        <Sparkles className="h-5 w-5 text-amber-500" /> Frequently Repaired Phones
+                      </h3>
+                      <p className="mt-0.5 text-xs text-ink-500">Tap any popular model for instant repair pricing</p>
+                    </div>
+                  </div>
+
+                  <div className="mt-6 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3.5">
+                    {POPULAR_REPAIR_MODELS.map((item) => (
+                      <button
+                        key={item.model}
+                        type="button"
+                        onClick={() => handleQuickModelSelect(item)}
+                        className="group flex flex-col items-center p-4 rounded-2xl border border-gray-200/80 bg-white hover:border-[#00a896] hover:shadow-lg hover:-translate-y-1 transition-all text-center"
+                      >
+                        <img src={item.image} alt={item.model} className="h-20 w-20 object-contain rounded-xl" />
+                        <p className="mt-2 text-xs font-black text-ink-900 group-hover:text-[#00a896] truncate w-full transition-colors">{item.model}</p>
+                        <span className="mt-2 badge bg-emerald-50 text-emerald-800 font-black text-[10px]">
+                          From {formatINR(item.price)}
+                        </span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </>
             )}
-
-            {/* Popular Repair Models Grid */}
-            <div className="card p-6 md:p-8 rounded-[28px]">
-              <h3 className="font-display text-lg font-bold text-ink-900 flex items-center gap-2">
-                <Sparkles className="h-5 w-5 text-brand-600" /> Frequently Repaired Phones in Lucknow
-              </h3>
-              <p className="mt-0.5 text-xs text-ink-500">Tap model for instant repair pricing</p>
-
-              <div className="mt-6 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3">
-                {POPULAR_REPAIR_MODELS.map((item) => (
-                  <button
-                    key={item.model}
-                    type="button"
-                    onClick={() => handleQuickModelSelect(item)}
-                    className="flex flex-col items-center p-3 rounded-2xl border border-ink-100 bg-white hover:border-brand-400 hover:shadow-md transition text-center"
-                  >
-                    <img src={item.image} alt={item.model} className="h-20 w-20 object-contain rounded-lg" />
-                    <p className="mt-2 text-xs font-bold text-ink-900 truncate w-full">{item.model}</p>
-                    <span className="mt-1.5 badge bg-emerald-50 text-emerald-700 font-extrabold">
-                      Repairs from {formatINR(item.price)}
-                    </span>
-                  </button>
-                ))}
-              </div>
-            </div>
           </div>
         )}
 
@@ -454,7 +762,7 @@ export default function Repair() {
                     Device: <span className="font-bold text-ink-900">{form.brand} {form.model}</span>
                   </p>
                 </div>
-                <button type="button" onClick={() => setStep(1)} className="text-xs text-brand-600 font-bold hover:underline">
+                <button type="button" onClick={() => goToStep(1)} className="text-xs text-brand-600 font-bold hover:underline">
                   Change Phone
                 </button>
               </div>
@@ -507,10 +815,10 @@ export default function Repair() {
               </div>
 
               <div className="mt-8 flex justify-between gap-3 pt-4 border-t border-ink-100">
-                <button type="button" onClick={() => setStep(1)} className="btn-outline text-sm">
+                <button type="button" onClick={() => goToStep(1)} className="btn-outline text-sm">
                   Back
                 </button>
-                <button type="button" onClick={() => setStep(3)} className="btn-primary flex items-center gap-2">
+                <button type="button" onClick={() => goToStep(3)} className="btn-primary flex items-center gap-2">
                   View Upfront Quote & Guarantees <ArrowRight className="h-4 w-4" />
                 </button>
               </div>
@@ -553,10 +861,10 @@ export default function Repair() {
               </div>
 
               <div className="mt-8 flex justify-between gap-3 pt-4 border-t border-ink-100">
-                <button type="button" onClick={() => setStep(2)} className="btn-outline text-sm">
+                <button type="button" onClick={() => goToStep(2)} className="btn-outline text-sm">
                   Change Issue
                 </button>
-                <button type="button" onClick={() => setStep(4)} className="btn-primary flex items-center gap-2">
+                <button type="button" onClick={() => goToStep(4)} className="btn-primary flex items-center gap-2">
                   Schedule Doorstep Booking <ArrowRight className="h-4 w-4" />
                 </button>
               </div>
@@ -642,7 +950,7 @@ export default function Repair() {
               </div>
 
               <div className="mt-8 flex justify-between gap-3 pt-4 border-t border-ink-100">
-                <button type="button" onClick={() => setStep(3)} className="btn-outline text-sm">
+                <button type="button" onClick={() => goToStep(3)} className="btn-outline text-sm">
                   Back
                 </button>
                 <button
