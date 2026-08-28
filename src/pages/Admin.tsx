@@ -15,6 +15,10 @@ import {
   LogOut,
   Truck,
   ShieldCheck,
+  Camera,
+  Upload,
+  Trash2,
+  Image as ImageIcon,
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import type {
@@ -1564,6 +1568,84 @@ export default function Admin() {
                   className="input text-xs"
                 />
               </div>
+
+              {/* 📷 CUSTOM PRODUCT IMAGE UPLOADER & MANAGEMENT */}
+              <div className="space-y-2.5 pt-2 border-t border-gray-100">
+                <div className="flex items-center justify-between">
+                  <label className="label text-xs font-bold text-gray-900 flex items-center gap-1.5">
+                    <ImageIcon className="h-4 w-4 text-[#00a896]" /> Product Photos & Images
+                  </label>
+                  <label className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-teal-50 hover:bg-teal-100 text-[#00a896] text-xs font-bold cursor-pointer transition">
+                    <Upload className="h-3.5 w-3.5" /> Upload Photo From Device
+                    <input
+                      type="file"
+                      accept="image/*"
+                      multiple
+                      className="hidden"
+                      onChange={(e) => {
+                        const files = Array.from(e.target.files || []);
+                        files.forEach((file) => {
+                          if (file.size > 5 * 1024 * 1024) {
+                            alert(`File ${file.name} is too large (>5MB)`);
+                            return;
+                          }
+                          const reader = new FileReader();
+                          reader.onloadend = () => {
+                            const b64 = reader.result as string;
+                            setListPhoneForm((prev) => {
+                              const existing = prev.images ? prev.images.split('\n').filter(Boolean) : [];
+                              return { ...prev, images: [...existing, b64].join('\n') };
+                            });
+                          };
+                          reader.readAsDataURL(file);
+                        });
+                      }}
+                    />
+                  </label>
+                </div>
+
+                {/* Thumbnail Previews */}
+                <div className="flex flex-wrap gap-2 py-1">
+                  {listPhoneForm.images
+                    .split('\n')
+                    .map((url) => url.trim())
+                    .filter(Boolean)
+                    .map((url, idx) => (
+                      <div key={idx} className="relative h-16 w-16 rounded-xl border border-gray-200 bg-gray-50 overflow-hidden group shrink-0">
+                        <img src={url} alt={`Preview ${idx + 1}`} className="h-full w-full object-cover" />
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const updated = listPhoneForm.images
+                              .split('\n')
+                              .map((s) => s.trim())
+                              .filter((s) => s && s !== url)
+                              .join('\n');
+                            setListPhoneForm({ ...listPhoneForm, images: updated });
+                          }}
+                          className="absolute top-1 right-1 h-5 w-5 rounded-full bg-red-600 text-white grid place-items-center opacity-80 hover:opacity-100 transition shadow-md text-[10px]"
+                          title="Remove image"
+                        >
+                          <X className="h-3 w-3" />
+                        </button>
+                      </div>
+                    ))}
+                </div>
+
+                {/* Direct Image URL Textarea */}
+                <div>
+                  <textarea
+                    rows={2}
+                    value={listPhoneForm.images}
+                    onChange={(e) => setListPhoneForm({ ...listPhoneForm, images: e.target.value })}
+                    placeholder="Image URLs (one per line) or use Upload button above"
+                    className="input text-xs font-mono"
+                  />
+                  <p className="text-[10px] text-gray-400 mt-1">
+                    Upload your own custom photos above or paste image URLs line by line.
+                  </p>
+                </div>
+              </div>
             </div>
 
             <div className="flex justify-end gap-2 pt-3 border-t border-ink-100">
@@ -1754,6 +1836,84 @@ export default function Admin() {
                     onChange={(e) => setProductForm({ ...productForm, stock: e.target.value })}
                     className="input text-xs font-bold"
                   />
+                </div>
+              </div>
+
+              {/* 📷 CUSTOM PRODUCT IMAGE UPLOADER & MANAGEMENT */}
+              <div className="space-y-2.5 pt-2 border-t border-gray-100">
+                <div className="flex items-center justify-between">
+                  <label className="label text-xs font-bold text-gray-900 flex items-center gap-1.5">
+                    <ImageIcon className="h-4 w-4 text-[#00a896]" /> Product Photos & Images
+                  </label>
+                  <label className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-teal-50 hover:bg-teal-100 text-[#00a896] text-xs font-bold cursor-pointer transition">
+                    <Upload className="h-3.5 w-3.5" /> Upload Photo From Device
+                    <input
+                      type="file"
+                      accept="image/*"
+                      multiple
+                      className="hidden"
+                      onChange={(e) => {
+                        const files = Array.from(e.target.files || []);
+                        files.forEach((file) => {
+                          if (file.size > 5 * 1024 * 1024) {
+                            alert(`File ${file.name} is too large (>5MB)`);
+                            return;
+                          }
+                          const reader = new FileReader();
+                          reader.onloadend = () => {
+                            const b64 = reader.result as string;
+                            setProductForm((prev) => {
+                              const existing = prev.images ? prev.images.split('\n').filter(Boolean) : [];
+                              return { ...prev, images: [...existing, b64].join('\n') };
+                            });
+                          };
+                          reader.readAsDataURL(file);
+                        });
+                      }}
+                    />
+                  </label>
+                </div>
+
+                {/* Thumbnail Previews */}
+                <div className="flex flex-wrap gap-2 py-1">
+                  {productForm.images
+                    .split('\n')
+                    .map((url) => url.trim())
+                    .filter(Boolean)
+                    .map((url, idx) => (
+                      <div key={idx} className="relative h-16 w-16 rounded-xl border border-gray-200 bg-gray-50 overflow-hidden group shrink-0">
+                        <img src={url} alt={`Preview ${idx + 1}`} className="h-full w-full object-cover" />
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const updated = productForm.images
+                              .split('\n')
+                              .map((s) => s.trim())
+                              .filter((s) => s && s !== url)
+                              .join('\n');
+                            setProductForm({ ...productForm, images: updated });
+                          }}
+                          className="absolute top-1 right-1 h-5 w-5 rounded-full bg-red-600 text-white grid place-items-center opacity-80 hover:opacity-100 transition shadow-md text-[10px]"
+                          title="Remove image"
+                        >
+                          <X className="h-3 w-3" />
+                        </button>
+                      </div>
+                    ))}
+                </div>
+
+                {/* Direct Image URL Textarea */}
+                <div>
+                  <textarea
+                    rows={2}
+                    value={productForm.images}
+                    onChange={(e) => setProductForm({ ...productForm, images: e.target.value })}
+                    placeholder="Image URLs (one per line) or use Upload button above"
+                    className="input text-xs font-mono"
+                  />
+                  <p className="text-[10px] text-gray-400 mt-1">
+                    Upload your own custom photos above or paste image URLs line by line.
+                  </p>
                 </div>
               </div>
             </div>

@@ -27,7 +27,7 @@ export default function HeroSection() {
     if (slidesCount <= 1) return;
     const timer = window.setInterval(() => {
       setActiveSlide((current) => (current + 1) % slidesCount);
-    }, 5500);
+    }, 2500);
 
     return () => window.clearInterval(timer);
   }, [slidesCount]);
