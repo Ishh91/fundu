@@ -16,8 +16,8 @@ export default function AdminLogin() {
     }
   }, [user, profile, authLoading, navigate]);
 
-  const [email, setEmail] = useState('admin@fundu.in');
-  const [password, setPassword] = useState('Admin@123456');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 

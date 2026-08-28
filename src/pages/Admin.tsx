@@ -66,8 +66,8 @@ export default function Admin() {
   const [searchParams] = useSearchParams();
 
   // Admin Login Form State
-  const [adminEmail, setAdminEmail] = useState('admin@fundu.in');
-  const [adminPassword, setAdminPassword] = useState('Admin@123456');
+  const [adminEmail, setAdminEmail] = useState('');
+  const [adminPassword, setAdminPassword] = useState('');
   const [adminLoginLoading, setAdminLoginLoading] = useState(false);
   const [adminLoginError, setAdminLoginError] = useState<string | null>(null);
 
