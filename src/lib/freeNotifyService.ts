@@ -154,21 +154,25 @@ export async function sendEmailOtpCode(email: string, otp: string, userName?: st
     return emailjsResult;
   }
 
-  // 2. Fallback to Render backend API endpoint
+  // 2. Try Render backend API endpoint (with 1-shot retry for cold boot / 502)
   const apiBase = (import.meta.env.VITE_API_URL as string | undefined) || 'https://fundu.onrender.com/api';
   const targetUrl = `${apiBase.replace(/\/$/, '')}/email/send-otp`;
 
-  try {
-    const res = await fetch(targetUrl, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email: recipientEmail, otp, userName: name }),
-    });
-    if (res.ok) {
-      return await res.json();
+  for (let attempt = 0; attempt < 2; attempt++) {
+    try {
+      const res = await fetch(targetUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: recipientEmail, otp, userName: name }),
+      });
+      if (res.ok) {
+        return await res.json();
+      }
+    } catch {
+      if (attempt === 0) {
+        await new Promise((r) => setTimeout(r, 1200));
+      }
     }
-  } catch (err) {
-    console.warn('Backend Email OTP endpoint failed, logging locally:', err);
   }
 
   console.log(`🔑 [Email OTP Code Dispatched] To: ${recipientEmail} → OTP: ${otp}`);
