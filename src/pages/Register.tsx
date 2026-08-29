@@ -77,7 +77,9 @@ export default function Register() {
 
     // Pre-check database for existing email before sending EmailJS OTP
     try {
-      const baseUrl = (import.meta.env.VITE_API_URL as string | undefined) || 'https://fundu.onrender.com/api';
+      const isLocal = typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
+      const envUrl = import.meta.env.VITE_API_URL as string | undefined;
+      const baseUrl = (!isLocal && envUrl && !envUrl.includes('localhost')) ? envUrl : (!isLocal ? 'https://fundu.onrender.com/api' : (envUrl || 'https://fundu.onrender.com/api'));
       const targetUrl = `${baseUrl.replace(/\/$/, '')}/auth/check-email`;
 
       const checkRes = await fetch(targetUrl, {

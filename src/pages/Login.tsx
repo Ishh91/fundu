@@ -147,7 +147,11 @@ export default function Login() {
     setResetError(null);
 
     try {
-      const primaryUrl = 'http://localhost:4000/api/auth/reset-password';
+      const isLocal = typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
+      const envUrl = import.meta.env.VITE_API_URL as string | undefined;
+      const apiBase = (!isLocal && envUrl && !envUrl.includes('localhost')) ? envUrl : (!isLocal ? 'https://fundu.onrender.com/api' : (envUrl || 'http://localhost:4000/api'));
+      
+      const primaryUrl = `${apiBase.replace(/\/$/, '')}/auth/reset-password`;
       const renderUrl = 'https://fundu.onrender.com/api/auth/reset-password';
 
       let response;
@@ -161,16 +165,21 @@ export default function Login() {
           }),
         });
       } catch {
-        response = await fetch(renderUrl, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            email: resetEmail.trim().toLowerCase(),
-            newPassword: newPassword,
-          }),
-        });
+        if (primaryUrl !== renderUrl) {
+          response = await fetch(renderUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              email: resetEmail.trim().toLowerCase(),
+              newPassword: newPassword,
+            }),
+          });
+        }
       }
 
+      if (!response) {
+        throw new Error('Failed to connect to authentication server');
+      }
       const json = await response.json();
       if (json.error) {
         throw new Error(json.error.message || json.error);
