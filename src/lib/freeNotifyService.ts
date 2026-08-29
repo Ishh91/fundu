@@ -90,7 +90,7 @@ export async function sendFreeEmailResend(
   `;
 
   // 1. Try Node backend API endpoint
-  const apiBase = (import.meta.env.VITE_API_URL as string | undefined) || 'https://fundu.onrender.com/api';
+  const apiBase = 'https://fundu.onrender.com/api';
   try {
     const res = await fetch(`${apiBase.replace(/\/$/, '')}/email/send`, {
       method: 'POST',
@@ -155,7 +155,7 @@ export async function sendEmailOtpCode(email: string, otp: string, userName?: st
   }
 
   // 2. Try Render backend API endpoint (with 1-shot retry for cold boot / 502)
-  const apiBase = (import.meta.env.VITE_API_URL as string | undefined) || 'https://fundu.onrender.com/api';
+  const apiBase = 'https://fundu.onrender.com/api';
   const targetUrl = `${apiBase.replace(/\/$/, '')}/email/send-otp`;
 
   for (let attempt = 0; attempt < 2; attempt++) {

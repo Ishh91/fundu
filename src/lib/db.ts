@@ -28,16 +28,7 @@ type Filter = {
   value: unknown;
 };
 
-const resolveApiBase = () => {
-  const envUrl = import.meta.env.VITE_API_URL as string | undefined;
-  if (envUrl && envUrl.trim() && !envUrl.includes('localhost') && !envUrl.includes('127.0.0.1')) {
-    return envUrl.trim().replace(/\/$/, '');
-  }
-  return 'https://fundu.onrender.com/api';
-};
-
-const API_BASE = resolveApiBase();
-const RENDER_API_BASE = 'https://fundu.onrender.com/api';
+const API_BASE = 'https://fundu.onrender.com/api';
 const SESSION_KEY = 'fundu_mongo_session';
 
 const authListeners = new Set<AuthChangeHandler>();
@@ -101,28 +92,10 @@ const apiRequest = async <T>(path: string, init: RequestInit = {}, useAuth = tru
     }
 
     return { data: (payload?.data ?? null) as T | null, error: null };
-  } catch (error) {
-    // 2. Fallback to Render production backend if local request fails
-    try {
-      const response = await fetch(`${RENDER_API_BASE}${path}`, { ...init, headers });
-      const payload = await response.json().catch(() => null);
-
-      if (response.ok) {
-        return { data: (payload?.data ?? null) as T | null, error: null };
-      }
-
-      const errorMessage =
-        typeof payload?.error === 'string'
-          ? payload.error
-          : payload?.error?.message || payload?.message || 'Authentication failed.';
-      return { data: null, error: createError(errorMessage) };
-    } catch {
-      // Silent catch for remote fallback
-    }
-
+  } catch (error: any) {
     return {
       data: null,
-      error: createError('Backend server is connecting. Please try again.'),
+      error: createError(error?.message || 'Backend server connection failed. Please try again.'),
     };
   }
 };

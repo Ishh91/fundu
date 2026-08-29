@@ -100,7 +100,7 @@ export default function Login() {
     try {
       // 1. Check if Email is registered in database BEFORE sending OTP
       // 1. Check if Email is registered in database BEFORE sending OTP
-      const baseUrl = (import.meta.env.VITE_API_URL as string | undefined) || 'https://fundu.onrender.com/api';
+      const baseUrl = 'https://fundu.onrender.com/api';
       const checkRes = await fetch(`${baseUrl.replace(/\/$/, '')}/auth/check-email`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -147,9 +147,7 @@ export default function Login() {
     setResetError(null);
 
     try {
-      const apiBase = (import.meta.env.VITE_API_URL as string | undefined) || 'https://fundu.onrender.com/api';
-      const primaryUrl = `${apiBase.replace(/\/$/, '')}/auth/reset-password`;
-      const renderUrl = 'https://fundu.onrender.com/api/auth/reset-password';
+      const primaryUrl = 'https://fundu.onrender.com/api/auth/reset-password';
 
       let response;
       try {

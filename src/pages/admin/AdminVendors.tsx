@@ -111,7 +111,7 @@ export default function AdminVendors() {
     const generatedOtp = Math.floor(100000 + Math.random() * 900000).toString();
 
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL || 'https://fundu.onrender.com/api'}/auth/register`, {
+      const response = await fetch('https://fundu.onrender.com/api/auth/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

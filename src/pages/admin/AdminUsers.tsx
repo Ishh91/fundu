@@ -101,7 +101,7 @@ export default function AdminUsers({
 
     try {
       // 1. Delete from database
-      const baseUrl = (import.meta.env.VITE_API_URL as string | undefined) || 'https://fundu.onrender.com/api';
+      const baseUrl = 'https://fundu.onrender.com/api';
       const targetUrl = `${baseUrl.replace(/\/$/, '')}/auth/delete-user`;
 
       await fetch(targetUrl, {
@@ -138,7 +138,7 @@ export default function AdminUsers({
 
     try {
       // 1. Create account on backend (is_verified: false until user enters Email OTP)
-      const baseUrl = (import.meta.env.VITE_API_URL as string | undefined) || 'https://fundu.onrender.com/api';
+      const baseUrl = 'https://fundu.onrender.com/api';
       const targetUrl = `${baseUrl.replace(/\/$/, '')}/auth/register`;
 
       const response = await fetch(targetUrl, {
