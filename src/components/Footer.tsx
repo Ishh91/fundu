@@ -97,12 +97,12 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
-                <Link to="/repair" className="hover:text-teal-700 flex items-center gap-1.5 transition">
+                <Link to="/repair/issue/screen" className="hover:text-teal-700 flex items-center gap-1.5 transition">
                   <Wrench className="h-3.5 w-3.5 text-teal-600" /> Doorstep Screen Replacement
                 </Link>
               </li>
               <li>
-                <Link to="/repair?issue=battery" className="hover:text-teal-700 flex items-center gap-1.5 transition">
+                <Link to="/repair/issue/battery" className="hover:text-teal-700 flex items-center gap-1.5 transition">
                   <Wrench className="h-3.5 w-3.5 text-teal-600" /> Doorstep Battery Replacement
                 </Link>
               </li>

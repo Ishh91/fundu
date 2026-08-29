@@ -8,6 +8,8 @@ import BuyPhones from './pages/BuyPhones';
 import SellPhone from './pages/SellPhone';
 import SellBrandPage from './pages/SellBrandPage';
 import Repair from './pages/Repair';
+import RepairBrandPage from './pages/RepairBrandPage';
+import RepairIssuePage from './pages/RepairIssuePage';
 import SpareParts from './pages/SpareParts';
 import About from './pages/About';
 import Contact from './pages/Contact';
@@ -110,7 +112,15 @@ function MainLayout() {
           <Route path="/sell-old-mobile-phone" element={<SellPhone />} />
           <Route path="/sell-old-mobile-phone/sell-:brandSlug" element={<SellBrandPage />} />
           <Route path="/sell-old-mobile-phone/sell-:brandSlug/sell-:modelSlug" element={<SellPhone />} />
+          {/* Repair Ecosystem & Dynamic Sub-Pages */}
           <Route path="/repair" element={<Repair />} />
+          <Route path="/repair/:brandSlug" element={<RepairBrandPage />} />
+          <Route path="/repair/:brandSlug/:modelSlug" element={<Repair />} />
+          <Route path="/repair/issue/:issueSlug" element={<RepairIssuePage />} />
+          <Route path="/mobile-repair-in-lucknow" element={<Repair />} />
+          <Route path="/mobile-repair-in-lucknow/repair-:brandSlug" element={<RepairBrandPage />} />
+          <Route path="/doorstep-mobile-repair" element={<Repair />} />
+          <Route path="/doorstep-mobile-repair/:issueSlug" element={<RepairIssuePage />} />
           <Route path="/spare-parts" element={<SpareParts />} />
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<Contact />} />
