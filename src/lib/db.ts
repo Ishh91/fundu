@@ -268,14 +268,23 @@ export const auth: AuthApi = {
     const storedSession = readSession();
     if (!storedSession) return { data: { session: null }, error: null };
 
-    const response = await apiRequest<{ session: Session }>('/auth/me', { method: 'GET' }, true);
-    if (response.error || !response.data?.session) {
-      writeSession(null);
-      return { data: { session: null }, error: null };
+    try {
+      const response = await apiRequest<{ session: Session }>('/auth/me', { method: 'GET' }, true);
+      if (!response.error && response.data?.session) {
+        writeSession(response.data.session);
+        return { data: { session: response.data.session }, error: null };
+      }
+
+      const errMsg = response.error?.message?.toLowerCase() || '';
+      if (errMsg.includes('401') || errMsg.includes('expired') || errMsg.includes('invalid')) {
+        writeSession(null);
+        return { data: { session: null }, error: null };
+      }
+    } catch {
+      // Retain stored session on network errors or server cold-starts
     }
 
-    writeSession(response.data.session);
-    return { data: { session: response.data.session }, error: null };
+    return { data: { session: storedSession }, error: null };
   },
 
   onAuthStateChange(callback) {

@@ -97,12 +97,12 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
-                <Link to="/repair/issue/screen" className="hover:text-teal-700 flex items-center gap-1.5 transition">
+                <Link to="/repair" className="hover:text-teal-700 flex items-center gap-1.5 transition">
                   <Wrench className="h-3.5 w-3.5 text-teal-600" /> Doorstep Screen Replacement
                 </Link>
               </li>
               <li>
-                <Link to="/repair/issue/battery" className="hover:text-teal-700 flex items-center gap-1.5 transition">
+                <Link to="/repair?issue=battery" className="hover:text-teal-700 flex items-center gap-1.5 transition">
                   <Wrench className="h-3.5 w-3.5 text-teal-600" /> Doorstep Battery Replacement
                 </Link>
               </li>
@@ -131,11 +131,9 @@ export default function Footer() {
               + All other Lucknow pin codes supported!
             </p>
           </div>
-
-          {/* Col 4: Lucknow Reach & Helpdesk */}
           <div>
             <h4 className="font-display text-xs font-black uppercase tracking-wider text-slate-900">
-              Lucknow Helpline
+              Helpline
             </h4>
             <ul className="mt-4 space-y-3 text-xs text-slate-700 font-medium">
               <li className="flex items-start gap-2.5">
@@ -168,7 +166,7 @@ export default function Footer() {
 
         {/* Bottom Strip */}
         <div className="mt-12 flex flex-col sm:flex-row items-center justify-between gap-4 border-t border-slate-200/80 pt-6 text-xs text-slate-500 font-medium">
-          <p>© {new Date().getFullYear()} Fundu Technologies Pvt. Ltd. Exclusively for Lucknow.</p>
+          <p>© {new Date().getFullYear()} Fundu Technologies Pvt. Ltd.</p>
           <div className="flex items-center gap-4 text-xs">
             <Link to="/about" className="hover:text-teal-700 transition">About Us</Link>
             <span>•</span>
