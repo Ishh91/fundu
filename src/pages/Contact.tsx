@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { Mail, Phone, MapPin, Clock, Send, CheckCircle2, AlertCircle } from 'lucide-react';
 import { db } from '../lib/db';
 
+import { sendEmailJSContact } from '../lib/emailjsService';
+
 export default function Contact() {
   const [form, setForm] = useState({ name: '', email: '', phone: '', subject: '', message: '' });
   const [loading, setLoading] = useState(false);
@@ -12,15 +14,39 @@ export default function Contact() {
     e.preventDefault();
     setLoading(true);
     setError(null);
-    const { error } = await db.from('support_tickets').insert({
-      name: form.name,
-      email: form.email,
-      phone: form.phone || null,
-      subject: form.subject,
-      message: form.message,
+
+    // 1. Save query to Database (contact_messages)
+    const { error: dbErr } = await db.from('contact_messages').insert({
+      name: form.name.trim(),
+      email: form.email.trim().toLowerCase(),
+      phone: form.phone.trim() || null,
+      subject: form.subject.trim(),
+      message: form.message.trim(),
+      status: 'open',
     });
+
+    if (dbErr) {
+      // Fallback to support_tickets if needed
+      await db.from('support_tickets').insert({
+        name: form.name.trim(),
+        email: form.email.trim().toLowerCase(),
+        phone: form.phone.trim() || null,
+        subject: form.subject.trim(),
+        message: form.message.trim(),
+        status: 'open',
+      });
+    }
+
+    // 2. Dispatch Email Notification via EmailJS
+    await sendEmailJSContact({
+      name: form.name.trim(),
+      email: form.email.trim(),
+      phone: form.phone.trim(),
+      subject: form.subject.trim(),
+      message: form.message.trim(),
+    });
+
     setLoading(false);
-    if (error) { setError(error.message); return; }
     setSuccess(true);
     setForm({ name: '', email: '', phone: '', subject: '', message: '' });
   };

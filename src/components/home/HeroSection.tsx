@@ -27,7 +27,7 @@ export default function HeroSection() {
     if (slidesCount <= 1) return;
     const timer = window.setInterval(() => {
       setActiveSlide((current) => (current + 1) % slidesCount);
-    }, 2500);
+    }, 6500); // 6.5 Seconds for optimal reading time
 
     return () => window.clearInterval(timer);
   }, [slidesCount]);
@@ -67,27 +67,27 @@ export default function HeroSection() {
             </picture>
           </Link>
 
-          {/* Floating Left Navigation Button */}
+          {/* Floating Light & Subtle Left Navigation Button */}
           {slidesCount > 1 && (
             <button
               type="button"
               onClick={() => setActiveSlide((currentIndex - 1 + slidesCount) % slidesCount)}
-              className="absolute left-3 sm:left-6 top-1/2 -translate-y-1/2 z-30 flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-full bg-slate-950/40 hover:bg-white text-white hover:text-slate-950 backdrop-blur-xl border border-white/40 shadow-2xl transition-all duration-300 hover:scale-110 active:scale-95 cursor-pointer"
+              className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 z-30 flex h-8 w-8 sm:h-10 sm:w-10 items-center justify-center rounded-full bg-slate-950/20 hover:bg-slate-950/60 text-white/70 hover:text-white backdrop-blur-md border border-white/20 shadow-sm transition-all duration-300 opacity-60 hover:opacity-100 hover:scale-105 active:scale-95 cursor-pointer"
               aria-label="Previous Slide"
             >
-              <ChevronLeft className="h-5 w-5 sm:h-6 sm:w-6" />
+              <ChevronLeft className="h-4 w-4 sm:h-5 sm:w-5" />
             </button>
           )}
 
-          {/* Floating Right Navigation Button */}
+          {/* Floating Light & Subtle Right Navigation Button */}
           {slidesCount > 1 && (
             <button
               type="button"
               onClick={() => setActiveSlide((currentIndex + 1) % slidesCount)}
-              className="absolute right-3 sm:right-6 top-1/2 -translate-y-1/2 z-30 flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-full bg-slate-950/40 hover:bg-white text-white hover:text-slate-950 backdrop-blur-xl border border-white/40 shadow-2xl transition-all duration-300 hover:scale-110 active:scale-95 cursor-pointer"
+              className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 z-30 flex h-8 w-8 sm:h-10 sm:w-10 items-center justify-center rounded-full bg-slate-950/20 hover:bg-slate-950/60 text-white/70 hover:text-white backdrop-blur-md border border-white/20 shadow-sm transition-all duration-300 opacity-60 hover:opacity-100 hover:scale-105 active:scale-95 cursor-pointer"
               aria-label="Next Slide"
             >
-              <ChevronRight className="h-5 w-5 sm:h-6 sm:w-6" />
+              <ChevronRight className="h-4 w-4 sm:h-5 sm:w-5" />
             </button>
           )}
 

@@ -25,7 +25,6 @@ import Checkout from './pages/Checkout';
 import Payment from './pages/Payment';
 import OrderSuccess from './pages/OrderSuccess';
 import NotFound from './pages/NotFound';
-import DocumentDoctor from './pages/DocumentDoctor';
 import PartnerProgram from './pages/PartnerProgram';
 import FunduStore from './pages/FunduStore';
 import BrandHub from './pages/BrandHub';
@@ -228,7 +227,6 @@ function MainLayout() {
           <Route path="/checkout" element={<Checkout />} />
           <Route path="/payment" element={<Payment />} />
           <Route path="/order-success" element={<OrderSuccess />} />
-          <Route path="/document-doctor" element={<DocumentDoctor />} />
           <Route path="/partner" element={<PartnerProgram />} />
           <Route path="/festival" element={<BuyPhones />} />
           <Route path="/store" element={<FunduStore />} />

@@ -12,6 +12,7 @@ import {
   Truck,
   X,
   MessageSquare,
+  Mail,
   MapPin,
   ExternalLink,
   Image as ImageIcon,
@@ -140,6 +141,7 @@ export default function AdminSidebar({
           path: '/admin/banners',
         },
         { id: 'reviews' as AdminTab, label: 'Customer Reviews', icon: MessageSquare, path: '/admin?tab=reviews' },
+        { id: 'contact' as AdminTab, label: 'Contact Queries', icon: Mail, path: '/admin?tab=contact' },
       ],
     },
   ];

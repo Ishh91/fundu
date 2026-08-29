@@ -58,6 +58,7 @@ import AdminUsers from './admin/AdminUsers';
 import AdminReviews from './admin/AdminReviews';
 import AdminHeroPosters from './admin/AdminHeroPosters';
 import AdminWholesalers from './admin/AdminWholesalers';
+import AdminContactQueries from './admin/AdminContactQueries';
 
 export default function Admin() {
   const { user, profile, loading, signIn, signOut } = useAuth();
@@ -1120,6 +1121,7 @@ export default function Admin() {
                 {tab === 'parts' && 'Spare Parts & OEM Components'}
                 {tab === 'users' && 'User Accounts & Roles'}
                 {tab === 'reviews' && 'Customer Reviews & Moderation'}
+                {tab === 'contact' && 'Customer Help & Contact Queries'}
                 {tab === 'overview' && 'Admin Control Center'}
               </h1>
               <p className="text-[11px] font-bold text-emerald-600 flex items-center gap-1">
@@ -1562,6 +1564,8 @@ export default function Admin() {
               onDeleteReview={deleteReview}
             />
           )}
+
+          {tab === 'contact' && <AdminContactQueries />}
         </main>
       </div>
 

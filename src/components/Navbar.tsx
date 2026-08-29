@@ -687,11 +687,6 @@ export default function Navbar() {
                           </Link>
                         </li>
                         <li>
-                          <Link to="/document-doctor" className="font-semibold text-gray-800 hover:text-[#00a896] block">
-                            Document Doctor (Bill & KYC)
-                          </Link>
-                        </li>
-                        <li>
                           <Link to="/partner" className="font-semibold text-gray-800 hover:text-[#00a896] block">
                             Become a Partner / Franchise
                           </Link>
@@ -835,14 +830,6 @@ export default function Navbar() {
                 Sell Appliances
               </Link>
 
-              {/* Document Doctor */}
-              <Link
-                to="/document-doctor"
-                className="py-2 hover:text-[#00a896] transition-colors flex items-center gap-1.5"
-              >
-                <FileText className="h-3.5 w-3.5 text-[#00a896]" />
-                <span>Document Doctor</span>
-              </Link>
 
               {/* Become Partner */}
               <Link
@@ -1018,14 +1005,6 @@ export default function Navbar() {
                   </span>
                 </Link>
 
-                <Link
-                  to="/document-doctor"
-                  className="flex items-center justify-between rounded-xl px-3 py-2.5 text-sm font-bold text-gray-800 hover:bg-gray-50"
-                >
-                  <span className="flex items-center gap-2.5">
-                    <FileText className="h-4 w-4 text-[#00a896]" /> Document Doctor
-                  </span>
-                </Link>
 
                 <Link
                   to="/partner"

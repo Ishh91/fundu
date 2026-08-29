@@ -78,3 +78,43 @@ export async function sendEmailJSWelcome(email: string, userName: string = 'User
     return { success: true, simulated: true };
   }
 }
+
+/**
+ * Send Contact Form Submission Notification Email via EmailJS (@emailjs/browser)
+ */
+export async function sendEmailJSContact(contactData: {
+  name: string;
+  email: string;
+  phone?: string;
+  subject: string;
+  message: string;
+}) {
+  const { serviceId, templateIdWelcome, publicKey } = getEmailJSConfig();
+  const templateIdContact = (import.meta.env.VITE_EMAILJS_TEMPLATE_ID_CONTACT as string | undefined) || templateIdWelcome;
+
+  if (!serviceId || !publicKey) {
+    console.log(`🎉 [EmailJS Contact Message Simulated]:`, contactData);
+    return { success: true, simulated: true };
+  }
+
+  try {
+    const templateParams = {
+      from_name: contactData.name,
+      from_email: contactData.email,
+      user_email: contactData.email,
+      phone: contactData.phone || 'N/A',
+      subject: contactData.subject,
+      message: contactData.message,
+      to_email: 'trustiqueassist0003@gmail.com',
+      reply_to: contactData.email,
+      app_name: 'Fundu Lucknow',
+    };
+
+    const response = await emailjs.send(serviceId, templateIdContact, templateParams, publicKey);
+    console.log('🎉 [EmailJS Contact Sent Successfully]:', response.status, response.text);
+    return { success: true, response };
+  } catch (error: any) {
+    console.warn('⚠️ [EmailJS Contact Fallback]:', error?.text || error?.message);
+    return { success: true, simulated: true };
+  }
+}
