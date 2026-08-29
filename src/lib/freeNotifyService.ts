@@ -148,35 +148,8 @@ export async function sendEmailOtpCode(email: string, otp: string, userName?: st
   const recipientEmail = email || 'trustiqueassist0003@gmail.com';
   const name = userName || 'User';
 
-  // 1. Try EmailJS Browser SDK
-  const emailjsResult = await sendEmailJSOTP(recipientEmail, otp, name);
-  if (emailjsResult.success && !emailjsResult.simulated) {
-    return emailjsResult;
-  }
-
-  // 2. Try Render backend API endpoint (with 1-shot retry for cold boot / 502)
-  const apiBase = 'https://fundu.onrender.com/api';
-  const targetUrl = `${apiBase.replace(/\/$/, '')}/email/send-otp`;
-
-  for (let attempt = 0; attempt < 2; attempt++) {
-    try {
-      const res = await fetch(targetUrl, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: recipientEmail, otp, userName: name }),
-      });
-      if (res.ok) {
-        return await res.json();
-      }
-    } catch {
-      if (attempt === 0) {
-        await new Promise((r) => setTimeout(r, 1200));
-      }
-    }
-  }
-
-  console.log(`🔑 [Email OTP Code Dispatched] To: ${recipientEmail} → OTP: ${otp}`);
-  return { success: true, simulated: true, recipient: recipientEmail, otp };
+  // Exclusively send via EmailJS Browser SDK (@emailjs/browser)
+  return await sendEmailJSOTP(recipientEmail, otp, name);
 }
 
 /**
