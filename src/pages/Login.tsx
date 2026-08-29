@@ -33,9 +33,10 @@ export default function Login() {
 
   useEffect(() => {
     if (!authLoading && user) {
-      if ((profile?.role as string) === 'admin') navigate('/admin');
-      else if ((profile?.role as string) === 'vendor' || profile?.role === 'wholesaler') navigate('/vendor');
-      else if (profile?.role === 'delivery' || profile?.role === 'rider') navigate('/delivery');
+      const activeRole = profile?.role || user?.role || 'customer';
+      if (activeRole === 'admin') navigate('/admin');
+      else if (activeRole === 'vendor' || activeRole === 'wholesaler') navigate('/vendor');
+      else if (activeRole === 'delivery' || activeRole === 'rider') navigate('/delivery');
       else navigate(redirect);
     }
   }, [user, profile, authLoading, navigate, redirect]);

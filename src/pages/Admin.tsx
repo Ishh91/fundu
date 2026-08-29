@@ -273,12 +273,13 @@ export default function Admin() {
 
   // Initial Data Fetch
   useEffect(() => {
-    if (!loading && (!user || profile?.role !== 'admin')) {
-      navigate('/login');
+    const activeRole = profile?.role || user?.role || 'customer';
+    if (!loading && (!user || activeRole !== 'admin')) {
+      navigate('/admin-login');
       return;
     }
 
-    if (user && profile?.role === 'admin') {
+    if (user && activeRole === 'admin') {
       loadAllData();
     }
   }, [user, profile, loading, navigate]);
@@ -351,7 +352,8 @@ export default function Admin() {
 
   // Real-time Background Lead Listener with Audio Chimes
   useEffect(() => {
-    if (!user || profile?.role !== 'admin') return;
+    const activeRole = profile?.role || user?.role || 'customer';
+    if (!user || activeRole !== 'admin') return;
 
     const pollInterval = setInterval(async () => {
       try {
@@ -992,7 +994,8 @@ export default function Admin() {
   }
 
   // 2. ADMIN AUTHENTICATION GATE (If not logged in as Admin)
-  if (!user || profile?.role !== 'admin') {
+  const activeRole = profile?.role || user?.role || 'customer';
+  if (!user || activeRole !== 'admin') {
     return (
       <div className="min-h-screen bg-slate-950 text-white flex flex-col items-center justify-center p-4 font-sans">
         <div className="w-full max-w-md bg-slate-900 border border-slate-800 rounded-3xl p-8 shadow-2xl space-y-6 animate-fade-in">

@@ -64,7 +64,7 @@ function ProtectedRoute({
   }
 
   if (allowedRoles && allowedRoles.length > 0) {
-    const userRole = profile?.role || 'customer';
+    const userRole = profile?.role || user?.role || 'customer';
     if (!allowedRoles.includes(userRole) && userRole !== 'admin') {
       return <Navigate to={redirectLogin} replace />;
     }

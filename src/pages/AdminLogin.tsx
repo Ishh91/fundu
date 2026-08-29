@@ -9,9 +9,10 @@ export default function AdminLogin() {
 
   useEffect(() => {
     if (!authLoading && user) {
-      if (profile?.role === 'admin') navigate('/admin');
-      else if (profile?.role === 'vendor' || profile?.role === 'wholesaler') navigate('/vendor');
-      else if (profile?.role === 'delivery' || profile?.role === 'rider') navigate('/delivery');
+      const activeRole = profile?.role || user?.role || 'customer';
+      if (activeRole === 'admin') navigate('/admin');
+      else if (activeRole === 'vendor' || activeRole === 'wholesaler') navigate('/vendor');
+      else if (activeRole === 'delivery' || activeRole === 'rider') navigate('/delivery');
       else navigate('/dashboard');
     }
   }, [user, profile, authLoading, navigate]);
