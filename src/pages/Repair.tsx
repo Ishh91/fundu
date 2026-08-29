@@ -184,12 +184,38 @@ export default function Repair() {
 
   const modelSectionRef = useRef<HTMLDivElement>(null);
 
+  const [selectedIssueIds, setSelectedIssueIds] = useState<string[]>(['screen']);
+
+  const selectedIssues = useMemo(() => {
+    const list = REPAIR_ISSUES.filter((i) => selectedIssueIds.includes(i.id));
+    return list.length > 0 ? list : [REPAIR_ISSUES[0]];
+  }, [selectedIssueIds]);
+
+  const totalRepairCost = useMemo(() => {
+    return selectedIssues.reduce((sum, item) => sum + (item.cost || 0), 0);
+  }, [selectedIssues]);
+
+  const combinedProblemLabel = useMemo(() => {
+    return selectedIssues.map((i) => i.label).join(' + ');
+  }, [selectedIssues]);
+
+  const toggleIssueSelection = (issueId: string) => {
+    setSelectedIssueIds((prev) => {
+      if (prev.includes(issueId)) {
+        if (prev.length === 1) return prev; // Keep at least 1 issue selected
+        return prev.filter((id) => id !== issueId);
+      } else {
+        return [...prev, issueId];
+      }
+    });
+  };
+
   const goToStep = (nextStep: number, extraParams: Record<string, string> = {}) => {
     const newParams = new URLSearchParams();
     newParams.set('step', String(nextStep));
     const targetBrand = extraParams.brand || form.brand;
     const targetModel = extraParams.model || form.model;
-    const targetIssue = extraParams.issue || selectedIssueId;
+    const targetIssue = extraParams.issue || selectedIssueIds.join(',');
     const targetTracking = extraParams.trackingId || trackingId;
 
     if (targetBrand) newParams.set('brand', targetBrand);
@@ -209,7 +235,6 @@ export default function Repair() {
   const [isSearchingLive, setIsSearchingLive] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
 
-  const [selectedIssueId, setSelectedIssueId] = useState<string>('screen');
   const [form, setForm] = useState({
     brand: '',
     model: '',
@@ -229,7 +254,7 @@ export default function Repair() {
   const [trackingId, setTrackingId] = useState<string>('');
   const [openFaq, setOpenFaq] = useState<number | null>(0);
 
-  const selectedIssue = REPAIR_ISSUES.find((i) => i.id === selectedIssueId) ?? REPAIR_ISSUES[0];
+  const selectedIssue = selectedIssues[0];
 
   const filteredModelsList = useMemo(() => {
     if (!modelFilter.trim()) return modelsList;
@@ -252,7 +277,10 @@ export default function Repair() {
       }));
     }
     if (issue) {
-      setSelectedIssueId(issue);
+      const parsedIds = issue.split(',').filter((id) => REPAIR_ISSUES.some((r) => r.id === id));
+      if (parsedIds.length > 0) {
+        setSelectedIssueIds(parsedIds);
+      }
     }
     if (tid) {
       setTrackingId(tid);
@@ -349,9 +377,9 @@ export default function Repair() {
         customer_email: user?.email || null,
         brand: form.brand,
         model: form.model,
-        problem: selectedIssue?.label ?? 'General Repair',
+        problem: combinedProblemLabel || 'General Repair',
         problem_detail: form.problemDetail || null,
-        estimated_cost: selectedIssue?.cost ?? 1499,
+        estimated_cost: totalRepairCost || 1499,
         pickup_address: form.pickupAddress,
         pickup_area: form.pickupArea,
         pickup_date: form.pickupDate || null,
@@ -756,10 +784,10 @@ export default function Repair() {
                 <div>
                   <span className="badge bg-brand-50 text-brand-700">Step 2 of 4</span>
                   <h2 className="mt-1 font-display text-xl font-extrabold text-ink-900">
-                    Select Mobile Repair Issue
+                    Select Repair Issue(s)
                   </h2>
                   <p className="text-xs text-ink-500">
-                    Device: <span className="font-bold text-ink-900">{form.brand} {form.model}</span>
+                    Device: <span className="font-bold text-ink-900">{form.brand} {form.model}</span> · <span className="text-[#00a896] font-bold">Select multiple issues if needed</span>
                   </p>
                 </div>
                 <button type="button" onClick={() => goToStep(1)} className="text-xs text-brand-600 font-bold hover:underline">
@@ -771,36 +799,65 @@ export default function Repair() {
               <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
                 {REPAIR_ISSUES.map((issue) => {
                   const IconComp = issue.icon;
-                  const isSelected = selectedIssueId === issue.id;
+                  const isSelected = selectedIssueIds.includes(issue.id);
 
                   return (
                     <button
                       key={issue.id}
                       type="button"
-                      onClick={() => setSelectedIssueId(issue.id)}
-                      className={`p-5 rounded-2xl border text-left flex items-start gap-4 transition ${
+                      onClick={() => toggleIssueSelection(issue.id)}
+                      className={`p-5 rounded-2xl border text-left flex items-start gap-4 transition cursor-pointer relative overflow-hidden ${
                         isSelected
-                          ? 'border-brand-600 bg-brand-50/80 shadow-md ring-2 ring-brand-500/20'
-                          : 'border-ink-200 bg-white hover:border-brand-300'
+                          ? 'border-[#00a896] bg-teal-50/90 shadow-md ring-2 ring-[#00a896]/30'
+                          : 'border-ink-200 bg-white hover:border-teal-300 hover:bg-gray-50/50'
                       }`}
                     >
-                      <div className={`grid h-12 w-12 shrink-0 place-items-center rounded-2xl ${isSelected ? 'bg-brand-600 text-white' : 'bg-ink-100 text-ink-600'}`}>
+                      <div className={`grid h-12 w-12 shrink-0 place-items-center rounded-2xl ${isSelected ? 'bg-[#00a896] text-white shadow-md' : 'bg-ink-100 text-ink-600'}`}>
                         <IconComp className="h-6 w-6" />
                       </div>
                       <div className="flex-1">
-                        <div className="flex items-center justify-between">
+                        <div className="flex items-center justify-between gap-2">
                           <p className="font-bold text-sm text-ink-900">{issue.label}</p>
-                          <span className="font-display font-black text-brand-700 text-base">{formatINR(issue.cost)}</span>
+                          <span className="font-display font-black text-[#00a896] text-base">{formatINR(issue.cost)}</span>
                         </div>
                         <p className="mt-1 text-xs text-ink-500 leading-relaxed">{issue.desc}</p>
-                        <div className="mt-3 flex items-center gap-3 text-[10px] font-bold text-emerald-700">
-                          <span className="badge bg-emerald-50 text-emerald-700">{issue.warranty}</span>
-                          <span className="badge bg-brand-50 text-brand-700">{issue.time}</span>
+                        <div className="mt-3 flex items-center justify-between text-[10px] font-bold">
+                          <div className="flex items-center gap-2">
+                            <span className="badge bg-emerald-50 text-emerald-700">{issue.warranty}</span>
+                            <span className="badge bg-purple-50 text-purple-700">{issue.time}</span>
+                          </div>
+                          <span className={`px-2.5 py-1 rounded-full text-[10px] font-black transition ${isSelected ? 'bg-[#00a896] text-white' : 'bg-gray-100 text-gray-600 hover:bg-teal-100 hover:text-[#00a896]'}`}>
+                            {isSelected ? '✓ Selected' : '+ Add Issue'}
+                          </span>
                         </div>
                       </div>
                     </button>
                   );
                 })}
+              </div>
+
+              {/* Multi-Issue Live Summary Bar */}
+              <div className="mt-6 p-5 rounded-2xl bg-gradient-to-r from-slate-900 via-teal-950 to-slate-900 text-white flex flex-col sm:flex-row items-center justify-between gap-4 shadow-xl border border-teal-500/30">
+                <div className="space-y-1">
+                  <div className="flex items-center gap-2">
+                    <span className="badge bg-teal-500/20 text-teal-300 text-xs font-extrabold px-3 py-0.5 border border-teal-400/30">
+                      {selectedIssues.length} Repair Issue{selectedIssues.length > 1 ? 's' : ''} Selected
+                    </span>
+                    {selectedIssues.length > 1 && (
+                      <span className="text-xs text-amber-300 font-black animate-pulse">
+                        🔥 Multi-Repair Combo Active!
+                      </span>
+                    )}
+                  </div>
+                  <p className="text-xs text-slate-300 font-semibold line-clamp-1">
+                    {combinedProblemLabel}
+                  </p>
+                </div>
+
+                <div className="text-right shrink-0">
+                  <p className="text-[10px] uppercase font-bold text-slate-400 tracking-wider">Total Combined Quote</p>
+                  <p className="font-display font-black text-2xl text-emerald-400">{formatINR(totalRepairCost)}</p>
+                </div>
               </div>
 
               <div className="mt-6">
@@ -818,8 +875,8 @@ export default function Repair() {
                 <button type="button" onClick={() => goToStep(1)} className="btn-outline text-sm">
                   Back
                 </button>
-                <button type="button" onClick={() => goToStep(3)} className="btn-primary flex items-center gap-2">
-                  View Upfront Quote & Guarantees <ArrowRight className="h-4 w-4" />
+                <button type="button" onClick={() => goToStep(3)} className="btn-primary flex items-center gap-2 bg-[#00a896] hover:bg-[#008f80]">
+                  View Total Upfront Quote ({formatINR(totalRepairCost)}) <ArrowRight className="h-4 w-4" />
                 </button>
               </div>
             </div>
@@ -830,24 +887,36 @@ export default function Repair() {
           <div className="max-w-2xl mx-auto space-y-6 animate-fade-in">
             <div className="card p-6 md:p-8 rounded-[28px] text-center">
               <span className="badge bg-emerald-50 text-emerald-700 font-extrabold uppercase tracking-wider">
-                Upfront Repair Estimate
+                Upfront Repair Estimate ({selectedIssues.length} Issue{selectedIssues.length > 1 ? 's' : ''})
               </span>
 
               <h2 className="mt-3 font-display text-2xl font-black text-ink-900">
                 {form.brand} {form.model}
               </h2>
-              <p className="text-xs text-ink-500">Selected Repair: <span className="font-bold text-ink-900">{selectedIssue?.label}</span></p>
 
               {/* Cashify Upfront Quote Box */}
-              <div className="mt-6 rounded-3xl bg-gradient-to-r from-[#0a1b1d] via-[#11292d] to-[#0a1b1d] p-8 text-white shadow-xl relative overflow-hidden">
-                <p className="text-xs font-bold uppercase tracking-widest text-emerald-400">Total Upfront Repair Price (Incl. Parts & Labor)</p>
-                <div className="mt-2 font-display text-4xl sm:text-5xl font-black text-white">
-                  {formatINR(selectedIssue?.cost ?? 0)}
+              <div className="mt-6 rounded-3xl bg-gradient-to-r from-[#0a1b1d] via-[#11292d] to-[#0a1b1d] p-6 sm:p-8 text-white shadow-xl relative overflow-hidden space-y-5">
+                <div>
+                  <p className="text-xs font-bold uppercase tracking-widest text-emerald-400">Total Upfront Repair Price (Incl. Parts & Labor)</p>
+                  <div className="mt-2 font-display text-4xl sm:text-5xl font-black text-white">
+                    {formatINR(totalRepairCost)}
+                  </div>
+                  <p className="mt-2 text-xs text-white/70">No hidden fees · Pay only after testing your phone</p>
                 </div>
-                <p className="mt-2 text-xs text-white/70">No hidden fees · Pay only after testing your phone</p>
+
+                {/* Selected Issues List */}
+                <div className="text-left bg-white/10 p-4 rounded-2xl border border-white/10 space-y-2 text-xs">
+                  <p className="text-[10px] font-bold text-emerald-300 uppercase tracking-wider">Included Repairs ({selectedIssues.length}):</p>
+                  {selectedIssues.map((item) => (
+                    <div key={item.id} className="flex items-center justify-between text-slate-200 font-semibold border-b border-white/10 pb-1.5 pt-0.5">
+                      <span>• {item.label}</span>
+                      <span className="font-bold text-white">{formatINR(item.cost)}</span>
+                    </div>
+                  ))}
+                </div>
 
                 {/* Repair Guarantees Pills */}
-                <div className="mt-6 flex flex-wrap justify-center gap-2 text-xs font-semibold">
+                <div className="flex flex-wrap justify-center gap-2 text-xs font-semibold pt-1">
                   <span className="inline-flex items-center gap-1 rounded-full bg-white/10 px-3 py-1 backdrop-blur-md text-emerald-300">
                     <ShieldCheck className="h-3.5 w-3.5" /> 6 Months Parts Warranty
                   </span>
@@ -862,9 +931,9 @@ export default function Repair() {
 
               <div className="mt-8 flex justify-between gap-3 pt-4 border-t border-ink-100">
                 <button type="button" onClick={() => goToStep(2)} className="btn-outline text-sm">
-                  Change Issue
+                  Change Issue(s)
                 </button>
-                <button type="button" onClick={() => goToStep(4)} className="btn-primary flex items-center gap-2">
+                <button type="button" onClick={() => goToStep(4)} className="btn-primary flex items-center gap-2 bg-[#00a896] hover:bg-[#008f80]">
                   Schedule Doorstep Booking <ArrowRight className="h-4 w-4" />
                 </button>
               </div>
