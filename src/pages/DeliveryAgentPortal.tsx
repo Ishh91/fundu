@@ -1118,7 +1118,9 @@ export default function DeliveryAgentPortal() {
                           <span className="badge bg-purple-50 text-purple-700 capitalize font-bold text-xs">{repair.status}</span>
                         </div>
                         <h3 className="font-display font-black text-lg text-slate-900 mt-1.5">
-                          {repair.brand} {repair.model}
+                          {repair.brand && repair.model?.toLowerCase().startsWith(repair.brand.toLowerCase())
+                            ? repair.model
+                            : `${repair.brand} ${repair.model}`}
                         </h3>
                         <p className="text-xs text-purple-800 font-semibold">
                           Problem: {repair.problem} ({repair.problem_detail || 'Inspection needed'})
@@ -1126,10 +1128,17 @@ export default function DeliveryAgentPortal() {
                       </div>
 
                       <div className="text-right">
-                        <p className="text-[10px] font-bold uppercase text-slate-400">Est. Repair Cost</p>
+                        <p className="text-[10px] font-bold uppercase text-slate-400">
+                          {repair.final_cost ? 'Final Approved Cost' : 'Est. Diagnostic Cost'}
+                        </p>
                         <p className="font-display text-2xl font-black text-purple-800">
                           {formatINR(repairCost)}
                         </p>
+                        {repair.final_cost && repair.estimated_cost && repair.final_cost !== repair.estimated_cost && (
+                          <p className="text-[10px] text-slate-400 font-semibold">
+                            (Base Diagnostic: {formatINR(repair.estimated_cost)})
+                          </p>
+                        )}
                       </div>
                     </div>
 

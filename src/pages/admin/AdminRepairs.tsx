@@ -226,7 +226,9 @@ export default function AdminRepairs({
                     <span className="badge bg-ink-100 text-ink-700">{selectedRepair.brand}</span>
                   </div>
                   <h2 className="font-display text-2xl font-black text-ink-900 mt-1">
-                    {selectedRepair.brand} {selectedRepair.model}
+                    {selectedRepair.brand && selectedRepair.model?.toLowerCase().startsWith(selectedRepair.brand.toLowerCase())
+                      ? selectedRepair.model
+                      : `${selectedRepair.brand} ${selectedRepair.model}`}
                   </h2>
                 </div>
 
