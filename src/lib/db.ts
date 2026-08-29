@@ -30,7 +30,7 @@ type Filter = {
 
 const resolveApiBase = () => {
   const envUrl = import.meta.env.VITE_API_URL as string | undefined;
-  if (envUrl && envUrl.trim()) {
+  if (envUrl && envUrl.trim() && !envUrl.includes('localhost') && !envUrl.includes('127.0.0.1')) {
     return envUrl.trim().replace(/\/$/, '');
   }
   return 'https://fundu.onrender.com/api';
