@@ -155,9 +155,7 @@ export async function sendEmailOtpCode(email: string, otp: string, userName?: st
   }
 
   // 2. Try Render backend API endpoint (with 1-shot retry for cold boot / 502)
-  const isLocal = typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
-  const envUrl = import.meta.env.VITE_API_URL as string | undefined;
-  const apiBase = (!isLocal && envUrl && !envUrl.includes('localhost')) ? envUrl : (!isLocal ? 'https://fundu.onrender.com/api' : (envUrl || 'https://fundu.onrender.com/api'));
+  const apiBase = (import.meta.env.VITE_API_URL as string | undefined) || 'https://fundu.onrender.com/api';
   const targetUrl = `${apiBase.replace(/\/$/, '')}/email/send-otp`;
 
   for (let attempt = 0; attempt < 2; attempt++) {

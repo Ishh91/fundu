@@ -147,10 +147,7 @@ export default function Login() {
     setResetError(null);
 
     try {
-      const isLocal = typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
-      const envUrl = import.meta.env.VITE_API_URL as string | undefined;
-      const apiBase = (!isLocal && envUrl && !envUrl.includes('localhost')) ? envUrl : (!isLocal ? 'https://fundu.onrender.com/api' : (envUrl || 'http://localhost:4000/api'));
-      
+      const apiBase = (import.meta.env.VITE_API_URL as string | undefined) || 'https://fundu.onrender.com/api';
       const primaryUrl = `${apiBase.replace(/\/$/, '')}/auth/reset-password`;
       const renderUrl = 'https://fundu.onrender.com/api/auth/reset-password';
 

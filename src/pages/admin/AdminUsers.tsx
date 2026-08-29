@@ -138,10 +138,8 @@ export default function AdminUsers({
 
     try {
       // 1. Create account on backend (is_verified: false until user enters Email OTP)
-      const targetUrl =
-        typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
-          ? 'http://localhost:4000/api/auth/register'
-          : 'https://fundu.onrender.com/api/auth/register';
+      const baseUrl = (import.meta.env.VITE_API_URL as string | undefined) || 'https://fundu.onrender.com/api';
+      const targetUrl = `${baseUrl.replace(/\/$/, '')}/auth/register`;
 
       const response = await fetch(targetUrl, {
         method: 'POST',
