@@ -1,10 +1,10 @@
 import emailjs from '@emailjs/browser';
 
 const getEmailJSConfig = () => ({
-  serviceId: (import.meta.env.VITE_EMAILJS_SERVICE_ID as string | undefined) || '',
-  templateIdOtp: (import.meta.env.VITE_EMAILJS_TEMPLATE_ID_OTP as string | undefined) || '',
-  templateIdWelcome: (import.meta.env.VITE_EMAILJS_TEMPLATE_ID_WELCOME as string | undefined) || '',
-  publicKey: (import.meta.env.VITE_EMAILJS_PUBLIC_KEY as string | undefined) || '',
+  serviceId: (import.meta.env.VITE_EMAILJS_SERVICE_ID as string | undefined) || 'service_o84hycc',
+  templateIdOtp: (import.meta.env.VITE_EMAILJS_TEMPLATE_ID_OTP as string | undefined) || 'template_vic1btb',
+  templateIdWelcome: (import.meta.env.VITE_EMAILJS_TEMPLATE_ID_WELCOME as string | undefined) || 'template_17mi00n',
+  publicKey: (import.meta.env.VITE_EMAILJS_PUBLIC_KEY as string | undefined) || '3OEztpA2CytlruIOh',
 });
 
 /**
@@ -14,6 +14,7 @@ export async function sendEmailJSOTP(email: string, otp: string, userName: strin
   const { serviceId, templateIdOtp, publicKey } = getEmailJSConfig();
 
   if (!serviceId || !templateIdOtp || !publicKey) {
+    console.warn(`⚠️ [EmailJS Credentials Missing]: Please check EmailJS configuration.`);
     console.log(`🔑 [EmailJS OTP Simulated] To: ${email} | Name: ${userName} | OTP: ${otp}`);
     return { success: true, simulated: true, otp };
   }
@@ -39,7 +40,7 @@ export async function sendEmailJSOTP(email: string, otp: string, userName: strin
     console.log('🎉 [EmailJS OTP Sent Successfully]:', response.status, response.text);
     return { success: true, response };
   } catch (error: any) {
-    console.warn('⚠️ [EmailJS OTP Fallback to Simulation]:', error?.text || error?.message);
+    console.error('❌ [EmailJS OTP Error Detail]:', error?.text || error?.message || error);
     return { success: true, simulated: true, otp };
   }
 }
