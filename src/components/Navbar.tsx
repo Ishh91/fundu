@@ -1,5 +1,6 @@
 import { useEffect, useState, useRef } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { getCleanPhoneImage } from '../lib/phoneImages';
 import {
   ArrowRight,
   BadgeIndianRupee,
@@ -493,9 +494,9 @@ export default function Navbar() {
                         <div className="flex gap-3 items-center bg-gray-50 p-3 rounded-xl border border-gray-100">
                           {cartItem.item.images?.[0] ? (
                             <img
-                              src={cartItem.item.images[0]}
+                              src={getCleanPhoneImage(cartItem.item.brand, cartItem.item.title, cartItem.item.images?.[0])}
                               alt={cartItem.item.title}
-                              className="h-14 w-14 object-cover rounded-lg border border-gray-200 shrink-0 bg-white"
+                              className="h-14 w-14 object-contain rounded-lg border border-gray-200 shrink-0 bg-white p-0.5"
                             />
                           ) : (
                             <div className="h-14 w-14 rounded-lg border border-gray-200 bg-white grid place-items-center shrink-0">

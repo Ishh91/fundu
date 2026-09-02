@@ -5,6 +5,7 @@ import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
 import { LUCKNOW_AREAS } from '../types';
 import { formatINR } from '../lib/db';
+import { getCleanPhoneImage } from '../lib/phoneImages';
 
 export default function Checkout() {
   const { cartItem, setDeliveryDetails } = useCart();
@@ -98,9 +99,9 @@ export default function Checkout() {
               <div className="flex gap-4">
                 {cartItem.item.images?.[0] ? (
                   <img
-                    src={cartItem.item.images[0]}
+                    src={getCleanPhoneImage(cartItem.item.brand, cartItem.item.title, cartItem.item.images?.[0])}
                     alt={cartItem.item.title}
-                    className="w-20 h-20 object-cover rounded-lg"
+                    className="w-20 h-20 object-contain rounded-lg bg-gray-50 p-1"
                   />
                 ) : (
                   <div className="w-20 h-20 bg-ink-100 rounded-lg grid place-items-center">

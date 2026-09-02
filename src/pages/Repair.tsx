@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useMemo } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+import { getCleanPhoneImage } from '../lib/phoneImages';
 import {
   Wrench,
   Truck,
@@ -763,7 +764,7 @@ export default function Repair() {
                         onClick={() => handleQuickModelSelect(item)}
                         className="group flex flex-col items-center p-4 rounded-2xl border border-gray-200/80 bg-white hover:border-[#00a896] hover:shadow-lg hover:-translate-y-1 transition-all text-center"
                       >
-                        <img src={item.image} alt={item.model} className="h-20 w-20 object-contain rounded-xl" />
+                        <img src={getCleanPhoneImage(item.brand, item.model, item.image)} alt={item.model} className="h-20 w-20 object-contain rounded-xl" />
                         <p className="mt-2 text-xs font-black text-ink-900 group-hover:text-[#00a896] truncate w-full transition-colors">{item.model}</p>
                         <span className="mt-2 badge bg-emerald-50 text-emerald-800 font-black text-[10px]">
                           From {formatINR(item.price)}

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { getCleanPhoneImage } from '../lib/phoneImages';
 import {
   X,
   Package,
@@ -297,9 +298,9 @@ export default function OrderDetailsModal({
                   <div className="flex items-center gap-3.5">
                     {item.image_url ? (
                       <img
-                        src={item.image_url}
+                        src={getCleanPhoneImage(item.brand, item.title, item.image_url)}
                         alt={item.title}
-                        className="h-16 w-16 object-cover rounded-2xl bg-ink-50 p-1 border border-ink-100 shrink-0"
+                        className="h-16 w-16 object-contain rounded-2xl bg-white p-1 border border-ink-100 shrink-0"
                       />
                     ) : (
                       <div className="h-16 w-16 rounded-2xl bg-brand-100 text-brand-700 grid place-items-center font-bold text-lg shrink-0">
