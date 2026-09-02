@@ -452,16 +452,29 @@ export default function SellPhone() {
       setForm((cur) => ({ ...cur, brand: foundBrand }));
 
       if (modelSlug) {
-        const cleanModelKey = modelSlug.replace(/^sell-/, '').replace(/-/g, ' ').toLowerCase();
-        const foundModel = MASTER_MODEL_CATALOG.find(
-          (m) => m.brand.toLowerCase() === cleanBrandKey && m.model.toLowerCase() === cleanModelKey
-        )?.model || cleanModelKey;
+        const cleanModelKey = modelSlug.replace(/^sell-/, '').replace(/-/g, ' ').toLowerCase().trim();
+        const stripped = cleanModelKey.replace(/[\s-]+/g, '');
+
+        const foundModel =
+          ALL_INDIAN_PHONES_CATALOG.find(
+            (p) =>
+              p.brand.toLowerCase() === cleanBrandKey &&
+              p.model.toLowerCase().replace(/[\s-]+/g, '') === stripped
+          )?.model ||
+          MASTER_MODEL_CATALOG.find(
+            (m) =>
+              m.brand.toLowerCase() === cleanBrandKey &&
+              m.model.toLowerCase().replace(/[\s-]+/g, '') === stripped
+          )?.model ||
+          cleanModelKey.split(' ').map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+
+        const storageParam = searchParams.get('storage');
 
         setForm((cur) => ({
           ...cur,
           brand: foundBrand,
           model: foundModel,
-          storage: cur.storage || '128 GB',
+          storage: storageParam || cur.storage || '128 GB',
         }));
         setStep(2);
       }
@@ -712,11 +725,13 @@ export default function SellPhone() {
     try {
       const payload = {
         user_id: user?.id || null,
-        customer_name: (user as any)?.user_metadata?.full_name || 'Valued Customer',
-        customer_phone: (user as any)?.phone || '+91-9839122345',
+        customer_name: (user as any)?.user_metadata?.full_name || profile?.full_name || 'Valued Customer',
+        customer_phone: (user as any)?.phone || profile?.phone || '+91-9839122345',
         customer_email: user?.email || '',
         brand: form.brand,
         model: form.model,
+        device_title: `${form.brand} ${form.model} (${form.storage || '128 GB'})`,
+        device_image: getCleanPhoneImage(form.brand, form.model),
         ram: form.ram,
         storage: form.storage,
         condition: form.condition,
@@ -730,6 +745,7 @@ export default function SellPhone() {
         device_photos: form.devicePhotos,
         diagnostics: form.diagnostics,
         accessories: form.accessories,
+        estimated_price: estimate,
         valuation_price: estimate,
         cashify_breakdown: cashifyValuation,
         payout_method: form.payoutMethod,
@@ -1414,19 +1430,66 @@ export default function SellPhone() {
         {step === 2 && (
           <div className="max-w-3xl mx-auto space-y-6 animate-fade-in">
             <div className="card p-6 md:p-8 rounded-[28px] bg-white border border-gray-200 shadow-xl space-y-6">
-              <div className="flex items-center justify-between border-b border-gray-100 pb-4">
-                <div>
-                  <span className="badge bg-teal-100 text-teal-800 font-bold">Step 2 of 5</span>
-                  <h2 className="mt-1 font-display text-xl font-extrabold text-gray-900">
-                    Device Condition & Hardware Diagnostics
-                  </h2>
-                  <p className="text-xs text-gray-500">
-                    Evaluating: <span className="font-bold text-gray-900">{form.brand} {form.model} ({form.storage})</span>
-                  </p>
+              {/* SELECTED PRODUCT DETAIL SHOWCASE CARD */}
+              <div className="p-4 sm:p-5 rounded-2xl bg-gradient-to-br from-teal-50/80 via-white to-teal-50/40 border border-teal-200/90 shadow-xs flex flex-col sm:flex-row items-center gap-4 sm:gap-5">
+                <div className="h-24 w-24 sm:h-28 sm:w-28 shrink-0 rounded-2xl bg-white p-2 border border-teal-100 flex items-center justify-center shadow-xs">
+                  <img
+                    src={getCleanPhoneImage(form.brand, form.model)}
+                    alt={form.model}
+                    className="h-full w-full object-contain drop-shadow-xs"
+                  />
                 </div>
-                <button type="button" onClick={() => setStep(1)} className="text-xs text-[#00a896] font-bold hover:underline">
-                  Change Model
-                </button>
+
+                <div className="space-y-2 flex-1 text-center sm:text-left">
+                  <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2">
+                    <span className="badge bg-[#00a896] text-white font-extrabold text-[11px] px-2 py-0.5">
+                      {form.brand}
+                    </span>
+                    <h3 className="font-extrabold text-base sm:text-lg text-gray-900">
+                      {form.model}
+                    </h3>
+                  </div>
+
+                  {/* Quick Storage Variant Switcher */}
+                  <div className="flex items-center justify-center sm:justify-start gap-1.5 flex-wrap">
+                    <span className="text-[11px] font-bold text-gray-500 mr-1">Storage:</span>
+                    {STORAGE_OPTIONS.map((stg) => (
+                      <button
+                        key={stg}
+                        type="button"
+                        onClick={() => setForm((f) => ({ ...f, storage: stg }))}
+                        className={`px-2.5 py-1 rounded-lg text-xs font-bold transition ${
+                          form.storage === stg
+                            ? 'bg-[#00a896] text-white shadow-xs'
+                            : 'bg-white text-gray-700 border border-gray-200 hover:bg-teal-50 hover:border-teal-300'
+                        }`}
+                      >
+                        {stg}
+                      </button>
+                    ))}
+                  </div>
+
+                  {/* Maximum Resale Cash Value Callout */}
+                  <div className="flex items-center justify-center sm:justify-start gap-2 pt-0.5">
+                    <span className="text-xs text-gray-500 font-medium">Spot Cash Quote:</span>
+                    <span className="font-black text-sm sm:text-base text-[#00a896]">
+                      Up to {formatINR(estimate)}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="shrink-0 flex flex-col items-center sm:items-end gap-1.5">
+                  <button
+                    type="button"
+                    onClick={() => setStep(1)}
+                    className="btn-outline text-xs px-3 py-1.5 rounded-xl border-gray-300 text-gray-700 hover:border-[#00a896] hover:text-[#00a896] font-bold transition"
+                  >
+                    Change Model
+                  </button>
+                  <span className="text-[10px] font-bold text-teal-700 bg-teal-50 px-2 py-0.5 rounded-md">
+                    Step 2 of 5
+                  </span>
+                </div>
               </div>
 
               {/* 1. Core Functionality & Warranty */}

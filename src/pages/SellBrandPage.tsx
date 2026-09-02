@@ -304,51 +304,55 @@ export default function SellBrandPage() {
             </div>
           )}
 
-          {/* CASHIFY MODEL PRODUCT TILE GRID */}
+          {/* CASHIFY COMPACT MODEL PRODUCT TILE GRID */}
           {isLoadingApi ? (
             <div className="py-16 text-center space-y-3">
               <RefreshCw className="h-8 w-8 text-[#00a896] animate-spin mx-auto" />
-              <p className="text-xs font-bold text-gray-500">Fetching live {brandDisplayName} models from API...</p>
+              <p className="text-xs font-bold text-gray-500">Fetching live {brandDisplayName} models...</p>
             </div>
           ) : brandModels.length > 0 ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 sm:gap-4">
               {brandModels.map((m) => (
                 <div
                   key={m.model}
-                  className="p-5 rounded-2xl border border-gray-200/90 bg-white hover:border-[#00a896] hover:shadow-xl transition-all duration-300 space-y-4 group cursor-pointer flex flex-col justify-between"
+                  onClick={() => handleSelectModel(m.model, m.storage || '128 GB')}
+                  className="p-3 sm:p-4 rounded-2xl border border-gray-200/90 bg-white hover:border-[#00a896] hover:shadow-lg transition-all duration-300 group cursor-pointer flex flex-col justify-between"
                 >
-                  <div className="space-y-3">
-                    <div className="flex items-center justify-between">
-                      <span className="badge bg-emerald-50 text-emerald-800 font-extrabold text-xs">
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between gap-1">
+                      <span className="badge bg-emerald-50 text-emerald-800 font-extrabold text-[10px] sm:text-[11px] px-1.5 py-0.5">
                         Up to {formatINR(m.price)}
                       </span>
-                      <span className="text-[10px] text-gray-400 font-semibold">{m.series || brandDisplayName}</span>
+                      <span className="text-[9px] sm:text-[10px] text-gray-400 font-medium truncate max-w-[80px]">
+                        {m.series || brandDisplayName}
+                      </span>
                     </div>
 
-                    {/* Centered Cashify-style Clean Device Image Container */}
-                    <div className="h-52 w-full bg-white rounded-xl p-3 flex items-center justify-center relative overflow-hidden group-hover:scale-105 transition-transform duration-300">
+                    {/* Centered Clean Device Image Container */}
+                    <div className="h-28 sm:h-32 w-full bg-white rounded-xl p-1.5 flex items-center justify-center relative overflow-hidden group-hover:scale-105 transition-transform duration-300">
                       <img
                         src={getCleanPhoneImage(m.brand || brandDisplayName, m.model, m.image)}
                         alt={m.model}
-                        className="h-full max-h-48 w-auto object-contain drop-shadow-sm"
+                        className="h-full max-h-28 sm:max-h-32 w-auto object-contain drop-shadow-xs"
                         loading="lazy"
                       />
                     </div>
 
                     <div>
-                      <p className="font-extrabold text-base text-gray-900 group-hover:text-[#00a896] transition-colors">{m.model}</p>
+                      <p className="font-bold text-xs sm:text-sm text-gray-900 group-hover:text-[#00a896] transition-colors line-clamp-1">
+                        {m.model}
+                      </p>
                     </div>
 
-                    {/* Storage Selection Pills */}
-                    <div className="space-y-1">
-                      <p className="text-[10px] font-extrabold text-gray-400 uppercase tracking-wider">Select Storage Variant:</p>
-                      <div className="flex flex-wrap gap-1.5">
-                        {STORAGE_OPTIONS.map((stg) => (
+                    {/* Storage Variant Pills */}
+                    <div className="pt-0.5" onClick={(e) => e.stopPropagation()}>
+                      <div className="flex flex-wrap gap-1">
+                        {STORAGE_OPTIONS.slice(0, 4).map((stg) => (
                           <button
                             key={stg}
                             type="button"
                             onClick={() => handleSelectModel(m.model, stg)}
-                            className="px-2.5 py-1 rounded-lg text-xs font-bold bg-gray-100 text-gray-700 hover:bg-[#00a896] hover:text-white transition"
+                            className="px-1.5 py-0.5 rounded text-[10px] font-semibold bg-gray-100 text-gray-700 hover:bg-[#00a896] hover:text-white transition"
                           >
                             {stg}
                           </button>
@@ -359,10 +363,13 @@ export default function SellBrandPage() {
 
                   <button
                     type="button"
-                    onClick={() => handleSelectModel(m.model, m.storage || '128 GB')}
-                    className="btn-primary w-full text-xs py-2.5 bg-[#00a896] hover:bg-[#008f80] flex items-center justify-center gap-1.5 font-bold shadow-md shadow-teal-500/20"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleSelectModel(m.model, m.storage || '128 GB');
+                    }}
+                    className="btn-primary w-full text-[11px] sm:text-xs py-1.5 sm:py-2 mt-2.5 bg-[#00a896] hover:bg-[#008f80] flex items-center justify-center gap-1 font-bold shadow-xs"
                   >
-                    Get Exact Cash Quote <ArrowRight className="h-4 w-4" />
+                    Get Quote <ArrowRight className="h-3 w-3" />
                   </button>
                 </div>
               ))}
