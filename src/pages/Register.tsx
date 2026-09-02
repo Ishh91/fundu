@@ -5,6 +5,7 @@ import { useAuth } from '../context/AuthContext';
 import { db } from '../lib/db';
 import BrandLogo from '../components/BrandLogo';
 import { sendEmailOtpCode, sendWelcomeEmail } from '../lib/freeNotifyService';
+import { API_BASE } from '../config/apiConfig';
 
 const OTP_LENGTH = 6;
 const RESEND_COOLDOWN = 60;
@@ -77,7 +78,7 @@ export default function Register() {
 
     // Pre-check database for existing email before sending EmailJS OTP
     try {
-      const baseUrl = 'https://fundu.onrender.com/api';
+      const baseUrl = API_BASE;
       const targetUrl = `${baseUrl.replace(/\/$/, '')}/auth/check-email`;
 
       const checkRes = await fetch(targetUrl, {

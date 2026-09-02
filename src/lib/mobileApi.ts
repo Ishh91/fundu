@@ -1,4 +1,4 @@
-const API_BASE = 'https://fundu.onrender.com/api';
+import { API_BASE } from '../config/apiConfig';
 
 export type PhoneModelOption = {
 
@@ -757,3 +757,12 @@ export async function fetchBrandCatalogFromApi(brand: string): Promise<CatalogMo
 
 
 
+
+async function fetchGsmArenaBrandModels(brand: string): Promise<Array<{ phone_name: string }>> {
+  try {
+    const results = await fetchGsmArenaSearch(brand);
+    return results.map((r) => ({ phone_name: r.phone_name }));
+  } catch {
+    return [];
+  }
+}

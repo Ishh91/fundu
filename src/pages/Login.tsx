@@ -4,6 +4,7 @@ import { Lock, User as UserIcon, ArrowRight, AlertCircle, KeyRound, Mail, X, Che
 import { useAuth } from '../context/AuthContext';
 import BrandLogo from '../components/BrandLogo';
 import { sendEmailOtpCode } from '../lib/freeNotifyService';
+import { API_BASE } from '../config/apiConfig';
 
 export default function Login() {
   const { signIn, user, profile, loading: authLoading } = useAuth();
@@ -100,8 +101,7 @@ export default function Login() {
 
     try {
       // 1. Check if Email is registered in database BEFORE sending OTP
-      // 1. Check if Email is registered in database BEFORE sending OTP
-      const baseUrl = 'https://fundu.onrender.com/api';
+      const baseUrl = API_BASE;
       const checkRes = await fetch(`${baseUrl.replace(/\/$/, '')}/auth/check-email`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -148,30 +148,16 @@ export default function Login() {
     setResetError(null);
 
     try {
-      const primaryUrl = 'https://fundu.onrender.com/api/auth/reset-password';
+      const resetUrl = `${API_BASE.replace(/\/$/, '')}/auth/reset-password`;
 
-      let response;
-      try {
-        response = await fetch(primaryUrl, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            email: resetEmail.trim().toLowerCase(),
-            newPassword: newPassword,
-          }),
-        });
-      } catch {
-        if (primaryUrl !== renderUrl) {
-          response = await fetch(renderUrl, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              email: resetEmail.trim().toLowerCase(),
-              newPassword: newPassword,
-            }),
-          });
-        }
-      }
+      const response = await fetch(resetUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: resetEmail.trim().toLowerCase(),
+          newPassword: newPassword,
+        }),
+      });
 
       if (!response) {
         throw new Error('Failed to connect to authentication server');

@@ -1,7 +1,4 @@
-/**
- * Free Notification Helper Service for Fundu App
- * 100% FREE Tier Options for Email, WhatsApp, and SMS Notifications
- */
+import { API_BASE } from '../config/apiConfig';
 
 export interface NotificationPayload {
   orderId: string;
@@ -90,7 +87,7 @@ export async function sendFreeEmailResend(
   `;
 
   // 1. Try Node backend API endpoint
-  const apiBase = 'https://fundu.onrender.com/api';
+  const apiBase = API_BASE;
   try {
     const res = await fetch(`${apiBase.replace(/\/$/, '')}/email/send`, {
       method: 'POST',
@@ -148,7 +145,45 @@ export async function sendEmailOtpCode(email: string, otp: string, userName?: st
   const recipientEmail = email || 'trustiqueassist0003@gmail.com';
   const name = userName || 'User';
 
-  // Exclusively send via EmailJS Browser SDK (@emailjs/browser)
+  // 1. Try Backend Gmail SMTP first (Guaranteed Inbox Delivery via Google App Password)
+  try {
+    const res = await fetch(`${API_BASE.replace(/\/$/, '')}/email/send`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        from: '"Fundu Verification" <trustiqueassist0003@gmail.com>',
+        to: recipientEmail,
+        subject: `Fundu Verification Code: ${otp}`,
+        html: `
+          <div style="font-family: Arial, sans-serif; padding: 24px; color: #0f172a; max-width: 480px; margin: 0 auto; border: 1px solid #e2e8f0; border-radius: 16px;">
+            <div style="background-color: #0f172a; padding: 20px; border-radius: 12px; text-align: center; color: white;">
+              <h2 style="margin: 0; color: #38bdf8;">Fundu Security</h2>
+              <p style="margin: 4px 0 0; font-size: 12px; color: #94a3b8;">Account Verification</p>
+            </div>
+            <div style="padding: 20px 0;">
+              <p>Hi <strong>${name}</strong>,</p>
+              <p>Your verification OTP code for Fundu is:</p>
+              <div style="background-color: #f8fafc; border: 2px dashed #cbd5e1; border-radius: 12px; padding: 16px; text-align: center; margin: 20px 0;">
+                <span style="font-family: monospace; font-size: 32px; font-weight: bold; color: #0284c7; letter-spacing: 8px;">${otp}</span>
+              </div>
+              <p style="font-size: 12px; color: #64748b;">This code expires in 10 minutes. Do not share it with anyone.</p>
+            </div>
+          </div>
+        `,
+      }),
+    });
+    if (res.ok) {
+      const data = await res.json();
+      if (data.success) {
+        console.log(`🎉 [Gmail SMTP OTP Sent Successfully] To: ${recipientEmail}`);
+        return { success: true, data };
+      }
+    }
+  } catch {
+    // Fallthrough to EmailJS fallback
+  }
+
+  // 2. Fallback to EmailJS Browser SDK (@emailjs/browser)
   return await sendEmailJSOTP(recipientEmail, otp, name);
 }
 

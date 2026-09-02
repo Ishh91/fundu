@@ -8,7 +8,7 @@ export default defineConfig({
     port: 5173,
     proxy: {
       '/api': {
-        target: 'https://fundu.onrender.com',
+        target: 'http://localhost:4000',
         changeOrigin: true,
       },
     },

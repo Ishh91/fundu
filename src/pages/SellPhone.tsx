@@ -941,7 +941,7 @@ export default function SellPhone() {
                           }`}
                         >
                           <div className="flex items-center gap-3">
-                            <img src={item.image} alt="" className="h-10 w-10 object-contain rounded-lg bg-gray-50 p-0.5" />
+                            <img src={getCleanPhoneImage(item.brand, item.model, item.image)} alt="" className="h-10 w-10 object-contain rounded-lg bg-gray-50 p-0.5" />
                             <div>
                               <p className="font-extrabold text-sm text-gray-900">
                                 {highlightMatch(`${item.brand} ${item.model}`, debouncedQuery)}

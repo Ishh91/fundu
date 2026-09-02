@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { API_BASE } from '../../config/apiConfig';
 import {
   Users,
   Search,
@@ -101,7 +102,7 @@ export default function AdminUsers({
 
     try {
       // 1. Delete from database
-      const baseUrl = 'https://fundu.onrender.com/api';
+      const baseUrl = API_BASE;
       const targetUrl = `${baseUrl.replace(/\/$/, '')}/auth/delete-user`;
 
       await fetch(targetUrl, {
@@ -138,7 +139,7 @@ export default function AdminUsers({
 
     try {
       // 1. Create account on backend (is_verified: false until user enters Email OTP)
-      const baseUrl = 'https://fundu.onrender.com/api';
+      const baseUrl = API_BASE;
       const targetUrl = `${baseUrl.replace(/\/$/, '')}/auth/register`;
 
       const response = await fetch(targetUrl, {

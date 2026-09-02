@@ -13,7 +13,7 @@ export default function BrandLogo({
     <div className={`flex items-center gap-2.5 ${className}`.trim()}>
       <img
         src="/logo1 (2).svg"
-        alt="Fundu - Lucknow"
+        alt="TheFundu"
         className={`object-contain block ${imageClassName}`.trim()}
       />
       {showLocation && (

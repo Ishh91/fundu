@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { API_BASE } from '../../config/apiConfig';
 import {
   Building2,
   CreditCard,
@@ -111,7 +112,7 @@ export default function AdminVendors() {
     const generatedOtp = Math.floor(100000 + Math.random() * 900000).toString();
 
     try {
-      const response = await fetch('https://fundu.onrender.com/api/auth/register', {
+      const response = await fetch(`${API_BASE.replace(/\/$/, '')}/auth/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

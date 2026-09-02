@@ -28,7 +28,8 @@ type Filter = {
   value: unknown;
 };
 
-const API_BASE = 'https://fundu.onrender.com/api';
+import { API_BASE } from '../config/apiConfig';
+
 const SESSION_KEY = 'fundu_mongo_session';
 
 const authListeners = new Set<AuthChangeHandler>();
