@@ -1076,8 +1076,8 @@ export default function SellPhone() {
                       onClick={() => handleBrandSelect(item.name)}
                       className="group relative flex flex-col items-center justify-center p-5 rounded-2xl border border-gray-200/90 bg-white hover:border-[#00a896] hover:bg-teal-50/40 hover:shadow-xl transition-all duration-300 active:scale-95 cursor-pointer"
                     >
-                      <div className="overflow-hidden rounded-xl p-2 bg-gray-50/80 group-hover:bg-white transition-all">
-                        <img src={item.logo} alt={item.name} className="h-12 w-12 object-contain rounded-lg group-hover:scale-110 transition-transform" />
+                      <div className="h-12 w-12 flex items-center justify-center rounded-xl p-2 bg-gray-50 group-hover:bg-white transition-all">
+                        <img src={getCleanBrandLogo(item.name)} alt={item.name} className="h-full w-full object-contain group-hover:scale-110 transition-transform" />
                       </div>
                       <span className="mt-2.5 text-sm font-extrabold text-gray-900 group-hover:text-[#00a896] transition-colors">{item.name}</span>
                       <span className="text-[10px] text-gray-400 font-semibold">{item.count}</span>
