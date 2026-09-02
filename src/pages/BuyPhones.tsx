@@ -688,6 +688,9 @@ export default function BuyPhones() {
                                     alt={product.title}
                                     className="h-48 w-auto max-h-44 object-contain group-hover:scale-105 transition-transform duration-300 drop-shadow-sm"
                                     loading="lazy"
+                                    onError={(e) => {
+                                      (e.target as HTMLImageElement).src = getCleanPhoneImage(product.brand, product.title, '');
+                                    }}
                                   />
                                 </div>
                               </Link>
@@ -778,6 +781,9 @@ export default function BuyPhones() {
                               src={getCleanPhoneImage(product.brand, product.title, image)}
                               alt={product.title}
                               className="h-48 w-auto max-h-44 object-contain transition-transform duration-300 group-hover:scale-105 drop-shadow-sm"
+                              onError={(e) => {
+                                (e.target as HTMLImageElement).src = getCleanPhoneImage(product.brand, product.title, '');
+                              }}
                             />
                           </div>
                         </Link>

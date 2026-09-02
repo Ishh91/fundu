@@ -217,6 +217,7 @@ export default function Admin() {
     images: '',
     is_approved: true,
     is_featured: false,
+    show_all_grades: true,
     stock: '0',
   });
   const [productSaving, setProductSaving] = useState(false);
@@ -740,6 +741,7 @@ export default function Admin() {
         images: productForm.images.split('\n').map((s) => s.trim()).filter(Boolean),
         is_approved: productForm.is_approved,
         is_featured: productForm.is_featured,
+        show_all_grades: productForm.show_all_grades,
         stock: Number(productForm.stock) || 0,
       };
 
@@ -1456,6 +1458,7 @@ export default function Admin() {
                     images: product.images.join('\n'),
                     is_approved: product.is_approved,
                     is_featured: product.is_featured,
+                    show_all_grades: product.show_all_grades !== false,
                     stock: String(product.stock),
                   });
                 } else {
@@ -1476,6 +1479,7 @@ export default function Admin() {
                     images: '',
                     is_approved: true,
                     is_featured: false,
+                    show_all_grades: true,
                     stock: '1',
                   });
                 }
@@ -1983,6 +1987,24 @@ export default function Admin() {
                     <option value="Excellent">Excellent</option>
                   </select>
                 </div>
+              </div>
+
+              {/* Grade Display Mode on Product Detail Page */}
+              <div className="p-3 rounded-2xl bg-teal-50/70 border border-teal-200/80">
+                <label className="label text-xs font-extrabold text-teal-800 flex items-center gap-1.5 mb-1">
+                  <Sparkles className="h-3.5 w-3.5 text-teal-700" /> Condition Grade View Mode on Website
+                </label>
+                <select
+                  value={productForm.show_all_grades ? 'all' : 'single'}
+                  onChange={(e) => setProductForm({ ...productForm, show_all_grades: e.target.value === 'all' })}
+                  className="input text-xs font-extrabold text-gray-900 bg-white border-teal-300"
+                >
+                  <option value="all">Show All 3 Grade Cards (Fair, Good, Superb)</option>
+                  <option value="single">Show Only Single Selected Grade Card ({productForm.condition})</option>
+                </select>
+                <p className="text-[11px] text-teal-700 font-medium mt-1">
+                  Select "Show Only Single Selected Grade" if you want the customer to view only 1 condition card on the product page.
+                </p>
               </div>
 
               <div className="grid grid-cols-3 gap-3">

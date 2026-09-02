@@ -3,6 +3,7 @@ import { ArrowRight, ShieldCheck, CheckCircle2, ShoppingCart, Sparkles, Star } f
 import { formatINR } from '../../lib/db';
 import type { Product } from '../../types';
 import { useCart } from '../../context/CartContext';
+import { getCleanPhoneImage } from '../../lib/phoneImages';
 
 interface BestDealsProps {
   products: Product[];
@@ -176,15 +177,14 @@ export default function BestDeals({ products, loading }: BestDealsProps) {
                   )}
 
                   <Link to={`/product/${item.id}`} className="h-full w-full flex items-center justify-center">
-                    {item.images?.[0] ? (
-                      <img
-                        src={item.images[0]}
-                        alt={item.title}
-                        className="h-full w-auto object-contain transition group-hover:scale-105"
-                      />
-                    ) : (
-                      <div className="text-xs text-gray-400">Refurbished Device</div>
-                    )}
+                    <img
+                      src={getCleanPhoneImage(item.brand, item.title || item.model, item.images?.[0])}
+                      alt={item.title}
+                      className="h-full w-auto object-contain transition group-hover:scale-105"
+                      onError={(e) => {
+                        (e.target as HTMLImageElement).src = getCleanPhoneImage(item.brand, item.title || item.model, '');
+                      }}
+                    />
                   </Link>
                 </div>
 

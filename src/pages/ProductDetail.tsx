@@ -335,11 +335,13 @@ export default function ProductDetail() {
 
   if (!product) return null;
 
-  // Use exact price and specs set by Admin in backend
+  // Calculate current price dynamically based on selected condition grade
   const activeGradeName = (selectedGrade || product.condition || 'Superb').toLowerCase();
   const gradeObj = CONDITION_GRADES.find((g) => g.id.toLowerCase() === activeGradeName || (activeGradeName.includes('excellent') && g.id === 'Superb')) || CONDITION_GRADES[2];
 
-  const currentPrice = product.price;
+  const currentPrice = Math.round(
+    product.price * (gradeObj.id === 'Fair' ? 0.88 : gradeObj.id === 'Good' ? 0.95 : 1.0)
+  );
   const currentMrp = product.original_price && product.original_price > product.price
     ? product.original_price
     : Math.round(product.price * 1.45);
@@ -416,6 +418,9 @@ export default function ProductDetail() {
                 src={getCleanPhoneImage(product.brand, product.title, selectedImage || images[0])}
                 alt={product.title}
                 className="h-80 w-auto object-contain transition-transform duration-300 group-hover:scale-105 drop-shadow-md"
+                onError={(e) => {
+                  (e.target as HTMLImageElement).src = getCleanPhoneImage(product.brand, product.title, '');
+                }}
               />
 
               <div className="mt-4 flex items-center gap-2 text-xs font-bold text-ink-500 bg-ink-50 px-3 py-1 rounded-full">
@@ -555,11 +560,17 @@ export default function ProductDetail() {
                 <label className="label text-xs font-extrabold text-ink-900 uppercase tracking-wider flex items-center gap-1.5">
                   <Sparkles className="h-4 w-4 text-brand-600" /> Refurbished Condition Grade
                 </label>
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                  {CONDITION_GRADES.map((g) => {
+                <div className={`grid gap-3 ${product.show_all_grades === false ? 'grid-cols-1 max-w-sm' : 'grid-cols-1 sm:grid-cols-3'}`}>
+                  {(product.show_all_grades === false
+                    ? CONDITION_GRADES.filter((g) => {
+                        const activeGrade = (selectedGrade || product.condition || 'Superb').toLowerCase();
+                        return activeGrade === g.id.toLowerCase() || (activeGrade.includes('excellent') && g.id === 'Superb');
+                      })
+                    : CONDITION_GRADES
+                  ).map((g) => {
                     const activeGrade = (selectedGrade || product.condition || 'Superb').toLowerCase();
                     const isSelected = activeGrade === g.id.toLowerCase() || (activeGrade.includes('excellent') && g.id === 'Superb');
-                    const displayPrice = isSelected ? product.price : Math.round(product.price * (g.id === 'Fair' ? 0.90 : g.id === 'Good' ? 0.95 : 1.0));
+                    const displayPrice = Math.round(product.price * (g.id === 'Fair' ? 0.88 : g.id === 'Good' ? 0.95 : 1.0));
 
                     return (
                       <button

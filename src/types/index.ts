@@ -19,6 +19,7 @@ export type Product = {
   stock: number;
   sold_count: number;
   seller_id: string | null;
+  show_all_grades?: boolean;
   created_at: string;
 };
 
