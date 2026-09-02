@@ -15,7 +15,7 @@ export const BRAND_OFFICIAL_LOGOS: Record<string, string> = {
   vivo: 'https://cdn.simpleicons.org/vivo/0056bd',
   iqoo: 'https://cdn.simpleicons.org/vivo/0056bd',
   oppo: 'https://cdn.simpleicons.org/oppo/008b47',
-  realme: 'https://cdn.simpleicons.org/realme/e6a100',
+  realme: '/realme-logo.svg',
   google: 'https://cdn.simpleicons.org/google/4285f4',
   pixel: 'https://cdn.simpleicons.org/google/4285f4',
   nothing: 'https://cdn.simpleicons.org/nothing/000000',
