@@ -1,6 +1,8 @@
 import { useState, useEffect, useRef, useMemo } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams, useParams, Link } from 'react-router-dom';
 import { getCleanPhoneImage } from '../lib/phoneImages';
+import { ALL_INDIAN_PHONES_CATALOG } from '../data/indianPhonesCatalog';
+import { MASTER_MODEL_CATALOG } from './SellPhone';
 import {
   Wrench,
   Truck,
@@ -179,6 +181,7 @@ export default function Repair() {
   const { user, profile } = useAuth();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
+  const { brandSlug, modelSlug } = useParams<{ brandSlug?: string; modelSlug?: string }>();
 
   const stepFromUrl = parseInt(searchParams.get('step') || '1', 10);
   const step = isNaN(stepFromUrl) || stepFromUrl < 1 || stepFromUrl > 5 ? 1 : stepFromUrl;
@@ -228,7 +231,16 @@ export default function Repair() {
       if (v) newParams.set(k, v);
     });
     window.scrollTo({ top: 120, behavior: 'smooth' });
-    navigate(`/repair?${newParams.toString()}`);
+
+    const bSlug = (targetBrand || brandSlug || '').toLowerCase().replace(/\s+/g, '-');
+    const mSlug = (targetModel || modelSlug || '').toLowerCase().replace(/\s+/g, '-');
+    if (bSlug && mSlug) {
+      navigate(`/repair/${bSlug}/${mSlug}?${newParams.toString()}`);
+    } else if (bSlug) {
+      navigate(`/repair/${bSlug}?${newParams.toString()}`);
+    } else {
+      navigate(`/repair?${newParams.toString()}`);
+    }
   };
 
   const [searchQuery, setSearchQuery] = useState('');
@@ -265,28 +277,64 @@ export default function Repair() {
 
   // Sync params from URL subpage routing
   useEffect(() => {
-    const b = searchParams.get('brand');
-    const m = searchParams.get('model');
-    const issue = searchParams.get('issue');
-    const tid = searchParams.get('trackingId');
+    if (brandSlug && modelSlug) {
+      const cleanBrandKey = brandSlug.replace(/^repair-/, '').toLowerCase();
+      const stripped = modelSlug.toLowerCase().replace(/[\s-]+/g, '');
 
-    if (b || m) {
+      const foundBrand = BRAND_CARDS.find((b) => b.name.toLowerCase() === cleanBrandKey)?.name ||
+        cleanBrandKey.charAt(0).toUpperCase() + cleanBrandKey.slice(1);
+
+      const foundModel = ALL_INDIAN_PHONES_CATALOG.find(
+        (p) => p.brand.toLowerCase() === cleanBrandKey && p.model.toLowerCase().replace(/[\s-]+/g, '') === stripped
+      )?.model ||
+      MASTER_MODEL_CATALOG.find(
+        (m) => m.brand.toLowerCase() === cleanBrandKey && m.model.toLowerCase().replace(/[\s-]+/g, '') === stripped
+      )?.model ||
+      modelSlug.split('-').map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+
       setForm((cur) => ({
         ...cur,
-        brand: b ?? cur.brand,
-        model: m ?? cur.model,
+        brand: foundBrand,
+        model: foundModel,
       }));
+
+      // Automatically advance to Step 2 if user arrived at a specific model subpage
+      const stepParam = searchParams.get('step');
+      if (!stepParam || stepParam === '1') {
+        goToStep(2, { brand: foundBrand, model: foundModel });
+      }
+    } else if (brandSlug) {
+      const cleanBrandKey = brandSlug.replace(/^repair-/, '').toLowerCase();
+      const foundBrand = BRAND_CARDS.find((b) => b.name.toLowerCase() === cleanBrandKey)?.name ||
+        cleanBrandKey.charAt(0).toUpperCase() + cleanBrandKey.slice(1);
+      setForm((cur) => ({
+        ...cur,
+        brand: foundBrand,
+      }));
+    } else {
+      const b = searchParams.get('brand');
+      const m = searchParams.get('model');
+      if (b || m) {
+        setForm((cur) => ({
+          ...cur,
+          brand: b ?? cur.brand,
+          model: m ?? cur.model,
+        }));
+      }
     }
+
+    const issue = searchParams.get('issue');
     if (issue) {
       const parsedIds = issue.split(',').filter((id) => REPAIR_ISSUES.some((r) => r.id === id));
       if (parsedIds.length > 0) {
         setSelectedIssueIds(parsedIds);
       }
     }
+    const tid = searchParams.get('trackingId');
     if (tid) {
       setTrackingId(tid);
     }
-  }, [searchParams]);
+  }, [brandSlug, modelSlug, searchParams]);
 
   // Live Mobile Device Search Effect across all 31,500+ phones
   useEffect(() => {
@@ -322,10 +370,11 @@ export default function Repair() {
   }, [searchQuery]);
 
   const handleSelectPhoneForRepair = (brandName: string, modelName: string) => {
-    setForm((f) => ({ ...f, brand: brandName, model: modelName }));
+    const bSlug = brandName.toLowerCase();
+    const mSlug = modelName.toLowerCase().replace(/\s+/g, '-');
     setSearchQuery('');
     setSearchOpen(false);
-    goToStep(2, { brand: brandName, model: modelName });
+    navigate(`/repair/${bSlug}/${mSlug}`);
   };
 
   useEffect(() => {
@@ -341,18 +390,14 @@ export default function Repair() {
   }, [form.brand, searchQuery]);
 
   const handleBrandSelect = (brandName: string) => {
-    setForm((f) => ({ ...f, brand: brandName, model: '' }));
-    window.scrollTo({ top: 120, behavior: 'smooth' });
-    navigate(`/repair?brand=${encodeURIComponent(brandName)}&step=1`);
+    const slug = brandName.toLowerCase();
+    navigate(`/repair/${slug}`);
   };
 
   const handleQuickModelSelect = (item: typeof POPULAR_REPAIR_MODELS[0]) => {
-    setForm((f) => ({
-      ...f,
-      brand: item.brand,
-      model: item.model,
-    }));
-    goToStep(2, { brand: item.brand, model: item.model });
+    const bSlug = item.brand.toLowerCase();
+    const mSlug = item.model.toLowerCase().replace(/\s+/g, '-');
+    navigate(`/repair/${bSlug}/${mSlug}`);
   };
 
   const handleSubmit = async () => {
@@ -445,6 +490,29 @@ export default function Repair() {
 
   return (
     <div className="min-h-screen bg-[#f4f7f8] pb-24">
+      {/* BREADCRUMB NAVIGATION */}
+      <div className="bg-white border-b border-gray-100 py-2.5 px-4 text-xs font-semibold text-gray-500">
+        <div className="max-w-7xl mx-auto flex items-center gap-1.5 flex-wrap">
+          <Link to="/" className="hover:text-[#00a896]">Home</Link>
+          <span>&gt;</span>
+          <Link to="/repair" className="hover:text-[#00a896]">Doorstep Mobile Repair</Link>
+          {form.brand && (
+            <>
+              <span>&gt;</span>
+              <Link to={`/repair/${(brandSlug || form.brand).toLowerCase()}`} className="hover:text-[#00a896]">
+                {form.brand}
+              </Link>
+            </>
+          )}
+          {form.model && (
+            <>
+              <span>&gt;</span>
+              <span className="text-[#00a896] font-extrabold">{form.model} Repair</span>
+            </>
+          )}
+        </div>
+      </div>
+
       {/* Cashify Top Search & Header */}
       <section className="bg-white border-b border-[#e5ecef] py-8">
         <div className="container-page">
@@ -780,20 +848,73 @@ export default function Repair() {
 
         {step === 2 && (
           <div className="max-w-4xl mx-auto space-y-6 animate-fade-in">
+            {/* STEP 2 SELECTED PRODUCT DETAIL SHOWCASE CARD */}
+            <div className="card p-5 sm:p-6 rounded-[28px] bg-gradient-to-r from-teal-950 via-slate-900 to-emerald-950 text-white shadow-xl border border-teal-500/30 overflow-hidden relative">
+              <div className="relative z-10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-5">
+                <div className="flex items-center gap-4 sm:gap-5">
+                  <div className="h-20 w-20 sm:h-24 sm:w-24 shrink-0 rounded-2xl bg-white/10 backdrop-blur-md p-2 border border-white/20 flex items-center justify-center shadow-lg">
+                    <img
+                      src={getCleanPhoneImage(form.brand, form.model)}
+                      alt={form.model}
+                      className="h-full w-full object-contain drop-shadow-md"
+                    />
+                  </div>
+                  <div className="space-y-1.5">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <span className="badge bg-teal-400/20 text-teal-300 border border-teal-400/30 text-[10px] sm:text-xs font-bold px-2.5 py-0.5">
+                        {form.brand || 'Device'}
+                      </span>
+                      <span className="badge bg-emerald-400/20 text-emerald-300 border border-emerald-400/30 text-[10px] sm:text-xs font-bold px-2.5 py-0.5">
+                        Lucknow Doorstep Repair
+                      </span>
+                    </div>
+                    <h2 className="font-display text-xl sm:text-2xl font-black text-white tracking-tight">
+                      {form.model || 'Select Phone'}
+                    </h2>
+                    <p className="text-xs text-slate-300 flex items-center gap-2">
+                      <span>Original OEM Parts</span>
+                      <span>·</span>
+                      <span>30-Min Doorstep Fix</span>
+                      <span>·</span>
+                      <span>6-Month Warranty</span>
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex flex-col sm:items-end gap-2 w-full sm:w-auto pt-2 sm:pt-0 border-t sm:border-t-0 border-white/10">
+                  <div className="text-left sm:text-right">
+                    <p className="text-[10px] uppercase font-bold text-teal-300 tracking-wider">Estimated Repair Cost</p>
+                    <p className="text-2xl font-black text-white">
+                      {formatINR(totalRepairCost)}
+                    </p>
+                  </div>
+                  <Link
+                    to={brandSlug ? `/repair/${brandSlug}` : form.brand ? `/repair/${form.brand.toLowerCase()}` : '/repair'}
+                    className="inline-flex items-center justify-center gap-1.5 text-xs font-extrabold text-white bg-white/15 hover:bg-white/25 border border-white/20 px-3.5 py-1.5 rounded-xl transition shadow-xs"
+                  >
+                    Change Model
+                  </Link>
+                </div>
+              </div>
+            </div>
+
             <div className="card p-6 md:p-8 rounded-[28px]">
               <div className="flex items-center justify-between border-b border-ink-100 pb-4">
                 <div>
-                  <span className="badge bg-brand-50 text-brand-700">Step 2 of 4</span>
+                  <span className="badge bg-teal-50 text-[#00a896] font-bold text-xs">Step 2 of 4: Diagnostics</span>
                   <h2 className="mt-1 font-display text-xl font-extrabold text-ink-900">
                     Select Repair Issue(s)
                   </h2>
                   <p className="text-xs text-ink-500">
-                    Device: <span className="font-bold text-ink-900">{form.brand} {form.model}</span> · <span className="text-[#00a896] font-bold">Select multiple issues if needed</span>
+                    Device: <span className="font-bold text-ink-900">{form.brand} {form.model}</span> · <span className="text-[#00a896] font-bold">Select one or multiple issues</span>
                   </p>
                 </div>
-                <button type="button" onClick={() => goToStep(1)} className="text-xs text-brand-600 font-bold hover:underline">
+                <Link
+                  to={brandSlug ? `/repair/${brandSlug}` : form.brand ? `/repair/${form.brand.toLowerCase()}` : '/repair'}
+                  className="text-xs text-[#00a896] font-bold hover:underline"
+                >
                   Change Phone
-                </button>
+                </Link>
               </div>
 
               {/* Repair Issues Grid */}

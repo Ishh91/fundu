@@ -1435,6 +1435,8 @@ export default function Admin() {
               selectedOrderId={selectedOrderId}
               onSelectOrder={(id) => setSelectedOrderId(id)}
               agents={agents}
+              products={products}
+              parts={parts}
               onUpdateStatus={(id, status) => updateStatus('orders', id, status)}
               onReassignAgent={reassignOrderAgent}
             />

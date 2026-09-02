@@ -1,24 +1,114 @@
 import { useState } from 'react';
-import { Package, Search, Truck, MapPin, PhoneCall, MessageCircle, CreditCard, ShoppingBag, MessageSquare, Send } from 'lucide-react';
-import type { Order, DeliveryAgent } from './adminTypes';
+import {
+  Package, Search, Truck, MapPin, PhoneCall, MessageCircle,
+  CreditCard, ShoppingBag, MessageSquare, Send, Smartphone,
+  ExternalLink, ShieldCheck, Tag
+} from 'lucide-react';
+import type { Order, DeliveryAgent, Product, SparePart } from './adminTypes';
 import { statusColors } from './adminTypes';
 import { db, formatINR } from '../../lib/db';
 import CustomerDetailsModal from '../../components/CustomerDetailsModal';
+import { getCleanPhoneImage } from '../../lib/phoneImages';
 
 type AdminOrdersProps = {
   orders: Order[];
   selectedOrderId: string | null;
   onSelectOrder: (id: string) => void;
   agents: DeliveryAgent[];
+  products?: Product[];
+  parts?: SparePart[];
   onUpdateStatus: (id: string, status: string) => void;
   onReassignAgent: (orderId: string, agentId: string) => void;
 };
+
+function getOrderResolvedItems(order: Order, products: Product[] = [], parts: SparePart[] = []) {
+  if (Array.isArray(order.items) && order.items.length > 0) {
+    return order.items.map((it: any) => ({
+      id: it.product_id || it.id || it._id || order.product_id,
+      product_id: it.product_id || order.product_id,
+      title: it.title || `${it.brand || ''} ${it.model || ''}`.trim() || 'Certified Refurbished Device',
+      brand: it.brand || '',
+      model: it.model || '',
+      storage: it.storage || '',
+      ram: it.ram || '',
+      color: it.color || '',
+      condition: it.condition || 'Grade A (Excellent)',
+      price: it.price ?? order.total_amount,
+      quantity: it.quantity ?? order.quantity ?? 1,
+      image: it.image_url || it.image || '',
+    }));
+  }
+
+  // If items array is empty, match with order.product_id
+  if (order.product_id) {
+    const prod = products.find(
+      (p) => String(p.id) === String(order.product_id) || String((p as any)._id) === String(order.product_id)
+    );
+    if (prod) {
+      return [{
+        id: prod.id,
+        product_id: prod.id,
+        title: prod.title || `${prod.brand} ${prod.model}`,
+        brand: prod.brand,
+        model: prod.model,
+        storage: prod.storage,
+        ram: prod.ram,
+        color: prod.color,
+        condition: prod.condition || 'Grade A (Excellent)',
+        price: prod.price || order.total_amount,
+        quantity: order.quantity || 1,
+        image: prod.image,
+      }];
+    }
+  }
+
+  // Check order.spare_part_id
+  if (order.spare_part_id) {
+    const part = parts.find(
+      (p) => String(p.id) === String(order.spare_part_id) || String((p as any)._id) === String(order.spare_part_id)
+    );
+    if (part) {
+      return [{
+        id: part.id,
+        product_id: null,
+        title: part.title || 'Spare Part',
+        brand: part.brand || '',
+        model: part.model || '',
+        storage: '',
+        ram: '',
+        color: '',
+        condition: 'Brand New Replacement Part',
+        price: part.price || order.total_amount,
+        quantity: order.quantity || 1,
+        image: (part as any).images?.[0] || '',
+      }];
+    }
+  }
+
+  // Fallback: Still show certified device card so admin always has full visibility
+  return [{
+    id: order.product_id || order.id,
+    product_id: order.product_id,
+    title: 'Certified Refurbished Smartphone',
+    brand: 'Mobile Device',
+    model: '',
+    storage: '',
+    ram: '',
+    color: '',
+    condition: '32-Point Quality Inspected',
+    price: order.total_amount,
+    quantity: order.quantity || 1,
+    image: '',
+  }];
+}
 
 export default function AdminOrders({
   orders,
   selectedOrderId,
   onSelectOrder,
   agents,
+  products = [],
+  parts = [],
   onUpdateStatus,
   onReassignAgent,
 }: AdminOrdersProps) {
@@ -93,9 +183,12 @@ export default function AdminOrders({
   const getWhatsAppDispatchLink = (order: Order) => {
     const phone = order.delivery_phone ? order.delivery_phone.replace(/\D/g, '') : '9839122345';
     const targetPhone = phone.length === 10 ? `91${phone}` : phone;
+    const resolved = getOrderResolvedItems(order, products, parts);
+    const itemNames = resolved.map((it) => `• ${it.title}${it.storage ? ` (${it.storage})` : ''} - Qty: ${it.quantity}`).join('\n');
     const text = `🎉 *FUNDU LUCKNOW DISPATCH UPDATE*\n\n` +
       `Hi *${order.delivery_name || 'Customer'}*,\n` +
       `Your refurbished order *#${order.id.slice(0, 8).toUpperCase()}* is dispatched with our certified executive *${order.delivery_person_name || 'Rohit'}*.\n\n` +
+      `📱 *Ordered Device(s):*\n${itemNames}\n\n` +
       `📍 *Delivery To:* ${order.delivery_address || 'Lucknow'}\n` +
       `💰 *Total Amount:* ₹${order.total_amount?.toLocaleString('en-IN')}\n` +
       `💳 *Payment Method:* ${order.payment_method || 'COD'}\n\n` +
@@ -106,9 +199,8 @@ export default function AdminOrders({
   const getDeliveryPartnerJobWhatsAppLink = (order: Order, agentPhone?: string) => {
     const rawPhone = (agentPhone || order.delivery_person_phone || '9839122345').replace(/\D/g, '');
     const targetPhone = rawPhone.length === 10 ? `91${rawPhone}` : rawPhone;
-    const itemsSummary =
-      order.items?.map((it: any) => `• ${it.title || 'Refurbished Device'} (Qty: ${it.quantity || 1}) - ₹${it.price || 0}`).join('\n') ||
-      `• Certified Refurbished Device - ₹${order.total_amount || 0}`;
+    const resolved = getOrderResolvedItems(order, products, parts);
+    const itemsSummary = resolved.map((it) => `• ${it.title}${it.storage ? ` (${it.storage})` : ''} (Qty: ${it.quantity}) - ₹${it.price}`).join('\n');
     const text = `📦 *NEW FUNDU DELIVERY DISPATCH ASSIGNED*\n\n` +
       `📋 *Order ID:* #${order.id.slice(0, 8).toUpperCase()}\n` +
       `👤 *Customer Name:* ${order.delivery_name || 'Customer'}\n` +
@@ -116,7 +208,7 @@ export default function AdminOrders({
       `📍 *Delivery Address:* ${order.delivery_address || 'Lucknow'}\n` +
       `🏙️ *Locality:* ${order.delivery_area || 'Lucknow'}\n` +
       `⏰ *Delivery Slot:* ${order.delivery_slot || 'Today Same-Day Express'}\n\n` +
-      `🛍️ *ORDER ITEMS & PAYMENT:*\n` +
+      `🛍️ *ORDERED DEVICE(S) & PAYMENT:*\n` +
       `${itemsSummary}\n` +
       `• *Total Payable:* ₹${(order.total_amount || 0).toLocaleString('en-IN')}\n` +
       `• *Payment Mode:* ${order.payment_method || 'COD'} (${order.payment_status || 'Prepaid/Pending'})\n\n` +
@@ -256,13 +348,15 @@ export default function AdminOrders({
             ) : (
               filteredOrders.map((o) => {
                 const isSelected = selectedOrder?.id === o.id;
+                const orderItems = getOrderResolvedItems(o, products, parts);
+                const firstItem = orderItems[0];
                 return (
                   <div
                     key={o.id}
                     onClick={() => onSelectOrder(o.id)}
                     className={`card p-4 rounded-2xl cursor-pointer transition-all ${isSelected
-                        ? 'border-brand-600 bg-brand-50/60 shadow-md ring-2 ring-brand-500/20'
-                        : 'bg-white hover:border-brand-300 hover:shadow-xs'
+                        ? 'border-teal-600 bg-teal-50/60 shadow-md ring-2 ring-teal-500/20'
+                        : 'bg-white hover:border-teal-300 hover:shadow-xs'
                       }`}
                   >
                     <div className="flex items-start justify-between gap-2">
@@ -274,8 +368,18 @@ export default function AdminOrders({
                         {o.status}
                       </span>
                     </div>
+
+                    {/* Ordered Device Badge */}
+                    <div className="mt-2 py-1 px-2 rounded-lg bg-teal-50/80 border border-teal-100/90 flex items-center gap-1.5 text-xs text-teal-800 font-bold">
+                      <Smartphone className="h-3.5 w-3.5 text-[#00a896] shrink-0" />
+                      <span className="truncate">{firstItem?.title || 'Refurbished Device'}</span>
+                      {orderItems.length > 1 && (
+                        <span className="text-[10px] text-teal-600 shrink-0 font-extrabold">+{orderItems.length - 1}</span>
+                      )}
+                    </div>
+
                     <div className="mt-2 flex items-center justify-between text-xs pt-2 border-t border-ink-100/60">
-                      <span className="font-extrabold text-brand-700">{formatINR(o.total_amount)}</span>
+                      <span className="font-extrabold text-[#00a896]">{formatINR(o.total_amount)}</span>
                       <span className="text-ink-400">{new Date(o.created_at).toLocaleDateString('en-IN')}</span>
                     </div>
                   </div>
@@ -368,37 +472,94 @@ export default function AdminOrders({
                 </div>
               </div>
 
-              {/* Order Items List */}
-              {selectedOrder.items && selectedOrder.items.length > 0 && (
-                <div className="space-y-2">
-                  <h4 className="text-xs font-bold uppercase tracking-wider text-ink-500 flex items-center gap-1.5">
-                    <ShoppingBag className="h-3.5 w-3.5 text-brand-600" /> Items in this Order ({selectedOrder.items.length})
-                  </h4>
-                  <div className="space-y-2">
-                    {selectedOrder.items.map((item: { image_url: string | undefined; title: (string | number | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | React.ReactPortal | null | undefined)[]; quantity: any; price: any; }, idx: React.Key | null | undefined) => (
-                      <div
-                        key={idx}
-                        className="flex items-center justify-between p-3 rounded-2xl bg-ink-50 border border-ink-100 text-xs"
-                      >
-                        <div className="flex items-center gap-3">
-                          {item.image_url ? (
-                            <img src={item.image_url} alt="" className="h-10 w-10 object-cover rounded-xl bg-white p-1" />
-                          ) : (
-                            <div className="h-10 w-10 rounded-xl bg-brand-100 text-brand-700 grid place-items-center font-bold">
-                              {item.title ? item.title[0] : 'P'}
+              {/* Ordered Products & Device Specifications */}
+              {(() => {
+                const resolvedItems = getOrderResolvedItems(selectedOrder, products, parts);
+                return (
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between">
+                      <h4 className="text-xs font-black uppercase tracking-wider text-ink-700 flex items-center gap-1.5">
+                        <ShoppingBag className="h-4 w-4 text-[#00a896]" />
+                        Ordered Product & Device Details ({resolvedItems.length})
+                      </h4>
+                      <span className="text-[11px] font-bold text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200">
+                        Certified Store Inventory
+                      </span>
+                    </div>
+
+                    <div className="space-y-3">
+                      {resolvedItems.map((item, idx) => {
+                        const cleanImg = getCleanPhoneImage(item.brand, item.model, item.image);
+                        return (
+                          <div
+                            key={idx}
+                            className="p-4 rounded-2xl bg-gradient-to-br from-gray-50/90 via-white to-teal-50/30 border border-ink-200/80 shadow-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4"
+                          >
+                            <div className="flex items-center gap-3.5">
+                              <div className="h-16 w-16 shrink-0 rounded-2xl bg-white border border-ink-100 p-1.5 flex items-center justify-center shadow-xs">
+                                <img
+                                  src={cleanImg}
+                                  alt={item.title}
+                                  className="h-full w-full object-contain drop-shadow-xs"
+                                  onError={(e) => {
+                                    (e.target as HTMLElement).style.display = 'none';
+                                  }}
+                                />
+                              </div>
+                              <div className="space-y-1">
+                                <div className="flex items-center gap-2 flex-wrap">
+                                  {item.brand && (
+                                    <span className="badge bg-teal-50 text-[#00a896] text-[10px] font-extrabold px-2 py-0.5">
+                                      {item.brand}
+                                    </span>
+                                  )}
+                                  <span className="text-[10px] font-bold bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded-md border border-emerald-200">
+                                    {item.condition || 'Grade A (Excellent)'}
+                                  </span>
+                                </div>
+                                <h3 className="font-extrabold text-sm text-ink-900 leading-snug">
+                                  {item.title}
+                                </h3>
+                                <div className="flex flex-wrap items-center gap-2 text-[11px] text-ink-600 font-semibold">
+                                  {item.storage && (
+                                    <span className="bg-ink-100 px-2 py-0.5 rounded-md text-ink-800">Storage: {item.storage}</span>
+                                  )}
+                                  {item.ram && (
+                                    <span className="bg-ink-100 px-2 py-0.5 rounded-md text-ink-800">RAM: {item.ram}</span>
+                                  )}
+                                  {item.color && (
+                                    <span className="bg-ink-100 px-2 py-0.5 rounded-md text-ink-800">Color: {item.color}</span>
+                                  )}
+                                  <span className="text-[#00a896] font-black">Qty: {item.quantity}</span>
+                                </div>
+                              </div>
                             </div>
-                          )}
-                          <div>
-                            <p className="font-bold text-ink-900">{item.title || 'Refurbished Smartphone'}</p>
-                            <p className="text-ink-500">Qty: {item.quantity || 1}</p>
+
+                            <div className="flex sm:flex-col items-end justify-between w-full sm:w-auto pt-2 sm:pt-0 border-t sm:border-t-0 border-ink-100">
+                              <span className="font-black text-ink-900 text-lg sm:text-right">
+                                {formatINR(item.price * item.quantity)}
+                              </span>
+                              <span className="text-[11px] text-ink-400">
+                                ({formatINR(item.price)} x {item.quantity})
+                              </span>
+                              {item.product_id && (
+                                <a
+                                  href={`/product/${item.product_id}`}
+                                  target="_blank"
+                                  rel="noreferrer"
+                                  className="text-[11px] font-bold text-[#00a896] hover:underline flex items-center gap-1 mt-1"
+                                >
+                                  View in Store <ExternalLink className="h-2.5 w-2.5" />
+                                </a>
+                              )}
+                            </div>
                           </div>
-                        </div>
-                        <span className="font-black text-brand-700 text-sm">{formatINR(item.price || 0)}</span>
-                      </div>
-                    ))}
+                        );
+                      })}
+                    </div>
                   </div>
-                </div>
-              )}
+                );
+              })()}
 
               {/* Delivery Partner Dispatch */}
               <div className="p-4 rounded-2xl bg-brand-50/50 border border-brand-100 space-y-3">

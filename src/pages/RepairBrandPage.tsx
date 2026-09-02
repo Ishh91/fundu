@@ -25,6 +25,8 @@ import {
 } from 'lucide-react';
 import { formatINR } from '../lib/db';
 import { MASTER_MODEL_CATALOG } from './SellPhone';
+import { ALL_INDIAN_PHONES_CATALOG } from '../data/indianPhonesCatalog';
+import { getCleanPhoneImage } from '../lib/phoneImages';
 
 const BRAND_REPAIR_DETAILS: Record<
   string,
@@ -139,12 +141,30 @@ export default function RepairBrandPage() {
   }, [brandSlug, selectedSeries]);
 
   const brandModels = useMemo(() => {
-    let list = MASTER_MODEL_CATALOG.filter(
-      (m) => m.brand.toLowerCase() === brandCleanKey
-    );
+    const indianList = ALL_INDIAN_PHONES_CATALOG.filter(
+      (p) => p.brand.toLowerCase() === brandCleanKey
+    ).map((p) => ({
+      brand: p.brand,
+      model: p.model,
+      series: p.series || brandDisplayName,
+      image: p.image_url,
+      price: 599,
+    }));
+
+    const masterList = MASTER_MODEL_CATALOG.filter(
+      (m) => m.brand.toLowerCase() === brandCleanKey && !indianList.some((ip) => ip.model.toLowerCase() === m.model.toLowerCase())
+    ).map((m) => ({
+      brand: m.brand,
+      model: m.model,
+      series: m.series || brandDisplayName,
+      image: m.image,
+      price: 599,
+    }));
+
+    let list = [...indianList, ...masterList];
 
     if (selectedSeries !== 'All') {
-      list = list.filter((m) => m.series === selectedSeries);
+      list = list.filter((m) => m.series?.toLowerCase() === selectedSeries.toLowerCase());
     }
 
     if (debouncedQuery) {
@@ -153,23 +173,22 @@ export default function RepairBrandPage() {
     }
 
     return list;
-  }, [brandCleanKey, selectedSeries, debouncedQuery]);
+  }, [brandCleanKey, brandDisplayName, selectedSeries, debouncedQuery]);
 
   const seriesTabs = useMemo(() => {
     if (brandInfo.series && brandInfo.series.length > 1) {
       return brandInfo.series;
     }
     const seriesSet = new Set<string>();
-    MASTER_MODEL_CATALOG.filter(
-      (m) => m.brand.toLowerCase() === brandCleanKey
-    ).forEach((m) => {
-      if (m.series) seriesSet.add(m.series);
+    ALL_INDIAN_PHONES_CATALOG.filter((p) => p.brand.toLowerCase() === brandCleanKey).forEach((p) => {
+      if (p.series) seriesSet.add(p.series);
     });
     return ['All', ...Array.from(seriesSet)];
   }, [brandCleanKey, brandInfo.series]);
 
   const handleBookRepair = (modelName: string, issueId: string = 'screen') => {
-    navigate(`/repair?step=2&brand=${encodeURIComponent(brandDisplayName)}&model=${encodeURIComponent(modelName)}&issue=${encodeURIComponent(issueId)}`);
+    const modelSlugClean = modelName.toLowerCase().replace(/\s+/g, '-');
+    navigate(`/repair/${brandCleanKey}/${modelSlugClean}?issue=${encodeURIComponent(issueId)}`);
   };
 
   return (
@@ -293,39 +312,49 @@ export default function RepairBrandPage() {
             </div>
           )}
 
-          {/* Models Grid */}
+          {/* COMPACT 5-COLUMN RESPONSIVE MODEL PRODUCT TILE GRID */}
           {brandModels.length > 0 ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 sm:gap-4">
               {brandModels.map((m) => (
                 <div
                   key={m.model}
-                  className="p-5 rounded-2xl border border-gray-200/90 bg-white hover:border-purple-600 hover:shadow-xl transition-all duration-300 space-y-4 group flex flex-col justify-between"
+                  onClick={() => handleBookRepair(m.model, 'screen')}
+                  className="p-3 sm:p-4 rounded-2xl border border-gray-200/90 bg-white hover:border-[#00a896] hover:shadow-lg transition-all duration-300 group cursor-pointer flex flex-col justify-between"
                 >
-                  <div className="space-y-3">
-                    <div className="flex items-center justify-between">
-                      <span className="badge bg-purple-50 text-purple-800 font-extrabold text-xs">
-                        Doorstep Repair Available
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between gap-1">
+                      <span className="badge bg-teal-50 text-teal-800 font-extrabold text-[10px] sm:text-[11px] px-1.5 py-0.5">
+                        Repair from ₹599
                       </span>
-                      <span className="text-[10px] text-gray-400 font-semibold">{m.series || brandDisplayName}</span>
+                      <span className="text-[9px] sm:text-[10px] text-gray-400 font-medium truncate max-w-[80px]">
+                        {m.series || brandDisplayName}
+                      </span>
                     </div>
 
-                    <div className="h-32 w-full overflow-hidden rounded-xl bg-gray-50/70 p-2 border border-gray-100 flex items-center justify-center">
-                      <img src={m.image} alt={m.model} className="h-full object-contain group-hover:scale-110 transition-transform duration-300" />
+                    {/* Centered Clean Device Image Container */}
+                    <div className="h-28 sm:h-32 w-full bg-white rounded-xl p-1.5 flex items-center justify-center relative overflow-hidden group-hover:scale-105 transition-transform duration-300">
+                      <img
+                        src={getCleanPhoneImage(m.brand || brandDisplayName, m.model, m.image)}
+                        alt={m.model}
+                        className="h-full max-h-28 sm:max-h-32 w-auto object-contain drop-shadow-xs"
+                        loading="lazy"
+                      />
                     </div>
 
                     <div>
-                      <p className="font-extrabold text-base text-gray-900 group-hover:text-purple-700 transition-colors">{m.model}</p>
-                      <p className="text-xs text-gray-500 mt-0.5">Screen, Battery, Port & Camera Repair</p>
+                      <p className="font-bold text-xs sm:text-sm text-gray-900 group-hover:text-[#00a896] transition-colors line-clamp-1">
+                        {m.model}
+                      </p>
+                      <p className="text-[10px] text-gray-400 mt-0.5">
+                        Screen · Battery · Camera
+                      </p>
                     </div>
                   </div>
 
-                  <button
-                    type="button"
-                    onClick={() => handleBookRepair(m.model, 'screen')}
-                    className="btn bg-purple-600 hover:bg-purple-700 text-white w-full text-xs py-2.5 flex items-center justify-center gap-1.5 font-bold shadow-md shadow-purple-600/20"
-                  >
-                    <Wrench className="h-4 w-4" /> Book Doorstep Repair <ArrowRight className="h-4 w-4" />
-                  </button>
+                  <div className="mt-2 pt-2 border-t border-gray-100 flex items-center justify-between text-xs text-[#00a896] font-bold group-hover:translate-x-0.5 transition-transform">
+                    <span>Book Repair</span>
+                    <ArrowRight className="h-3.5 w-3.5" />
+                  </div>
                 </div>
               ))}
             </div>

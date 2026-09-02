@@ -76,6 +76,23 @@ export default function Payment() {
   const createOrder = async (paymentMethod: 'cod' | 'razorpay', paymentStatus: string = 'pending') => {
     setLoading(true);
     try {
+      const orderItem = {
+        id: cartItem.item.id,
+        product_id: cartItem.type === 'product' ? cartItem.item.id : null,
+        spare_part_id: cartItem.type === 'spare_part' ? cartItem.item.id : null,
+        title: cartItem.item.title || `${(cartItem.item as any).brand || ''} ${(cartItem.item as any).model || ''}`.trim() || 'Certified Refurbished Device',
+        brand: (cartItem.item as any).brand || '',
+        model: (cartItem.item as any).model || '',
+        storage: (cartItem.item as any).storage || '',
+        ram: (cartItem.item as any).ram || '',
+        color: (cartItem.item as any).color || '',
+        condition: (cartItem.item as any).condition || 'Grade A (Excellent)',
+        price: cartItem.item.price,
+        quantity: cartItem.quantity || 1,
+        image: cartItem.item.image || (cartItem.item as any).images?.[0] || '',
+        image_url: cartItem.item.image || (cartItem.item as any).images?.[0] || '',
+      };
+
       const orderData = {
         user_id: user?.id,
         customer_name: deliveryDetails.name || profile?.full_name || null,
@@ -83,15 +100,16 @@ export default function Payment() {
         customer_email: user?.email || null,
         product_id: cartItem.type === 'product' ? cartItem.item.id : null,
         spare_part_id: cartItem.type === 'spare_part' ? cartItem.item.id : null,
-        quantity: cartItem.quantity,
-        total_amount: cartItem.item.price,
+        quantity: cartItem.quantity || 1,
+        total_amount: cartItem.item.price * (cartItem.quantity || 1),
         status: 'pending',
         payment_method: paymentMethod,
         payment_status: paymentStatus,
         delivery_address: `${deliveryDetails.address}, ${deliveryDetails.area}`,
         delivery_area: deliveryDetails.area,
         delivery_name: deliveryDetails.name,
-        delivery_phone: deliveryDetails.phone
+        delivery_phone: deliveryDetails.phone,
+        items: [orderItem],
       };
 
       const { error } = await db
