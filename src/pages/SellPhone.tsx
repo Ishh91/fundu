@@ -1002,13 +1002,13 @@ export default function SellPhone() {
 
           {/* Hero Visual Graphic */}
           <div className="shrink-0 hidden md:block">
-            <div className="relative w-64 h-64 rounded-full bg-gradient-to-br from-teal-400 to-[#00a896] p-2 shadow-2xl flex items-center justify-center">
+            <div className="relative w-80 h-72 rounded-3xl overflow-hidden shadow-xl border border-teal-100/60 bg-gradient-to-br from-teal-50 to-emerald-50 p-1 flex items-center justify-center group">
               <img
-                src="https://images.unsplash.com/photo-1556742049-0a670f4a4591?w=400&auto=format&fit=crop&q=80"
-                alt="Instant Mobile Cash"
-                className="w-full h-full object-cover rounded-full filter brightness-105"
+                src="/sell-hero-3d.jpg"
+                alt="Instant Mobile Cash Best Deals"
+                className="w-full h-full object-cover rounded-2xl group-hover:scale-105 transition-transform duration-500"
               />
-              <div className="absolute -bottom-2 bg-white rounded-2xl shadow-xl px-4 py-2 border border-gray-100 flex items-center gap-2">
+              <div className="absolute bottom-3 left-1/2 -translate-x-1/2 bg-white/95 backdrop-blur-md rounded-2xl shadow-xl px-4 py-2 border border-teal-100 flex items-center gap-2 whitespace-nowrap">
                 <BadgeIndianRupee className="h-5 w-5 text-emerald-600" />
                 <span className="font-extrabold text-xs text-gray-900">Spot Cash at Doorstep</span>
               </div>

@@ -19,7 +19,7 @@ import { useSearchParams, useNavigate, Link } from 'react-router-dom';
 import { db, formatINR } from '../lib/db';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
-import { getCleanPhoneImage } from '../lib/phoneImages';
+import { getCleanPhoneImage, getCleanBrandLogo } from '../lib/phoneImages';
 import type { Product } from '../types';
 
 const BRAND_PILLS = [
@@ -398,20 +398,34 @@ export default function BuyPhones() {
 
           {/* Quick Brand Pills Carousel */}
           <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none">
-            {BRAND_PILLS.map((b) => (
-              <button
-                key={b.name}
-                type="button"
-                onClick={() => setSelectedBrand(b.name)}
-                className={`flex items-center gap-1.5 rounded-full px-4 py-2 text-xs font-bold whitespace-nowrap transition-all duration-200 ${
-                  selectedBrand === b.name
-                    ? 'bg-[#00a896] text-white shadow-sm ring-2 ring-[#00a896]/20'
-                    : 'border border-gray-200 bg-white text-gray-700 hover:border-[#00a896] hover:bg-teal-50/40'
-                }`}
-              >
-                <span>{b.icon}</span> {b.name}
-              </button>
-            ))}
+            {BRAND_PILLS.map((b) => {
+              const isSelected = selectedBrand === b.name;
+              return (
+                <button
+                  key={b.name}
+                  type="button"
+                  onClick={() => setSelectedBrand(b.name)}
+                  className={`flex items-center gap-2 rounded-full px-4 py-2 text-xs font-bold whitespace-nowrap transition-all duration-200 ${
+                    isSelected
+                      ? 'bg-[#00a896] text-white shadow-sm ring-2 ring-[#00a896]/20'
+                      : 'border border-gray-200 bg-white text-gray-700 hover:border-[#00a896] hover:bg-teal-50/40'
+                  }`}
+                >
+                  {b.name === 'All' ? (
+                    <Smartphone className={`h-4 w-4 ${isSelected ? 'text-white' : 'text-[#00a896]'}`} />
+                  ) : (
+                    <div className="h-4 w-4 flex items-center justify-center rounded-full overflow-hidden bg-white p-0.5 border border-gray-200/60 shrink-0 shadow-xs">
+                      <img
+                        src={getCleanBrandLogo(b.name)}
+                        alt={b.name}
+                        className="h-full w-full object-contain"
+                      />
+                    </div>
+                  )}
+                  <span>{b.name}</span>
+                </button>
+              );
+            })}
           </div>
         </div>
       </section>

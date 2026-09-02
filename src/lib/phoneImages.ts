@@ -1,7 +1,30 @@
 /**
- * Official Studio Smartphone Renders (Cashify-Style Clean Isolated Renders)
- * Provides official front-facing upright device renders on clean white backgrounds.
+ * Official Studio Smartphone Renders & Brand Vector Logos
+ * Provides official front-facing upright device renders and authentic brand logos.
  */
+
+// Official Brand Vector Logos
+export const BRAND_OFFICIAL_LOGOS: Record<string, string> = {
+  apple: 'https://upload.wikimedia.org/wikipedia/commons/f/fa/Apple_logo_black.svg',
+  iphone: 'https://upload.wikimedia.org/wikipedia/commons/f/fa/Apple_logo_black.svg',
+  samsung: 'https://upload.wikimedia.org/wikipedia/commons/2/24/Samsung_Logo.svg',
+  oneplus: 'https://upload.wikimedia.org/wikipedia/commons/2/29/OnePlus_logo.svg',
+  xiaomi: 'https://upload.wikimedia.org/wikipedia/commons/a/ae/Xiaomi_logo_%282021-%29.svg',
+  redmi: 'https://upload.wikimedia.org/wikipedia/commons/a/ae/Xiaomi_logo_%282021-%29.svg',
+  poco: 'https://upload.wikimedia.org/wikipedia/commons/a/ae/Xiaomi_logo_%282021-%29.svg',
+  vivo: 'https://upload.wikimedia.org/wikipedia/commons/e/e5/Vivo_mobile_logo.svg',
+  iqoo: 'https://upload.wikimedia.org/wikipedia/commons/e/e5/Vivo_mobile_logo.svg',
+  oppo: 'https://upload.wikimedia.org/wikipedia/commons/b/b8/OPPO_Logo.svg',
+  realme: 'https://upload.wikimedia.org/wikipedia/commons/e/e0/Realme_logo.svg',
+  google: 'https://upload.wikimedia.org/wikipedia/commons/2/2f/Google_2015_logo.svg',
+  pixel: 'https://upload.wikimedia.org/wikipedia/commons/2/2f/Google_2015_logo.svg',
+  nothing: 'https://upload.wikimedia.org/wikipedia/commons/9/9c/Nothing_Logo.svg',
+  motorola: 'https://upload.wikimedia.org/wikipedia/commons/4/4c/Motorola_new_logo.svg',
+  moto: 'https://upload.wikimedia.org/wikipedia/commons/4/4c/Motorola_new_logo.svg',
+  infinix: 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/Infinix_logo.svg/320px-Infinix_logo.svg.png',
+  tecno: 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c9/Tecno_Mobile_logo.svg/320px-Tecno_Mobile_logo.svg.png',
+  itel: 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/69/Itel_Mobile_logo.svg/320px-Itel_Mobile_logo.svg.png',
+};
 
 // Model-Specific Official Studio Renders
 export const MODEL_EXACT_RENDERS: Array<{ keyword: string; url: string }> = [
@@ -69,7 +92,7 @@ export const MODEL_EXACT_RENDERS: Array<{ keyword: string; url: string }> = [
   { keyword: 'tecno camon', url: 'https://fdn2.gsmarena.com/vv/bigpic/tecno-camon-30-pro.jpg' },
 ];
 
-// Brand-Specific High-Reliability Clean Renders for Fallback
+// Brand-Specific High-Reliability Clean Renders for Device Fallbacks
 export const BRAND_FRONT_FALLBACKS: Record<string, string> = {
   apple: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-15-pro.jpg',
   iphone: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-15-pro.jpg',
@@ -92,12 +115,15 @@ export const BRAND_FRONT_FALLBACKS: Record<string, string> = {
   itel: 'https://fdn2.gsmarena.com/vv/bigpic/itel-s24.jpg',
 };
 
+/**
+ * Returns authentic official vector/brand logo URL.
+ */
 export function getCleanBrandLogo(brandName?: string): string {
   const b = (brandName || '').toLowerCase().trim();
-  for (const [key, url] of Object.entries(BRAND_FRONT_FALLBACKS)) {
+  for (const [key, url] of Object.entries(BRAND_OFFICIAL_LOGOS)) {
     if (b.includes(key)) return url;
   }
-  return BRAND_FRONT_FALLBACKS.apple;
+  return BRAND_OFFICIAL_LOGOS.apple;
 }
 
 /**
