@@ -335,13 +335,25 @@ export default function ProductDetail() {
 
   if (!product) return null;
 
-  // Calculate current price dynamically based on selected condition grade
+  // Helper to compute grade price with exact +₹1500 step increments (Fair -> Good -> Superb)
+  const getGradePrice = (gradeId: string) => {
+    const defaultCond = (product.condition || 'Superb').toLowerCase();
+    let fairBasePrice = product.price;
+    if (defaultCond.includes('good')) {
+      fairBasePrice = product.price - 1500;
+    } else if (defaultCond.includes('superb') || defaultCond.includes('excellent')) {
+      fairBasePrice = product.price - 3000;
+    }
+
+    if (gradeId === 'Fair') return Math.max(0, fairBasePrice);
+    if (gradeId === 'Good') return Math.max(0, fairBasePrice + 1500);
+    return Math.max(0, fairBasePrice + 3000);
+  };
+
   const activeGradeName = (selectedGrade || product.condition || 'Superb').toLowerCase();
   const gradeObj = CONDITION_GRADES.find((g) => g.id.toLowerCase() === activeGradeName || (activeGradeName.includes('excellent') && g.id === 'Superb')) || CONDITION_GRADES[2];
 
-  const currentPrice = Math.round(
-    product.price * (gradeObj.id === 'Fair' ? 0.88 : gradeObj.id === 'Good' ? 0.95 : 1.0)
-  );
+  const currentPrice = getGradePrice(gradeObj.id);
   const currentMrp = product.original_price && product.original_price > product.price
     ? product.original_price
     : Math.round(product.price * 1.45);
@@ -570,7 +582,7 @@ export default function ProductDetail() {
                   ).map((g) => {
                     const activeGrade = (selectedGrade || product.condition || 'Superb').toLowerCase();
                     const isSelected = activeGrade === g.id.toLowerCase() || (activeGrade.includes('excellent') && g.id === 'Superb');
-                    const displayPrice = Math.round(product.price * (g.id === 'Fair' ? 0.88 : g.id === 'Good' ? 0.95 : 1.0));
+                    const displayPrice = getGradePrice(g.id);
 
                     return (
                       <button
