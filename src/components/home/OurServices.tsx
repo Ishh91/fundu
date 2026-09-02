@@ -8,7 +8,7 @@ const FUNDU_SERVICES = [
     href: '/sell',
     icon: Smartphone,
     color: 'bg-teal-50 text-[#00a896] border-teal-200',
-    image: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-15-pro-max.jpg',
+    image: 'https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=150&auto=format&fit=crop&q=80',
   },
   {
     title: 'Buy Refurbished',
@@ -16,7 +16,7 @@ const FUNDU_SERVICES = [
     href: '/buy',
     icon: ShoppingCart,
     color: 'bg-emerald-50 text-emerald-700 border-emerald-200',
-    image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s24-ultra-5g.jpg',
+    image: 'https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?w=150&auto=format&fit=crop&q=80',
   },
   {
     title: 'Doorstep Repair',
@@ -32,7 +32,7 @@ const FUNDU_SERVICES = [
     href: '/sell',
     icon: RefreshCw,
     color: 'bg-indigo-50 text-indigo-700 border-indigo-200',
-    image: 'https://fdn2.gsmarena.com/vv/bigpic/oneplus-12.jpg',
+    image: 'https://images.unsplash.com/photo-1580910051074-3eb694886505?w=150&auto=format&fit=crop&q=80',
   },
 ];
 
@@ -50,11 +50,15 @@ export default function OurServices() {
                 to={s.href}
                 className="group flex flex-col items-center text-center p-4 rounded-2xl bg-white border border-gray-200 shadow-xs hover:border-[#00a896] hover:shadow-md transition-all duration-300 cursor-pointer"
               >
-                <div className="w-16 h-16 rounded-2xl bg-[#eef8f7] border border-teal-100 p-2 flex items-center justify-center group-hover:scale-105 transition-transform">
+                <div className="w-16 h-16 rounded-2xl bg-[#eef8f7] border border-teal-100 p-2 flex items-center justify-center group-hover:scale-105 transition-transform overflow-hidden">
                   <img
                     src={s.image}
                     alt={s.title}
-                    className="h-full w-full object-contain drop-shadow-xs"
+                    className="h-full w-full object-contain drop-shadow-xs rounded-xl"
+                    onError={(e) => {
+                      (e.target as HTMLImageElement).src =
+                        'https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=150&auto=format&fit=crop&q=80';
+                    }}
                   />
                 </div>
                 <span className="mt-3 text-sm font-extrabold text-gray-900 group-hover:text-[#00a896] transition-colors">

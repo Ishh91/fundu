@@ -134,6 +134,10 @@ export default function PopularBrands() {
                     src={getCleanBrandLogo(brand)}
                     alt={`${brand} phone`}
                     className="h-full w-full object-contain"
+                    onError={(e) => {
+                      (e.target as HTMLImageElement).src =
+                        'https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=400&auto=format&fit=crop&q=80';
+                    }}
                   />
                 </div>
 
