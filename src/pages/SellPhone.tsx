@@ -31,6 +31,7 @@ import {
 import { computeDetailedCashifyValuation, fetchSellPriceConfig, fetchPhoneModels, type SellPriceConfig } from '../lib/mobileApi';
 import { db, formatINR } from '../lib/db';
 import { useAuth } from '../context/AuthContext';
+import { ALL_INDIAN_PHONES_CATALOG } from '../data/indianPhonesCatalog';
 
 // Master Lucknow Localities
 const LUCKNOW_LOCALITIES = [
@@ -77,8 +78,25 @@ export const MASTER_MODEL_CATALOG = [
 
   // OnePlus
   { brand: 'OnePlus', series: 'Number Series', model: 'OnePlus 12', storage: '256 GB', price: 48000, image: 'https://images.unsplash.com/photo-1580910051074-3eb694886505?w=300&auto=format&fit=crop&q=80' },
+  { brand: 'OnePlus', series: 'Number Series', model: 'OnePlus 12R', storage: '128 GB', price: 29000, image: 'https://images.unsplash.com/photo-1580910051074-3eb694886505?w=300&auto=format&fit=crop&q=80' },
   { brand: 'OnePlus', series: 'Number Series', model: 'OnePlus 11', storage: '256 GB', price: 33500, image: 'https://images.unsplash.com/photo-1580910051074-3eb694886505?w=300&auto=format&fit=crop&q=80' },
-  { brand: 'OnePlus', series: 'Nord Series', model: 'OnePlus Nord 3', storage: '128 GB', price: 19000, image: 'https://images.unsplash.com/photo-1580910051074-3eb694886505?w=300&auto=format&fit=crop&q=80' },
+  { brand: 'OnePlus', series: 'Number Series', model: 'OnePlus 11R 5G', storage: '128 GB', price: 24000, image: 'https://images.unsplash.com/photo-1580910051074-3eb694886505?w=300&auto=format&fit=crop&q=80' },
+  { brand: 'OnePlus', series: 'Nord Series', model: 'OnePlus Nord 4 5G', storage: '128 GB', price: 23000, image: 'https://images.unsplash.com/photo-1580910051074-3eb694886505?w=300&auto=format&fit=crop&q=80' },
+  { brand: 'OnePlus', series: 'Nord Series', model: 'OnePlus Nord 3 5G', storage: '128 GB', price: 19000, image: 'https://images.unsplash.com/photo-1580910051074-3eb694886505?w=300&auto=format&fit=crop&q=80' },
+  { brand: 'OnePlus', series: 'Nord Series', model: 'OnePlus Nord 2 5G', storage: '128 GB', price: 14500, image: 'https://images.unsplash.com/photo-1580910051074-3eb694886505?w=300&auto=format&fit=crop&q=80' },
+  { brand: 'OnePlus', series: 'Nord Series', model: 'OnePlus Nord 2T 5G', storage: '128 GB', price: 16000, image: 'https://images.unsplash.com/photo-1580910051074-3eb694886505?w=300&auto=format&fit=crop&q=80' },
+  { brand: 'OnePlus', series: 'Nord Series', model: 'OnePlus Nord CE 4 5G', storage: '128 GB', price: 18000, image: 'https://images.unsplash.com/photo-1580910051074-3eb694886505?w=300&auto=format&fit=crop&q=80' },
+  { brand: 'OnePlus', series: 'Nord Series', model: 'OnePlus Nord CE 3 5G', storage: '128 GB', price: 14500, image: 'https://images.unsplash.com/photo-1580910051074-3eb694886505?w=300&auto=format&fit=crop&q=80' },
+  { brand: 'OnePlus', series: 'Nord Series', model: 'OnePlus Nord CE 3 Lite 5G', storage: '128 GB', price: 12000, image: 'https://images.unsplash.com/photo-1580910051074-3eb694886505?w=300&auto=format&fit=crop&q=80' },
+  { brand: 'OnePlus', series: 'Nord Series', model: 'OnePlus Nord CE 2 5G', storage: '128 GB', price: 11500, image: 'https://images.unsplash.com/photo-1580910051074-3eb694886505?w=300&auto=format&fit=crop&q=80' },
+  { brand: 'OnePlus', series: 'Nord Series', model: 'OnePlus Nord CE 2 Lite 5G', storage: '128 GB', price: 9800, image: 'https://images.unsplash.com/photo-1580910051074-3eb694886505?w=300&auto=format&fit=crop&q=80' },
+  { brand: 'OnePlus', series: 'Nord Series', model: 'OnePlus Nord 5G', storage: '128 GB', price: 11000, image: 'https://images.unsplash.com/photo-1580910051074-3eb694886505?w=300&auto=format&fit=crop&q=80' },
+  { brand: 'OnePlus', series: 'Number Series', model: 'OnePlus 10 Pro 5G', storage: '128 GB', price: 26000, image: 'https://images.unsplash.com/photo-1580910051074-3eb694886505?w=300&auto=format&fit=crop&q=80' },
+  { brand: 'OnePlus', series: 'Number Series', model: 'OnePlus 10R 5G', storage: '128 GB', price: 17500, image: 'https://images.unsplash.com/photo-1580910051074-3eb694886505?w=300&auto=format&fit=crop&q=80' },
+  { brand: 'OnePlus', series: 'Number Series', model: 'OnePlus 10T 5G', storage: '128 GB', price: 21000, image: 'https://images.unsplash.com/photo-1580910051074-3eb694886505?w=300&auto=format&fit=crop&q=80' },
+  { brand: 'OnePlus', series: 'Number Series', model: 'OnePlus 9 Pro 5G', storage: '128 GB', price: 20000, image: 'https://images.unsplash.com/photo-1580910051074-3eb694886505?w=300&auto=format&fit=crop&q=80' },
+  { brand: 'OnePlus', series: 'Number Series', model: 'OnePlus 9R 5G', storage: '128 GB', price: 15000, image: 'https://images.unsplash.com/photo-1580910051074-3eb694886505?w=300&auto=format&fit=crop&q=80' },
+  { brand: 'OnePlus', series: 'Number Series', model: 'OnePlus 9RT 5G', storage: '128 GB', price: 17000, image: 'https://images.unsplash.com/photo-1580910051074-3eb694886505?w=300&auto=format&fit=crop&q=80' },
 
   // Xiaomi
   { brand: 'Xiaomi', series: 'Mi Series', model: 'Xiaomi 13 Pro', storage: '256 GB', price: 34000, image: 'https://images.unsplash.com/photo-1598327105666-5b89351aff97?w=300&auto=format&fit=crop&q=80' },
@@ -460,16 +478,42 @@ export default function SellPhone() {
 
   const estimate = cashifyValuation.finalEstimate;
 
-  // Filtered Master Models for Search Autocomplete
+  // Filtered Master Models for Search Autocomplete (Combines Master Catalog & Indian Phones Catalog)
   const searchResults = useMemo(() => {
     if (!debouncedQuery) return [];
-    const q = debouncedQuery.toLowerCase();
-    return MASTER_MODEL_CATALOG.filter(
-      (m) =>
-        m.model.toLowerCase().includes(q) ||
-        m.brand.toLowerCase().includes(q) ||
-        `${m.brand} ${m.model}`.toLowerCase().includes(q)
-    );
+    const q = debouncedQuery.toLowerCase().trim();
+    const queryWords = q.split(/\s+/).filter(Boolean);
+
+    // Combine MASTER_MODEL_CATALOG and ALL_INDIAN_PHONES_CATALOG
+    const modelMap = new Map<string, any>();
+
+    MASTER_MODEL_CATALOG.forEach((m) => {
+      const key = `${m.brand.toLowerCase()}-${m.model.toLowerCase()}`;
+      modelMap.set(key, m);
+    });
+
+    if (Array.isArray(ALL_INDIAN_PHONES_CATALOG)) {
+      ALL_INDIAN_PHONES_CATALOG.forEach((p) => {
+        const key = `${p.brand.toLowerCase()}-${p.model.toLowerCase()}`;
+        if (!modelMap.has(key)) {
+          modelMap.set(key, {
+            brand: p.brand,
+            series: p.brand,
+            model: p.model,
+            storage: p.storage_options?.[0] || '128 GB',
+            price: p.base_resale_value || Math.round((p.default_mrp || 30000) * 0.55),
+            image: p.image_url || 'https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=300&auto=format&fit=crop&q=80',
+          });
+        }
+      });
+    }
+
+    const allModels = Array.from(modelMap.values());
+
+    return allModels.filter((m) => {
+      const fullText = `${m.brand} ${m.series || ''} ${m.model}`.toLowerCase();
+      return queryWords.every((word) => fullText.includes(word));
+    });
   }, [debouncedQuery]);
 
   // Available Series List for Selected Brand
