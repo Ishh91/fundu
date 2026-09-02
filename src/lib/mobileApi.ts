@@ -582,11 +582,9 @@ export async function addCustomIndianPhoneApi(payload: Record<string, any>) {
 }
 
 /**
- * GSMArena Unofficial API Integration
- * Live endpoints for device specifications, high-res photos, and brand catalogs
+ * Device Search & Specifications
+ * Routed cleanly through local backend API
  */
-const GSMARENA_BASE = 'https://phone-specs-api.azharimm.dev/v2';
-
 export type GsmArenaSearchResult = {
   brand: string;
   phone_name: string;
@@ -612,15 +610,20 @@ export type GsmArenaDeviceDetail = {
 export async function fetchGsmArenaSearch(query: string): Promise<GsmArenaSearchResult[]> {
   if (!query || query.trim().length < 2) return [];
   try {
-    const res = await fetch(`${GSMARENA_BASE}/search?q=${encodeURIComponent(query)}`);
+    const res = await fetch(`${API_BASE}/mobile/search?query=${encodeURIComponent(query)}`);
     if (res.ok) {
       const json = await res.json();
-      if (json.status && json.data && Array.isArray(json.data.phones)) {
-        return json.data.phones;
+      if (json.data && Array.isArray(json.data)) {
+        return json.data.map((item: any) => ({
+          brand: item.brand || '',
+          phone_name: item.model || item.name || '',
+          slug: (item.model || item.name || '').toLowerCase().replace(/\s+/g, '-'),
+          image: item.image_url || 'https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=150&auto=format&fit=crop&q=80',
+        }));
       }
     }
   } catch {
-    // Fall through to active backend API if GSMArena mirror is down
+    // fallback
   }
 
   try {
@@ -645,10 +648,10 @@ export async function fetchGsmArenaSearch(query: string): Promise<GsmArenaSearch
 export async function fetchGsmArenaDeviceDetails(slug: string): Promise<GsmArenaDeviceDetail | null> {
   if (!slug) return null;
   try {
-    const res = await fetch(`${GSMARENA_BASE}/${encodeURIComponent(slug)}`);
+    const res = await fetch(`${API_BASE}/mobile/devices/${encodeURIComponent(slug)}`);
     if (!res.ok) return null;
     const json = await res.json();
-    if (json.status && json.data) {
+    if (json.data) {
       return json.data as GsmArenaDeviceDetail;
     }
     return null;
