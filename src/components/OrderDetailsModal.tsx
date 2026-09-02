@@ -554,13 +554,38 @@ export default function OrderDetailsModal({
           <p className="text-xs text-ink-500 font-medium">
             Fundu Technologies Pvt Ltd • Lucknow Central Hub, Hazratganj
           </p>
-          <button
-            type="button"
-            onClick={onClose}
-            className="btn-outline text-xs px-5 py-2 font-bold"
-          >
-            Close
-          </button>
+          <div className="flex items-center gap-2">
+            {!['delivered', 'cancelled'].includes(order.status) && (
+              <button
+                type="button"
+                onClick={async () => {
+                  const confirmed = window.confirm(
+                    `Are you sure you want to cancel Order #${order.id.slice(0, 8).toUpperCase()}? Your order will be cancelled and items restored to inventory.`
+                  );
+                  if (!confirmed) return;
+                  try {
+                    const { error } = await db.from('orders').update({ status: 'cancelled' }).eq('id', order.id);
+                    if (error) throw error;
+                    alert('✓ Order cancelled successfully. Items have been restored to store inventory.');
+                    onOrderUpdated?.();
+                    onClose();
+                  } catch (err: any) {
+                    alert(err?.message || 'Failed to cancel order');
+                  }
+                }}
+                className="btn text-xs px-4 py-2 border border-rose-300 text-rose-600 hover:bg-rose-50 font-bold rounded-xl transition cursor-pointer"
+              >
+                Cancel Order
+              </button>
+            )}
+            <button
+              type="button"
+              onClick={onClose}
+              className="btn-outline text-xs px-5 py-2 font-bold"
+            >
+              Close
+            </button>
+          </div>
         </div>
 
       </div>

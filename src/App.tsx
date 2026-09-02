@@ -32,6 +32,7 @@ import Recycle from './pages/Recycle';
 import Articles from './pages/Articles';
 import LaptopComingSoon from './pages/LaptopComingSoon';
 import ProductDetail from './pages/ProductDetail';
+import SearchActionPage from './pages/SearchActionPage';
 import AdminLogin from './pages/AdminLogin';
 import VendorLogin from './pages/VendorLogin';
 import WholesalerLogin from './pages/WholesalerLogin';
@@ -104,6 +105,7 @@ function MainLayout() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/buy" element={<BuyPhones />} />
+          <Route path="/search" element={<SearchActionPage />} />
           <Route path="/product/:id" element={<ProductDetail />} />
           <Route path="/sell" element={<SellPhone />} />
           <Route path="/sell/:brandSlug" element={<SellBrandPage />} />

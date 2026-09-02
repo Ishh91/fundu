@@ -4,7 +4,7 @@ import {
   LayoutDashboard, Smartphone, BadgeIndianRupee, Wrench, Package,
   Truck, Clock, LogOut, User, Phone, MapPin, Calendar, CheckCircle2,
   Circle, AlertCircle, ChevronRight, Banknote, ShieldCheck, Star,
-  RefreshCw, ArrowRight, CreditCard, Boxes, Navigation, Eye, MessageSquare,
+  RefreshCw, ArrowRight, CreditCard, Boxes, Navigation, Eye, MessageSquare, XCircle,
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { db, formatINR } from '../lib/db';
@@ -197,6 +197,22 @@ export default function Dashboard() {
       });
   };
 
+  const handleCancelOrder = async (orderId: string) => {
+    const confirmed = window.confirm(
+      `Are you sure you want to cancel Order #${orderId.slice(0, 8).toUpperCase()}? Your order will be cancelled and the items will be restored to store inventory.`
+    );
+    if (!confirmed) return;
+
+    try {
+      const { error } = await db.from('orders').update({ status: 'cancelled' }).eq('id', orderId);
+      if (error) throw error;
+      alert('✓ Order cancelled successfully. Items have been restored to store inventory.');
+      refreshOrders();
+    } catch (err: any) {
+      alert(err?.message || 'Failed to cancel order');
+    }
+  };
+
   useEffect(() => {
     if (!loading && !user) navigate('/login?redirect=/dashboard');
     if (!loading && user && profile && profile.role === 'admin') navigate('/admin');
@@ -355,6 +371,7 @@ export default function Dashboard() {
             onOpenTracker={handleOpenTracker}
             onViewOrderDetails={(order, dispatch) => setSelectedOrderDetails({ order, dispatch })}
             onOpenReviewModal={() => setReviewModalOpen(true)}
+            onCancelOrder={handleCancelOrder}
           />
         )}
       </div>
@@ -903,12 +920,14 @@ function OrdersTab({
   onOpenTracker,
   onViewOrderDetails,
   onOpenReviewModal,
+  onCancelOrder,
 }: {
   orders: Order[];
   dispatches: Dispatch[];
   onOpenTracker?: (item: any) => void;
   onViewOrderDetails?: (order: Order, dispatch?: Dispatch) => void;
   onOpenReviewModal?: () => void;
+  onCancelOrder?: (id: string) => void;
 }) {
   if (orders.length === 0) {
     return <EmptyState icon={Package} title="No orders yet" desc="Browse certified refurbished phones with warranty." cta={{ to: '/buy', label: 'Browse Phones' }} />;
@@ -925,6 +944,7 @@ function OrdersTab({
             onOpenTracker={onOpenTracker}
             onViewOrderDetails={onViewOrderDetails}
             onOpenReviewModal={onOpenReviewModal}
+            onCancelOrder={onCancelOrder}
           />
         );
       })}
@@ -938,12 +958,14 @@ function OrderCard({
   onOpenTracker,
   onViewOrderDetails,
   onOpenReviewModal,
+  onCancelOrder,
 }: {
   order: Order;
   dispatch?: Dispatch;
   onOpenTracker?: (item: any) => void;
   onViewOrderDetails?: (order: Order, dispatch?: Dispatch) => void;
   onOpenReviewModal?: () => void;
+  onCancelOrder?: (id: string) => void;
 }) {
   const isTerminal = ['delivered', 'cancelled'].includes(o.status);
   const effectiveStatus = disp?.status ?? o.status;
@@ -1083,6 +1105,16 @@ function OrderCard({
           >
             <MessageSquare className="h-3.5 w-3.5" /> WhatsApp Support
           </a>
+
+          {!isTerminal && (
+            <button
+              type="button"
+              onClick={() => onCancelOrder?.(o.id)}
+              className="btn text-xs px-3 py-1.5 border border-rose-200 text-rose-600 hover:bg-rose-50 hover:border-rose-300 flex items-center gap-1.5 rounded-xl font-bold transition shadow-xs cursor-pointer"
+            >
+              <XCircle className="h-3.5 w-3.5 text-rose-500" /> Cancel Order
+            </button>
+          )}
         </div>
 
         {isTerminal && effectiveStatus === 'delivered' && (

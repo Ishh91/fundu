@@ -220,11 +220,11 @@ export default function Navbar() {
     event.preventDefault();
     const value = search.trim();
     if (!value) {
-      navigate('/buy');
+      navigate('/search');
       return;
     }
     setSearchOpen(false);
-    navigate(`/buy?search=${encodeURIComponent(value)}`);
+    navigate(`/search?q=${encodeURIComponent(value)}`);
   };
 
   // Autocomplete matching models
@@ -358,7 +358,11 @@ export default function Navbar() {
                       {matchingModels.map((item) => (
                         <div
                           key={`${item.brand}-${item.model}`}
-                          className="flex items-center justify-between rounded-xl p-2.5 hover:bg-teal-50/70 transition group"
+                          onClick={() => {
+                            setSearchOpen(false);
+                            navigate(`/search?q=${encodeURIComponent(item.model)}`);
+                          }}
+                          className="flex items-center justify-between rounded-xl p-2.5 hover:bg-teal-50/70 transition group cursor-pointer"
                         >
                           <div className="flex items-center gap-2.5">
                             <div className="grid h-8 w-8 place-items-center rounded-lg bg-teal-100/60 text-teal-700">
@@ -372,7 +376,7 @@ export default function Navbar() {
                             </div>
                           </div>
 
-                          <div className="flex items-center gap-1.5">
+                          <div className="flex items-center gap-1.5" onClick={(e) => e.stopPropagation()}>
                             <Link
                               to={`/sell?brand=${encodeURIComponent(item.brand)}&model=${encodeURIComponent(
                                 item.model
@@ -383,7 +387,7 @@ export default function Navbar() {
                               Sell
                             </Link>
                             <Link
-                              to={`/buy?search=${encodeURIComponent(item.model)}`}
+                              to={`/search?q=${encodeURIComponent(item.model)}`}
                               onClick={() => setSearchOpen(false)}
                               className="rounded-lg bg-teal-50 px-2.5 py-1 text-xs font-bold text-teal-700 hover:bg-teal-100"
                             >
@@ -401,10 +405,26 @@ export default function Navbar() {
                           </div>
                         </div>
                       ))}
+
+                      <button
+                        type="button"
+                        onClick={submitSearch}
+                        className="w-full mt-2 py-2 px-3 rounded-xl bg-teal-50 text-teal-800 text-xs font-bold hover:bg-teal-100 flex items-center justify-between transition cursor-pointer"
+                      >
+                        <span>View Buy, Sell & Repair options for "{search}"</span>
+                        <ArrowRight className="h-3.5 w-3.5" />
+                      </button>
                     </div>
                   ) : search.trim() ? (
-                    <div className="p-4 text-center text-sm text-gray-500">
-                      No exact matches found. Press Enter to browse all refurbished phones.
+                    <div className="p-4 text-center text-sm text-gray-500 space-y-2">
+                      <p>No exact catalog match for "{search}".</p>
+                      <button
+                        type="button"
+                        onClick={submitSearch}
+                        className="btn-primary text-xs px-4 py-1.5 bg-[#00a896] hover:bg-[#008f80] font-bold mx-auto"
+                      >
+                        Search All Services
+                      </button>
                     </div>
                   ) : (
                     <div className="p-2">
@@ -427,10 +447,10 @@ export default function Navbar() {
                             type="button"
                             onClick={() => {
                               setSearch(name);
-                              navigate(`/buy?search=${encodeURIComponent(name)}`);
+                              navigate(`/search?q=${encodeURIComponent(name)}`);
                               setSearchOpen(false);
                             }}
-                            className="rounded-full bg-gray-100 px-3.5 py-1.5 text-xs font-semibold text-gray-700 hover:bg-teal-50 hover:text-teal-700 transition"
+                            className="rounded-full bg-gray-100 px-3.5 py-1.5 text-xs font-semibold text-gray-700 hover:bg-teal-50 hover:text-teal-700 transition cursor-pointer"
                           >
                             {name}
                           </button>
