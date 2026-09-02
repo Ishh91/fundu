@@ -246,7 +246,7 @@ const FAQS_LIST = [
 const TESTIMONIALS_LIST = [
   { name: 'Aman Srivastava', area: 'Gomti Nagar, Lucknow', rating: 5, text: 'Sold my iPhone 13 in just 20 mins! The rider came to my office in Gomti Nagar, tested the screen, and sent ₹38,500 GPay instantly. Best mobile buyback service in Lucknow!' },
   { name: 'Priya Verma', area: 'Hazratganj, Lucknow', rating: 5, text: 'Very smooth experience! No bargaining like offline market. Got exact valuation for my OnePlus 11 with box & charger. Highly recommended for instant cash!' },
-  { name: 'Mohd. Zaid', area: 'Aliganj, Lucknow', rating: 5, text: 'Fundu is way better than Cashify! Payout is instant on spot before rider leaves. Plus got ₹400 bonus for original box. Will sell again!' },
+  { name: 'Mohd. Zaid', area: 'Aliganj, Lucknow', rating: 5, text: 'Fundu is the best mobile sell app! Payout is instant on spot before rider leaves. Plus got ₹400 bonus for original box. Will sell again!' },
   { name: 'Ritu Raj Singh', area: 'Indira Nagar, Lucknow', rating: 5, text: 'Super fast technician arrival! Sold my Galaxy S23 Ultra at home in Indira Nagar. Got full cash payout in hand. Zero hassle!' },
   { name: 'Ananya Dwivedi', area: 'Mahanagar, Lucknow', rating: 5, text: 'I was worried about my data safety, but the Fundu agent performed a factory wipe right in front of me and gave a legal digital receipt. 10/10 service!' },
   { name: 'Kavita Rastogi', area: 'Ashiyana, Lucknow', rating: 5, text: 'Sold my old Redmi Note 13 Pro. The search bar found my exact model in 2 seconds and quote was higher than local Lucknow shops!' },
@@ -1646,7 +1646,7 @@ export default function SellPhone() {
               <div className="p-5 rounded-2xl bg-gray-50 border border-gray-200 text-left space-y-2.5 text-xs">
                 <div className="flex items-center justify-between border-b border-gray-200 pb-2">
                   <span className="font-extrabold text-gray-900 uppercase tracking-wider text-[11px] flex items-center gap-1.5">
-                    <Sparkles className="h-3.5 w-3.5 text-[#00a896]" /> Cashify-Style Valuation Breakdown
+                    <Sparkles className="h-3.5 w-3.5 text-[#00a896]" /> Fundu Instant Valuation Breakdown
                   </span>
                   <span className="badge bg-teal-100 text-teal-800 text-[10px] font-bold">Guaranteed</span>
                 </div>

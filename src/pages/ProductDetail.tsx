@@ -277,7 +277,7 @@ export default function ProductDetail() {
         <div className="container-page max-w-4xl mx-auto">
           <div className="card p-12 text-center animate-pulse rounded-[32px] bg-white">
             <Smartphone className="mx-auto h-12 w-12 text-ink-300 animate-bounce" />
-            <p className="mt-4 text-sm font-bold text-ink-500">Loading Cashify Refurbished Device Details...</p>
+            <p className="mt-4 text-sm font-bold text-ink-500">Loading Fundu Refurbished Device Details...</p>
           </div>
         </div>
       </div>
@@ -368,7 +368,7 @@ export default function ProductDetail() {
               />
 
               <div className="mt-4 flex items-center gap-2 text-xs font-bold text-ink-500 bg-ink-50 px-3 py-1 rounded-full">
-                <Sparkles className="h-3.5 w-3.5 text-brand-600" /> 32-Point Cashify Quality Certified
+                <Sparkles className="h-3.5 w-3.5 text-brand-600" /> 32-Point Fundu Quality Certified
               </div>
             </div>
 

@@ -239,7 +239,7 @@ const buildBlock = (
 
 export const DEFAULT_SITE_CONTENT_BLOCKS: SiteContentBlock[] = [
   buildBlock('hero_slides', 10, {
-    title: 'Cashify-inspired experience, Fundu flows',
+    title: 'Instant phone resale & buyback experience, Fundu flows',
     subtitle: 'Sell old phone, buy refurbished, and book repair from one cleaner marketplace.',
     description: 'Fundu ab phone-first journey pe focused hai. Exact device lookup se start karo, instant value samjho, verified stock browse karo, aur repair booking ko simpler banao.',
     cta_label: 'Get Phone Value',
@@ -274,7 +274,7 @@ export const DEFAULT_SITE_CONTENT_BLOCKS: SiteContentBlock[] = [
   buildBlock('sell_benefits', 70, {
     title: 'Sell-first design',
     subtitle: 'Old phone bechne ka flow ab homepage se hi obvious hai',
-    description: 'Cashify-style clarity ka core point yehi tha: user ko turant samajh aaye ki first action kya hai. Isliye Sell journey ko sabse strong hierarchy di gayi hai.',
+    description: 'Fundu clarity ka core point yehi tha: user ko turant samajh aaye ki first action kya hai. Isliye Sell journey ko sabse strong hierarchy di gayi hai.',
     items: HOME_BENEFITS,
   }),
   buildBlock('sell_steps', 80, {

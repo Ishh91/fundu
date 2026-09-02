@@ -1008,7 +1008,7 @@ export default function DeliveryAgentPortal() {
                     {/* Cashify Rider Handover Milestone Actions Bar */}
                     <div className="space-y-2 pt-2 border-t border-slate-100">
                       <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
-                        Cashify Rider Handover Actions:
+                        Fundu Rider Handover Actions:
                       </p>
                       <div className="flex flex-wrap items-center gap-2 text-xs">
                         <button
@@ -2157,7 +2157,7 @@ export default function DeliveryAgentPortal() {
             <div className="flex items-center justify-between border-b border-slate-100 pb-3">
               <div>
                 <span className="badge bg-brand-50 text-brand-700 text-[10px] font-bold">
-                  Cashify Security Handover
+                  Fundu Security Handover
                 </span>
                 <h3 className="font-display font-black text-lg text-slate-900 mt-0.5">
                   Verify Customer Delivery OTP
