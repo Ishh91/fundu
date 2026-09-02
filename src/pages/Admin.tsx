@@ -18,6 +18,7 @@ import {
   Camera,
   Upload,
   Trash2,
+  Sparkles,
   Image as ImageIcon,
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
