@@ -288,6 +288,9 @@ export default function ProductDetail() {
   if (!product) return null;
 
   // Use exact price and specs set by Admin in backend
+  const activeGradeName = (selectedGrade || product.condition || 'Superb').toLowerCase();
+  const gradeObj = CONDITION_GRADES.find((g) => g.id.toLowerCase() === activeGradeName || (activeGradeName.includes('excellent') && g.id === 'Superb')) || CONDITION_GRADES[2];
+
   const currentPrice = product.price;
   const currentMrp = product.original_price && product.original_price > product.price
     ? product.original_price
