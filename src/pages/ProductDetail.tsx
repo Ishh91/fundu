@@ -395,11 +395,11 @@ export default function ProductDetail() {
         <div className="container-page">
           <div className="flex flex-wrap items-center justify-between gap-2 text-xs font-semibold text-ink-500">
             <div className="flex items-center gap-2">
-              <Link to="/" className="hover:text-brand-600 transition">Home</Link>
+              <Link to="/" className="hover:text-[#00a896] transition">Home</Link>
               <ChevronRight className="h-3.5 w-3.5 text-ink-300" />
-              <Link to="/buy" className="hover:text-brand-600 transition">Buy Refurbished Mobiles</Link>
+              <Link to="/buy" className="hover:text-[#00a896] transition">Buy</Link>
               <ChevronRight className="h-3.5 w-3.5 text-ink-300" />
-              <span className="text-ink-900 font-bold truncate max-w-xs">{product.brand} {product.model}</span>
+              <span className="text-[#00a896] font-bold truncate max-w-xs">{product.brand} {product.model}</span>
             </div>
             <div className="flex items-center gap-1 text-[11px] font-bold text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-full">
               <Building2 className="h-3 w-3 text-emerald-600" /> Lucknow Certified Warehouse Stock

@@ -495,7 +495,7 @@ export default function Repair() {
         <div className="max-w-7xl mx-auto flex items-center gap-1.5 flex-wrap">
           <Link to="/" className="hover:text-[#00a896]">Home</Link>
           <span>&gt;</span>
-          <Link to="/repair" className="hover:text-[#00a896]">Doorstep Mobile Repair</Link>
+          <Link to="/repair" className="hover:text-[#00a896]">Repair</Link>
           {form.brand && (
             <>
               <span>&gt;</span>
@@ -507,7 +507,7 @@ export default function Repair() {
           {form.model && (
             <>
               <span>&gt;</span>
-              <span className="text-[#00a896] font-extrabold">{form.model} Repair</span>
+              <span className="text-[#00a896] font-extrabold">{form.model}</span>
             </>
           )}
         </div>

@@ -226,11 +226,11 @@ export default function SellBrandPage() {
       {/* CASHIFY EXACT BREADCRUMB NAVIGATION */}
       <div className="bg-white border-b border-gray-100 py-2.5 px-4 text-xs font-semibold text-gray-500">
         <div className="max-w-7xl mx-auto flex items-center gap-1.5 flex-wrap">
-          <Link to="/sell" className="hover:text-[#00a896]">Home</Link>
+          <Link to="/" className="hover:text-[#00a896] transition">Home</Link>
           <span>&gt;</span>
-          <Link to="/sell" className="hover:text-[#00a896]">Sell Old Mobile Phone</Link>
+          <Link to="/sell" className="hover:text-[#00a896] transition">Sell</Link>
           <span>&gt;</span>
-          <span className="text-[#00a896] font-extrabold">Sell {brandDisplayName}</span>
+          <span className="text-[#00a896] font-extrabold">{brandDisplayName}</span>
         </div>
       </div>
 

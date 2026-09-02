@@ -864,23 +864,23 @@ export default function SellPhone() {
   return (
     <div className="min-h-screen bg-[#f4f7f8] pb-24">
       {/* Top Breadcrumb Navigation */}
-      <div className="bg-white border-b border-gray-100 py-2 px-4 text-xs font-semibold text-gray-500">
+      <div className="bg-white border-b border-gray-100 py-2.5 px-4 text-xs font-semibold text-gray-500">
         <div className="max-w-7xl mx-auto flex items-center gap-1.5 flex-wrap">
-          <span onClick={() => { setForm({ ...form, brand: '', model: '' }); setStep(1); navigate('/sell'); }} className="hover:text-[#00a896] cursor-pointer">Home</span>
+          <Link to="/" className="hover:text-[#00a896] transition">Home</Link>
           <span>&gt;</span>
-          <span onClick={() => { setForm({ ...form, brand: '', model: '' }); setStep(1); navigate('/sell'); }} className="hover:text-[#00a896] cursor-pointer">Sell Old Mobile Phone</span>
+          <Link to="/sell" className="hover:text-[#00a896] transition">Sell</Link>
           {form.brand && (
             <>
               <span>&gt;</span>
-              <span onClick={() => { setForm((f) => ({ ...f, model: '' })); setStep(1); navigate(`/sell/${form.brand.toLowerCase()}`); }} className="hover:text-[#00a896] cursor-pointer text-gray-800 font-bold">
-                Sell {form.brand}
-              </span>
+              <Link to={`/sell/${form.brand.toLowerCase()}`} className="hover:text-[#00a896] transition">
+                {form.brand}
+              </Link>
             </>
           )}
           {form.model && (
             <>
               <span>&gt;</span>
-              <span className="text-[#00a896] font-black">{form.model}</span>
+              <span className="text-[#00a896] font-extrabold">{form.model}</span>
             </>
           )}
         </div>

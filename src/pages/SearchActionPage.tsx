@@ -158,6 +158,21 @@ export default function SearchActionPage() {
 
   return (
     <div className="min-h-screen bg-[#f4f7f8] pb-24">
+      {/* CASHIFY EXACT BREADCRUMB NAVIGATION */}
+      <div className="bg-white border-b border-gray-100 py-2.5 px-4 text-xs font-semibold text-gray-500">
+        <div className="max-w-7xl mx-auto flex items-center gap-1.5 flex-wrap">
+          <Link to="/" className="hover:text-[#00a896] transition">Home</Link>
+          <span>&gt;</span>
+          <Link to="/search" className="hover:text-[#00a896] transition">Search</Link>
+          {query && (
+            <>
+              <span>&gt;</span>
+              <span className="text-[#00a896] font-extrabold">{query}</span>
+            </>
+          )}
+        </div>
+      </div>
+
       {/* Search Header Banner */}
       <div className="bg-white border-b border-gray-200/80 py-6 px-4">
         <div className="max-w-5xl mx-auto space-y-4">
@@ -170,13 +185,6 @@ export default function SearchActionPage() {
               <p className="text-xs text-gray-500 mt-0.5">
                 Choose whether you want to Buy, Sell, or Repair this device in Lucknow with instant doorstep service.
               </p>
-            </div>
-
-            {/* Breadcrumbs */}
-            <div className="flex items-center gap-1.5 text-xs text-gray-400 font-semibold">
-              <Link to="/" className="hover:text-[#00a896]">Home</Link>
-              <span>/</span>
-              <span className="text-[#00a896] font-bold">Search Hub</span>
             </div>
           </div>
 

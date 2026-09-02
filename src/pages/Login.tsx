@@ -1,16 +1,42 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
-import { Lock, User as UserIcon, ArrowRight, AlertCircle, KeyRound, Mail, X, CheckCircle2, ShieldCheck, RefreshCw } from 'lucide-react';
+import {
+  Lock,
+  User as UserIcon,
+  ArrowRight,
+  AlertCircle,
+  KeyRound,
+  Mail,
+  X,
+  CheckCircle2,
+  ShieldCheck,
+  RefreshCw,
+  Phone,
+  Smartphone,
+  MessageSquare,
+} from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import BrandLogo from '../components/BrandLogo';
 import { sendEmailOtpCode } from '../lib/freeNotifyService';
 import { API_BASE } from '../config/apiConfig';
 
 export default function Login() {
-  const { signIn, user, profile, loading: authLoading } = useAuth();
+  const { signIn, sendOtp, verifyOtp, user, profile, loading: authLoading } = useAuth();
   const navigate = useNavigate();
   const [params] = useSearchParams();
   const redirect = params.get('redirect') || '/';
+
+  /* ── Auth Mode: 'otp' (default) vs 'password' ── */
+  const [authMode, setAuthMode] = useState<'otp' | 'password'>('otp');
+
+  /* ── Mobile OTP States ── */
+  const [phone, setPhone] = useState('');
+  const [otpStep, setOtpStep] = useState<'input' | 'verify'>('input');
+  const [otpDigits, setOtpDigits] = useState<string[]>(Array(6).fill(''));
+  const [otpCountdown, setOtpCountdown] = useState(0);
+  const otpInputRefs = useRef<Array<HTMLInputElement | null>>([]);
+  const otpTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const [devOtpHint, setDevOtpHint] = useState<string | null>(null);
 
   /* ── Unified Credentials State ── */
   const [identifier, setIdentifier] = useState('');
@@ -31,6 +57,116 @@ export default function Login() {
   const [resetLoading, setResetLoading] = useState(false);
   const [resetError, setResetError] = useState<string | null>(null);
   const [resetSuccess, setResetSuccess] = useState<string | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (otpTimerRef.current) clearInterval(otpTimerRef.current);
+    };
+  }, []);
+
+  const startOtpCountdown = () => {
+    setOtpCountdown(60);
+    if (otpTimerRef.current) clearInterval(otpTimerRef.current);
+    otpTimerRef.current = setInterval(() => {
+      setOtpCountdown((c) => {
+        if (c <= 1) {
+          clearInterval(otpTimerRef.current!);
+          return 0;
+        }
+        return c - 1;
+      });
+    }, 1000);
+  };
+
+  const handleSendOtp = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const cleanPhone = phone.replace(/\D/g, '').slice(-10);
+    if (cleanPhone.length !== 10) {
+      setError('⚠️ Please enter a valid 10-digit Indian mobile number.');
+      return;
+    }
+
+    setLoading(true);
+    setError(null);
+    setDevOtpHint(null);
+
+    const res = await sendOtp(cleanPhone);
+    setLoading(false);
+
+    if (res.error) {
+      setError(`❌ ${res.error}`);
+      return;
+    }
+
+    setOtpStep('verify');
+    setOtpDigits(Array(6).fill(''));
+    if (res.devOtp) {
+      setDevOtpHint(res.devOtp);
+    }
+    startOtpCountdown();
+    setTimeout(() => {
+      otpInputRefs.current[0]?.focus();
+    }, 150);
+  };
+
+  const handleVerifyOtp = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const cleanPhone = phone.replace(/\D/g, '').slice(-10);
+    const otpCode = otpDigits.join('');
+
+    if (otpCode.length !== 6) {
+      setError('⚠️ Please enter the complete 6-digit OTP.');
+      return;
+    }
+
+    setLoading(true);
+    setError(null);
+
+    const res = await verifyOtp(cleanPhone, otpCode);
+    setLoading(false);
+
+    if (res.error) {
+      setError(`❌ ${res.error}`);
+      return;
+    }
+
+    setSuccessMsg('✅ Mobile number verified successfully! Redirecting...');
+  };
+
+  const handleOtpDigitChange = (index: number, val: string) => {
+    const clean = val.replace(/\D/g, '');
+    if (!clean) {
+      const next = [...otpDigits];
+      next[index] = '';
+      setOtpDigits(next);
+      return;
+    }
+
+    if (clean.length > 1) {
+      const pasted = clean.slice(0, 6).split('');
+      const next = [...otpDigits];
+      pasted.forEach((d, i) => {
+        if (i < 6) next[i] = d;
+      });
+      setOtpDigits(next);
+      const targetIndex = Math.min(pasted.length, 5);
+      otpInputRefs.current[targetIndex]?.focus();
+      return;
+    }
+
+    const next = [...otpDigits];
+    next[index] = clean;
+    setOtpDigits(next);
+    if (index < 5 && clean) {
+      otpInputRefs.current[index + 1]?.focus();
+    }
+  };
+
+  const handleOtpKeyDown = (index: number, e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Backspace' && !otpDigits[index] && index > 0) {
+      otpInputRefs.current[index - 1]?.focus();
+    }
+  };
 
   useEffect(() => {
     if (!authLoading && user) {
@@ -236,79 +372,242 @@ export default function Login() {
           </div>
         )}
 
-        {/* Unified Login Form */}
-        <form onSubmit={handleLoginSubmit} className="mt-6 card p-6 md:p-8 space-y-4 shadow-sm border border-ink-100 bg-white rounded-3xl">
-          {/* Unified Identifier Input */}
-          <div>
-            <label className="label">Mobile Number or Email Address</label>
-            <div className="flex rounded-xl border border-ink-200 overflow-hidden focus-within:border-brand-500 focus-within:ring-4 focus-within:ring-brand-500/10 bg-white transition-all">
-              <div className="flex items-center border-r border-ink-200 bg-ink-50 px-3.5 py-3 text-ink-500 select-none shrink-0">
-                <UserIcon className="h-4 w-4 text-brand-500" />
-              </div>
-              <input
-                type="text"
-                required
-                value={identifier}
-                onChange={(e) => {
-                  setIdentifier(e.target.value);
-                  setError(null);
-                }}
-                placeholder="e.g. 9876543210 or user@gmail.com"
-                className="flex-1 bg-white px-3.5 py-3 text-ink-900 outline-none text-sm font-medium"
-              />
-            </div>
-          </div>
-
-          {/* Password Input + Reset Password Link */}
-          <div>
-            <div className="flex items-center justify-between">
-              <label className="label">Account Password</label>
-              <button
-                type="button"
-                onClick={() => {
-                  setResetEmail(identifier);
-                  setResetModalOpen(true);
-                }}
-                className="text-xs font-bold text-brand-600 hover:underline hover:text-brand-800 flex items-center gap-1 mb-1"
-              >
-                <KeyRound className="h-3 w-3" /> Reset Password?
-              </button>
-            </div>
-            <div className="flex rounded-xl border border-ink-200 overflow-hidden focus-within:border-brand-500 focus-within:ring-4 focus-within:ring-brand-500/10 bg-white transition-all">
-              <div className="flex items-center border-r border-ink-200 bg-ink-50 px-3.5 py-3 text-ink-500 select-none shrink-0">
-                <Lock className="h-4 w-4 text-brand-500" />
-              </div>
-              <input
-                type="password"
-                required
-                value={password}
-                onChange={(e) => {
-                  setPassword(e.target.value);
-                  setError(null);
-                }}
-                placeholder="••••••••"
-                className="flex-1 bg-white px-3.5 py-3 text-ink-900 outline-none text-sm font-medium"
-              />
-            </div>
-          </div>
-
-          {/* Submit Button */}
+        {/* Auth Mode Toggle Tabs */}
+        <div className="mt-6 grid grid-cols-2 p-1.5 rounded-2xl bg-gray-100 border border-gray-200 text-xs font-black shadow-xs">
           <button
-            type="submit"
-            disabled={loading || !identifier.trim() || !password}
-            className="btn-primary w-full mt-2 font-bold py-3 shadow-md hover:scale-[1.01] transition-transform"
+            type="button"
+            onClick={() => { setAuthMode('otp'); setError(null); }}
+            className={`flex items-center justify-center gap-2 py-2.5 rounded-xl transition-all cursor-pointer ${
+              authMode === 'otp'
+                ? 'bg-white text-gray-950 shadow-sm'
+                : 'text-gray-500 hover:text-gray-800'
+            }`}
           >
-            {loading ? 'Signing in…' : 'Sign In Now'} <ArrowRight className="h-4 w-4 ml-1" />
+            <Smartphone className="h-4 w-4 text-[#00a896]" /> Mobile OTP
           </button>
+          <button
+            type="button"
+            onClick={() => { setAuthMode('password'); setError(null); }}
+            className={`flex items-center justify-center gap-2 py-2.5 rounded-xl transition-all cursor-pointer ${
+              authMode === 'password'
+                ? 'bg-white text-gray-950 shadow-sm'
+                : 'text-gray-500 hover:text-gray-800'
+            }`}
+          >
+            <Lock className="h-4 w-4 text-[#00a896]" /> Password
+          </button>
+        </div>
 
-          {/* Registration Redirect Link */}
-          <div className="mt-5 text-center text-xs text-ink-500 pt-2 border-t border-ink-100">
-            Don't have an account?{' '}
-            <Link to="/register" className="font-bold text-brand-600 hover:underline">
-              Create New Account
-            </Link>
+        {/* ── MODE 1: MOBILE OTP AUTHENTICATION (TWILIO) ── */}
+        {authMode === 'otp' && (
+          <div className="mt-4 card p-6 md:p-8 space-y-5 shadow-sm border border-ink-100 bg-white rounded-3xl animate-fade-in">
+            {otpStep === 'input' ? (
+              <form onSubmit={handleSendOtp} className="space-y-4">
+                <div>
+                  <label className="label">Enter Your Mobile Number</label>
+                  <div className="flex rounded-xl border border-ink-200 overflow-hidden focus-within:border-[#00a896] focus-within:ring-4 focus-within:ring-[#00a896]/10 bg-white transition-all">
+                    <div className="flex items-center gap-1.5 border-r border-ink-200 bg-ink-50 px-3.5 py-3 text-xs font-black text-gray-700 select-none shrink-0">
+                      <span>🇮🇳</span>
+                      <span>+91</span>
+                    </div>
+                    <input
+                      type="tel"
+                      required
+                      maxLength={10}
+                      value={phone}
+                      onChange={(e) => {
+                        setPhone(e.target.value.replace(/\D/g, ''));
+                        setError(null);
+                      }}
+                      placeholder="Enter 10-digit mobile number"
+                      className="flex-1 bg-white px-3.5 py-3 text-ink-900 outline-none text-sm font-bold tracking-wider"
+                    />
+                  </div>
+                  <p className="text-[11px] text-gray-400 mt-1.5 flex items-center gap-1">
+                    <ShieldCheck className="h-3.5 w-3.5 text-[#00a896]" />
+                    We'll send a 6-digit OTP code via Twilio SMS to verify.
+                  </p>
+                </div>
+
+                <button
+                  type="submit"
+                  disabled={loading || phone.replace(/\D/g, '').length !== 10}
+                  className="btn-primary w-full py-3 font-bold shadow-md hover:scale-[1.01] transition-transform flex items-center justify-center gap-2"
+                >
+                  {loading ? (
+                    <>
+                      <RefreshCw className="h-4 w-4 animate-spin" /> Sending OTP via Twilio...
+                    </>
+                  ) : (
+                    <>
+                      Get OTP on Mobile <ArrowRight className="h-4 w-4" />
+                    </>
+                  )}
+                </button>
+              </form>
+            ) : (
+              <form onSubmit={handleVerifyOtp} className="space-y-4">
+                <div className="flex items-center justify-between pb-2 border-b border-gray-100">
+                  <div>
+                    <p className="text-xs text-gray-500 font-semibold">OTP sent via Twilio SMS to:</p>
+                    <p className="text-sm font-black text-gray-900">+91 {phone}</p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setOtpStep('input');
+                      setError(null);
+                      setDevOtpHint(null);
+                    }}
+                    className="text-xs text-[#00a896] font-bold hover:underline"
+                  >
+                    Change Number
+                  </button>
+                </div>
+
+                {devOtpHint && (
+                  <div className="p-2.5 rounded-xl bg-teal-50 border border-teal-200 text-teal-900 text-xs font-bold flex items-center justify-between">
+                    <span>🔑 Dev Mode OTP:</span>
+                    <span className="font-mono text-sm tracking-widest text-[#00a896]">{devOtpHint}</span>
+                  </div>
+                )}
+
+                <div>
+                  <label className="label text-center mb-2 block">Enter 6-Digit OTP</label>
+                  <div className="flex items-center justify-center gap-2 sm:gap-2.5">
+                    {otpDigits.map((digit, idx) => (
+                      <input
+                        key={idx}
+                        ref={(el) => (otpInputRefs.current[idx] = el)}
+                        type="text"
+                        inputMode="numeric"
+                        maxLength={1}
+                        value={digit}
+                        onChange={(e) => handleOtpDigitChange(idx, e.target.value)}
+                        onKeyDown={(e) => handleOtpKeyDown(idx, e)}
+                        className="w-10 sm:w-12 h-12 sm:h-14 text-center text-lg sm:text-xl font-black rounded-xl border border-gray-300 focus:border-[#00a896] focus:ring-4 focus:ring-[#00a896]/10 outline-none transition bg-white"
+                      />
+                    ))}
+                  </div>
+                </div>
+
+                <button
+                  type="submit"
+                  disabled={loading || otpDigits.join('').length !== 6}
+                  className="btn-primary w-full py-3 font-bold shadow-md hover:scale-[1.01] transition-transform flex items-center justify-center gap-2 mt-2"
+                >
+                  {loading ? (
+                    <>
+                      <RefreshCw className="h-4 w-4 animate-spin" /> Verifying Code...
+                    </>
+                  ) : (
+                    <>
+                      Verify & Sign In <CheckCircle2 className="h-4 w-4" />
+                    </>
+                  )}
+                </button>
+
+                {/* Resend OTP */}
+                <div className="text-center pt-2">
+                  {otpCountdown > 0 ? (
+                    <p className="text-xs text-gray-400 font-semibold">
+                      Resend OTP in <span className="text-[#00a896] font-bold">{otpCountdown}s</span>
+                    </p>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={handleSendOtp}
+                      disabled={loading}
+                      className="text-xs text-[#00a896] font-bold hover:underline inline-flex items-center gap-1"
+                    >
+                      <RefreshCw className="h-3 w-3" /> Resend OTP Code
+                    </button>
+                  )}
+                </div>
+              </form>
+            )}
+
+            <div className="mt-4 text-center text-xs text-ink-500 pt-3 border-t border-ink-100">
+              New to Fundu? Sign in with mobile OTP automatically creates your account!
+            </div>
           </div>
-        </form>
+        )}
+
+        {/* ── MODE 2: EMAIL & PASSWORD FORM (ADMIN & LEGACY) ── */}
+        {authMode === 'password' && (
+          <form onSubmit={handleLoginSubmit} className="mt-4 card p-6 md:p-8 space-y-4 shadow-sm border border-ink-100 bg-white rounded-3xl animate-fade-in">
+            {/* Unified Identifier Input */}
+            <div>
+              <label className="label">Mobile Number or Email Address</label>
+              <div className="flex rounded-xl border border-ink-200 overflow-hidden focus-within:border-brand-500 focus-within:ring-4 focus-within:ring-brand-500/10 bg-white transition-all">
+                <div className="flex items-center border-r border-ink-200 bg-ink-50 px-3.5 py-3 text-ink-500 select-none shrink-0">
+                  <UserIcon className="h-4 w-4 text-brand-500" />
+                </div>
+                <input
+                  type="text"
+                  required
+                  value={identifier}
+                  onChange={(e) => {
+                    setIdentifier(e.target.value);
+                    setError(null);
+                  }}
+                  placeholder="e.g. 9876543210 or user@gmail.com"
+                  className="flex-1 bg-white px-3.5 py-3 text-ink-900 outline-none text-sm font-medium"
+                />
+              </div>
+            </div>
+
+            {/* Password Input + Reset Password Link */}
+            <div>
+              <div className="flex items-center justify-between">
+                <label className="label">Account Password</label>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setResetEmail(identifier);
+                    setResetModalOpen(true);
+                  }}
+                  className="text-xs font-bold text-brand-600 hover:underline hover:text-brand-800 flex items-center gap-1 mb-1"
+                >
+                  <KeyRound className="h-3 w-3" /> Reset Password?
+                </button>
+              </div>
+              <div className="flex rounded-xl border border-ink-200 overflow-hidden focus-within:border-brand-500 focus-within:ring-4 focus-within:ring-brand-500/10 bg-white transition-all">
+                <div className="flex items-center border-r border-ink-200 bg-ink-50 px-3.5 py-3 text-ink-500 select-none shrink-0">
+                  <Lock className="h-4 w-4 text-brand-500" />
+                </div>
+                <input
+                  type="password"
+                  required
+                  value={password}
+                  onChange={(e) => {
+                    setPassword(e.target.value);
+                    setError(null);
+                  }}
+                  placeholder="••••••••"
+                  className="flex-1 bg-white px-3.5 py-3 text-ink-900 outline-none text-sm font-medium"
+                />
+              </div>
+            </div>
+
+            {/* Submit Button */}
+            <button
+              type="submit"
+              disabled={loading || !identifier.trim() || !password}
+              className="btn-primary w-full mt-2 font-bold py-3 shadow-md hover:scale-[1.01] transition-transform"
+            >
+              {loading ? 'Signing in…' : 'Sign In with Password'} <ArrowRight className="h-4 w-4 ml-1" />
+            </button>
+
+            {/* Registration Redirect Link */}
+            <div className="mt-5 text-center text-xs text-ink-500 pt-2 border-t border-ink-100">
+              Don't have an account?{' '}
+              <Link to="/register" className="font-bold text-brand-600 hover:underline">
+                Create New Account
+              </Link>
+            </div>
+          </form>
+        )}
       </div>
 
       {/* ── RESET PASSWORD MODAL ── */}
