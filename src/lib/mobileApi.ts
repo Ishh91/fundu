@@ -76,6 +76,16 @@ const brandCache: { value: string[] | null } = { value: null };
 const modelCache = new Map<string, PhoneModelOption[]>();
 
 import { LOOKUP_BRANDS, getModelsForBrand } from '../data/phoneLookup';
+import { ALL_INDIAN_PHONES_CATALOG } from '../data/indianPhonesCatalog';
+
+export type CatalogModelItem = {
+  brand: string;
+  series: string;
+  model: string;
+  storage: string;
+  price: number;
+  image: string;
+};
 
 async function fetchApi<T>(path: string): Promise<T> {
   const response = await fetch(`${API_BASE}${path}`);
@@ -643,19 +653,102 @@ export async function fetchGsmArenaDeviceDetails(slug: string): Promise<GsmArena
   }
 }
 
-export async function fetchGsmArenaBrandModels(brandSlug: string): Promise<GsmArenaSearchResult[]> {
-  if (!brandSlug) return [];
-  try {
-    const res = await fetch(`${GSMARENA_BASE}/brands/${encodeURIComponent(brandSlug)}`);
-    if (!res.ok) return [];
-    const json = await res.json();
-    if (json.status && json.data && Array.isArray(json.data.phones)) {
-      return json.data.phones;
-    }
-    return [];
-  } catch {
-    return [];
+export function detectSeries(brand: string, modelName: string): string {
+  const b = brand.toLowerCase();
+  const m = modelName.toLowerCase();
+
+  if (b === 'vivo') {
+    if (/\bx\d|\bx\s|\bx-|\bfold/i.test(modelName)) return 'X Series';
+    if (/\bv\d|\bv\s|\bv-/i.test(modelName)) return 'V Series';
+    if (/\by\d|\by\s|\by-/i.test(modelName)) return 'Y Series';
+    if (/\bt\d|\bt\s|\bt-/i.test(modelName)) return 'T Series';
+    if (/\bz\d|\bz\s|\bz-/i.test(modelName)) return 'Z Series';
+    if (/\bu\d|\bu\s|\bu-/i.test(modelName)) return 'U Series';
+    if (/nex/i.test(modelName)) return 'NEX Series';
+    if (/\bs\d|\bs\s|\bs-/i.test(modelName)) return 'S Series';
+    return 'X Series';
   }
+  if (b === 'apple') {
+    if (/iphone 16/i.test(modelName)) return 'iPhone 16 Series';
+    if (/iphone 15/i.test(modelName)) return 'iPhone 15 Series';
+    if (/iphone 14/i.test(modelName)) return 'iPhone 14 Series';
+    if (/iphone 13/i.test(modelName)) return 'iPhone 13 Series';
+    if (/iphone 12/i.test(modelName)) return 'iPhone 12 Series';
+    if (/iphone 11/i.test(modelName)) return 'iPhone 11 Series';
+    return 'iPhone Series';
+  }
+  if (b === 'samsung') {
+    if (/galaxy s/i.test(modelName)) return 'Galaxy S Series';
+    if (/galaxy z/i.test(modelName)) return 'Galaxy Z Series';
+    if (/galaxy a/i.test(modelName)) return 'Galaxy A Series';
+    if (/galaxy m/i.test(modelName)) return 'Galaxy M Series';
+    return 'Galaxy S Series';
+  }
+  if (b === 'oneplus') {
+    if (/nord/i.test(modelName)) return 'Nord Series';
+    if (/\dr\b/i.test(modelName)) return 'R Series';
+    return 'Number Series';
+  }
+  if (b === 'xiaomi') {
+    if (/redmi note/i.test(modelName)) return 'Redmi Note Series';
+    if (/redmi/i.test(modelName)) return 'Redmi Series';
+    if (/poco/i.test(modelName)) return 'Poco Series';
+    return 'Mi Series';
+  }
+  return 'All Series';
+}
+
+const catalogCache = new Map<string, CatalogModelItem[]>();
+
+export async function fetchBrandCatalogFromApi(brand: string): Promise<CatalogModelItem[]> {
+  const cleanBrand = brand.trim().toLowerCase();
+  if (catalogCache.has(cleanBrand)) {
+    return catalogCache.get(cleanBrand)!;
+  }
+
+  // 1. Primary: Try Remote API endpoint `/mobile/devices?brand=...`
+  try {
+    const apiDevices = await fetchWithTimeout(async () => {
+      const result = await fetchApi<MobileApiDevice[]>(`/mobile/devices?brand=${encodeURIComponent(brand)}`);
+      if (Array.isArray(result) && result.length > 0) return result;
+      throw new Error('NO_API_DEVICES');
+    }, 8000).catch(() => null);
+
+    if (apiDevices && apiDevices.length > 0) {
+      const mapped: CatalogModelItem[] = apiDevices.map((dev) => ({
+        brand: dev.brand || brand,
+        series: detectSeries(dev.brand || brand, dev.model),
+        model: dev.model,
+        storage: dev.storage_options?.[0] || '128 GB',
+        price: dev.base_resale_value || Math.round((dev.default_mrp || 30000) * 0.55),
+        image: dev.image_url || 'https://images.unsplash.com/photo-1546054454-aa26e2b734c7?w=300&auto=format&fit=crop&q=80',
+      }));
+      catalogCache.set(cleanBrand, mapped);
+      return mapped;
+    }
+  } catch {
+    // fallback to local catalog
+  }
+
+  // 2. Secondary: Fallback to local catalog database (ALL_INDIAN_PHONES_CATALOG)
+  const localMatches = ALL_INDIAN_PHONES_CATALOG.filter(
+    (p) => p.brand.toLowerCase() === cleanBrand
+  );
+
+  if (localMatches.length > 0) {
+    const mapped: CatalogModelItem[] = localMatches.map((p) => ({
+      brand: p.brand,
+      series: detectSeries(p.brand, p.model),
+      model: p.model,
+      storage: p.storage_options?.[0] || '128 GB',
+      price: p.base_resale_value || Math.round(p.default_mrp * 0.55),
+      image: p.image_url || 'https://images.unsplash.com/photo-1546054454-aa26e2b734c7?w=300&auto=format&fit=crop&q=80',
+    }));
+    catalogCache.set(cleanBrand, mapped);
+    return mapped;
+  }
+
+  return [];
 }
 
 

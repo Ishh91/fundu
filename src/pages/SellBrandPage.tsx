@@ -24,6 +24,7 @@ import {
 } from 'lucide-react';
 import { formatINR } from '../lib/db';
 import { MASTER_MODEL_CATALOG } from './SellPhone';
+import { fetchBrandCatalogFromApi, type CatalogModelItem } from '../lib/mobileApi';
 
 const BRAND_DETAILS: Record<
   string,
@@ -60,9 +61,9 @@ const BRAND_DETAILS: Record<
   vivo: {
     logo: 'https://images.unsplash.com/photo-1546054454-aa26e2b734c7?w=150&auto=format&fit=crop&q=80',
     tagline: 'Sell Old Vivo Mobile Online for Instant Spot Payout',
-    desc: 'Sell old Vivo X, V & Y series smartphones in Lucknow with free doorstep pickup & guaranteed valuation.',
-    count: '40+ Vivo Models',
-    series: ['All', 'X Series', 'V Series', 'Y Series'],
+    desc: 'Sell used Vivo X, V, Y, T, Z, U, NEX & S series smartphones in Lucknow with free doorstep pickup & guaranteed valuation.',
+    count: '100+ Vivo Models',
+    series: ['All', 'X Series', 'V Series', 'Y Series', 'T Series', 'Z Series', 'U Series', 'NEX Series', 'S Series'],
   },
   realme: {
     logo: 'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=150&auto=format&fit=crop&q=80',
@@ -135,11 +136,34 @@ export default function SellBrandPage() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }, [brandSlug, selectedSeries]);
 
-  // Master Models filtered for this brand, selected series, and debounced search query
+  // Dynamic API Models Catalog State
+  const [apiModels, setApiModels] = useState<CatalogModelItem[]>([]);
+  const [isLoadingApi, setIsLoadingApi] = useState<boolean>(true);
+
+  // Fetch models dynamically from API when brand changes
+  useEffect(() => {
+    let isSubscribed = true;
+    setIsLoadingApi(true);
+    fetchBrandCatalogFromApi(brandCleanKey)
+      .then((models) => {
+        if (isSubscribed) setApiModels(models);
+      })
+      .catch(() => {
+        if (isSubscribed) setApiModels([]);
+      })
+      .finally(() => {
+        if (isSubscribed) setIsLoadingApi(false);
+      });
+    return () => {
+      isSubscribed = false;
+    };
+  }, [brandCleanKey]);
+
+  // Models filtered for this brand, selected series, and debounced search query
   const brandModels = useMemo(() => {
-    let list = MASTER_MODEL_CATALOG.filter(
-      (m) => m.brand.toLowerCase() === brandCleanKey
-    );
+    let list = apiModels.length > 0
+      ? apiModels
+      : MASTER_MODEL_CATALOG.filter((m) => m.brand.toLowerCase() === brandCleanKey);
 
     if (selectedSeries !== 'All') {
       list = list.filter((m) => m.series === selectedSeries);
@@ -151,7 +175,7 @@ export default function SellBrandPage() {
     }
 
     return list;
-  }, [brandCleanKey, selectedSeries, debouncedQuery]);
+  }, [apiModels, brandCleanKey, selectedSeries, debouncedQuery]);
 
   // Available Series Tabs
   const seriesTabs = useMemo(() => {
@@ -159,13 +183,15 @@ export default function SellBrandPage() {
       return brandInfo.series;
     }
     const seriesSet = new Set<string>();
-    MASTER_MODEL_CATALOG.filter(
-      (m) => m.brand.toLowerCase() === brandCleanKey
-    ).forEach((m) => {
+    const sourceList = apiModels.length > 0
+      ? apiModels
+      : MASTER_MODEL_CATALOG.filter((m) => m.brand.toLowerCase() === brandCleanKey);
+
+    sourceList.forEach((m) => {
       if (m.series) seriesSet.add(m.series);
     });
     return ['All', ...Array.from(seriesSet)];
-  }, [brandCleanKey, brandInfo.series]);
+  }, [brandCleanKey, brandInfo.series, apiModels]);
 
   const handleSelectModel = (modelName: string, storage: string) => {
     const modelSlugClean = modelName.toLowerCase().replace(/\s+/g, '-');
@@ -275,7 +301,12 @@ export default function SellBrandPage() {
           )}
 
           {/* CASHIFY MODEL PRODUCT TILE GRID */}
-          {brandModels.length > 0 ? (
+          {isLoadingApi ? (
+            <div className="py-16 text-center space-y-3">
+              <RefreshCw className="h-8 w-8 text-[#00a896] animate-spin mx-auto" />
+              <p className="text-xs font-bold text-gray-500">Fetching live {brandDisplayName} models from API...</p>
+            </div>
+          ) : brandModels.length > 0 ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
               {brandModels.map((m) => (
                 <div
