@@ -294,16 +294,16 @@ export default function Admin() {
       // Fetch all tables independently so one failure doesn't block others
       const [productsRes, sellsRes, pricingRes, repairsRes, ordersRes, partsRes, profilesRes, reviewsRes, agentsRes, masterPhonesRes] =
         await Promise.all([
-          db.from('products').select('*').sort({ field: 'created_at', ascending: false }),
-          db.from('sell_requests').select('*').sort({ field: 'created_at', ascending: false }),
-          db.from('sell_price_configs').select('*').sort({ field: 'created_at', ascending: false }),
-          db.from('repair_bookings').select('*').sort({ field: 'created_at', ascending: false }),
-          db.from('orders').select('*').sort({ field: 'created_at', ascending: false }),
-          db.from('spare_parts').select('*').sort({ field: 'created_at', ascending: false }),
-          db.from('profiles').select('*').sort({ field: 'created_at', ascending: false }),
-          db.from('reviews').select('*').sort({ field: 'created_at', ascending: false }),
-          db.from('delivery_agents').select('*').sort({ field: 'created_at', ascending: false }),
-          db.from('master_phones').select('*').sort({ field: 'release_year', ascending: false }),
+          db.from('products').select('*').limit(250).sort({ field: 'created_at', ascending: false }),
+          db.from('sell_requests').select('*').limit(250).sort({ field: 'created_at', ascending: false }),
+          db.from('sell_price_configs').select('*').limit(250).sort({ field: 'created_at', ascending: false }),
+          db.from('repair_bookings').select('*').limit(250).sort({ field: 'created_at', ascending: false }),
+          db.from('orders').select('*').limit(250).sort({ field: 'created_at', ascending: false }),
+          db.from('spare_parts').select('*').limit(250).sort({ field: 'created_at', ascending: false }),
+          db.from('profiles').select('*').limit(250).sort({ field: 'created_at', ascending: false }),
+          db.from('reviews').select('*').limit(250).sort({ field: 'created_at', ascending: false }),
+          db.from('delivery_agents').select('*').limit(100).sort({ field: 'created_at', ascending: false }),
+          db.from('master_phones').select('*').limit(150).sort({ field: 'release_year', ascending: false }),
         ]);
 
       // Log any per-table errors but keep loading the rest

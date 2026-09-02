@@ -1,59 +1,59 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { LOOKUP_BRANDS } from '../../data/phoneLookup';
-import { getCleanBrandLogo } from '../../lib/phoneImages';
+import { getCleanPhoneImage } from '../../lib/phoneImages';
 
 const BRAND_DATA: Record<
   string,
   { image: string; tag: string; popularModel: string }
 > = {
   Apple: {
-    image: getCleanBrandLogo('Apple'),
+    image: getCleanPhoneImage('Apple', 'iPhone 15 Pro'),
     tag: 'Top Value',
     popularModel: 'iPhone 13 / 14 / 15',
   },
   Samsung: {
-    image: getCleanBrandLogo('Samsung'),
+    image: getCleanPhoneImage('Samsung', 'Galaxy S24 Ultra'),
     tag: 'Galaxy Series',
     popularModel: 'S23 / S22 / M Series',
   },
   OnePlus: {
-    image: getCleanBrandLogo('OnePlus'),
+    image: getCleanPhoneImage('OnePlus', 'OnePlus 12'),
     tag: 'Fast Charging',
     popularModel: 'Nord / 11 / 10R',
   },
   Xiaomi: {
-    image: getCleanBrandLogo('Xiaomi'),
+    image: getCleanPhoneImage('Xiaomi', 'Xiaomi 14'),
     tag: 'Best Budget',
     popularModel: 'Redmi Note 13 / 12',
   },
   Realme: {
-    image: getCleanBrandLogo('Realme'),
+    image: getCleanPhoneImage('Realme', 'Realme 12 Pro'),
     tag: 'Popular',
     popularModel: 'Narzo / 12 Pro',
   },
   Vivo: {
-    image: getCleanBrandLogo('Vivo'),
+    image: getCleanPhoneImage('Vivo', 'Vivo X100'),
     tag: 'Camera Expert',
     popularModel: 'V29 / T2x 5G',
   },
   Oppo: {
-    image: getCleanBrandLogo('Oppo'),
+    image: getCleanPhoneImage('Oppo', 'Oppo Find X7'),
     tag: 'Portrait Pro',
     popularModel: 'Reno 11 / F25',
   },
   Google: {
-    image: getCleanBrandLogo('Google'),
+    image: getCleanPhoneImage('Google', 'Pixel 8 Pro'),
     tag: 'Clean Android',
     popularModel: 'Pixel 7 / 7a / 8',
   },
   Nothing: {
-    image: getCleanBrandLogo('Nothing'),
+    image: getCleanPhoneImage('Nothing', 'Nothing Phone 2a'),
     tag: 'Glyph Design',
     popularModel: 'Phone (1) / (2)',
   },
   Motorola: {
-    image: getCleanBrandLogo('Motorola'),
+    image: getCleanPhoneImage('Motorola', 'Moto Edge 50'),
     tag: 'Moto 5G',
     popularModel: 'Edge 40 / G84',
   },
@@ -109,7 +109,7 @@ export default function PopularBrands() {
         <div className="mt-6 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
           {topBrands.map((brand) => {
             const data = BRAND_DATA[brand] || {
-              image: getCleanBrandLogo(brand),
+              image: getCleanPhoneImage(brand, `${brand} Phone`),
               tag: 'Top Brand',
               popularModel: `${brand} Models`,
             };
@@ -129,14 +129,13 @@ export default function PopularBrands() {
                   {data.tag}
                 </span>
 
-                <div className="mt-4 h-20 w-20 overflow-hidden rounded-2xl bg-white p-1 flex items-center justify-center border border-gray-100 transition group-hover:scale-105 group-hover:border-teal-300">
+                <div className="mt-4 h-20 w-20 overflow-hidden rounded-2xl bg-gray-50/60 p-1.5 flex items-center justify-center border border-gray-100 transition group-hover:scale-105 group-hover:border-teal-300">
                   <img
-                    src={getCleanBrandLogo(brand)}
+                    src={data.image}
                     alt={`${brand} phone`}
                     className="h-full w-full object-contain"
                     onError={(e) => {
-                      (e.target as HTMLImageElement).src =
-                        'https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=400&auto=format&fit=crop&q=80';
+                      (e.target as HTMLImageElement).src = getCleanPhoneImage(brand, data.popularModel);
                     }}
                   />
                 </div>
