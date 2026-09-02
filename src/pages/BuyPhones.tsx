@@ -19,6 +19,7 @@ import { useSearchParams, useNavigate, Link } from 'react-router-dom';
 import { db, formatINR } from '../lib/db';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
+import { getCleanPhoneImage } from '../lib/phoneImages';
 import type { Product } from '../types';
 
 const BRAND_PILLS = [
@@ -683,9 +684,9 @@ export default function BuyPhones() {
                                     </span>
                                   )}
                                   <img
-                                    src={image}
+                                    src={getCleanPhoneImage(product.brand, product.title, image)}
                                     alt={product.title}
-                                    className="h-44 w-full object-contain group-hover:scale-105 transition-transform duration-300"
+                                    className="h-48 w-auto max-h-44 object-contain group-hover:scale-105 transition-transform duration-300 drop-shadow-sm"
                                     loading="lazy"
                                   />
                                 </div>
@@ -774,9 +775,9 @@ export default function BuyPhones() {
                               </span>
                             ) : null}
                             <img
-                              src={image}
+                              src={getCleanPhoneImage(product.brand, product.title, image)}
                               alt={product.title}
-                              className="h-44 w-auto object-contain transition-transform duration-300 group-hover:scale-105"
+                              className="h-48 w-auto max-h-44 object-contain transition-transform duration-300 group-hover:scale-105 drop-shadow-sm"
                             />
                           </div>
                         </Link>

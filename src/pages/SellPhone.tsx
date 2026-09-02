@@ -32,6 +32,8 @@ import { computeDetailedCashifyValuation, fetchSellPriceConfig, fetchPhoneModels
 import { db, formatINR } from '../lib/db';
 import { useAuth } from '../context/AuthContext';
 import { ALL_INDIAN_PHONES_CATALOG } from '../data/indianPhonesCatalog';
+import { getCleanPhoneImage } from '../lib/phoneImages';
+import { usePriceSync, applyPriceOverrides } from '../lib/priceSync';
 
 // Master Lucknow Localities
 const LUCKNOW_LOCALITIES = [
@@ -259,6 +261,7 @@ export default function SellPhone() {
   const navigate = useNavigate();
   const { brandSlug, modelSlug } = useParams<{ brandSlug?: string; modelSlug?: string }>();
   const [searchParams] = useSearchParams();
+  const { version } = usePriceSync();
 
   const [step, setStep] = useState(1);
 
@@ -565,12 +568,12 @@ export default function SellPhone() {
     });
 
     if (localMatches.length > 0) {
-      return localMatches;
+      return applyPriceOverrides(localMatches);
     }
 
     // Fallback to MobileAPI search results if local database has 0 matches
-    return apiSearchResults;
-  }, [debouncedQuery, apiSearchResults]);
+    return applyPriceOverrides(apiSearchResults);
+  }, [debouncedQuery, apiSearchResults, version]);
 
   // Available Series List for Selected Brand
   const brandSeriesList = useMemo(() => {
@@ -669,6 +672,26 @@ export default function SellPhone() {
     const clean = form.imei.replace(/\D/g, '');
     return clean.length === 15;
   }, [form.imei]);
+
+  const hasDevicePhotos = useMemo(() => {
+    const { front, back, edges, bill_box } = form.devicePhotos;
+    return Boolean(front || back || edges || bill_box || form.imeiPhoto);
+  }, [form.devicePhotos, form.imeiPhoto]);
+
+  const [step3Error, setStep3Error] = useState<string | null>(null);
+
+  const handleStep3Continue = () => {
+    setStep3Error(null);
+    if (!isImeiValid) {
+      setStep3Error('15-Digit IMEI Number is mandatory! Please enter a valid 15-digit numeric IMEI (Dial *#06# on dialer).');
+      return;
+    }
+    if (!hasDevicePhotos) {
+      setStep3Error('Device Photo upload is mandatory! Please upload at least one clear photo of your device.');
+      return;
+    }
+    setStep(4);
+  };
 
   const handleSubmit = async () => {
     if (profile && profile.role !== 'customer') {
@@ -1119,8 +1142,8 @@ export default function SellPhone() {
                       className="p-4 rounded-2xl border border-gray-200 bg-white hover:border-[#00a896] hover:shadow-lg transition-all duration-300 space-y-3 cursor-pointer group"
                     >
                       <div className="flex items-center gap-3">
-                        <div className="h-16 w-16 shrink-0 overflow-hidden rounded-xl bg-gray-50 p-1 border border-gray-100 flex items-center justify-center">
-                          <img src={m.image} alt={m.model} className="h-full w-full object-contain group-hover:scale-105 transition-transform" />
+                        <div className="h-16 w-16 shrink-0 overflow-hidden rounded-xl bg-white p-1 border border-gray-100 flex items-center justify-center">
+                          <img src={getCleanPhoneImage(m.brand, m.model, m.image)} alt={m.model} className="h-full w-full object-contain group-hover:scale-105 transition-transform drop-shadow-xs" />
                         </div>
                         <div>
                           <p className="font-extrabold text-sm text-gray-900 group-hover:text-[#00a896] transition-colors">{m.model}</p>
@@ -1587,16 +1610,42 @@ export default function SellPhone() {
                 </div>
               </div>
 
+              {step3Error && (
+                <div className="p-4 rounded-2xl bg-rose-50 border border-rose-200 text-xs text-rose-700 flex items-center gap-2 font-bold animate-shake">
+                  <AlertCircle className="h-5 w-5 text-rose-600 shrink-0" />
+                  <span>{step3Error}</span>
+                </div>
+              )}
+
               <div className="space-y-2">
-                <label className="label text-sm font-extrabold text-gray-900">1. Enter 15-Digit Device IMEI Number</label>
+                <div className="flex items-center justify-between">
+                  <label className="label text-sm font-extrabold text-gray-900">
+                    1. Enter 15-Digit Device IMEI Number <span className="text-rose-500 font-bold">*</span>
+                  </label>
+                  {isImeiValid ? (
+                    <span className="badge bg-emerald-50 text-emerald-700 font-bold text-[10px]">
+                      ✓ Valid 15-Digit IMEI
+                    </span>
+                  ) : (
+                    <span className="badge bg-rose-50 text-rose-700 font-bold text-[10px]">
+                      Required (15 Digits)
+                    </span>
+                  )}
+                </div>
+
                 <div className="flex items-center gap-2">
                   <input
                     type="text"
                     maxLength={15}
                     value={form.imei}
-                    onChange={(e) => setForm({ ...form, imei: e.target.value.replace(/\D/g, '') })}
+                    onChange={(e) => {
+                      setStep3Error(null);
+                      setForm({ ...form, imei: e.target.value.replace(/\D/g, '') });
+                    }}
                     placeholder="e.g. 356891094827105"
-                    className="input font-mono tracking-wider font-bold text-[#00a896]"
+                    className={`input font-mono tracking-wider font-bold ${
+                      form.imei && !isImeiValid ? 'border-rose-400 text-rose-600 focus:border-rose-500' : 'text-[#00a896]'
+                    }`}
                   />
                   <button
                     type="button"
@@ -1619,7 +1668,21 @@ export default function SellPhone() {
 
               {/* Photo Uploads */}
               <div className="space-y-3">
-                <label className="label text-sm font-extrabold text-gray-900">2. Upload Device Photos (Optional for Bonus)</label>
+                <div className="flex items-center justify-between">
+                  <label className="label text-sm font-extrabold text-gray-900">
+                    2. Upload Device Photos <span className="text-rose-500 font-bold">*</span>
+                  </label>
+                  {hasDevicePhotos ? (
+                    <span className="badge bg-emerald-50 text-emerald-700 font-bold text-[10px]">
+                      ✓ Photo Uploaded
+                    </span>
+                  ) : (
+                    <span className="badge bg-rose-50 text-rose-700 font-bold text-[10px]">
+                      At Least 1 Photo Mandatory
+                    </span>
+                  )}
+                </div>
+
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                   {[
                     { key: 'front' as const, label: 'Front Display' },
@@ -1632,18 +1695,21 @@ export default function SellPhone() {
                       <div key={key} className="space-y-1 text-center">
                         <span className="text-[11px] font-bold text-gray-700">{label}</span>
                         {img ? (
-                          <div className="relative rounded-xl overflow-hidden border border-gray-200 bg-gray-50 h-24">
+                          <div className="relative rounded-xl overflow-hidden border border-emerald-300 bg-gray-50 h-24">
                             <img src={img} alt="" className="h-full w-full object-cover" />
                           </div>
                         ) : (
                           <label className="flex flex-col items-center justify-center h-24 rounded-xl border border-dashed border-gray-300 bg-gray-50 hover:border-[#00a896] hover:bg-teal-50/40 cursor-pointer transition">
                             <Camera className="h-5 w-5 text-gray-400" />
-                            <span className="text-[10px] font-bold text-[#00a896] mt-1">Upload</span>
+                            <span className="text-[10px] font-bold text-[#00a896] mt-1">Upload *</span>
                             <input
                               type="file"
                               accept="image/*"
                               className="hidden"
-                              onChange={(e) => handlePhotoUpload(key, e.target.files?.[0] || null)}
+                              onChange={(e) => {
+                                setStep3Error(null);
+                                handlePhotoUpload(key, e.target.files?.[0] || null);
+                              }}
                             />
                           </label>
                         )}
@@ -1657,7 +1723,7 @@ export default function SellPhone() {
                 <button type="button" onClick={() => setStep(2)} className="btn-outline text-sm">
                   Back
                 </button>
-                <button type="button" onClick={() => setStep(4)} className="btn-primary bg-[#00a896] hover:bg-[#008f80] flex items-center gap-2">
+                <button type="button" onClick={handleStep3Continue} className="btn-primary bg-[#00a896] hover:bg-[#008f80] flex items-center gap-2">
                   View Guaranteed Quote <ArrowRight className="h-4 w-4" />
                 </button>
               </div>

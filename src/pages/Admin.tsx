@@ -33,6 +33,7 @@ import type {
   MasterPhone,
 } from './admin/adminTypes';
 import type { AdminTab } from './admin/adminTypes';
+import { savePriceOverride } from '../lib/priceSync';
 import { LUCKNOW_AREAS } from '../types';
 import { db, formatINR } from '../lib/db';
 import { ALL_INDIAN_PHONES_CATALOG } from '../data/indianPhonesCatalog';
@@ -669,12 +670,14 @@ export default function Admin() {
           .select('*')
           .single();
         if (error) throw error;
+        savePriceOverride(pricingForm.brand, pricingForm.model, Number(pricingForm.base_price), pricingForm.storage);
         setSellPriceConfigs((prev) =>
           prev.map((c) => (c.id === pricingModal.config?.id ? (data as SellPriceConfig) : c))
         );
       } else {
         const { data, error } = await db.from('sell_price_configs').insert(payload).select('*').single();
         if (error) throw error;
+        savePriceOverride(pricingForm.brand, pricingForm.model, Number(pricingForm.base_price), pricingForm.storage);
         setSellPriceConfigs((prev) => [data as SellPriceConfig, ...prev]);
       }
       setPricingModal(null);

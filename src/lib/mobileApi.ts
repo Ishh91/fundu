@@ -362,6 +362,7 @@ export async function fetchSellPriceConfig(brand: string, model: string, storage
 }
 
 import { getIndianPhoneByModel } from '../data/indianPhonesCatalog';
+import { getEffectivePrice } from './priceSync';
 
 export function getDynamicFallbackConfig(brand: string, model: string, storage: string): SellPriceConfig {
   const indianPhone = getIndianPhoneByModel(model) || getIndianPhoneByModel(`${brand} ${model}`);
@@ -396,6 +397,9 @@ export function getDynamicFallbackConfig(brand: string, model: string, storage: 
 
   if (storage.includes('256')) basePrice = Math.round(basePrice * 1.08);
   else if (storage.includes('512') || storage.includes('1TB')) basePrice = Math.round(basePrice * 1.18);
+
+  // Apply real-time admin price override if configured
+  basePrice = getEffectivePrice(brand, model, basePrice, storage);
 
   return {
     id: `fallback-${brand}-${model}`,

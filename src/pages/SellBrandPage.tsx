@@ -23,6 +23,8 @@ import {
   UserCheck,
 } from 'lucide-react';
 import { formatINR } from '../lib/db';
+import { getCleanPhoneImage } from '../lib/phoneImages';
+import { usePriceSync, applyPriceOverrides } from '../lib/priceSync';
 import { MASTER_MODEL_CATALOG } from './SellPhone';
 import { fetchBrandCatalogFromApi, type CatalogModelItem } from '../lib/mobileApi';
 
@@ -159,6 +161,8 @@ export default function SellBrandPage() {
     };
   }, [brandCleanKey]);
 
+  const { version } = usePriceSync();
+
   // Models filtered for this brand, selected series, and debounced search query
   const brandModels = useMemo(() => {
     let list = apiModels.length > 0
@@ -174,8 +178,8 @@ export default function SellBrandPage() {
       list = list.filter((m) => m.model.toLowerCase().includes(q));
     }
 
-    return list;
-  }, [apiModels, brandCleanKey, selectedSeries, debouncedQuery]);
+    return applyPriceOverrides(list);
+  }, [apiModels, brandCleanKey, selectedSeries, debouncedQuery, version]);
 
   // Available Series Tabs
   const seriesTabs = useMemo(() => {
@@ -321,9 +325,14 @@ export default function SellBrandPage() {
                       <span className="text-[10px] text-gray-400 font-semibold">{m.series || brandDisplayName}</span>
                     </div>
 
-                    {/* Centered Device Image */}
-                    <div className="h-32 w-full overflow-hidden rounded-xl bg-gray-50/70 p-2 border border-gray-100 flex items-center justify-center">
-                      <img src={m.image} alt={m.model} className="h-full object-contain group-hover:scale-110 transition-transform duration-300" />
+                    {/* Centered Cashify-style Clean Device Image Container */}
+                    <div className="h-52 w-full bg-white rounded-xl p-3 flex items-center justify-center relative overflow-hidden group-hover:scale-105 transition-transform duration-300">
+                      <img
+                        src={getCleanPhoneImage(m.brand || brandDisplayName, m.model, m.image)}
+                        alt={m.model}
+                        className="h-full max-h-48 w-auto object-contain drop-shadow-sm"
+                        loading="lazy"
+                      />
                     </div>
 
                     <div>

@@ -26,6 +26,7 @@ import {
 import { db, formatINR } from '../lib/db';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
+import { getCleanPhoneImage } from '../lib/phoneImages';
 import type { Product } from '../types';
 
 // Lucknow PIN code to Area mapping dictionary
@@ -362,9 +363,9 @@ export default function ProductDetail() {
               )}
 
               <img
-                src={selectedImage || images[0]}
+                src={getCleanPhoneImage(product.brand, product.title, selectedImage || images[0])}
                 alt={product.title}
-                className="h-80 w-auto object-contain transition-transform duration-300 group-hover:scale-105"
+                className="h-80 w-auto object-contain transition-transform duration-300 group-hover:scale-105 drop-shadow-md"
               />
 
               <div className="mt-4 flex items-center gap-2 text-xs font-bold text-ink-500 bg-ink-50 px-3 py-1 rounded-full">

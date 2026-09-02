@@ -11,4 +11,5 @@ export { default as WhyChooseFundu } from './WhyChooseFundu';
 export { default as TrustAndTestimonials } from './TrustAndTestimonials';
 export { default as FaqSection } from './FaqSection';
 export { default as TrendingArticles } from './TrendingArticles';
+export { default as OurServices } from './OurServices';
 
