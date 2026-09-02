@@ -32,8 +32,8 @@ export default function HeroSection() {
   return (
     <section className="py-4 space-y-4">
       <div className="container-page space-y-4">
-        {/* Cashify Top Search Bar */}
-        <div className="max-w-3xl mx-auto">
+        {/* Cashify Top Search Bar (Mobile Only) */}
+        <div className="max-w-3xl mx-auto md:hidden">
           <div
             onClick={() => navigate('/sell')}
             className="relative flex items-center w-full px-4 py-3 bg-white rounded-2xl border border-gray-200 shadow-xs cursor-pointer hover:border-[#00a896] hover:shadow-md transition group"

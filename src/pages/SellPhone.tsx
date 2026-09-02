@@ -245,17 +245,6 @@ const FAQS_LIST = [
   { q: 'Do I get a legal seller invoice?', a: 'Yes, an official digital seller invoice & receipt is sent to your mobile number immediately upon completion of pickup.' },
 ];
 
-const TESTIMONIALS_LIST = [
-  { name: 'Aman Srivastava', area: 'Gomti Nagar, Lucknow', rating: 5, text: 'Sold my iPhone 13 in just 20 mins! The rider came to my office in Gomti Nagar, tested the screen, and sent ₹38,500 GPay instantly. Best mobile buyback service in Lucknow!' },
-  { name: 'Priya Verma', area: 'Hazratganj, Lucknow', rating: 5, text: 'Very smooth experience! No bargaining like offline market. Got exact valuation for my OnePlus 11 with box & charger. Highly recommended for instant cash!' },
-  { name: 'Mohd. Zaid', area: 'Aliganj, Lucknow', rating: 5, text: 'Fundu is the best mobile sell app! Payout is instant on spot before rider leaves. Plus got ₹400 bonus for original box. Will sell again!' },
-  { name: 'Ritu Raj Singh', area: 'Indira Nagar, Lucknow', rating: 5, text: 'Super fast technician arrival! Sold my Galaxy S23 Ultra at home in Indira Nagar. Got full cash payout in hand. Zero hassle!' },
-  { name: 'Ananya Dwivedi', area: 'Mahanagar, Lucknow', rating: 5, text: 'I was worried about my data safety, but the Fundu agent performed a factory wipe right in front of me and gave a legal digital receipt. 10/10 service!' },
-  { name: 'Kavita Rastogi', area: 'Ashiyana, Lucknow', rating: 5, text: 'Sold my old Redmi Note 13 Pro. The search bar found my exact model in 2 seconds and quote was higher than local Lucknow shops!' },
-  { name: 'Deepak Shukla', area: 'Chowk, Lucknow', rating: 5, text: 'Booked pickup for 4 PM in Chowk. Executive arrived on time, inspected the phone, and transferred UPI money in 30 seconds!' },
-  { name: 'Shalini Tripathi', area: 'Rajajipuram, Lucknow', rating: 5, text: 'Got ₹28,000 for my iPhone 12. Free doorstep pickup and polite behavior. Best re-commerce app in UP!' },
-];
-
 export default function SellPhone() {
   const { user, profile } = useAuth();
   const navigate = useNavigate();
@@ -264,6 +253,19 @@ export default function SellPhone() {
   const { version } = usePriceSync();
 
   const [step, setStep] = useState(1);
+
+  // Real Approved Database Reviews State
+  const [dbReviews, setDbReviews] = useState<Array<{ id: string; reviewer_name: string; location: string; rating: number; comment: string }>>([]);
+  useEffect(() => {
+    db.from('reviews')
+      .select('*')
+      .eq('is_approved', true)
+      .then(({ data }) => {
+        if (Array.isArray(data)) {
+          setDbReviews(data as any);
+        }
+      });
+  }, []);
 
   // Debounced Search State
   const [rawSearchQuery, setRawSearchQuery] = useState('');
@@ -1326,22 +1328,30 @@ export default function SellPhone() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                {TESTIMONIALS_LIST.map((rev, idx) => (
-                  <div key={idx} className="p-4 rounded-2xl bg-gray-50 border border-gray-200/80 space-y-2 text-xs flex flex-col justify-between">
-                    <div className="space-y-2">
-                      <div className="flex items-center justify-between">
-                        <span className="font-bold text-gray-900 text-sm">{rev.name}</span>
-                        <span className="text-amber-500 text-xs">★★★★★</span>
+              {dbReviews.length === 0 ? (
+                <div className="p-8 text-center bg-gray-50 rounded-2xl border border-gray-200/80 space-y-2">
+                  <Star className="h-8 w-8 text-amber-400 mx-auto opacity-50" />
+                  <p className="font-bold text-xs text-gray-800">No customer reviews submitted yet.</p>
+                  <p className="text-[11px] text-gray-500">Real customer feedback will appear here after seller deals are completed.</p>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                  {dbReviews.map((rev) => (
+                    <div key={rev.id} className="p-4 rounded-2xl bg-gray-50 border border-gray-200/80 space-y-2 text-xs flex flex-col justify-between">
+                      <div className="space-y-2">
+                        <div className="flex items-center justify-between">
+                          <span className="font-bold text-gray-900 text-sm">{rev.reviewer_name}</span>
+                          <span className="text-amber-500 text-xs">{'★'.repeat(rev.rating || 5)}</span>
+                        </div>
+                        <p className="text-gray-600 leading-relaxed italic">"{rev.comment}"</p>
                       </div>
-                      <p className="text-gray-600 leading-relaxed italic">"{rev.text}"</p>
+                      <div className="pt-2 border-t border-gray-200/60 text-[11px] font-bold text-[#00a896] flex items-center gap-1">
+                        <MapPin className="h-3 w-3" /> {rev.location || 'Lucknow'}
+                      </div>
                     </div>
-                    <div className="pt-2 border-t border-gray-200/60 text-[11px] font-bold text-[#00a896] flex items-center gap-1">
-                      <MapPin className="h-3 w-3" /> {rev.area}
-                    </div>
-                  </div>
-                ))}
-              </div>
+                  ))}
+                </div>
+              )}
             </div>
 
             {/* FAQ Accordion Section (14 Comprehensive Q&As) */}

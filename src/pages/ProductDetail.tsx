@@ -165,12 +165,6 @@ const INSPECTION_POINTS = [
   'Biometric Face ID / Fingerprint Working',
 ];
 
-const REVIEWS = [
-  { name: 'Abhinav Sharma', location: 'Gomti Nagar, Lucknow', rating: 5, text: 'Purchased iPhone 13 in Superb condition. Literally looks brand new with 94% battery health! Got doorstep delivery within 4 hours.' },
-  { name: 'Priya Verma', location: 'Hazratganj, Lucknow', rating: 5, text: 'Clean packaging, original box, and 6 months warranty card included. Saved almost ₹20k compared to new!' },
-  { name: 'Mohd. Tariq', location: 'Indira Nagar, Lucknow', rating: 5, text: 'Pincode check exact location show kiya. COD service was smooth, technician showed phone working before payment.' },
-];
-
 export default function ProductDetail() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
@@ -185,6 +179,60 @@ export default function ProductDetail() {
   const [selectedGrade, setSelectedGrade] = useState<string>('Superb');
   const [selectedStorage, setSelectedStorage] = useState<string>('128 GB');
   const [selectedColor, setSelectedColor] = useState<string>('');
+
+  // Real Database Reviews & Submission State
+  const [dbReviews, setDbReviews] = useState<Review[]>([]);
+  const [showReviewModal, setShowReviewModal] = useState(false);
+  const [newReview, setNewReview] = useState({
+    rating: 5,
+    reviewer_name: '',
+    location: 'Lucknow',
+    comment: '',
+  });
+  const [reviewSubmitting, setReviewSubmitting] = useState(false);
+
+  useEffect(() => {
+    db.from('reviews')
+      .select('*')
+      .eq('is_approved', true)
+      .then(({ data }) => {
+        if (Array.isArray(data)) {
+          setDbReviews(data as Review[]);
+        }
+      });
+  }, [id]);
+
+  const handleAddReview = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newReview.reviewer_name.trim() || !newReview.comment.trim()) {
+      alert('Please enter your name and review comment.');
+      return;
+    }
+    setReviewSubmitting(true);
+    try {
+      const payload = {
+        user_id: user?.id || null,
+        product_id: id || null,
+        service_type: 'buy',
+        rating: newReview.rating,
+        reviewer_name: newReview.reviewer_name.trim(),
+        location: newReview.location.trim() || 'Lucknow',
+        comment: newReview.comment.trim(),
+        is_approved: false,
+      };
+
+      const { error } = await db.from('reviews').insert(payload);
+      if (error) throw error;
+
+      alert('🎉 Thank you for your review! It has been submitted for verification.');
+      setShowReviewModal(false);
+      setNewReview({ rating: 5, reviewer_name: '', location: 'Lucknow', comment: '' });
+    } catch (err: any) {
+      alert(err?.message || 'Failed to submit review');
+    } finally {
+      setReviewSubmitting(false);
+    }
+  };
 
   // Pincode & Location Auto-lookup State
   const [pincode, setPincode] = useState<string>('226010');
@@ -726,27 +774,120 @@ export default function ProductDetail() {
               </div>
             </div>
 
-            {/* REVIEWS */}
+            {/* REVIEWS SECTION */}
             <div className="card p-6 md:p-8 rounded-[32px] bg-white border border-ink-100 space-y-6 shadow-soft">
-              <h3 className="font-display text-lg font-black text-ink-900 flex items-center gap-2">
-                <Star className="h-5 w-5 text-amber-500 fill-amber-400" /> Verified Customer Reviews
-              </h3>
-
-              <div className="space-y-4">
-                {REVIEWS.map((r, idx) => (
-                  <div key={idx} className="p-4 rounded-2xl bg-[#f8fafb] border border-ink-100 space-y-1">
-                    <div className="flex items-center justify-between">
-                      <p className="font-bold text-xs text-ink-900">{r.name}</p>
-                      <span className="text-[10px] text-ink-400 font-semibold">{r.location}</span>
-                    </div>
-                    <div className="flex items-center gap-1 text-amber-400 text-xs">
-                      {'★'.repeat(r.rating)}
-                    </div>
-                    <p className="text-xs text-ink-600 leading-relaxed pt-1">{r.text}</p>
-                  </div>
-                ))}
+              <div className="flex items-center justify-between flex-wrap gap-3">
+                <div>
+                  <h3 className="font-display text-lg font-black text-ink-900 flex items-center gap-2">
+                    <Star className="h-5 w-5 text-amber-500 fill-amber-400" /> Verified Customer Reviews
+                  </h3>
+                  <p className="text-xs text-ink-500 mt-0.5">Authentic reviews from verified buyers</p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setShowReviewModal(true)}
+                  className="btn-outline text-xs px-4 py-2 font-bold flex items-center gap-1.5 cursor-pointer"
+                >
+                  Write a Review
+                </button>
               </div>
+
+              {dbReviews.length === 0 ? (
+                <div className="p-8 text-center bg-ink-50 rounded-2xl space-y-2 border border-ink-100/60">
+                  <Star className="h-8 w-8 text-amber-400 mx-auto opacity-50" />
+                  <p className="font-bold text-xs text-ink-800">No verified reviews submitted yet.</p>
+                  <p className="text-[11px] text-ink-500">Purchased or used this device? Be the first to share your experience!</p>
+                  <button
+                    type="button"
+                    onClick={() => setShowReviewModal(true)}
+                    className="mt-2 btn-primary text-xs px-4 py-2 bg-brand-600 font-bold inline-block cursor-pointer"
+                  >
+                    Write First Review
+                  </button>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {dbReviews.map((r) => (
+                    <div key={r.id} className="p-4 rounded-2xl bg-[#f8fafb] border border-ink-100 space-y-1">
+                      <div className="flex items-center justify-between">
+                        <p className="font-bold text-xs text-ink-900">{r.reviewer_name}</p>
+                        <span className="text-[10px] text-ink-400 font-semibold">{r.location}</span>
+                      </div>
+                      <div className="flex items-center gap-1 text-amber-400 text-xs">
+                        {'★'.repeat(r.rating || 5)}
+                      </div>
+                      <p className="text-xs text-ink-600 leading-relaxed pt-1">{r.comment}</p>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
+
+            {/* WRITE REVIEW MODAL */}
+            {showReviewModal && (
+              <div className="fixed inset-0 z-50 flex items-center justify-center bg-ink-900/50 p-4">
+                <div className="card w-full max-w-md p-6 bg-white rounded-3xl space-y-4 shadow-2xl animate-fade-in">
+                  <div className="flex items-center justify-between border-b border-ink-100 pb-3">
+                    <h3 className="font-bold text-base text-ink-900">Write Customer Review</h3>
+                    <button onClick={() => setShowReviewModal(false)} className="text-ink-400 hover:text-ink-700">✕</button>
+                  </div>
+                  <form onSubmit={handleAddReview} className="space-y-3">
+                    <div>
+                      <label className="label text-xs">Your Name</label>
+                      <input
+                        type="text"
+                        required
+                        value={newReview.reviewer_name}
+                        onChange={(e) => setNewReview({ ...newReview, reviewer_name: e.target.value })}
+                        placeholder="e.g. Rahul Verma"
+                        className="input text-xs font-bold"
+                      />
+                    </div>
+                    <div>
+                      <label className="label text-xs">Location / Area</label>
+                      <input
+                        type="text"
+                        value={newReview.location}
+                        onChange={(e) => setNewReview({ ...newReview, location: e.target.value })}
+                        placeholder="e.g. Gomti Nagar, Lucknow"
+                        className="input text-xs font-bold"
+                      />
+                    </div>
+                    <div>
+                      <label className="label text-xs">Star Rating</label>
+                      <select
+                        value={newReview.rating}
+                        onChange={(e) => setNewReview({ ...newReview, rating: Number(e.target.value) })}
+                        className="input text-xs font-bold"
+                      >
+                        <option value={5}>⭐⭐⭐⭐⭐ (5/5 Excellent)</option>
+                        <option value={4}>⭐⭐⭐⭐ (4/5 Very Good)</option>
+                        <option value={3}>⭐⭐⭐ (3/5 Average)</option>
+                        <option value={2}>⭐⭐ (2/5 Needs Improvement)</option>
+                        <option value={1}>⭐ (1/5 Poor)</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label className="label text-xs">Your Feedback / Comment</label>
+                      <textarea
+                        rows={3}
+                        required
+                        value={newReview.comment}
+                        onChange={(e) => setNewReview({ ...newReview, comment: e.target.value })}
+                        placeholder="Share your experience with phone quality, delivery speed, warranty..."
+                        className="input text-xs"
+                      />
+                    </div>
+                    <div className="flex justify-end gap-2 pt-2">
+                      <button type="button" onClick={() => setShowReviewModal(false)} className="btn-outline text-xs">Cancel</button>
+                      <button type="submit" disabled={reviewSubmitting} className="btn-primary text-xs bg-brand-600">
+                        {reviewSubmitting ? 'Submitting...' : 'Submit Review'}
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            )}
 
           </div>
         </div>
