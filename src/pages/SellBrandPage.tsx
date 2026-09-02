@@ -23,7 +23,7 @@ import {
   UserCheck,
 } from 'lucide-react';
 import { formatINR } from '../lib/db';
-import { getCleanPhoneImage } from '../lib/phoneImages';
+import { getCleanPhoneImage, getCleanBrandLogo } from '../lib/phoneImages';
 import { usePriceSync, applyPriceOverrides } from '../lib/priceSync';
 import { MASTER_MODEL_CATALOG } from './SellPhone';
 import { fetchBrandCatalogFromApi, type CatalogModelItem } from '../lib/mobileApi';
@@ -33,56 +33,56 @@ const BRAND_DETAILS: Record<
   { logo: string; tagline: string; desc: string; count: string; series: string[] }
 > = {
   xiaomi: {
-    logo: 'https://images.unsplash.com/photo-1598327105666-5b89351aff97?w=150&auto=format&fit=crop&q=80',
+    logo: getCleanBrandLogo('xiaomi'),
     tagline: 'Get Maximum Resale Cash Value for Your Old Xiaomi / Redmi Phone in Lucknow',
     desc: 'Sell used Xiaomi Mi, Redmi Note & POCO smartphones online in Lucknow for instant spot cash & 100% free doorstep pickup across Gomti Nagar, Hazratganj, Indira Nagar & Aliganj.',
     count: '50+ Xiaomi Models',
     series: ['All', 'Redmi Note Series', 'Mi Series', 'Redmi Series', 'Poco Series'],
   },
   apple: {
-    logo: 'https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=150&auto=format&fit=crop&q=80',
+    logo: getCleanBrandLogo('apple'),
     tagline: 'Sell Old Apple iPhone Online for Instant Cash at Doorstep',
     desc: 'Get highest guaranteed spot cash for your old Apple iPhone in Lucknow. Free doorstep pickup & instant UPI payment across all Lucknow localities.',
     count: '30+ iPhone Models',
     series: ['All', 'iPhone 15 Series', 'iPhone 14 Series', 'iPhone 13 Series', 'iPhone 12 Series', 'iPhone 11 Series'],
   },
   samsung: {
-    logo: 'https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?w=150&auto=format&fit=crop&q=80',
+    logo: getCleanBrandLogo('samsung'),
     tagline: 'Sell Old Samsung Galaxy Mobile Online at Best Resale Valuation',
     desc: 'Sell used Samsung Galaxy S, Z Fold/Flip, A & M series smartphones online in Lucknow for maximum spot payment.',
     count: '45+ Galaxy Models',
     series: ['All', 'Galaxy S Series', 'Galaxy Z Series', 'Galaxy A Series', 'Galaxy M Series'],
   },
   oneplus: {
-    logo: 'https://images.unsplash.com/photo-1580910051074-3eb694886505?w=150&auto=format&fit=crop&q=80',
+    logo: getCleanBrandLogo('oneplus'),
     tagline: 'Sell Old OnePlus Smartphone Online at Highest Cash Rates',
     desc: 'Sell old OnePlus 12, 11, Nord & R series phones at best doorstep cash rates in Lucknow with instant data wipe.',
     count: '25+ OnePlus Models',
     series: ['All', 'Number Series', 'Nord Series', 'R Series'],
   },
   vivo: {
-    logo: 'https://images.unsplash.com/photo-1546054454-aa26e2b734c7?w=150&auto=format&fit=crop&q=80',
+    logo: getCleanBrandLogo('vivo'),
     tagline: 'Sell Old Vivo Mobile Online for Instant Spot Payout',
     desc: 'Sell used Vivo X, V, Y, T, Z, U, NEX & S series smartphones in Lucknow with free doorstep pickup & guaranteed valuation.',
     count: '100+ Vivo Models',
     series: ['All', 'X Series', 'V Series', 'Y Series', 'T Series', 'Z Series', 'U Series', 'NEX Series', 'S Series'],
   },
   realme: {
-    logo: 'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=150&auto=format&fit=crop&q=80',
+    logo: getCleanBrandLogo('realme'),
     tagline: 'Sell Old Realme Mobile Phone Online at Best Price',
     desc: 'Sell used Realme Pro, GT & C series phones online in Lucknow for instant cash in hand.',
     count: '35+ Realme Models',
     series: ['All', 'Pro Series', 'GT Series', 'C Series'],
   },
   oppo: {
-    logo: 'https://images.unsplash.com/photo-1565849904461-04a58ad377e0?w=150&auto=format&fit=crop&q=80',
+    logo: getCleanBrandLogo('oppo'),
     tagline: 'Sell Old Oppo Mobile Phone Online for Instant Cash',
     desc: 'Sell old Oppo Reno, Find & A series mobiles in Lucknow with zero hassle and instant GPay/PhonePe transfer.',
     count: '30+ Oppo Models',
     series: ['All', 'Reno Series', 'Find Series', 'A Series'],
   },
   google: {
-    logo: 'https://images.unsplash.com/photo-1598327105666-5b89351aff97?w=150&auto=format&fit=crop&q=80',
+    logo: getCleanBrandLogo('google'),
     tagline: 'Sell Old Google Pixel Phone Online at Best Resale Value',
     desc: 'Sell used Google Pixel 8, 7 & 6 series phones in Lucknow at highest market value.',
     count: '15+ Pixel Models',

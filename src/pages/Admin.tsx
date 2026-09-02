@@ -1621,35 +1621,70 @@ export default function Admin() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-3 gap-3">
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                 <div>
-                  <label className="label text-xs">Condition</label>
+                  <label className="label text-xs font-bold">RAM (Memory)</label>
+                  <input
+                    type="text"
+                    placeholder="e.g. 8 GB"
+                    value={listPhoneForm.ram}
+                    onChange={(e) => setListPhoneForm({ ...listPhoneForm, ram: e.target.value })}
+                    className="input text-xs font-bold"
+                  />
+                </div>
+                <div>
+                  <label className="label text-xs font-bold">Storage</label>
+                  <input
+                    type="text"
+                    placeholder="e.g. 256 GB"
+                    value={listPhoneForm.storage}
+                    onChange={(e) => setListPhoneForm({ ...listPhoneForm, storage: e.target.value })}
+                    className="input text-xs font-bold"
+                  />
+                </div>
+                <div>
+                  <label className="label text-xs font-bold">Device Color</label>
+                  <input
+                    type="text"
+                    placeholder="e.g. Midnight Black"
+                    value={listPhoneForm.color}
+                    onChange={(e) => setListPhoneForm({ ...listPhoneForm, color: e.target.value })}
+                    className="input text-xs font-bold"
+                  />
+                </div>
+                <div>
+                  <label className="label text-xs font-bold">Refurbished Grade</label>
                   <select
                     value={listPhoneForm.condition}
                     onChange={(e) => setListPhoneForm({ ...listPhoneForm, condition: e.target.value as any })}
                     className="input text-xs font-bold"
                   >
+                    <option value="Superb">Superb (Like New)</option>
+                    <option value="Good">Good (Popular)</option>
+                    <option value="Fair">Fair (Value)</option>
                     <option value="Excellent">Excellent</option>
-                    <option value="Good">Good</option>
-                    <option value="Fair">Fair</option>
                   </select>
                 </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="label text-xs">Offer Tag</label>
+                  <label className="label text-xs font-bold">Offer Tag</label>
                   <input
                     type="text"
+                    placeholder="e.g. 🔥 Hot Deal"
                     value={listPhoneForm.offer_tag}
                     onChange={(e) => setListPhoneForm({ ...listPhoneForm, offer_tag: e.target.value })}
                     className="input text-xs font-bold"
                   />
                 </div>
                 <div>
-                  <label className="label text-xs">Stock Units</label>
+                  <label className="label text-xs font-bold">Stock Units</label>
                   <input
                     type="number"
                     value={listPhoneForm.stock}
                     onChange={(e) => setListPhoneForm({ ...listPhoneForm, stock: e.target.value })}
-                    className="input text-xs"
+                    className="input text-xs font-bold"
                   />
                 </div>
               </div>
@@ -1894,13 +1929,59 @@ export default function Admin() {
                   />
                 </div>
                 <div>
-                  <label className="label text-xs">Model</label>
+                  <label className="label text-xs font-bold">Model</label>
                   <input
                     type="text"
                     value={productForm.model}
                     onChange={(e) => setProductForm({ ...productForm, model: e.target.value })}
-                    className="input text-xs"
+                    className="input text-xs font-bold"
                   />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                <div>
+                  <label className="label text-xs font-bold">RAM (Memory)</label>
+                  <input
+                    type="text"
+                    placeholder="e.g. 8 GB"
+                    value={productForm.ram}
+                    onChange={(e) => setProductForm({ ...productForm, ram: e.target.value })}
+                    className="input text-xs font-bold"
+                  />
+                </div>
+                <div>
+                  <label className="label text-xs font-bold">Storage</label>
+                  <input
+                    type="text"
+                    placeholder="e.g. 256 GB"
+                    value={productForm.storage}
+                    onChange={(e) => setProductForm({ ...productForm, storage: e.target.value })}
+                    className="input text-xs font-bold"
+                  />
+                </div>
+                <div>
+                  <label className="label text-xs font-bold">Device Color</label>
+                  <input
+                    type="text"
+                    placeholder="e.g. Midnight Black"
+                    value={productForm.color}
+                    onChange={(e) => setProductForm({ ...productForm, color: e.target.value })}
+                    className="input text-xs font-bold"
+                  />
+                </div>
+                <div>
+                  <label className="label text-xs font-bold">Refurbished Grade</label>
+                  <select
+                    value={productForm.condition}
+                    onChange={(e) => setProductForm({ ...productForm, condition: e.target.value as any })}
+                    className="input text-xs font-bold"
+                  >
+                    <option value="Superb">Superb (Like New)</option>
+                    <option value="Good">Good (Popular)</option>
+                    <option value="Fair">Fair (Value)</option>
+                    <option value="Excellent">Excellent</option>
+                  </select>
                 </div>
               </div>
 

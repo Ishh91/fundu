@@ -287,14 +287,13 @@ export default function ProductDetail() {
 
   if (!product) return null;
 
-  // Calculate dynamic pricing based on Grade & Storage selection
-  const gradeObj = CONDITION_GRADES.find((g) => g.id === selectedGrade) || CONDITION_GRADES[2];
-  const storageMultiplier = selectedStorage === '256 GB' ? 1.12 : selectedStorage === '512 GB' ? 1.25 : selectedStorage === '64 GB' ? 0.92 : 1.0;
-  
-  const currentPrice = Math.round(product.price * gradeObj.priceMultiplier * storageMultiplier);
-  const currentMrp = product.original_price ? Math.round(product.original_price * storageMultiplier) : Math.round(currentPrice * 1.5);
+  // Use exact price and specs set by Admin in backend
+  const currentPrice = product.price;
+  const currentMrp = product.original_price && product.original_price > product.price
+    ? product.original_price
+    : Math.round(product.price * 1.45);
   const currentSavings = Math.max(0, currentMrp - currentPrice);
-  const currentDiscountPercent = Math.round((currentSavings / currentMrp) * 100);
+  const currentDiscountPercent = product.discount_percent || Math.round((currentSavings / currentMrp) * 100);
   const emiAmount = Math.round(currentPrice / 24);
 
   const images = product.images && product.images.length > 0
@@ -503,12 +502,13 @@ export default function ProductDetail() {
               {/* CONDITION GRADE SELECTOR CARDS */}
               <div className="space-y-3">
                 <label className="label text-xs font-extrabold text-ink-900 uppercase tracking-wider flex items-center gap-1.5">
-                  <Sparkles className="h-4 w-4 text-brand-600" /> Select Refurbished Grade / Condition
+                  <Sparkles className="h-4 w-4 text-brand-600" /> Refurbished Condition Grade
                 </label>
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                   {CONDITION_GRADES.map((g) => {
-                    const isSelected = selectedGrade === g.id;
-                    const gradePrice = Math.round(product.price * g.priceMultiplier * storageMultiplier);
+                    const activeGrade = (selectedGrade || product.condition || 'Superb').toLowerCase();
+                    const isSelected = activeGrade === g.id.toLowerCase() || (activeGrade.includes('excellent') && g.id === 'Superb');
+                    const displayPrice = isSelected ? product.price : Math.round(product.price * (g.id === 'Fair' ? 0.90 : g.id === 'Good' ? 0.95 : 1.0));
 
                     return (
                       <button
@@ -529,7 +529,7 @@ export default function ProductDetail() {
                           <p className="text-[11px] text-ink-500 leading-tight mb-2">{g.desc}</p>
                         </div>
                         <div>
-                          <span className="font-display font-black text-sm text-ink-900">{formatINR(gradePrice)}</span>
+                          <span className="font-display font-black text-sm text-ink-900">{formatINR(displayPrice)}</span>
                           <span className="ml-1 text-[10px] text-emerald-700 font-bold block">{g.badge}</span>
                         </div>
                       </button>
@@ -538,39 +538,35 @@ export default function ProductDetail() {
                 </div>
               </div>
 
-              {/* STORAGE CAPACITY SELECTOR */}
-              <div className="space-y-2">
-                <label className="label text-xs font-bold text-ink-900">Storage Capacity</label>
-                <div className="flex flex-wrap gap-2.5">
-                  {['64 GB', '128 GB', '256 GB', '512 GB'].map((stg) => (
-                    <button
-                      key={stg}
-                      type="button"
-                      onClick={() => setSelectedStorage(stg)}
-                      className={`rounded-2xl px-5 py-2.5 text-xs font-extrabold transition cursor-pointer ${
-                        selectedStorage === stg
-                          ? 'bg-brand-600 text-white shadow-md ring-2 ring-brand-500/20'
-                          : 'border border-ink-200 bg-white text-ink-800 hover:border-brand-300'
-                      }`}
-                    >
-                      {stg}
-                    </button>
-                  ))}
+              {/* RAM MEMORY & STORAGE CAPACITY SPECIFICATIONS */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <label className="label text-xs font-bold text-ink-900">RAM (Memory)</label>
+                  <div className="flex flex-wrap gap-2">
+                    <span className="rounded-2xl px-4 py-2.5 text-xs font-extrabold bg-brand-600 text-white shadow-md">
+                      {product.ram || '8 GB RAM'}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <label className="label text-xs font-bold text-ink-900">Storage Capacity</label>
+                  <div className="flex flex-wrap gap-2">
+                    <span className="rounded-2xl px-4 py-2.5 text-xs font-extrabold bg-brand-600 text-white shadow-md">
+                      {selectedStorage || product.storage || '128 GB'}
+                    </span>
+                  </div>
                 </div>
               </div>
 
-              {/* COLOR SELECTION */}
+              {/* DEVICE COLOR SELECTOR */}
               <div className="space-y-2">
                 <label className="label text-xs font-bold text-ink-900">Device Color</label>
                 <div className="flex items-center gap-3">
-                  <button
-                    type="button"
-                    onClick={() => setSelectedColor(product.color || 'Default')}
-                    className="rounded-2xl px-4 py-2 text-xs font-bold bg-brand-50 text-brand-700 border border-brand-200 flex items-center gap-2"
-                  >
+                  <span className="rounded-2xl px-4 py-2 text-xs font-bold bg-brand-50 text-brand-700 border border-brand-200 flex items-center gap-2">
                     <span className="h-3 w-3 rounded-full bg-brand-600 inline-block" />
-                    {selectedColor || product.color || 'Default Color'}
-                  </button>
+                    {selectedColor || product.color || 'Midnight Black'}
+                  </span>
                 </div>
               </div>
 

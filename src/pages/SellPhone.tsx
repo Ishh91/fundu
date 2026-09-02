@@ -32,7 +32,7 @@ import { computeDetailedCashifyValuation, fetchSellPriceConfig, fetchPhoneModels
 import { db, formatINR } from '../lib/db';
 import { useAuth } from '../context/AuthContext';
 import { ALL_INDIAN_PHONES_CATALOG } from '../data/indianPhonesCatalog';
-import { getCleanPhoneImage } from '../lib/phoneImages';
+import { getCleanPhoneImage, getCleanBrandLogo } from '../lib/phoneImages';
 import { usePriceSync, applyPriceOverrides } from '../lib/priceSync';
 
 // Master Lucknow Localities
@@ -51,12 +51,12 @@ const LUCKNOW_LOCALITIES = [
 
 // Brand Grid Cards
 const BRAND_TILES = [
-  { name: 'Apple', logo: 'https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=150&auto=format&fit=crop&q=80', count: '30+ Models' },
-  { name: 'Samsung', logo: 'https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?w=150&auto=format&fit=crop&q=80', count: '45+ Models' },
-  { name: 'OnePlus', logo: 'https://images.unsplash.com/photo-1580910051074-3eb694886505?w=150&auto=format&fit=crop&q=80', count: '25+ Models' },
-  { name: 'Xiaomi', logo: 'https://images.unsplash.com/photo-1598327105666-5b89351aff97?w=150&auto=format&fit=crop&q=80', count: '50+ Models' },
-  { name: 'Realme', logo: 'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=150&auto=format&fit=crop&q=80', count: '35+ Models' },
-  { name: 'Vivo', logo: 'https://images.unsplash.com/photo-1546054454-aa26e2b734c7?w=150&auto=format&fit=crop&q=80', count: '40+ Models' },
+  { name: 'Apple', logo: getCleanBrandLogo('Apple'), count: '30+ Models' },
+  { name: 'Samsung', logo: getCleanBrandLogo('Samsung'), count: '45+ Models' },
+  { name: 'OnePlus', logo: getCleanBrandLogo('OnePlus'), count: '25+ Models' },
+  { name: 'Xiaomi', logo: getCleanBrandLogo('Xiaomi'), count: '50+ Models' },
+  { name: 'Realme', logo: getCleanBrandLogo('Realme'), count: '35+ Models' },
+  { name: 'Vivo', logo: getCleanBrandLogo('Vivo'), count: '40+ Models' },
 ];
 
 // Master Model Catalog Database (Easily Updatable JSON/Array)
@@ -1207,8 +1207,8 @@ export default function SellPhone() {
                     onClick={() => handleQuickModelSelect(item)}
                     className="p-3.5 rounded-2xl border border-gray-200 bg-white hover:border-[#00a896] hover:shadow-lg transition-all duration-300 flex flex-col items-center text-center cursor-pointer group"
                   >
-                    <div className="h-16 w-16 overflow-hidden rounded-xl p-1 bg-gray-50">
-                      <img src={item.image} alt={item.model} className="h-full w-full object-contain group-hover:scale-105 transition-transform" />
+                    <div className="h-20 w-full overflow-hidden rounded-xl p-1 bg-white flex items-center justify-center">
+                      <img src={getCleanPhoneImage(item.brand, item.model, item.image)} alt={item.model} className="h-full w-full object-contain group-hover:scale-105 transition-transform" />
                     </div>
                     <p className="mt-2 text-xs font-extrabold text-gray-900 group-hover:text-[#00a896] transition-colors truncate w-full">{item.model}</p>
                     <span className="mt-1 badge bg-emerald-50 text-emerald-800 font-extrabold text-[10px]">
