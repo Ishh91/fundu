@@ -28,7 +28,7 @@ import {
   FileText,
   Award,
 } from 'lucide-react';
-import { computeDetailedCashifyValuation, fetchSellPriceConfig, fetchPhoneModels, type SellPriceConfig } from '../lib/mobileApi';
+import { computeDetailedCashifyValuation, fetchSellPriceConfig, fetchPhoneModels, searchMobileApiDev, type SellPriceConfig } from '../lib/mobileApi';
 import { db, formatINR } from '../lib/db';
 import { useAuth } from '../context/AuthContext';
 import { ALL_INDIAN_PHONES_CATALOG } from '../data/indianPhonesCatalog';
@@ -266,6 +266,8 @@ export default function SellPhone() {
   const [rawSearchQuery, setRawSearchQuery] = useState('');
   const [debouncedQuery, setDebouncedQuery] = useState('');
   const [isSearching, setIsSearching] = useState(false);
+  const [apiSearchResults, setApiSearchResults] = useState<Array<{ brand: string; series: string; model: string; storage: string; price: number; image: string }>>([]);
+  const [isSearchingApi, setIsSearchingApi] = useState(false);
   const [focusedSearchIndex, setFocusedSearchIndex] = useState(-1);
   const searchInputRef = useRef<HTMLInputElement>(null);
   const searchDropdownRef = useRef<HTMLDivElement>(null);
@@ -323,6 +325,53 @@ export default function SellPhone() {
     pickup_person_phone?: string | null;
     estimated_arrival_time?: string | null;
   } | null>(null);
+
+  // MobileAPI Live Search Fallback Effect when query is not found in local catalog
+  useEffect(() => {
+    if (!debouncedQuery || debouncedQuery.trim().length < 2) {
+      setApiSearchResults([]);
+      setIsSearchingApi(false);
+      return;
+    }
+
+    const q = debouncedQuery.toLowerCase().trim();
+    const queryWords = q.split(/\s+/).filter(Boolean);
+
+    // Calculate count of local catalog matches
+    const localMatchesCount = MASTER_MODEL_CATALOG.filter((m) => {
+      const fullText = `${m.brand} ${m.series || ''} ${m.model}`.toLowerCase();
+      return queryWords.every((word) => fullText.includes(word));
+    }).length + (Array.isArray(ALL_INDIAN_PHONES_CATALOG) ? ALL_INDIAN_PHONES_CATALOG.filter((p) => {
+      const fullText = `${p.brand} ${p.model}`.toLowerCase();
+      return queryWords.every((word) => fullText.includes(word));
+    }).length : 0);
+
+    // If local database has 0 matches, perform live MobileAPI lookup
+    if (localMatchesCount === 0) {
+      setIsSearchingApi(true);
+      searchMobileApiDev(debouncedQuery)
+        .then((devices) => {
+          if (Array.isArray(devices) && devices.length > 0) {
+            const mapped = devices.map((d: any) => ({
+              brand: d.brand || 'Smartphone',
+              series: d.brand || 'Mobile',
+              model: d.model || d.phone_name || debouncedQuery,
+              storage: d.storage_options?.[0] || '128 GB',
+              price: d.base_resale_value || Math.round((d.default_mrp || 30000) * 0.55),
+              image: d.image_url || d.image || 'https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=300&auto=format&fit=crop&q=80',
+            }));
+            setApiSearchResults(mapped);
+          } else {
+            setApiSearchResults([]);
+          }
+        })
+        .catch(() => setApiSearchResults([]))
+        .finally(() => setIsSearchingApi(false));
+    } else {
+      setApiSearchResults([]);
+      setIsSearchingApi(false);
+    }
+  }, [debouncedQuery]);
   const [error, setError] = useState<string | null>(null);
 
   const [pricingConfig, setPricingConfig] = useState<SellPriceConfig | null>(null);
@@ -478,7 +527,7 @@ export default function SellPhone() {
 
   const estimate = cashifyValuation.finalEstimate;
 
-  // Filtered Master Models for Search Autocomplete (Combines Master Catalog & Indian Phones Catalog)
+  // Filtered Master Models for Search Autocomplete (Combines Master Catalog, Indian Phones Catalog, & MobileAPI Live Fallback)
   const searchResults = useMemo(() => {
     if (!debouncedQuery) return [];
     const q = debouncedQuery.toLowerCase().trim();
@@ -510,11 +559,18 @@ export default function SellPhone() {
 
     const allModels = Array.from(modelMap.values());
 
-    return allModels.filter((m) => {
+    const localMatches = allModels.filter((m) => {
       const fullText = `${m.brand} ${m.series || ''} ${m.model}`.toLowerCase();
       return queryWords.every((word) => fullText.includes(word));
     });
-  }, [debouncedQuery]);
+
+    if (localMatches.length > 0) {
+      return localMatches;
+    }
+
+    // Fallback to MobileAPI search results if local database has 0 matches
+    return apiSearchResults;
+  }, [debouncedQuery, apiSearchResults]);
 
   // Available Series List for Selected Brand
   const brandSeriesList = useMemo(() => {
@@ -874,6 +930,11 @@ export default function SellPhone() {
                         </button>
                       ))}
                     </>
+                  ) : isSearchingApi ? (
+                    <div className="p-6 text-center space-y-2">
+                      <RefreshCw className="h-6 w-6 text-[#00a896] animate-spin mx-auto" />
+                      <p className="font-bold text-sm text-gray-900">Searching MobileAPI live catalog for "{rawSearchQuery}"...</p>
+                    </div>
                   ) : (
                     <div className="p-6 text-center space-y-2">
                       <AlertCircle className="h-6 w-6 text-rose-500 mx-auto" />
