@@ -1072,19 +1072,24 @@ export default function Admin() {
     );
   }
 
-  if (loading || dataLoading) {
+  if (loading) {
     return (
       <div className="min-h-screen bg-[#f4f7f8] flex items-center justify-center">
         <div className="flex flex-col items-center gap-3">
           <RefreshCw className="h-8 w-8 animate-spin text-brand-600" />
-          <p className="text-sm font-bold text-ink-700">Loading Fundu Admin Workspace...</p>
+          <p className="text-sm font-bold text-ink-700">Verifying Admin Credentials...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-[#f4f7f8] text-ink-900 flex">
+    <div className="min-h-screen bg-[#f4f7f8] text-ink-900 flex relative">
+      {dataLoading && (
+        <div className="fixed top-0 left-0 right-0 z-50 h-1 bg-teal-100/60 overflow-hidden">
+          <div className="h-full bg-[#00a896] animate-pulse w-full" />
+        </div>
+      )}
       {/* 1. Persistent Sidebar Navigation */}
       <AdminSidebar
         activeTab={tab}
