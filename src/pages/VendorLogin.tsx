@@ -41,9 +41,9 @@ export default function VendorLogin() {
       <div className="w-full max-w-md space-y-6">
         {/* Brand Header */}
         <div className="text-center space-y-2">
-          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-brand-500 text-white font-black text-2xl shadow-lg shadow-brand-500/20">
-            <Building2 className="h-8 w-8 text-white" />
-          </div>
+          <Link to="/" className="inline-block transition-transform hover:scale-105">
+            <img src="/logo.png" alt="Fundu" className="h-16 sm:h-20 w-auto mx-auto object-contain drop-shadow-md" />
+          </Link>
           <div className="inline-flex items-center gap-1.5 rounded-full bg-slate-900 border border-slate-800 px-3 py-1 text-xs font-mono text-brand-400">
             <ShieldCheck className="h-3.5 w-3.5" /> Official Vendor Partner Portal
           </div>

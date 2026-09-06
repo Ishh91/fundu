@@ -41,9 +41,9 @@ export default function DeliveryLogin() {
       <div className="w-full max-w-md space-y-6">
         {/* Brand Header */}
         <div className="text-center space-y-2">
-          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-emerald-500 text-slate-950 font-black text-2xl shadow-lg shadow-emerald-500/20">
-            <Truck className="h-8 w-8 text-slate-950" />
-          </div>
+          <Link to="/" className="inline-block transition-transform hover:scale-105">
+            <img src="/logo.png" alt="Fundu" className="h-16 sm:h-20 w-auto mx-auto object-contain drop-shadow-md" />
+          </Link>
           <div className="inline-flex items-center gap-1.5 rounded-full bg-slate-900 border border-slate-800 px-3 py-1 text-xs font-mono text-emerald-400">
             <ShieldCheck className="h-3.5 w-3.5" /> Doorstep Executive & Rider Desk
           </div>

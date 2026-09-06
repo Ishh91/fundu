@@ -12,8 +12,8 @@ export default function BrandLogo({
   return (
     <div className={`flex items-center gap-2.5 ${className}`.trim()}>
       <img
-        src="/logo1 (2).svg"
-        alt="TheFundu"
+        src="/logo.png"
+        alt="Fundu - Smart Choice Smart Price"
         className={`object-contain block ${imageClassName}`.trim()}
       />
       {showLocation && (
