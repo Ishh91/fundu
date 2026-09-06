@@ -420,9 +420,12 @@ export default function Login() {
                   </div>
                   <p className="text-[11px] text-gray-400 mt-1.5 flex items-center gap-1">
                     <ShieldCheck className="h-3.5 w-3.5 text-[#00a896]" />
-                    We'll send a 6-digit OTP code via Twilio SMS to verify.
+                    We'll send a 6-digit OTP code via SMS to verify.
                   </p>
                 </div>
+
+                {/* Invisible Firebase ReCAPTCHA container */}
+                <div id="recaptcha-container" className="invisible" />
 
                 <button
                   type="submit"
@@ -431,7 +434,7 @@ export default function Login() {
                 >
                   {loading ? (
                     <>
-                      <RefreshCw className="h-4 w-4 animate-spin" /> Sending OTP via Twilio...
+                      <RefreshCw className="h-4 w-4 animate-spin" /> Sending OTP...
                     </>
                   ) : (
                     <>
@@ -444,7 +447,7 @@ export default function Login() {
               <form onSubmit={handleVerifyOtp} className="space-y-4">
                 <div className="flex items-center justify-between pb-2 border-b border-gray-100">
                   <div>
-                    <p className="text-xs text-gray-500 font-semibold">OTP sent via Twilio SMS to:</p>
+                    <p className="text-xs text-gray-500 font-semibold">OTP sent via SMS to:</p>
                     <p className="text-sm font-black text-gray-900">+91 {phone}</p>
                   </div>
                   <button

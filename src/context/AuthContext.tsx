@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 import { Session, User, db } from '../lib/db';
+import { sendFirebasePhoneOtp, verifyFirebasePhoneOtp } from '../lib/firebase';
 
 export type Profile = {
   id: string;
@@ -90,16 +91,42 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const sendOtp = async (phone: string) => {
+    // 1. Primary: Send real SMS via Firebase Phone Authentication (10,000 free SMS/mo)
+    try {
+      const fbResult = await sendFirebasePhoneOtp(phone);
+      if (fbResult.success) {
+        return { error: null };
+      }
+      if (fbResult.error && !fbResult.error.toLowerCase().includes('network')) {
+        return { error: fbResult.error };
+      }
+    } catch (fbErr: any) {
+      console.warn('Firebase OTP failed, falling back to server dispatch:', fbErr);
+    }
+
+    // 2. Fallback to server-side SMS provider if Firebase client fails
     const { data, error } = await db.auth.sendOtp(phone);
     if (error) return { error: error.message };
     return { error: null, devOtp: data?.devOtp };
   };
 
   const verifyOtp = async (phone: string, otp: string) => {
+    // 1. If Firebase confirmation result is present, verify code with Firebase
+    if (typeof window !== 'undefined' && window.confirmationResult) {
+      const fbVerify = await verifyFirebasePhoneOtp(otp);
+      if (fbVerify.success) {
+        const { data, error } = await db.auth.verifyFirebaseSession(phone);
+        if (error) return { error: error.message };
+        if (!data?.session) return { error: 'Login failed. Please try again.' };
+        return { error: null, isNewUser: data.isNewUser };
+      }
+      return { error: fbVerify.error || 'Invalid OTP code.' };
+    }
+
+    // 2. Fallback to server-side verification
     const { data, error } = await db.auth.verifyOtp(phone, otp);
     if (error) return { error: error.message };
     if (!data?.session) return { error: 'Login failed. Please try again.' };
-    // Auth state change listener will update session/user/profile
     return { error: null, isNewUser: data.isNewUser };
   };
 

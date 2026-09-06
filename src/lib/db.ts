@@ -262,6 +262,8 @@ type AuthApi = {
   sendOtp: (phone: string) => Promise<QueryResponse<{ message: string; devOtp?: string }>>;
   /** Verify OTP and log in (auto-creates account if new user). */
   verifyOtp: (phone: string, otp: string) => AuthResponse<{ session: Session; user: User; isNewUser: boolean }>;
+  /** Verify Firebase-authenticated phone and issue backend session */
+  verifyFirebaseSession: (phone: string, fullName?: string) => AuthResponse<{ session: Session; user: User; isNewUser: boolean }>;
 };
 
 export const auth: AuthApi = {
@@ -371,6 +373,32 @@ export const auth: AuthApi = {
 
     if (response.error || !response.data?.session) {
       return { data: null, error: response.error || createError('OTP verification failed.') };
+    }
+
+    writeSession(response.data.session);
+    notifyAuthChange('SIGNED_IN', response.data.session);
+    return {
+      data: {
+        session: response.data.session,
+        user: response.data.session.user,
+        isNewUser: response.data.isNewUser ?? false,
+      },
+      error: null,
+    };
+  },
+
+  async verifyFirebaseSession(phone, fullName) {
+    const response = await apiRequest<{ session: Session; profile: unknown; isNewUser: boolean }>(
+      '/auth/otp/verify-firebase',
+      {
+        method: 'POST',
+        body: JSON.stringify({ phone, fullName }),
+      },
+      false,
+    );
+
+    if (response.error || !response.data?.session) {
+      return { data: null, error: response.error || createError('Firebase verification failed.') };
     }
 
     writeSession(response.data.session);
