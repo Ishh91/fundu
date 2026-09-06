@@ -36,7 +36,6 @@ export default function Login() {
   const [otpCountdown, setOtpCountdown] = useState(0);
   const otpInputRefs = useRef<Array<HTMLInputElement | null>>([]);
   const otpTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
-  const [devOtpHint, setDevOtpHint] = useState<string | null>(null);
 
   /* ── Unified Credentials State ── */
   const [identifier, setIdentifier] = useState('');
@@ -88,7 +87,6 @@ export default function Login() {
 
     setLoading(true);
     setError(null);
-    setDevOtpHint(null);
 
     const res = await sendOtp(cleanPhone);
     setLoading(false);
@@ -100,9 +98,6 @@ export default function Login() {
 
     setOtpStep('verify');
     setOtpDigits(Array(6).fill(''));
-    if (res.devOtp) {
-      setDevOtpHint(res.devOtp);
-    }
     startOtpCountdown();
     setTimeout(() => {
       otpInputRefs.current[0]?.focus();
@@ -457,20 +452,12 @@ export default function Login() {
                     onClick={() => {
                       setOtpStep('input');
                       setError(null);
-                      setDevOtpHint(null);
                     }}
                     className="text-xs text-[#00a896] font-bold hover:underline"
                   >
                     Change Number
                   </button>
                 </div>
-
-                {devOtpHint && (
-                  <div className="p-2.5 rounded-xl bg-teal-50 border border-teal-200 text-teal-900 text-xs font-bold flex items-center justify-between">
-                    <span>🔑 Dev Mode OTP:</span>
-                    <span className="font-mono text-sm tracking-widest text-[#00a896]">{devOtpHint}</span>
-                  </div>
-                )}
 
                 <div>
                   <label className="label text-center mb-2 block">Enter 6-Digit OTP</label>
