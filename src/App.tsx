@@ -38,7 +38,6 @@ import VendorLogin from './pages/VendorLogin';
 import WholesalerLogin from './pages/WholesalerLogin';
 import DeliveryLogin from './pages/DeliveryLogin';
 import SEO from './components/SEO';
-import VipLoginModal from './components/VipLoginModal';
 
 // Security Guard for Role-based Protected Routes
 function ProtectedRoute({
@@ -99,7 +98,6 @@ function MainLayout() {
   return (
     <div className="flex min-h-screen flex-col">
       <SEO />
-      <VipLoginModal />
       {!isStandaloneApp && <Navbar />}
       <main className="flex-1">
         <Routes>
