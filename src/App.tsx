@@ -1,4 +1,6 @@
-import { BrowserRouter, Routes, Route, useLocation, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, useLocation, Navigate, useParams } from 'react-router-dom';
+import { isSeriesSlug } from './data/brandSeriesCatalog';
+
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { CartProvider } from './context/CartContext';
 import Navbar from './components/Navbar';
@@ -74,6 +76,18 @@ function ProtectedRoute({
   return children;
 }
 
+// Route dispatcher for multi-page brand series -> sub-models -> valuation
+function SellModelOrSeriesRoute() {
+  const { modelSlug, seriesSlug } = useParams<{ modelSlug?: string; seriesSlug?: string }>();
+  const slug = seriesSlug || modelSlug || '';
+  const cleanSlug = slug.replace(/^sell-/, '').toLowerCase();
+
+  if (isSeriesSlug(cleanSlug)) {
+    return <SellBrandPage />;
+  }
+  return <SellPhone />;
+}
+
 function MainLayout() {
   const location = useLocation();
   const isAdminPath = location.pathname.startsWith('/admin') || location.pathname.startsWith('/admin-login');
@@ -105,12 +119,17 @@ function MainLayout() {
           <Route path="/buy" element={<BuyPhones />} />
           <Route path="/search" element={<SearchActionPage />} />
           <Route path="/product/:id" element={<ProductDetail />} />
+          {/* Multi-Page Sell Ecosystem: Brand -> Series -> Sub-Models -> Step 2 Valuation */}
           <Route path="/sell" element={<SellPhone />} />
           <Route path="/sell/:brandSlug" element={<SellBrandPage />} />
-          <Route path="/sell/:brandSlug/:modelSlug" element={<SellPhone />} />
+          <Route path="/sell/:brandSlug/series/:seriesSlug" element={<SellBrandPage />} />
+          <Route path="/sell/:brandSlug/:modelSlug" element={<SellModelOrSeriesRoute />} />
           <Route path="/sell-old-mobile-phone" element={<SellPhone />} />
           <Route path="/sell-old-mobile-phone/sell-:brandSlug" element={<SellBrandPage />} />
-          <Route path="/sell-old-mobile-phone/sell-:brandSlug/sell-:modelSlug" element={<SellPhone />} />
+          <Route path="/sell-old-mobile-phone/sell-:brandSlug/series/:seriesSlug" element={<SellBrandPage />} />
+          <Route path="/sell-old-mobile-phone/sell-:brandSlug/sell-:modelSlug" element={<SellModelOrSeriesRoute />} />
+          <Route path="/sell-old-mobile-phone/sell-:brandSlug/:modelSlug" element={<SellModelOrSeriesRoute />} />
+
           {/* Repair Ecosystem & Dynamic Sub-Pages */}
           <Route path="/repair" element={<Repair />} />
           <Route path="/repair/:brandSlug" element={<RepairBrandPage />} />
