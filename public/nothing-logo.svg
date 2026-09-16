@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160" width="160" height="160">
+  <rect width="160" height="160" rx="32" fill="#0a0a0a"/>
+  <!-- Nothing distinctive dot-matrix styling / logo -->
+  <g fill="#ffffff" transform="translate(20, 56)">
+    <!-- N -->
+    <path d="M4 36V12h6l12 18V12h6v24h-6L10 18v18H4z" fill="#ffffff"/>
+    <!-- O -->
+    <path d="M34 24c0-7 5-12 12-12s12 5 12 12-5 12-12 12-12-5-12-12zm18 0c0-4-3-7-6-7s-6 3-6 7 3 7 6 7 6-3 6-7z" fill="#ffffff"/>
+    <!-- T -->
+    <path d="M62 17V12h20v5h-7v19h-6V17h-7z" fill="#ffffff"/>
+    <!-- H -->
+    <path d="M86 36V12h6v9h10V12h6v24h-6V26H92v10h-6z" fill="#ffffff"/>
+    <!-- I -->
+    <path d="M112 36V12h6v24h-6z" fill="#ffffff"/>
+  </g>
+  <circle cx="80" cy="115" r="5" fill="#e11d48"/>
+</svg>

@@ -23,7 +23,7 @@ import {
   UserCheck,
 } from 'lucide-react';
 import { formatINR } from '../lib/db';
-import { getCleanPhoneImage, getCleanBrandLogo } from '../lib/phoneImages';
+import { getCleanPhoneImage, getCleanBrandLogo, BRAND_FRONT_FALLBACKS } from '../lib/phoneImages';
 import { usePriceSync, applyPriceOverrides } from '../lib/priceSync';
 import { MASTER_MODEL_CATALOG } from './SellPhone';
 import { fetchBrandCatalogFromApi, type CatalogModelItem } from '../lib/mobileApi';
@@ -335,6 +335,14 @@ export default function SellBrandPage() {
                         alt={m.model}
                         className="h-full max-h-28 sm:max-h-32 w-auto object-contain drop-shadow-xs"
                         loading="lazy"
+                        referrerPolicy="no-referrer"
+                        onError={(e) => {
+                          const target = e.currentTarget;
+                          const fallback = BRAND_FRONT_FALLBACKS[brandCleanKey] || BRAND_FRONT_FALLBACKS.samsung;
+                          if (target.src !== fallback) {
+                            target.src = fallback;
+                          }
+                        }}
                       />
                     </div>
 

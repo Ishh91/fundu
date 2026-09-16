@@ -25,8 +25,8 @@ import {
 } from 'lucide-react';
 import { formatINR } from '../lib/db';
 import { MASTER_MODEL_CATALOG } from './SellPhone';
+import { getCleanPhoneImage, BRAND_FRONT_FALLBACKS } from '../lib/phoneImages';
 import { ALL_INDIAN_PHONES_CATALOG } from '../data/indianPhonesCatalog';
-import { getCleanPhoneImage } from '../lib/phoneImages';
 
 const BRAND_REPAIR_DETAILS: Record<
   string,
@@ -300,11 +300,10 @@ export default function RepairBrandPage() {
                   key={ser}
                   type="button"
                   onClick={() => setSelectedSeries(ser)}
-                  className={`px-4 py-2 rounded-full text-xs font-extrabold transition shrink-0 cursor-pointer ${
-                    selectedSeries === ser
+                  className={`px-4 py-2 rounded-full text-xs font-extrabold transition shrink-0 cursor-pointer ${selectedSeries === ser
                       ? 'bg-purple-700 text-white shadow-md scale-105'
                       : 'bg-gray-100 text-gray-700 hover:bg-purple-50 hover:text-purple-700'
-                  }`}
+                    }`}
                 >
                   {ser}
                 </button>
@@ -338,6 +337,14 @@ export default function RepairBrandPage() {
                         alt={m.model}
                         className="h-full max-h-28 sm:max-h-32 w-auto object-contain drop-shadow-xs"
                         loading="lazy"
+                        referrerPolicy="no-referrer"
+                        onError={(e) => {
+                          const target = e.currentTarget;
+                          const fallback = BRAND_FRONT_FALLBACKS[brandCleanKey] || BRAND_FRONT_FALLBACKS.samsung;
+                          if (target.src !== fallback) {
+                            target.src = fallback;
+                          }
+                        }}
                       />
                     </div>
 

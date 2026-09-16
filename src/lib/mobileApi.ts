@@ -142,7 +142,7 @@ function evaluateBestModelList(listA: PhoneModelOption[], listB: PhoneModelOptio
 export async function fetchPhoneModels(
   brand: string,
   query: string = '',
-  provider: 'auto' | 'cashify' | 'mobileapi' = 'auto',
+  provider: 'auto' | 'cashify' | 'mobileapi' = 'mobileapi',
 ): Promise<PhoneModelOption[]> {
   const cacheKey = `${provider}:${brand.trim().toLowerCase()}:${query.trim().toLowerCase()}`;
   if (modelCache.has(cacheKey)) return modelCache.get(cacheKey) ?? [];

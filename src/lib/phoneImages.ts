@@ -18,12 +18,12 @@ export const BRAND_OFFICIAL_LOGOS: Record<string, string> = {
   realme: '/realme-logo.svg',
   google: 'https://cdn.simpleicons.org/google/4285f4',
   pixel: 'https://cdn.simpleicons.org/google/4285f4',
-  nothing: 'https://cdn.simpleicons.org/nothing/000000',
+  nothing: '/nothing-logo.svg',
   motorola: 'https://cdn.simpleicons.org/motorola/000000',
   moto: 'https://cdn.simpleicons.org/motorola/000000',
-  infinix: 'https://cdn.simpleicons.org/infinix/000000',
-  tecno: 'https://cdn.simpleicons.org/tecno/0056bd',
-  itel: 'https://cdn.simpleicons.org/itel/e20a17',
+  infinix: '/infinix-logo.svg',
+  tecno: '/tecno-logo.svg',
+  itel: '/itel-logo.svg',
 };
 
 // Model-Specific Official Studio Renders
@@ -35,7 +35,7 @@ export const MODEL_EXACT_RENDERS: Array<{ keyword: string; url: string }> = [
   { keyword: 'iphone 15 pro max', url: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-15-pro-max.jpg' },
   { keyword: 'iphone 15 pro', url: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-15-pro.jpg' },
   { keyword: 'iphone 15', url: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-15.jpg' },
-  { keyword: 'iphone 14 pro max', url: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-14-pro-max.jpg' },
+  { keyword: 'iphone 14 pro max', url: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-14-pro.jpg' },
   { keyword: 'iphone 14 pro', url: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-14-pro.jpg' },
   { keyword: 'iphone 14', url: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-14.jpg' },
   { keyword: 'iphone 13 pro max', url: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-13-pro-max.jpg' },
@@ -45,10 +45,20 @@ export const MODEL_EXACT_RENDERS: Array<{ keyword: string; url: string }> = [
   { keyword: 'iphone 11', url: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-11.jpg' },
 
   // Samsung Galaxy
-  { keyword: 's24 ultra', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s24-ultra-5g.jpg' },
-  { keyword: 's24', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s24.jpg' },
+  { keyword: 's25 ultra', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s25-ultra-sm-s938.jpg' },
+  { keyword: 's25+', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s24-plus-5g-sm-s926.jpg' },
+  { keyword: 's25 plus', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s24-plus-5g-sm-s926.jpg' },
+  { keyword: 's25', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s24-5g-sm-s921.jpg' },
+  { keyword: 's24 ultra', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s24-ultra-5g-sm-s928-stylus.jpg' },
+  { keyword: 's24+', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s24-plus-5g-sm-s926.jpg' },
+  { keyword: 's24 plus', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s24-plus-5g-sm-s926.jpg' },
+  { keyword: 's24', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s24-5g-sm-s921.jpg' },
   { keyword: 's23 ultra', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s23-ultra-5g.jpg' },
-  { keyword: 's23', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s23.jpg' },
+  { keyword: 's23 fe', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s23-fe.jpg' },
+  { keyword: 's23', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s23-5g.jpg' },
+  { keyword: 's22 ultra', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s22-ultra-5g.jpg' },
+  { keyword: 's22', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s22-5g.jpg' },
+  { keyword: 's21 fe', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s21-fe-5g.jpg' },
   { keyword: 'fold 5', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-z-fold5.jpg' },
   { keyword: 'flip 5', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-z-flip5.jpg' },
   { keyword: 'a55', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-a55.jpg' },
@@ -57,11 +67,11 @@ export const MODEL_EXACT_RENDERS: Array<{ keyword: string; url: string }> = [
   // OnePlus
   { keyword: 'oneplus 12r', url: 'https://fdn2.gsmarena.com/vv/bigpic/oneplus-12r.jpg' },
   { keyword: 'oneplus 12', url: 'https://fdn2.gsmarena.com/vv/bigpic/oneplus-12.jpg' },
-  { keyword: 'oneplus 11r', url: 'https://fdn2.gsmarena.com/vv/bigpic/oneplus-11r.jpg' },
+  { keyword: 'oneplus 11r', url: 'https://fdn2.gsmarena.com/vv/bigpic/oneplus-ace2.jpg' },
   { keyword: 'oneplus 11', url: 'https://fdn2.gsmarena.com/vv/bigpic/oneplus-11.jpg' },
-  { keyword: 'oneplus 9 pro', url: 'https://fdn2.gsmarena.com/vv/bigpic/oneplus-9-pro.jpg' },
-  { keyword: 'oneplus 9', url: 'https://fdn2.gsmarena.com/vv/bigpic/oneplus-9.jpg' },
-  { keyword: 'nord 3', url: 'https://fdn2.gsmarena.com/vv/bigpic/oneplus-nord-3.jpg' },
+  { keyword: 'oneplus 9 pro', url: 'https://fdn2.gsmarena.com/vv/bigpic/oneplus-9-pro-.jpg' },
+  { keyword: 'oneplus 9', url: 'https://fdn2.gsmarena.com/vv/bigpic/oneplus-9-pro-.jpg' },
+  { keyword: 'nord 3', url: 'https://fdn2.gsmarena.com/vv/bigpic/oneplus-nord-3r.jpg' },
   { keyword: 'nord 2', url: 'https://fdn2.gsmarena.com/vv/bigpic/oneplus-nord-2-5g.jpg' },
 
   // Xiaomi / Redmi / Poco
@@ -74,7 +84,7 @@ export const MODEL_EXACT_RENDERS: Array<{ keyword: string; url: string }> = [
   { keyword: 'vivo x200', url: 'https://fdn2.gsmarena.com/vv/bigpic/vivo-x200-pro.jpg' },
   { keyword: 'vivo x100', url: 'https://fdn2.gsmarena.com/vv/bigpic/vivo-x100-pro.jpg' },
   { keyword: 'vivo v30', url: 'https://fdn2.gsmarena.com/vv/bigpic/vivo-v30-pro.jpg' },
-  { keyword: 'iqoo 12', url: 'https://fdn2.gsmarena.com/vv/bigpic/iqoo-12.jpg' },
+  { keyword: 'iqoo 12', url: 'https://fdn2.gsmarena.com/vv/bigpic/vivo-iqoo12.jpg' },
 
   // Google Pixel
   { keyword: 'pixel 8 pro', url: 'https://fdn2.gsmarena.com/vv/bigpic/google-pixel-8-pro.jpg' },
@@ -83,7 +93,7 @@ export const MODEL_EXACT_RENDERS: Array<{ keyword: string; url: string }> = [
 
   // Motorola
   { keyword: 'edge 50', url: 'https://fdn2.gsmarena.com/vv/bigpic/motorola-edge-50-pro.jpg' },
-  { keyword: 'g84', url: 'https://fdn2.gsmarena.com/vv/bigpic/motorola-g84.jpg' },
+  { keyword: 'g84', url: 'https://fdn2.gsmarena.com/vv/bigpic/motorola-moto-g84.jpg' },
 
   // Others
   { keyword: 'nothing phone', url: 'https://fdn2.gsmarena.com/vv/bigpic/nothing-phone-2a.jpg' },
@@ -96,13 +106,13 @@ export const MODEL_EXACT_RENDERS: Array<{ keyword: string; url: string }> = [
 export const BRAND_FRONT_FALLBACKS: Record<string, string> = {
   apple: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-15-pro.jpg',
   iphone: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-15-pro.jpg',
-  samsung: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s24-ultra-5g.jpg',
+  samsung: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s24-ultra-5g-sm-s928-stylus.jpg',
   oneplus: 'https://fdn2.gsmarena.com/vv/bigpic/oneplus-12.jpg',
   xiaomi: 'https://fdn2.gsmarena.com/vv/bigpic/xiaomi-14-pro.jpg',
   redmi: 'https://fdn2.gsmarena.com/vv/bigpic/xiaomi-redmi-note-13-pro-plus.jpg',
   poco: 'https://fdn2.gsmarena.com/vv/bigpic/xiaomi-poco-x6-pro.jpg',
   vivo: 'https://fdn2.gsmarena.com/vv/bigpic/vivo-x100-pro.jpg',
-  iqoo: 'https://fdn2.gsmarena.com/vv/bigpic/iqoo-12.jpg',
+  iqoo: 'https://fdn2.gsmarena.com/vv/bigpic/vivo-iqoo12.jpg',
   realme: 'https://fdn2.gsmarena.com/vv/bigpic/realme-12-pro-plus.jpg',
   oppo: 'https://fdn2.gsmarena.com/vv/bigpic/oppo-find-x7-ultra.jpg',
   google: 'https://fdn2.gsmarena.com/vv/bigpic/google-pixel-8-pro.jpg',

@@ -32,7 +32,7 @@ import { computeDetailedCashifyValuation, fetchSellPriceConfig, fetchPhoneModels
 import { db, formatINR } from '../lib/db';
 import { useAuth } from '../context/AuthContext';
 import { ALL_INDIAN_PHONES_CATALOG } from '../data/indianPhonesCatalog';
-import { getCleanPhoneImage, getCleanBrandLogo } from '../lib/phoneImages';
+import { getCleanPhoneImage, getCleanBrandLogo, BRAND_FRONT_FALLBACKS } from '../lib/phoneImages';
 import { usePriceSync, applyPriceOverrides } from '../lib/priceSync';
 
 // Master Lucknow Localities
@@ -1161,7 +1161,17 @@ export default function SellPhone() {
                     >
                       <div className="flex items-center gap-3">
                         <div className="h-16 w-16 shrink-0 overflow-hidden rounded-xl bg-white p-1 border border-gray-100 flex items-center justify-center">
-                          <img src={getCleanPhoneImage(m.brand, m.model, m.image)} alt={m.model} className="h-full w-full object-contain group-hover:scale-105 transition-transform drop-shadow-xs" />
+                          <img
+                            src={getCleanPhoneImage(m.brand, m.model, m.image)}
+                            alt={m.model}
+                            className="h-full w-full object-contain group-hover:scale-105 transition-transform drop-shadow-xs"
+                            referrerPolicy="no-referrer"
+                            onError={(e) => {
+                              const target = e.currentTarget;
+                              const fallback = BRAND_FRONT_FALLBACKS[form.brand?.toLowerCase()] || BRAND_FRONT_FALLBACKS.samsung;
+                              if (target.src !== fallback) target.src = fallback;
+                            }}
+                          />
                         </div>
                         <div>
                           <p className="font-extrabold text-sm text-gray-900 group-hover:text-[#00a896] transition-colors">{m.model}</p>
@@ -1226,7 +1236,17 @@ export default function SellPhone() {
                     className="p-3.5 rounded-2xl border border-gray-200 bg-white hover:border-[#00a896] hover:shadow-lg transition-all duration-300 flex flex-col items-center text-center cursor-pointer group"
                   >
                     <div className="h-20 w-full overflow-hidden rounded-xl p-1 bg-white flex items-center justify-center">
-                      <img src={getCleanPhoneImage(item.brand, item.model, item.image)} alt={item.model} className="h-full w-full object-contain group-hover:scale-105 transition-transform" />
+                      <img
+                        src={getCleanPhoneImage(item.brand, item.model, item.image)}
+                        alt={item.model}
+                        className="h-full w-full object-contain group-hover:scale-105 transition-transform"
+                        referrerPolicy="no-referrer"
+                        onError={(e) => {
+                          const target = e.currentTarget;
+                          const fallback = BRAND_FRONT_FALLBACKS[item.brand?.toLowerCase()] || BRAND_FRONT_FALLBACKS.samsung;
+                          if (target.src !== fallback) target.src = fallback;
+                        }}
+                      />
                     </div>
                     <p className="mt-2 text-xs font-extrabold text-gray-900 group-hover:text-[#00a896] transition-colors truncate w-full">{item.model}</p>
                     <span className="mt-1 badge bg-emerald-50 text-emerald-800 font-extrabold text-[10px]">
@@ -1437,6 +1457,12 @@ export default function SellPhone() {
                     src={getCleanPhoneImage(form.brand, form.model)}
                     alt={form.model}
                     className="h-full w-full object-contain drop-shadow-xs"
+                    referrerPolicy="no-referrer"
+                    onError={(e) => {
+                      const target = e.currentTarget;
+                      const fallback = BRAND_FRONT_FALLBACKS[form.brand?.toLowerCase()] || BRAND_FRONT_FALLBACKS.samsung;
+                      if (target.src !== fallback) target.src = fallback;
+                    }}
                   />
                 </div>
 
