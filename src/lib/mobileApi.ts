@@ -722,7 +722,31 @@ export async function fetchBrandCatalogFromApi(brand: string): Promise<CatalogMo
     return catalogCache.get(cleanBrand)!;
   }
 
-  // 1. PRIMARY: Curated Indian Phone Catalog (Modern 2018-2025 verified smartphones)
+  // 1. PRIMARY: MobileAPI.dev Live Integration (Using purchased MobileAPI key)
+  try {
+    const apiDevices = await fetchWithTimeout(async () => {
+      const result = await fetchApi<MobileApiDevice[]>(`/mobile/devices?brand=${encodeURIComponent(brand)}`);
+      if (Array.isArray(result) && result.length > 0) return result;
+      throw new Error('NO_API_DEVICES');
+    }, 10000).catch(() => null);
+
+    if (apiDevices && apiDevices.length > 0) {
+      const mapped: CatalogModelItem[] = apiDevices.map((dev) => ({
+        brand: dev.brand || brand,
+        series: detectSeries(dev.brand || brand, dev.model),
+        model: dev.model,
+        storage: dev.storage_options?.[0] || '128 GB',
+        price: dev.base_resale_value || Math.round((dev.default_mrp || 30000) * 0.55),
+        image: getCleanPhoneImage(dev.brand || brand, dev.model, dev.image_url),
+      }));
+      catalogCache.set(cleanBrand, mapped);
+      return mapped;
+    }
+  } catch {
+    // fallback to local catalog
+  }
+
+  // 2. FALLBACK: Curated Indian Phone Catalog
   const localMatches = ALL_INDIAN_PHONES_CATALOG.filter(
     (p) => p.brand.toLowerCase() === cleanBrand
   );
@@ -738,30 +762,6 @@ export async function fetchBrandCatalogFromApi(brand: string): Promise<CatalogMo
     }));
     catalogCache.set(cleanBrand, mapped);
     return mapped;
-  }
-
-  // 2. SECONDARY FALLBACK ONLY: If brand has 0 models in Indian catalog
-  try {
-    const apiDevices = await fetchWithTimeout(async () => {
-      const result = await fetchApi<MobileApiDevice[]>(`/mobile/devices?brand=${encodeURIComponent(brand)}`);
-      if (Array.isArray(result) && result.length > 0) return result;
-      throw new Error('NO_API_DEVICES');
-    }, 8000).catch(() => null);
-
-    if (apiDevices && apiDevices.length > 0) {
-      const mapped: CatalogModelItem[] = apiDevices.map((dev) => ({
-        brand: dev.brand || brand,
-        series: detectSeries(dev.brand || brand, dev.model),
-        model: dev.model,
-        storage: dev.storage_options?.[0] || '128 GB',
-        price: dev.base_resale_value || Math.round((dev.default_mrp || 30000) * 0.55),
-        image: getCleanPhoneImage(dev.brand || brand, dev.model, dev.image_url),
-      }));
-      catalogCache.set(cleanBrand, mapped);
-      return mapped;
-    }
-  } catch {
-    // fallback to empty
   }
 
   return [];
