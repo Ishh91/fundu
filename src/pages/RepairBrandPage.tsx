@@ -278,12 +278,11 @@ export default function RepairBrandPage() {
         </div>
 
         {/* MODEL SELECTION GRID */}
-        <div className="card p-6 md:p-8 rounded-[32px] bg-white border border-gray-200 shadow-md space-y-6">
+        <div className="card p-6 md:p-8 rounded-[32px] bg-white border border-gray-200/80 shadow-sm space-y-6">
           <div className="flex flex-wrap items-center justify-between gap-3 border-b border-gray-100 pb-4">
             <div>
-              <span className="badge bg-purple-100 text-purple-800 font-bold text-xs">Select Model</span>
-              <h2 className="mt-1 font-display text-2xl font-black text-gray-900">
-                Select Your {brandDisplayName} Model to Book Doorstep Repair
+              <h2 className="font-display text-xl sm:text-2xl font-black text-gray-900">
+                Select Model
               </h2>
             </div>
             <span className="text-xs font-bold text-gray-500 bg-gray-100 px-3.5 py-1.5 rounded-xl border border-gray-200">
@@ -291,7 +290,7 @@ export default function RepairBrandPage() {
             </span>
           </div>
 
-          {/* Series Tabs */}
+          {/* Horizontal Series Filter Tabs */}
           {seriesTabs.length > 1 && (
             <div className="flex items-center gap-2 overflow-x-auto scrollbar-hide py-1 border-b border-gray-100 pb-4">
               <span className="text-xs font-bold text-gray-400 uppercase tracking-wider shrink-0 mr-2">Series:</span>
@@ -300,10 +299,11 @@ export default function RepairBrandPage() {
                   key={ser}
                   type="button"
                   onClick={() => setSelectedSeries(ser)}
-                  className={`px-4 py-2 rounded-full text-xs font-extrabold transition shrink-0 cursor-pointer ${selectedSeries === ser
-                      ? 'bg-purple-700 text-white shadow-md scale-105'
-                      : 'bg-gray-100 text-gray-700 hover:bg-purple-50 hover:text-purple-700'
-                    }`}
+                  className={`px-4 py-2 rounded-full text-xs font-extrabold transition shrink-0 cursor-pointer ${
+                    selectedSeries === ser
+                      ? 'bg-[#00a896] text-white shadow-md shadow-teal-500/20 scale-105'
+                      : 'bg-gray-100 text-gray-700 hover:bg-teal-50 hover:text-[#00a896]'
+                  }`}
                 >
                   {ser}
                 </button>
@@ -311,36 +311,31 @@ export default function RepairBrandPage() {
             </div>
           )}
 
-          {/* COMPACT 5-COLUMN RESPONSIVE MODEL PRODUCT TILE GRID */}
+          {/* EXACT CASHIFY-STYLE 6-COLUMN RESPONSIVE MODEL PRODUCT TILE GRID */}
           {brandModels.length > 0 ? (
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 sm:gap-4">
-              {brandModels.map((m) => (
-                <div
-                  key={m.model}
-                  onClick={() => handleBookRepair(m.model, 'screen')}
-                  className="p-3 sm:p-4 rounded-2xl border border-gray-200/90 bg-white hover:border-[#00a896] hover:shadow-lg transition-all duration-300 group cursor-pointer flex flex-col justify-between"
-                >
-                  <div className="space-y-2">
-                    <div className="flex items-center justify-between gap-1">
-                      <span className="badge bg-teal-50 text-teal-800 font-extrabold text-[10px] sm:text-[11px] px-1.5 py-0.5">
-                        Repair from ₹599
-                      </span>
-                      <span className="text-[9px] sm:text-[10px] text-gray-400 font-medium truncate max-w-[80px]">
-                        {m.series || brandDisplayName}
-                      </span>
-                    </div>
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 sm:gap-4 md:gap-5">
+              {brandModels.map((m) => {
+                const displayName = m.model.toLowerCase().startsWith((m.brand || brandDisplayName).toLowerCase())
+                  ? m.model
+                  : `${brandDisplayName} ${m.model}`;
 
+                return (
+                  <div
+                    key={m.model}
+                    onClick={() => handleBookRepair(m.model, 'screen')}
+                    className="p-3.5 sm:p-5 rounded-2xl border border-gray-100 bg-white hover:border-[#00a896] hover:shadow-lg transition-all duration-200 group cursor-pointer flex flex-col items-center justify-between text-center min-h-[175px] sm:min-h-[210px]"
+                  >
                     {/* Centered Clean Device Image Container */}
-                    <div className="h-28 sm:h-32 w-full bg-white rounded-xl p-1.5 flex items-center justify-center relative overflow-hidden group-hover:scale-105 transition-transform duration-300">
+                    <div className="h-28 sm:h-36 w-full flex items-center justify-center p-1 relative overflow-hidden">
                       <img
                         src={getCleanPhoneImage(m.brand || brandDisplayName, m.model, m.image)}
-                        alt={m.model}
-                        className="h-full max-h-28 sm:max-h-32 w-auto object-contain drop-shadow-xs"
+                        alt={displayName}
+                        className="h-full max-h-28 sm:max-h-36 w-auto object-contain group-hover:scale-105 transition-transform duration-300 drop-shadow-xs"
                         loading="lazy"
                         referrerPolicy="no-referrer"
                         onError={(e) => {
                           const target = e.currentTarget;
-                          const fallback = BRAND_FRONT_FALLBACKS[brandCleanKey] || BRAND_FRONT_FALLBACKS.samsung;
+                          const fallback = BRAND_FRONT_FALLBACKS[brandCleanKey] || BRAND_FRONT_FALLBACKS.apple;
                           if (target.src !== fallback) {
                             target.src = fallback;
                           }
@@ -348,22 +343,12 @@ export default function RepairBrandPage() {
                       />
                     </div>
 
-                    <div>
-                      <p className="font-bold text-xs sm:text-sm text-gray-900 group-hover:text-[#00a896] transition-colors line-clamp-1">
-                        {m.model}
-                      </p>
-                      <p className="text-[10px] text-gray-400 mt-0.5">
-                        Screen · Battery · Camera
-                      </p>
-                    </div>
+                    <p className="mt-2 text-xs sm:text-sm font-semibold text-gray-800 group-hover:text-[#00a896] transition-colors line-clamp-2 leading-snug">
+                      {displayName}
+                    </p>
                   </div>
-
-                  <div className="mt-2 pt-2 border-t border-gray-100 flex items-center justify-between text-xs text-[#00a896] font-bold group-hover:translate-x-0.5 transition-transform">
-                    <span>Book Repair</span>
-                    <ArrowRight className="h-3.5 w-3.5" />
-                  </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           ) : (
             <div className="p-12 text-center space-y-3">
