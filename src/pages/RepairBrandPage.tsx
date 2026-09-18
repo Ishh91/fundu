@@ -265,47 +265,15 @@ export default function RepairBrandPage() {
 
       {/* MAIN CONTENT CONTAINER */}
       <div className="max-w-7xl mx-auto px-4 space-y-8">
-        {/* COMMON REPAIR ISSUES CAROUSEL / GRID */}
-        <div className="card p-6 md:p-8 rounded-[32px] bg-white border border-gray-200 shadow-md space-y-5">
-          <div className="flex items-center justify-between">
-            <div>
-              <span className="badge bg-purple-50 text-purple-700 font-bold text-xs">Doorstep Services</span>
-              <h2 className="font-display text-xl font-black text-gray-900 mt-0.5">
-                Select Repair Issue for {brandDisplayName}
-              </h2>
-            </div>
-            <span className="text-xs font-semibold text-purple-700">6 Months Warranty</span>
-          </div>
-
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
-            {COMMON_REPAIR_SERVICES.map((srv) => {
-              const IconComp = srv.icon;
-              return (
-                <div
-                  key={srv.id}
-                  onClick={() => navigate(`/repair/issue/${srv.id}`)}
-                  className="p-4 rounded-2xl border border-gray-200 bg-purple-50/30 hover:bg-purple-100/50 hover:border-purple-300 transition cursor-pointer text-center space-y-2 group"
-                >
-                  <div className="w-10 h-10 rounded-xl bg-purple-600 text-white grid place-items-center mx-auto shadow-md group-hover:scale-110 transition">
-                    <IconComp className="h-5 w-5" />
-                  </div>
-                  <p className="font-bold text-xs text-gray-900 line-clamp-1">{srv.label}</p>
-                  <p className="text-[11px] font-black text-purple-800">From {formatINR(srv.cost)}</p>
-                  <span className="inline-block text-[10px] text-gray-500 bg-white px-2 py-0.5 rounded-full border border-gray-200">
-                    ⏱️ {srv.time}
-                  </span>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-
-        {/* MODEL SELECTION GRID */}
+        {/* 1. MODEL SELECTION GRID (First Step: Select Model) */}
         <div className="card p-6 md:p-8 rounded-[32px] bg-white border border-gray-200/80 shadow-sm space-y-6">
           <div className="flex flex-wrap items-center justify-between gap-3 border-b border-gray-100 pb-4">
             <div>
-              <h2 className="font-display text-xl sm:text-2xl font-black text-gray-900">
-                Select Model
+              <span className="badge bg-teal-50 text-teal-800 font-extrabold text-xs">
+                Step 1: Pick Device
+              </span>
+              <h2 className="font-display text-xl sm:text-2xl font-black text-gray-900 mt-1">
+                Select {brandDisplayName} Model
               </h2>
             </div>
             <span className="text-xs font-bold text-gray-500 bg-gray-100 px-3.5 py-1.5 rounded-xl border border-gray-200">
@@ -389,6 +357,41 @@ export default function RepairBrandPage() {
               </button>
             </div>
           )}
+        </div>
+
+        {/* 2. COMMON REPAIR ISSUES CAROUSEL / GRID (Or Pick by Problem) */}
+        <div className="card p-6 md:p-8 rounded-[32px] bg-white border border-gray-200 shadow-md space-y-5">
+          <div className="flex items-center justify-between">
+            <div>
+              <span className="badge bg-purple-50 text-purple-700 font-extrabold text-xs">Or Pick by Problem</span>
+              <h2 className="font-display text-xl font-black text-gray-900 mt-1">
+                Common Repair Issues for {brandDisplayName}
+              </h2>
+            </div>
+            <span className="text-xs font-semibold text-purple-700">6 Months Warranty</span>
+          </div>
+
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+            {COMMON_REPAIR_SERVICES.map((srv) => {
+              const IconComp = srv.icon;
+              return (
+                <div
+                  key={srv.id}
+                  onClick={() => navigate(`/repair/issue/${srv.id}`)}
+                  className="p-4 rounded-2xl border border-gray-200 bg-purple-50/30 hover:bg-purple-100/50 hover:border-purple-300 transition cursor-pointer text-center space-y-2 group"
+                >
+                  <div className="w-10 h-10 rounded-xl bg-purple-600 text-white grid place-items-center mx-auto shadow-md group-hover:scale-110 transition">
+                    <IconComp className="h-5 w-5" />
+                  </div>
+                  <p className="font-bold text-xs text-gray-900 line-clamp-1">{srv.label}</p>
+                  <p className="text-[11px] font-black text-purple-800">From {formatINR(srv.cost)}</p>
+                  <span className="inline-block text-[10px] text-gray-500 bg-white px-2 py-0.5 rounded-full border border-gray-200">
+                    ⏱️ {srv.time}
+                  </span>
+                </div>
+              );
+            })}
+          </div>
         </div>
 
         {/* 3-STEP REPAIR PROCESS */}
