@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef, useMemo } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { getCleanPhoneImage } from '../lib/phoneImages';
 import {
@@ -26,12 +26,16 @@ import {
   Check,
   Clock,
   Truck,
+  RefreshCw,
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
 import { formatINR } from '../lib/db';
 import BrandLogo from './BrandLogo';
 import { PHONE_LOOKUP_CATALOG } from '../data/phoneLookup';
+import { MASTER_MODEL_CATALOG } from '../pages/SellPhone';
+import { fetchBrandCatalogFromApi, fetchDeviceAutocomplete } from '../lib/mobileApi';
+
 
 export const LUCKNOW_LOCALITIES = [
   'Hazratganj',
@@ -131,6 +135,55 @@ const PHONE_BRANDS = [
   { name: 'Motorola', tag: 'Series' },
 ];
 
+const BRAND_ALIASES: Record<string, string> = {
+  apple: 'Apple',
+  iphone: 'Apple',
+  samsung: 'Samsung',
+  galaxy: 'Samsung',
+  oneplus: 'OnePlus',
+  '1+': 'OnePlus',
+  xiaomi: 'Xiaomi',
+  mi: 'Xiaomi',
+  redmi: 'Xiaomi',
+  realme: 'Realme',
+  vivo: 'Vivo',
+  oppo: 'Oppo',
+  google: 'Google',
+  pixel: 'Google',
+  nothing: 'Nothing',
+  motorola: 'Motorola',
+  moto: 'Motorola',
+  poco: 'Poco',
+  iqoo: 'iQOO',
+};
+
+const resolveBrand = (term: string): string | null => {
+  const lower = term.toLowerCase().trim();
+  if (BRAND_ALIASES[lower]) return BRAND_ALIASES[lower];
+  for (const [key, val] of Object.entries(BRAND_ALIASES)) {
+    if (lower === key || lower.startsWith(key + ' ') || lower.startsWith(key)) return val;
+  }
+  return null;
+};
+
+const highlightMatch = (text: string, query: string) => {
+  if (!query.trim()) return text;
+  const parts = text.split(new RegExp(`(${query.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&')})`, 'gi'));
+  return (
+    <>
+      {parts.map((part, i) =>
+        part.toLowerCase() === query.toLowerCase() ? (
+          <span key={i} className="text-[#00a896] font-extrabold underline decoration-[#00a896]/40">
+            {part}
+          </span>
+        ) : (
+          part
+        )
+      )}
+    </>
+  );
+};
+
 const BUY_REFURBISHED_HIGHLIGHTS = [
   {
     title: 'iPhones',
@@ -183,7 +236,12 @@ export default function Navbar() {
 
   const [search, setSearch] = useState('');
   const [searchOpen, setSearchOpen] = useState(false);
-  const searchRef = useRef<HTMLDivElement>(null);
+  const [apiModels, setApiModels] = useState<Array<{ model: string; brand: string; image?: string; price?: number }>>([]);
+  const [isSearchingApi, setIsSearchingApi] = useState(false);
+
+  const desktopSearchRef = useRef<HTMLDivElement>(null);
+  const mobileSearchRef = useRef<HTMLDivElement>(null);
+  const searchCacheRef = useRef<Map<string, Array<{ model: string; brand: string; image?: string; price?: number }>>>(new Map());
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -198,16 +256,101 @@ export default function Navbar() {
   // Click outside listener for search & dropdown menus
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (searchRef.current && !searchRef.current.contains(event.target as Node)) {
+      const target = event.target as Node;
+      const inDesktop = desktopSearchRef.current && desktopSearchRef.current.contains(target);
+      const inMobile = mobileSearchRef.current && mobileSearchRef.current.contains(target);
+      if (!inDesktop && !inMobile) {
         setSearchOpen(false);
       }
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+      if (dropdownRef.current && !dropdownRef.current.contains(target)) {
         setActiveDropdown(null);
       }
     };
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
+
+  // Debounced MobileAPI dev live search
+  useEffect(() => {
+    const query = search.trim();
+    if (!query || query.length < 2) {
+      setApiModels([]);
+      setIsSearchingApi(false);
+      return;
+    }
+
+    const queryKey = query.toLowerCase();
+    if (searchCacheRef.current.has(queryKey)) {
+      setApiModels(searchCacheRef.current.get(queryKey)!);
+      return;
+    }
+
+    let isMounted = true;
+    const timer = setTimeout(async () => {
+      setIsSearchingApi(true);
+      try {
+        const detectedBrand = resolveBrand(query);
+        const promises: Promise<any>[] = [];
+
+        // 1. If brand identified, query brand catalog from MobileAPI
+        if (detectedBrand) {
+          promises.push(fetchBrandCatalogFromApi(detectedBrand).catch(() => []));
+        }
+
+        // 2. Query device autocomplete from MobileAPI (up to 30 items)
+        promises.push(fetchDeviceAutocomplete(query, 30).catch(() => []));
+
+        const [brandCatalogRes, autocompleteRes] = await Promise.all(promises);
+
+        if (!isMounted) return;
+
+        const combined: Array<{ model: string; brand: string; image?: string; price?: number }> = [];
+        const seen = new Set<string>();
+
+        if (Array.isArray(brandCatalogRes)) {
+          brandCatalogRes.forEach((item) => {
+            const key = `${item.brand || ''}-${item.model || ''}`.toLowerCase();
+            if (!seen.has(key)) {
+              seen.add(key);
+              combined.push({
+                model: item.model,
+                brand: item.brand,
+                image: item.image,
+                price: item.price,
+              });
+            }
+          });
+        }
+
+        if (Array.isArray(autocompleteRes)) {
+          autocompleteRes.forEach((item) => {
+            const brandName = item.brand || detectedBrand || 'Smartphone';
+            const key = `${brandName}-${item.name || ''}`.toLowerCase();
+            if (!seen.has(key)) {
+              seen.add(key);
+              combined.push({
+                model: item.name,
+                brand: brandName,
+                image: getCleanPhoneImage(brandName, item.name),
+              });
+            }
+          });
+        }
+
+        searchCacheRef.current.set(queryKey, combined);
+        setApiModels(combined);
+      } catch {
+        // Fallback gracefully
+      } finally {
+        if (isMounted) setIsSearchingApi(false);
+      }
+    }, 220);
+
+    return () => {
+      isMounted = false;
+      clearTimeout(timer);
+    };
+  }, [search]);
 
   const handleSelectLocality = (loc: string) => {
     const fullLoc = `${loc}, Lucknow`;
@@ -227,14 +370,68 @@ export default function Navbar() {
     navigate(`/search?q=${encodeURIComponent(value)}`);
   };
 
-  // Autocomplete matching models
-  const matchingModels = search.trim()
-    ? PHONE_LOOKUP_CATALOG.filter(
+  // Autocomplete matching models (combining MobileAPI + MASTER_MODEL_CATALOG + PHONE_LOOKUP_CATALOG)
+  const matchingModels = useMemo(() => {
+    const query = search.trim().toLowerCase();
+    if (!query) return [];
+
+    const detectedBrand = resolveBrand(query);
+    const results: Array<{ model: string; brand: string; image?: string; price?: number }> = [];
+    const seen = new Set<string>();
+
+    const add = (item: { model: string; brand: string; image?: string; price?: number }) => {
+      const key = `${item.brand}-${item.model}`.toLowerCase().replace(/[^a-z0-9]/g, '');
+      if (!seen.has(key) && results.length < 35) {
+        seen.add(key);
+        results.push(item);
+      }
+    };
+
+    // 1. First priority: apiModels returned from MobileAPI
+    apiModels.forEach(add);
+
+    // 2. Second priority: If brand detected, populate all models for that brand from MASTER_MODEL_CATALOG
+    if (detectedBrand) {
+      const brandLower = detectedBrand.toLowerCase();
+      MASTER_MODEL_CATALOG.filter((p) => p.brand.toLowerCase() === brandLower).forEach((p) => {
+        add({
+          model: p.model,
+          brand: p.brand,
+          image: p.image || getCleanPhoneImage(p.brand, p.model),
+          price: p.price,
+        });
+      });
+    }
+
+    // 3. Third priority: Search in MASTER_MODEL_CATALOG by model or brand substring
+    MASTER_MODEL_CATALOG.filter(
       (p) =>
-        p.model.toLowerCase().includes(search.toLowerCase()) ||
-        p.brand.toLowerCase().includes(search.toLowerCase())
-    ).slice(0, 5)
-    : [];
+        p.model.toLowerCase().includes(query) ||
+        p.brand.toLowerCase().includes(query)
+    ).forEach((p) => {
+      add({
+        model: p.model,
+        brand: p.brand,
+        image: p.image || getCleanPhoneImage(p.brand, p.model),
+        price: p.price,
+      });
+    });
+
+    // 4. Fourth priority: PHONE_LOOKUP_CATALOG
+    PHONE_LOOKUP_CATALOG.filter(
+      (p) =>
+        p.model.toLowerCase().includes(query) ||
+        p.brand.toLowerCase().includes(query)
+    ).forEach((p) => {
+      add({
+        model: p.model,
+        brand: p.brand,
+        image: getCleanPhoneImage(p.brand, p.model),
+      });
+    });
+
+    return results;
+  }, [search, apiModels]);
 
   const toggleDropdown = (name: string) => {
     setActiveDropdown((prev) => (prev === name ? null : name));
@@ -288,6 +485,164 @@ export default function Navbar() {
     </>
   );
 
+  const renderSearchDropdown = (isMobile: boolean) => (
+    <div
+      className={`absolute left-0 right-0 top-full mt-2 rounded-2xl border border-gray-200 bg-white p-3 sm:p-3.5 shadow-2xl z-50 animate-fade-in ${
+        isMobile ? 'mx-0 max-h-[65vh]' : 'max-h-[58vh]'
+      } overflow-hidden flex flex-col`}
+    >
+      {search.trim() ? (
+        <>
+          <div className="flex items-center justify-between px-2 pb-2 border-b border-gray-100 shrink-0">
+            <div className="flex items-center gap-2">
+              <span className="text-[11px] font-bold uppercase tracking-wider text-gray-500">
+                Direct Actions {matchingModels.length > 0 && `(${matchingModels.length} Models)`}
+              </span>
+              {isSearchingApi && (
+                <span className="inline-flex items-center gap-1 rounded-full bg-teal-50 px-2 py-0.5 text-[10px] font-bold text-teal-700">
+                  <RefreshCw className="h-2.5 w-2.5 animate-spin" /> MobileAPI Live
+                </span>
+              )}
+            </div>
+            {matchingModels.length > 0 && (
+              <span className="text-[10px] font-semibold text-gray-400 hidden sm:inline-block">
+                Instant Sell / Buy / Repair
+              </span>
+            )}
+          </div>
+
+          {matchingModels.length > 0 ? (
+            <div className="overflow-y-auto space-y-1 py-1.5 flex-1 pr-1 overscroll-contain">
+              {matchingModels.map((item) => (
+                <div
+                  key={`${item.brand}-${item.model}`}
+                  onClick={() => {
+                    setSearchOpen(false);
+                    navigate(`/search?q=${encodeURIComponent(item.model)}`);
+                  }}
+                  className="flex items-center justify-between gap-2 rounded-xl p-2 hover:bg-teal-50/70 transition group cursor-pointer"
+                >
+                  <div className="flex items-center gap-2.5 min-w-0 flex-1">
+                    <div className="h-9 w-9 shrink-0 rounded-lg border border-gray-200/80 bg-white p-0.5 grid place-items-center overflow-hidden shadow-xs">
+                      <img
+                        src={getCleanPhoneImage(item.brand, item.model, item.image)}
+                        alt={item.model}
+                        className="h-full w-full object-contain"
+                        loading="lazy"
+                        onError={(e) => {
+                          (e.currentTarget as HTMLImageElement).src =
+                            'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=100&auto=format&fit=crop&q=80';
+                        }}
+                      />
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <p className="text-xs sm:text-sm font-bold text-gray-800 group-hover:text-teal-700 truncate">
+                        {highlightMatch(item.model, search.trim())}
+                      </p>
+                      <div className="flex items-center gap-1.5 text-[11px] text-gray-400">
+                        <span>{item.brand}</span>
+                        {item.price ? (
+                          <>
+                            <span>•</span>
+                            <span className="text-teal-700 font-bold">From {formatINR(item.price)}</span>
+                          </>
+                        ) : null}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-1 shrink-0" onClick={(e) => e.stopPropagation()}>
+                    <Link
+                      to={`/sell?brand=${encodeURIComponent(item.brand)}&model=${encodeURIComponent(item.model)}`}
+                      onClick={() => setSearchOpen(false)}
+                      className="rounded-lg bg-emerald-50 px-2.5 py-1 text-xs font-bold text-emerald-700 hover:bg-emerald-100 transition"
+                    >
+                      Sell
+                    </Link>
+                    <Link
+                      to={`/search?q=${encodeURIComponent(item.model)}`}
+                      onClick={() => setSearchOpen(false)}
+                      className="rounded-lg bg-teal-50 px-2.5 py-1 text-xs font-bold text-teal-700 hover:bg-teal-100 transition"
+                    >
+                      Buy
+                    </Link>
+                    <Link
+                      to={`/repair?brand=${encodeURIComponent(item.brand)}&model=${encodeURIComponent(item.model)}`}
+                      onClick={() => setSearchOpen(false)}
+                      className="rounded-lg bg-amber-50 px-2.5 py-1 text-xs font-bold text-amber-700 hover:bg-amber-100 transition"
+                    >
+                      Repair
+                    </Link>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="p-4 text-center text-sm text-gray-500 space-y-2">
+              {isSearchingApi ? (
+                <div className="py-6 flex flex-col items-center justify-center gap-2">
+                  <RefreshCw className="h-6 w-6 animate-spin text-[#00a896]" />
+                  <p className="text-xs font-bold text-gray-700">Searching MobileAPI for "{search}" models...</p>
+                </div>
+              ) : (
+                <>
+                  <p>No exact catalog match for "{search}".</p>
+                  <button
+                    type="button"
+                    onClick={submitSearch}
+                    className="btn-primary text-xs px-4 py-1.5 bg-[#00a896] hover:bg-[#008f80] font-bold mx-auto cursor-pointer"
+                  >
+                    Search All Services
+                  </button>
+                </>
+              )}
+            </div>
+          )}
+
+          <button
+            type="button"
+            onClick={submitSearch}
+            className="w-full mt-2 py-2 px-3 rounded-xl bg-teal-50 text-teal-800 text-xs font-bold hover:bg-teal-100 flex items-center justify-between transition cursor-pointer shrink-0"
+          >
+            <span>View Buy, Sell & Repair options for "{search}"</span>
+            <ArrowRight className="h-3.5 w-3.5" />
+          </button>
+        </>
+      ) : (
+        <div className="p-2">
+          <p className="px-2 py-1 text-[11px] font-bold uppercase tracking-wider text-gray-400">
+            Direct Brand Models Search (MobileAPI.dev)
+          </p>
+          <div className="mt-2 grid grid-cols-2 sm:grid-cols-4 gap-2">
+            {[
+              { name: 'Apple', sub: 'iPhone 16 down to 1' },
+              { name: 'Samsung', sub: 'Galaxy S24, S23, Fold' },
+              { name: 'OnePlus', sub: '12, 12R, Nord series' },
+              { name: 'Xiaomi', sub: 'Redmi Note 13, 12' },
+              { name: 'Realme', sub: 'GT 6, 12 Pro series' },
+              { name: 'Vivo', sub: 'X100, V30, V29 series' },
+              { name: 'Google', sub: 'Pixel 8 Pro, 8a, 7' },
+              { name: 'Nothing', sub: 'Phone (2), (2a)' },
+            ].map((item) => (
+              <button
+                key={item.name}
+                type="button"
+                onClick={() => {
+                  setSearch(item.name);
+                  setSearchOpen(true);
+                }}
+                className="rounded-xl border border-gray-100 bg-gray-50/80 p-2 text-left hover:bg-teal-50 hover:border-teal-200 transition cursor-pointer group"
+              >
+                <p className="text-xs font-bold text-gray-800 group-hover:text-teal-700">{item.name}</p>
+                <p className="text-[10px] text-gray-400 truncate">{item.sub}</p>
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+
   return (
     <>
       <header className="sticky top-0 z-50 bg-white border-b border-gray-200 shadow-sm transition-all">
@@ -318,8 +673,8 @@ export default function Navbar() {
               </button>
             </div>
 
-            {/* 2. Middle: Large Rounded-Full Pill Search Bar */}
-            <div ref={searchRef} className="relative flex-1 max-w-2xl hidden md:block">
+            {/* 2. Middle: Large Rounded-Full Pill Search Bar (Desktop) */}
+            <div ref={desktopSearchRef} className="relative flex-1 max-w-2xl hidden md:block">
               <form
                 onSubmit={submitSearch}
                 className="flex items-center gap-3 rounded-full bg-[#f1f5f9] hover:bg-[#ebf0f5] focus-within:bg-white focus-within:ring-2 focus-within:ring-[#00a896]/30 focus-within:border-[#00a896] border border-transparent px-4 sm:px-5 py-2.5 transition-all duration-200"
@@ -333,9 +688,12 @@ export default function Navbar() {
                     setSearch(e.target.value);
                     setSearchOpen(true);
                   }}
-                  placeholder="Search phone to sell — iPhone 15, S24, Pixel 8..."
+                  placeholder="Search brand or model (iPhone 16, Galaxy S24, OnePlus 12...)"
                   className="w-full bg-transparent text-xs sm:text-sm font-medium text-gray-800 outline-none placeholder:text-gray-400"
                 />
+                {isSearchingApi && (
+                  <RefreshCw className="h-4 w-4 text-teal-600 animate-spin shrink-0" />
+                )}
                 {search && (
                   <button
                     type="button"
@@ -348,118 +706,7 @@ export default function Navbar() {
               </form>
 
               {/* Live Search Autocomplete Popup */}
-              {searchOpen && (
-                <div className="absolute left-0 right-0 top-full mt-2 rounded-2xl border border-gray-200 bg-white p-3.5 shadow-2xl z-50 animate-fade-in">
-                  {search.trim() && matchingModels.length > 0 ? (
-                    <div className="space-y-1">
-                      <div className="px-3 py-1.5 text-[11px] font-bold uppercase tracking-wider text-gray-400">
-                        Direct Actions
-                      </div>
-                      {matchingModels.map((item) => (
-                        <div
-                          key={`${item.brand}-${item.model}`}
-                          onClick={() => {
-                            setSearchOpen(false);
-                            navigate(`/search?q=${encodeURIComponent(item.model)}`);
-                          }}
-                          className="flex items-center justify-between rounded-xl p-2.5 hover:bg-teal-50/70 transition group cursor-pointer"
-                        >
-                          <div className="flex items-center gap-2.5">
-                            <div className="grid h-8 w-8 place-items-center rounded-lg bg-teal-100/60 text-teal-700">
-                              <Smartphone className="h-4 w-4" />
-                            </div>
-                            <div>
-                              <p className="text-sm font-bold text-gray-800 group-hover:text-teal-700">
-                                {item.model}
-                              </p>
-                              <p className="text-xs text-gray-400">{item.brand}</p>
-                            </div>
-                          </div>
-
-                          <div className="flex items-center gap-1.5" onClick={(e) => e.stopPropagation()}>
-                            <Link
-                              to={`/sell?brand=${encodeURIComponent(item.brand)}&model=${encodeURIComponent(
-                                item.model
-                              )}`}
-                              onClick={() => setSearchOpen(false)}
-                              className="rounded-lg bg-emerald-50 px-2.5 py-1 text-xs font-bold text-emerald-700 hover:bg-emerald-100"
-                            >
-                              Sell
-                            </Link>
-                            <Link
-                              to={`/search?q=${encodeURIComponent(item.model)}`}
-                              onClick={() => setSearchOpen(false)}
-                              className="rounded-lg bg-teal-50 px-2.5 py-1 text-xs font-bold text-teal-700 hover:bg-teal-100"
-                            >
-                              Buy
-                            </Link>
-                            <Link
-                              to={`/repair?brand=${encodeURIComponent(item.brand)}&model=${encodeURIComponent(
-                                item.model
-                              )}`}
-                              onClick={() => setSearchOpen(false)}
-                              className="rounded-lg bg-amber-50 px-2.5 py-1 text-xs font-bold text-amber-700 hover:bg-amber-100"
-                            >
-                              Repair
-                            </Link>
-                          </div>
-                        </div>
-                      ))}
-
-                      <button
-                        type="button"
-                        onClick={submitSearch}
-                        className="w-full mt-2 py-2 px-3 rounded-xl bg-teal-50 text-teal-800 text-xs font-bold hover:bg-teal-100 flex items-center justify-between transition cursor-pointer"
-                      >
-                        <span>View Buy, Sell & Repair options for "{search}"</span>
-                        <ArrowRight className="h-3.5 w-3.5" />
-                      </button>
-                    </div>
-                  ) : search.trim() ? (
-                    <div className="p-4 text-center text-sm text-gray-500 space-y-2">
-                      <p>No exact catalog match for "{search}".</p>
-                      <button
-                        type="button"
-                        onClick={submitSearch}
-                        className="btn-primary text-xs px-4 py-1.5 bg-[#00a896] hover:bg-[#008f80] font-bold mx-auto"
-                      >
-                        Search All Services
-                      </button>
-                    </div>
-                  ) : (
-                    <div className="p-2">
-                      <p className="px-2 py-1 text-[11px] font-bold uppercase tracking-wider text-gray-400">
-                        Popular Searches in Lucknow
-                      </p>
-                      <div className="mt-2 flex flex-wrap gap-2">
-                        {[
-                          'iPhone 13',
-                          'iPhone 14',
-                          'iPhone 15',
-                          'Galaxy S23',
-                          'Galaxy S24',
-                          'OnePlus 11',
-                          'Redmi Note 13',
-                          'Pixel 8',
-                        ].map((name) => (
-                          <button
-                            key={name}
-                            type="button"
-                            onClick={() => {
-                              setSearch(name);
-                              navigate(`/search?q=${encodeURIComponent(name)}`);
-                              setSearchOpen(false);
-                            }}
-                            className="rounded-full bg-gray-100 px-3.5 py-1.5 text-xs font-semibold text-gray-700 hover:bg-teal-50 hover:text-teal-700 transition cursor-pointer"
-                          >
-                            {name}
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-                </div>
-              )}
+              {searchOpen && renderSearchDropdown(false)}
             </div>
 
             {/* 3. Right: Shopping Cart Icon & Solid Teal Pill Login Button */}
@@ -628,6 +875,44 @@ export default function Navbar() {
               </button>
             </div>
           </div>
+        </div>
+
+        {/* ========================================================================= */}
+        {/* MOBILE RESPONSIVE SEARCH BAR ROW (< md viewports) */}
+        {/* ========================================================================= */}
+        <div ref={mobileSearchRef} className="block md:hidden border-t border-gray-100 px-3.5 py-2 bg-white relative">
+          <form
+            onSubmit={submitSearch}
+            className="flex items-center gap-2.5 rounded-full bg-[#f1f5f9] focus-within:bg-white focus-within:ring-2 focus-within:ring-[#00a896]/30 focus-within:border-[#00a896] border border-transparent px-3.5 py-2 transition-all duration-200"
+          >
+            <Search className="h-4 w-4 shrink-0 text-gray-400" />
+            <input
+              type="text"
+              value={search}
+              onFocus={() => setSearchOpen(true)}
+              onChange={(e) => {
+                setSearch(e.target.value);
+                setSearchOpen(true);
+              }}
+              placeholder="Search brand or model (iPhone, Samsung, OnePlus...)"
+              className="w-full bg-transparent text-xs font-medium text-gray-800 outline-none placeholder:text-gray-400"
+            />
+            {isSearchingApi && (
+              <RefreshCw className="h-3.5 w-3.5 text-teal-600 animate-spin shrink-0" />
+            )}
+            {search && (
+              <button
+                type="button"
+                onClick={() => setSearch('')}
+                className="text-gray-400 hover:text-gray-600 transition p-0.5"
+              >
+                <X className="h-3.5 w-3.5" />
+              </button>
+            )}
+          </form>
+
+          {/* Mobile Live Search Autocomplete Dropdown */}
+          {searchOpen && renderSearchDropdown(true)}
         </div>
 
         {/* ========================================================================= */}
