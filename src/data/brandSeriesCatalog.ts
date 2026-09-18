@@ -1,6 +1,10 @@
 import { getCleanPhoneImage } from '../lib/phoneImages';
 import type { CatalogModelItem } from '../lib/mobileApi';
 
+export function getApiThumb(brand: string, query: string, fallback?: string): string {
+  return getCleanPhoneImage(brand, query, fallback);
+}
+
 export type BrandSeriesDefinition = {
   id: string;
   slug: string;
