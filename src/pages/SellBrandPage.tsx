@@ -161,12 +161,26 @@ export default function SellBrandPage() {
 
   const { version } = usePriceSync();
 
-  // Master Brand Models
+  // Master Brand Models - combine local master catalog with API models so full lineup is always present
   const allBrandModels = useMemo(() => {
-    let list = apiModels.length > 0
-      ? apiModels
-      : MASTER_MODEL_CATALOG.filter((m) => m.brand.toLowerCase() === brandCleanKey);
+    const masterList = MASTER_MODEL_CATALOG.filter((m) => m.brand.toLowerCase() === brandCleanKey);
+    const combinedMap = new Map<string, CatalogModelItem>();
 
+    // Add all master catalog items first
+    masterList.forEach((m) => {
+      const key = m.model.toLowerCase().replace(/[^a-z0-9]/g, '');
+      combinedMap.set(key, m);
+    });
+
+    // Merge any live API models
+    apiModels.forEach((m) => {
+      const key = m.model.toLowerCase().replace(/[^a-z0-9]/g, '');
+      if (!combinedMap.has(key)) {
+        combinedMap.set(key, m);
+      }
+    });
+
+    const list = Array.from(combinedMap.values());
     return applyPriceOverrides(list);
   }, [apiModels, brandCleanKey, version]);
 

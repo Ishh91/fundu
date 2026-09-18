@@ -213,6 +213,11 @@ export const BRAND_SERIES_DEFINITIONS: Record<string, BrandSeriesDefinition[]> =
       image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s25-ultra-sm-s938.jpg',
       description: 'S25 Ultra, S25+, S25 5G',
       pattern: /\bs25\b/i,
+      defaultModels: [
+        { brand: 'Samsung', series: 'Galaxy S25 Series', model: 'Samsung Galaxy S25 Ultra', storage: '256 GB', price: 84000, image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s25-ultra-sm-s938.jpg' },
+        { brand: 'Samsung', series: 'Galaxy S25 Series', model: 'Samsung Galaxy S25+', storage: '256 GB', price: 68000, image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s24-plus-5g-sm-s926.jpg' },
+        { brand: 'Samsung', series: 'Galaxy S25 Series', model: 'Samsung Galaxy S25 5G', storage: '128 GB', price: 56000, image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s24-5g-sm-s921.jpg' },
+      ],
     },
     {
       id: 'galaxy-s24',
@@ -220,8 +225,14 @@ export const BRAND_SERIES_DEFINITIONS: Record<string, BrandSeriesDefinition[]> =
       name: 'Galaxy S24 Series',
       brand: 'Samsung',
       image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s24-ultra-5g-sm-s928-stylus.jpg',
-      description: 'S24 Ultra, S24+, S24 5G',
+      description: 'S24 Ultra, S24+, S24 5G, S24 FE',
       pattern: /\bs24\b/i,
+      defaultModels: [
+        { brand: 'Samsung', series: 'Galaxy S24 Series', model: 'Samsung Galaxy S24 Ultra', storage: '256 GB', price: 78000, image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s24-ultra-5g-sm-s928-stylus.jpg' },
+        { brand: 'Samsung', series: 'Galaxy S24 Series', model: 'Samsung Galaxy S24+', storage: '256 GB', price: 59000, image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s24-plus-5g-sm-s926.jpg' },
+        { brand: 'Samsung', series: 'Galaxy S24 Series', model: 'Samsung Galaxy S24 5G', storage: '128 GB', price: 48000, image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s24-5g-sm-s921.jpg' },
+        { brand: 'Samsung', series: 'Galaxy S24 Series', model: 'Samsung Galaxy S24 FE', storage: '128 GB', price: 38000, image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s24-fe.jpg' },
+      ],
     },
     {
       id: 'galaxy-s23',
@@ -231,6 +242,12 @@ export const BRAND_SERIES_DEFINITIONS: Record<string, BrandSeriesDefinition[]> =
       image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s23-ultra-5g.jpg',
       description: 'S23 Ultra, S23+, S23 5G, S23 FE',
       pattern: /\bs23\b/i,
+      defaultModels: [
+        { brand: 'Samsung', series: 'Galaxy S23 Series', model: 'Samsung Galaxy S23 Ultra', storage: '256 GB', price: 62000, image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s23-ultra-5g.jpg' },
+        { brand: 'Samsung', series: 'Galaxy S23 Series', model: 'Samsung Galaxy S23+', storage: '256 GB', price: 46000, image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s23-plus-5g.jpg' },
+        { brand: 'Samsung', series: 'Galaxy S23 Series', model: 'Samsung Galaxy S23 5G', storage: '128 GB', price: 39000, image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s23-5g.jpg' },
+        { brand: 'Samsung', series: 'Galaxy S23 Series', model: 'Samsung Galaxy S23 FE 5G', storage: '128 GB', price: 31000, image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s23-fe.jpg' },
+      ],
     },
     {
       id: 'galaxy-s22',
@@ -240,6 +257,11 @@ export const BRAND_SERIES_DEFINITIONS: Record<string, BrandSeriesDefinition[]> =
       image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s22-ultra-5g.jpg',
       description: 'S22 Ultra, S22+, S22 5G',
       pattern: /\bs22\b/i,
+      defaultModels: [
+        { brand: 'Samsung', series: 'Galaxy S22 Series', model: 'Samsung Galaxy S22 Ultra 5G', storage: '128 GB', price: 44000, image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s22-ultra-5g.jpg' },
+        { brand: 'Samsung', series: 'Galaxy S22 Series', model: 'Samsung Galaxy S22+ 5G', storage: '128 GB', price: 34000, image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s22-plus-5g.jpg' },
+        { brand: 'Samsung', series: 'Galaxy S22 Series', model: 'Samsung Galaxy S22 5G', storage: '128 GB', price: 27000, image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s22-5g.jpg' },
+      ],
     },
     {
       id: 'galaxy-s21',
@@ -249,15 +271,43 @@ export const BRAND_SERIES_DEFINITIONS: Record<string, BrandSeriesDefinition[]> =
       image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s21-fe-5g.jpg',
       description: 'S21 Ultra, S21+, S21 5G, S21 FE',
       pattern: /\bs21\b/i,
+      defaultModels: [
+        { brand: 'Samsung', series: 'Galaxy S21 Series', model: 'Samsung Galaxy S21 Ultra 5G', storage: '128 GB', price: 32000, image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s21-ultra-5g-.jpg' },
+        { brand: 'Samsung', series: 'Galaxy S21 Series', model: 'Samsung Galaxy S21+ 5G', storage: '128 GB', price: 24000, image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s21-plus-5g-.jpg' },
+        { brand: 'Samsung', series: 'Galaxy S21 Series', model: 'Samsung Galaxy S21 5G', storage: '128 GB', price: 20000, image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s21-5g-r.jpg' },
+        { brand: 'Samsung', series: 'Galaxy S21 Series', model: 'Samsung Galaxy S21 FE 5G', storage: '128 GB', price: 18500, image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s21-fe-5g.jpg' },
+      ],
     },
     {
       id: 'galaxy-s20',
       slug: 'galaxy-s20-series',
       name: 'Galaxy S20 Series',
       brand: 'Samsung',
-      image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s23-5g.jpg',
+      image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s20-ultra-5g-r.jpg',
       description: 'S20 Ultra, S20+, S20 5G, S20 FE',
       pattern: /\bs20\b/i,
+      defaultModels: [
+        { brand: 'Samsung', series: 'Galaxy S20 Series', model: 'Samsung Galaxy S20 Ultra 5G', storage: '128 GB', price: 23000, image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s20-ultra-5g-r.jpg' },
+        { brand: 'Samsung', series: 'Galaxy S20 Series', model: 'Samsung Galaxy S20+', storage: '128 GB', price: 18000, image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s20-plus-r.jpg' },
+        { brand: 'Samsung', series: 'Galaxy S20 Series', model: 'Samsung Galaxy S20', storage: '128 GB', price: 15000, image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s20-r.jpg' },
+        { brand: 'Samsung', series: 'Galaxy S20 Series', model: 'Samsung Galaxy S20 FE 5G', storage: '128 GB', price: 14000, image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s20-fe-5g.jpg' },
+        { brand: 'Samsung', series: 'Galaxy S20 Series', model: 'Samsung Galaxy S20 FE', storage: '128 GB', price: 12000, image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s20-fe-5g.jpg' },
+      ],
+    },
+    {
+      id: 'galaxy-s10',
+      slug: 'galaxy-s10-series',
+      name: 'Galaxy S10 Series',
+      brand: 'Samsung',
+      image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s10-plus-new.jpg',
+      description: 'S10+, S10, S10e, S10 Lite',
+      pattern: /\bs10\b/i,
+      defaultModels: [
+        { brand: 'Samsung', series: 'Galaxy S10 Series', model: 'Samsung Galaxy S10+', storage: '128 GB', price: 12500, image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s10-plus-new.jpg' },
+        { brand: 'Samsung', series: 'Galaxy S10 Series', model: 'Samsung Galaxy S10', storage: '128 GB', price: 10500, image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s10-1.jpg' },
+        { brand: 'Samsung', series: 'Galaxy S10 Series', model: 'Samsung Galaxy S10e', storage: '128 GB', price: 8500, image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s10e-1.jpg' },
+        { brand: 'Samsung', series: 'Galaxy S10 Series', model: 'Samsung Galaxy S10 Lite', storage: '128 GB', price: 9500, image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s10-lite-sm-g770f.jpg' },
+      ],
     },
     {
       id: 'galaxy-z',
@@ -265,17 +315,38 @@ export const BRAND_SERIES_DEFINITIONS: Record<string, BrandSeriesDefinition[]> =
       name: 'Galaxy Z Series (Fold & Flip)',
       brand: 'Samsung',
       image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-z-fold5.jpg',
-      description: 'Fold 6, Flip 6, Fold 5, Flip 5',
+      description: 'Fold 6, Flip 6, Fold 5, Flip 5, Fold 4, Flip 4',
       pattern: /\b(fold|flip)\b/i,
+      defaultModels: [
+        { brand: 'Samsung', series: 'Galaxy Z Series (Fold & Flip)', model: 'Samsung Galaxy Z Fold 6', storage: '256 GB', price: 88000, image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-z-fold6.jpg' },
+        { brand: 'Samsung', series: 'Galaxy Z Series (Fold & Flip)', model: 'Samsung Galaxy Z Flip 6', storage: '256 GB', price: 58000, image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-z-flip6.jpg' },
+        { brand: 'Samsung', series: 'Galaxy Z Series (Fold & Flip)', model: 'Samsung Galaxy Z Fold 5', storage: '256 GB', price: 72000, image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-z-fold5.jpg' },
+        { brand: 'Samsung', series: 'Galaxy Z Series (Fold & Flip)', model: 'Samsung Galaxy Z Flip 5', storage: '256 GB', price: 44000, image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-z-flip5.jpg' },
+        { brand: 'Samsung', series: 'Galaxy Z Series (Fold & Flip)', model: 'Samsung Galaxy Z Fold 4', storage: '256 GB', price: 54000, image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-z-fold4.jpg' },
+        { brand: 'Samsung', series: 'Galaxy Z Series (Fold & Flip)', model: 'Samsung Galaxy Z Flip 4', storage: '128 GB', price: 32000, image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-z-flip4.jpg' },
+        { brand: 'Samsung', series: 'Galaxy Z Series (Fold & Flip)', model: 'Samsung Galaxy Z Fold 3 5G', storage: '256 GB', price: 38000, image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-z-fold3-5g.jpg' },
+        { brand: 'Samsung', series: 'Galaxy Z Series (Fold & Flip)', model: 'Samsung Galaxy Z Flip 3 5G', storage: '128 GB', price: 22000, image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-z-flip3-5g.jpg' },
+        { brand: 'Samsung', series: 'Galaxy Z Series (Fold & Flip)', model: 'Samsung Galaxy Z Fold 2 5G', storage: '256 GB', price: 26000, image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-z-fold2-5g.jpg' },
+        { brand: 'Samsung', series: 'Galaxy Z Series (Fold & Flip)', model: 'Samsung Galaxy Z Flip', storage: '128 GB', price: 17000, image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-z-flip.jpg' },
+      ],
     },
     {
       id: 'galaxy-note',
       slug: 'galaxy-note-series',
       name: 'Galaxy Note Series',
       brand: 'Samsung',
-      image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s24-ultra-5g-sm-s928-stylus.jpg',
-      description: 'Note 20 Ultra, Note 20, Note 10',
+      image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-note20-ultra-5g-.jpg',
+      description: 'Note 20 Ultra, Note 20, Note 10+, Note 10',
       pattern: /\bnote\b/i,
+      defaultModels: [
+        { brand: 'Samsung', series: 'Galaxy Note Series', model: 'Samsung Galaxy Note 20 Ultra 5G', storage: '256 GB', price: 36000, image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-note20-ultra-5g-.jpg' },
+        { brand: 'Samsung', series: 'Galaxy Note Series', model: 'Samsung Galaxy Note 20', storage: '256 GB', price: 24000, image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-note20-5g-r.jpg' },
+        { brand: 'Samsung', series: 'Galaxy Note Series', model: 'Samsung Galaxy Note 10+', storage: '256 GB', price: 19000, image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-note10-plus-.jpg' },
+        { brand: 'Samsung', series: 'Galaxy Note Series', model: 'Samsung Galaxy Note 10', storage: '256 GB', price: 16000, image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-note10-.jpg' },
+        { brand: 'Samsung', series: 'Galaxy Note Series', model: 'Samsung Galaxy Note 10 Lite', storage: '128 GB', price: 12000, image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-note10-lite.jpg' },
+        { brand: 'Samsung', series: 'Galaxy Note Series', model: 'Samsung Galaxy Note 9', storage: '128 GB', price: 11000, image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-note9-r1.jpg' },
+        { brand: 'Samsung', series: 'Galaxy Note Series', model: 'Samsung Galaxy Note 8', storage: '64 GB', price: 8500, image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-note8-sm-n950.jpg' },
+      ],
     },
     {
       id: 'galaxy-a',
@@ -283,17 +354,69 @@ export const BRAND_SERIES_DEFINITIONS: Record<string, BrandSeriesDefinition[]> =
       name: 'Galaxy A Series',
       brand: 'Samsung',
       image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-a55.jpg',
-      description: 'A55, A54, A35, A34, A15...',
+      description: 'A55, A54, A35, A34, A25, A15, A14...',
       pattern: /\ba\d+/i,
+      defaultModels: [
+        { brand: 'Samsung', series: 'Galaxy A Series', model: 'Samsung Galaxy A55 5G', storage: '128 GB', price: 25000, image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-a55.jpg' },
+        { brand: 'Samsung', series: 'Galaxy A Series', model: 'Samsung Galaxy A54 5G', storage: '128 GB', price: 19500, image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-a54.jpg' },
+        { brand: 'Samsung', series: 'Galaxy A Series', model: 'Samsung Galaxy A53 5G', storage: '128 GB', price: 15500, image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-a53-5g.jpg' },
+        { brand: 'Samsung', series: 'Galaxy A Series', model: 'Samsung Galaxy A52s 5G', storage: '128 GB', price: 13500, image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-a52s-5g.jpg' },
+        { brand: 'Samsung', series: 'Galaxy A Series', model: 'Samsung Galaxy A52', storage: '128 GB', price: 11500, image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-a52-5g.jpg' },
+        { brand: 'Samsung', series: 'Galaxy A Series', model: 'Samsung Galaxy A51', storage: '128 GB', price: 9000, image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-a51.jpg' },
+        { brand: 'Samsung', series: 'Galaxy A Series', model: 'Samsung Galaxy A50', storage: '64 GB', price: 7000, image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-a50.jpg' },
+        { brand: 'Samsung', series: 'Galaxy A Series', model: 'Samsung Galaxy A35 5G', storage: '128 GB', price: 18500, image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-a35.jpg' },
+        { brand: 'Samsung', series: 'Galaxy A Series', model: 'Samsung Galaxy A34 5G', storage: '128 GB', price: 14500, image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-a34.jpg' },
+        { brand: 'Samsung', series: 'Galaxy A Series', model: 'Samsung Galaxy A33 5G', storage: '128 GB', price: 12000, image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-a33-5g.jpg' },
+        { brand: 'Samsung', series: 'Galaxy A Series', model: 'Samsung Galaxy A32', storage: '128 GB', price: 9500, image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-a32-4g.jpg' },
+        { brand: 'Samsung', series: 'Galaxy A Series', model: 'Samsung Galaxy A25 5G', storage: '128 GB', price: 13000, image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-a25.jpg' },
+        { brand: 'Samsung', series: 'Galaxy A Series', model: 'Samsung Galaxy A24', storage: '128 GB', price: 11000, image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-a24-4g.jpg' },
+        { brand: 'Samsung', series: 'Galaxy A Series', model: 'Samsung Galaxy A23 5G', storage: '128 GB', price: 10500, image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-a23-5g.jpg' },
+        { brand: 'Samsung', series: 'Galaxy A Series', model: 'Samsung Galaxy A22 5G', storage: '128 GB', price: 9000, image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-a22-5g.jpg' },
+        { brand: 'Samsung', series: 'Galaxy A Series', model: 'Samsung Galaxy A21s', storage: '64 GB', price: 7500, image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-a21s.jpg' },
+        { brand: 'Samsung', series: 'Galaxy A Series', model: 'Samsung Galaxy A15 5G', storage: '128 GB', price: 10000, image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-a15-5g.jpg' },
+        { brand: 'Samsung', series: 'Galaxy A Series', model: 'Samsung Galaxy A14 5G', storage: '64 GB', price: 7500, image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-a14-5g.jpg' },
+        { brand: 'Samsung', series: 'Galaxy A Series', model: 'Samsung Galaxy A13', storage: '64 GB', price: 6500, image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-a13.jpg' },
+        { brand: 'Samsung', series: 'Galaxy A Series', model: 'Samsung Galaxy A12', storage: '64 GB', price: 5500, image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-a12-sm-a125.jpg' },
+        { brand: 'Samsung', series: 'Galaxy A Series', model: 'Samsung Galaxy A05s', storage: '64 GB', price: 6000, image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-a05s.jpg' },
+        { brand: 'Samsung', series: 'Galaxy A Series', model: 'Samsung Galaxy A04s', storage: '64 GB', price: 5000, image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-a04s.jpg' },
+        { brand: 'Samsung', series: 'Galaxy A Series', model: 'Samsung Galaxy A73 5G', storage: '128 GB', price: 18000, image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-a73-5g.jpg' },
+        { brand: 'Samsung', series: 'Galaxy A Series', model: 'Samsung Galaxy A72', storage: '128 GB', price: 14000, image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-a72-4g.jpg' },
+        { brand: 'Samsung', series: 'Galaxy A Series', model: 'Samsung Galaxy A71', storage: '128 GB', price: 11000, image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-a71.jpg' },
+        { brand: 'Samsung', series: 'Galaxy A Series', model: 'Samsung Galaxy A70', storage: '128 GB', price: 8500, image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-a70.jpg' },
+      ],
     },
     {
       id: 'galaxy-m-f',
       slug: 'galaxy-m-series',
       name: 'Galaxy M & F Series',
       brand: 'Samsung',
-      image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-a54.jpg',
-      description: 'M55, M54, M34, F55, F54...',
+      image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-m55.jpg',
+      description: 'M55, M54, M34, M33, F55, F54, F34...',
       pattern: /\b(m|f)\d+/i,
+      defaultModels: [
+        { brand: 'Samsung', series: 'Galaxy M & F Series', model: 'Samsung Galaxy M55 5G', storage: '128 GB', price: 17500, image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-m55.jpg' },
+        { brand: 'Samsung', series: 'Galaxy M & F Series', model: 'Samsung Galaxy M54 5G', storage: '128 GB', price: 15000, image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-m54.jpg' },
+        { brand: 'Samsung', series: 'Galaxy M & F Series', model: 'Samsung Galaxy M53 5G', storage: '128 GB', price: 12500, image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-m53-5g.jpg' },
+        { brand: 'Samsung', series: 'Galaxy M & F Series', model: 'Samsung Galaxy M52 5G', storage: '128 GB', price: 10500, image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-m52-5g.jpg' },
+        { brand: 'Samsung', series: 'Galaxy M & F Series', model: 'Samsung Galaxy M51', storage: '128 GB', price: 9000, image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-m51.jpg' },
+        { brand: 'Samsung', series: 'Galaxy M & F Series', model: 'Samsung Galaxy M35 5G', storage: '128 GB', price: 14000, image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-m35.jpg' },
+        { brand: 'Samsung', series: 'Galaxy M & F Series', model: 'Samsung Galaxy M34 5G', storage: '128 GB', price: 11000, image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-m34-5g.jpg' },
+        { brand: 'Samsung', series: 'Galaxy M & F Series', model: 'Samsung Galaxy M33 5G', storage: '128 GB', price: 9500, image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-m33-5g.jpg' },
+        { brand: 'Samsung', series: 'Galaxy M & F Series', model: 'Samsung Galaxy M32', storage: '64 GB', price: 7500, image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-m32-4g.jpg' },
+        { brand: 'Samsung', series: 'Galaxy M & F Series', model: 'Samsung Galaxy M31s', storage: '128 GB', price: 7000, image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-m31s.jpg' },
+        { brand: 'Samsung', series: 'Galaxy M & F Series', model: 'Samsung Galaxy M31', storage: '64 GB', price: 6500, image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-m31.jpg' },
+        { brand: 'Samsung', series: 'Galaxy M & F Series', model: 'Samsung Galaxy M21', storage: '64 GB', price: 5500, image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-m21.jpg' },
+        { brand: 'Samsung', series: 'Galaxy M & F Series', model: 'Samsung Galaxy M14 5G', storage: '128 GB', price: 7500, image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-m14-5g.jpg' },
+        { brand: 'Samsung', series: 'Galaxy M & F Series', model: 'Samsung Galaxy M13', storage: '64 GB', price: 5500, image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-m13-4g.jpg' },
+        { brand: 'Samsung', series: 'Galaxy M & F Series', model: 'Samsung Galaxy M12', storage: '64 GB', price: 4800, image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-m12.jpg' },
+        { brand: 'Samsung', series: 'Galaxy M & F Series', model: 'Samsung Galaxy M04', storage: '64 GB', price: 4200, image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-m04.jpg' },
+        { brand: 'Samsung', series: 'Galaxy M & F Series', model: 'Samsung Galaxy F55 5G', storage: '128 GB', price: 16500, image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-f55.jpg' },
+        { brand: 'Samsung', series: 'Galaxy M & F Series', model: 'Samsung Galaxy F54 5G', storage: '256 GB', price: 14000, image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-f54.jpg' },
+        { brand: 'Samsung', series: 'Galaxy M & F Series', model: 'Samsung Galaxy F34 5G', storage: '128 GB', price: 10500, image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-f34-5g.jpg' },
+        { brand: 'Samsung', series: 'Galaxy M & F Series', model: 'Samsung Galaxy F23 5G', storage: '128 GB', price: 8500, image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-f23-5g.jpg' },
+        { brand: 'Samsung', series: 'Galaxy M & F Series', model: 'Samsung Galaxy F14 5G', storage: '128 GB', price: 7000, image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-f14-5g.jpg' },
+        { brand: 'Samsung', series: 'Galaxy M & F Series', model: 'Samsung Galaxy F13', storage: '64 GB', price: 5500, image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-f13.jpg' },
+      ],
     },
     {
       id: 'galaxy-j',
@@ -301,8 +424,23 @@ export const BRAND_SERIES_DEFINITIONS: Record<string, BrandSeriesDefinition[]> =
       name: 'Galaxy J Series (Classic)',
       brand: 'Samsung',
       image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-j7-prime.jpg',
-      description: 'J7 Prime, J7 Pro, J7 Max, J6...',
+      description: 'J8, J7 Prime, J7 Pro, J7 Max, J6, J4...',
       pattern: /\bj\d+/i,
+      defaultModels: [
+        { brand: 'Samsung', series: 'Galaxy J Series (Classic)', model: 'Samsung Galaxy J8', storage: '64 GB', price: 4400, image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-j8.jpg' },
+        { brand: 'Samsung', series: 'Galaxy J Series (Classic)', model: 'Samsung Galaxy J7 Prime', storage: '32 GB', price: 3800, image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-j7-prime.jpg' },
+        { brand: 'Samsung', series: 'Galaxy J Series (Classic)', model: 'Samsung Galaxy J7 Pro', storage: '64 GB', price: 4500, image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-j7-pro.jpg' },
+        { brand: 'Samsung', series: 'Galaxy J Series (Classic)', model: 'Samsung Galaxy J7 Max', storage: '32 GB', price: 4200, image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-j7-max.jpg' },
+        { brand: 'Samsung', series: 'Galaxy J Series (Classic)', model: 'Samsung Galaxy J7 Nxt', storage: '32 GB', price: 2800, image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-j7-nxt.jpg' },
+        { brand: 'Samsung', series: 'Galaxy J Series (Classic)', model: 'Samsung Galaxy J7 Duo', storage: '32 GB', price: 3900, image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-j7-duo.jpg' },
+        { brand: 'Samsung', series: 'Galaxy J Series (Classic)', model: 'Samsung Galaxy J7 (2016)', storage: '16 GB', price: 3200, image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-j7-2016.jpg' },
+        { brand: 'Samsung', series: 'Galaxy J Series (Classic)', model: 'Samsung Galaxy J6+', storage: '64 GB', price: 3600, image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-j6-plus.jpg' },
+        { brand: 'Samsung', series: 'Galaxy J Series (Classic)', model: 'Samsung Galaxy J6', storage: '64 GB', price: 3500, image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-j6.jpg' },
+        { brand: 'Samsung', series: 'Galaxy J Series (Classic)', model: 'Samsung Galaxy J4+', storage: '32 GB', price: 2900, image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-j4-plus.jpg' },
+        { brand: 'Samsung', series: 'Galaxy J Series (Classic)', model: 'Samsung Galaxy J4', storage: '16 GB', price: 2600, image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-j4.jpg' },
+        { brand: 'Samsung', series: 'Galaxy J Series (Classic)', model: 'Samsung Galaxy J2 Pro', storage: '16 GB', price: 2200, image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-j2-pro-2018.jpg' },
+        { brand: 'Samsung', series: 'Galaxy J Series (Classic)', model: 'Samsung Galaxy J2 (2018)', storage: '16 GB', price: 1800, image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-j2-2018.jpg' },
+      ],
     },
   ],
 
@@ -646,7 +784,22 @@ export function groupModelsBySeries(brand: string, allModels: CatalogModelItem[]
 
     matched.forEach((m) => assignedModels.add(m.model.toLowerCase()));
 
-    const effectiveModels = matched.length > 0 ? matched : (def.defaultModels || []);
+    // Combine matched models with defaultModels so all expected models are present
+    const combinedModels: CatalogModelItem[] = [...matched];
+    const seenNames = new Set(matched.map((m) => m.model.toLowerCase().replace(/[^a-z0-9]/g, '')));
+
+    if (def.defaultModels) {
+      for (const defModel of def.defaultModels) {
+        const norm = defModel.model.toLowerCase().replace(/[^a-z0-9]/g, '');
+        if (!seenNames.has(norm)) {
+          combinedModels.push(defModel);
+          seenNames.add(norm);
+        }
+        assignedModels.add(defModel.model.toLowerCase());
+      }
+    }
+
+    const effectiveModels = combinedModels.length > 0 ? combinedModels : (def.defaultModels || []);
 
     grouped.push({
       id: def.id,
