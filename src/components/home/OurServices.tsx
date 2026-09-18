@@ -40,17 +40,16 @@ export default function OurServices() {
   return (
     <section className="py-4">
       <div className="container-page space-y-4">
-        <h2 className="font-display font-extrabold text-xl text-gray-900">Our Services</h2>
+        <h2 className="font-display font-black text-xl text-[#344257]">Our Services</h2>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
           {FUNDU_SERVICES.map((s) => {
-            const Icon = s.icon;
             return (
               <Link
                 key={s.title}
                 to={s.href}
-                className="group flex flex-col items-center text-center p-4 rounded-2xl bg-white border border-gray-200 shadow-xs hover:border-[#00a896] hover:shadow-md transition-all duration-300 cursor-pointer"
+                className="group flex flex-col items-center text-center p-4 rounded-2xl bg-white border border-[#C0C8D8]/70 shadow-xs hover:border-[#6A859F] hover:shadow-md transition-all duration-300 cursor-pointer"
               >
-                <div className="w-16 h-16 rounded-2xl bg-[#eef8f7] border border-teal-100 p-2 flex items-center justify-center group-hover:scale-105 transition-transform overflow-hidden">
+                <div className="w-16 h-16 rounded-2xl bg-[#F0F0F5] border border-[#C0C8D8]/80 p-2 flex items-center justify-center group-hover:scale-105 transition-transform overflow-hidden">
                   <img
                     src={s.image}
                     alt={s.title}
@@ -61,10 +60,10 @@ export default function OurServices() {
                     }}
                   />
                 </div>
-                <span className="mt-3 text-sm font-extrabold text-gray-900 group-hover:text-[#00a896] transition-colors">
+                <span className="mt-3 text-sm font-black text-[#344257] group-hover:text-[#47576E] transition-colors">
                   {s.title}
                 </span>
-                <span className="text-[11px] font-semibold text-gray-500 mt-0.5">
+                <span className="text-[11px] font-semibold text-[#47576E] mt-0.5">
                   {s.subtitle}
                 </span>
               </Link>

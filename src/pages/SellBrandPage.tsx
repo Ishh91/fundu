@@ -168,13 +168,13 @@ export default function SellBrandPage() {
 
     // Add all master catalog items first
     masterList.forEach((m) => {
-      const key = m.model.toLowerCase().replace(/[^a-z0-9]/g, '');
+      const key = m.model.toLowerCase().replace(/\+/g, 'plus').replace(/[^a-z0-9]/g, '');
       combinedMap.set(key, m);
     });
 
     // Merge any live API models
     apiModels.forEach((m) => {
-      const key = m.model.toLowerCase().replace(/[^a-z0-9]/g, '');
+      const key = m.model.toLowerCase().replace(/\+/g, 'plus').replace(/[^a-z0-9]/g, '');
       if (!combinedMap.has(key)) {
         combinedMap.set(key, m);
       }
@@ -244,24 +244,24 @@ export default function SellBrandPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#f4f7f8] pb-24">
+    <div className="min-h-screen bg-transparent pb-24">
       {/* CASHIFY EXACT BREADCRUMB NAVIGATION */}
-      <div className="bg-white border-b border-gray-100 py-2.5 px-4 text-xs font-semibold text-gray-500">
+      <div className="bg-white/90 backdrop-blur-md border-b border-[#C0C8D8]/70 py-2.5 px-4 text-xs font-semibold text-[#47576E]">
         <div className="max-w-7xl mx-auto flex items-center gap-1.5 flex-wrap">
-          <Link to="/" className="hover:text-[#00a896] transition">Home</Link>
+          <Link to="/" className="hover:text-[#344257] transition">Home</Link>
           <span>&gt;</span>
-          <Link to="/sell" className="hover:text-[#00a896] transition">Sell</Link>
+          <Link to="/sell" className="hover:text-[#344257] transition">Sell</Link>
           <span>&gt;</span>
           {effectiveSeriesSlug ? (
             <>
-              <Link to={`/sell/${brandCleanKey}`} className="hover:text-[#00a896] transition">
+              <Link to={`/sell/${brandCleanKey}`} className="hover:text-[#344257] transition">
                 {brandDisplayName}
               </Link>
               <span>&gt;</span>
-              <span className="text-[#00a896] font-extrabold">{currentSeriesGroup?.name || effectiveSeriesSlug}</span>
+              <span className="text-[#344257] font-extrabold">{currentSeriesGroup?.name || effectiveSeriesSlug}</span>
             </>
           ) : (
-            <span className="text-[#00a896] font-extrabold">{brandDisplayName}</span>
+            <span className="text-[#344257] font-extrabold">{brandDisplayName}</span>
           )}
         </div>
       </div>
@@ -273,20 +273,20 @@ export default function SellBrandPage() {
             <button
               type="button"
               onClick={() => navigate(`/sell/${brandCleanKey}`)}
-              className="inline-flex items-center gap-1.5 text-xs font-bold text-gray-500 hover:text-[#00a896] transition cursor-pointer mb-3"
+              className="inline-flex items-center gap-1.5 text-xs font-bold text-[#47576E] hover:text-[#344257] transition cursor-pointer mb-3"
             >
-              <ArrowLeft className="h-4 w-4" /> Back to all {brandDisplayName} Series
+              <ArrowLeft className="h-4 w-4 text-[#6A859F]" /> Back to all {brandDisplayName} Series
             </button>
           )}
 
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
             <div>
-              <h1 className="font-display text-2xl md:text-3xl font-black text-gray-900">
+              <h1 className="font-display text-2xl md:text-3xl font-black text-[#344257]">
                 {effectiveSeriesSlug
                   ? `Sell Old ${currentSeriesGroup?.name || brandDisplayName} Online`
                   : `Sell Old ${brandDisplayName} Mobile Phone Online At Best Price`}
               </h1>
-              <p className="text-xs text-gray-500 mt-1">
+              <p className="text-xs text-[#47576E] mt-1">
                 {effectiveSeriesSlug
                   ? `Select your exact ${currentSeriesGroup?.name || brandDisplayName} model below for instant spot valuation & doorstep pickup in Lucknow`
                   : `Select your ${brandDisplayName} model series below for instant spot cash & doorstep pickup in Lucknow`}
@@ -296,7 +296,7 @@ export default function SellBrandPage() {
             {/* Search Bar Aligned at Right Corner */}
             <div className="relative w-full md:w-80 shrink-0">
               <div className="relative">
-                <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-[#6A859F]" />
                 <input
                   type="text"
                   value={rawSearchQuery}
@@ -306,7 +306,7 @@ export default function SellBrandPage() {
                       ? `Search in ${currentSeriesGroup?.name || brandDisplayName}...`
                       : `Search ${brandDisplayName} models...`
                   }
-                  className="w-full pl-12 pr-10 py-3 rounded-2xl bg-white border border-gray-300 text-xs font-medium shadow-sm focus:border-[#00a896] focus:ring-4 focus:ring-[#00a896]/10 outline-none transition"
+                  className="w-full pl-12 pr-10 py-3 rounded-2xl bg-white border border-[#C0C8D8] text-xs font-medium shadow-sm focus:border-[#6A859F] focus:ring-4 focus:ring-[#6A859F]/15 outline-none transition text-[#344257] placeholder:text-[#8A9AAF]"
                 />
                 {rawSearchQuery ? (
                   <button
@@ -317,7 +317,7 @@ export default function SellBrandPage() {
                     <X className="h-4 w-4" />
                   </button>
                 ) : isSearching ? (
-                  <RefreshCw className="absolute right-4 top-1/2 -translate-y-1/2 h-4 w-4 text-[#00a896] animate-spin" />
+                  <RefreshCw className="absolute right-4 top-1/2 -translate-y-1/2 h-4 w-4 text-[#47576E] animate-spin" />
                 ) : null}
               </div>
             </div>
@@ -368,7 +368,7 @@ export default function SellBrandPage() {
                     <div
                       key={m.model}
                       onClick={() => handleSelectModel(m.model, m.storage || '128 GB')}
-                      className="p-3.5 sm:p-5 rounded-2xl border border-gray-100 bg-white hover:border-[#00a896] hover:shadow-lg transition-all duration-200 group cursor-pointer flex flex-col items-center justify-between text-center min-h-[175px] sm:min-h-[210px]"
+                      className="p-3.5 sm:p-5 rounded-2xl border border-gray-100 bg-white hover:border-[#6A859F] hover:shadow-lg transition-all duration-200 group cursor-pointer flex flex-col items-center justify-between text-center min-h-[175px] sm:min-h-[210px]"
                     >
                       <div className="h-28 sm:h-36 w-full flex items-center justify-center p-1 relative overflow-hidden">
                         <img
@@ -386,7 +386,7 @@ export default function SellBrandPage() {
                           }}
                         />
                       </div>
-                      <p className="mt-2 text-xs sm:text-sm font-semibold text-gray-800 group-hover:text-[#00a896] transition-colors line-clamp-2 leading-snug">
+                      <p className="mt-2 text-xs sm:text-sm font-semibold text-gray-800 group-hover:text-[#344257] transition-colors line-clamp-2 leading-snug">
                         {highlightMatch(displayName, debouncedQuery)}
                       </p>
                     </div>
@@ -424,7 +424,7 @@ export default function SellBrandPage() {
                     <div
                       key={m.model}
                       onClick={() => handleSelectModel(m.model, m.storage || '128 GB')}
-                      className="p-3.5 sm:p-5 rounded-2xl border border-gray-100 bg-white hover:border-[#00a896] hover:shadow-lg transition-all duration-200 group cursor-pointer flex flex-col items-center justify-between text-center min-h-[175px] sm:min-h-[210px]"
+                      className="p-3.5 sm:p-5 rounded-2xl border border-gray-100 bg-white hover:border-[#6A859F] hover:shadow-lg transition-all duration-200 group cursor-pointer flex flex-col items-center justify-between text-center min-h-[175px] sm:min-h-[210px]"
                     >
                       <div className="h-28 sm:h-36 w-full flex items-center justify-center p-1 relative overflow-hidden">
                         <img
@@ -442,7 +442,7 @@ export default function SellBrandPage() {
                           }}
                         />
                       </div>
-                      <p className="mt-2 text-xs sm:text-sm font-semibold text-gray-800 group-hover:text-[#00a896] transition-colors line-clamp-2 leading-snug">
+                      <p className="mt-2 text-xs sm:text-sm font-semibold text-gray-800 group-hover:text-[#344257] transition-colors line-clamp-2 leading-snug">
                         {displayName}
                       </p>
                     </div>
@@ -472,7 +472,7 @@ export default function SellBrandPage() {
                   <div
                     key={ser.slug}
                     onClick={() => handleSelectSeries(ser)}
-                    className="p-3.5 sm:p-5 rounded-2xl border border-gray-100 bg-white hover:border-[#00a896] hover:shadow-lg transition-all duration-200 group cursor-pointer flex flex-col items-center justify-between text-center min-h-[175px] sm:min-h-[210px]"
+                    className="p-3.5 sm:p-5 rounded-2xl border border-gray-100 bg-white hover:border-[#6A859F] hover:shadow-lg transition-all duration-200 group cursor-pointer flex flex-col items-center justify-between text-center min-h-[175px] sm:min-h-[210px]"
                   >
                     <div className="h-28 sm:h-36 w-full flex items-center justify-center p-1 relative overflow-hidden">
                       <img
@@ -491,7 +491,7 @@ export default function SellBrandPage() {
                       />
                     </div>
                     <div className="mt-2 w-full">
-                      <p className="text-xs sm:text-sm font-bold text-gray-900 group-hover:text-[#00a896] transition-colors line-clamp-2 leading-snug">
+                      <p className="text-xs sm:text-sm font-bold text-[#344257] group-hover:text-[#47576E] transition-colors line-clamp-2 leading-snug">
                         {ser.name}
                       </p>
                       <p className="text-[11px] font-medium text-gray-400 mt-0.5">
@@ -516,7 +516,7 @@ export default function SellBrandPage() {
         {/* CASHIFY "HOW IT WORKS" 3-STEP FLOW */}
         <div className="card p-8 rounded-[32px] bg-white border border-gray-200 space-y-6">
           <div className="text-center max-w-xl mx-auto space-y-1">
-            <span className="badge bg-teal-50 text-[#00a896] text-xs font-bold">Simple 3-Step Process</span>
+            <span className="badge bg-[#F0F0F5] text-[#344257] border border-[#C0C8D8] text-xs font-bold">Simple 3-Step Process</span>
             <h2 className="font-display text-2xl font-black text-gray-900">How to Sell Old {brandDisplayName} Phone</h2>
             <p className="text-xs text-gray-500">Sell your mobile in under 2 minutes from home</p>
           </div>

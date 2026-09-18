@@ -645,65 +645,67 @@ export default function Navbar() {
 
   return (
     <>
-      <header className="sticky top-0 z-50 bg-white border-b border-gray-200 shadow-sm transition-all">
+      <header className="sticky top-0 z-50 shadow-sm transition-all">
         {/* ========================================================================= */}
         {/* TOP ROW: LOGO | LOCATION | EXPANDED PILL SEARCH BAR | CART | LOGIN PILL */}
+        {/* Gradient: #42546C -> #B6AEBB */}
         {/* ========================================================================= */}
-        <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex h-16 sm:h-18 md:h-20 items-center justify-between gap-3 md:gap-6">
+        <div className="fundu-top-nav-gradient border-b border-white/10 text-white">
+          <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex h-16 sm:h-18 md:h-20 items-center justify-between gap-3 md:gap-6">
 
-            {/* 1. Left: Brand Logo & Location Selector */}
-            <div className="flex items-center gap-3 sm:gap-6 shrink-0">
-              <Link to="/" className="flex items-center shrink-0" aria-label="Fundu Home">
-                <BrandLogo imageClassName="h-11 sm:h-14 md:h-16 w-auto max-w-[240px] sm:max-w-[290px] md:max-w-[320px] filter drop-shadow-xs transition-transform duration-200 hover:scale-102" />
-              </Link>
+              {/* 1. Left: Brand Logo & Location Selector */}
+              <div className="flex items-center gap-3 sm:gap-6 shrink-0">
+                <Link to="/" className="flex items-center shrink-0" aria-label="Fundu Home">
+                  <BrandLogo imageClassName="h-11 sm:h-14 md:h-16 w-auto max-w-[240px] sm:max-w-[290px] md:max-w-[320px] filter drop-shadow-xs transition-transform duration-200 hover:scale-102" />
+                </Link>
 
-              {/* Location Selector (Lucknow) */}
-              <button
-                type="button"
-                onClick={() => setLocationModalOpen(true)}
-                className="hidden sm:flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-gray-700 hover:text-teal-600 transition-colors py-1.5 px-2 rounded-lg hover:bg-gray-50 group cursor-pointer"
-                title="Fundu services Lucknow"
-              >
-                <MapPin className="h-4 w-4 text-[#00a896] shrink-0 group-hover:scale-110 transition-transform" />
-                <span className="font-bold text-gray-800 group-hover:text-[#00a896]">
-                  {selectedLocality === 'Lucknow' ? 'Lucknow' : `${selectedLocality}`}
-                </span>
-                <ChevronDown className="h-3.5 w-3.5 text-gray-400 group-hover:text-teal-600 transition-transform" />
-              </button>
-            </div>
+                {/* Location Selector (Lucknow) */}
+                <button
+                  type="button"
+                  onClick={() => setLocationModalOpen(true)}
+                  className="hidden sm:flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-white/95 hover:text-white transition-colors py-1.5 px-3 rounded-full bg-white/10 hover:bg-white/20 border border-white/20 group cursor-pointer"
+                  title="Fundu services Lucknow"
+                >
+                  <MapPin className="h-4 w-4 text-[#C0C8D8] shrink-0 group-hover:scale-110 transition-transform" />
+                  <span className="font-bold text-white">
+                    {selectedLocality === 'Lucknow' ? 'Lucknow' : `${selectedLocality}`}
+                  </span>
+                  <ChevronDown className="h-3.5 w-3.5 text-white/70 group-hover:text-white transition-transform" />
+                </button>
+              </div>
 
-            {/* 2. Middle: Large Rounded-Full Pill Search Bar (Desktop) */}
-            <div ref={desktopSearchRef} className="relative flex-1 max-w-2xl hidden md:block">
-              <form
-                onSubmit={submitSearch}
-                className="flex items-center gap-3 rounded-full bg-[#f1f5f9] hover:bg-[#ebf0f5] focus-within:bg-white focus-within:ring-2 focus-within:ring-[#00a896]/30 focus-within:border-[#00a896] border border-transparent px-4 sm:px-5 py-2.5 transition-all duration-200"
-              >
-                <Search className="h-4 w-4 shrink-0 text-gray-400" />
-                <input
-                  type="text"
-                  value={search}
-                  onFocus={() => setSearchOpen(true)}
-                  onChange={(e) => {
-                    setSearch(e.target.value);
-                    setSearchOpen(true);
-                  }}
-                  placeholder="Search brand or model (iPhone 16, Galaxy S24, OnePlus 12...)"
-                  className="w-full bg-transparent text-xs sm:text-sm font-medium text-gray-800 outline-none placeholder:text-gray-400"
-                />
-                {isSearchingApi && (
-                  <RefreshCw className="h-4 w-4 text-teal-600 animate-spin shrink-0" />
-                )}
-                {search && (
-                  <button
-                    type="button"
-                    onClick={() => setSearch('')}
-                    className="text-gray-400 hover:text-gray-600 transition p-0.5"
-                  >
-                    <X className="h-3.5 w-3.5" />
-                  </button>
-                )}
-              </form>
+              {/* 2. Middle: Large Rounded-Full Pill Search Bar (Desktop) */}
+              <div ref={desktopSearchRef} className="relative flex-1 max-w-2xl hidden md:block">
+                <form
+                  onSubmit={submitSearch}
+                  className="flex items-center gap-3 rounded-full bg-white text-[#344257] hover:bg-white focus-within:bg-white focus-within:ring-2 focus-within:ring-[#6A859F]/40 focus-within:border-[#47576E] border border-transparent shadow-sm px-4 sm:px-5 py-2.5 transition-all duration-200"
+                >
+                  <Search className="h-4 w-4 shrink-0 text-[#6A859F]" />
+                  <input
+                    type="text"
+                    value={search}
+                    onFocus={() => setSearchOpen(true)}
+                    onChange={(e) => {
+                      setSearch(e.target.value);
+                      setSearchOpen(true);
+                    }}
+                    placeholder="Search brand or model (iPhone 16, Galaxy S24, OnePlus 12...)"
+                    className="w-full bg-transparent text-xs sm:text-sm font-medium text-[#344257] outline-none placeholder:text-[#8A9AAF]"
+                  />
+                  {isSearchingApi && (
+                    <RefreshCw className="h-4 w-4 text-[#47576E] animate-spin shrink-0" />
+                  )}
+                  {search && (
+                    <button
+                      type="button"
+                      onClick={() => setSearch('')}
+                      className="text-gray-400 hover:text-gray-600 transition p-0.5"
+                    >
+                      <X className="h-3.5 w-3.5" />
+                    </button>
+                  )}
+                </form>
 
               {/* Live Search Autocomplete Popup */}
               {searchOpen && renderSearchDropdown(false)}
@@ -716,9 +718,9 @@ export default function Navbar() {
               <button
                 type="button"
                 onClick={() => setLocationModalOpen(true)}
-                className="flex sm:hidden items-center gap-1 rounded-full bg-teal-50 px-2.5 py-1 text-xs font-bold text-teal-700"
+                className="flex sm:hidden items-center gap-1 rounded-full bg-white/15 border border-white/25 px-2.5 py-1 text-xs font-bold text-white"
               >
-                <MapPin className="h-3 w-3 text-[#00a896]" />
+                <MapPin className="h-3 w-3 text-[#C0C8D8]" />
                 <span className="max-w-[70px] truncate">{selectedLocality.split(',')[0]}</span>
               </button>
 
@@ -727,12 +729,12 @@ export default function Navbar() {
                 <button
                   type="button"
                   onClick={() => setCartOpen((prev) => !prev)}
-                  className="relative flex h-10 w-10 items-center justify-center rounded-full text-gray-700 hover:text-[#00a896] hover:bg-gray-50 transition-colors"
+                  className="relative flex h-10 w-10 items-center justify-center rounded-full text-white/90 hover:text-white hover:bg-white/15 transition-colors cursor-pointer"
                   aria-label="Shopping Cart"
                 >
-                  <ShoppingCart className="h-5 w-5" />
+                  <ShoppingCart className="h-5 w-5 text-white" />
                   {cartItem ? (
-                    <span className="absolute 0 top-0.5 right-0.5 flex h-4.5 w-4.5 items-center justify-center rounded-full bg-[#00a896] text-[10px] font-bold text-white shadow">
+                    <span className="absolute 0 top-0.5 right-0.5 flex h-4.5 w-4.5 items-center justify-center rounded-full bg-[#344257] text-[10px] font-extrabold text-white shadow border border-white/40">
                       {cartItem.quantity || 1}
                     </span>
                   ) : null}
@@ -740,10 +742,10 @@ export default function Navbar() {
 
                 {/* Cart Modal Dropdown */}
                 {cartOpen && (
-                  <div className="absolute right-0 top-full mt-3 w-80 sm:w-92 rounded-2xl border border-gray-200 bg-white p-4 shadow-2xl z-50 animate-fade-in">
+                  <div className="absolute right-0 top-full mt-3 w-80 sm:w-92 rounded-2xl border border-gray-200 bg-white p-4 shadow-2xl z-50 animate-fade-in text-[#344257]">
                     <div className="flex items-center justify-between border-b border-gray-100 pb-3 mb-3">
                       <h3 className="font-bold text-sm sm:text-base text-gray-900 flex items-center gap-2">
-                        <ShoppingCart className="h-4 w-4 text-[#00a896]" /> Shopping Cart
+                        <ShoppingCart className="h-4 w-4 text-[#47576E]" /> Shopping Cart
                       </h3>
                       {cartItem && (
                         <button
@@ -777,7 +779,7 @@ export default function Navbar() {
                             <p className="text-xs text-gray-500 font-medium capitalize">
                               {cartItem.type.replace('_', ' ')} • Lucknow Free Delivery
                             </p>
-                            <p className="text-sm font-extrabold text-[#00a896] mt-0.5">
+                            <p className="text-sm font-extrabold text-[#344257] mt-0.5">
                               {formatINR(cartItem.item.price)}
                             </p>
                           </div>
@@ -793,7 +795,7 @@ export default function Navbar() {
                         <Link
                           to="/checkout"
                           onClick={() => setCartOpen(false)}
-                          className="w-full py-2.5 rounded-xl text-sm font-bold flex items-center justify-center gap-2 bg-[#00a896] hover:bg-[#008f80] text-white shadow transition"
+                          className="w-full py-2.5 rounded-xl text-sm font-bold flex items-center justify-center gap-2 bg-gradient-to-r from-[#344257] to-[#5D6A82] hover:brightness-110 text-white shadow transition"
                         >
                           Proceed to Checkout <ArrowRight className="h-4 w-4" />
                         </Link>
@@ -808,7 +810,7 @@ export default function Navbar() {
                         <Link
                           to="/buy"
                           onClick={() => setCartOpen(false)}
-                          className="inline-block mt-3 px-4 py-1.5 rounded-full text-xs font-bold bg-teal-50 text-teal-700 hover:bg-teal-100"
+                          className="inline-block mt-3 px-4 py-1.5 rounded-full text-xs font-bold bg-[#F0F0F5] text-[#344257] hover:bg-[#E4E7F0]"
                         >
                           Browse Deals
                         </Link>
@@ -824,9 +826,9 @@ export default function Navbar() {
                   <button
                     type="button"
                     onClick={() => setProfileOpen((prev) => !prev)}
-                    className="flex items-center gap-2 rounded-full border border-gray-200 bg-white px-3 py-1.5 text-sm font-bold text-gray-700 hover:border-[#00a896] shadow-sm transition"
+                    className="flex items-center gap-2 rounded-full border border-white/25 bg-white/15 hover:bg-white/25 px-3 py-1.5 text-sm font-bold text-white shadow-sm transition cursor-pointer"
                   >
-                    <span className="grid h-7 w-7 place-items-center rounded-full bg-teal-50 text-teal-700 overflow-hidden shrink-0 border border-teal-200">
+                    <span className="grid h-7 w-7 place-items-center rounded-full bg-white/20 text-white overflow-hidden shrink-0 border border-white/30">
                       {profile?.avatar_url ? (
                         <img src={profile.avatar_url} alt="Profile Avatar" className="h-full w-full object-cover" />
                       ) : (
@@ -836,11 +838,11 @@ export default function Navbar() {
                     <span className="max-w-[100px] truncate hidden sm:inline-block">
                       {profile?.full_name || user.email?.split('@')[0]}
                     </span>
-                    <ChevronDown className="h-3 w-3 text-gray-400" />
+                    <ChevronDown className="h-3 w-3 text-white/80" />
                   </button>
 
                   {profileOpen && (
-                    <div className="absolute right-0 top-full mt-2 w-60 rounded-2xl border border-gray-200 bg-white p-2.5 shadow-2xl z-50 animate-fade-in">
+                    <div className="absolute right-0 top-full mt-2 w-60 rounded-2xl border border-gray-200 bg-white p-2.5 shadow-2xl z-50 animate-fade-in text-[#344257]">
                       {authLinks}
                       <button
                         type="button"
@@ -858,7 +860,7 @@ export default function Navbar() {
               ) : (
                 <Link
                   to="/login"
-                  className="inline-flex items-center justify-center rounded-full bg-[#00a896] hover:bg-[#009688] active:scale-95 text-white font-bold text-xs sm:text-sm px-5 sm:px-6 py-2 sm:py-2.5 shadow-sm transition-all duration-150"
+                  className="inline-flex items-center justify-center rounded-full bg-gradient-to-r from-[#344257] to-[#5D6A82] hover:brightness-110 active:scale-95 text-white font-bold text-xs sm:text-sm px-5 sm:px-6 py-2 sm:py-2.5 shadow-md border border-white/20 transition-all duration-150 cursor-pointer"
                 >
                   Login
                 </Link>
@@ -868,24 +870,25 @@ export default function Navbar() {
               <button
                 type="button"
                 onClick={() => setMobileOpen((prev) => !prev)}
-                className="grid h-10 w-10 place-items-center rounded-full border border-gray-200 bg-white text-gray-700 lg:hidden shadow-sm hover:bg-gray-50"
+                className="grid h-10 w-10 place-items-center rounded-full border border-white/25 bg-white/15 text-white lg:hidden shadow-sm hover:bg-white/25 cursor-pointer"
                 aria-label="Toggle Navigation Menu"
               >
-                {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+                {mobileOpen ? <X className="h-5 w-5 text-white" /> : <Menu className="h-5 w-5 text-white" />}
               </button>
             </div>
           </div>
         </div>
+      </div>
 
         {/* ========================================================================= */}
         {/* MOBILE RESPONSIVE SEARCH BAR ROW (< md viewports) */}
         {/* ========================================================================= */}
-        <div ref={mobileSearchRef} className="block md:hidden border-t border-gray-100 px-3.5 py-2 bg-white relative">
+        <div ref={mobileSearchRef} className="block md:hidden border-t border-white/15 px-3.5 py-2 fundu-top-nav-gradient relative">
           <form
             onSubmit={submitSearch}
-            className="flex items-center gap-2.5 rounded-full bg-[#f1f5f9] focus-within:bg-white focus-within:ring-2 focus-within:ring-[#00a896]/30 focus-within:border-[#00a896] border border-transparent px-3.5 py-2 transition-all duration-200"
+            className="flex items-center gap-2.5 rounded-full bg-white text-[#344257] focus-within:ring-2 focus-within:ring-[#6A859F]/30 border border-transparent px-3.5 py-2 transition-all duration-200 shadow-sm"
           >
-            <Search className="h-4 w-4 shrink-0 text-gray-400" />
+            <Search className="h-4 w-4 shrink-0 text-[#6A859F]" />
             <input
               type="text"
               value={search}
@@ -895,10 +898,10 @@ export default function Navbar() {
                 setSearchOpen(true);
               }}
               placeholder="Search brand or model (iPhone, Samsung, OnePlus...)"
-              className="w-full bg-transparent text-xs font-medium text-gray-800 outline-none placeholder:text-gray-400"
+              className="w-full bg-transparent text-xs font-medium text-[#344257] outline-none placeholder:text-[#8A9AAF]"
             />
             {isSearchingApi && (
-              <RefreshCw className="h-3.5 w-3.5 text-teal-600 animate-spin shrink-0" />
+              <RefreshCw className="h-3.5 w-3.5 text-[#47576E] animate-spin shrink-0" />
             )}
             {search && (
               <button
@@ -918,36 +921,36 @@ export default function Navbar() {
         {/* ========================================================================= */}
         {/* BOTTOM ROW: SUB-NAVBAR CATEGORY STRIP */}
         {/* ========================================================================= */}
-        <div ref={dropdownRef} className="border-t border-gray-100 bg-white relative hidden lg:block">
+        <div ref={dropdownRef} className="border-t border-[#C0C8D8]/50 border-b border-[#C0C8D8]/60 fundu-feature-strip-gradient relative hidden lg:block shadow-xs">
           <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
-            <nav className="flex items-center justify-between text-[13px] font-semibold text-gray-700 h-11">
+            <nav className="flex items-center justify-between text-[13px] font-semibold text-[#344257] h-11">
 
               {/* All Mega Menu */}
               <div className="relative">
                 <button
                   type="button"
                   onClick={() => toggleDropdown('all')}
-                  className={`flex items-center gap-1.5 py-2 font-bold transition-colors cursor-pointer ${activeDropdown === 'all' ? 'text-[#00a896]' : 'text-gray-900 hover:text-[#00a896]'
+                  className={`flex items-center gap-1.5 py-2 font-bold transition-colors cursor-pointer ${activeDropdown === 'all' ? 'text-[#344257]' : 'text-[#344257] hover:text-[#47576E]'
                     }`}
                 >
                   <span>All</span>
-                  <ChevronDown className={`h-3 w-3 transition-transform duration-200 ${activeDropdown === 'all' ? 'rotate-180 text-[#00a896]' : 'text-gray-400'}`} />
+                  <ChevronDown className={`h-3 w-3 transition-transform duration-200 ${activeDropdown === 'all' ? 'rotate-180 text-[#344257]' : 'text-[#6A859F]'}`} />
                 </button>
 
                 {activeDropdown === 'all' && (
-                  <div className="absolute left-0 top-full mt-1 w-[720px] rounded-2xl border border-gray-200 bg-white p-6 shadow-2xl z-50 animate-fade-in grid grid-cols-3 gap-6">
+                  <div className="absolute left-0 top-full mt-1 w-[720px] rounded-2xl border border-gray-200 bg-white p-6 shadow-2xl z-50 animate-fade-in grid grid-cols-3 gap-6 text-[#344257]">
                     <div>
-                      <h4 className="text-xs font-extrabold uppercase tracking-wider text-gray-400 mb-3 flex items-center gap-1.5">
-                        <BadgeIndianRupee className="h-3.5 w-3.5 text-[#00a896]" /> Sell & Trade-in
+                      <h4 className="text-xs font-extrabold uppercase tracking-wider text-[#6A859F] mb-3 flex items-center gap-1.5">
+                        <BadgeIndianRupee className="h-3.5 w-3.5 text-[#47576E]" /> Sell & Trade-in
                       </h4>
                       <ul className="space-y-2 text-xs">
                         <li>
-                          <Link to="/sell" className="font-semibold text-gray-800 hover:text-[#00a896] block">
+                          <Link to="/sell" className="font-semibold text-gray-800 hover:text-[#344257] block">
                             Sell Old Phone (Instant Cash)
                           </Link>
                         </li>
                         <li>
-                          <Link to="/recycle" className="font-semibold text-gray-800 hover:text-[#00a896] block">
+                          <Link to="/recycle" className="font-semibold text-gray-800 hover:text-[#344257] block">
                             Sell Old Appliances & Tablets
                           </Link>
                         </li>
@@ -955,22 +958,22 @@ export default function Navbar() {
                     </div>
 
                     <div>
-                      <h4 className="text-xs font-extrabold uppercase tracking-wider text-gray-400 mb-3 flex items-center gap-1.5">
-                        <Store className="h-3.5 w-3.5 text-[#00a896]" /> Buy Phone
+                      <h4 className="text-xs font-extrabold uppercase tracking-wider text-[#6A859F] mb-3 flex items-center gap-1.5">
+                        <Store className="h-3.5 w-3.5 text-[#47576E]" /> Buy Phone
                       </h4>
                       <ul className="space-y-2 text-xs">
                         <li>
-                          <Link to="/buy?brand=Apple" className="font-semibold text-gray-800 hover:text-[#00a896] block">
+                          <Link to="/buy?brand=Apple" className="font-semibold text-gray-800 hover:text-[#344257] block">
                             Refurbished Apple iPhones
                           </Link>
                         </li>
                         <li>
-                          <Link to="/buy?brand=Samsung" className="font-semibold text-gray-800 hover:text-[#00a896] block">
+                          <Link to="/buy?brand=Samsung" className="font-semibold text-gray-800 hover:text-[#344257] block">
                             Samsung Galaxy Flagships
                           </Link>
                         </li>
                         <li>
-                          <Link to="/store" className="font-semibold text-gray-800 hover:text-[#00a896] block">
+                          <Link to="/store" className="font-semibold text-gray-800 hover:text-[#344257] block">
                             Fundu Exclusive Store
                           </Link>
                         </li>
@@ -978,22 +981,22 @@ export default function Navbar() {
                     </div>
 
                     <div>
-                      <h4 className="text-xs font-extrabold uppercase tracking-wider text-gray-400 mb-3 flex items-center gap-1.5">
-                        <Wrench className="h-3.5 w-3.5 text-[#00a896]" /> Repairs & Services
+                      <h4 className="text-xs font-extrabold uppercase tracking-wider text-[#6A859F] mb-3 flex items-center gap-1.5">
+                        <Wrench className="h-3.5 w-3.5 text-[#47576E]" /> Repairs & Services
                       </h4>
                       <ul className="space-y-2 text-xs">
                         <li>
-                          <Link to="/repair" className="font-semibold text-gray-800 hover:text-[#00a896] block">
+                          <Link to="/repair" className="font-semibold text-gray-800 hover:text-[#344257] block">
                             30-Min Doorstep Phone Repair
                           </Link>
                         </li>
                         <li>
-                          <Link to="/spare-parts" className="font-semibold text-gray-800 hover:text-[#00a896] block">
+                          <Link to="/spare-parts" className="font-semibold text-gray-800 hover:text-[#344257] block">
                             Genuine Spare Parts
                           </Link>
                         </li>
                         <li>
-                          <Link to="/partner" className="font-semibold text-gray-800 hover:text-[#00a896] block">
+                          <Link to="/partner" className="font-semibold text-gray-800 hover:text-[#344257] block">
                             Become a Partner / Franchise
                           </Link>
                         </li>
@@ -1009,8 +1012,8 @@ export default function Navbar() {
                   to="/sell"
                   className={`transition-colors font-bold ${
                     activeDropdown === 'sell-phone' || location.pathname === '/sell'
-                      ? 'text-[#00a896]'
-                      : 'hover:text-[#00a896]'
+                      ? 'text-[#344257]'
+                      : 'text-[#344257] hover:text-[#47576E]'
                   }`}
                 >
                   Sell Phone
@@ -1018,21 +1021,21 @@ export default function Navbar() {
                 <button
                   type="button"
                   onClick={() => toggleDropdown('sell-phone')}
-                  className="p-1 hover:text-[#00a896] cursor-pointer"
+                  className="p-1 text-[#6A859F] hover:text-[#344257] cursor-pointer"
                   title="Toggle Sell Brands Menu"
                 >
                   <ChevronDown
                     className={`h-3 w-3 transition-transform duration-200 ${
-                      activeDropdown === 'sell-phone' ? 'rotate-180 text-[#00a896]' : 'text-gray-400'
+                      activeDropdown === 'sell-phone' ? 'rotate-180 text-[#344257]' : 'text-[#6A859F]'
                     }`}
                   />
                 </button>
 
                 {activeDropdown === 'sell-phone' && (
-                  <div className="absolute left-0 top-full mt-1 w-[460px] rounded-2xl border border-gray-200 bg-white p-4 shadow-2xl z-50 animate-fade-in">
+                  <div className="absolute left-0 top-full mt-1 w-[460px] rounded-2xl border border-gray-200 bg-white p-4 shadow-2xl z-50 animate-fade-in text-[#344257]">
                     <div className="flex items-center justify-between pb-2 border-b border-gray-100 mb-3">
                       <span className="text-xs font-bold text-gray-900">Select Brand to Sell</span>
-                      <Link to="/sell" className="text-xs font-bold text-[#00a896] hover:underline">
+                      <Link to="/sell" className="text-xs font-bold text-[#47576E] hover:text-[#344257] hover:underline">
                         View All Brands →
                       </Link>
                     </div>
@@ -1041,12 +1044,12 @@ export default function Navbar() {
                         <Link
                           key={b.name}
                           to={`/sell?brand=${encodeURIComponent(b.name)}`}
-                          className="flex items-center justify-between p-2 rounded-xl hover:bg-gray-50 border border-gray-100 transition group"
+                          className="flex items-center justify-between p-2 rounded-xl hover:bg-[#F0F0F5] border border-gray-100 transition group"
                         >
-                          <span className="text-xs font-bold text-gray-800 group-hover:text-[#00a896]">
+                          <span className="text-xs font-bold text-gray-800 group-hover:text-[#344257]">
                             {b.name}
                           </span>
-                          <span className="text-[10px] font-semibold text-teal-700 bg-teal-50 px-2 py-0.5 rounded-md">
+                          <span className="text-[10px] font-semibold text-[#47576E] bg-[#E4E7F0] px-2 py-0.5 rounded-md">
                             {b.tag}
                           </span>
                         </Link>
@@ -1062,8 +1065,8 @@ export default function Navbar() {
                   to="/buy"
                   className={`transition-colors font-bold ${
                     activeDropdown === 'buy-refurbished' || location.pathname === '/buy'
-                      ? 'text-[#00a896]'
-                      : 'hover:text-[#00a896]'
+                      ? 'text-[#344257]'
+                      : 'text-[#344257] hover:text-[#47576E]'
                   }`}
                 >
                   Buy Phone
@@ -1071,21 +1074,21 @@ export default function Navbar() {
                 <button
                   type="button"
                   onClick={() => toggleDropdown('buy-refurbished')}
-                  className="p-1 hover:text-[#00a896] cursor-pointer"
+                  className="p-1 text-[#6A859F] hover:text-[#344257] cursor-pointer"
                   title="Toggle Certified Phones Menu"
                 >
                   <ChevronDown
                     className={`h-3 w-3 transition-transform duration-200 ${
-                      activeDropdown === 'buy-refurbished' ? 'rotate-180 text-[#00a896]' : 'text-gray-400'
+                      activeDropdown === 'buy-refurbished' ? 'rotate-180 text-[#344257]' : 'text-[#6A859F]'
                     }`}
                   />
                 </button>
 
                 {activeDropdown === 'buy-refurbished' && (
-                  <div className="absolute left-0 top-full mt-1 w-[420px] rounded-2xl border border-gray-200 bg-white p-4 shadow-2xl z-50 animate-fade-in">
+                  <div className="absolute left-0 top-full mt-1 w-[420px] rounded-2xl border border-gray-200 bg-white p-4 shadow-2xl z-50 animate-fade-in text-[#344257]">
                     <div className="flex items-center justify-between pb-2 border-b border-gray-100 mb-3">
                       <span className="text-xs font-bold text-gray-900">Certified Phones</span>
-                      <Link to="/buy" className="text-xs font-bold text-[#00a896] hover:underline">
+                      <Link to="/buy" className="text-xs font-bold text-[#47576E] hover:text-[#344257] hover:underline">
                         All Deals →
                       </Link>
                     </div>
@@ -1094,15 +1097,15 @@ export default function Navbar() {
                         <Link
                           key={item.title}
                           to={item.to}
-                          className="flex items-center justify-between p-2.5 rounded-xl hover:bg-teal-50/60 border border-gray-100 transition group"
+                          className="flex items-center justify-between p-2.5 rounded-xl hover:bg-[#F0F0F5] border border-gray-100 transition group"
                         >
                           <div>
-                            <p className="text-xs font-bold text-gray-900 group-hover:text-[#00a896]">
+                            <p className="text-xs font-bold text-gray-900 group-hover:text-[#344257]">
                               {item.title}
                             </p>
                             <p className="text-[11px] text-gray-500">{item.desc}</p>
                           </div>
-                          <span className="text-[10px] font-bold bg-teal-100/70 text-teal-800 px-2 py-0.5 rounded-md shrink-0">
+                          <span className="text-[10px] font-bold bg-[#E4E7F0] text-[#344257] px-2 py-0.5 rounded-md shrink-0">
                             {item.badge}
                           </span>
                         </Link>
@@ -1115,7 +1118,7 @@ export default function Navbar() {
               {/* Phone Repair */}
               <Link
                 to="/repair"
-                className="py-2 hover:text-[#00a896] transition-colors"
+                className="py-2 text-[#344257] hover:text-[#47576E] transition-colors"
               >
                 Phone Repair
               </Link>
@@ -1123,7 +1126,7 @@ export default function Navbar() {
               {/* Spare Parts */}
               <Link
                 to="/spare-parts"
-                className="py-2 hover:text-[#00a896] transition-colors"
+                className="py-2 text-[#344257] hover:text-[#47576E] transition-colors"
               >
                 Spare Parts
               </Link>
@@ -1131,7 +1134,7 @@ export default function Navbar() {
               {/* Sell Appliances */}
               <Link
                 to="/recycle"
-                className="py-2 hover:text-[#00a896] transition-colors"
+                className="py-2 text-[#344257] hover:text-[#47576E] transition-colors"
               >
                 Sell Appliances
               </Link>
@@ -1140,7 +1143,7 @@ export default function Navbar() {
               {/* Become Partner */}
               <Link
                 to="/partner"
-                className="py-2 hover:text-[#00a896] transition-colors"
+                className="py-2 text-[#344257] hover:text-[#47576E] transition-colors"
               >
                 Become Partner
               </Link>
@@ -1150,15 +1153,15 @@ export default function Navbar() {
                 <button
                   type="button"
                   onClick={() => toggleDropdown('our-stores')}
-                  className={`flex items-center gap-1.5 py-2 font-bold transition-colors cursor-pointer ${activeDropdown === 'our-stores' ? 'text-[#00a896]' : 'text-gray-900 hover:text-[#00a896]'
+                  className={`flex items-center gap-1.5 py-2 font-bold transition-colors cursor-pointer ${activeDropdown === 'our-stores' ? 'text-[#344257]' : 'text-[#344257] hover:text-[#47576E]'
                     }`}
                 >
-                  <MapPin className="h-3.5 w-3.5 text-[#00a896]" />
+                  <MapPin className="h-3.5 w-3.5 text-[#6A859F]" />
                   <span>Our Stores</span>
-                  <span className="grid h-4.5 min-w-4.5 px-1 place-items-center rounded-full bg-[#00a896] text-[10px] font-extrabold text-white">
+                  <span className="grid h-4.5 min-w-4.5 px-1 place-items-center rounded-full bg-[#344257] text-[10px] font-extrabold text-white shadow-xs">
                     7
                   </span>
-                  <ChevronDown className={`h-3 w-3 transition-transform duration-200 ${activeDropdown === 'our-stores' ? 'rotate-180 text-[#00a896]' : 'text-gray-400'}`} />
+                  <ChevronDown className={`h-3 w-3 transition-transform duration-200 ${activeDropdown === 'our-stores' ? 'rotate-180 text-[#344257]' : 'text-[#6A859F]'}`} />
                 </button>
 
                 {activeDropdown === 'our-stores' && (

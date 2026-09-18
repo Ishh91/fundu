@@ -786,11 +786,11 @@ export function groupModelsBySeries(brand: string, allModels: CatalogModelItem[]
 
     // Combine matched models with defaultModels so all expected models are present
     const combinedModels: CatalogModelItem[] = [...matched];
-    const seenNames = new Set(matched.map((m) => m.model.toLowerCase().replace(/[^a-z0-9]/g, '')));
+    const seenNames = new Set(matched.map((m) => m.model.toLowerCase().replace(/\+/g, 'plus').replace(/[^a-z0-9]/g, '')));
 
     if (def.defaultModels) {
       for (const defModel of def.defaultModels) {
-        const norm = defModel.model.toLowerCase().replace(/[^a-z0-9]/g, '');
+        const norm = defModel.model.toLowerCase().replace(/\+/g, 'plus').replace(/[^a-z0-9]/g, '');
         if (!seenNames.has(norm)) {
           combinedModels.push(defModel);
           seenNames.add(norm);

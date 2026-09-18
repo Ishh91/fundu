@@ -5,18 +5,39 @@
 @tailwind utilities;
 
 @layer base {
+  :root {
+    --fundu-deep-slate: #344257;
+    --fundu-slate-blue: #47576E;
+    --fundu-steel-blue: #6A859F;
+    --fundu-muted-blue-gray: #8A9AAF;
+    --fundu-lavender: #C0C8D8;
+    --fundu-hero-light: #F0F0F5;
+    --fundu-strip-light: #F7F7FA;
+    --fundu-strip-end: #E4E7F0;
+    --fundu-nav-start: #42546C;
+    --fundu-nav-end: #B6AEBB;
+    --fundu-cta-start: #344257;
+    --fundu-cta-end: #5D6A82;
+
+    --gradient-top-nav: linear-gradient(90deg, #42546C 0%, #B6AEBB 100%);
+    --gradient-hero: linear-gradient(135deg, #6A859F 0%, #F0F0F5 100%);
+    --gradient-hero-lavender: linear-gradient(90deg, #F0F0F5 0%, #C0C8D8 100%);
+    --gradient-feature-strip: linear-gradient(180deg, #F7F7FA 0%, #E4E7F0 100%);
+    --gradient-dark-cta: linear-gradient(135deg, #344257 0%, #5D6A82 100%);
+  }
+
   html {
     scroll-behavior: smooth;
   }
   body {
-    @apply text-slate-900 font-sans antialiased selection:bg-[#86dedd]/30 selection:text-slate-900;
-    background: linear-gradient(135deg, #86dedd 0%, #bfebe1 25%, #9ac0dd 50%, #c0e7e4 75%, #a2e5e2 100%);
+    @apply text-[#344257] font-sans antialiased selection:bg-[#6A859F]/25 selection:text-[#344257];
+    background: linear-gradient(180deg, #F0F0F5 0%, #F7F7FA 35%, #E4E7F0 100%);
     background-attachment: fixed;
     min-height: 100vh;
   }
   ::selection {
-    background-color: rgba(134, 222, 221, 0.4);
-    color: #0f172a;
+    background-color: rgba(106, 133, 159, 0.3);
+    color: #344257;
   }
 }
 
@@ -30,19 +51,33 @@
   }
 
   .btn-primary {
-    @apply btn border border-brand-500 bg-brand-500 text-white px-5 py-3 hover:bg-brand-600 hover:shadow-glow active:scale-[0.98];
+    @apply btn border border-[#344257] text-white px-5 py-3 shadow-md hover:shadow-lg active:scale-[0.98];
+    background: linear-gradient(135deg, #344257 0%, #5D6A82 100%);
+  }
+  .btn-primary:hover {
+    background: linear-gradient(135deg, #2a3647 0%, #4c586e 100%);
+  }
+
+  .btn-dark-cta {
+    @apply btn text-white font-bold px-6 py-3 rounded-full transition-all duration-200 shadow-md active:scale-95;
+    background: linear-gradient(135deg, #344257 0%, #5D6A82 100%);
+  }
+  .btn-dark-cta:hover {
+    background: linear-gradient(135deg, #263140 0%, #47546a 100%);
+    box-shadow: 0 8px 20px -4px rgba(52, 66, 87, 0.4);
   }
 
   .btn-accent {
-    @apply btn border border-accent-400 bg-accent-500 text-white px-5 py-3 hover:bg-accent-400 active:scale-[0.98];
+    @apply btn border border-[#6A859F] text-white px-5 py-3 hover:opacity-90 active:scale-[0.98];
+    background: linear-gradient(135deg, #6A859F 0%, #8A9AAF 100%);
   }
 
   .btn-outline {
-    @apply btn border border-ink-200 bg-white text-ink-900 px-5 py-3 hover:border-brand-300 hover:bg-brand-50 hover:text-brand-700 active:scale-[0.98];
+    @apply btn border border-[#C0C8D8] bg-white text-[#344257] px-5 py-3 hover:border-[#6A859F] hover:bg-[#F0F0F5] hover:text-[#344257] active:scale-[0.98];
   }
 
   .btn-ghost {
-    @apply btn text-ink-600 px-4 py-2 hover:bg-brand-50 hover:text-brand-700;
+    @apply btn text-[#47576E] px-4 py-2 hover:bg-[#F0F0F5] hover:text-[#344257];
   }
 
   .input {
@@ -161,11 +196,27 @@
     border: 1px solid rgba(134, 222, 221, 0.65);
   }
   .canva-pill-frosted:hover {
-    background-color: rgba(162, 229, 226, 0.85);
-    border-color: rgba(134, 222, 221, 0.9);
+    background-color: rgba(192, 231, 228, 0.9);
   }
   .canva-card-glass {
     @apply rounded-3xl bg-white/80 backdrop-blur-xl border border-white/80 shadow-[0_20px_50px_rgba(0,0,0,0.04)];
+  }
+
+  /* Fundu Official Palette Gradient Classes */
+  .fundu-top-nav-gradient {
+    background: linear-gradient(90deg, #42546C 0%, #B6AEBB 100%);
+  }
+  .fundu-hero-gradient {
+    background: linear-gradient(135deg, #6A859F 0%, #F0F0F5 100%);
+  }
+  .fundu-hero-lavender-gradient {
+    background: linear-gradient(90deg, #F0F0F5 0%, #C0C8D8 100%);
+  }
+  .fundu-feature-strip-gradient {
+    background: linear-gradient(180deg, #F7F7FA 0%, #E4E7F0 100%);
+  }
+  .fundu-dark-cta-gradient {
+    background: linear-gradient(135deg, #344257 0%, #5D6A82 100%);
   }
 }
 
