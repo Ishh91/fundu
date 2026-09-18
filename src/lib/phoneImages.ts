@@ -104,21 +104,52 @@ export const MODEL_EXACT_RENDERS: Array<{ keyword: string; url: string }> = [
   { keyword: 'xiaomi 14', url: 'https://fdn2.gsmarena.com/vv/bigpic/xiaomi-14-pro.jpg' },
   { keyword: 'redmi note 13 pro', url: 'https://fdn2.gsmarena.com/vv/bigpic/xiaomi-redmi-note-13-pro-plus.jpg' },
   { keyword: 'redmi note 13', url: 'https://fdn2.gsmarena.com/vv/bigpic/xiaomi-redmi-note-13.jpg' },
+  { keyword: 'redmi note 12 pro', url: 'https://fdn2.gsmarena.com/vv/bigpic/xiaomi-redmi-note-12-pro-plus.jpg' },
+  { keyword: 'redmi note 12', url: 'https://fdn2.gsmarena.com/vv/bigpic/xiaomi-redmi-note-12-5g.jpg' },
+  { keyword: 'redmi note 11 pro', url: 'https://fdn2.gsmarena.com/vv/bigpic/xiaomi-redmi-note-11-pro-plus-5g.jpg' },
+  { keyword: 'redmi note 11', url: 'https://fdn2.gsmarena.com/vv/bigpic/xiaomi-redmi-note-11-global.jpg' },
+  { keyword: 'redmi note 10 pro', url: 'https://fdn2.gsmarena.com/vv/bigpic/xiaomi-redmi-note10-pro.jpg' },
+  { keyword: 'redmi note 10', url: 'https://fdn2.gsmarena.com/vv/bigpic/xiaomi-redmi-note10.jpg' },
+  { keyword: 'redmi note 9 pro', url: 'https://fdn2.gsmarena.com/vv/bigpic/xiaomi-redmi-note-9-pro-global-.jpg' },
+  { keyword: 'redmi note 9', url: 'https://fdn2.gsmarena.com/vv/bigpic/xiaomi-redmi-note-9.jpg' },
+  { keyword: 'redmi note 8 pro', url: 'https://fdn2.gsmarena.com/vv/bigpic/xiaomi-redmi-note-8-pro.jpg' },
+  { keyword: 'redmi note 8', url: 'https://fdn2.gsmarena.com/vv/bigpic/xiaomi-redmi-note-8.jpg' },
   { keyword: 'poco x6', url: 'https://fdn2.gsmarena.com/vv/bigpic/xiaomi-poco-x6-pro.jpg' },
 
   // Vivo / iQOO
   { keyword: 'vivo x200', url: 'https://fdn2.gsmarena.com/vv/bigpic/vivo-x200-pro.jpg' },
   { keyword: 'vivo x100', url: 'https://fdn2.gsmarena.com/vv/bigpic/vivo-x100-pro.jpg' },
+  { keyword: 'vivo v40 pro', url: 'https://fdn2.gsmarena.com/vv/bigpic/vivo-v40-pro.jpg' },
+  { keyword: 'vivo v40', url: 'https://fdn2.gsmarena.com/vv/bigpic/vivo-v40.jpg' },
   { keyword: 'vivo v30', url: 'https://fdn2.gsmarena.com/vv/bigpic/vivo-v30-pro.jpg' },
+  { keyword: 'vivo v29 pro', url: 'https://fdn2.gsmarena.com/vv/bigpic/vivo-v29-pro.jpg' },
+  { keyword: 'vivo v29', url: 'https://fdn2.gsmarena.com/vv/bigpic/vivo-v29.jpg' },
   { keyword: 'iqoo 12', url: 'https://fdn2.gsmarena.com/vv/bigpic/vivo-iqoo12.jpg' },
 
+  // Oppo
+  { keyword: 'oppo reno 12 pro', url: 'https://fdn2.gsmarena.com/vv/bigpic/oppo-reno12-pro.jpg' },
+  { keyword: 'oppo reno 12', url: 'https://fdn2.gsmarena.com/vv/bigpic/oppo-reno12.jpg' },
+  { keyword: 'oppo reno 11 pro', url: 'https://fdn2.gsmarena.com/vv/bigpic/oppo-reno11-pro.jpg' },
+  { keyword: 'oppo reno 11', url: 'https://fdn2.gsmarena.com/vv/bigpic/oppo-reno11.jpg' },
+  { keyword: 'oppo find x7', url: 'https://fdn2.gsmarena.com/vv/bigpic/oppo-find-x7-ultra.jpg' },
+
+  // Realme
+  { keyword: 'realme 13 pro', url: 'https://fdn2.gsmarena.com/vv/bigpic/realme-13-pro-plus.jpg' },
+  { keyword: 'realme 12 pro', url: 'https://fdn2.gsmarena.com/vv/bigpic/realme-12-pro-plus.jpg' },
+  { keyword: 'realme 11 pro', url: 'https://fdn2.gsmarena.com/vv/bigpic/realme-11-pro-plus.jpg' },
+  { keyword: 'realme gt', url: 'https://fdn2.gsmarena.com/vv/bigpic/realme-gt-6t.jpg' },
+
   // Google Pixel
+  { keyword: 'pixel 9 pro', url: 'https://fdn2.gsmarena.com/vv/bigpic/google-pixel-9-pro-xl.jpg' },
+  { keyword: 'pixel 9', url: 'https://fdn2.gsmarena.com/vv/bigpic/google-pixel-9.jpg' },
   { keyword: 'pixel 8 pro', url: 'https://fdn2.gsmarena.com/vv/bigpic/google-pixel-8-pro.jpg' },
   { keyword: 'pixel 8', url: 'https://fdn2.gsmarena.com/vv/bigpic/google-pixel-8.jpg' },
   { keyword: 'pixel 7', url: 'https://fdn2.gsmarena.com/vv/bigpic/google-pixel-7a.jpg' },
 
   // Motorola
   { keyword: 'edge 50', url: 'https://fdn2.gsmarena.com/vv/bigpic/motorola-edge-50-pro.jpg' },
+  { keyword: 'edge 40', url: 'https://fdn2.gsmarena.com/vv/bigpic/motorola-edge-40.jpg' },
+  { keyword: 'g85', url: 'https://fdn2.gsmarena.com/vv/bigpic/motorola-moto-g85.jpg' },
   { keyword: 'g84', url: 'https://fdn2.gsmarena.com/vv/bigpic/motorola-moto-g84.jpg' },
 
   // Others

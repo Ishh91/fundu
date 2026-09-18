@@ -26,6 +26,7 @@ import {
   ArrowRight,
 } from 'lucide-react';
 import { formatINR } from '../lib/db';
+import { getCleanPhoneImage } from '../lib/phoneImages';
 import { MASTER_MODEL_CATALOG } from './SellPhone';
 
 const ISSUE_DETAILS: Record<
@@ -250,6 +251,21 @@ export default function RepairIssuePage() {
                     </>
                   )}
                 </select>
+              </div>
+
+              {/* Selected Phone Live Thumbnail */}
+              <div className="flex items-center gap-3 p-2.5 bg-gray-50 rounded-2xl border border-gray-200/80">
+                <div className="h-12 w-12 rounded-xl bg-white p-1 border border-gray-100 flex items-center justify-center shrink-0 shadow-xs">
+                  <img
+                    src={getCleanPhoneImage(selectedBrand, selectedModel)}
+                    alt={selectedModel}
+                    className="max-h-full max-w-full w-auto h-auto object-contain mix-blend-multiply"
+                  />
+                </div>
+                <div>
+                  <p className="text-xs font-bold text-gray-900">{selectedModel}</p>
+                  <p className="text-[11px] text-gray-500 font-semibold">{selectedBrand} · Instant Doorstep Fix</p>
+                </div>
               </div>
 
               <button

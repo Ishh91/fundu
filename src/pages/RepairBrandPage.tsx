@@ -25,7 +25,7 @@ import {
 } from 'lucide-react';
 import { formatINR } from '../lib/db';
 import { MASTER_MODEL_CATALOG } from './SellPhone';
-import { getCleanPhoneImage, BRAND_FRONT_FALLBACKS } from '../lib/phoneImages';
+import { getCleanPhoneImage, getCleanBrandLogo, BRAND_FRONT_FALLBACKS } from '../lib/phoneImages';
 import { ALL_INDIAN_PHONES_CATALOG } from '../data/indianPhonesCatalog';
 
 const BRAND_REPAIR_DETAILS: Record<
@@ -33,60 +33,74 @@ const BRAND_REPAIR_DETAILS: Record<
   { logo: string; tagline: string; desc: string; count: string; series: string[] }
 > = {
   apple: {
-    logo: 'https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=150&auto=format&fit=crop&q=80',
+    logo: getCleanBrandLogo('Apple'),
     tagline: 'Doorstep iPhone Repair Services in Lucknow with Up to 6 Months Warranty',
     desc: 'Get certified doorstep Apple iPhone screen, battery, camera & back glass repair in Lucknow. 30-minute repair right in front of your eyes at home or office.',
     count: '30+ iPhone Models Covered',
     series: ['All', 'iPhone 15 Series', 'iPhone 14 Series', 'iPhone 13 Series', 'iPhone 12 Series', 'iPhone 11 Series'],
   },
   samsung: {
-    logo: 'https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?w=150&auto=format&fit=crop&q=80',
+    logo: getCleanBrandLogo('Samsung'),
     tagline: 'Doorstep Samsung Galaxy Phone Repair & Display Replacement in Lucknow',
     desc: 'Original Super AMOLED screen replacement, battery health fix & motherboard IC repair for Samsung S, Z Fold, A & M series at your doorstep.',
     count: '45+ Samsung Models Covered',
     series: ['All', 'Galaxy S Series', 'Galaxy Z Series', 'Galaxy A Series', 'Galaxy M Series'],
   },
   oneplus: {
-    logo: 'https://images.unsplash.com/photo-1580910051074-3eb694886505?w=150&auto=format&fit=crop&q=80',
+    logo: getCleanBrandLogo('OnePlus'),
     tagline: 'Doorstep OnePlus Mobile Screen, Battery & Charging Port Repair',
     desc: 'Quick 30-minute doorstep repair for OnePlus 12, 11, Nord & R series in Lucknow with 100% genuine spare parts.',
     count: '25+ OnePlus Models Covered',
     series: ['All', 'Number Series', 'Nord Series', 'R Series'],
   },
   xiaomi: {
-    logo: 'https://images.unsplash.com/photo-1598327105666-5b89351aff97?w=150&auto=format&fit=crop&q=80',
+    logo: getCleanBrandLogo('Xiaomi'),
     tagline: 'Fast Doorstep Xiaomi / Redmi / POCO Phone Repair in Lucknow',
     desc: 'Expert display change, battery replacement & liquid damage diagnosis for Xiaomi Mi, Redmi Note & POCO mobiles at home.',
     count: '50+ Xiaomi Models Covered',
     series: ['All', 'Redmi Note Series', 'Mi Series', 'Redmi Series', 'Poco Series'],
   },
   vivo: {
-    logo: 'https://images.unsplash.com/photo-1546054454-aa26e2b734c7?w=150&auto=format&fit=crop&q=80',
+    logo: getCleanBrandLogo('Vivo'),
     tagline: 'Doorstep Vivo Mobile Display & Glass Replacement Service',
     desc: 'Get your Vivo X, V & Y series phone repaired at your doorstep in Lucknow. Original parts & up to 6 months warranty.',
     count: '40+ Vivo Models Covered',
     series: ['All', 'X Series', 'V Series', 'Y Series'],
   },
   realme: {
-    logo: 'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=150&auto=format&fit=crop&q=80',
+    logo: getCleanBrandLogo('Realme'),
     tagline: 'Doorstep Realme Mobile Phone Repair & Battery Replacement',
     desc: 'Affordable doorstep screen & battery repair for Realme GT, Pro & C series across Gomti Nagar, Hazratganj & all Lucknow.',
     count: '35+ Realme Models Covered',
     series: ['All', 'Pro Series', 'GT Series', 'C Series'],
   },
   oppo: {
-    logo: 'https://images.unsplash.com/photo-1565849904461-04a58ad377e0?w=150&auto=format&fit=crop&q=80',
+    logo: getCleanBrandLogo('Oppo'),
     tagline: 'Doorstep Oppo Mobile Screen & Charging Port Repair',
     desc: 'Certified repair for Oppo Reno, Find & A series at your doorstep in Lucknow with zero visiting fees.',
     count: '30+ Oppo Models Covered',
     series: ['All', 'Reno Series', 'Find Series', 'A Series'],
   },
   google: {
-    logo: 'https://images.unsplash.com/photo-1598327105666-5b89351aff97?w=150&auto=format&fit=crop&q=80',
+    logo: getCleanBrandLogo('Google'),
     tagline: 'Doorstep Google Pixel Display & Battery Repair in Lucknow',
     desc: 'Specialized doorstep repair for Google Pixel 8, 7 & 6 series with OEM screen panels & original batteries.',
     count: '15+ Pixel Models Covered',
     series: ['All', 'Pixel Series'],
+  },
+  motorola: {
+    logo: getCleanBrandLogo('Motorola'),
+    tagline: 'Doorstep Motorola Phone Display & Battery Repair in Lucknow',
+    desc: 'Certified repair for Motorola Edge, Moto G & Razr series in Lucknow with genuine replacement parts.',
+    count: '25+ Motorola Models Covered',
+    series: ['All', 'Edge Series', 'G Series', 'Razr Series'],
+  },
+  nothing: {
+    logo: getCleanBrandLogo('Nothing'),
+    tagline: 'Doorstep Nothing Phone Repair & Glyph Interface Diagnostics',
+    desc: 'Doorstep transparent back glass, OLED display & battery repair for Nothing Phone (1), (2), (2a) & CMF in Lucknow.',
+    count: '4+ Nothing Models Covered',
+    series: ['All', 'Phone Series', 'CMF Series'],
   },
 };
 
@@ -208,16 +222,25 @@ export default function RepairBrandPage() {
       <section className="py-6 px-4">
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
-            <div>
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-100 text-purple-800 font-extrabold text-xs mb-2">
-                <Wrench className="h-3.5 w-3.5" /> Lucknow Doorstep Repair Center
+            <div className="flex items-start sm:items-center gap-4">
+              <div className="h-16 w-16 rounded-2xl bg-white p-3 border border-purple-100 shadow-sm flex items-center justify-center shrink-0">
+                <img
+                  src={brandInfo.logo || getCleanBrandLogo(brandCleanKey)}
+                  alt={brandDisplayName}
+                  className="max-h-full max-w-full object-contain"
+                />
               </div>
-              <h1 className="font-display text-2xl md:text-3xl font-black text-gray-900">
-                Doorstep {brandDisplayName} Mobile Repair in Lucknow
-              </h1>
-              <p className="text-xs text-gray-500 mt-1 max-w-2xl">
-                {brandInfo.desc}
-              </p>
+              <div>
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-100 text-purple-800 font-extrabold text-xs mb-2">
+                  <Wrench className="h-3.5 w-3.5" /> Lucknow Doorstep Repair Center
+                </div>
+                <h1 className="font-display text-2xl md:text-3xl font-black text-gray-900">
+                  Doorstep {brandDisplayName} Mobile Repair in Lucknow
+                </h1>
+                <p className="text-xs text-gray-500 mt-1 max-w-2xl">
+                  {brandInfo.desc}
+                </p>
+              </div>
             </div>
 
             {/* Search Bar */}
@@ -326,11 +349,11 @@ export default function RepairBrandPage() {
                     className="p-3.5 sm:p-5 rounded-2xl border border-gray-100 bg-white hover:border-[#00a896] hover:shadow-lg transition-all duration-200 group cursor-pointer flex flex-col items-center justify-between text-center min-h-[175px] sm:min-h-[210px]"
                   >
                     {/* Centered Clean Device Image Container */}
-                    <div className="h-28 sm:h-36 w-full flex items-center justify-center p-1 relative overflow-hidden">
+                    <div className="h-32 sm:h-40 w-full flex items-center justify-center p-2.5 relative">
                       <img
                         src={getCleanPhoneImage(m.brand || brandDisplayName, m.model, m.image)}
                         alt={displayName}
-                        className="h-full max-h-28 sm:max-h-36 w-auto object-contain group-hover:scale-105 transition-transform duration-300 drop-shadow-xs"
+                        className="max-h-full max-w-full w-auto h-auto object-contain group-hover:scale-105 transition-transform duration-300 filter drop-shadow-sm mix-blend-multiply"
                         loading="lazy"
                         referrerPolicy="no-referrer"
                         onError={(e) => {

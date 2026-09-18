@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useMemo } from 'react';
 import { useNavigate, useSearchParams, useParams, Link } from 'react-router-dom';
-import { getCleanPhoneImage } from '../lib/phoneImages';
+import { getCleanPhoneImage, getCleanBrandLogo } from '../lib/phoneImages';
 import { ALL_INDIAN_PHONES_CATALOG } from '../data/indianPhonesCatalog';
 import { MASTER_MODEL_CATALOG } from './SellPhone';
 import {
@@ -38,16 +38,16 @@ import { db, formatINR } from '../lib/db';
 import { fetchPhoneModels, searchMobileApiDev } from '../lib/mobileApi';
 
 const BRAND_CARDS = [
-  { name: 'Apple', logo: 'https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=150&auto=format&fit=crop&q=80' },
-  { name: 'Samsung', logo: 'https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?w=150&auto=format&fit=crop&q=80' },
-  { name: 'OnePlus', logo: 'https://images.unsplash.com/photo-1580910051074-3eb694886505?w=150&auto=format&fit=crop&q=80' },
-  { name: 'Xiaomi', logo: 'https://images.unsplash.com/photo-1598327105666-5b89351aff97?w=150&auto=format&fit=crop&q=80' },
-  { name: 'Realme', logo: 'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=150&auto=format&fit=crop&q=80' },
-  { name: 'Vivo', logo: 'https://images.unsplash.com/photo-1546054454-aa26e2b734c7?w=150&auto=format&fit=crop&q=80' },
-  { name: 'Oppo', logo: 'https://images.unsplash.com/photo-1565849904461-04a58ad377e0?w=150&auto=format&fit=crop&q=80' },
-  { name: 'Google', logo: 'https://images.unsplash.com/photo-1598327105666-5b89351aff97?w=150&auto=format&fit=crop&q=80' },
-  { name: 'Nothing', logo: 'https://images.unsplash.com/photo-1678685888221-cda773a3dcdb?w=150&auto=format&fit=crop&q=80' },
-  { name: 'Motorola', logo: 'https://images.unsplash.com/photo-1585060544812-6b45742d762f?w=150&auto=format&fit=crop&q=80' },
+  { name: 'Apple', logo: getCleanBrandLogo('Apple') },
+  { name: 'Samsung', logo: getCleanBrandLogo('Samsung') },
+  { name: 'OnePlus', logo: getCleanBrandLogo('OnePlus') },
+  { name: 'Xiaomi', logo: getCleanBrandLogo('Xiaomi') },
+  { name: 'Realme', logo: getCleanBrandLogo('Realme') },
+  { name: 'Vivo', logo: getCleanBrandLogo('Vivo') },
+  { name: 'Oppo', logo: getCleanBrandLogo('Oppo') },
+  { name: 'Google', logo: getCleanBrandLogo('Google') },
+  { name: 'Nothing', logo: getCleanBrandLogo('Nothing') },
+  { name: 'Motorola', logo: getCleanBrandLogo('Motorola') },
 ];
 
 const REPAIR_ISSUES = [
@@ -162,12 +162,12 @@ const REPAIR_ISSUES = [
 ];
 
 const POPULAR_REPAIR_MODELS = [
-  { brand: 'Apple', model: 'iPhone 13', price: 2999, image: 'https://images.unsplash.com/photo-1695048133142-1a20484d2569?w=300&auto=format&fit=crop&q=80' },
-  { brand: 'Apple', model: 'iPhone 14', price: 3499, image: 'https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=300&auto=format&fit=crop&q=80' },
-  { brand: 'Samsung', model: 'Galaxy S22', price: 2499, image: 'https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?w=300&auto=format&fit=crop&q=80' },
-  { brand: 'OnePlus', model: 'OnePlus 11', price: 2199, image: 'https://images.unsplash.com/photo-1580910051074-3eb694886505?w=300&auto=format&fit=crop&q=80' },
-  { brand: 'Google', model: 'Pixel 7', price: 1999, image: 'https://images.unsplash.com/photo-1598327105666-5b89351aff97?w=300&auto=format&fit=crop&q=80' },
-  { brand: 'Xiaomi', model: 'Redmi Note 13 Pro', price: 1299, image: 'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=300&auto=format&fit=crop&q=80' },
+  { brand: 'Apple', model: 'iPhone 14', price: 3499, image: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-14-pro.jpg' },
+  { brand: 'Apple', model: 'iPhone 13', price: 2999, image: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-13.jpg' },
+  { brand: 'Samsung', model: 'Galaxy S23', price: 2799, image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s23-5g.jpg' },
+  { brand: 'OnePlus', model: 'OnePlus 11R', price: 2199, image: 'https://fdn2.gsmarena.com/vv/bigpic/oneplus-ace2.jpg' },
+  { brand: 'Xiaomi', model: 'Redmi Note 13 Pro', price: 1499, image: 'https://fdn2.gsmarena.com/vv/bigpic/xiaomi-redmi-note-13-pro-plus.jpg' },
+  { brand: 'Google', model: 'Pixel 7', price: 1999, image: 'https://fdn2.gsmarena.com/vv/bigpic/google-pixel-7a.jpg' },
 ];
 
 const REPAIR_FAQS = [
@@ -462,6 +462,16 @@ export default function Repair() {
               Our technician will visit <span className="font-bold text-ink-900">{form.pickupArea}, Lucknow</span> on <span className="font-bold text-ink-900">{form.pickupDate} ({form.pickupSlot})</span> with genuine parts for your <span className="font-bold text-ink-900">{form.brand} {form.model}</span>.
             </p>
 
+            {form.brand && form.model && (
+              <div className="h-24 w-24 mx-auto my-3 p-2 bg-gray-50 rounded-2xl border border-gray-100 flex items-center justify-center shadow-xs">
+                <img
+                  src={getCleanPhoneImage(form.brand, form.model)}
+                  alt={form.model}
+                  className="max-h-full max-w-full w-auto h-auto object-contain mix-blend-multiply"
+                />
+              </div>
+            )}
+
             <div className="mt-6 rounded-2xl bg-gradient-to-r from-emerald-600 to-teal-700 p-6 text-white shadow-md text-left">
               <div className="flex justify-between items-center border-b border-white/20 pb-3">
                 <span className="text-xs font-bold text-emerald-100 uppercase tracking-wider">Repair Tracking ID</span>
@@ -572,8 +582,12 @@ export default function Repair() {
                           className="flex items-center justify-between w-full p-2.5 rounded-xl hover:bg-teal-50/80 transition text-left group border border-transparent hover:border-teal-200"
                         >
                           <div className="flex items-center gap-2.5">
-                            <div className="grid h-8 w-8 place-items-center rounded-lg bg-teal-100/70 text-[#00a896]">
-                              <Smartphone className="h-4 w-4" />
+                            <div className="h-10 w-10 shrink-0 rounded-xl bg-gray-50 border border-gray-100 p-1 flex items-center justify-center">
+                              <img
+                                src={getCleanPhoneImage(phone.brand, phone.model)}
+                                alt={phone.model}
+                                className="max-h-full max-w-full w-auto h-auto object-contain mix-blend-multiply"
+                              />
                             </div>
                             <div>
                               <p className="text-xs font-bold text-gray-900 group-hover:text-[#00a896]">
@@ -751,18 +765,24 @@ export default function Repair() {
                         key={m.name}
                         type="button"
                         onClick={() => handleSelectPhoneForRepair(form.brand, m.name)}
-                        className="group relative flex flex-col items-center justify-between p-4 sm:p-5 rounded-2xl border border-gray-200/90 bg-white hover:border-[#00a896] hover:shadow-xl hover:-translate-y-1 transition-all duration-300 text-center cursor-pointer overflow-hidden"
+                        className="group relative flex flex-col items-center justify-between p-4 sm:p-5 rounded-2xl border border-gray-200/90 bg-white hover:border-[#00a896] hover:shadow-xl hover:-translate-y-1 transition-all duration-300 text-center cursor-pointer"
                       >
                         {/* Top Subtle Pill */}
-                        <span className="text-[10px] font-extrabold text-teal-700 bg-teal-50 group-hover:bg-teal-600 group-hover:text-white transition-colors px-2 py-0.5 rounded-full mb-3">
+                        <span className="text-[10px] font-extrabold text-teal-700 bg-teal-50 group-hover:bg-teal-600 group-hover:text-white transition-colors px-2 py-0.5 rounded-full mb-2">
                           Lucknow Express
                         </span>
 
-                        <div className="grid h-12 w-12 sm:h-14 sm:w-14 place-items-center rounded-2xl bg-gradient-to-br from-teal-50 to-emerald-50 text-[#00a896] group-hover:from-[#00a896] group-hover:to-teal-600 group-hover:text-white transition-all duration-300 shadow-xs">
-                          <Smartphone className="h-6 w-6 sm:h-7 sm:w-7" />
+                        {/* Centered Clean Device Image */}
+                        <div className="h-28 sm:h-36 w-full flex items-center justify-center p-2 mb-2 relative">
+                          <img
+                            src={getCleanPhoneImage(form.brand, m.name)}
+                            alt={m.name}
+                            className="max-h-full max-w-full w-auto h-auto object-contain drop-shadow-sm mix-blend-multiply group-hover:scale-105 transition-transform duration-300"
+                            loading="lazy"
+                          />
                         </div>
 
-                        <p className="mt-3 text-xs sm:text-sm font-black text-gray-900 group-hover:text-[#00a896] line-clamp-2 transition-colors">
+                        <p className="mt-2 text-xs sm:text-sm font-black text-gray-900 group-hover:text-[#00a896] line-clamp-2 transition-colors">
                           {m.name}
                         </p>
 
@@ -798,8 +818,8 @@ export default function Repair() {
                         onClick={() => handleBrandSelect(item.name)}
                         className="group relative flex flex-col items-center justify-center p-5 rounded-2xl border border-gray-200/90 bg-white hover:border-[#00a896] hover:shadow-xl hover:-translate-y-1 transition-all duration-300 cursor-pointer overflow-hidden"
                       >
-                        <div className="h-14 w-14 p-2 rounded-2xl bg-gray-50 group-hover:bg-teal-50 transition-colors flex items-center justify-center">
-                          <img src={item.logo} alt={item.name} className="h-full w-full object-contain" />
+                        <div className="h-14 w-14 p-2.5 rounded-2xl bg-gray-50 group-hover:bg-teal-50 transition-colors flex items-center justify-center">
+                          <img src={item.logo} alt={item.name} className="max-h-full max-w-full object-contain" />
                         </div>
                         <span className="mt-3 text-sm font-black text-ink-900 group-hover:text-[#00a896] transition-colors">{item.name}</span>
                         <span className="mt-1 text-[11px] font-bold text-gray-400 group-hover:text-[#00a896] transition-colors flex items-center gap-0.5">
@@ -832,7 +852,14 @@ export default function Repair() {
                         onClick={() => handleQuickModelSelect(item)}
                         className="group flex flex-col items-center p-4 rounded-2xl border border-gray-200/80 bg-white hover:border-[#00a896] hover:shadow-lg hover:-translate-y-1 transition-all text-center"
                       >
-                        <img src={getCleanPhoneImage(item.brand, item.model, item.image)} alt={item.model} className="h-20 w-20 object-contain rounded-xl" />
+                        <div className="h-24 sm:h-28 w-full flex items-center justify-center p-1.5 mb-1 relative">
+                          <img
+                            src={getCleanPhoneImage(item.brand, item.model, item.image)}
+                            alt={item.model}
+                            className="max-h-full max-w-full w-auto h-auto object-contain drop-shadow-sm mix-blend-multiply group-hover:scale-105 transition-transform duration-300"
+                            loading="lazy"
+                          />
+                        </div>
                         <p className="mt-2 text-xs font-black text-ink-900 group-hover:text-[#00a896] truncate w-full transition-colors">{item.model}</p>
                         <span className="mt-2 badge bg-emerald-50 text-emerald-800 font-black text-[10px]">
                           From {formatINR(item.price)}
@@ -852,11 +879,11 @@ export default function Repair() {
             <div className="card p-5 sm:p-6 rounded-[28px] bg-gradient-to-r from-teal-950 via-slate-900 to-emerald-950 text-white shadow-xl border border-teal-500/30 overflow-hidden relative">
               <div className="relative z-10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-5">
                 <div className="flex items-center gap-4 sm:gap-5">
-                  <div className="h-20 w-20 sm:h-24 sm:w-24 shrink-0 rounded-2xl bg-white/10 backdrop-blur-md p-2 border border-white/20 flex items-center justify-center shadow-lg">
+                  <div className="h-20 w-20 sm:h-24 sm:w-24 shrink-0 rounded-2xl bg-white p-2 border border-white/20 flex items-center justify-center shadow-lg">
                     <img
                       src={getCleanPhoneImage(form.brand, form.model)}
                       alt={form.model}
-                      className="h-full w-full object-contain drop-shadow-md"
+                      className="max-h-full max-w-full w-auto h-auto object-contain drop-shadow-md mix-blend-multiply"
                     />
                   </div>
                   <div className="space-y-1.5">
@@ -1012,7 +1039,16 @@ export default function Repair() {
                 Upfront Repair Estimate ({selectedIssues.length} Issue{selectedIssues.length > 1 ? 's' : ''})
               </span>
 
-              <h2 className="mt-3 font-display text-2xl font-black text-ink-900">
+              {/* Clean Framed Phone Device Render */}
+              <div className="h-28 w-28 mx-auto my-3 p-2 bg-gray-50 rounded-2xl border border-gray-100 flex items-center justify-center">
+                <img
+                  src={getCleanPhoneImage(form.brand, form.model)}
+                  alt={form.model}
+                  className="max-h-full max-w-full w-auto h-auto object-contain mix-blend-multiply drop-shadow-sm"
+                />
+              </div>
+
+              <h2 className="mt-1 font-display text-2xl font-black text-ink-900">
                 {form.brand} {form.model}
               </h2>
 
@@ -1067,14 +1103,23 @@ export default function Repair() {
           <div className="max-w-2xl mx-auto space-y-6 animate-fade-in">
             <div className="card p-6 md:p-8 rounded-[28px]">
               <div className="flex items-center justify-between border-b border-ink-100 pb-4">
-                <div>
-                  <span className="badge bg-brand-50 text-brand-700">Step 4 of 4</span>
-                  <h2 className="mt-1 font-display text-xl font-extrabold text-ink-900">
-                    Schedule Lucknow Doorstep Repair
-                  </h2>
-                  <p className="text-xs text-ink-500">
-                    Device: <span className="font-bold text-ink-900">{form.brand} {form.model}</span> ({selectedIssue?.label})
-                  </p>
+                <div className="flex items-center gap-3.5">
+                  <div className="h-14 w-14 rounded-xl bg-gray-50 border border-gray-100 p-1.5 flex items-center justify-center shrink-0">
+                    <img
+                      src={getCleanPhoneImage(form.brand, form.model)}
+                      alt={form.model}
+                      className="max-h-full max-w-full w-auto h-auto object-contain mix-blend-multiply"
+                    />
+                  </div>
+                  <div>
+                    <span className="badge bg-brand-50 text-brand-700">Step 4 of 4</span>
+                    <h2 className="mt-1 font-display text-xl font-extrabold text-ink-900">
+                      Schedule Lucknow Doorstep Repair
+                    </h2>
+                    <p className="text-xs text-ink-500">
+                      Device: <span className="font-bold text-ink-900">{form.brand} {form.model}</span> ({selectedIssue?.label})
+                    </p>
+                  </div>
                 </div>
               </div>
 
