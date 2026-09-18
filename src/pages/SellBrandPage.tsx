@@ -244,21 +244,69 @@ export default function SellBrandPage() {
   // Active Series Group if on series page
   const currentSeriesGroup = useMemo(() => {
     if (!effectiveSeriesSlug) return undefined;
-    return seriesGroups.find(
-      (g) => g.slug === effectiveSeriesSlug || g.id === effectiveSeriesSlug
-    );
-  }, [effectiveSeriesSlug, seriesGroups]);
+    const clean = effectiveSeriesSlug.toLowerCase().replace(/^sell-/, '');
+
+    // 1. Direct slug or id match
+    const direct = seriesGroups.find((g) => g.slug === clean || g.id === clean);
+    if (direct && direct.models.length > 0) return direct;
+
+    // 2. Normalize and check aliases (e.g. redmi-note-11-series -> matches group containing note 11)
+    const normalized = clean.replace(/-series$/, '');
+    const partialMatch = seriesGroups.find((g) => {
+      const gSlugNorm = g.slug.replace(/-series$/, '');
+      return (
+        gSlugNorm.includes(normalized) ||
+        normalized.includes(gSlugNorm) ||
+        clean.split('-').filter((w) => w.length > 2 && w !== 'series' && w !== 'note').every((w) => g.slug.includes(w) || g.name.toLowerCase().includes(w))
+      );
+    });
+    if (partialMatch && partialMatch.models.length > 0) return partialMatch;
+
+    // 3. If direct was found, use it even if models count is being loaded
+    if (direct) return direct;
+
+    // 4. Dynamic series creation from allBrandModels pattern match
+    const pattern = new RegExp(clean.replace(/-/g, '\\s*').replace(/series/g, ''), 'i');
+    const matchedModels = allBrandModels.filter((m) => pattern.test(`${m.model} ${m.series}`));
+    if (matchedModels.length > 0) {
+      return {
+        id: clean,
+        slug: clean,
+        name: clean.split('-').map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(' '),
+        brand: brandDisplayName,
+        image: matchedModels[0].image,
+        modelsCount: matchedModels.length,
+        models: matchedModels,
+      };
+    }
+
+    return undefined;
+  }, [effectiveSeriesSlug, seriesGroups, allBrandModels, brandDisplayName]);
 
   // Sub-models for current series
   const subModels = useMemo(() => {
     if (!currentSeriesGroup) return [];
     let list = currentSeriesGroup.models;
+
+    // Fallback: if group models array is unexpectedly empty, search allBrandModels
+    if (list.length === 0) {
+      const terms = (currentSeriesGroup.name || effectiveSeriesSlug || '')
+        .toLowerCase()
+        .replace(/series/g, '')
+        .trim()
+        .split(/\s+/);
+      list = allBrandModels.filter((m) => {
+        const text = `${m.model} ${m.series}`.toLowerCase();
+        return terms.some((t) => t.length > 2 && text.includes(t));
+      });
+    }
+
     if (debouncedQuery) {
       const q = debouncedQuery.toLowerCase();
       list = list.filter((m) => m.model.toLowerCase().includes(q));
     }
     return list;
-  }, [currentSeriesGroup, debouncedQuery]);
+  }, [currentSeriesGroup, effectiveSeriesSlug, allBrandModels, debouncedQuery]);
 
   // Global search matches across brand
   const globalSearchMatches = useMemo(() => {
