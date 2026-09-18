@@ -34,53 +34,89 @@ const BRAND_DETAILS: Record<
   string,
   { logo: string; tagline: string; desc: string; count: string }
 > = {
-  xiaomi: {
-    logo: getCleanBrandLogo('xiaomi'),
-    tagline: 'Get Maximum Resale Cash Value for Your Old Xiaomi / Redmi Phone in Lucknow',
-    desc: 'Sell used Xiaomi Mi, Redmi Note & POCO smartphones online in Lucknow for instant spot cash & 100% free doorstep pickup across Gomti Nagar, Hazratganj, Indira Nagar & Aliganj.',
-    count: '50+ Xiaomi Models',
-  },
   apple: {
     logo: getCleanBrandLogo('apple'),
     tagline: 'Sell Old Apple iPhone Online for Instant Cash at Doorstep',
     desc: 'Get highest guaranteed spot cash for your old Apple iPhone in Lucknow. Free doorstep pickup & instant UPI payment across all Lucknow localities.',
-    count: '30+ iPhone Models',
+    count: '46+ iPhone Models',
   },
   samsung: {
     logo: getCleanBrandLogo('samsung'),
     tagline: 'Sell Old Samsung Galaxy Mobile Online at Best Resale Valuation',
     desc: 'Sell used Samsung Galaxy S, Z Fold/Flip, A & M series smartphones online in Lucknow for maximum spot payment.',
-    count: '45+ Galaxy Models',
+    count: '105+ Galaxy Models',
   },
   oneplus: {
     logo: getCleanBrandLogo('oneplus'),
     tagline: 'Sell Old OnePlus Smartphone Online at Highest Cash Rates',
-    desc: 'Sell old OnePlus 12, 11, Nord & R series phones at best doorstep cash rates in Lucknow with instant data wipe.',
-    count: '25+ OnePlus Models',
+    desc: 'Sell old OnePlus 13, 12, 11, Nord & Open series phones at best doorstep cash rates in Lucknow with instant data wipe.',
+    count: '40+ OnePlus Models',
   },
-  vivo: {
-    logo: getCleanBrandLogo('vivo'),
-    tagline: 'Sell Old Vivo Mobile Online for Instant Spot Payout',
-    desc: 'Sell used Vivo X, V, Y, T, Z, U, NEX & S series smartphones in Lucknow with free doorstep pickup & guaranteed valuation.',
-    count: '100+ Vivo Models',
+  xiaomi: {
+    logo: getCleanBrandLogo('xiaomi'),
+    tagline: 'Get Maximum Resale Cash Value for Your Old Xiaomi / Redmi Phone in Lucknow',
+    desc: 'Sell used Xiaomi Mi, Redmi Note & POCO smartphones online in Lucknow for instant spot cash & 100% free doorstep pickup across Gomti Nagar, Hazratganj, Indira Nagar & Aliganj.',
+    count: '60+ Xiaomi Models',
+  },
+  redmi: {
+    logo: getCleanBrandLogo('redmi'),
+    tagline: 'Sell Old Redmi Mobile Phone Online for Instant Cash',
+    desc: 'Sell used Redmi Note 13, 12, 11 & C series phones online in Lucknow for instant spot payment.',
+    count: '40+ Redmi Models',
+  },
+  poco: {
+    logo: getCleanBrandLogo('poco'),
+    tagline: 'Sell Old POCO Gaming Phone Online at Best Resale Price',
+    desc: 'Sell used POCO F, X, M & C series performance smartphones with zero hassle and instant cash at doorstep.',
+    count: '25+ POCO Models',
   },
   realme: {
     logo: getCleanBrandLogo('realme'),
     tagline: 'Sell Old Realme Mobile Phone Online at Best Price',
-    desc: 'Sell used Realme Pro, GT & C series phones online in Lucknow for instant cash in hand.',
-    count: '35+ Realme Models',
+    desc: 'Sell used Realme GT, Number Pro, Narzo & C series phones online in Lucknow for instant cash in hand.',
+    count: '40+ Realme Models',
   },
   oppo: {
     logo: getCleanBrandLogo('oppo'),
     tagline: 'Sell Old Oppo Mobile Phone Online for Instant Cash',
-    desc: 'Sell old Oppo Reno, Find & A series mobiles in Lucknow with zero hassle and instant GPay/PhonePe transfer.',
-    count: '30+ Oppo Models',
+    desc: 'Sell old Oppo Find, Reno, F & A series mobiles in Lucknow with zero hassle and instant GPay/PhonePe transfer.',
+    count: '35+ Oppo Models',
+  },
+  vivo: {
+    logo: getCleanBrandLogo('vivo'),
+    tagline: 'Sell Old Vivo Mobile Online for Instant Spot Payout',
+    desc: 'Sell used Vivo X, V, T & Y series smartphones in Lucknow with free doorstep pickup & guaranteed valuation.',
+    count: '45+ Vivo Models',
+  },
+  iqoo: {
+    logo: getCleanBrandLogo('iqoo'),
+    tagline: 'Sell Old iQOO Gaming Smartphone Online at Best Value',
+    desc: 'Sell used iQOO 12, 11, Neo & Z series performance phones for instant doorstep payment in Lucknow.',
+    count: '15+ iQOO Models',
   },
   google: {
     logo: getCleanBrandLogo('google'),
     tagline: 'Sell Old Google Pixel Phone Online at Best Resale Value',
-    desc: 'Sell used Google Pixel 8, 7 & 6 series phones in Lucknow at highest market value.',
-    count: '15+ Pixel Models',
+    desc: 'Sell used Google Pixel 9, 8, 7, 6 & Fold series phones in Lucknow at highest market value.',
+    count: '25+ Pixel Models',
+  },
+  motorola: {
+    logo: getCleanBrandLogo('motorola'),
+    tagline: 'Sell Old Motorola Moto Phone Online for Instant Cash',
+    desc: 'Sell used Motorola Razr, Edge & Moto G series smartphones in Lucknow for maximum spot payment.',
+    count: '30+ Moto Models',
+  },
+  moto: {
+    logo: getCleanBrandLogo('motorola'),
+    tagline: 'Sell Old Moto Smartphone Online for Quick Doorstep Cash',
+    desc: 'Sell used Moto G, Edge & Razr series phones online in Lucknow with free doorstep pickup.',
+    count: '30+ Moto Models',
+  },
+  nothing: {
+    logo: getCleanBrandLogo('nothing'),
+    tagline: 'Sell Old Nothing Phone Online at Top Guaranteed Price',
+    desc: 'Sell used Nothing Phone (2), (1), (2a) & CMF Phone 1 in Lucknow for instant spot cash.',
+    count: '10+ Nothing Models',
   },
 };
 
@@ -97,6 +133,15 @@ export default function SellBrandPage() {
     return brandSlug.replace(/^sell-/, '').toLowerCase();
   }, [brandSlug]);
 
+  const brandCanonicalKey = useMemo(() => {
+    if (brandCleanKey === 'poco' || brandCleanKey === 'redmi') return 'xiaomi';
+    if (brandCleanKey === 'iqoo') return 'vivo';
+    if (brandCleanKey === 'moto') return 'motorola';
+    if (brandCleanKey === 'pixel') return 'google';
+    if (brandCleanKey === 'iphone') return 'apple';
+    return brandCleanKey;
+  }, [brandCleanKey]);
+
   const effectiveSeriesSlug = useMemo(() => {
     const raw = seriesSlug || (modelSlug && isSeriesSlug(modelSlug) ? modelSlug : undefined);
     if (!raw) return undefined;
@@ -109,8 +154,8 @@ export default function SellBrandPage() {
     return brandCleanKey.charAt(0).toUpperCase() + brandCleanKey.slice(1);
   }, [brandCleanKey]);
 
-  const brandInfo = BRAND_DETAILS[brandCleanKey] || {
-    logo: 'https://images.unsplash.com/photo-1598327105666-5b89351aff97?w=150&auto=format&fit=crop&q=80',
+  const brandInfo = BRAND_DETAILS[brandCleanKey] || BRAND_DETAILS[brandCanonicalKey] || {
+    logo: getCleanBrandLogo(brandDisplayName),
     tagline: `Sell Old ${brandDisplayName} Mobile Phone Online At Best Price`,
     desc: `Sell used ${brandDisplayName} smartphones online in Lucknow for instant spot cash & free doorstep pickup.`,
     count: `30+ ${brandDisplayName} Models`,
@@ -144,7 +189,7 @@ export default function SellBrandPage() {
   useEffect(() => {
     let isSubscribed = true;
     setIsLoadingApi(true);
-    fetchBrandCatalogFromApi(brandCleanKey)
+    fetchBrandCatalogFromApi(brandCanonicalKey)
       .then((models) => {
         if (isSubscribed) setApiModels(models);
       })
@@ -157,13 +202,20 @@ export default function SellBrandPage() {
     return () => {
       isSubscribed = false;
     };
-  }, [brandCleanKey]);
+  }, [brandCanonicalKey]);
 
   const { version } = usePriceSync();
 
   // Master Brand Models - combine local master catalog with API models so full lineup is always present
   const allBrandModels = useMemo(() => {
-    const masterList = MASTER_MODEL_CATALOG.filter((m) => m.brand.toLowerCase() === brandCleanKey);
+    const masterList = MASTER_MODEL_CATALOG.filter((m) => {
+      const b = m.brand.toLowerCase();
+      if (b === brandCanonicalKey || b === brandCleanKey) return true;
+      if (brandCanonicalKey === 'xiaomi' && (b === 'redmi' || b === 'poco')) return true;
+      if (brandCanonicalKey === 'vivo' && b === 'iqoo') return true;
+      if (brandCanonicalKey === 'motorola' && b === 'moto') return true;
+      return false;
+    });
     const combinedMap = new Map<string, CatalogModelItem>();
 
     // Add all master catalog items first
@@ -182,12 +234,12 @@ export default function SellBrandPage() {
 
     const list = Array.from(combinedMap.values());
     return applyPriceOverrides(list);
-  }, [apiModels, brandCleanKey, version]);
+  }, [apiModels, brandCleanKey, brandCanonicalKey, version]);
 
   // Series Groups (iPhone 16 Series down to iPhone 1 / Classic)
   const seriesGroups = useMemo(() => {
-    return groupModelsBySeries(brandCleanKey, allBrandModels);
-  }, [brandCleanKey, allBrandModels]);
+    return groupModelsBySeries(brandCanonicalKey, allBrandModels);
+  }, [brandCanonicalKey, allBrandModels]);
 
   // Active Series Group if on series page
   const currentSeriesGroup = useMemo(() => {
