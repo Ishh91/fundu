@@ -234,12 +234,23 @@ export default function Repair() {
 
     const bSlug = (targetBrand || brandSlug || '').toLowerCase().replace(/\s+/g, '-');
     const mSlug = (targetModel || modelSlug || '').toLowerCase().replace(/\s+/g, '-');
+    const targetUrl = bSlug && mSlug
+      ? `/repair/${bSlug}/${mSlug}?${newParams.toString()}`
+      : bSlug
+      ? `/repair/${bSlug}?${newParams.toString()}`
+      : `/repair?${newParams.toString()}`;
+
+    if (nextStep >= 4 && !user) {
+      navigate(`/login?redirect=${encodeURIComponent(targetUrl)}`);
+      return;
+    }
+
     if (bSlug && mSlug) {
-      navigate(`/repair/${bSlug}/${mSlug}?${newParams.toString()}`);
+      navigate(targetUrl);
     } else if (bSlug) {
-      navigate(`/repair/${bSlug}?${newParams.toString()}`);
+      navigate(targetUrl);
     } else {
-      navigate(`/repair?${newParams.toString()}`);
+      navigate(targetUrl);
     }
   };
 
@@ -400,9 +411,17 @@ export default function Repair() {
     navigate(`/repair/${bSlug}/${mSlug}`);
   };
 
+  useEffect(() => {
+    if (step >= 4 && !user) {
+      const returnUrl = window.location.pathname + window.location.search;
+      navigate(`/login?redirect=${encodeURIComponent(returnUrl)}`);
+    }
+  }, [step, user, navigate]);
+
   const handleSubmit = async () => {
     if (!user) {
-      navigate('/login?redirect=/repair');
+      const returnUrl = window.location.pathname + window.location.search;
+      navigate(`/login?redirect=${encodeURIComponent(returnUrl)}`);
       return;
     }
 

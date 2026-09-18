@@ -1,5 +1,6 @@
 import { useState, useMemo, useEffect } from 'react';
 import { useNavigate, useParams, Link } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 import {
   Wrench,
   Monitor,
@@ -131,6 +132,7 @@ const ISSUE_DETAILS: Record<
 export default function RepairIssuePage() {
   const { issueSlug } = useParams<{ issueSlug: string }>();
   const navigate = useNavigate();
+  const { user } = useAuth();
 
   const issueCleanKey = useMemo(() => {
     if (!issueSlug) return 'screen';
@@ -149,7 +151,12 @@ export default function RepairIssuePage() {
   }, [issueSlug]);
 
   const handleStartBooking = () => {
-    navigate(`/repair?step=2&brand=${encodeURIComponent(selectedBrand)}&model=${encodeURIComponent(selectedModel)}&issue=${encodeURIComponent(issueCleanKey)}`);
+    const targetUrl = `/repair?step=4&brand=${encodeURIComponent(selectedBrand)}&model=${encodeURIComponent(selectedModel)}&issue=${encodeURIComponent(issueCleanKey)}`;
+    if (!user) {
+      navigate(`/login?redirect=${encodeURIComponent(targetUrl)}`);
+      return;
+    }
+    navigate(targetUrl);
   };
 
   return (

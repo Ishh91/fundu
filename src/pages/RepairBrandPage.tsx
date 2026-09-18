@@ -1,5 +1,6 @@
 import { useState, useMemo, useEffect } from 'react';
 import { useNavigate, useParams, Link } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 import {
   Search,
   Wrench,
@@ -116,6 +117,7 @@ const COMMON_REPAIR_SERVICES = [
 export default function RepairBrandPage() {
   const { brandSlug } = useParams<{ brandSlug: string }>();
   const navigate = useNavigate();
+  const { user } = useAuth();
 
   const brandCleanKey = useMemo(() => {
     if (!brandSlug) return 'apple';
@@ -202,7 +204,12 @@ export default function RepairBrandPage() {
 
   const handleBookRepair = (modelName: string, issueId: string = 'screen') => {
     const modelSlugClean = modelName.toLowerCase().replace(/\s+/g, '-');
-    navigate(`/repair/${brandCleanKey}/${modelSlugClean}?issue=${encodeURIComponent(issueId)}`);
+    const targetUrl = `/repair/${brandCleanKey}/${modelSlugClean}?issue=${encodeURIComponent(issueId)}`;
+    if (!user) {
+      navigate(`/login?redirect=${encodeURIComponent(targetUrl)}`);
+      return;
+    }
+    navigate(targetUrl);
   };
 
   return (
