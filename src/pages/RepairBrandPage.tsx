@@ -333,7 +333,7 @@ export default function RepairBrandPage() {
                         referrerPolicy="no-referrer"
                         onError={(e) => {
                           const target = e.currentTarget;
-                          const fallback = BRAND_FRONT_FALLBACKS[brandCleanKey] || BRAND_FRONT_FALLBACKS.apple;
+                          const fallback = BRAND_FRONT_FALLBACKS[brandCleanKey] || BRAND_FRONT_FALLBACKS[brandCanonicalKey] || getCleanPhoneImage(brandDisplayName);
                           if (target.src !== fallback) {
                             target.src = fallback;
                           }

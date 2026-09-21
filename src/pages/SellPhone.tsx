@@ -51,12 +51,22 @@ const LUCKNOW_LOCALITIES = [
 
 // Brand Grid Cards
 const BRAND_TILES = [
-  { name: 'Apple', logo: getCleanBrandLogo('Apple'), count: '30+ Models' },
-  { name: 'Samsung', logo: getCleanBrandLogo('Samsung'), count: '45+ Models' },
-  { name: 'OnePlus', logo: getCleanBrandLogo('OnePlus'), count: '25+ Models' },
-  { name: 'Xiaomi', logo: getCleanBrandLogo('Xiaomi'), count: '50+ Models' },
-  { name: 'Realme', logo: getCleanBrandLogo('Realme'), count: '35+ Models' },
-  { name: 'Vivo', logo: getCleanBrandLogo('Vivo'), count: '40+ Models' },
+  { name: 'Apple', logo: getCleanBrandLogo('Apple'), count: '35+ Models' },
+  { name: 'Samsung', logo: getCleanBrandLogo('Samsung'), count: '60+ Models' },
+  { name: 'OnePlus', logo: getCleanBrandLogo('OnePlus'), count: '30+ Models' },
+  { name: 'Xiaomi', logo: getCleanBrandLogo('Xiaomi'), count: '55+ Models' },
+  { name: 'Realme', logo: getCleanBrandLogo('Realme'), count: '40+ Models' },
+  { name: 'Vivo', logo: getCleanBrandLogo('Vivo'), count: '45+ Models' },
+  { name: 'Oppo', logo: getCleanBrandLogo('Oppo'), count: '35+ Models' },
+  { name: 'Nothing', logo: getCleanBrandLogo('Nothing'), count: '10+ Models' },
+  { name: 'Tecno', logo: getCleanBrandLogo('Tecno'), count: '25+ Models' },
+  { name: 'Itel', logo: getCleanBrandLogo('Itel'), count: '20+ Models' },
+  { name: 'Motorola', logo: getCleanBrandLogo('Motorola'), count: '30+ Models' },
+  { name: 'Google', logo: getCleanBrandLogo('Google'), count: '15+ Models' },
+  { name: 'Poco', logo: getCleanBrandLogo('Poco'), count: '25+ Models' },
+  { name: 'iQOO', logo: getCleanBrandLogo('iQOO'), count: '20+ Models' },
+  { name: 'Infinix', logo: getCleanBrandLogo('Infinix'), count: '25+ Models' },
+  { name: 'Lava', logo: getCleanBrandLogo('Lava'), count: '15+ Models' },
 ];
 
 // Master Model Catalog Database (Easily Updatable JSON/Array)
@@ -483,6 +493,59 @@ export const MASTER_MODEL_CATALOG = [
   { brand: 'Nothing', series: 'Nothing Phone Series', model: 'Nothing Phone (2a) Plus', storage: '256 GB', price: 21000, image: 'https://api.mobileapi.dev/devices/1256/thumb.png' },
   { brand: 'Nothing', series: 'Nothing Phone Series', model: 'Nothing Phone (2a)', storage: '128 GB', price: 17500, image: 'https://api.mobileapi.dev/devices/1256/thumb.png' },
   { brand: 'Nothing', series: 'CMF by Nothing Series', model: 'CMF Phone 1 by Nothing', storage: '128 GB', price: 12000, image: 'https://api.mobileapi.dev/devices/1249/thumb.png' },
+  // Tecno
+  { brand: 'Tecno', series: 'Phantom Series', model: 'Tecno Phantom V Fold 5G', storage: '256 GB', price: 46000, image: 'https://fdn2.gsmarena.com/vv/bigpic/tecno-phantom-v-fold.jpg' },
+  { brand: 'Tecno', series: 'Phantom Series', model: 'Tecno Phantom V Flip 5G', storage: '256 GB', price: 32000, image: 'https://fdn2.gsmarena.com/vv/bigpic/tecno-phantom-v-flip.jpg' },
+  { brand: 'Tecno', series: 'Phantom Series', model: 'Tecno Phantom X2 Pro 5G', storage: '256 GB', price: 24000, image: 'https://fdn2.gsmarena.com/vv/bigpic/tecno-phantom-x2-pro.jpg' },
+  { brand: 'Tecno', series: 'Camon Series', model: 'Tecno Camon 30 Premier 5G', storage: '512 GB', price: 22000, image: 'https://fdn2.gsmarena.com/vv/bigpic/tecno-camon-30-premier.jpg' },
+  { brand: 'Tecno', series: 'Camon Series', model: 'Tecno Camon 30 5G', storage: '256 GB', price: 14000, image: 'https://fdn2.gsmarena.com/vv/bigpic/tecno-camon-30-5g.jpg' },
+  { brand: 'Tecno', series: 'Camon Series', model: 'Tecno Camon 20 Pro 5G', storage: '128 GB', price: 11000, image: 'https://fdn2.gsmarena.com/vv/bigpic/tecno-camon-20-pro-5g.jpg' },
+  { brand: 'Tecno', series: 'Pova Series', model: 'Tecno Pova 6 Pro 5G', storage: '128 GB', price: 12500, image: 'https://fdn2.gsmarena.com/vv/bigpic/tecno-pova-6-pro.jpg' },
+  { brand: 'Tecno', series: 'Pova Series', model: 'Tecno Pova 5 Pro 5G', storage: '128 GB', price: 9800, image: 'https://fdn2.gsmarena.com/vv/bigpic/tecno-pova-5-pro.jpg' },
+  { brand: 'Tecno', series: 'Spark Series', model: 'Tecno Spark 20 Pro+', storage: '256 GB', price: 10500, image: 'https://fdn2.gsmarena.com/vv/bigpic/tecno-spark-20-pro-plus.jpg' },
+  { brand: 'Tecno', series: 'Spark Series', model: 'Tecno Spark 20', storage: '128 GB', price: 6800, image: 'https://fdn2.gsmarena.com/vv/bigpic/tecno-spark-20.jpg' },
+  { brand: 'Tecno', series: 'Spark Series', model: 'Tecno Spark Go 2024', storage: '64 GB', price: 4500, image: 'https://fdn2.gsmarena.com/vv/bigpic/tecno-spark-go-2024.jpg' },
+  // Itel
+  { brand: 'Itel', series: 'Color Pro Series', model: 'Itel Color Pro 5G', storage: '128 GB', price: 6200, image: 'https://fdn2.gsmarena.com/vv/bigpic/itel-color-pro-5g.jpg' },
+  { brand: 'Itel', series: 'S Series', model: 'Itel S24', storage: '128 GB', price: 6500, image: 'https://fdn2.gsmarena.com/vv/bigpic/itel-s24.jpg' },
+  { brand: 'Itel', series: 'S Series', model: 'Itel S23+', storage: '256 GB', price: 7800, image: 'https://fdn2.gsmarena.com/vv/bigpic/itel-s23-plus.jpg' },
+  { brand: 'Itel', series: 'P Series', model: 'Itel P55 5G', storage: '128 GB', price: 5800, image: 'https://fdn2.gsmarena.com/vv/bigpic/itel-p55-5g.jpg' },
+  { brand: 'Itel', series: 'P Series', model: 'Itel P55+', storage: '256 GB', price: 5900, image: 'https://fdn2.gsmarena.com/vv/bigpic/itel-p55-plus.jpg' },
+  { brand: 'Itel', series: 'P Series', model: 'Itel P55', storage: '128 GB', price: 4500, image: 'https://fdn2.gsmarena.com/vv/bigpic/itel-p55.jpg' },
+  { brand: 'Itel', series: 'P Series', model: 'Itel P55T', storage: '128 GB', price: 4700, image: 'https://fdn2.gsmarena.com/vv/bigpic/itel-p55t.jpg' },
+  { brand: 'Itel', series: 'A Series', model: 'Itel A70', storage: '128 GB', price: 3900, image: 'https://fdn2.gsmarena.com/vv/bigpic/itel-a70.jpg' },
+  { brand: 'Itel', series: 'A Series', model: 'Itel A60s', storage: '64 GB', price: 3200, image: 'https://fdn2.gsmarena.com/vv/bigpic/itel-a60s.jpg' },
+  { brand: 'Itel', series: 'A Series', model: 'Itel A05s', storage: '64 GB', price: 2800, image: 'https://fdn2.gsmarena.com/vv/bigpic/itel-a05s.jpg' },
+  // Infinix
+  { brand: 'Infinix', series: 'GT Gaming Series', model: 'Infinix GT 20 Pro 5G', storage: '256 GB', price: 17000, image: 'https://fdn2.gsmarena.com/vv/bigpic/infinix-gt-20-pro.jpg' },
+  { brand: 'Infinix', series: 'GT Gaming Series', model: 'Infinix GT 10 Pro 5G', storage: '128 GB', price: 12500, image: 'https://fdn2.gsmarena.com/vv/bigpic/infinix-gt-10-pro.jpg' },
+  { brand: 'Infinix', series: 'Note Series', model: 'Infinix Note 40 Pro+ 5G', storage: '256 GB', price: 15500, image: 'https://fdn2.gsmarena.com/vv/bigpic/infinix-note-40-pro-plus-5g.jpg' },
+  { brand: 'Infinix', series: 'Note Series', model: 'Infinix Note 40 Pro 5G', storage: '256 GB', price: 13000, image: 'https://fdn2.gsmarena.com/vv/bigpic/infinix-note-40-pro-5g.jpg' },
+  { brand: 'Infinix', series: 'Zero Series', model: 'Infinix Zero 30 5G', storage: '256 GB', price: 14000, image: 'https://fdn2.gsmarena.com/vv/bigpic/infinix-zero-30-5g.jpg' },
+  { brand: 'Infinix', series: 'Hot Series', model: 'Infinix Hot 40 Pro', storage: '128 GB', price: 8200, image: 'https://fdn2.gsmarena.com/vv/bigpic/infinix-hot-40-pro.jpg' },
+  { brand: 'Infinix', series: 'Smart Series', model: 'Infinix Smart 8 HD', storage: '64 GB', price: 4200, image: 'https://fdn2.gsmarena.com/vv/bigpic/infinix-smart-8-hd.jpg' },
+  // Poco
+  { brand: 'Poco', series: 'F Flagship Series', model: 'Poco F6 5G', storage: '256 GB', price: 22000, image: 'https://fdn2.gsmarena.com/vv/bigpic/xiaomi-poco-f6.jpg' },
+  { brand: 'Poco', series: 'F Flagship Series', model: 'Poco F5 5G', storage: '256 GB', price: 17000, image: 'https://fdn2.gsmarena.com/vv/bigpic/xiaomi-poco-f5.jpg' },
+  { brand: 'Poco', series: 'X Speed Series', model: 'Poco X6 Pro 5G', storage: '256 GB', price: 17500, image: 'https://fdn2.gsmarena.com/vv/bigpic/xiaomi-poco-x6-pro.jpg' },
+  { brand: 'Poco', series: 'X Speed Series', model: 'Poco X6 5G', storage: '128 GB', price: 13500, image: 'https://fdn2.gsmarena.com/vv/bigpic/xiaomi-poco-x6.jpg' },
+  { brand: 'Poco', series: 'M Power Series', model: 'Poco M6 Pro 5G', storage: '128 GB', price: 8500, image: 'https://fdn2.gsmarena.com/vv/bigpic/xiaomi-poco-m6-pro-5g.jpg' },
+  { brand: 'Poco', series: 'M Power Series', model: 'Poco M6 5G', storage: '128 GB', price: 7200, image: 'https://fdn2.gsmarena.com/vv/bigpic/xiaomi-poco-m6-5g.jpg' },
+  { brand: 'Poco', series: 'C Budget Series', model: 'Poco C65', storage: '128 GB', price: 5400, image: 'https://fdn2.gsmarena.com/vv/bigpic/xiaomi-poco-c65.jpg' },
+  // iQOO
+  { brand: 'iQOO', series: 'Number Series', model: 'iQOO 12 5G', storage: '256 GB', price: 38000, image: 'https://fdn2.gsmarena.com/vv/bigpic/vivo-iqoo-12.jpg' },
+  { brand: 'iQOO', series: 'Neo Gaming Series', model: 'iQOO Neo 9 Pro 5G', storage: '128 GB', price: 24000, image: 'https://fdn2.gsmarena.com/vv/bigpic/vivo-iqoo-neo-9-pro.jpg' },
+  { brand: 'iQOO', series: 'Neo Gaming Series', model: 'iQOO Neo 7 Pro 5G', storage: '128 GB', price: 18000, image: 'https://fdn2.gsmarena.com/vv/bigpic/vivo-iqoo-neo-7-pro.jpg' },
+  { brand: 'iQOO', series: 'Z Series', model: 'iQOO Z9s Pro 5G', storage: '128 GB', price: 16500, image: 'https://fdn2.gsmarena.com/vv/bigpic/vivo-iqoo-z9s-pro.jpg' },
+  { brand: 'iQOO', series: 'Z Series', model: 'iQOO Z9s 5G', storage: '128 GB', price: 13500, image: 'https://fdn2.gsmarena.com/vv/bigpic/vivo-iqoo-z9s.jpg' },
+  { brand: 'iQOO', series: 'Z Series', model: 'iQOO Z9 5G', storage: '128 GB', price: 12000, image: 'https://fdn2.gsmarena.com/vv/bigpic/vivo-iqoo-z9.jpg' },
+  { brand: 'iQOO', series: 'Z Series', model: 'iQOO Z9x 5G', storage: '128 GB', price: 9200, image: 'https://fdn2.gsmarena.com/vv/bigpic/vivo-iqoo-z9x.jpg' },
+  // Lava
+  { brand: 'Lava', series: 'Agni Flagship Series', model: 'Lava Agni 3 5G', storage: '128 GB', price: 14000, image: 'https://fdn2.gsmarena.com/vv/bigpic/lava-agni2-5g.jpg' },
+  { brand: 'Lava', series: 'Agni Flagship Series', model: 'Lava Agni 2 5G', storage: '128 GB', price: 11500, image: 'https://fdn2.gsmarena.com/vv/bigpic/lava-agni2-5g.jpg' },
+  { brand: 'Lava', series: 'Blaze Series', model: 'Lava Blaze Curve 5G', storage: '128 GB', price: 10200, image: 'https://fdn2.gsmarena.com/vv/bigpic/lava-blaze-curve-5g.jpg' },
+  { brand: 'Lava', series: 'Blaze Series', model: 'Lava Blaze 2 5G', storage: '64 GB', price: 6800, image: 'https://fdn2.gsmarena.com/vv/bigpic/lava-blaze2-5g.jpg' },
+  { brand: 'Lava', series: 'Yuva Series', model: 'Lava Yuva 3 Pro', storage: '128 GB', price: 5200, image: 'https://fdn2.gsmarena.com/vv/bigpic/lava-yuva-3-pro.jpg' },
 ];
 
 const STORAGE_OPTIONS = ['64 GB', '128 GB', '256 GB', '512 GB', '1 TB'];

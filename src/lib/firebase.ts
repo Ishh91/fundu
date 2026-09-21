@@ -37,13 +37,26 @@ export function initRecaptcha(containerId = 'recaptcha-container'): RecaptchaVer
     throw new Error('Window is not defined');
   }
 
-  // Clear previous verifier if any
+  // 1. Clear previous verifier instance if any
   if (window.recaptchaVerifier) {
     try {
       window.recaptchaVerifier.clear();
-    } catch {
-      // ignore
+    } catch (e) {
+      console.warn('Could not clear existing recaptcha verifier:', e);
     }
+    window.recaptchaVerifier = undefined;
+  }
+
+  // 2. Ensure container element exists and is completely emptied of any previous reCAPTCHA widgets/iframes
+  let container = document.getElementById(containerId);
+  if (!container) {
+    container = document.createElement('div');
+    container.id = containerId;
+    container.className = 'invisible';
+    document.body.appendChild(container);
+  } else {
+    // Clear out any old iframes or nodes injected by grecaptcha
+    container.innerHTML = '';
   }
 
   const verifier = new RecaptchaVerifier(auth, containerId, {
@@ -52,7 +65,14 @@ export function initRecaptcha(containerId = 'recaptcha-container'): RecaptchaVer
       // reCAPTCHA solved
     },
     'expired-callback': () => {
-      // reCAPTCHA expired, will re-trigger when user submits
+      if (window.recaptchaVerifier) {
+        try {
+          window.recaptchaVerifier.clear();
+        } catch {}
+        window.recaptchaVerifier = undefined;
+      }
+      const c = document.getElementById(containerId);
+      if (c) c.innerHTML = '';
     },
   });
 
@@ -82,6 +102,17 @@ export async function sendFirebasePhoneOtp(
     return { success: true };
   } catch (err: any) {
     console.error('Firebase sendPhoneOtp error:', err);
+
+    // Clean up verifier on error so subsequent attempts start fresh
+    if (window.recaptchaVerifier) {
+      try {
+        window.recaptchaVerifier.clear();
+      } catch {}
+      window.recaptchaVerifier = undefined;
+    }
+    const c = document.getElementById(containerId);
+    if (c) c.innerHTML = '';
+
     let message = err?.message || 'Failed to send OTP via SMS.';
     if (err?.code === 'auth/invalid-phone-number') {
       message = 'Invalid phone number format.';
@@ -89,8 +120,10 @@ export async function sendFirebasePhoneOtp(
       message = 'Too many requests. Please wait a few minutes before requesting another OTP.';
     } else if (err?.code === 'auth/quota-exceeded') {
       message = 'SMS quota exceeded for today. Please try again later.';
-    } else if (err?.code === 'auth/captcha-check-failed') {
-      message = 'ReCAPTCHA verification failed. Please refresh and try again.';
+    } else if (err?.code === 'auth/captcha-check-failed' || message.includes('reCAPTCHA')) {
+      message = 'ReCAPTCHA verification reset. Please try sending OTP again.';
+    } else if (err?.code === 'auth/billing-not-enabled' || message.includes('billing-not-enabled')) {
+      message = 'Firebase SMS service unavailable. Falling back to server OTP dispatch.';
     }
     return { success: false, error: message };
   }

@@ -97,9 +97,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (fbResult.success) {
         return { error: null };
       }
-      if (fbResult.error && !fbResult.error.toLowerCase().includes('network')) {
-        return { error: fbResult.error };
-      }
+      console.warn('Firebase Phone OTP failed, falling back to server dispatch:', fbResult.error);
     } catch (fbErr: any) {
       console.warn('Firebase OTP failed, falling back to server dispatch:', fbErr);
     }

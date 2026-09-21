@@ -1170,6 +1170,196 @@ export const BRAND_SERIES_DEFINITIONS: Record<string, BrandSeriesDefinition[]> =
       ],
     },
   ],
+
+  lava: [
+    {
+      id: 'lava-agni',
+      slug: 'lava-agni-series',
+      name: 'Agni Flagship Series',
+      brand: 'Lava',
+      image: 'https://fdn2.gsmarena.com/vv/bigpic/lava-agni2-5g.jpg',
+      description: 'Lava Agni 3 5G, Agni 2 5G',
+      pattern: /\bagni\b/i,
+      defaultModels: [
+        { brand: 'Lava', series: 'Agni Flagship Series', model: 'Lava Agni 3 5G', storage: '128 GB', price: 14000, image: 'https://fdn2.gsmarena.com/vv/bigpic/lava-agni2-5g.jpg' },
+        { brand: 'Lava', series: 'Agni Flagship Series', model: 'Lava Agni 2 5G', storage: '128 GB', price: 11500, image: 'https://fdn2.gsmarena.com/vv/bigpic/lava-agni2-5g.jpg' },
+      ],
+    },
+    {
+      id: 'lava-blaze',
+      slug: 'lava-blaze-series',
+      name: 'Blaze Series',
+      brand: 'Lava',
+      image: 'https://fdn2.gsmarena.com/vv/bigpic/lava-blaze-curve-5g.jpg',
+      description: 'Lava Blaze Curve 5G, Blaze 2 5G, Blaze 5G',
+      pattern: /\bblaze\b/i,
+      defaultModels: [
+        { brand: 'Lava', series: 'Blaze Series', model: 'Lava Blaze Curve 5G', storage: '128 GB', price: 10200, image: 'https://fdn2.gsmarena.com/vv/bigpic/lava-blaze-curve-5g.jpg' },
+        { brand: 'Lava', series: 'Blaze Series', model: 'Lava Blaze 2 5G', storage: '64 GB', price: 6800, image: 'https://fdn2.gsmarena.com/vv/bigpic/lava-blaze2-5g.jpg' },
+      ],
+    },
+    {
+      id: 'lava-yuva',
+      slug: 'lava-yuva-series',
+      name: 'Yuva Series',
+      brand: 'Lava',
+      image: 'https://fdn2.gsmarena.com/vv/bigpic/lava-yuva-3-pro.jpg',
+      description: 'Lava Yuva 3 Pro, Yuva 3, Yuva 2 Pro',
+      pattern: /\byuva\b/i,
+      defaultModels: [
+        { brand: 'Lava', series: 'Yuva Series', model: 'Lava Yuva 3 Pro', storage: '128 GB', price: 5200, image: 'https://fdn2.gsmarena.com/vv/bigpic/lava-yuva-3-pro.jpg' },
+      ],
+    },
+  ],
+
+  tecno: [
+    {
+      id: 'tecno-camon',
+      slug: 'tecno-camon-series',
+      name: 'Camon Imaging Series',
+      brand: 'Tecno',
+      image: 'https://fdn2.gsmarena.com/vv/bigpic/tecno-camon-30-pro.jpg',
+      description: 'Camon 30 Premier, Camon 30 Pro, Camon 30, Camon 20 Pro',
+      pattern: /\bcamon\b/i,
+      defaultModels: [
+        { brand: 'Tecno', series: 'Camon Imaging Series', model: 'Tecno Camon 30 Premier 5G', storage: '512 GB', price: 27000, image: 'https://fdn2.gsmarena.com/vv/bigpic/tecno-camon-30-pro.jpg' },
+        { brand: 'Tecno', series: 'Camon Imaging Series', model: 'Tecno Camon 30 Pro 5G', storage: '256 GB', price: 21000, image: 'https://fdn2.gsmarena.com/vv/bigpic/tecno-camon-30-pro.jpg' },
+        { brand: 'Tecno', series: 'Camon Imaging Series', model: 'Tecno Camon 30 5G', storage: '256 GB', price: 16500, image: 'https://fdn2.gsmarena.com/vv/bigpic/tecno-camon-30-pro.jpg' },
+      ],
+    },
+    {
+      id: 'tecno-pova',
+      slug: 'tecno-pova-series',
+      name: 'Pova Power Gaming Series',
+      brand: 'Tecno',
+      image: 'https://fdn2.gsmarena.com/vv/bigpic/tecno-pova6-pro.jpg',
+      description: 'Pova 6 Pro 5G, Pova 5 Pro, Pova Neo 3',
+      pattern: /\bpova\b/i,
+      defaultModels: [
+        { brand: 'Tecno', series: 'Pova Power Gaming Series', model: 'Tecno Pova 6 Pro 5G', storage: '256 GB', price: 15500, image: 'https://fdn2.gsmarena.com/vv/bigpic/tecno-pova6-pro.jpg' },
+        { brand: 'Tecno', series: 'Pova Power Gaming Series', model: 'Tecno Pova 5 Pro 5G', storage: '128 GB', price: 11000, image: 'https://fdn2.gsmarena.com/vv/bigpic/tecno-pova6-pro.jpg' },
+      ],
+    },
+    {
+      id: 'tecno-spark',
+      slug: 'tecno-spark-series',
+      name: 'Spark Series',
+      brand: 'Tecno',
+      image: 'https://fdn2.gsmarena.com/vv/bigpic/tecno-spark-20.jpg',
+      description: 'Spark 20 Pro+, Spark 20, Spark Go 2024',
+      pattern: /\bspark\b/i,
+      defaultModels: [
+        { brand: 'Tecno', series: 'Spark Series', model: 'Tecno Spark 20 Pro+ 5G', storage: '256 GB', price: 12500, image: 'https://fdn2.gsmarena.com/vv/bigpic/tecno-spark-20.jpg' },
+        { brand: 'Tecno', series: 'Spark Series', model: 'Tecno Spark 20', storage: '128 GB', price: 7800, image: 'https://fdn2.gsmarena.com/vv/bigpic/tecno-spark-20.jpg' },
+      ],
+    },
+    {
+      id: 'tecno-phantom',
+      slug: 'tecno-phantom-series',
+      name: 'Phantom Flagship Series',
+      brand: 'Tecno',
+      image: 'https://fdn2.gsmarena.com/vv/bigpic/tecno-phantom-v-fold.jpg',
+      description: 'Phantom V Fold, Phantom V Flip, Phantom X2 Pro',
+      pattern: /\bphantom\b/i,
+      defaultModels: [
+        { brand: 'Tecno', series: 'Phantom Flagship Series', model: 'Tecno Phantom V Fold', storage: '256 GB', price: 42000, image: 'https://fdn2.gsmarena.com/vv/bigpic/tecno-phantom-v-fold.jpg' },
+      ],
+    },
+  ],
+
+  itel: [
+    {
+      id: 'itel-color-pro',
+      slug: 'itel-color-pro-series',
+      name: 'Color Pro 5G Series',
+      brand: 'Itel',
+      image: 'https://fdn2.gsmarena.com/vv/bigpic/itel-color-pro-5g.jpg',
+      description: 'Itel Color Pro 5G',
+      pattern: /\bcolor\s*pro\b/i,
+      defaultModels: [
+        { brand: 'Itel', series: 'Color Pro 5G Series', model: 'Itel Color Pro 5G', storage: '128 GB', price: 8500, image: 'https://fdn2.gsmarena.com/vv/bigpic/itel-color-pro-5g.jpg' },
+      ],
+    },
+    {
+      id: 'itel-s',
+      slug: 'itel-s-series',
+      name: 'S Series (Curved AMOLED)',
+      brand: 'Itel',
+      image: 'https://fdn2.gsmarena.com/vv/bigpic/itel-s23-plus.jpg',
+      description: 'Itel S24, Itel S23+',
+      pattern: /\bs\d+/i,
+      defaultModels: [
+        { brand: 'Itel', series: 'S Series', model: 'Itel S24', storage: '128 GB', price: 7200, image: 'https://fdn2.gsmarena.com/vv/bigpic/itel-s24.jpg' },
+        { brand: 'Itel', series: 'S Series', model: 'Itel S23+', storage: '256 GB', price: 8900, image: 'https://fdn2.gsmarena.com/vv/bigpic/itel-s23-plus.jpg' },
+      ],
+    },
+    {
+      id: 'itel-p',
+      slug: 'itel-p-series',
+      name: 'P Power Series',
+      brand: 'Itel',
+      image: 'https://fdn2.gsmarena.com/vv/bigpic/itel-p55.jpg',
+      description: 'Itel P55 5G, P55+, P55, P55T',
+      pattern: /\bp\d+/i,
+      defaultModels: [
+        { brand: 'Itel', series: 'P Series', model: 'Itel P55 5G', storage: '128 GB', price: 7800, image: 'https://fdn2.gsmarena.com/vv/bigpic/itel-p55.jpg' },
+        { brand: 'Itel', series: 'P Series', model: 'Itel P55+', storage: '128 GB', price: 6800, image: 'https://fdn2.gsmarena.com/vv/bigpic/itel-p55.jpg' },
+      ],
+    },
+    {
+      id: 'itel-a',
+      slug: 'itel-a-series',
+      name: 'A Smart Series',
+      brand: 'Itel',
+      image: 'https://fdn2.gsmarena.com/vv/bigpic/itel-a70.jpg',
+      description: 'Itel A70, A60s, A05s',
+      pattern: /\ba\d+/i,
+      defaultModels: [
+        { brand: 'Itel', series: 'A Series', model: 'Itel A70', storage: '128 GB', price: 5600, image: 'https://fdn2.gsmarena.com/vv/bigpic/itel-a70.jpg' },
+        { brand: 'Itel', series: 'A Series', model: 'Itel A60s', storage: '64 GB', price: 4200, image: 'https://fdn2.gsmarena.com/vv/bigpic/itel-a70.jpg' },
+      ],
+    },
+  ],
+
+  infinix: [
+    {
+      id: 'infinix-gt',
+      slug: 'infinix-gt-series',
+      name: 'GT Gaming Series',
+      brand: 'Infinix',
+      image: 'https://fdn2.gsmarena.com/vv/bigpic/infinix-gt-20-pro.jpg',
+      description: 'Infinix GT 20 Pro 5G, GT 10 Pro',
+      pattern: /\bgt\b/i,
+      defaultModels: [
+        { brand: 'Infinix', series: 'GT Gaming Series', model: 'Infinix GT 20 Pro 5G', storage: '256 GB', price: 18500, image: 'https://fdn2.gsmarena.com/vv/bigpic/infinix-gt-20-pro.jpg' },
+        { brand: 'Infinix', series: 'GT Gaming Series', model: 'Infinix GT 10 Pro', storage: '256 GB', price: 14500, image: 'https://fdn2.gsmarena.com/vv/bigpic/infinix-gt-10-pro.jpg' },
+      ],
+    },
+    {
+      id: 'infinix-zero',
+      slug: 'infinix-zero-series',
+      name: 'Zero Flagship Series',
+      brand: 'Infinix',
+      image: 'https://fdn2.gsmarena.com/vv/bigpic/infinix-zero-30-5g.jpg',
+      description: 'Infinix Zero 30 5G, Zero Ultra',
+      pattern: /\bzero\b/i,
+      defaultModels: [
+        { brand: 'Infinix', series: 'Zero Flagship Series', model: 'Infinix Zero 30 5G', storage: '256 GB', price: 16500, image: 'https://fdn2.gsmarena.com/vv/bigpic/infinix-zero-30-5g.jpg' },
+      ],
+    },
+    {
+      id: 'infinix-note',
+      slug: 'infinix-note-series',
+      name: 'Note Pro Series',
+      brand: 'Infinix',
+      image: 'https://fdn2.gsmarena.com/vv/bigpic/infinix-note-40-pro-plus-5g.jpg',
+      description: 'Infinix Note 40 Pro+ 5G, Note 40 Pro, Note 30 5G',
+      pattern: /\bnote\b/i,
+      defaultModels: [
+        { brand: 'Infinix', series: 'Note Pro Series', model: 'Infinix Note 40 Pro+ 5G', storage: '256 GB', price: 17500, image: 'https://fdn2.gsmarena.com/vv/bigpic/infinix-note-40-pro-plus-5g.jpg' },
+      ],
+    },
+  ],
 };
 
 export function groupModelsBySeries(brand: string, allModels: CatalogModelItem[]): SeriesGroup[] {

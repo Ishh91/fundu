@@ -154,9 +154,61 @@ export const MODEL_EXACT_RENDERS: Array<{ keyword: string; url: string }> = [
 
   // Others
   { keyword: 'nothing phone', url: 'https://fdn2.gsmarena.com/vv/bigpic/nothing-phone-2a.jpg' },
-  { keyword: 'itel s24', url: 'https://fdn2.gsmarena.com/vv/bigpic/itel-s24.jpg' },
-  { keyword: 'infinix gt', url: 'https://fdn2.gsmarena.com/vv/bigpic/infinix-gt-20-pro.jpg' },
-  { keyword: 'tecno camon', url: 'https://fdn2.gsmarena.com/vv/bigpic/tecno-camon-30-pro.jpg' },
+  { keyword: 'cmf', url: 'https://fdn2.gsmarena.com/vv/bigpic/cmf-phone-1.jpg' },
+
+  // Lava
+  { keyword: 'agni 3', url: 'https://fdn2.gsmarena.com/vv/bigpic/lava-agni2-5g.jpg' },
+  { keyword: 'agni 2', url: 'https://fdn2.gsmarena.com/vv/bigpic/lava-agni2-5g.jpg' },
+  { keyword: 'agni', url: 'https://fdn2.gsmarena.com/vv/bigpic/lava-agni2-5g.jpg' },
+  { keyword: 'blaze curve', url: 'https://fdn2.gsmarena.com/vv/bigpic/lava-blaze-curve-5g.jpg' },
+  { keyword: 'blaze 2', url: 'https://fdn2.gsmarena.com/vv/bigpic/lava-blaze2-5g.jpg' },
+  { keyword: 'blaze', url: 'https://fdn2.gsmarena.com/vv/bigpic/lava-blaze-curve-5g.jpg' },
+  { keyword: 'yuva 3', url: 'https://fdn2.gsmarena.com/vv/bigpic/lava-yuva-3-pro.jpg' },
+  { keyword: 'yuva', url: 'https://fdn2.gsmarena.com/vv/bigpic/lava-yuva-3-pro.jpg' },
+  { keyword: 'storm', url: 'https://fdn2.gsmarena.com/vv/bigpic/lava-storm-5g.jpg' },
+  { keyword: 'lava', url: 'https://fdn2.gsmarena.com/vv/bigpic/lava-agni2-5g.jpg' },
+
+  // Tecno
+  { keyword: 'camon 30', url: 'https://fdn2.gsmarena.com/vv/bigpic/tecno-camon-30-pro.jpg' },
+  { keyword: 'camon', url: 'https://fdn2.gsmarena.com/vv/bigpic/tecno-camon-30-pro.jpg' },
+  { keyword: 'pova 6', url: 'https://fdn2.gsmarena.com/vv/bigpic/tecno-pova6-pro.jpg' },
+  { keyword: 'pova', url: 'https://fdn2.gsmarena.com/vv/bigpic/tecno-pova6-pro.jpg' },
+  { keyword: 'spark 20', url: 'https://fdn2.gsmarena.com/vv/bigpic/tecno-spark-20.jpg' },
+  { keyword: 'spark', url: 'https://fdn2.gsmarena.com/vv/bigpic/tecno-spark-20.jpg' },
+  { keyword: 'phantom', url: 'https://fdn2.gsmarena.com/vv/bigpic/tecno-phantom-v-fold.jpg' },
+  { keyword: 'tecno', url: 'https://fdn2.gsmarena.com/vv/bigpic/tecno-camon-30-pro.jpg' },
+
+  // Itel
+  { keyword: 'color pro', url: 'https://fdn2.gsmarena.com/vv/bigpic/itel-color-pro-5g.jpg' },
+  { keyword: 's23+', url: 'https://fdn2.gsmarena.com/vv/bigpic/itel-s23-plus.jpg' },
+  { keyword: 's23 plus', url: 'https://fdn2.gsmarena.com/vv/bigpic/itel-s23-plus.jpg' },
+  { keyword: 's24', url: 'https://fdn2.gsmarena.com/vv/bigpic/itel-s24.jpg' },
+  { keyword: 'p55', url: 'https://fdn2.gsmarena.com/vv/bigpic/itel-p55.jpg' },
+  { keyword: 'a70', url: 'https://fdn2.gsmarena.com/vv/bigpic/itel-a70.jpg' },
+  { keyword: 'itel', url: 'https://fdn2.gsmarena.com/vv/bigpic/itel-s24.jpg' },
+
+  // Infinix
+  { keyword: 'gt 20', url: 'https://fdn2.gsmarena.com/vv/bigpic/infinix-gt-20-pro.jpg' },
+  { keyword: 'gt 10', url: 'https://fdn2.gsmarena.com/vv/bigpic/infinix-gt-10-pro.jpg' },
+  { keyword: 'zero 30', url: 'https://fdn2.gsmarena.com/vv/bigpic/infinix-zero-30-5g.jpg' },
+  { keyword: 'note 40', url: 'https://fdn2.gsmarena.com/vv/bigpic/infinix-note-40-pro-plus-5g.jpg' },
+  { keyword: 'note 30', url: 'https://fdn2.gsmarena.com/vv/bigpic/infinix-note-30-5g.jpg' },
+  { keyword: 'hot 40', url: 'https://fdn2.gsmarena.com/vv/bigpic/infinix-hot-40-pro.jpg' },
+  { keyword: 'infinix', url: 'https://fdn2.gsmarena.com/vv/bigpic/infinix-gt-20-pro.jpg' },
+
+  // POCO
+  { keyword: 'poco f6', url: 'https://fdn2.gsmarena.com/vv/bigpic/xiaomi-poco-f6.jpg' },
+  { keyword: 'poco x6', url: 'https://fdn2.gsmarena.com/vv/bigpic/xiaomi-poco-x6-pro.jpg' },
+  { keyword: 'poco m6', url: 'https://fdn2.gsmarena.com/vv/bigpic/xiaomi-poco-m6-pro.jpg' },
+  { keyword: 'poco c65', url: 'https://fdn2.gsmarena.com/vv/bigpic/xiaomi-poco-c65.jpg' },
+  { keyword: 'poco', url: 'https://fdn2.gsmarena.com/vv/bigpic/xiaomi-poco-x6-pro.jpg' },
+
+  // iQOO
+  { keyword: 'iqoo 12', url: 'https://fdn2.gsmarena.com/vv/bigpic/vivo-iqoo12.jpg' },
+  { keyword: 'neo 9', url: 'https://fdn2.gsmarena.com/vv/bigpic/vivo-iqoo-neo9-pro.jpg' },
+  { keyword: 'neo 7', url: 'https://fdn2.gsmarena.com/vv/bigpic/vivo-iqoo-neo-7-pro.jpg' },
+  { keyword: 'iqoo z9', url: 'https://fdn2.gsmarena.com/vv/bigpic/vivo-iqoo-z9.jpg' },
+  { keyword: 'iqoo', url: 'https://fdn2.gsmarena.com/vv/bigpic/vivo-iqoo12.jpg' },
 ];
 
 // Brand-Specific High-Reliability Clean Renders for Device Fallbacks
@@ -180,6 +232,8 @@ export const BRAND_FRONT_FALLBACKS: Record<string, string> = {
   infinix: 'https://fdn2.gsmarena.com/vv/bigpic/infinix-gt-20-pro.jpg',
   tecno: 'https://fdn2.gsmarena.com/vv/bigpic/tecno-camon-30-pro.jpg',
   itel: 'https://fdn2.gsmarena.com/vv/bigpic/itel-s24.jpg',
+  lava: 'https://fdn2.gsmarena.com/vv/bigpic/lava-agni2-5g.jpg',
+  honor: 'https://fdn2.gsmarena.com/vv/bigpic/honor-200.jpg',
 };
 
 /**
@@ -224,6 +278,10 @@ export function getCleanPhoneImage(brand?: string, model?: string, fallbackUrl?:
     if (b.includes(key) || m.includes(key)) {
       return url;
     }
+  }
+
+  if (BRAND_FRONT_FALLBACKS[b]) {
+    return BRAND_FRONT_FALLBACKS[b];
   }
 
   return BRAND_FRONT_FALLBACKS.apple;

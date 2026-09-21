@@ -118,6 +118,36 @@ const BRAND_DETAILS: Record<
     desc: 'Sell used Nothing Phone (2), (1), (2a) & CMF Phone 1 in Lucknow for instant spot cash.',
     count: '10+ Nothing Models',
   },
+  tecno: {
+    logo: getCleanBrandLogo('tecno'),
+    tagline: 'Sell Old Tecno Smartphone Online for Instant Cash at Doorstep',
+    desc: 'Sell used Tecno Camon, Pova, Phantom & Spark series smartphones online in Lucknow for maximum spot payment.',
+    count: '25+ Tecno Models',
+  },
+  itel: {
+    logo: getCleanBrandLogo('itel'),
+    tagline: 'Sell Old Itel Mobile Phone Online for Instant Cash',
+    desc: 'Sell used Itel Color Pro, S24, P55, A70 & A60 series smartphones in Lucknow with free doorstep pickup & instant payment.',
+    count: '20+ Itel Models',
+  },
+  infinix: {
+    logo: getCleanBrandLogo('infinix'),
+    tagline: 'Sell Old Infinix Smartphone Online at Best Resale Value',
+    desc: 'Sell used Infinix GT, Zero, Note & Hot series phones online in Lucknow for top guaranteed cash.',
+    count: '30+ Infinix Models',
+  },
+  lava: {
+    logo: getCleanBrandLogo('lava'),
+    tagline: 'Sell Old Lava Mobile Phone Online for Maximum Spot Payout',
+    desc: 'Sell used Lava Agni, Blaze, Storm & Yuva series smartphones in Lucknow with zero hassle and instant cash.',
+    count: '20+ Lava Models',
+  },
+  honor: {
+    logo: getCleanBrandLogo('honor'),
+    tagline: 'Sell Old Honor Smartphone Online at Highest Market Value',
+    desc: 'Sell used Honor 200, 90, X9b & Magic series smartphones online in Lucknow for instant spot payment.',
+    count: '15+ Honor Models',
+  },
 };
 
 export default function SellBrandPage() {
@@ -479,7 +509,7 @@ export default function SellBrandPage() {
                           referrerPolicy="no-referrer"
                           onError={(e) => {
                             const target = e.currentTarget;
-                            const fallback = BRAND_FRONT_FALLBACKS[brandCleanKey] || BRAND_FRONT_FALLBACKS.apple;
+                            const fallback = BRAND_FRONT_FALLBACKS[brandCleanKey] || BRAND_FRONT_FALLBACKS[brandCanonicalKey] || getCleanPhoneImage(brandDisplayName);
                             if (target.src !== fallback) {
                               target.src = fallback;
                             }
@@ -535,7 +565,7 @@ export default function SellBrandPage() {
                           referrerPolicy="no-referrer"
                           onError={(e) => {
                             const target = e.currentTarget;
-                            const fallback = BRAND_FRONT_FALLBACKS[brandCleanKey] || BRAND_FRONT_FALLBACKS.apple;
+                            const fallback = BRAND_FRONT_FALLBACKS[brandCleanKey] || BRAND_FRONT_FALLBACKS[brandCanonicalKey] || getCleanPhoneImage(brandDisplayName);
                             if (target.src !== fallback) {
                               target.src = fallback;
                             }
@@ -583,7 +613,7 @@ export default function SellBrandPage() {
                         referrerPolicy="no-referrer"
                         onError={(e) => {
                           const target = e.currentTarget;
-                          const fallback = BRAND_FRONT_FALLBACKS[brandCleanKey] || BRAND_FRONT_FALLBACKS.apple;
+                          const fallback = BRAND_FRONT_FALLBACKS[brandCleanKey] || BRAND_FRONT_FALLBACKS[brandCanonicalKey] || getCleanPhoneImage(brandDisplayName);
                           if (target.src !== fallback) {
                             target.src = fallback;
                           }
