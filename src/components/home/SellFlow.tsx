@@ -122,28 +122,28 @@ export default function SellFlow() {
         {/* Top Header & Tab Buttons */}
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 border-b border-gray-100 pb-6">
           <div>
-            <span className="rounded-full bg-teal-50 px-3 py-1 text-xs font-extrabold uppercase tracking-wider text-teal-700">
+            <span className="rounded-full bg-[#6A859F]/15 border border-[#6A859F]/30 px-3 py-1 text-xs font-extrabold uppercase tracking-wider text-[#344257]">
               Simple & Transparent
             </span>
-            <h2 className="mt-2 font-display text-2xl sm:text-3xl font-extrabold text-gray-900">
+            <h2 className="mt-2 font-display text-2xl sm:text-3xl font-extrabold text-[#344257]">
               {currentFlow.title}
             </h2>
-            <p className="mt-1 text-xs sm:text-sm text-gray-500 max-w-xl">
+            <p className="mt-1 text-xs sm:text-sm text-[#8A9AAF] max-w-xl">
               {currentFlow.desc}
             </p>
           </div>
 
-          <div className="flex items-center gap-1.5 rounded-2xl bg-gray-100 p-1.5 self-start lg:self-auto">
+          <div className="flex items-center gap-1.5 rounded-2xl bg-gray-100 p-1.5 self-start lg:self-auto border border-[#C0C8D8]/60">
             <button
               type="button"
               onClick={() => setActiveTab('sell')}
               className={`flex items-center gap-2 rounded-xl px-4 py-2 text-xs font-bold transition ${
                 activeTab === 'sell'
-                  ? 'bg-white text-gray-900 shadow-sm'
-                  : 'text-gray-600 hover:text-gray-900'
+                  ? 'bg-gradient-to-r from-[#344257] to-[#5D6A82] text-white shadow-sm'
+                  : 'text-[#47576E] hover:text-[#344257]'
               }`}
             >
-              <BadgeIndianRupee className="h-4 w-4 text-emerald-600" />
+              <BadgeIndianRupee className="h-4 w-4" />
               Selling Flow
             </button>
             <button
@@ -151,11 +151,11 @@ export default function SellFlow() {
               onClick={() => setActiveTab('buy')}
               className={`flex items-center gap-2 rounded-xl px-4 py-2 text-xs font-bold transition ${
                 activeTab === 'buy'
-                  ? 'bg-white text-gray-900 shadow-sm'
-                  : 'text-gray-600 hover:text-gray-900'
+                  ? 'bg-gradient-to-r from-[#344257] to-[#5D6A82] text-white shadow-sm'
+                  : 'text-[#47576E] hover:text-[#344257]'
               }`}
             >
-              <Store className="h-4 w-4 text-teal-600" />
+              <Store className="h-4 w-4" />
               Buying Flow
             </button>
             <button
@@ -163,11 +163,11 @@ export default function SellFlow() {
               onClick={() => setActiveTab('repair')}
               className={`flex items-center gap-2 rounded-xl px-4 py-2 text-xs font-bold transition ${
                 activeTab === 'repair'
-                  ? 'bg-white text-gray-900 shadow-sm'
-                  : 'text-gray-600 hover:text-gray-900'
+                  ? 'bg-gradient-to-r from-[#344257] to-[#5D6A82] text-white shadow-sm'
+                  : 'text-[#47576E] hover:text-[#344257]'
               }`}
             >
-              <Wrench className="h-4 w-4 text-amber-600" />
+              <Wrench className="h-4 w-4" />
               Repair Flow
             </button>
           </div>
@@ -180,26 +180,26 @@ export default function SellFlow() {
             return (
               <div
                 key={st.step}
-                className="group relative rounded-2xl border border-gray-200 bg-[#f8fafc] p-5 transition-all duration-200 hover:-translate-y-1 hover:border-teal-400 hover:bg-white hover:shadow-md flex flex-col justify-between"
+                className="group relative rounded-2xl border border-gray-200 bg-[#F7F7FA] p-5 transition-all duration-200 hover:-translate-y-1 hover:border-[#6A859F] hover:bg-white hover:shadow-md flex flex-col justify-between"
               >
                 <div>
                   <div className="flex items-center justify-between">
-                    <span className="font-display text-2xl font-black text-teal-600/30 group-hover:text-teal-600 transition">
+                    <span className="font-display text-2xl font-black text-[#8A9AAF] group-hover:text-[#344257] transition">
                       {st.step}
                     </span>
-                    <div className="grid h-10 w-10 place-items-center rounded-xl bg-teal-100 text-teal-700">
+                    <div className="grid h-10 w-10 place-items-center rounded-xl bg-gradient-to-r from-[#344257] to-[#5D6A82] text-white shadow-xs">
                       <Icon className="h-5 w-5" />
                     </div>
                   </div>
 
-                  <h3 className="mt-4 text-base font-extrabold text-gray-900 group-hover:text-teal-700 transition">
+                  <h3 className="mt-4 text-base font-extrabold text-[#344257] group-hover:text-[#6A859F] transition">
                     {st.title}
                   </h3>
-                  <p className="mt-2 text-xs leading-relaxed text-gray-500">{st.desc}</p>
+                  <p className="mt-2 text-xs leading-relaxed text-[#8A9AAF]">{st.desc}</p>
                 </div>
 
-                <div className="mt-5 pt-3 border-t border-gray-100 flex items-center gap-1.5 text-[11px] font-bold text-teal-700">
-                  <CheckCircle2 className="h-3.5 w-3.5" />
+                <div className="mt-5 pt-3 border-t border-gray-100 flex items-center gap-1.5 text-[11px] font-bold text-[#344257]">
+                  <CheckCircle2 className="h-3.5 w-3.5 text-[#6A859F]" />
                   <span>Guaranteed in Lucknow</span>
                 </div>
               </div>
@@ -208,22 +208,22 @@ export default function SellFlow() {
         </div>
 
         {/* CTA Bottom Banner */}
-        <div className="mt-8 flex flex-col sm:flex-row items-center justify-between gap-4 rounded-2xl bg-teal-500 p-5 text-white shadow-md">
+        <div className="mt-8 flex flex-col sm:flex-row items-center justify-between gap-4 rounded-2xl bg-gradient-to-r from-[#344257] to-[#5D6A82] p-5 text-white shadow-md">
           <div className="flex items-center gap-3">
             <Zap className="h-6 w-6 text-amber-300 shrink-0" />
             <div>
               <p className="text-sm font-black">Ready to get started in Lucknow?</p>
-              <p className="text-xs text-teal-100">
+              <p className="text-xs text-[#C0C8D8]">
                 Over 25,000+ happy customers across Gomti Nagar, Hazratganj, Indira Nagar & more.
               </p>
             </div>
           </div>
           <Link
             to={currentFlow.ctaHref}
-            className="inline-flex items-center gap-2 rounded-xl bg-white px-5 py-2.5 text-xs font-extrabold text-teal-900 shadow-sm hover:bg-teal-50 transition"
+            className="inline-flex items-center gap-2 rounded-xl bg-white px-5 py-2.5 text-xs font-extrabold text-[#344257] shadow-sm hover:bg-[#F0F0F5] transition"
           >
             <span>{currentFlow.ctaText}</span>
-            <ArrowRight className="h-3.5 w-3.5 text-teal-700" />
+            <ArrowRight className="h-3.5 w-3.5 text-[#344257]" />
           </Link>
         </div>
       </div>

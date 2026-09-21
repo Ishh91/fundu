@@ -213,15 +213,15 @@ export default function RepairBrandPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#f4f7f8] pb-24">
+    <div className="min-h-screen bg-[#F0F0F5] pb-24">
       {/* BREADCRUMB NAVIGATION */}
-      <div className="bg-white border-b border-gray-100 py-2.5 px-4 text-xs font-semibold text-gray-500">
+      <div className="bg-white border-b border-[#C0C8D8]/50 py-2.5 px-4 text-xs font-semibold text-[#8A9AAF]">
         <div className="max-w-7xl mx-auto flex items-center gap-1.5 flex-wrap">
-          <Link to="/" className="hover:text-[#00a896]">Home</Link>
+          <Link to="/" className="hover:text-[#344257] transition">Home</Link>
           <span>&gt;</span>
-          <Link to="/repair" className="hover:text-[#00a896]">Repair</Link>
+          <Link to="/repair" className="hover:text-[#344257] transition">Repair</Link>
           <span>&gt;</span>
-          <span className="text-[#00a896] font-extrabold">{brandDisplayName}</span>
+          <span className="text-[#344257] font-extrabold">{brandDisplayName}</span>
         </div>
       </div>
 
@@ -230,7 +230,7 @@ export default function RepairBrandPage() {
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
             <div className="flex items-start sm:items-center gap-4">
-              <div className="h-16 w-16 rounded-2xl bg-white p-3 border border-purple-100 shadow-sm flex items-center justify-center shrink-0">
+              <div className="h-16 w-16 rounded-2xl bg-white p-3 border border-[#C0C8D8]/80 shadow-sm flex items-center justify-center shrink-0">
                 <img
                   src={brandInfo.logo || getCleanBrandLogo(brandCleanKey)}
                   alt={brandDisplayName}
@@ -238,13 +238,13 @@ export default function RepairBrandPage() {
                 />
               </div>
               <div>
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-100 text-purple-800 font-extrabold text-xs mb-2">
-                  <Wrench className="h-3.5 w-3.5" /> Lucknow Doorstep Repair Center
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#6A859F]/15 border border-[#6A859F]/30 text-[#344257] font-extrabold text-xs mb-2">
+                  <Wrench className="h-3.5 w-3.5 text-[#47576E]" /> Lucknow Doorstep Repair Center
                 </div>
-                <h1 className="font-display text-2xl md:text-3xl font-black text-gray-900">
+                <h1 className="font-display text-2xl md:text-3xl font-black text-[#344257]">
                   Doorstep {brandDisplayName} Mobile Repair in Lucknow
                 </h1>
-                <p className="text-xs text-gray-500 mt-1 max-w-2xl">
+                <p className="text-xs text-[#47576E] mt-1 max-w-2xl font-medium">
                   {brandInfo.desc}
                 </p>
               </div>
@@ -253,16 +253,16 @@ export default function RepairBrandPage() {
             {/* Search Bar */}
             <div className="relative w-full md:w-80 shrink-0">
               <div className="relative">
-                <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-[#8A9AAF]" />
                 <input
                   type="text"
                   value={rawSearchQuery}
                   onChange={(e) => setRawSearchQuery(e.target.value)}
                   placeholder={`Search ${brandDisplayName} model to repair...`}
-                  className="w-full pl-12 pr-10 py-3 rounded-2xl bg-white border border-gray-300 text-xs font-medium shadow-sm focus:border-purple-600 focus:ring-4 focus:ring-purple-600/10 outline-none transition"
+                  className="w-full pl-12 pr-10 py-3 rounded-2xl bg-white border border-[#C0C8D8] text-xs font-medium text-[#344257] shadow-sm focus:border-[#6A859F] focus:ring-4 focus:ring-[#6A859F]/15 outline-none transition"
                 />
                 {isSearching && (
-                  <RefreshCw className="absolute right-4 top-1/2 -translate-y-1/2 h-4 w-4 text-purple-600 animate-spin" />
+                  <RefreshCw className="absolute right-4 top-1/2 -translate-y-1/2 h-4 w-4 text-[#47576E] animate-spin" />
                 )}
               </div>
             </div>
@@ -273,17 +273,17 @@ export default function RepairBrandPage() {
       {/* MAIN CONTENT CONTAINER */}
       <div className="max-w-7xl mx-auto px-4 space-y-8">
         {/* 1. MODEL SELECTION GRID (First Step: Select Model) */}
-        <div className="card p-6 md:p-8 rounded-[32px] bg-white border border-gray-200/80 shadow-sm space-y-6">
+        <div className="card p-6 md:p-8 rounded-[32px] bg-white border border-[#C0C8D8]/70 shadow-sm space-y-6">
           <div className="flex flex-wrap items-center justify-between gap-3 border-b border-gray-100 pb-4">
             <div>
-              <span className="badge bg-teal-50 text-teal-800 font-extrabold text-xs">
+              <span className="badge bg-[#6A859F]/15 border border-[#6A859F]/30 text-[#344257] font-extrabold text-xs">
                 Step 1: Pick Device
               </span>
-              <h2 className="font-display text-xl sm:text-2xl font-black text-gray-900 mt-1">
+              <h2 className="font-display text-xl sm:text-2xl font-black text-[#344257] mt-1">
                 Select {brandDisplayName} Model
               </h2>
             </div>
-            <span className="text-xs font-bold text-gray-500 bg-gray-100 px-3.5 py-1.5 rounded-xl border border-gray-200">
+            <span className="text-xs font-bold text-[#47576E] bg-[#F7F7FA] px-3.5 py-1.5 rounded-xl border border-[#C0C8D8]/60">
               Showing {brandModels.length} Models
             </span>
           </div>
@@ -291,7 +291,7 @@ export default function RepairBrandPage() {
           {/* Horizontal Series Filter Tabs */}
           {seriesTabs.length > 1 && (
             <div className="flex items-center gap-2 overflow-x-auto scrollbar-hide py-1 border-b border-gray-100 pb-4">
-              <span className="text-xs font-bold text-gray-400 uppercase tracking-wider shrink-0 mr-2">Series:</span>
+              <span className="text-xs font-bold text-[#8A9AAF] uppercase tracking-wider shrink-0 mr-2">Series:</span>
               {seriesTabs.map((ser) => (
                 <button
                   key={ser}
@@ -299,8 +299,8 @@ export default function RepairBrandPage() {
                   onClick={() => setSelectedSeries(ser)}
                   className={`px-4 py-2 rounded-full text-xs font-extrabold transition shrink-0 cursor-pointer ${
                     selectedSeries === ser
-                      ? 'bg-[#00a896] text-white shadow-md shadow-teal-500/20 scale-105'
-                      : 'bg-gray-100 text-gray-700 hover:bg-teal-50 hover:text-[#00a896]'
+                      ? 'bg-gradient-to-r from-[#344257] to-[#5D6A82] text-white shadow-md'
+                      : 'bg-[#F7F7FA] text-[#47576E] hover:bg-[#F0F0F5] hover:text-[#344257] border border-transparent hover:border-[#C0C8D8]'
                   }`}
                 >
                   {ser}
@@ -321,7 +321,7 @@ export default function RepairBrandPage() {
                   <div
                     key={m.model}
                     onClick={() => handleBookRepair(m.model, 'screen')}
-                    className="p-3.5 sm:p-5 rounded-2xl border border-gray-100 bg-white hover:border-[#00a896] hover:shadow-lg transition-all duration-200 group cursor-pointer flex flex-col items-center justify-between text-center min-h-[175px] sm:min-h-[210px]"
+                    className="p-3.5 sm:p-5 rounded-2xl border border-gray-100 bg-white hover:border-[#6A859F] hover:shadow-lg transition-all duration-200 group cursor-pointer flex flex-col items-center justify-between text-center min-h-[175px] sm:min-h-[210px]"
                   >
                     {/* Centered Clean Device Image Container */}
                     <div className="h-32 sm:h-40 w-full flex items-center justify-center p-2.5 relative">
@@ -341,7 +341,7 @@ export default function RepairBrandPage() {
                       />
                     </div>
 
-                    <p className="mt-2 text-xs sm:text-sm font-semibold text-gray-800 group-hover:text-[#00a896] transition-colors line-clamp-2 leading-snug">
+                    <p className="mt-2 text-xs sm:text-sm font-semibold text-gray-800 group-hover:text-[#344257] transition-colors line-clamp-2 leading-snug">
                       {displayName}
                     </p>
                   </div>
@@ -367,15 +367,15 @@ export default function RepairBrandPage() {
         </div>
 
         {/* 2. COMMON REPAIR ISSUES CAROUSEL / GRID (Or Pick by Problem) */}
-        <div className="card p-6 md:p-8 rounded-[32px] bg-white border border-gray-200 shadow-md space-y-5">
+        <div className="card p-6 md:p-8 rounded-[32px] bg-white border border-[#C0C8D8]/70 shadow-sm space-y-5">
           <div className="flex items-center justify-between">
             <div>
-              <span className="badge bg-purple-50 text-purple-700 font-extrabold text-xs">Or Pick by Problem</span>
-              <h2 className="font-display text-xl font-black text-gray-900 mt-1">
+              <span className="badge bg-[#6A859F]/15 border border-[#6A859F]/30 text-[#344257] font-extrabold text-xs">Or Pick by Problem</span>
+              <h2 className="font-display text-xl font-black text-[#344257] mt-1">
                 Common Repair Issues for {brandDisplayName}
               </h2>
             </div>
-            <span className="text-xs font-semibold text-purple-700">6 Months Warranty</span>
+            <span className="text-xs font-bold text-[#47576E] bg-[#F7F7FA] px-3 py-1 rounded-full border border-[#C0C8D8]/50">6 Months Warranty</span>
           </div>
 
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
@@ -385,13 +385,13 @@ export default function RepairBrandPage() {
                 <div
                   key={srv.id}
                   onClick={() => navigate(`/repair/issue/${srv.id}`)}
-                  className="p-4 rounded-2xl border border-gray-200 bg-purple-50/30 hover:bg-purple-100/50 hover:border-purple-300 transition cursor-pointer text-center space-y-2 group"
+                  className="p-4 rounded-2xl border border-[#C0C8D8]/60 bg-[#F7F7FA] hover:bg-white hover:border-[#6A859F] hover:shadow-md transition cursor-pointer text-center space-y-2 group"
                 >
-                  <div className="w-10 h-10 rounded-xl bg-purple-600 text-white grid place-items-center mx-auto shadow-md group-hover:scale-110 transition">
+                  <div className="w-10 h-10 rounded-xl bg-gradient-to-r from-[#344257] to-[#5D6A82] text-white grid place-items-center mx-auto shadow-sm group-hover:scale-110 transition">
                     <IconComp className="h-5 w-5" />
                   </div>
-                  <p className="font-bold text-xs text-gray-900 line-clamp-1">{srv.label}</p>
-                  <p className="text-[11px] font-black text-purple-800">From {formatINR(srv.cost)}</p>
+                  <p className="font-bold text-xs text-[#344257] line-clamp-1">{srv.label}</p>
+                  <p className="text-[11px] font-black text-[#47576E]">From {formatINR(srv.cost)}</p>
                   <span className="inline-block text-[10px] text-gray-500 bg-white px-2 py-0.5 rounded-full border border-gray-200">
                     ⏱️ {srv.time}
                   </span>
@@ -402,11 +402,11 @@ export default function RepairBrandPage() {
         </div>
 
         {/* 3-STEP REPAIR PROCESS */}
-        <div className="card p-8 rounded-[32px] bg-white border border-gray-200 space-y-6">
+        <div className="card p-8 rounded-[32px] bg-white border border-[#C0C8D8]/70 shadow-sm space-y-6">
           <div className="text-center max-w-xl mx-auto space-y-1">
-            <span className="badge bg-purple-50 text-purple-700 text-xs font-bold">Fast & Convenient</span>
-            <h2 className="font-display text-2xl font-black text-gray-900">How Doorstep {brandDisplayName} Repair Works</h2>
-            <p className="text-xs text-gray-500">Repaired right at your home or office in 30 minutes</p>
+            <span className="badge bg-[#6A859F]/15 border border-[#6A859F]/30 text-[#344257] text-xs font-bold">Fast & Convenient</span>
+            <h2 className="font-display text-2xl font-black text-[#344257]">How Doorstep {brandDisplayName} Repair Works</h2>
+            <p className="text-xs text-[#47576E]">Repaired right at your home or office in 30 minutes</p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-2">
@@ -427,21 +427,21 @@ export default function RepairBrandPage() {
                 desc: 'Tech repairs your phone in front of your eyes. Test thoroughly and pay via cash or UPI!',
               },
             ].map((stepItem) => (
-              <div key={stepItem.num} className="p-6 rounded-2xl bg-purple-50/50 border border-purple-100 flex flex-col items-center text-center space-y-3">
-                <div className="grid h-12 w-12 place-items-center rounded-2xl bg-purple-600 text-white font-display font-black text-xl shadow-md">
+              <div key={stepItem.num} className="p-6 rounded-2xl bg-[#F7F7FA] border border-[#C0C8D8]/60 flex flex-col items-center text-center space-y-3">
+                <div className="grid h-12 w-12 place-items-center rounded-2xl bg-gradient-to-r from-[#344257] to-[#5D6A82] text-white font-display font-black text-xl shadow-md">
                   {stepItem.num}
                 </div>
-                <h3 className="font-extrabold text-base text-gray-900">{stepItem.title}</h3>
-                <p className="text-xs text-gray-600 leading-relaxed">{stepItem.desc}</p>
+                <h3 className="font-extrabold text-base text-[#344257]">{stepItem.title}</h3>
+                <p className="text-xs text-[#47576E] leading-relaxed">{stepItem.desc}</p>
               </div>
             ))}
           </div>
         </div>
 
         {/* REPAIR ADVANTAGES */}
-        <div className="card p-8 rounded-[32px] bg-slate-900 text-white shadow-xl space-y-6">
+        <div className="card p-8 rounded-[32px] bg-[#344257] text-white border border-[#47576E] shadow-xl space-y-6">
           <div className="text-center max-w-2xl mx-auto space-y-2">
-            <span className="badge bg-purple-500/20 text-purple-300 border border-purple-400/30 text-xs font-bold px-3 py-1">
+            <span className="badge bg-[#6A859F]/20 text-[#C0C8D8] border border-[#6A859F]/40 text-xs font-bold px-3 py-1">
               Lucknow's #1 Doorstep Mobile Service
             </span>
             <h2 className="font-display text-2xl md:text-3xl font-black text-white">
@@ -452,7 +452,7 @@ export default function RepairBrandPage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {[
               {
-                icon: <Wrench className="h-6 w-6 text-purple-400" />,
+                icon: <Wrench className="h-6 w-6 text-[#C0C8D8]" />,
                 title: '30-Minute Doorstep Fix',
                 desc: 'No need to leave your home or travel to local markets. Repair completed right at your desk.',
               },
@@ -462,22 +462,22 @@ export default function RepairBrandPage() {
                 desc: 'All replaced screens, batteries & camera parts come with genuine warranty protection.',
               },
               {
-                icon: <Lock className="h-6 w-6 text-blue-400" />,
+                icon: <Lock className="h-6 w-6 text-sky-300" />,
                 title: '100% Personal Data Safe',
                 desc: 'Repair happens right in front of your eyes. No need to share passwords or unlock pin.',
               },
               {
-                icon: <BadgeIndianRupee className="h-6 w-6 text-amber-400" />,
+                icon: <BadgeIndianRupee className="h-6 w-6 text-amber-300" />,
                 title: 'Pay ONLY After Testing',
                 desc: 'Zero advance payment required. Test your touch, display, battery & camera first, then pay.',
               },
               {
-                icon: <Truck className="h-6 w-6 text-rose-400" />,
+                icon: <Truck className="h-6 w-6 text-rose-300" />,
                 title: 'Zero Visiting Charges',
                 desc: 'Free doorstep technician visit across Gomti Nagar, Hazratganj, Indira Nagar, Aliganj & Chowk.',
               },
               {
-                icon: <CheckCircle2 className="h-6 w-6 text-teal-400" />,
+                icon: <CheckCircle2 className="h-6 w-6 text-emerald-300" />,
                 title: 'Tested Genuine Parts',
                 desc: 'We use high-grade OEM displays and tested lithium batteries for maximum longevity.',
               },
@@ -492,10 +492,10 @@ export default function RepairBrandPage() {
         </div>
 
         {/* FAQS */}
-        <div className="card p-8 rounded-[32px] bg-white border border-gray-200 space-y-6">
+        <div className="card p-8 rounded-[32px] bg-white border border-[#C0C8D8]/70 shadow-sm space-y-6">
           <div className="text-center max-w-xl mx-auto space-y-1">
-            <span className="badge bg-purple-50 text-purple-700 text-xs font-bold">Frequently Asked Questions</span>
-            <h2 className="font-display text-2xl font-black text-gray-900">
+            <span className="badge bg-[#6A859F]/15 border border-[#6A859F]/30 text-[#344257] text-xs font-bold">Frequently Asked Questions</span>
+            <h2 className="font-display text-2xl font-black text-[#344257]">
               {brandDisplayName} Doorstep Repair FAQs
             </h2>
           </div>
@@ -521,16 +521,16 @@ export default function RepairBrandPage() {
                   <button
                     type="button"
                     onClick={() => setOpenFaqIndex(isOpen ? null : idx)}
-                    className="w-full p-4 text-left font-bold text-sm text-gray-900 flex items-center justify-between gap-4 hover:bg-purple-50/30 transition cursor-pointer"
+                    className="w-full p-4 text-left font-bold text-sm text-[#344257] flex items-center justify-between gap-4 hover:bg-[#F7F7FA] transition cursor-pointer"
                   >
                     <span className="flex items-center gap-2">
-                      <HelpCircle className="h-4 w-4 text-purple-600 shrink-0" /> {f.q}
+                      <HelpCircle className="h-4 w-4 text-[#6A859F] shrink-0" /> {f.q}
                     </span>
                     {isOpen ? <ChevronUp className="h-4 w-4 text-gray-500" /> : <ChevronDown className="h-4 w-4 text-gray-500" />}
                   </button>
 
                   {isOpen && (
-                    <div className="px-4 pb-4 pt-1 text-xs text-gray-600 leading-relaxed border-t border-gray-100 bg-gray-50/50">
+                    <div className="px-4 pb-4 pt-1 text-xs text-gray-600 leading-relaxed border-t border-gray-100 bg-[#F7F7FA]">
                       {f.a}
                     </div>
                   )}

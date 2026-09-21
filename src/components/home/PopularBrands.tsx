@@ -71,23 +71,23 @@ export default function PopularBrands() {
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-gray-100 pb-5">
           <div>
             <div className="flex items-center gap-2">
-              <span className="rounded-full bg-teal-50 px-3 py-1 text-xs font-extrabold uppercase tracking-wider text-teal-700">
+              <span className="rounded-full bg-[#6A859F]/15 border border-[#6A859F]/30 px-3 py-1 text-xs font-extrabold uppercase tracking-wider text-[#344257]">
                 Brand Directory
               </span>
-              <span className="text-xs font-semibold text-gray-500">Lucknow Doorstep Service</span>
+              <span className="text-xs font-semibold text-[#8A9AAF]">Lucknow Doorstep Service</span>
             </div>
-            <h2 className="mt-2 text-2xl font-black text-gray-900 sm:text-3xl">
+            <h2 className="mt-2 text-2xl font-black text-[#344257] sm:text-3xl">
               Select Your Mobile Brand
             </h2>
           </div>
 
-          <div className="flex rounded-2xl bg-gray-100 p-1 border border-gray-200/60 shrink-0">
+          <div className="flex rounded-2xl bg-gray-100 p-1 border border-[#C0C8D8]/60 shrink-0">
             <button
               onClick={() => setActiveTab('sell')}
               className={`rounded-xl px-5 py-2 text-xs font-extrabold transition-all cursor-pointer ${
                 activeTab === 'sell'
-                  ? 'bg-brand-600 text-white shadow-md'
-                  : 'text-gray-600 hover:text-gray-900'
+                  ? 'bg-gradient-to-r from-[#344257] to-[#5D6A82] text-white shadow-md'
+                  : 'text-[#47576E] hover:text-[#344257]'
               }`}
             >
               Sell Phone (Cash)
@@ -96,8 +96,8 @@ export default function PopularBrands() {
               onClick={() => setActiveTab('buy')}
               className={`rounded-xl px-5 py-2 text-xs font-extrabold transition-all cursor-pointer ${
                 activeTab === 'buy'
-                  ? 'bg-brand-600 text-white shadow-md'
-                  : 'text-gray-600 hover:text-gray-900'
+                  ? 'bg-gradient-to-r from-[#344257] to-[#5D6A82] text-white shadow-md'
+                  : 'text-[#47576E] hover:text-[#344257]'
               }`}
             >
               Buy Refurbished
@@ -123,13 +123,13 @@ export default function PopularBrands() {
               <Link
                 key={brand}
                 to={targetHref}
-                className="group relative flex flex-col items-center justify-between rounded-2xl border border-gray-100 bg-white p-4 text-center transition-all duration-200 hover:-translate-y-1 hover:border-teal-400 hover:shadow-lg"
+                className="group relative flex flex-col items-center justify-between rounded-2xl border border-gray-100 bg-white p-4 text-center transition-all duration-200 hover:-translate-y-1 hover:border-[#6A859F] hover:shadow-lg"
               >
-                <span className="absolute left-2.5 top-2.5 z-10 pointer-events-none rounded-md bg-teal-50 border border-teal-100 px-2 py-0.5 text-[10px] font-bold text-teal-800">
+                <span className="absolute left-2.5 top-2.5 z-10 pointer-events-none rounded-md bg-[#F0F0F5] border border-[#C0C8D8] px-2 py-0.5 text-[10px] font-bold text-[#344257]">
                   {data.tag}
                 </span>
 
-                <div className="mt-4 h-20 w-20 overflow-hidden rounded-2xl bg-gray-50/60 p-1.5 flex items-center justify-center border border-gray-100 transition group-hover:scale-105 group-hover:border-teal-300">
+                <div className="mt-4 h-20 w-20 overflow-hidden rounded-2xl bg-[#F7F7FA] p-1.5 flex items-center justify-center border border-gray-100 transition group-hover:scale-105 group-hover:border-[#6A859F]/40">
                   <img
                     src={data.image}
                     alt={`${brand} phone`}
@@ -141,15 +141,15 @@ export default function PopularBrands() {
                 </div>
 
                 <div className="mt-3">
-                  <h3 className="text-sm font-extrabold text-gray-900 group-hover:text-teal-600 transition">
+                  <h3 className="text-sm font-extrabold text-[#344257] group-hover:text-[#6A859F] transition">
                     {brand}
                   </h3>
-                  <p className="text-[11px] font-medium text-gray-500 truncate max-w-[120px] mt-0.5">
+                  <p className="text-[11px] font-medium text-[#8A9AAF] truncate max-w-[120px] mt-0.5">
                     {data.popularModel}
                   </p>
                 </div>
 
-                <div className="mt-3 w-full rounded-lg bg-teal-50 group-hover:bg-teal-600 py-1.5 text-[11px] font-bold text-teal-800 group-hover:text-white border border-teal-200 transition">
+                <div className="mt-3 w-full rounded-lg bg-[#F0F0F5] group-hover:bg-gradient-to-r group-hover:from-[#344257] group-hover:to-[#5D6A82] py-1.5 text-[11px] font-bold text-[#344257] group-hover:text-white border border-[#C0C8D8] group-hover:border-transparent transition">
                   {activeTab === 'sell' ? 'Get Quote' : 'View Deals'}
                 </div>
               </Link>

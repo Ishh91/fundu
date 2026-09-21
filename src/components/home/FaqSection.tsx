@@ -78,14 +78,14 @@ export default function FaqSection() {
           {/* Left Summary Box */}
           <div className="flex flex-col justify-between rounded-2xl bg-white/80 p-6 border border-white/90 shadow-sm">
             <div>
-              <div className="inline-flex items-center gap-1.5 rounded-full bg-teal-50 px-3 py-1 text-xs font-extrabold uppercase tracking-wider text-teal-700">
-                <HelpCircle className="h-3.5 w-3.5" />
+              <div className="inline-flex items-center gap-1.5 rounded-full bg-[#6A859F]/15 border border-[#6A859F]/30 px-3 py-1 text-xs font-extrabold uppercase tracking-wider text-[#344257]">
+                <HelpCircle className="h-3.5 w-3.5 text-[#47576E]" />
                 Frequently Asked Questions
               </div>
-              <h2 className="mt-3 font-display text-2xl sm:text-3xl font-extrabold text-gray-900">
+              <h2 className="mt-3 font-display text-2xl sm:text-3xl font-extrabold text-[#344257]">
                 Everything You Need to Know About Fundu
               </h2>
-              <p className="mt-2 text-xs sm:text-sm text-gray-600 leading-relaxed">
+              <p className="mt-2 text-xs sm:text-sm text-[#8A9AAF] leading-relaxed">
                 Got questions about selling, buying refurbished, or booking doorstep repair in Lucknow? We've got you covered.
               </p>
 
@@ -101,8 +101,8 @@ export default function FaqSection() {
                     }}
                     className={`rounded-xl px-3.5 py-2 text-xs font-bold transition ${
                       activeCategory === cat.id
-                        ? 'bg-teal-500 text-white shadow-sm'
-                        : 'bg-white border border-gray-200 text-gray-700 hover:border-teal-300'
+                        ? 'bg-gradient-to-r from-[#344257] to-[#5D6A82] text-white shadow-sm'
+                        : 'bg-white border border-[#C0C8D8]/70 text-[#47576E] hover:border-[#6A859F] hover:text-[#344257]'
                     }`}
                   >
                     {cat.label}
@@ -112,23 +112,23 @@ export default function FaqSection() {
             </div>
 
             {/* Helpline Box */}
-            <div className="mt-8 rounded-xl bg-white p-4 border border-gray-200">
-              <p className="text-xs font-bold text-gray-900">Still have questions?</p>
-              <p className="text-xs text-gray-500 mt-0.5">
+            <div className="mt-8 rounded-xl bg-[#F7F7FA] p-4 border border-[#C0C8D8]/60">
+              <p className="text-xs font-bold text-[#344257]">Still have questions?</p>
+              <p className="text-xs text-[#8A9AAF] mt-0.5">
                 Our Lucknow support desk is available 7 days a week (9 AM - 9 PM).
               </p>
               <div className="mt-3 flex items-center justify-between">
                 <a
                   href="tel:+919876543210"
-                  className="inline-flex items-center gap-1.5 text-xs font-bold text-teal-700 hover:text-teal-800"
+                  className="inline-flex items-center gap-1.5 text-xs font-bold text-[#344257] hover:text-[#6A859F] transition"
                 >
-                  <PhoneCall className="h-3.5 w-3.5" /> Call +91 98765 43210
+                  <PhoneCall className="h-3.5 w-3.5 text-[#6A859F]" /> Call +91 98765 43210
                 </a>
                 <Link
                   to="/contact"
-                  className="inline-flex items-center gap-1 text-xs font-bold text-gray-700 hover:text-teal-600"
+                  className="inline-flex items-center gap-1 text-xs font-bold text-[#47576E] hover:text-[#344257] transition"
                 >
-                  Contact Form <ArrowRight className="h-3 w-3" />
+                  Contact Form <ArrowRight className="h-3 w-3 text-[#6A859F]" />
                 </Link>
               </div>
             </div>
@@ -143,8 +143,8 @@ export default function FaqSection() {
                   key={index}
                   className={`rounded-2xl border transition-all duration-200 ${
                     isOpen
-                      ? 'border-teal-400 bg-teal-50/20 shadow-sm'
-                      : 'border-gray-200 bg-white hover:border-gray-300'
+                      ? 'border-[#6A859F] bg-[#F7F7FA] shadow-sm'
+                      : 'border-gray-200 bg-white hover:border-[#C0C8D8]'
                   }`}
                 >
                   <button
@@ -152,16 +152,16 @@ export default function FaqSection() {
                     onClick={() => setOpenIndex(isOpen ? null : index)}
                     className="flex w-full items-start justify-between gap-4 p-4 text-left"
                   >
-                    <span className="text-sm font-bold text-gray-900 leading-snug">{faq.q}</span>
+                    <span className="text-sm font-bold text-[#344257] leading-snug">{faq.q}</span>
                     <ChevronDown
-                      className={`h-4 w-4 shrink-0 text-gray-400 transition-transform duration-200 mt-0.5 ${
-                        isOpen ? 'rotate-180 text-teal-600' : ''
+                      className={`h-4 w-4 shrink-0 text-[#8A9AAF] transition-transform duration-200 mt-0.5 ${
+                        isOpen ? 'rotate-180 text-[#344257]' : ''
                       }`}
                     />
                   </button>
 
                   {isOpen && (
-                    <div className="px-4 pb-4 pt-1 text-xs leading-relaxed text-gray-600 border-t border-teal-100/60 mt-1">
+                    <div className="px-4 pb-4 pt-1 text-xs leading-relaxed text-[#47576E] border-t border-[#C0C8D8]/50 mt-1">
                       {faq.a}
                     </div>
                   )}

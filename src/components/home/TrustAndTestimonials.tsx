@@ -132,7 +132,7 @@ export default function TrustAndTestimonials() {
         {/* Header & Stats Strip */}
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 border-b border-gray-800 pb-8">
           <div>
-            <span className="rounded-full bg-teal-500/20 border border-teal-500/30 px-3 py-1 text-xs font-extrabold uppercase tracking-widest text-teal-400">
+            <span className="rounded-full bg-[#6A859F]/20 border border-[#6A859F]/40 px-3 py-1 text-xs font-extrabold uppercase tracking-widest text-[#C0C8D8]">
               Verified Lucknow Feedback
             </span>
             <h2 className="mt-2 font-display text-2xl sm:text-3xl font-black text-white">
@@ -151,7 +151,7 @@ export default function TrustAndTestimonials() {
                   key={idx}
                   className="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/5 px-4 py-2.5 backdrop-blur-sm"
                 >
-                  <div className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-teal-500/20 text-teal-400">
+                  <div className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-[#6A859F]/20 text-[#C0C8D8]">
                     <Icon className="h-4.5 w-4.5" />
                   </div>
                   <div>
@@ -165,7 +165,7 @@ export default function TrustAndTestimonials() {
             <button
               type="button"
               onClick={() => setReviewModalOpen(true)}
-              className="inline-flex items-center gap-2 rounded-2xl bg-teal-500 hover:bg-teal-600 px-4 py-3 text-xs font-bold text-white shadow-lg transition"
+              className="inline-flex items-center gap-2 rounded-2xl bg-gradient-to-r from-[#47576E] to-[#6A859F] hover:brightness-110 px-4 py-3 text-xs font-bold text-white shadow-lg transition"
             >
               <MessageSquarePlus className="h-4 w-4" />
               <span>Write a Review</span>
@@ -179,7 +179,7 @@ export default function TrustAndTestimonials() {
             {allTestimonials.slice(startIndex, startIndex + visibleCount).map((item, idx) => (
               <div
                 key={`${item.name}-${idx}`}
-                className="flex flex-col justify-between rounded-2xl bg-white/5 border border-white/10 p-5 backdrop-blur-md transition hover:border-teal-500/50 hover:bg-white/10"
+                className="flex flex-col justify-between rounded-2xl bg-white/5 border border-white/10 p-5 backdrop-blur-md transition hover:border-[#6A859F]/60 hover:bg-white/10"
               >
                 <div>
                   <div className="flex items-center justify-between">
@@ -188,7 +188,7 @@ export default function TrustAndTestimonials() {
                         <Star key={i} className="h-4 w-4 fill-current" />
                       ))}
                     </div>
-                    <span className="rounded-full bg-teal-500/20 px-2.5 py-0.5 text-[10px] font-bold text-teal-300">
+                    <span className="rounded-full bg-[#6A859F]/20 px-2.5 py-0.5 text-[10px] font-bold text-[#C0C8D8]">
                       {item.service}
                     </span>
                   </div>
@@ -200,7 +200,7 @@ export default function TrustAndTestimonials() {
 
                 <div className="mt-6 pt-4 border-t border-white/10 flex items-center justify-between">
                   <div className="flex items-center gap-2.5">
-                    <div className="grid h-9 w-9 place-items-center rounded-full bg-teal-500/30 text-teal-300 font-bold text-xs border border-teal-500/40">
+                    <div className="grid h-9 w-9 place-items-center rounded-full bg-[#6A859F]/30 text-[#C0C8D8] font-bold text-xs border border-[#6A859F]/40">
                       {item.name.charAt(0)}
                     </div>
                     <div>
@@ -258,7 +258,7 @@ export default function TrustAndTestimonials() {
       />
 
       {/* Brand Partners Marquee Strip */}
-      <div className="mt-10 bg-teal-600 py-3.5 overflow-hidden">
+      <div className="mt-10 bg-gradient-to-r from-[#344257] via-[#47576E] to-[#344257] border-y border-[#C0C8D8]/20 py-3.5 overflow-hidden">
         <div className="flex whitespace-nowrap marquee-track">
           {[
             ...BRAND_PARTNERS,

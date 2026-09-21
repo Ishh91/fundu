@@ -150,20 +150,20 @@ export default function BestDeals({ products, loading }: BestDealsProps) {
                   : 'Fair';
             const gradeColor =
               item.condition === 'Excellent'
-                ? 'bg-emerald-500 text-white'
+                ? 'bg-[#344257] text-white'
                 : item.condition === 'Good'
-                  ? 'bg-teal-600 text-white'
-                  : 'bg-amber-500 text-white';
+                  ? 'bg-[#47576E] text-white'
+                  : 'bg-[#6A859F] text-white';
 
             const emiAmount = Math.round(item.price / 12);
 
             return (
               <div
                 key={item.id}
-                className="group relative flex flex-col justify-between overflow-hidden rounded-2xl border border-gray-200 bg-white transition-all duration-200 hover:-translate-y-1 hover:border-teal-400 hover:shadow-xl"
+                className="group relative flex flex-col justify-between overflow-hidden rounded-2xl border border-gray-200 bg-white transition-all duration-200 hover:-translate-y-1 hover:border-[#6A859F] hover:shadow-xl"
               >
                 {/* Top Badges */}
-                <div className="relative aspect-[4/3] bg-[#f8fafc] overflow-hidden p-4 flex items-center justify-center">
+                <div className="relative aspect-[4/3] bg-[#F7F7FA] overflow-hidden p-4 flex items-center justify-center">
                   <span
                     className={`absolute left-3 top-3 z-10 pointer-events-none rounded-full px-2.5 py-0.5 text-[10px] font-extrabold uppercase tracking-wide ${gradeColor}`}
                   >
@@ -193,13 +193,13 @@ export default function BestDeals({ products, loading }: BestDealsProps) {
                   <div>
                     <div className="flex items-center justify-between text-xs text-gray-400 font-semibold uppercase tracking-wider">
                       <span>{item.brand}</span>
-                      <span className="flex items-center gap-1 text-emerald-600 font-bold">
-                        <CheckCircle2 className="h-3 w-3" /> 32-Pt Check Passed
+                      <span className="flex items-center gap-1 text-[#344257] font-bold">
+                        <CheckCircle2 className="h-3 w-3 text-[#6A859F]" /> 32-Pt Check Passed
                       </span>
                     </div>
 
                     <Link to={`/product/${item.id}`}>
-                      <h3 className="mt-1.5 text-sm font-bold text-gray-900 group-hover:text-teal-700 transition line-clamp-1">
+                      <h3 className="mt-1.5 text-sm font-bold text-[#344257] group-hover:text-[#6A859F] transition line-clamp-1">
                         {item.title}
                       </h3>
                     </Link>
@@ -207,17 +207,17 @@ export default function BestDeals({ products, loading }: BestDealsProps) {
                     {/* Specs Pills */}
                     <div className="mt-2.5 flex flex-wrap gap-1.5 text-[11px]">
                       {item.storage && (
-                        <span className="rounded-md bg-gray-100 px-2 py-0.5 font-bold text-gray-700">
+                        <span className="rounded-md bg-gray-100 px-2 py-0.5 font-bold text-[#47576E]">
                           {item.storage}
                         </span>
                       )}
                       {item.ram && (
-                        <span className="rounded-md bg-gray-100 px-2 py-0.5 font-bold text-gray-700">
+                        <span className="rounded-md bg-gray-100 px-2 py-0.5 font-bold text-[#47576E]">
                           {item.ram} RAM
                         </span>
                       )}
-                      <span className="rounded-md bg-teal-50 px-2 py-0.5 font-bold text-teal-700 flex items-center gap-1">
-                        <ShieldCheck className="h-3 w-3" /> {item.warranty_months || 6}M Warranty
+                      <span className="rounded-md bg-[#6A859F]/15 px-2 py-0.5 font-bold text-[#344257] flex items-center gap-1">
+                        <ShieldCheck className="h-3 w-3 text-[#6A859F]" /> {item.warranty_months || 6}M Warranty
                       </span>
                     </div>
                   </div>
@@ -225,7 +225,7 @@ export default function BestDeals({ products, loading }: BestDealsProps) {
                   {/* Pricing & CTA */}
                   <div className="mt-4 pt-3 border-t border-gray-100">
                     <div className="flex items-baseline gap-2">
-                      <span className="text-lg font-black text-gray-900">
+                      <span className="text-lg font-black text-[#344257]">
                         {formatINR(item.price)}
                       </span>
                       {item.original_price && (
@@ -234,21 +234,21 @@ export default function BestDeals({ products, loading }: BestDealsProps) {
                         </span>
                       )}
                     </div>
-                    <p className="text-[11px] font-semibold text-teal-700 mt-0.5">
+                    <p className="text-[11px] font-semibold text-[#6A859F] mt-0.5">
                       Or EMI from {formatINR(emiAmount)}/month
                     </p>
 
                     <div className="mt-3 flex gap-2">
                       <Link
                         to={`/product/${item.id}`}
-                        className="flex-1 rounded-xl bg-teal-500 py-2 text-center text-xs font-bold text-white hover:bg-teal-600 shadow-sm transition"
+                        className="flex-1 rounded-xl bg-gradient-to-r from-[#344257] to-[#5D6A82] py-2 text-center text-xs font-bold text-white hover:brightness-110 shadow-sm transition"
                       >
                         Buy Now
                       </Link>
                       <button
                         type="button"
                         onClick={() => addToCart(item, 1)}
-                        className="grid h-8 w-8 place-items-center rounded-xl border border-gray-200 bg-white text-gray-700 hover:border-teal-400 hover:text-teal-700 transition shadow-sm"
+                        className="grid h-8 w-8 place-items-center rounded-xl border border-gray-200 bg-white text-[#344257] hover:border-[#6A859F] hover:text-[#344257] transition shadow-sm"
                         title="Add to Cart"
                       >
                         <ShoppingCart className="h-4 w-4" />

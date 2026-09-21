@@ -7,7 +7,7 @@ const FUNDU_SERVICES = [
     subtitle: 'Instant Spot Cash',
     href: '/sell',
     icon: Smartphone,
-    color: 'bg-teal-50 text-[#00a896] border-teal-200',
+    color: 'bg-[#6A859F]/15 text-[#344257] border-[#6A859F]/30',
     image: 'https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=150&auto=format&fit=crop&q=80',
   },
   {
