@@ -161,13 +161,13 @@ export default function SearchActionPage() {
       {/* CASHIFY EXACT BREADCRUMB NAVIGATION */}
       <div className="bg-white border-b border-gray-100 py-2.5 px-4 text-xs font-semibold text-gray-500">
         <div className="max-w-7xl mx-auto flex items-center gap-1.5 flex-wrap">
-          <Link to="/" className="hover:text-[#00a896] transition">Home</Link>
+          <Link to="/" className="hover:text-[#344257] transition">Home</Link>
           <span>&gt;</span>
-          <Link to="/search" className="hover:text-[#00a896] transition">Search</Link>
+          <Link to="/search" className="hover:text-[#344257] transition">Search</Link>
           {query && (
             <>
               <span>&gt;</span>
-              <span className="text-[#00a896] font-extrabold">{query}</span>
+              <span className="text-[#344257] font-extrabold">{query}</span>
             </>
           )}
         </div>
@@ -178,8 +178,8 @@ export default function SearchActionPage() {
         <div className="max-w-5xl mx-auto space-y-4">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div>
-              <span className="badge bg-teal-50 text-[#00a896] text-xs font-bold">Smart Device Hub</span>
-              <h1 className="text-2xl sm:text-3xl font-black text-gray-900 mt-1">
+              <span className="badge bg-[#F0F0F5] text-[#344257] border border-[#C0C8D8] text-xs font-bold">Smart Device Hub</span>
+              <h1 className="text-2xl sm:text-3xl font-black text-[#344257] mt-1">
                 {query ? `Search Results for "${query}"` : 'Search Any Phone'}
               </h1>
               <p className="text-xs text-gray-500 mt-0.5">
@@ -190,7 +190,7 @@ export default function SearchActionPage() {
 
           {/* Quick Search Re-input Bar */}
           <form onSubmit={handleSearchSubmit} className="relative max-w-2xl">
-            <div className="flex items-center gap-2 rounded-2xl bg-gray-50 border border-gray-300/80 px-4 py-3 focus-within:bg-white focus-within:ring-2 focus-within:ring-[#00a896]/30 focus-within:border-[#00a896] transition shadow-xs">
+            <div className="flex items-center gap-2 rounded-2xl bg-gray-50 border border-[#C0C8D8] px-4 py-3 focus-within:bg-white focus-within:ring-2 focus-within:ring-[#6A859F]/30 focus-within:border-[#47576E] transition shadow-xs">
               <Search className="h-5 w-5 text-gray-400 shrink-0" />
               <input
                 type="text"
@@ -201,7 +201,7 @@ export default function SearchActionPage() {
               />
               <button
                 type="submit"
-                className="btn-primary text-xs px-4 py-1.5 bg-[#00a896] hover:bg-[#008f80] font-bold rounded-xl shrink-0 shadow-xs"
+                className="btn-primary text-xs px-4 py-1.5 font-bold rounded-xl shrink-0 shadow-xs"
               >
                 Search
               </button>
@@ -214,7 +214,7 @@ export default function SearchActionPage() {
       <div className="max-w-5xl mx-auto px-4 py-8 space-y-8">
         {matchedPhones.length === 0 ? (
           <div className="card p-12 text-center bg-white rounded-3xl border border-gray-200 shadow-sm space-y-4">
-            <div className="grid h-16 w-16 place-items-center rounded-2xl bg-teal-50 text-[#00a896] mx-auto shadow-xs">
+            <div className="grid h-16 w-16 place-items-center rounded-2xl bg-[#F0F0F5] text-[#344257] border border-[#C0C8D8] mx-auto shadow-xs">
               <Smartphone className="h-8 w-8" />
             </div>
             <div>
@@ -225,7 +225,7 @@ export default function SearchActionPage() {
             </div>
 
             <div className="flex flex-wrap justify-center gap-3 pt-2">
-              <Link to="/buy" className="btn-primary text-xs px-5 py-2.5 bg-[#00a896] hover:bg-[#008f80] font-bold">
+              <Link to="/buy" className="btn-primary text-xs px-5 py-2.5 font-bold">
                 Browse Buy Store
               </Link>
               <Link to="/sell" className="btn-outline text-xs px-5 py-2.5 font-bold">
@@ -259,7 +259,7 @@ export default function SearchActionPage() {
                       />
                     </div>
                     <div className="space-y-1">
-                      <span className="badge bg-teal-50 text-[#00a896] font-extrabold text-[11px] px-2.5 py-0.5">
+                      <span className="badge bg-[#F0F0F5] text-[#344257] border border-[#C0C8D8] font-extrabold text-[11px] px-2.5 py-0.5">
                         {phone.brand}
                       </span>
                       <h2 className="text-xl sm:text-2xl font-black text-gray-900">
@@ -329,14 +329,14 @@ export default function SearchActionPage() {
                   </div>
 
                   {/* 2. BUY CARD */}
-                  <div className="p-5 rounded-2xl bg-gradient-to-br from-teal-50/80 via-white to-teal-50/30 border border-teal-200 shadow-xs flex flex-col justify-between space-y-4 hover:border-teal-400 transition-colors group">
+                  <div className="p-5 rounded-2xl bg-gradient-to-br from-[#F0F0F5]/90 via-white to-[#F7F7FA] border border-[#C0C8D8] shadow-xs flex flex-col justify-between space-y-4 hover:border-[#6A859F] transition-colors group">
                     <div className="space-y-2">
                       <div className="flex items-center justify-between">
-                        <div className="grid h-10 w-10 place-items-center rounded-xl bg-teal-100 text-[#00a896] shadow-xs">
+                        <div className="grid h-10 w-10 place-items-center rounded-xl bg-[#E5E9F0] text-[#344257] shadow-xs">
                           <Smartphone className="h-5 w-5" />
                         </div>
                         {stockInfo.inStock ? (
-                          <span className="badge bg-teal-600 text-white font-extrabold text-[10px] px-2 py-0.5">
+                          <span className="badge bg-[#344257] text-white font-extrabold text-[10px] px-2 py-0.5">
                             Certified Ready
                           </span>
                         ) : (
@@ -346,7 +346,7 @@ export default function SearchActionPage() {
                         )}
                       </div>
 
-                      <h3 className="font-extrabold text-base text-gray-900 group-hover:text-[#00a896] transition-colors">
+                      <h3 className="font-extrabold text-base text-gray-900 group-hover:text-[#344257] transition-colors">
                         Buy Refurbished
                       </h3>
                       <p className="text-xs text-gray-500 leading-relaxed">
@@ -357,7 +357,7 @@ export default function SearchActionPage() {
 
                       <div className="pt-1">
                         <p className="text-[11px] text-gray-400 font-bold uppercase tracking-wider">Starting Price:</p>
-                        <p className="text-lg font-black text-teal-800">
+                        <p className="text-lg font-black text-[#344257]">
                           {stockInfo.price ? formatINR(stockInfo.price) : 'Check Restock'}
                         </p>
                       </div>
@@ -366,7 +366,7 @@ export default function SearchActionPage() {
                     {stockInfo.inStock && stockInfo.product ? (
                       <Link
                         to={`/product/${stockInfo.product.id}`}
-                        className="btn-primary w-full text-xs py-2.5 bg-[#00a896] hover:bg-[#008f80] font-bold flex items-center justify-center gap-1.5 shadow-xs"
+                        className="btn-primary w-full text-xs py-2.5 font-bold flex items-center justify-center gap-1.5 shadow-xs"
                       >
                         Buy Now ({formatINR(stockInfo.price!)}) <ArrowRight className="h-4 w-4" />
                       </Link>
@@ -479,7 +479,7 @@ export default function SearchActionPage() {
 
                 <button
                   type="submit"
-                  className="btn-primary w-full py-2.5 text-xs font-bold bg-[#00a896] hover:bg-[#008f80] flex items-center justify-center gap-1.5 shadow-md shadow-teal-500/20"
+                  className="btn-primary w-full py-2.5 text-xs font-bold flex items-center justify-center gap-1.5 shadow-md shadow-slate-900/20"
                 >
                   <Bell className="h-4 w-4" /> Notify Me When In Stock
                 </button>

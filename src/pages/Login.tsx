@@ -378,7 +378,7 @@ export default function Login() {
                 : 'text-gray-500 hover:text-gray-800'
             }`}
           >
-            <Smartphone className="h-4 w-4 text-[#00a896]" /> Mobile OTP
+            <Smartphone className="h-4 w-4 text-[#344257]" /> Mobile OTP
           </button>
           <button
             type="button"
@@ -389,7 +389,7 @@ export default function Login() {
                 : 'text-gray-500 hover:text-gray-800'
             }`}
           >
-            <Lock className="h-4 w-4 text-[#00a896]" /> Password
+            <Lock className="h-4 w-4 text-[#344257]" /> Password
           </button>
         </div>
 
@@ -400,7 +400,7 @@ export default function Login() {
               <form onSubmit={handleSendOtp} className="space-y-4">
                 <div>
                   <label className="label">Enter Your Mobile Number</label>
-                  <div className="flex rounded-xl border border-ink-200 overflow-hidden focus-within:border-[#00a896] focus-within:ring-4 focus-within:ring-[#00a896]/10 bg-white transition-all">
+                  <div className="flex rounded-xl border border-ink-200 overflow-hidden focus-within:border-[#47576E] focus-within:ring-4 focus-within:ring-[#6A859F]/10 bg-white transition-all">
                     <div className="flex items-center gap-1.5 border-r border-ink-200 bg-ink-50 px-3.5 py-3 text-xs font-black text-gray-700 select-none shrink-0">
                       <span>🇮🇳</span>
                       <span>+91</span>
@@ -419,7 +419,7 @@ export default function Login() {
                     />
                   </div>
                   <p className="text-[11px] text-gray-400 mt-1.5 flex items-center gap-1">
-                    <ShieldCheck className="h-3.5 w-3.5 text-[#00a896]" />
+                    <ShieldCheck className="h-3.5 w-3.5 text-emerald-600" />
                     We'll send a 6-digit OTP code via SMS to verify.
                   </p>
                 </div>
@@ -456,7 +456,7 @@ export default function Login() {
                       setOtpStep('input');
                       setError(null);
                     }}
-                    className="text-xs text-[#00a896] font-bold hover:underline"
+                    className="text-xs text-[#344257] font-bold hover:underline"
                   >
                     Change Number
                   </button>
@@ -475,7 +475,7 @@ export default function Login() {
                         value={digit}
                         onChange={(e) => handleOtpDigitChange(idx, e.target.value)}
                         onKeyDown={(e) => handleOtpKeyDown(idx, e)}
-                        className="w-10 sm:w-12 h-12 sm:h-14 text-center text-lg sm:text-xl font-black rounded-xl border border-gray-300 focus:border-[#00a896] focus:ring-4 focus:ring-[#00a896]/10 outline-none transition bg-white"
+                        className="w-10 sm:w-12 h-12 sm:h-14 text-center text-lg sm:text-xl font-black rounded-xl border border-gray-300 focus:border-[#47576E] focus:ring-4 focus:ring-[#6A859F]/10 outline-none transition bg-white"
                       />
                     ))}
                   </div>
@@ -501,14 +501,14 @@ export default function Login() {
                 <div className="text-center pt-2">
                   {otpCountdown > 0 ? (
                     <p className="text-xs text-gray-400 font-semibold">
-                      Resend OTP in <span className="text-[#00a896] font-bold">{otpCountdown}s</span>
+                      Resend OTP in <span className="text-[#344257] font-bold">{otpCountdown}s</span>
                     </p>
                   ) : (
                     <button
                       type="button"
                       onClick={handleSendOtp}
                       disabled={loading}
-                      className="text-xs text-[#00a896] font-bold hover:underline inline-flex items-center gap-1"
+                      className="text-xs text-[#344257] font-bold hover:underline inline-flex items-center gap-1"
                     >
                       <RefreshCw className="h-3 w-3" /> Resend OTP Code
                     </button>

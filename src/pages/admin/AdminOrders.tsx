@@ -370,16 +370,16 @@ export default function AdminOrders({
                     </div>
 
                     {/* Ordered Device Badge */}
-                    <div className="mt-2 py-1 px-2 rounded-lg bg-teal-50/80 border border-teal-100/90 flex items-center gap-1.5 text-xs text-teal-800 font-bold">
-                      <Smartphone className="h-3.5 w-3.5 text-[#00a896] shrink-0" />
+                    <div className="mt-2 py-1 px-2 rounded-lg bg-[#F0F0F5] border border-[#C0C8D8] flex items-center gap-1.5 text-xs text-[#344257] font-bold">
+                      <Smartphone className="h-3.5 w-3.5 text-[#344257] shrink-0" />
                       <span className="truncate">{firstItem?.title || 'Refurbished Device'}</span>
                       {orderItems.length > 1 && (
-                        <span className="text-[10px] text-teal-600 shrink-0 font-extrabold">+{orderItems.length - 1}</span>
+                        <span className="text-[10px] text-[#47576E] shrink-0 font-extrabold">+{orderItems.length - 1}</span>
                       )}
                     </div>
 
                     <div className="mt-2 flex items-center justify-between text-xs pt-2 border-t border-ink-100/60">
-                      <span className="font-extrabold text-[#00a896]">{formatINR(o.total_amount)}</span>
+                      <span className="font-extrabold text-[#344257]">{formatINR(o.total_amount)}</span>
                       <span className="text-ink-400">{new Date(o.created_at).toLocaleDateString('en-IN')}</span>
                     </div>
                   </div>
@@ -479,7 +479,7 @@ export default function AdminOrders({
                   <div className="space-y-3">
                     <div className="flex items-center justify-between">
                       <h4 className="text-xs font-black uppercase tracking-wider text-ink-700 flex items-center gap-1.5">
-                        <ShoppingBag className="h-4 w-4 text-[#00a896]" />
+                        <ShoppingBag className="h-4 w-4 text-[#344257]" />
                         Ordered Product & Device Details ({resolvedItems.length})
                       </h4>
                       <span className="text-[11px] font-bold text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200">
@@ -493,7 +493,7 @@ export default function AdminOrders({
                         return (
                           <div
                             key={idx}
-                            className="p-4 rounded-2xl bg-gradient-to-br from-gray-50/90 via-white to-teal-50/30 border border-ink-200/80 shadow-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4"
+                            className="p-4 rounded-2xl bg-gradient-to-br from-gray-50/90 via-white to-[#F0F0F5]/50 border border-[#C0C8D8] shadow-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4"
                           >
                             <div className="flex items-center gap-3.5">
                               <div className="h-16 w-16 shrink-0 rounded-2xl bg-white border border-ink-100 p-1.5 flex items-center justify-center shadow-xs">
@@ -509,7 +509,7 @@ export default function AdminOrders({
                               <div className="space-y-1">
                                 <div className="flex items-center gap-2 flex-wrap">
                                   {item.brand && (
-                                    <span className="badge bg-teal-50 text-[#00a896] text-[10px] font-extrabold px-2 py-0.5">
+                                    <span className="badge bg-[#F0F0F5] text-[#344257] border border-[#C0C8D8] text-[10px] font-extrabold px-2 py-0.5">
                                       {item.brand}
                                     </span>
                                   )}
@@ -530,7 +530,7 @@ export default function AdminOrders({
                                   {item.color && (
                                     <span className="bg-ink-100 px-2 py-0.5 rounded-md text-ink-800">Color: {item.color}</span>
                                   )}
-                                  <span className="text-[#00a896] font-black">Qty: {item.quantity}</span>
+                                  <span className="text-[#344257] font-black">Qty: {item.quantity}</span>
                                 </div>
                               </div>
                             </div>
@@ -547,7 +547,7 @@ export default function AdminOrders({
                                   href={`/product/${item.product_id}`}
                                   target="_blank"
                                   rel="noreferrer"
-                                  className="text-[11px] font-bold text-[#00a896] hover:underline flex items-center gap-1 mt-1"
+                                  className="text-[11px] font-bold text-[#344257] hover:underline flex items-center gap-1 mt-1"
                                 >
                                   View in Store <ExternalLink className="h-2.5 w-2.5" />
                                 </a>

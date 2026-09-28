@@ -522,13 +522,13 @@ export default function Repair() {
       {/* BREADCRUMB NAVIGATION */}
       <div className="bg-white border-b border-gray-100 py-2.5 px-4 text-xs font-semibold text-gray-500">
         <div className="max-w-7xl mx-auto flex items-center gap-1.5 flex-wrap">
-          <Link to="/" className="hover:text-[#00a896]">Home</Link>
+          <Link to="/" className="hover:text-[#344257]">Home</Link>
           <span>&gt;</span>
-          <Link to="/repair" className="hover:text-[#00a896]">Repair</Link>
+          <Link to="/repair" className="hover:text-[#344257]">Repair</Link>
           {form.brand && (
             <>
               <span>&gt;</span>
-              <Link to={`/repair/${(brandSlug || form.brand).toLowerCase()}`} className="hover:text-[#00a896]">
+              <Link to={`/repair/${(brandSlug || form.brand).toLowerCase()}`} className="hover:text-[#344257]">
                 {form.brand}
               </Link>
             </>
@@ -536,7 +536,7 @@ export default function Repair() {
           {form.model && (
             <>
               <span>&gt;</span>
-              <span className="text-[#00a896] font-extrabold">{form.model}</span>
+              <span className="text-[#344257] font-extrabold">{form.model}</span>
             </>
           )}
         </div>
@@ -550,7 +550,7 @@ export default function Repair() {
               <div className="inline-flex items-center gap-2 rounded-full bg-emerald-50 px-3 py-1 text-xs font-bold text-emerald-700">
                 <Wrench className="h-3.5 w-3.5 text-emerald-600" /> 30-Minute Doorstep Mobile Repair
               </div>
-              <h1 className="mt-2 font-display text-2xl md:text-4xl font-extrabold text-ink-900">
+              <h1 className="mt-2 font-display text-2xl md:text-4xl font-extrabold text-[#344257]">
                 Mobile Repair at Your Doorstep in Lucknow
               </h1>
               <p className="mt-1 text-sm text-ink-500">
@@ -568,7 +568,7 @@ export default function Repair() {
                   onFocus={() => searchQuery.trim() && setSearchOpen(true)}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Search any phone model (e.g. iPhone 15, S24, Pixel 8)..."
-                  className="input pl-10 pr-9 py-2.5 rounded-full border-ink-200 text-xs sm:text-sm shadow-sm focus:border-[#00a896] bg-white font-medium"
+                  className="input pl-10 pr-9 py-2.5 rounded-full border-ink-200 text-xs sm:text-sm shadow-sm focus:border-[#47576E] bg-white font-medium"
                 />
                 {searchQuery && (
                   <button
@@ -585,8 +585,8 @@ export default function Repair() {
               {searchOpen && searchQuery.trim() && (
                 <div className="absolute left-0 right-0 top-full mt-2 rounded-2xl border border-gray-200 bg-white p-3 shadow-2xl z-50 animate-fade-in max-h-80 overflow-y-auto">
                   {isSearchingLive ? (
-                    <div className="p-4 text-center text-xs font-bold text-teal-700 flex items-center justify-center gap-2">
-                      <Sparkles className="h-4 w-4 animate-spin text-[#00a896]" /> Searching all phones in catalog...
+                    <div className="p-4 text-center text-xs font-bold text-[#344257] flex items-center justify-center gap-2">
+                      <Sparkles className="h-4 w-4 animate-spin text-[#47576E]" /> Searching all phones in catalog...
                     </div>
                   ) : liveSearchResults.length > 0 ? (
                     <div className="space-y-1">
@@ -598,7 +598,7 @@ export default function Repair() {
                           key={`${phone.brand}-${phone.model}-${idx}`}
                           type="button"
                           onClick={() => handleSelectPhoneForRepair(phone.brand, phone.model)}
-                          className="flex items-center justify-between w-full p-2.5 rounded-xl hover:bg-teal-50/80 transition text-left group border border-transparent hover:border-teal-200"
+                          className="flex items-center justify-between w-full p-2.5 rounded-xl hover:bg-[#F0F0F5] transition text-left group border border-transparent hover:border-[#C0C8D8]"
                         >
                           <div className="flex items-center gap-2.5">
                             <div className="h-10 w-10 shrink-0 rounded-xl bg-gray-50 border border-gray-100 p-1 flex items-center justify-center">
@@ -609,13 +609,13 @@ export default function Repair() {
                               />
                             </div>
                             <div>
-                              <p className="text-xs font-bold text-gray-900 group-hover:text-[#00a896]">
+                              <p className="text-xs font-bold text-gray-900 group-hover:text-[#344257]">
                                 {phone.model}
                               </p>
                               <p className="text-[11px] text-gray-400 font-semibold">{phone.brand}</p>
                             </div>
                           </div>
-                          <span className="text-[10px] font-extrabold text-[#00a896] bg-teal-100/60 px-2 py-1 rounded-md group-hover:bg-[#00a896] group-hover:text-white transition">
+                          <span className="text-[10px] font-extrabold text-[#344257] bg-[#F0F0F5] border border-[#C0C8D8] px-2 py-1 rounded-md group-hover:bg-[#344257] group-hover:text-white transition">
                             Select Issue →
                           </span>
                         </button>
@@ -648,7 +648,7 @@ export default function Repair() {
                 onClick={() => step > s && goToStep(s)}
                 className={`flex items-center gap-2 rounded-full px-3.5 py-1.5 text-xs font-bold transition-all duration-200 ${
                   step === s
-                    ? 'bg-[#00a896] text-white shadow-sm'
+                    ? 'bg-gradient-to-r from-[#344257] to-[#47576E] text-white shadow-md'
                     : step > s
                     ? 'bg-emerald-100 text-emerald-700 hover:bg-emerald-200 cursor-pointer'
                     : 'bg-gray-100 text-gray-400 cursor-not-allowed'
@@ -759,10 +759,10 @@ export default function Repair() {
 
                 {/* Direct Models Grid View */}
                 {loadingModels ? (
-                  <div className="card p-16 text-center rounded-[28px] border border-teal-100 bg-teal-50/20">
-                    <Sparkles className="h-8 w-8 animate-spin text-[#00a896] mx-auto mb-3" />
-                    <p className="text-sm font-bold text-teal-900">Fetching all certified {form.brand} models...</p>
-                    <p className="text-xs text-teal-600 mt-1">Checking stock & repair parts availability</p>
+                  <div className="card p-16 text-center rounded-[28px] border border-gray-200 bg-[#F0F0F5]/50">
+                    <Sparkles className="h-8 w-8 animate-spin text-[#47576E] mx-auto mb-3" />
+                    <p className="text-sm font-bold text-[#344257]">Fetching all certified {form.brand} models...</p>
+                    <p className="text-xs text-ink-500 mt-1">Checking stock & repair parts availability</p>
                   </div>
                 ) : filteredModelsList.length === 0 ? (
                   <div className="card p-12 text-center rounded-[28px] border border-gray-200 bg-white">
@@ -784,10 +784,10 @@ export default function Repair() {
                         key={m.name}
                         type="button"
                         onClick={() => handleSelectPhoneForRepair(form.brand, m.name)}
-                        className="group relative flex flex-col items-center justify-between p-4 sm:p-5 rounded-2xl border border-gray-200/90 bg-white hover:border-[#00a896] hover:shadow-xl hover:-translate-y-1 transition-all duration-300 text-center cursor-pointer"
+                        className="group relative flex flex-col items-center justify-between p-4 sm:p-5 rounded-2xl border border-gray-200/90 bg-white hover:border-[#47576E] hover:shadow-xl hover:-translate-y-1 transition-all duration-300 text-center cursor-pointer"
                       >
                         {/* Top Subtle Pill */}
-                        <span className="text-[10px] font-extrabold text-teal-700 bg-teal-50 group-hover:bg-teal-600 group-hover:text-white transition-colors px-2 py-0.5 rounded-full mb-2">
+                        <span className="text-[10px] font-extrabold text-[#344257] bg-[#F0F0F5] border border-[#C0C8D8] group-hover:bg-[#344257] group-hover:text-white transition-colors px-2 py-0.5 rounded-full mb-2">
                           Lucknow Express
                         </span>
 
@@ -801,11 +801,11 @@ export default function Repair() {
                           />
                         </div>
 
-                        <p className="mt-2 text-xs sm:text-sm font-black text-gray-900 group-hover:text-[#00a896] line-clamp-2 transition-colors">
+                        <p className="mt-2 text-xs sm:text-sm font-black text-gray-900 group-hover:text-[#344257] line-clamp-2 transition-colors">
                           {m.name}
                         </p>
 
-                        <div className="mt-4 w-full py-2 px-3 rounded-xl bg-slate-900 text-white font-extrabold text-xs group-hover:bg-[#00a896] transition-all flex items-center justify-center gap-1 shadow-sm">
+                        <div className="mt-4 w-full py-2 px-3 rounded-xl bg-slate-900 text-white font-extrabold text-xs group-hover:bg-[#344257] transition-all flex items-center justify-center gap-1 shadow-sm">
                           Select Issue <ArrowRight className="h-3.5 w-3.5 group-hover:translate-x-1 transition-transform" />
                         </div>
                       </button>
@@ -819,11 +819,11 @@ export default function Repair() {
                 <div className="card p-6 md:p-8 rounded-[28px] border border-gray-200/80 bg-white shadow-sm">
                   <div className="flex items-center justify-between border-b border-gray-100 pb-4">
                     <div>
-                      <span className="badge bg-teal-50 text-teal-800 font-extrabold text-xs">
+                      <span className="badge bg-[#F0F0F5] text-[#344257] border border-[#C0C8D8] font-extrabold text-xs">
                         Step 1: Pick Manufacturer
                       </span>
                       <h2 className="mt-2 font-display text-xl sm:text-2xl font-black text-ink-900 flex items-center gap-2">
-                        <Smartphone className="h-6 w-6 text-[#00a896]" /> Select Phone Brand to Repair
+                        <Smartphone className="h-6 w-6 text-[#344257]" /> Select Phone Brand to Repair
                       </h2>
                       <p className="mt-1 text-xs text-ink-500">Choose your phone manufacturer to explore dedicated model repair catalogs</p>
                     </div>
@@ -835,13 +835,13 @@ export default function Repair() {
                         key={item.name}
                         type="button"
                         onClick={() => handleBrandSelect(item.name)}
-                        className="group relative flex flex-col items-center justify-center p-5 rounded-2xl border border-gray-200/90 bg-white hover:border-[#00a896] hover:shadow-xl hover:-translate-y-1 transition-all duration-300 cursor-pointer overflow-hidden"
+                        className="group relative flex flex-col items-center justify-center p-5 rounded-2xl border border-gray-200/90 bg-white hover:border-[#47576E] hover:shadow-xl hover:-translate-y-1 transition-all duration-300 cursor-pointer overflow-hidden"
                       >
-                        <div className="h-14 w-14 p-2.5 rounded-2xl bg-gray-50 group-hover:bg-teal-50 transition-colors flex items-center justify-center">
+                        <div className="h-14 w-14 p-2.5 rounded-2xl bg-gray-50 group-hover:bg-[#F0F0F5] transition-colors flex items-center justify-center">
                           <img src={item.logo} alt={item.name} className="max-h-full max-w-full object-contain" />
                         </div>
-                        <span className="mt-3 text-sm font-black text-ink-900 group-hover:text-[#00a896] transition-colors">{item.name}</span>
-                        <span className="mt-1 text-[11px] font-bold text-gray-400 group-hover:text-[#00a896] transition-colors flex items-center gap-0.5">
+                        <span className="mt-3 text-sm font-black text-ink-900 group-hover:text-[#344257] transition-colors">{item.name}</span>
+                        <span className="mt-1 text-[11px] font-bold text-gray-400 group-hover:text-[#344257] transition-colors flex items-center gap-0.5">
                           View Models <ArrowRight className="h-3 w-3 group-hover:translate-x-0.5 transition-transform" />
                         </span>
                       </button>
@@ -869,7 +869,7 @@ export default function Repair() {
                         key={item.model}
                         type="button"
                         onClick={() => handleQuickModelSelect(item)}
-                        className="group flex flex-col items-center p-4 rounded-2xl border border-gray-200/80 bg-white hover:border-[#00a896] hover:shadow-lg hover:-translate-y-1 transition-all text-center"
+                        className="group flex flex-col items-center p-4 rounded-2xl border border-gray-200/80 bg-white hover:border-[#47576E] hover:shadow-lg hover:-translate-y-1 transition-all text-center"
                       >
                         <div className="h-24 sm:h-28 w-full flex items-center justify-center p-1.5 mb-1 relative">
                           <img
@@ -879,7 +879,7 @@ export default function Repair() {
                             loading="lazy"
                           />
                         </div>
-                        <p className="mt-2 text-xs font-black text-ink-900 group-hover:text-[#00a896] truncate w-full transition-colors">{item.model}</p>
+                        <p className="mt-2 text-xs font-black text-ink-900 group-hover:text-[#344257] truncate w-full transition-colors">{item.model}</p>
                         <span className="mt-2 badge bg-emerald-50 text-emerald-800 font-black text-[10px]">
                           From {formatINR(item.price)}
                         </span>
@@ -947,17 +947,17 @@ export default function Repair() {
             <div className="card p-6 md:p-8 rounded-[28px]">
               <div className="flex items-center justify-between border-b border-ink-100 pb-4">
                 <div>
-                  <span className="badge bg-teal-50 text-[#00a896] font-bold text-xs">Step 2 of 4: Diagnostics</span>
-                  <h2 className="mt-1 font-display text-xl font-extrabold text-ink-900">
+                  <span className="badge bg-[#F0F0F5] text-[#344257] border border-[#C0C8D8] font-bold text-xs">Step 2 of 4: Diagnostics</span>
+                  <h2 className="mt-1 font-display text-xl font-extrabold text-[#344257]">
                     Select Repair Issue(s)
                   </h2>
                   <p className="text-xs text-ink-500">
-                    Device: <span className="font-bold text-ink-900">{form.brand} {form.model}</span> · <span className="text-[#00a896] font-bold">Select one or multiple issues</span>
+                    Device: <span className="font-bold text-ink-900">{form.brand} {form.model}</span> · <span className="text-[#344257] font-bold">Select one or multiple issues</span>
                   </p>
                 </div>
                 <Link
                   to={brandSlug ? `/repair/${brandSlug}` : form.brand ? `/repair/${form.brand.toLowerCase()}` : '/repair'}
-                  className="text-xs text-[#00a896] font-bold hover:underline"
+                  className="text-xs text-[#344257] font-bold hover:underline"
                 >
                   Change Phone
                 </Link>
@@ -976,17 +976,17 @@ export default function Repair() {
                       onClick={() => toggleIssueSelection(issue.id)}
                       className={`p-5 rounded-2xl border text-left flex items-start gap-4 transition cursor-pointer relative overflow-hidden ${
                         isSelected
-                          ? 'border-[#00a896] bg-teal-50/90 shadow-md ring-2 ring-[#00a896]/30'
-                          : 'border-ink-200 bg-white hover:border-teal-300 hover:bg-gray-50/50'
+                          ? 'border-[#344257] bg-[#F0F0F5] shadow-md ring-2 ring-[#6A859F]/30'
+                          : 'border-ink-200 bg-white hover:border-[#6A859F] hover:bg-gray-50/50'
                       }`}
                     >
-                      <div className={`grid h-12 w-12 shrink-0 place-items-center rounded-2xl ${isSelected ? 'bg-[#00a896] text-white shadow-md' : 'bg-ink-100 text-ink-600'}`}>
+                      <div className={`grid h-12 w-12 shrink-0 place-items-center rounded-2xl ${isSelected ? 'bg-[#344257] text-white shadow-md' : 'bg-ink-100 text-ink-600'}`}>
                         <IconComp className="h-6 w-6" />
                       </div>
                       <div className="flex-1">
                         <div className="flex items-center justify-between gap-2">
                           <p className="font-bold text-sm text-ink-900">{issue.label}</p>
-                          <span className="font-display font-black text-[#00a896] text-base">{formatINR(issue.cost)}</span>
+                          <span className="font-display font-black text-[#344257] text-base">{formatINR(issue.cost)}</span>
                         </div>
                         <p className="mt-1 text-xs text-ink-500 leading-relaxed">{issue.desc}</p>
                         <div className="mt-3 flex items-center justify-between text-[10px] font-bold">
@@ -994,7 +994,7 @@ export default function Repair() {
                             <span className="badge bg-emerald-50 text-emerald-700">{issue.warranty}</span>
                             <span className="badge bg-purple-50 text-purple-700">{issue.time}</span>
                           </div>
-                          <span className={`px-2.5 py-1 rounded-full text-[10px] font-black transition ${isSelected ? 'bg-[#00a896] text-white' : 'bg-gray-100 text-gray-600 hover:bg-teal-100 hover:text-[#00a896]'}`}>
+                          <span className={`px-2.5 py-1 rounded-full text-[10px] font-black transition ${isSelected ? 'bg-[#344257] text-white' : 'bg-gray-100 text-gray-600 hover:bg-[#F0F0F5] hover:text-[#344257]'}`}>
                             {isSelected ? '✓ Selected' : '+ Add Issue'}
                           </span>
                         </div>
@@ -1005,10 +1005,10 @@ export default function Repair() {
               </div>
 
               {/* Multi-Issue Live Summary Bar */}
-              <div className="mt-6 p-5 rounded-2xl bg-gradient-to-r from-slate-900 via-teal-950 to-slate-900 text-white flex flex-col sm:flex-row items-center justify-between gap-4 shadow-xl border border-teal-500/30">
+              <div className="mt-6 p-5 rounded-2xl bg-gradient-to-r from-slate-900 via-[#1E2734] to-[#344257] text-white flex flex-col sm:flex-row items-center justify-between gap-4 shadow-xl border border-[#47576E]">
                 <div className="space-y-1">
                   <div className="flex items-center gap-2">
-                    <span className="badge bg-teal-500/20 text-teal-300 text-xs font-extrabold px-3 py-0.5 border border-teal-400/30">
+                    <span className="badge bg-white/20 text-white text-xs font-extrabold px-3 py-0.5 border border-white/30">
                       {selectedIssues.length} Repair Issue{selectedIssues.length > 1 ? 's' : ''} Selected
                     </span>
                     {selectedIssues.length > 1 && (
@@ -1043,7 +1043,7 @@ export default function Repair() {
                 <button type="button" onClick={() => goToStep(1)} className="btn-outline text-sm">
                   Back
                 </button>
-                <button type="button" onClick={() => goToStep(3)} className="btn-primary flex items-center gap-2 bg-[#00a896] hover:bg-[#008f80]">
+                <button type="button" onClick={() => goToStep(3)} className="btn-primary flex items-center gap-2">
                   View Total Upfront Quote ({formatINR(totalRepairCost)}) <ArrowRight className="h-4 w-4" />
                 </button>
               </div>
@@ -1110,7 +1110,7 @@ export default function Repair() {
                 <button type="button" onClick={() => goToStep(2)} className="btn-outline text-sm">
                   Change Issue(s)
                 </button>
-                <button type="button" onClick={() => goToStep(4)} className="btn-primary flex items-center gap-2 bg-[#00a896] hover:bg-[#008f80]">
+                <button type="button" onClick={() => goToStep(4)} className="btn-primary flex items-center gap-2">
                   Schedule Doorstep Booking <ArrowRight className="h-4 w-4" />
                 </button>
               </div>

@@ -173,7 +173,7 @@ const highlightMatch = (text: string, query: string) => {
     <>
       {parts.map((part, i) =>
         part.toLowerCase() === query.toLowerCase() ? (
-          <span key={i} className="text-[#00a896] font-extrabold underline decoration-[#00a896]/40">
+          <span key={i} className="text-[#344257] font-extrabold underline decoration-[#344257]/40">
             {part}
           </span>
         ) : (
@@ -581,7 +581,7 @@ export default function Navbar() {
             <div className="p-4 text-center text-sm text-gray-500 space-y-2">
               {isSearchingApi ? (
                 <div className="py-6 flex flex-col items-center justify-center gap-2">
-                  <RefreshCw className="h-6 w-6 animate-spin text-[#00a896]" />
+                  <RefreshCw className="h-6 w-6 animate-spin text-[#47576E]" />
                   <p className="text-xs font-bold text-gray-700">Searching MobileAPI for "{search}" models...</p>
                 </div>
               ) : (
@@ -590,7 +590,7 @@ export default function Navbar() {
                   <button
                     type="button"
                     onClick={submitSearch}
-                    className="btn-primary text-xs px-4 py-1.5 bg-[#00a896] hover:bg-[#008f80] font-bold mx-auto cursor-pointer"
+                    className="btn-primary text-xs px-4 py-1.5 font-bold mx-auto cursor-pointer"
                   >
                     Search All Services
                   </button>
@@ -1169,9 +1169,9 @@ export default function Navbar() {
                     <div className="flex items-center justify-between pb-2 border-b border-gray-100 mb-3">
                       <div>
                         <span className="text-xs font-bold text-gray-900">7 Lucknow Store & Pickup Hubs</span>
-                        <p className="text-[11px] text-teal-700 font-medium">Walk-in for instant cash or phone pickup</p>
+                        <p className="text-[11px] text-[#47576E] font-medium">Walk-in for instant cash or phone pickup</p>
                       </div>
-                      <Link to="/store" className="text-xs font-bold text-[#00a896] hover:underline">
+                      <Link to="/store" className="text-xs font-bold text-[#344257] hover:underline">
                         View Hub Details →
                       </Link>
                     </div>
@@ -1180,24 +1180,24 @@ export default function Navbar() {
                       {LUCKNOW_STORES.map((s) => (
                         <div
                           key={s.id}
-                          className="p-2.5 rounded-xl border border-gray-100 hover:border-teal-200 hover:bg-teal-50/40 transition"
+                          className="p-2.5 rounded-xl border border-gray-100 hover:border-[#C0C8D8] hover:bg-[#F0F0F5]/50 transition"
                         >
                           <div className="flex items-start justify-between">
                             <div>
                               <h5 className="text-xs font-bold text-gray-900 flex items-center gap-1.5">
-                                <MapPin className="h-3 w-3 text-[#00a896]" /> {s.name}
+                                <MapPin className="h-3 w-3 text-[#47576E]" /> {s.name}
                               </h5>
                               <p className="text-[11px] text-gray-600 mt-0.5">{s.address}</p>
                               <div className="flex items-center gap-3 mt-1.5 text-[10px] text-gray-500">
                                 <span className="flex items-center gap-1">
                                   <Clock className="h-3 w-3 text-gray-400" /> {s.timing}
                                 </span>
-                                <span className="flex items-center gap-1 text-teal-700 font-semibold">
-                                  <Phone className="h-3 w-3 text-[#00a896]" /> {s.phone}
+                                <span className="flex items-center gap-1 text-[#47576E] font-semibold">
+                                  <Phone className="h-3 w-3 text-[#47576E]" /> {s.phone}
                                 </span>
                               </div>
                             </div>
-                            <span className="text-[9px] font-bold uppercase bg-teal-100 text-teal-800 px-1.5 py-0.5 rounded">
+                            <span className="text-[9px] font-bold uppercase bg-[#F0F0F5] text-[#344257] border border-[#C0C8D8] px-1.5 py-0.5 rounded">
                               {s.locality}
                             </span>
                           </div>
@@ -1211,7 +1211,7 @@ export default function Navbar() {
                       </span>
                       <Link
                         to="/store"
-                        className="font-bold text-[#00a896] hover:underline flex items-center gap-1"
+                        className="font-bold text-[#344257] hover:underline flex items-center gap-1"
                       >
                         Locate on Map <ArrowRight className="h-3 w-3" />
                       </Link>
@@ -1249,13 +1249,13 @@ export default function Navbar() {
                   setMobileOpen(false);
                   setLocationModalOpen(true);
                 }}
-                className="flex w-full items-center justify-between rounded-xl bg-teal-50 px-4 py-3 text-xs sm:text-sm font-bold text-teal-900 border border-teal-100"
+                className="flex w-full items-center justify-between rounded-xl bg-[#F0F0F5] px-4 py-3 text-xs sm:text-sm font-bold text-[#344257] border border-[#C0C8D8]"
               >
                 <span className="flex items-center gap-2">
-                  <MapPin className="h-4 w-4 text-[#00a896]" />
+                  <MapPin className="h-4 w-4 text-[#344257]" />
                   <span>{selectedLocality}, Lucknow</span>
                 </span>
-                <span className="text-xs font-bold text-[#00a896] underline">Change Area</span>
+                <span className="text-xs font-bold text-[#344257] underline">Change Area</span>
               </button>
 
               {/* Primary Navigation Links */}
@@ -1265,7 +1265,7 @@ export default function Navbar() {
                   className="flex items-center justify-between rounded-xl px-3 py-2.5 text-sm font-bold text-gray-800 hover:bg-gray-50"
                 >
                   <span className="flex items-center gap-2.5">
-                    <BadgeIndianRupee className="h-4 w-4 text-[#00a896]" /> Sell Phone
+                    <BadgeIndianRupee className="h-4 w-4 text-[#47576E]" /> Sell Phone
                   </span>
                   <span className="text-[10px] font-bold bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full">
                     Instant Cash
@@ -1277,9 +1277,9 @@ export default function Navbar() {
                   className="flex items-center justify-between rounded-xl px-3 py-2.5 text-sm font-bold text-gray-800 hover:bg-gray-50"
                 >
                   <span className="flex items-center gap-2.5">
-                    <Store className="h-4 w-4 text-[#00a896]" /> Buy Refurbished Phones
+                    <Store className="h-4 w-4 text-[#47576E]" /> Buy Refurbished Phones
                   </span>
-                  <span className="text-[10px] font-bold bg-teal-100 text-teal-800 px-2 py-0.5 rounded-full">
+                  <span className="text-[10px] font-bold bg-[#F0F0F5] text-[#344257] border border-[#C0C8D8] px-2 py-0.5 rounded-full">
                     6M Warranty
                   </span>
                 </Link>
@@ -1289,7 +1289,7 @@ export default function Navbar() {
                   className="flex items-center justify-between rounded-xl px-3 py-2.5 text-sm font-bold text-gray-800 hover:bg-gray-50"
                 >
                   <span className="flex items-center gap-2.5">
-                    <Wrench className="h-4 w-4 text-[#00a896]" /> Phone Repair
+                    <Wrench className="h-4 w-4 text-[#47576E]" /> Phone Repair
                   </span>
                   <span className="text-[10px] font-bold bg-amber-100 text-amber-800 px-2 py-0.5 rounded-full">
                     30-Min Doorstep
@@ -1301,7 +1301,7 @@ export default function Navbar() {
                   className="flex items-center justify-between rounded-xl px-3 py-2.5 text-sm font-bold text-gray-800 hover:bg-gray-50"
                 >
                   <span className="flex items-center gap-2.5">
-                    <Wrench className="h-4 w-4 text-[#00a896]" /> Genuine Spare Parts
+                    <Wrench className="h-4 w-4 text-[#47576E]" /> Genuine Spare Parts
                   </span>
                 </Link>
 
@@ -1310,7 +1310,7 @@ export default function Navbar() {
                   className="flex items-center justify-between rounded-xl px-3 py-2.5 text-sm font-bold text-gray-800 hover:bg-gray-50"
                 >
                   <span className="flex items-center gap-2.5">
-                    <Tv className="h-4 w-4 text-[#00a896]" /> Sell Appliances
+                    <Tv className="h-4 w-4 text-[#47576E]" /> Sell Appliances
                   </span>
                 </Link>
 
@@ -1320,7 +1320,7 @@ export default function Navbar() {
                   className="flex items-center justify-between rounded-xl px-3 py-2.5 text-sm font-bold text-gray-800 hover:bg-gray-50"
                 >
                   <span className="flex items-center gap-2.5">
-                    <Building2 className="h-4 w-4 text-[#00a896]" /> Become Partner
+                    <Building2 className="h-4 w-4 text-[#47576E]" /> Become Partner
                   </span>
                 </Link>
 
@@ -1329,9 +1329,9 @@ export default function Navbar() {
                   className="flex items-center justify-between rounded-xl px-3 py-2.5 text-sm font-bold text-gray-800 hover:bg-gray-50"
                 >
                   <span className="flex items-center gap-2.5">
-                    <MapPin className="h-4 w-4 text-[#00a896]" /> Our Stores (7 Hubs)
+                    <MapPin className="h-4 w-4 text-[#47576E]" /> Our Stores (7 Hubs)
                   </span>
-                  <span className="text-[10px] font-bold bg-[#00a896] text-white px-2 py-0.5 rounded-full">
+                  <span className="text-[10px] font-bold bg-[#344257] text-white px-2 py-0.5 rounded-full">
                     Lucknow
                   </span>
                 </Link>
@@ -1357,7 +1357,7 @@ export default function Navbar() {
                   <div className="flex gap-2 pt-2">
                     <Link
                       to="/login"
-                      className="flex-1 rounded-xl bg-[#00a896] py-2.5 text-center text-sm font-bold text-white shadow hover:bg-[#009688]"
+                      className="btn-primary flex-1 py-2.5 text-center text-sm font-bold text-white shadow"
                     >
                       Login
                     </Link>
@@ -1383,12 +1383,12 @@ export default function Navbar() {
           <div className="w-full max-w-md rounded-3xl bg-white p-6 shadow-2xl border border-gray-100">
             <div className="flex items-center justify-between border-b border-gray-100 pb-4">
               <div className="flex items-center gap-2.5">
-                <div className="grid h-10 w-10 place-items-center rounded-full bg-teal-50 text-[#00a896]">
+                <div className="grid h-10 w-10 place-items-center rounded-2xl bg-[#F0F0F5] text-[#344257] border border-[#C0C8D8]">
                   <MapPin className="h-5 w-5" />
                 </div>
                 <div>
                   <h3 className="font-display font-bold text-lg text-gray-900">Select Locality</h3>
-                  <p className="text-xs font-semibold text-teal-700">
+                  <p className="text-xs font-semibold text-[#47576E]">
                     Fundu is exclusively operational across Lucknow
                   </p>
                 </div>
@@ -1415,20 +1415,20 @@ export default function Navbar() {
                       type="button"
                       onClick={() => handleSelectLocality(loc)}
                       className={`flex items-center justify-between rounded-xl p-2.5 text-left text-xs font-bold transition cursor-pointer ${isSelected
-                          ? 'border-2 border-[#00a896] bg-teal-50 text-teal-900 shadow-sm'
-                          : 'border border-gray-200 bg-white text-gray-700 hover:border-teal-300 hover:bg-teal-50/40'
+                          ? 'border-2 border-[#344257] bg-[#F0F0F5] text-[#344257] shadow-sm'
+                          : 'border border-gray-200 bg-white text-gray-700 hover:border-[#6A859F] hover:bg-[#F0F0F5]/50'
                         }`}
                     >
                       <span>{loc}</span>
-                      {isSelected && <Check className="h-4 w-4 text-[#00a896]" />}
+                      {isSelected && <Check className="h-4 w-4 text-[#344257]" />}
                     </button>
                   );
                 })}
               </div>
             </div>
 
-            <div className="mt-6 rounded-2xl bg-teal-50/70 p-3 text-center text-xs font-semibold text-teal-900 flex items-center justify-center gap-2 border border-teal-100">
-              <ShieldCheck className="h-4 w-4 text-[#00a896] shrink-0" />
+            <div className="mt-6 rounded-2xl bg-[#F0F0F5] p-3 text-center text-xs font-semibold text-[#344257] flex items-center justify-center gap-2 border border-[#C0C8D8]">
+              <ShieldCheck className="h-4 w-4 text-emerald-600 shrink-0" />
               Free doorstep pickup & instant payment across all 16 Lucknow zones!
             </div>
           </div>

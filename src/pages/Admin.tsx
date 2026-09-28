@@ -1087,8 +1087,8 @@ export default function Admin() {
   return (
     <div className="min-h-screen bg-[#f4f7f8] text-ink-900 flex relative">
       {dataLoading && (
-        <div className="fixed top-0 left-0 right-0 z-50 h-1 bg-teal-100/60 overflow-hidden">
-          <div className="h-full bg-[#00a896] animate-pulse w-full" />
+        <div className="fixed top-0 left-0 right-0 z-50 h-1 bg-[#F0F0F5] overflow-hidden">
+          <div className="h-full bg-[#344257] animate-pulse w-full" />
         </div>
       )}
       {/* 1. Persistent Sidebar Navigation */}
@@ -1208,7 +1208,7 @@ export default function Admin() {
                 });
                 setProductModal({ product: null });
               }}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#00a896] hover:bg-teal-600 text-white text-xs font-extrabold shadow-sm transition cursor-pointer"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#344257] hover:bg-[#47576E] text-white text-xs font-extrabold shadow-sm transition cursor-pointer"
             >
               <Plus className="h-3.5 w-3.5" /> Add Store Product
             </button>
@@ -1715,9 +1715,9 @@ export default function Admin() {
               <div className="space-y-2.5 pt-2 border-t border-gray-100">
                 <div className="flex items-center justify-between">
                   <label className="label text-xs font-bold text-gray-900 flex items-center gap-1.5">
-                    <ImageIcon className="h-4 w-4 text-[#00a896]" /> Product Photos & Images
+                    <ImageIcon className="h-4 w-4 text-[#344257]" /> Product Photos & Images
                   </label>
-                  <label className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-teal-50 hover:bg-teal-100 text-[#00a896] text-xs font-bold cursor-pointer transition">
+                  <label className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#F0F0F5] hover:bg-[#E5E9F0] text-[#344257] border border-[#C0C8D8] text-xs font-bold cursor-pointer transition">
                     <Upload className="h-3.5 w-3.5" /> Upload Photo From Device
                     <input
                       type="file"
@@ -2049,9 +2049,9 @@ export default function Admin() {
               <div className="space-y-2.5 pt-2 border-t border-gray-100">
                 <div className="flex items-center justify-between">
                   <label className="label text-xs font-bold text-gray-900 flex items-center gap-1.5">
-                    <ImageIcon className="h-4 w-4 text-[#00a896]" /> Product Photos & Images
+                    <ImageIcon className="h-4 w-4 text-[#344257]" /> Product Photos & Images
                   </label>
-                  <label className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-teal-50 hover:bg-teal-100 text-[#00a896] text-xs font-bold cursor-pointer transition">
+                  <label className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#F0F0F5] hover:bg-[#E5E9F0] text-[#344257] border border-[#C0C8D8] text-xs font-bold cursor-pointer transition">
                     <Upload className="h-3.5 w-3.5" /> Upload Photo From Device
                     <input
                       type="file"

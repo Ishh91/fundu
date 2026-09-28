@@ -36,9 +36,9 @@ export default function HeroSection() {
         <div className="max-w-3xl mx-auto md:hidden">
           <div
             onClick={() => navigate('/sell')}
-            className="relative flex items-center w-full px-4 py-3 bg-white rounded-2xl border border-gray-200 shadow-xs cursor-pointer hover:border-[#00a896] hover:shadow-md transition group"
+            className="relative flex items-center w-full px-4 py-3 bg-white rounded-2xl border border-gray-200 shadow-xs cursor-pointer hover:border-[#47576E] hover:shadow-md transition group"
           >
-            <Search className="h-4 w-4 sm:h-5 sm:w-5 text-gray-400 group-hover:text-[#00a896] mr-3 shrink-0" />
+            <Search className="h-4 w-4 sm:h-5 sm:w-5 text-gray-400 group-hover:text-[#344257] mr-3 shrink-0" />
             <span className="text-xs sm:text-sm text-gray-400 font-medium truncate">
               Search for mobiles, accessories & More
             </span>

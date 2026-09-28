@@ -94,13 +94,13 @@ export default function ProfilePage() {
             <div className="flex items-center gap-5">
               {/* Profile Avatar with Camera Trigger Overlay */}
               <div className="relative group shrink-0 cursor-pointer" onClick={() => fileInputRef.current?.click()}>
-                <div className="h-20 w-20 sm:h-24 sm:w-24 rounded-full bg-teal-50 border-2 border-[#00a896] overflow-hidden grid place-items-center text-teal-700 text-3xl font-extrabold shadow-md transition-transform group-hover:scale-105">
+                <div className="h-20 w-20 sm:h-24 sm:w-24 rounded-full bg-[#F0F0F5] border-2 border-[#344257] overflow-hidden grid place-items-center text-[#344257] text-3xl font-extrabold shadow-md transition-transform group-hover:scale-105">
                   {currentAvatar ? (
                     <img src={currentAvatar} alt="Profile" className="h-full w-full object-cover" />
                   ) : profile?.full_name ? (
                     profile.full_name.charAt(0).toUpperCase()
                   ) : (
-                    <User className="h-10 w-10 text-teal-600" />
+                    <User className="h-10 w-10 text-[#47576E]" />
                   )}
                 </div>
                 {/* Camera Overlay Badge */}
@@ -118,14 +118,14 @@ export default function ProfilePage() {
               </div>
 
               <div>
-                <h1 className="font-display text-2xl sm:text-3xl font-extrabold text-ink-900">
+                <h1 className="font-display text-2xl sm:text-3xl font-extrabold text-[#344257]">
                   {profile?.full_name || 'Update your profile'}
                 </h1>
                 <p className="text-ink-500 text-sm font-semibold capitalize mt-0.5">{profile?.role || 'Customer'}</p>
                 <button
                   type="button"
                   onClick={() => fileInputRef.current?.click()}
-                  className="mt-2 inline-flex items-center gap-1.5 text-xs font-bold text-[#00a896] hover:underline"
+                  className="mt-2 inline-flex items-center gap-1.5 text-xs font-bold text-[#344257] hover:underline"
                 >
                   <Upload className="h-3.5 w-3.5" /> Upload Photo
                 </button>
@@ -255,7 +255,7 @@ export default function ProfilePage() {
 
             <div className="flex items-center gap-4 pt-4 border-t border-ink-100">
               <div className="flex items-center gap-2 text-ink-500">
-                <Shield className="h-4 w-4 text-[#00a896]" />
+                <Shield className="h-4 w-4 text-emerald-600" />
                 <span className="text-sm">
                   Verified Account: {profile?.is_verified ? 'Yes' : 'No'}
                 </span>

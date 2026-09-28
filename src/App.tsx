@@ -56,7 +56,7 @@ function ProtectedRoute({
   if (loading) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-slate-950 text-white">
-        <div className="h-10 w-10 border-4 border-[#00a896] border-t-transparent rounded-full animate-spin mb-3" />
+        <div className="h-10 w-10 border-4 border-[#6A859F] border-t-transparent rounded-full animate-spin mb-3" />
         <p className="text-xs font-bold text-slate-400">Verifying Security Credentials...</p>
       </div>
     );

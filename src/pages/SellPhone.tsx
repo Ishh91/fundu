@@ -1637,9 +1637,9 @@ export default function SellPhone() {
             </div>
 
             {/* Why Us (6 USPs) */}
-            <div className="card p-8 rounded-[32px] bg-gradient-to-r from-teal-900 via-gray-900 to-teal-950 text-white shadow-xl space-y-6">
+            <div className="card p-8 rounded-[32px] bg-gradient-to-r from-[#1E2734] via-[#344257] to-[#47576E] text-white shadow-xl space-y-6">
               <div className="text-center max-w-2xl mx-auto space-y-2">
-                <span className="badge bg-teal-500/20 text-teal-300 border border-teal-400/30 text-xs font-bold px-3 py-1">
+                <span className="badge bg-white/10 text-white border border-white/20 text-xs font-bold px-3 py-1">
                   Lucknow's #1 Phone Buyback Network
                 </span>
                 <h2 className="font-display text-2xl md:text-3xl font-black text-white">
@@ -1653,7 +1653,7 @@ export default function SellPhone() {
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 {[
                   {
-                    icon: <BadgeIndianRupee className="h-6 w-6 text-teal-400" />,
+                    icon: <BadgeIndianRupee className="h-6 w-6 text-[#8A9AAF]" />,
                     title: 'Instant Spot Cash Payout',
                     desc: 'Get instant UPI (GPay/PhonePe) or hard cash transfer directly into your hand before handing over your mobile.',
                   },
@@ -1663,12 +1663,12 @@ export default function SellPhone() {
                     desc: 'Our AI valuation algorithm checks live resale market rates to guarantee you the absolute highest cash price in Lucknow.',
                   },
                   {
-                    icon: <Truck className="h-6 w-6 text-blue-400" />,
+                    icon: <Truck className="h-6 w-6 text-[#9ac0dd]" />,
                     title: 'Free Lucknow Doorstep Pickup',
                     desc: 'Zero shipping fees across Gomti Nagar, Hazratganj, Indira Nagar, Aliganj, Mahanagar, Ashiyana & Chowk.',
                   },
                   {
-                    icon: <Lock className="h-6 w-6 text-purple-400" />,
+                    icon: <Lock className="h-6 w-6 text-[#C0C8D8]" />,
                     title: 'Military-Grade Data Wipe',
                     desc: 'We perform automated factory data wipe right in front of you for complete privacy & data safety.',
                   },
@@ -1696,11 +1696,11 @@ export default function SellPhone() {
             <div className="card p-8 rounded-[32px] bg-white border border-gray-200 space-y-6">
               <div className="flex flex-wrap items-center justify-between gap-4 border-b border-gray-100 pb-4">
                 <div>
-                  <span className="badge bg-emerald-100 text-emerald-800 font-bold text-xs">Verified Lucknow Feedback</span>
-                  <h2 className="font-display text-2xl font-black text-gray-900 mt-1">What Lucknow Sellers Say</h2>
+                  <span className="badge bg-emerald-50 text-emerald-800 border border-emerald-200 font-bold text-xs">Verified Lucknow Feedback</span>
+                  <h2 className="font-display text-2xl font-black text-[#344257] mt-1">What Lucknow Sellers Say</h2>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="font-display font-black text-2xl text-gray-900">4.9</span>
+                  <span className="font-display font-black text-2xl text-[#344257]">4.9</span>
                   <span className="text-amber-500 text-lg">★★★★★</span>
                   <span className="text-xs text-gray-500 font-medium">(12,400+ Verified Lucknow Deals)</span>
                 </div>
@@ -1723,7 +1723,7 @@ export default function SellPhone() {
                         </div>
                         <p className="text-gray-600 leading-relaxed italic">"{rev.comment}"</p>
                       </div>
-                      <div className="pt-2 border-t border-gray-200/60 text-[11px] font-bold text-[#00a896] flex items-center gap-1">
+                      <div className="pt-2 border-t border-gray-200/60 text-[11px] font-bold text-[#344257] flex items-center gap-1">
                         <MapPin className="h-3 w-3" /> {rev.location || 'Lucknow'}
                       </div>
                     </div>
@@ -1735,8 +1735,8 @@ export default function SellPhone() {
             {/* FAQ Accordion Section (14 Comprehensive Q&As) */}
             <div className="card p-8 rounded-[32px] bg-white border border-gray-200 space-y-6">
               <div className="text-center max-w-xl mx-auto space-y-1">
-                <span className="badge bg-teal-50 text-[#00a896] text-xs font-bold">Clear Answers</span>
-                <h2 className="font-display text-2xl font-black text-gray-900">Frequently Asked Questions</h2>
+                <span className="badge bg-[#F0F0F5] text-[#344257] border border-[#C0C8D8] text-xs font-bold">Clear Answers</span>
+                <h2 className="font-display text-2xl font-black text-[#344257]">Frequently Asked Questions</h2>
                 <p className="text-xs text-gray-500 font-medium">Everything you need to know about selling mobile on Fundu Lucknow</p>
               </div>
 
@@ -1751,10 +1751,10 @@ export default function SellPhone() {
                       <button
                         type="button"
                         onClick={() => setOpenFaqIndex(isOpen ? null : idx)}
-                        className="w-full p-4 text-left font-bold text-sm text-gray-900 flex items-center justify-between gap-4 hover:bg-teal-50/30 transition cursor-pointer"
+                        className="w-full p-4 text-left font-bold text-sm text-[#344257] flex items-center justify-between gap-4 hover:bg-[#F7F7FA] transition cursor-pointer"
                       >
                         <span className="flex items-center gap-2">
-                          <HelpCircle className="h-4 w-4 text-[#00a896] shrink-0" />
+                          <HelpCircle className="h-4 w-4 text-[#6A859F] shrink-0" />
                           {f.q}
                         </span>
                         {isOpen ? <ChevronUp className="h-4 w-4 text-gray-500 shrink-0" /> : <ChevronDown className="h-4 w-4 text-gray-500 shrink-0" />}
@@ -1793,8 +1793,8 @@ export default function SellPhone() {
           <div className="max-w-3xl mx-auto space-y-6 animate-fade-in">
             <div className="card p-6 md:p-8 rounded-[28px] bg-white border border-gray-200 shadow-xl space-y-6">
               {/* SELECTED PRODUCT DETAIL SHOWCASE CARD */}
-              <div className="p-4 sm:p-5 rounded-2xl bg-gradient-to-br from-teal-50/80 via-white to-teal-50/40 border border-teal-200/90 shadow-xs flex flex-col sm:flex-row items-center gap-4 sm:gap-5">
-                <div className="h-24 w-24 sm:h-28 sm:w-28 shrink-0 rounded-2xl bg-white p-2 border border-teal-100 flex items-center justify-center shadow-xs">
+              <div className="p-4 sm:p-5 rounded-2xl bg-gradient-to-br from-[#F0F0F5] via-white to-[#F7F7FA] border border-[#C0C8D8] shadow-xs flex flex-col sm:flex-row items-center gap-4 sm:gap-5">
+                <div className="h-24 w-24 sm:h-28 sm:w-28 shrink-0 rounded-2xl bg-white p-2 border border-[#C0C8D8] flex items-center justify-center shadow-xs">
                   <img
                     src={getCleanPhoneImage(form.brand, form.model)}
                     alt={form.model}
@@ -1810,7 +1810,7 @@ export default function SellPhone() {
 
                 <div className="space-y-2 flex-1 text-center sm:text-left">
                   <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2">
-                    <span className="badge bg-[#00a896] text-white font-extrabold text-[11px] px-2 py-0.5">
+                    <span className="badge bg-[#344257] text-white font-extrabold text-[11px] px-2 py-0.5">
                       {form.brand}
                     </span>
                     <h3 className="font-extrabold text-base sm:text-lg text-gray-900">
@@ -1828,8 +1828,8 @@ export default function SellPhone() {
                         onClick={() => setForm((f) => ({ ...f, storage: stg }))}
                         className={`px-2.5 py-1 rounded-lg text-xs font-bold transition ${
                           form.storage === stg
-                            ? 'bg-[#00a896] text-white shadow-xs'
-                            : 'bg-white text-gray-700 border border-gray-200 hover:bg-teal-50 hover:border-teal-300'
+                            ? 'bg-[#344257] text-white shadow-xs'
+                            : 'bg-white text-gray-700 border border-[#C0C8D8] hover:bg-[#F0F0F5] hover:border-[#6A859F]'
                         }`}
                       >
                         {stg}
@@ -1840,7 +1840,7 @@ export default function SellPhone() {
                   {/* Maximum Resale Cash Value Callout */}
                   <div className="flex items-center justify-center sm:justify-start gap-2 pt-0.5">
                     <span className="text-xs text-gray-500 font-medium">Spot Cash Quote:</span>
-                    <span className="font-black text-sm sm:text-base text-[#00a896]">
+                    <span className="font-black text-sm sm:text-base text-[#344257]">
                       Up to {formatINR(estimate)}
                     </span>
                   </div>
@@ -1850,11 +1850,11 @@ export default function SellPhone() {
                   <button
                     type="button"
                     onClick={() => setStep(1)}
-                    className="btn-outline text-xs px-3 py-1.5 rounded-xl border-gray-300 text-gray-700 hover:border-[#00a896] hover:text-[#00a896] font-bold transition"
+                    className="btn-outline text-xs px-3 py-1.5 rounded-xl border-[#C0C8D8] text-[#344257] hover:border-[#6A859F] hover:text-[#344257] font-bold transition"
                   >
                     Change Model
                   </button>
-                  <span className="text-[10px] font-bold text-teal-700 bg-teal-50 px-2 py-0.5 rounded-md">
+                  <span className="badge bg-[#F0F0F5] text-[#344257] border border-[#C0C8D8] text-[10px] font-bold px-2 py-0.5">
                     Step 2 of 5
                   </span>
                 </div>
@@ -1935,8 +1935,8 @@ export default function SellPhone() {
                       onClick={() => setForm((f) => ({ ...f, screenCondition: sc.id as any }))}
                       className={`p-4 rounded-2xl border text-left transition-all duration-200 cursor-pointer ${
                         form.screenCondition === sc.id
-                          ? 'border-[#00a896] bg-teal-50/90 shadow-md ring-2 ring-[#00a896]/30 -translate-y-1'
-                          : 'border-gray-200 bg-white hover:border-[#00a896] hover:bg-teal-50/20'
+                          ? 'border-[#344257] bg-[#F0F0F5] shadow-md ring-2 ring-[#344257]/20 -translate-y-1'
+                          : 'border-gray-200 bg-white hover:border-[#6A859F] hover:bg-[#F7F7FA]'
                       }`}
                     >
                       <p className="font-extrabold text-xs text-gray-900">{sc.label}</p>
@@ -1961,8 +1961,8 @@ export default function SellPhone() {
                       onClick={() => setForm((f) => ({ ...f, bodyCondition: bc.id as any }))}
                       className={`p-4 rounded-2xl border text-left transition-all duration-200 cursor-pointer ${
                         form.bodyCondition === bc.id
-                          ? 'border-[#00a896] bg-teal-50/90 shadow-md ring-2 ring-[#00a896]/30 -translate-y-1'
-                          : 'border-gray-200 bg-white hover:border-[#00a896] hover:bg-teal-50/20'
+                          ? 'border-[#344257] bg-[#F0F0F5] shadow-md ring-2 ring-[#344257]/20 -translate-y-1'
+                          : 'border-gray-200 bg-white hover:border-[#6A859F] hover:bg-[#F7F7FA]'
                       }`}
                     >
                       <p className="font-extrabold text-xs text-gray-900">{bc.label}</p>
@@ -2012,8 +2012,8 @@ export default function SellPhone() {
                         onClick={() => toggleAccessory(acc.id)}
                         className={`rounded-full px-4 py-2 text-xs font-bold border transition-all duration-200 active:scale-95 cursor-pointer ${
                           isSel
-                            ? 'border-[#00a896] bg-[#00a896] text-white shadow-md shadow-teal-500/20 scale-105'
-                            : 'border-gray-200 bg-white text-gray-700 hover:border-[#00a896] hover:bg-teal-50/50'
+                            ? 'border-[#344257] bg-[#344257] text-white shadow-md shadow-slate-500/20 scale-105'
+                            : 'border-gray-200 bg-white text-gray-700 hover:border-[#6A859F] hover:bg-[#F0F0F5]'
                         }`}
                       >
                         {acc.label} <span className="opacity-80 font-normal">{acc.bonus}</span>
@@ -2027,7 +2027,7 @@ export default function SellPhone() {
                 <button type="button" onClick={() => setStep(1)} className="btn-outline text-sm">
                   Back
                 </button>
-                <button type="button" onClick={() => setStep(3)} className="btn-primary bg-[#00a896] hover:bg-[#008f80] flex items-center gap-2">
+                <button type="button" onClick={() => setStep(3)} className="btn-primary flex items-center gap-2">
                   Continue to IMEI & Photos <ArrowRight className="h-4 w-4" />
                 </button>
               </div>
@@ -2041,12 +2041,12 @@ export default function SellPhone() {
             <div className="card p-6 md:p-8 rounded-[28px] bg-white border border-gray-200 shadow-xl space-y-6">
               <div className="flex items-center justify-between border-b border-gray-100 pb-4">
                 <div>
-                  <span className="badge bg-teal-100 text-teal-800 font-bold">Step 3 of 5</span>
-                  <h2 className="mt-1 font-display text-xl font-extrabold text-gray-900">
+                  <span className="badge bg-[#F0F0F5] text-[#344257] border border-[#C0C8D8] font-bold">Step 3 of 5</span>
+                  <h2 className="mt-1 font-display text-xl font-extrabold text-[#344257]">
                     15-Digit IMEI Verification & Photos
                   </h2>
                   <p className="text-xs text-gray-500">
-                    Evaluating: <span className="font-bold text-gray-900">{form.brand} {form.model}</span>
+                    Evaluating: <span className="font-bold text-[#344257]">{form.brand} {form.model}</span>
                   </p>
                 </div>
               </div>
@@ -2060,16 +2060,22 @@ export default function SellPhone() {
 
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
-                  <label className="label text-sm font-extrabold text-gray-900">
-                    1. Enter 15-Digit Device IMEI Number <span className="text-rose-500 font-bold">*</span>
+                  <label className="label text-sm font-extrabold text-[#344257]">
+                    1. Enter 15-Digit Device IMEI Number <span className="text-xs font-normal text-gray-500">(Optional)</span>
                   </label>
-                  {isImeiValid ? (
-                    <span className="badge bg-emerald-50 text-emerald-700 font-bold text-[10px]">
-                      ✓ Valid 15-Digit IMEI
-                    </span>
+                  {form.imei ? (
+                    isImeiValid ? (
+                      <span className="badge bg-emerald-50 text-emerald-700 border border-emerald-200 font-bold text-[10px]">
+                        ✓ Valid 15-Digit IMEI
+                      </span>
+                    ) : (
+                      <span className="badge bg-amber-50 text-amber-700 border border-amber-200 font-bold text-[10px]">
+                        15 Digits Needed
+                      </span>
+                    )
                   ) : (
-                    <span className="badge bg-rose-50 text-rose-700 font-bold text-[10px]">
-                      Required (15 Digits)
+                    <span className="badge bg-[#F0F0F5] text-[#47576E] border border-[#C0C8D8] font-bold text-[10px]">
+                      Optional · Doorstep Verification
                     </span>
                   )}
                 </div>
@@ -2083,26 +2089,26 @@ export default function SellPhone() {
                       setStep3Error(null);
                       setForm({ ...form, imei: e.target.value.replace(/\D/g, '') });
                     }}
-                    placeholder="e.g. 356891094827105"
-                    className={`input font-mono tracking-wider font-bold ${
-                      form.imei && !isImeiValid ? 'border-rose-400 text-rose-600 focus:border-rose-500' : 'text-[#00a896]'
+                    placeholder="e.g. 356891094827105 (Optional)"
+                    className={`input font-mono tracking-wider font-bold focus:border-[#6A859F] focus:ring-4 focus:ring-[#6A859F]/15 ${
+                      form.imei && !isImeiValid ? 'border-amber-400 text-amber-700 focus:border-amber-500' : 'text-[#344257]'
                     }`}
                   />
                   <button
                     type="button"
                     onClick={() => setShowImeiGuide(!showImeiGuide)}
-                    className="px-3 py-3 rounded-xl border border-gray-200 text-xs font-bold text-gray-700 bg-gray-50 hover:bg-gray-100 shrink-0"
+                    className="px-3 py-3 rounded-xl border border-[#C0C8D8] text-xs font-bold text-[#344257] bg-[#F0F0F5] hover:bg-[#E4E7F0] transition shrink-0"
                   >
                     How to find?
                   </button>
                 </div>
 
                 {showImeiGuide && (
-                  <div className="p-4 rounded-2xl bg-teal-50 border border-teal-200 text-xs text-gray-700 space-y-1">
-                    <p className="font-bold text-teal-900 flex items-center gap-1.5">
-                      <HelpCircle className="h-4 w-4 text-[#00a896]" /> Dial *#06# on your phone
+                  <div className="p-4 rounded-2xl bg-[#F7F7FA] border border-[#C0C8D8] text-xs text-gray-700 space-y-1">
+                    <p className="font-bold text-[#344257] flex items-center gap-1.5">
+                      <HelpCircle className="h-4 w-4 text-[#6A859F]" /> Dial *#06# on your phone
                     </p>
-                    <p>Open your phone dialer and type <span className="font-mono font-bold bg-white px-1.5 py-0.5 rounded border">*#06#</span>. A 15-digit IMEI number will pop up on your screen instantly.</p>
+                    <p>Open your phone dialer and type <span className="font-mono font-bold bg-white px-1.5 py-0.5 rounded border border-[#C0C8D8] text-[#344257]">*#06#</span>. A 15-digit IMEI number will pop up on your screen. You can enter it now or skip it—our rider can verify it at your doorstep.</p>
                   </div>
                 )}
               </div>
@@ -2110,15 +2116,15 @@ export default function SellPhone() {
               {/* Photo Uploads */}
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
-                  <label className="label text-sm font-extrabold text-gray-900">
+                  <label className="label text-sm font-extrabold text-[#344257]">
                     2. Upload Device Photos <span className="text-rose-500 font-bold">*</span>
                   </label>
                   {hasDevicePhotos ? (
-                    <span className="badge bg-emerald-50 text-emerald-700 font-bold text-[10px]">
+                    <span className="badge bg-emerald-50 text-emerald-700 border border-emerald-200 font-bold text-[10px]">
                       ✓ Photo Uploaded
                     </span>
                   ) : (
-                    <span className="badge bg-rose-50 text-rose-700 font-bold text-[10px]">
+                    <span className="badge bg-rose-50 text-rose-700 border border-rose-200 font-bold text-[10px]">
                       At Least 1 Photo Mandatory
                     </span>
                   )}
@@ -2140,9 +2146,9 @@ export default function SellPhone() {
                             <img src={img} alt="" className="h-full w-full object-cover" />
                           </div>
                         ) : (
-                          <label className="flex flex-col items-center justify-center h-24 rounded-xl border border-dashed border-gray-300 bg-gray-50 hover:border-[#00a896] hover:bg-teal-50/40 cursor-pointer transition">
-                            <Camera className="h-5 w-5 text-gray-400" />
-                            <span className="text-[10px] font-bold text-[#00a896] mt-1">Upload *</span>
+                          <label className="flex flex-col items-center justify-center h-24 rounded-xl border border-dashed border-[#C0C8D8] bg-[#F7F7FA] hover:border-[#6A859F] hover:bg-[#F0F0F5] cursor-pointer transition">
+                            <Camera className="h-5 w-5 text-[#8A9AAF]" />
+                            <span className="text-[10px] font-bold text-[#344257] mt-1">Upload *</span>
                             <input
                               type="file"
                               accept="image/*"
@@ -2164,7 +2170,7 @@ export default function SellPhone() {
                 <button type="button" onClick={() => setStep(2)} className="btn-outline text-sm">
                   Back
                 </button>
-                <button type="button" onClick={handleStep3Continue} className="btn-primary bg-[#00a896] hover:bg-[#008f80] flex items-center gap-2">
+                <button type="button" onClick={handleStep3Continue} className="btn-primary flex items-center gap-2">
                   View Guaranteed Quote <ArrowRight className="h-4 w-4" />
                 </button>
               </div>
@@ -2176,22 +2182,22 @@ export default function SellPhone() {
         {step === 4 && (
           <div className="max-w-2xl mx-auto space-y-6 animate-fade-in">
             <div className="card p-6 md:p-8 rounded-[28px] bg-white border border-gray-200 shadow-xl text-center space-y-6">
-              <span className="badge bg-emerald-50 text-emerald-800 font-extrabold uppercase tracking-wider text-xs">
+              <span className="badge bg-emerald-50 text-emerald-800 border border-emerald-200 font-extrabold uppercase tracking-wider text-xs">
                 Pre-Approved Spot Cash Valuation · Lucknow
               </span>
 
               <div>
-                <h2 className="font-display text-2xl font-black text-gray-900">
+                <h2 className="font-display text-2xl font-black text-[#344257]">
                   {form.brand} {form.model} ({form.storage})
                 </h2>
                 <p className="text-xs text-gray-500 mt-1">
-                  Condition: {form.condition} · IMEI: {form.imei || 'Verified at doorstep'}
+                  Condition: {form.condition} · IMEI: {form.imei || 'Doorstep Verification'}
                 </p>
               </div>
 
-              {/* Cashify Dark Quote Box */}
-              <div className="rounded-3xl bg-gradient-to-r from-teal-950 via-gray-900 to-teal-950 p-8 text-white shadow-2xl relative overflow-hidden space-y-3">
-                <p className="text-xs font-bold uppercase tracking-widest text-emerald-400">Guaranteed Lucknow Payout Quote</p>
+              {/* Fundu Theme Dark Quote Box */}
+              <div className="rounded-3xl bg-gradient-to-r from-[#1E2734] via-[#344257] to-[#47576E] p-8 text-white shadow-2xl relative overflow-hidden space-y-3">
+                <p className="text-xs font-bold uppercase tracking-widest text-[#9ac0dd]">Guaranteed Lucknow Payout Quote</p>
                 <div className="font-display text-4xl sm:text-5xl font-black text-white">
                   {formatINR(estimate)}
                 </div>
@@ -2210,13 +2216,13 @@ export default function SellPhone() {
                 </div>
               </div>
 
-              {/* Cashify Live Price Breakdown Card */}
+              {/* Fundu Live Price Breakdown Card */}
               <div className="p-5 rounded-2xl bg-gray-50 border border-gray-200 text-left space-y-2.5 text-xs">
                 <div className="flex items-center justify-between border-b border-gray-200 pb-2">
-                  <span className="font-extrabold text-gray-900 uppercase tracking-wider text-[11px] flex items-center gap-1.5">
-                    <Sparkles className="h-3.5 w-3.5 text-[#00a896]" /> Fundu Instant Valuation Breakdown
+                  <span className="font-extrabold text-[#344257] uppercase tracking-wider text-[11px] flex items-center gap-1.5">
+                    <Sparkles className="h-3.5 w-3.5 text-[#6A859F]" /> Fundu Instant Valuation Breakdown
                   </span>
-                  <span className="badge bg-teal-100 text-teal-800 text-[10px] font-bold">Guaranteed</span>
+                  <span className="badge bg-[#F0F0F5] text-[#344257] border border-[#C0C8D8] text-[10px] font-bold">Guaranteed</span>
                 </div>
 
                 <div className="flex justify-between font-semibold text-gray-700">
@@ -2268,7 +2274,7 @@ export default function SellPhone() {
 
                 <div className="pt-2 border-t border-gray-200 flex justify-between font-extrabold text-sm text-gray-900">
                   <span>Net Doorstep Cash Offer:</span>
-                  <span className="text-[#00a896] font-black text-base">{formatINR(cashifyValuation.finalEstimate)}</span>
+                  <span className="text-[#344257] font-black text-base">{formatINR(cashifyValuation.finalEstimate)}</span>
                 </div>
               </div>
 
@@ -2287,7 +2293,7 @@ export default function SellPhone() {
                       onClick={() => setForm({ ...form, payoutMethod: p.id as any })}
                       className={`p-3 rounded-xl border text-center transition cursor-pointer ${
                         form.payoutMethod === p.id
-                          ? 'border-[#00a896] bg-teal-50 font-extrabold text-[#00a896] ring-2 ring-[#00a896]/20'
+                          ? 'border-[#344257] bg-[#F0F0F5] font-extrabold text-[#344257] ring-2 ring-[#344257]/20'
                           : 'border-gray-200 bg-white text-gray-700 hover:border-gray-300'
                       }`}
                     >
@@ -2304,7 +2310,7 @@ export default function SellPhone() {
                       value={form.payoutDetails}
                       onChange={(e) => setForm({ ...form, payoutDetails: e.target.value })}
                       placeholder="e.g. yourname@oksbi or 9839122345"
-                      className="input mt-1 text-xs"
+                      className="input mt-1 text-xs focus:border-[#6A859F] focus:ring-4 focus:ring-[#6A859F]/15"
                     />
                   </div>
                 )}
@@ -2314,7 +2320,7 @@ export default function SellPhone() {
                 <button type="button" onClick={() => setStep(3)} className="btn-outline text-sm">
                   Back
                 </button>
-                <button type="button" onClick={() => setStep(5)} className="btn-primary bg-[#00a896] hover:bg-[#008f80] flex items-center gap-2">
+                <button type="button" onClick={() => setStep(5)} className="btn-primary flex items-center gap-2">
                   Accept & Schedule Pickup <ArrowRight className="h-4 w-4" />
                 </button>
               </div>
@@ -2328,12 +2334,12 @@ export default function SellPhone() {
             <div className="card p-6 md:p-8 rounded-[28px] bg-white border border-gray-200 shadow-xl space-y-6">
               <div className="flex items-center justify-between border-b border-gray-100 pb-4">
                 <div>
-                  <span className="badge bg-teal-100 text-teal-800 font-bold">Step 5 of 5</span>
-                  <h2 className="mt-1 font-display text-xl font-extrabold text-gray-900">
+                  <span className="badge bg-[#F0F0F5] text-[#344257] border border-[#C0C8D8] font-bold">Step 5 of 5</span>
+                  <h2 className="mt-1 font-display text-xl font-extrabold text-[#344257]">
                     Schedule Lucknow Doorstep Pickup
                   </h2>
                   <p className="text-xs text-gray-500">
-                    Guaranteed Payout: <span className="font-extrabold text-[#00a896]">{formatINR(estimate)}</span> ({form.payoutMethod})
+                    Guaranteed Payout: <span className="font-extrabold text-[#344257]">{formatINR(estimate)}</span> ({form.payoutMethod})
                   </p>
                 </div>
               </div>
@@ -2350,7 +2356,7 @@ export default function SellPhone() {
                   <select
                     value={form.pickupArea}
                     onChange={(e) => setForm({ ...form, pickupArea: e.target.value })}
-                    className="input mt-1 focus:border-[#00a896]"
+                    className="input mt-1 focus:border-[#6A859F] focus:ring-4 focus:ring-[#6A859F]/15"
                   >
                     {LUCKNOW_LOCALITIES.map((area) => (
                       <option key={area} value={area}>
@@ -2370,7 +2376,7 @@ export default function SellPhone() {
                     value={form.pickupAddress}
                     onChange={(e) => setForm({ ...form, pickupAddress: e.target.value })}
                     placeholder="House / Flat No., Building Name, Street, Landmark"
-                    className="input mt-1 focus:border-[#00a896]"
+                    className="input mt-1 focus:border-[#6A859F] focus:ring-4 focus:ring-[#6A859F]/15"
                     required
                   />
                 </div>
@@ -2382,7 +2388,7 @@ export default function SellPhone() {
                       type="date"
                       value={form.pickupDate}
                       onChange={(e) => setForm({ ...form, pickupDate: e.target.value })}
-                      className="input mt-1 focus:border-[#00a896]"
+                      className="input mt-1 focus:border-[#6A859F] focus:ring-4 focus:ring-[#6A859F]/15"
                     />
                   </div>
 
@@ -2391,7 +2397,7 @@ export default function SellPhone() {
                     <select
                       value={form.pickupSlot}
                       onChange={(e) => setForm({ ...form, pickupSlot: e.target.value })}
-                      className="input mt-1 focus:border-[#00a896]"
+                      className="input mt-1 focus:border-[#6A859F] focus:ring-4 focus:ring-[#6A859F]/15"
                     >
                       {['10 AM - 12 PM', '12 PM - 2 PM', '2 PM - 4 PM', '4 PM - 6 PM', '6 PM - 8 PM'].map((slot) => (
                         <option key={slot} value={slot}>
@@ -2409,7 +2415,7 @@ export default function SellPhone() {
                     value={form.notes}
                     onChange={(e) => setForm({ ...form, notes: e.target.value })}
                     placeholder="e.g. Call 10 mins before arrival, Landmark near Sahara Ganj"
-                    className="input mt-1 focus:border-[#00a896]"
+                    className="input mt-1 focus:border-[#6A859F] focus:ring-4 focus:ring-[#6A859F]/15"
                   />
                 </div>
               </div>
@@ -2422,7 +2428,7 @@ export default function SellPhone() {
                   type="button"
                   onClick={handleSubmit}
                   disabled={submitting || !form.pickupAddress.trim()}
-                  className="btn-primary bg-[#00a896] hover:bg-[#008f80] text-sm flex items-center gap-2"
+                  className="btn-primary text-sm flex items-center gap-2"
                 >
                   {submitting ? 'Auto-Assigning Agent...' : 'Confirm Pickup Booking'} <CheckCircle2 className="h-4 w-4" />
                 </button>

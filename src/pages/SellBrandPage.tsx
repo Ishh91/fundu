@@ -362,7 +362,7 @@ export default function SellBrandPage() {
       <span>
         {parts.map((part, i) =>
           part.toLowerCase() === query.toLowerCase() ? (
-            <mark key={i} className="bg-teal-100 text-[#00a896] font-black px-0.5 rounded">
+            <mark key={i} className="bg-[#C0C8D8]/50 text-[#344257] font-black px-0.5 rounded">
               {part}
             </mark>
           ) : (
@@ -480,7 +480,7 @@ export default function SellBrandPage() {
           {/* CATALOG CONTENT SWITCHER */}
           {isLoadingApi ? (
             <div className="py-16 text-center space-y-3">
-              <RefreshCw className="h-8 w-8 text-[#00a896] animate-spin mx-auto" />
+              <RefreshCw className="h-8 w-8 text-[#6A859F] animate-spin mx-auto" />
               <p className="text-xs font-bold text-gray-500">Fetching live {brandDisplayName} models...</p>
             </div>
           ) : debouncedQuery ? (
@@ -669,11 +669,11 @@ export default function SellBrandPage() {
                 desc: 'Rider checks your device on spot and transfers cash or UPI (GPay/PhonePe) directly into your account!',
               },
             ].map((stepItem) => (
-              <div key={stepItem.num} className="p-6 rounded-2xl bg-teal-50/50 border border-teal-100 flex flex-col items-center text-center space-y-3">
-                <div className="grid h-12 w-12 place-items-center rounded-2xl bg-[#00a896] text-white font-display font-black text-xl shadow-md shadow-teal-500/20">
+              <div key={stepItem.num} className="p-6 rounded-2xl bg-[#F7F7FA] border border-[#C0C8D8] flex flex-col items-center text-center space-y-3">
+                <div className="grid h-12 w-12 place-items-center rounded-2xl bg-gradient-to-r from-[#344257] to-[#47576E] text-white font-display font-black text-xl shadow-md">
                   {stepItem.num}
                 </div>
-                <h3 className="font-extrabold text-base text-gray-900">{stepItem.title}</h3>
+                <h3 className="font-extrabold text-base text-[#344257]">{stepItem.title}</h3>
                 <p className="text-xs text-gray-600 leading-relaxed">{stepItem.desc}</p>
               </div>
             ))}
@@ -681,9 +681,9 @@ export default function SellBrandPage() {
         </div>
 
         {/* CASHIFY WHY SELL BRAND ON FUNDU (6 USPs) */}
-        <div className="card p-8 rounded-[32px] bg-gradient-to-r from-teal-950 via-gray-900 to-teal-950 text-white shadow-xl space-y-6">
+        <div className="card p-8 rounded-[32px] bg-gradient-to-r from-[#1E2734] via-[#344257] to-[#47576E] text-white shadow-xl space-y-6">
           <div className="text-center max-w-2xl mx-auto space-y-2">
-            <span className="badge bg-teal-500/20 text-teal-300 border border-teal-400/30 text-xs font-bold px-3 py-1">
+            <span className="badge bg-white/10 text-white border border-white/20 text-xs font-bold px-3 py-1">
               Lucknow's #1 Mobile Buyback Network
             </span>
             <h2 className="font-display text-2xl md:text-3xl font-black text-white">
@@ -694,7 +694,7 @@ export default function SellBrandPage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {[
               {
-                icon: <BadgeIndianRupee className="h-6 w-6 text-teal-400" />,
+                icon: <BadgeIndianRupee className="h-6 w-6 text-[#8A9AAF]" />,
                 title: 'Instant Spot Cash Payout',
                 desc: 'Get instant UPI (GPay/PhonePe) or hard cash transfer directly into your hand before handing over your mobile.',
               },
@@ -704,12 +704,12 @@ export default function SellBrandPage() {
                 desc: `Our AI algorithm checks live Lucknow market demand to guarantee maximum cash for your ${brandDisplayName}.`,
               },
               {
-                icon: <Truck className="h-6 w-6 text-blue-400" />,
+                icon: <Truck className="h-6 w-6 text-[#9ac0dd]" />,
                 title: 'Free Lucknow Doorstep Visit',
                 desc: 'Zero shipping or visiting fees across Gomti Nagar, Hazratganj, Indira Nagar, Aliganj, Mahanagar & Chowk.',
               },
               {
-                icon: <Lock className="h-6 w-6 text-purple-400" />,
+                icon: <Lock className="h-6 w-6 text-[#C0C8D8]" />,
                 title: 'Military-Grade Data Wipe',
                 desc: 'We perform automated factory data wipe right in front of you for 100% privacy & peace of mind.',
               },
@@ -736,8 +736,8 @@ export default function SellBrandPage() {
         {/* BRAND SPECIFIC FAQS */}
         <div className="card p-8 rounded-[32px] bg-white border border-gray-200 space-y-6">
           <div className="text-center max-w-xl mx-auto space-y-1">
-            <span className="badge bg-teal-50 text-[#00a896] text-xs font-bold">Frequently Asked Questions</span>
-            <h2 className="font-display text-2xl font-black text-gray-900">
+            <span className="badge bg-[#F0F0F5] text-[#344257] border border-[#C0C8D8] text-xs font-bold">Frequently Asked Questions</span>
+            <h2 className="font-display text-2xl font-black text-[#344257]">
               Selling {brandDisplayName} on Fundu Lucknow
             </h2>
           </div>
@@ -767,10 +767,10 @@ export default function SellBrandPage() {
                   <button
                     type="button"
                     onClick={() => setOpenFaqIndex(isOpen ? null : idx)}
-                    className="w-full p-4 text-left font-bold text-sm text-gray-900 flex items-center justify-between gap-4 hover:bg-teal-50/30 transition cursor-pointer"
+                    className="w-full p-4 text-left font-bold text-sm text-[#344257] flex items-center justify-between gap-4 hover:bg-[#F7F7FA] transition cursor-pointer"
                   >
                     <span className="flex items-center gap-2">
-                      <HelpCircle className="h-4 w-4 text-[#00a896] shrink-0" /> {f.q}
+                      <HelpCircle className="h-4 w-4 text-[#6A859F] shrink-0" /> {f.q}
                     </span>
                     {isOpen ? <ChevronUp className="h-4 w-4 text-gray-500" /> : <ChevronDown className="h-4 w-4 text-gray-500" />}
                   </button>

@@ -200,7 +200,7 @@ export default function AdminSidebar({
                         onClick={() => handleItemClick(item)}
                         className={`flex w-full items-center justify-between rounded-xl px-3 py-2 text-xs font-bold transition-all ${
                           isActive
-                            ? 'bg-[#00a896] text-white shadow-md shadow-teal-500/20 font-black'
+                            ? 'bg-[#344257] text-white shadow-md shadow-slate-900/20 font-black'
                             : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900'
                         }`}
                       >

@@ -117,8 +117,8 @@ export default function AdminContactQueries() {
                     onClick={() => setSelectedQueryId(q.id)}
                     className={`card p-4 rounded-2xl cursor-pointer transition-all ${
                       isSelected
-                        ? 'border-[#00a896] bg-teal-50/80 shadow-md ring-2 ring-[#00a896]/30'
-                        : 'bg-white hover:border-teal-300 hover:shadow-xs'
+                        ? 'border-[#344257] bg-[#F0F0F5] shadow-md ring-2 ring-[#6A859F]/30'
+                        : 'bg-white hover:border-[#6A859F] hover:shadow-xs'
                     }`}
                   >
                     <div className="flex items-center justify-between gap-2">
@@ -127,7 +127,7 @@ export default function AdminContactQueries() {
                         {isResolved ? 'Resolved' : 'Open'}
                       </span>
                     </div>
-                    <p className="text-xs font-bold text-teal-700 mt-0.5 truncate">{q.subject}</p>
+                    <p className="text-xs font-bold text-[#47576E] mt-0.5 truncate">{q.subject}</p>
                     <p className="text-xs text-gray-500 mt-1 line-clamp-2">{q.message}</p>
                     <div className="mt-2.5 flex items-center justify-between text-[11px] text-gray-400 font-semibold pt-2 border-t border-gray-100">
                       <span className="flex items-center gap-1"><Mail className="h-3 w-3" /> {q.email}</span>
@@ -208,7 +208,7 @@ export default function AdminContactQueries() {
                   href={`mailto:${selectedQuery.email}?subject=Re: ${encodeURIComponent(selectedQuery.subject)}&body=${encodeURIComponent(`Hi ${selectedQuery.name},\n\nThank you for reaching out to Fundu!\n\n`)}`}
                   target="_blank"
                   rel="noreferrer"
-                  className="btn-primary w-full flex items-center justify-center gap-2 bg-[#00a896] hover:bg-[#008f80] py-3 text-xs font-bold"
+                  className="btn-primary w-full flex items-center justify-center gap-2 py-3 text-xs font-bold"
                 >
                   <Send className="h-4 w-4" /> Reply to Customer via Email
                 </a>
