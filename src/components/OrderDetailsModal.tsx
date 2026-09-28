@@ -277,7 +277,7 @@ export default function OrderDetailsModal({
                         trackingId: order.tracking_id,
                       });
                     }}
-                    className="btn-primary text-xs px-4 py-2 flex items-center gap-1.5 bg-teal-600 hover:bg-teal-700 shadow-md font-bold"
+                    className="btn-primary text-xs px-4 py-2 flex items-center gap-1.5 shadow-md font-bold"
                   >
                     <Navigation className="h-4 w-4" /> Open Live GPS Map Tracker
                   </button>
@@ -427,10 +427,10 @@ export default function OrderDetailsModal({
           {/* ══════════════════════════════════════════════════════════
               CONNECT WITH ADMIN & LIVE SUPPORT SECTION
              ══════════════════════════════════════════════════════════ */}
-          <div className="p-5 rounded-2xl bg-gradient-to-br from-teal-500/10 via-brand-500/10 to-indigo-500/10 border border-teal-200/80 space-y-4">
+          <div className="p-5 rounded-2xl bg-gradient-to-br from-[#F0F0F5]/80 via-white to-[#F7F7FA] border border-[#C0C8D8] space-y-4">
             <div className="flex flex-wrap items-center justify-between gap-3">
               <div>
-                <div className="inline-flex items-center gap-1.5 rounded-full bg-teal-100 px-2.5 py-0.5 text-[10px] font-black text-teal-800">
+                <div className="inline-flex items-center gap-1.5 rounded-full bg-[#F0F0F5] border border-[#C0C8D8] px-2.5 py-0.5 text-[10px] font-black text-[#344257]">
                   <Sparkles className="h-3 w-3" /> Live Tracking Support Desk
                 </div>
                 <h4 className="font-display text-sm font-black text-ink-900 mt-1">
@@ -460,9 +460,9 @@ export default function OrderDetailsModal({
             </div>
 
             {/* In-App Direct Message to Admin */}
-            <form onSubmit={handleSendMessageToAdmin} className="space-y-2 pt-2 border-t border-teal-200/60">
+            <form onSubmit={handleSendMessageToAdmin} className="space-y-2 pt-2 border-t border-[#C0C8D8]">
               <label className="text-[11px] font-bold text-ink-700 flex items-center gap-1">
-                <MessageSquare className="h-3.5 w-3.5 text-teal-600" />
+                <MessageSquare className="h-3.5 w-3.5 text-[#47576E]" />
                 Send a quick message/note to Admin regarding this order:
               </label>
               <div className="flex gap-2">
@@ -476,7 +476,7 @@ export default function OrderDetailsModal({
                 <button
                   type="submit"
                   disabled={sendingMessage || !chatMessage.trim()}
-                  className="btn-primary text-xs px-4 py-2 font-bold flex items-center gap-1 bg-teal-600 hover:bg-teal-700 disabled:opacity-50"
+                  className="btn-primary text-xs px-4 py-2 font-bold flex items-center gap-1 disabled:opacity-50"
                 >
                   <Send className="h-3.5 w-3.5" /> Send Note
                 </button>
@@ -492,7 +492,7 @@ export default function OrderDetailsModal({
 
             {/* Conversation History with Admin if any */}
             {Array.isArray(order.support_messages) && order.support_messages.length > 0 && (
-              <div className="mt-3 p-3 rounded-xl bg-white border border-teal-100 space-y-2 text-xs">
+              <div className="mt-3 p-3 rounded-xl bg-white border border-[#C0C8D8] space-y-2 text-xs">
                 <p className="text-[10px] font-bold uppercase text-ink-400">Order Messages & Updates:</p>
                 <div className="space-y-1.5 max-h-32 overflow-y-auto pr-1">
                   {order.support_messages.map((msg, mIdx) => (
@@ -501,7 +501,7 @@ export default function OrderDetailsModal({
                       className={`p-2 rounded-xl text-xs ${
                         msg.sender === 'admin'
                           ? 'bg-brand-50 text-brand-900 border border-brand-100 mr-6'
-                          : 'bg-teal-50 text-teal-900 border border-teal-100 ml-6 text-right'
+                          : 'bg-[#F0F0F5] text-[#344257] border border-[#C0C8D8] ml-6 text-right'
                       }`}
                     >
                       <div className="flex items-center justify-between gap-2 mb-0.5">

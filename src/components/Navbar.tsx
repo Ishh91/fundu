@@ -454,15 +454,15 @@ export default function Navbar() {
         <>
           <Link
             to="/dashboard"
-            className="flex items-center gap-2.5 rounded-xl px-4 py-2.5 text-sm font-semibold text-gray-700 hover:bg-teal-50 hover:text-teal-700 transition"
+            className="flex items-center gap-2.5 rounded-xl px-4 py-2.5 text-sm font-semibold text-gray-700 hover:bg-[#F0F0F5] hover:text-[#344257] transition"
           >
-            <LayoutDashboard className="h-4 w-4 text-teal-600" /> My Orders & Bookings
+            <LayoutDashboard className="h-4 w-4 text-[#47576E]" /> My Orders & Bookings
           </Link>
           <Link
             to="/profile"
-            className="flex items-center gap-2.5 rounded-xl px-4 py-2.5 text-sm font-semibold text-gray-700 hover:bg-teal-50 hover:text-teal-700 transition"
+            className="flex items-center gap-2.5 rounded-xl px-4 py-2.5 text-sm font-semibold text-gray-700 hover:bg-[#F0F0F5] hover:text-[#344257] transition"
           >
-            <User className="h-4 w-4 text-teal-600" /> Account Profile
+            <User className="h-4 w-4 text-[#47576E]" /> Account Profile
           </Link>
           {isVendorRole && (
             <Link
@@ -499,7 +499,7 @@ export default function Navbar() {
                 Direct Actions {matchingModels.length > 0 && `(${matchingModels.length} Models)`}
               </span>
               {isSearchingApi && (
-                <span className="inline-flex items-center gap-1 rounded-full bg-teal-50 px-2 py-0.5 text-[10px] font-bold text-teal-700">
+                <span className="inline-flex items-center gap-1 rounded-full bg-[#F0F0F5] px-2 py-0.5 text-[10px] font-bold text-[#344257]">
                   <RefreshCw className="h-2.5 w-2.5 animate-spin" /> MobileAPI Live
                 </span>
               )}
@@ -520,7 +520,7 @@ export default function Navbar() {
                     setSearchOpen(false);
                     navigate(`/search?q=${encodeURIComponent(item.model)}`);
                   }}
-                  className="flex items-center justify-between gap-2 rounded-xl p-2 hover:bg-teal-50/70 transition group cursor-pointer"
+                  className="flex items-center justify-between gap-2 rounded-xl p-2 hover:bg-[#F0F0F5] transition group cursor-pointer"
                 >
                   <div className="flex items-center gap-2.5 min-w-0 flex-1">
                     <div className="h-9 w-9 shrink-0 rounded-lg border border-gray-200/80 bg-white p-0.5 grid place-items-center overflow-hidden shadow-xs">
@@ -536,7 +536,7 @@ export default function Navbar() {
                       />
                     </div>
                     <div className="min-w-0 flex-1">
-                      <p className="text-xs sm:text-sm font-bold text-gray-800 group-hover:text-teal-700 truncate">
+                      <p className="text-xs sm:text-sm font-bold text-gray-800 group-hover:text-[#344257] truncate">
                         {highlightMatch(item.model, search.trim())}
                       </p>
                       <div className="flex items-center gap-1.5 text-[11px] text-gray-400">
@@ -544,7 +544,7 @@ export default function Navbar() {
                         {item.price ? (
                           <>
                             <span>•</span>
-                            <span className="text-teal-700 font-bold">From {formatINR(item.price)}</span>
+                            <span className="text-[#344257] font-bold">From {formatINR(item.price)}</span>
                           </>
                         ) : null}
                       </div>
@@ -562,7 +562,7 @@ export default function Navbar() {
                     <Link
                       to={`/search?q=${encodeURIComponent(item.model)}`}
                       onClick={() => setSearchOpen(false)}
-                      className="rounded-lg bg-teal-50 px-2.5 py-1 text-xs font-bold text-teal-700 hover:bg-teal-100 transition"
+                      className="rounded-lg bg-[#F0F0F5] px-2.5 py-1 text-xs font-bold text-[#344257] hover:bg-[#E2E8F0] transition"
                     >
                       Buy
                     </Link>
@@ -602,7 +602,7 @@ export default function Navbar() {
           <button
             type="button"
             onClick={submitSearch}
-            className="w-full mt-2 py-2 px-3 rounded-xl bg-teal-50 text-teal-800 text-xs font-bold hover:bg-teal-100 flex items-center justify-between transition cursor-pointer shrink-0"
+            className="w-full mt-2 py-2 px-3 rounded-xl bg-[#F0F0F5] text-[#344257] text-xs font-bold hover:bg-[#E2E8F0] flex items-center justify-between transition cursor-pointer shrink-0"
           >
             <span>View Buy, Sell & Repair options for "{search}"</span>
             <ArrowRight className="h-3.5 w-3.5" />
@@ -631,9 +631,9 @@ export default function Navbar() {
                   setSearch(item.name);
                   setSearchOpen(true);
                 }}
-                className="rounded-xl border border-gray-100 bg-gray-50/80 p-2 text-left hover:bg-teal-50 hover:border-teal-200 transition cursor-pointer group"
+                className="rounded-xl border border-gray-100 bg-gray-50/80 p-2 text-left hover:bg-[#F0F0F5] hover:border-[#C0C8D8] transition cursor-pointer group"
               >
-                <p className="text-xs font-bold text-gray-800 group-hover:text-teal-700">{item.name}</p>
+                <p className="text-xs font-bold text-gray-800 group-hover:text-[#344257]">{item.name}</p>
                 <p className="text-[10px] text-gray-400 truncate">{item.sub}</p>
               </button>
             ))}
@@ -711,7 +711,7 @@ export default function Navbar() {
               {searchOpen && renderSearchDropdown(false)}
             </div>
 
-            {/* 3. Right: Shopping Cart Icon & Solid Teal Pill Login Button */}
+            {/* 3. Right: Shopping Cart Icon & Solid Fundu Slate Pill Login Button */}
             <div className="flex items-center gap-3 sm:gap-4 shrink-0">
 
               {/* Mobile Location Badge */}

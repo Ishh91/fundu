@@ -138,7 +138,7 @@ export default function LiveExecutiveTracker({
         {/* Top Header */}
         <div className="flex items-center justify-between border-b border-gray-100 bg-[#0f172a] px-6 py-4 text-white">
           <div className="flex items-center gap-3">
-            <div className="relative grid h-10 w-10 place-items-center rounded-2xl bg-teal-500 text-white shadow-glow">
+            <div className="relative grid h-10 w-10 place-items-center rounded-2xl bg-[#344257] text-white shadow-glow">
               <Truck className="h-5 w-5 animate-pulse" />
               <span className="absolute -right-1 -top-1 h-3 w-3 rounded-full bg-emerald-400 border-2 border-[#0f172a] animate-ping" />
             </div>
@@ -155,7 +155,7 @@ export default function LiveExecutiveTracker({
                   {isAssigned ? 'GPS Active' : 'Admin Assigning Rider'}
                 </span>
               </div>
-              <p className="text-xs text-teal-200">
+              <p className="text-xs text-[#C0C8D8]">
                 {actionText} • {deviceInfo}
               </p>
             </div>
@@ -205,7 +205,7 @@ export default function LiveExecutiveTracker({
           <div className="absolute left-4 top-4 rounded-md bg-black/60 px-2 py-1 text-[10px] font-bold text-gray-300 backdrop-blur-sm border border-white/10">
             📍 Lucknow Central Hub (Hazratganj)
           </div>
-          <div className="absolute right-4 top-4 rounded-md bg-black/60 px-2 py-1 text-[10px] font-bold text-teal-300 backdrop-blur-sm border border-white/10">
+          <div className="absolute right-4 top-4 rounded-md bg-black/60 px-2 py-1 text-[10px] font-bold text-[#C0C8D8] backdrop-blur-sm border border-white/10">
             🏙️ Gomti Riverfront
           </div>
           <div className="absolute right-4 bottom-4 rounded-md bg-black/60 px-2 py-1 text-[10px] font-bold text-gray-300 backdrop-blur-sm border border-white/10">
@@ -219,7 +219,7 @@ export default function LiveExecutiveTracker({
               y1={`${startPos.y}%`}
               x2={`${targetPos.x}%`}
               y2={`${targetPos.y}%`}
-              stroke={isAssigned ? '#14c8ba' : '#38bdf8'}
+              stroke={isAssigned ? '#47576E' : '#6A859F'}
               strokeWidth="4"
               strokeDasharray="6,6"
               className="animate-pulse"
@@ -231,7 +231,7 @@ export default function LiveExecutiveTracker({
             className="absolute -translate-x-1/2 -translate-y-1/2 z-10 flex flex-col items-center pointer-events-none"
             style={{ left: `${startPos.x}%`, top: `${startPos.y}%` }}
           >
-            <div className="h-3 w-3 rounded-full bg-cyan-400 border border-white shadow-md" />
+            <div className="h-3 w-3 rounded-full bg-[#6A859F] border border-white shadow-md" />
           </div>
 
           {/* Destination Pin (Customer Address) */}
@@ -261,15 +261,15 @@ export default function LiveExecutiveTracker({
               style={{ left: `${currentX}%`, top: `${currentY}%` }}
             >
               <div className="relative">
-                <span className="absolute -inset-3 rounded-full bg-teal-400/40 animate-pulse" />
-                <div className="grid h-9 w-9 place-items-center rounded-full bg-gradient-to-tr from-teal-600 to-cyan-400 text-white shadow-2xl border-2 border-white">
+                <span className="absolute -inset-3 rounded-full bg-[#47576E]/40 animate-pulse" />
+                <div className="grid h-9 w-9 place-items-center rounded-full bg-gradient-to-tr from-[#344257] to-[#47576E] text-white shadow-2xl border-2 border-white">
                   <Navigation className="h-4.5 w-4.5 rotate-45" />
                 </div>
               </div>
               
               {/* Label placed BELOW the marker to avoid overlap */}
               <div className="absolute top-10 left-1/2 -translate-x-1/2 whitespace-nowrap z-30">
-                <div className="flex items-center gap-1 rounded-full bg-[#0f172a]/95 border border-teal-400 px-2.5 py-0.5 text-[10px] font-black text-white shadow-xl">
+                <div className="flex items-center gap-1 rounded-full bg-[#0f172a]/95 border border-[#6A859F] px-2.5 py-0.5 text-[10px] font-black text-white shadow-xl">
                   <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-ping" />
                   <span>{executiveName?.split(' ')[0]} (On Bike)</span>
                 </div>
@@ -277,8 +277,8 @@ export default function LiveExecutiveTracker({
             </div>
           ) : (
             <div className="absolute inset-0 grid place-items-center bg-black/40 backdrop-blur-xs z-30 pointer-events-none">
-              <div className="rounded-2xl bg-black/80 border border-teal-500/40 p-4 text-center text-white max-w-xs shadow-2xl space-y-1">
-                <p className="text-xs font-black text-teal-300">⚡ Order Verified at Hazratganj Hub</p>
+              <div className="rounded-2xl bg-black/80 border border-[#47576E] p-4 text-center text-white max-w-xs shadow-2xl space-y-1">
+                <p className="text-xs font-black text-[#C0C8D8]">⚡ Order Verified at Hazratganj Hub</p>
                 <p className="text-[11px] text-gray-300">
                   Admin is assigning certified rider for doorstep pickup/delivery in {targetPos.label.split(',')[0]}.
                 </p>
@@ -290,7 +290,7 @@ export default function LiveExecutiveTracker({
           {isAssigned && (
             <div className="absolute left-4 bottom-4 rounded-2xl bg-black/80 backdrop-blur-md p-3 text-white border border-white/10 flex items-center gap-4 text-xs shadow-xl z-30">
               <div>
-                <p className="text-[10px] font-bold uppercase text-teal-400">Live ETA</p>
+                <p className="text-[10px] font-bold uppercase text-[#6A859F]">Live ETA</p>
                 <p className="text-sm font-black">{etaMins} mins</p>
               </div>
               <div className="h-6 w-px bg-white/20" />
@@ -309,9 +309,9 @@ export default function LiveExecutiveTracker({
 
         {/* Executive Profile & Quick Actions */}
         <div className="p-5 sm:p-6 space-y-4">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 rounded-2xl bg-gray-50 p-4 border border-gray-200">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 rounded-2xl bg-[#F0F0F5] p-4 border border-[#C0C8D8]">
             <div className="flex items-center gap-3.5">
-              <div className="grid h-12 w-12 shrink-0 place-items-center rounded-full bg-teal-100 text-teal-800 font-display font-black text-lg border-2 border-teal-200">
+              <div className="grid h-12 w-12 shrink-0 place-items-center rounded-full bg-white text-[#344257] font-display font-black text-lg border-2 border-[#C0C8D8]">
                 {executiveName?.charAt(0) || 'R'}
               </div>
               <div>
@@ -334,7 +334,7 @@ export default function LiveExecutiveTracker({
             <div className="flex items-center gap-2">
               <a
                 href={`tel:${executivePhone}`}
-                className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-2 rounded-xl bg-teal-500 hover:bg-teal-600 px-4 py-2.5 text-xs font-bold text-white shadow-md transition active:scale-95"
+                className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-2 rounded-xl bg-[#344257] hover:bg-[#2B3646] px-4 py-2.5 text-xs font-bold text-white shadow-md transition active:scale-95"
               >
                 <Phone className="h-4 w-4" />
                 <span>Call Executive</span>
@@ -358,12 +358,12 @@ export default function LiveExecutiveTracker({
                 <div key={node.id} className="text-center">
                   <div
                     className={`h-1.5 w-full rounded-full transition-all ${
-                      isPast ? 'bg-teal-500' : 'bg-gray-200'
+                      isPast ? 'bg-[#344257]' : 'bg-gray-200'
                     }`}
                   />
                   <p
                     className={`mt-2 text-[11px] font-bold ${
-                      isPast ? 'text-teal-700' : 'text-gray-400'
+                      isPast ? 'text-[#344257]' : 'text-gray-400'
                     }`}
                   >
                     {node.label}
@@ -374,15 +374,15 @@ export default function LiveExecutiveTracker({
           </div>
 
           {/* Safety & Payout Note */}
-          <div className="rounded-xl bg-teal-50/70 p-3 text-xs text-teal-800 flex items-center justify-between">
+          <div className="rounded-xl bg-[#F0F0F5] p-3 text-xs text-[#344257] border border-[#C0C8D8] flex items-center justify-between">
             <span className="flex items-center gap-1.5 font-semibold">
-              <Zap className="h-4 w-4 text-teal-600 shrink-0" />
+              <Zap className="h-4 w-4 text-[#47576E] shrink-0" />
               {orderType === 'sell'
                 ? 'Instant UPI / Cash payment will be transferred on the spot before phone handover.'
                 : 'Inspect and test completely before paying.'}
             </span>
             {trackingId && (
-              <span className="font-mono font-bold text-[11px] text-teal-900 bg-white px-2 py-0.5 rounded border border-teal-200">
+              <span className="font-mono font-bold text-[11px] text-[#344257] bg-white px-2 py-0.5 rounded border border-[#C0C8D8]">
                 #{trackingId}
               </span>
             )}
@@ -391,10 +391,10 @@ export default function LiveExecutiveTracker({
           {/* ══════════════════════════════════════════════════════════
               CONNECT WITH ADMIN DESK IN TRACKING
              ══════════════════════════════════════════════════════════ */}
-          <div className="rounded-2xl bg-gradient-to-r from-slate-900 via-teal-950 to-slate-900 text-white p-4 space-y-3">
+          <div className="rounded-2xl bg-gradient-to-r from-[#1E2734] via-[#2B3646] to-[#344257] text-white p-4 space-y-3">
             <div className="flex flex-wrap items-center justify-between gap-3">
               <div>
-                <p className="text-xs font-black text-teal-300 flex items-center gap-1.5">
+                <p className="text-xs font-black text-[#C0C8D8] flex items-center gap-1.5">
                   <Sparkles className="h-3.5 w-3.5" /> Need Delivery Assistance? Connect with Admin
                 </p>
                 <p className="text-[11px] text-gray-300 mt-0.5">
@@ -417,7 +417,7 @@ export default function LiveExecutiveTracker({
                   href="tel:+919839122345"
                   className="inline-flex items-center gap-1.5 rounded-xl bg-white/15 hover:bg-white/25 text-white px-3 py-1.5 text-xs font-bold transition border border-white/20"
                 >
-                  <Phone className="h-3.5 w-3.5 text-teal-400" />
+                  <Phone className="h-3.5 w-3.5 text-[#C0C8D8]" />
                   <span>Call Desk</span>
                 </a>
               </div>

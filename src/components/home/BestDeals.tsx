@@ -110,7 +110,7 @@ export default function BestDeals({ products, loading }: BestDealsProps) {
       <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
         <div>
           <div className="flex items-center gap-2">
-            <span className="rounded-full bg-teal-50 px-3 py-1 text-xs font-extrabold uppercase tracking-wider text-teal-700">
+            <span className="rounded-full bg-[#F0F0F5] border border-[#C0C8D8] px-3 py-1 text-xs font-extrabold uppercase tracking-wider text-[#344257]">
               Refurbished Store
             </span>
             <span className="text-xs font-semibold text-gray-500">📍 Lucknow Stock Ready</span>
@@ -124,7 +124,7 @@ export default function BestDeals({ products, loading }: BestDealsProps) {
         </div>
         <Link
           to="/buy"
-          className="inline-flex items-center gap-2 text-sm font-bold text-teal-700 hover:text-teal-800 transition"
+          className="inline-flex items-center gap-2 text-sm font-bold text-[#344257] hover:text-[#47576E] transition"
         >
           View All Refurbished Mobiles <ArrowRight className="h-4 w-4" />
         </Link>

@@ -49,7 +49,7 @@ export default function Home() {
     <div className="min-h-screen">
       {/* ── Welcome Notification Banner (Shown After Registration) ── */}
       {welcomeBannerVisible && (
-        <div className="bg-gradient-to-r from-brand-600 via-teal-600 to-indigo-600 text-white px-4 py-3.5 shadow-md relative animate-slide-down z-30">
+        <div className="bg-gradient-to-r from-[#344257] via-[#47576E] to-[#5D6A82] text-white px-4 py-3.5 shadow-md relative animate-slide-down z-30">
           <div className="max-w-7xl mx-auto flex items-center justify-between gap-4">
             <div className="flex items-center gap-3 text-xs md:text-sm font-semibold">
               <div className="w-8 h-8 rounded-full bg-white/20 grid place-items-center shrink-0">

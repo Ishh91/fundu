@@ -27,15 +27,15 @@ export default function CanvaTechnologySection() {
             {/* Feature Pills */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
               <div className="flex items-center gap-2 rounded-2xl bg-white/80 backdrop-blur-md p-3.5 border border-white/80 shadow-sm">
-                <Zap className="h-5 w-5 text-teal-600 shrink-0" />
+                <Zap className="h-5 w-5 text-[#47576E] shrink-0" />
                 <span className="text-xs font-bold text-slate-900 leading-tight">Instant Spot Cash</span>
               </div>
               <div className="flex items-center gap-2 rounded-2xl bg-white/80 backdrop-blur-md p-3.5 border border-white/80 shadow-sm">
-                <ShieldCheck className="h-5 w-5 text-teal-600 shrink-0" />
+                <ShieldCheck className="h-5 w-5 text-[#47576E] shrink-0" />
                 <span className="text-xs font-bold text-slate-900 leading-tight">32-Point Check</span>
               </div>
               <div className="flex items-center gap-2 rounded-2xl bg-white/80 backdrop-blur-md p-3.5 border border-white/80 shadow-sm">
-                <Truck className="h-5 w-5 text-teal-600 shrink-0" />
+                <Truck className="h-5 w-5 text-[#47576E] shrink-0" />
                 <span className="text-xs font-bold text-slate-900 leading-tight">Lucknow Pickup</span>
               </div>
             </div>

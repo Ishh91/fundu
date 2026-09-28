@@ -491,9 +491,9 @@ export default function Repair() {
               </div>
             )}
 
-            <div className="mt-6 rounded-2xl bg-gradient-to-r from-emerald-600 to-teal-700 p-6 text-white shadow-md text-left">
+            <div className="mt-6 rounded-2xl bg-gradient-to-r from-[#1E2734] via-[#2B3646] to-[#344257] p-6 text-white shadow-md text-left">
               <div className="flex justify-between items-center border-b border-white/20 pb-3">
-                <span className="text-xs font-bold text-emerald-100 uppercase tracking-wider">Repair Tracking ID</span>
+                <span className="text-xs font-bold text-[#C0C8D8] uppercase tracking-wider">Repair Tracking ID</span>
                 <span className="font-mono text-sm font-black text-white">{trackingId}</span>
               </div>
               <div className="mt-3 space-y-1 text-xs text-white/90">
@@ -673,9 +673,9 @@ export default function Repair() {
               /* DEDICATED BRAND MODEL SELECTION ULTRA-PREMIUM SUBPAGE */
               <div ref={modelSectionRef} className="space-y-6 animate-fade-in">
                 {/* Hero Banner Header */}
-                <div className="relative overflow-hidden rounded-[28px] bg-gradient-to-r from-slate-900 via-teal-950 to-emerald-950 p-6 sm:p-8 text-white shadow-xl">
+                <div className="relative overflow-hidden rounded-[28px] bg-gradient-to-r from-[#1E2734] via-[#2B3646] to-[#344257] p-6 sm:p-8 text-white shadow-xl">
                   {/* Subtle Glowing Background Accents */}
-                  <div className="absolute -right-10 -top-10 h-64 w-64 rounded-full bg-teal-500/20 blur-3xl pointer-events-none" />
+                  <div className="absolute -right-10 -top-10 h-64 w-64 rounded-full bg-[#47576E]/20 blur-3xl pointer-events-none" />
                   <div className="absolute -left-10 -bottom-10 h-48 w-48 rounded-full bg-emerald-500/10 blur-2xl pointer-events-none" />
 
                   <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
@@ -689,13 +689,13 @@ export default function Repair() {
                           />
                         </div>
                       ) : (
-                        <div className="h-14 w-14 sm:h-16 sm:w-16 rounded-2xl bg-white/10 backdrop-blur-md p-2.5 border border-white/20 flex items-center justify-center shrink-0 shadow-lg text-teal-400">
+                        <div className="h-14 w-14 sm:h-16 sm:w-16 rounded-2xl bg-white/10 backdrop-blur-md p-2.5 border border-white/20 flex items-center justify-center shrink-0 shadow-lg text-[#C0C8D8]">
                           <Smartphone className="h-8 w-8" />
                         </div>
                       )}
                       <div>
                         <div className="flex items-center gap-2 flex-wrap">
-                          <span className="badge bg-teal-400/20 text-teal-300 border border-teal-400/30 text-xs font-bold px-3 py-1">
+                          <span className="badge bg-[#47576E]/30 text-[#C0C8D8] border border-[#6A859F]/40 text-xs font-bold px-3 py-1">
                             Official Doorstep Repair Catalog
                           </span>
                           <span className="badge bg-emerald-400/20 text-emerald-300 border border-emerald-400/30 text-xs font-bold px-3 py-1">
@@ -733,7 +733,7 @@ export default function Repair() {
                       value={modelFilter}
                       onChange={(e) => setModelFilter(e.target.value)}
                       placeholder={`Search ${form.brand} models (e.g. ${form.brand} 15, S23)...`}
-                      className="input pl-10 pr-9 py-2.5 rounded-xl text-xs sm:text-sm border-gray-200 bg-gray-50/50 focus:bg-white focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-all"
+                      className="input pl-10 pr-9 py-2.5 rounded-xl text-xs sm:text-sm border-gray-200 bg-gray-50/50 focus:bg-white focus:ring-2 focus:ring-[#47576E]/20 focus:border-[#47576E] transition-all"
                     />
                     {modelFilter && (
                       <button
@@ -751,7 +751,7 @@ export default function Repair() {
                       Showing <strong className="text-gray-900">{filteredModelsList.length}</strong> models
                     </span>
                     <span className="h-4 w-px bg-gray-200 hidden sm:block" />
-                    <span className="text-[11px] font-bold text-teal-700 bg-teal-50 px-3 py-1 rounded-lg border border-teal-100">
+                    <span className="text-[11px] font-bold text-[#344257] bg-[#F0F0F5] px-3 py-1 rounded-lg border border-[#C0C8D8]">
                       ⚡ Doorstep Service Available
                     </span>
                   </div>
@@ -895,7 +895,7 @@ export default function Repair() {
         {step === 2 && (
           <div className="max-w-4xl mx-auto space-y-6 animate-fade-in">
             {/* STEP 2 SELECTED PRODUCT DETAIL SHOWCASE CARD */}
-            <div className="card p-5 sm:p-6 rounded-[28px] bg-gradient-to-r from-teal-950 via-slate-900 to-emerald-950 text-white shadow-xl border border-teal-500/30 overflow-hidden relative">
+            <div className="card p-5 sm:p-6 rounded-[28px] bg-gradient-to-r from-[#1E2734] via-[#2B3646] to-[#344257] text-white shadow-xl border border-[#47576E]/40 overflow-hidden relative">
               <div className="relative z-10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-5">
                 <div className="flex items-center gap-4 sm:gap-5">
                   <div className="h-20 w-20 sm:h-24 sm:w-24 shrink-0 rounded-2xl bg-white p-2 border border-white/20 flex items-center justify-center shadow-lg">
@@ -907,7 +907,7 @@ export default function Repair() {
                   </div>
                   <div className="space-y-1.5">
                     <div className="flex items-center gap-2 flex-wrap">
-                      <span className="badge bg-teal-400/20 text-teal-300 border border-teal-400/30 text-[10px] sm:text-xs font-bold px-2.5 py-0.5">
+                      <span className="badge bg-[#47576E]/30 text-[#C0C8D8] border border-[#6A859F]/40 text-[10px] sm:text-xs font-bold px-2.5 py-0.5">
                         {form.brand || 'Device'}
                       </span>
                       <span className="badge bg-emerald-400/20 text-emerald-300 border border-emerald-400/30 text-[10px] sm:text-xs font-bold px-2.5 py-0.5">
@@ -929,7 +929,7 @@ export default function Repair() {
 
                 <div className="flex flex-col sm:items-end gap-2 w-full sm:w-auto pt-2 sm:pt-0 border-t sm:border-t-0 border-white/10">
                   <div className="text-left sm:text-right">
-                    <p className="text-[10px] uppercase font-bold text-teal-300 tracking-wider">Estimated Repair Cost</p>
+                    <p className="text-[10px] uppercase font-bold text-[#C0C8D8] tracking-wider">Estimated Repair Cost</p>
                     <p className="text-2xl font-black text-white">
                       {formatINR(totalRepairCost)}
                     </p>

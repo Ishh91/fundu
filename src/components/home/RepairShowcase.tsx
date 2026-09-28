@@ -24,7 +24,7 @@ const REPAIR_SERVICES = [
     estTime: '30 Mins',
     warranty: '6 Months',
     priceFrom: 1499,
-    bgIcon: 'bg-teal-100 text-teal-700',
+    bgIcon: 'bg-[#F0F0F5] text-[#344257]',
   },
   {
     id: 'battery',

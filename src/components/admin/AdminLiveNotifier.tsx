@@ -71,9 +71,9 @@ export default function AdminLiveNotifier({
           type="button"
           onClick={onSimulateTestAlert}
           title="Trigger a test order audio chime & alert popup"
-          className="hidden sm:flex items-center gap-1 rounded-xl bg-teal-50 border border-teal-200 px-2.5 py-1.5 text-xs font-semibold text-teal-700 hover:bg-teal-100 transition active:scale-95"
+          className="hidden sm:flex items-center gap-1 rounded-xl bg-[#F0F0F5] border border-[#C0C8D8] px-2.5 py-1.5 text-xs font-semibold text-[#344257] hover:bg-[#E2E8F0] transition active:scale-95"
         >
-          <Sparkles className="h-3.5 w-3.5 text-teal-600" />
+          <Sparkles className="h-3.5 w-3.5 text-[#47576E]" />
           <span>Test Alert</span>
         </button>
       </div>
@@ -89,7 +89,7 @@ export default function AdminLiveNotifier({
               key={notif.id}
               className={`pointer-events-auto rounded-2xl p-4 text-white shadow-2xl border backdrop-blur-xl animate-slide-up transition-all ${
                 isSell
-                  ? 'bg-gradient-to-r from-[#0d9488] to-[#047857] border-teal-300/40 shadow-teal-900/30'
+                  ? 'bg-gradient-to-r from-[#344257] to-[#47576E] border-[#6A859F]/40 shadow-slate-900/30'
                   : isRepair
                   ? 'bg-gradient-to-r from-[#2563eb] to-[#1d4ed8] border-blue-300/40 shadow-blue-900/30'
                   : 'bg-gradient-to-r from-[#7c3aed] to-[#6d28d9] border-purple-300/40 shadow-purple-900/30'

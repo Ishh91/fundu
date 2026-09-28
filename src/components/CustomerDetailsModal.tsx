@@ -129,9 +129,9 @@ export default function CustomerDetailsModal({ isOpen, onClose, customer }: Cust
       <div className="relative w-full max-w-2xl bg-white rounded-3xl shadow-2xl border border-gray-100 overflow-hidden my-8">
         
         {/* Header Strip */}
-        <div className="bg-gradient-to-r from-gray-900 via-teal-950 to-gray-900 px-6 py-5 text-white flex items-center justify-between">
+        <div className="bg-gradient-to-r from-[#1E2734] via-[#2B3646] to-[#344257] px-6 py-5 text-white flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="grid h-11 w-11 place-items-center rounded-2xl bg-teal-500/20 text-teal-300 border border-teal-400/30">
+            <div className="grid h-11 w-11 place-items-center rounded-2xl bg-[#47576E]/30 text-[#C0C8D8] border border-[#6A859F]/40">
               <User className="h-6 w-6" />
             </div>
             <div>
@@ -157,13 +157,13 @@ export default function CustomerDetailsModal({ isOpen, onClose, customer }: Cust
         <div className="p-6 space-y-6 max-h-[80vh] overflow-y-auto">
 
           {/* Quick Action Contact Bar */}
-          <div className="p-4 rounded-2xl bg-teal-50/70 border border-teal-200/80 flex flex-wrap items-center justify-between gap-3">
+          <div className="p-4 rounded-2xl bg-[#F0F0F5] border border-[#C0C8D8] flex flex-wrap items-center justify-between gap-3">
             <div className="flex items-center gap-3">
-              <div className="grid h-10 w-10 place-items-center rounded-xl bg-teal-600 text-white font-bold text-sm">
+              <div className="grid h-10 w-10 place-items-center rounded-xl bg-[#344257] text-white font-bold text-sm">
                 <Phone className="h-5 w-5" />
               </div>
               <div>
-                <p className="text-xs font-bold text-teal-900 uppercase tracking-wider">Primary Mobile</p>
+                <p className="text-xs font-bold text-[#47576E] uppercase tracking-wider">Primary Mobile</p>
                 <p className="font-display font-extrabold text-base text-gray-900">{formattedPhone}</p>
               </div>
             </div>
@@ -196,7 +196,7 @@ export default function CustomerDetailsModal({ isOpen, onClose, customer }: Cust
             {/* Contact & Email */}
             <div className="p-4 rounded-2xl bg-gray-50 border border-gray-200/80 space-y-2">
               <div className="flex items-center gap-2 text-xs font-bold text-gray-500 uppercase tracking-wider">
-                <Mail className="h-4 w-4 text-teal-600" /> Customer Email & Account
+                <Mail className="h-4 w-4 text-[#47576E]" /> Customer Email & Account
               </div>
               <p className="font-semibold text-sm text-gray-900">{email}</p>
               {customer.user_id && (
@@ -246,7 +246,7 @@ export default function CustomerDetailsModal({ isOpen, onClose, customer }: Cust
                       {item.image_url ? (
                         <img src={item.image_url} alt="" className="h-9 w-9 object-cover rounded-lg bg-gray-50 p-0.5" />
                       ) : (
-                        <div className="h-9 w-9 rounded-lg bg-teal-50 text-teal-700 grid place-items-center font-bold">
+                        <div className="h-9 w-9 rounded-lg bg-[#F0F0F5] text-[#344257] grid place-items-center font-bold">
                           {item.title ? item.title[0] : 'P'}
                         </div>
                       )}
@@ -255,7 +255,7 @@ export default function CustomerDetailsModal({ isOpen, onClose, customer }: Cust
                         <p className="text-gray-500 text-[11px]">Qty: {item.quantity || 1}</p>
                       </div>
                     </div>
-                    <span className="font-extrabold text-teal-700">{formatINR(item.price || 0)}</span>
+                    <span className="font-extrabold text-[#344257]">{formatINR(item.price || 0)}</span>
                   </div>
                 ))}
               </div>
@@ -264,16 +264,16 @@ export default function CustomerDetailsModal({ isOpen, onClose, customer }: Cust
 
           {/* Current Lead / Service Details (If applicable) */}
           {(customer.brand || customer.type) && (
-            <div className="p-5 rounded-2xl bg-gradient-to-r from-teal-50/50 to-blue-50/50 border border-teal-200/80 space-y-4">
-              <div className="flex items-center justify-between border-b border-teal-200/60 pb-3">
+            <div className="p-5 rounded-2xl bg-gradient-to-r from-[#F0F0F5]/80 to-[#F7F7FA] border border-[#C0C8D8] space-y-4">
+              <div className="flex items-center justify-between border-b border-[#C0C8D8] pb-3">
                 <div className="flex items-center gap-2">
-                  <Smartphone className="h-5 w-5 text-teal-700" />
+                  <Smartphone className="h-5 w-5 text-[#344257]" />
                   <span className="font-extrabold text-sm text-gray-900">
                     {customer.brand ? `${customer.brand} ${customer.model || ''}` : 'Service Request Details'}
                   </span>
                 </div>
                 {customer.tracking_id && (
-                  <span className="font-mono text-xs font-bold text-teal-800 bg-teal-100 px-2.5 py-1 rounded-lg">
+                  <span className="font-mono text-xs font-bold text-[#344257] bg-[#F0F0F5] border border-[#C0C8D8] px-2.5 py-1 rounded-lg">
                     ID: {customer.tracking_id}
                   </span>
                 )}
@@ -299,7 +299,7 @@ export default function CustomerDetailsModal({ isOpen, onClose, customer }: Cust
                       <span className="text-gray-400 block font-semibold text-[10px]">IMEI NUMBER</span>
                       <button
                         onClick={() => copyToClipboard(customer.imei!, 'IMEI')}
-                        className="text-teal-600 hover:text-teal-700"
+                        className="text-[#47576E] hover:text-[#344257]"
                         title="Copy IMEI"
                       >
                         <Copy className="h-3 w-3" />
@@ -313,17 +313,17 @@ export default function CustomerDetailsModal({ isOpen, onClose, customer }: Cust
               {/* Cashify Hardware Diagnostics & Accessories Summary */}
               {((customer as any).screenCondition || (customer as any).bodyCondition || (customer as any).defects || (customer as any).accessories) && (
                 <div className="p-3.5 rounded-xl bg-white border border-gray-200 text-xs space-y-2">
-                  <span className="font-bold text-gray-900 block text-[11px] uppercase tracking-wider text-teal-800">
+                  <span className="font-bold text-gray-900 block text-[11px] uppercase tracking-wider text-[#344257]">
                     🔍 Fundu Diagnostics Evaluation Summary:
                   </span>
                   <div className="flex flex-wrap gap-1.5 text-[11px]">
                     {(customer as any).screenCondition && (
-                      <span className="bg-teal-50 text-teal-800 border border-teal-200 px-2 py-0.5 rounded-lg font-semibold">
+                      <span className="bg-[#F0F0F5] text-[#344257] border border-[#C0C8D8] px-2 py-0.5 rounded-lg font-semibold">
                         Screen: {(customer as any).screenCondition}
                       </span>
                     )}
                     {(customer as any).bodyCondition && (
-                      <span className="bg-teal-50 text-teal-800 border border-teal-200 px-2 py-0.5 rounded-lg font-semibold">
+                      <span className="bg-[#F0F0F5] text-[#344257] border border-[#C0C8D8] px-2 py-0.5 rounded-lg font-semibold">
                         Body: {(customer as any).bodyCondition}
                       </span>
                     )}
@@ -354,7 +354,7 @@ export default function CustomerDetailsModal({ isOpen, onClose, customer }: Cust
                 {(customer.estimated_price || customer.estimated_cost || customer.total_amount) && (
                   <div className="ml-auto text-right">
                     <span className="text-[11px] text-gray-500 font-semibold block">Estimated Valuation / Cost:</span>
-                    <span className="font-display font-black text-xl text-teal-700">
+                    <span className="font-display font-black text-xl text-[#344257]">
                       {formatINR(customer.estimated_price || customer.estimated_cost || customer.total_amount || 0)}
                     </span>
                   </div>

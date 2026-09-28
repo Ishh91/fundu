@@ -27,7 +27,7 @@ const WHY_CHOOSE_PILLARS = [
     icon: Truck,
     title: 'Free Lucknow Doorstep Pickup',
     desc: 'Zero hidden charges, zero travel hassle. Our executive comes to your home or workplace anywhere in Lucknow.',
-    color: 'bg-teal-100 text-teal-700',
+    color: 'bg-[#F0F0F5] text-[#344257]',
   },
   {
     icon: ShieldCheck,

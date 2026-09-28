@@ -19,7 +19,7 @@ export default function CanvaSupportSection() {
             <div>
               <Link
                 to="/repair"
-                className="inline-flex items-center gap-2 text-base font-bold text-slate-900 hover:text-teal-700 underline underline-offset-4 decoration-2"
+                className="inline-flex items-center gap-2 text-base font-bold text-slate-900 hover:text-[#47576E] underline underline-offset-4 decoration-2"
               >
                 <span>Visit us in stores!</span>
               </Link>
@@ -33,19 +33,19 @@ export default function CanvaSupportSection() {
 
               <div className="space-y-2.5 text-sm text-slate-700 font-medium">
                 <p className="flex items-center gap-2">
-                  <MapPin className="h-4 w-4 text-teal-600 shrink-0" />
+                  <MapPin className="h-4 w-4 text-[#47576E] shrink-0" />
                   <span><strong>Hazratganj Flagship:</strong> MG Marg, Near Cathedral, Lucknow</span>
                 </p>
                 <p className="flex items-center gap-2">
-                  <MapPin className="h-4 w-4 text-teal-600 shrink-0" />
+                  <MapPin className="h-4 w-4 text-[#47576E] shrink-0" />
                   <span><strong>Gomti Nagar Super Hub:</strong> Viram Khand 1, Patrakarpuram, Lucknow</span>
                 </p>
                 <p className="flex items-center gap-2">
-                  <MapPin className="h-4 w-4 text-teal-600 shrink-0" />
+                  <MapPin className="h-4 w-4 text-[#47576E] shrink-0" />
                   <span><strong>Doorstep Coverage:</strong> Indira Nagar, Aliganj, Mahanagar, Ashiyana</span>
                 </p>
                 <p className="flex items-center gap-2 text-slate-600 text-xs pt-1">
-                  <Phone className="h-3.5 w-3.5 text-teal-600 shrink-0" />
+                  <Phone className="h-3.5 w-3.5 text-[#47576E] shrink-0" />
                   <span>+91 98765 43210 &nbsp;|&nbsp; 10:00 AM – 9:00 PM (All Days)</span>
                 </p>
               </div>

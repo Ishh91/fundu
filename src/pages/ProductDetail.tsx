@@ -478,16 +478,16 @@ export default function ProductDetail() {
             </div>
 
             {/* Exchange Old Phone Banner */}
-            <div className="card p-5 rounded-[28px] bg-gradient-to-r from-emerald-900 to-teal-900 text-white shadow-md flex items-center justify-between gap-4">
+            <div className="card p-5 rounded-[28px] bg-gradient-to-r from-[#1E2734] via-[#2B3646] to-[#344257] text-white shadow-md flex items-center justify-between gap-4">
               <div>
-                <span className="badge bg-emerald-400/20 text-emerald-300 text-[10px] font-black uppercase tracking-wider">Exchange Offer</span>
+                <span className="badge bg-[#47576E]/40 text-[#C0C8D8] border border-[#6A859F]/40 text-[10px] font-black uppercase tracking-wider">Exchange Offer</span>
                 <h4 className="mt-1 font-display font-extrabold text-sm text-white">Trade in your old phone</h4>
-                <p className="text-[11px] text-emerald-100/80">Get up to ₹18,500 instant trade-in discount</p>
+                <p className="text-[11px] text-gray-300">Get up to ₹18,500 instant trade-in discount</p>
               </div>
               <button
                 type="button"
                 onClick={() => setShowExchangeModal(true)}
-                className="btn bg-white text-emerald-900 hover:bg-emerald-50 text-xs font-bold px-3 py-2 shrink-0 rounded-xl"
+                className="btn bg-white text-[#344257] hover:bg-[#F0F0F5] text-xs font-bold px-3 py-2 shrink-0 rounded-xl"
               >
                 Check Value
               </button>
