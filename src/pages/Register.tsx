@@ -271,7 +271,7 @@ export default function Register() {
 
             <div>
               <label className="label">
-                Mobile Number <span className="text-red-500 font-bold">*</span> (Mandatory for OTP verification)
+                Mobile Number <span className="text-red-500 font-bold">*</span>
               </label>
               <div className="flex rounded-xl border border-ink-200 overflow-hidden focus-within:border-brand-500 focus-within:ring-4 focus-within:ring-brand-500/10 bg-white">
                 <div className="flex items-center border-r border-ink-200 bg-ink-50 px-3 py-3 text-ink-700 font-bold text-xs">
@@ -291,7 +291,7 @@ export default function Register() {
 
             <div>
               <label className="label">
-                Email Address <span className="text-ink-400 font-normal">(Optional — kept for record & invoices)</span>
+                Email Address
               </label>
               <div className="flex rounded-xl border border-ink-200 overflow-hidden focus-within:border-brand-500 focus-within:ring-4 focus-within:ring-brand-500/10 bg-white">
                 <div className="flex items-center border-r border-ink-200 bg-ink-50 px-3.5 py-3 text-ink-500">
@@ -305,14 +305,12 @@ export default function Register() {
                   className="flex-1 bg-white px-3.5 py-3 text-ink-900 outline-none text-sm font-medium"
                 />
               </div>
-              <p className="text-[11px] text-ink-400 mt-1 pl-1">
-                OTP will NOT be sent to email. Email is saved strictly for receipts and order tracking.
-              </p>
+
             </div>
 
             <div>
               <label className="label">
-                Account Password <span className="text-ink-400 font-normal">(Optional — for password login)</span>
+                Account Password
               </label>
               <div className="flex rounded-xl border border-ink-200 overflow-hidden focus-within:border-brand-500 focus-within:ring-4 focus-within:ring-brand-500/10 bg-white">
                 <div className="flex items-center border-r border-ink-200 bg-ink-50 px-3.5 py-3 text-ink-500">
