@@ -26,8 +26,6 @@ export default function Login() {
   const [params] = useSearchParams();
   const redirect = params.get('redirect') || '/';
 
-  /* ── Auth Mode: 'otp' (default) vs 'password' ── */
-  const [authMode, setAuthMode] = useState<'otp' | 'password'>('otp');
 
   /* ── Mobile OTP States ── */
   const [phone, setPhone] = useState('');
@@ -77,13 +75,15 @@ export default function Login() {
     }, 1000);
   };
 
-  const handleSendOtp = async (e: React.FormEvent) => {
-    e.preventDefault();
-    const cleanPhone = phone.replace(/\D/g, '').slice(-10);
+  const handleSendOtp = async (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
+    const rawVal = phone || identifier;
+    const cleanPhone = rawVal.replace(/\D/g, '').slice(-10);
     if (cleanPhone.length !== 10) {
-      setError('⚠️ Please enter a valid 10-digit Indian mobile number.');
+      setError('⚠️ Please enter a valid 10-digit Indian mobile number to get an SMS OTP.');
       return;
     }
+    setPhone(cleanPhone);
 
     setLoading(true);
     setError(null);
@@ -387,237 +387,223 @@ export default function Login() {
           </div>
         )}
 
-        {/* Auth Mode Toggle Tabs */}
-        <div className="mt-6 grid grid-cols-2 p-1.5 rounded-2xl bg-gray-100 border border-gray-200 text-xs font-black shadow-xs">
-          <button
-            type="button"
-            onClick={() => { setAuthMode('otp'); setError(null); }}
-            className={`flex items-center justify-center gap-2 py-2.5 rounded-xl transition-all cursor-pointer ${
-              authMode === 'otp'
-                ? 'bg-white text-gray-950 shadow-sm'
-                : 'text-gray-500 hover:text-gray-800'
-            }`}
-          >
-            <Smartphone className="h-4 w-4 text-[#344257]" /> Mobile OTP
-          </button>
-          <button
-            type="button"
-            onClick={() => { setAuthMode('password'); setError(null); }}
-            className={`flex items-center justify-center gap-2 py-2.5 rounded-xl transition-all cursor-pointer ${
-              authMode === 'password'
-                ? 'bg-white text-gray-950 shadow-sm'
-                : 'text-gray-500 hover:text-gray-800'
-            }`}
-          >
-            <Lock className="h-4 w-4 text-[#344257]" /> Password
-          </button>
-        </div>
-
-        {/* ── MODE 1: MOBILE OTP AUTHENTICATION (TWILIO) ── */}
-        {authMode === 'otp' && (
-          <div className="mt-4 card p-6 md:p-8 space-y-5 shadow-sm border border-ink-100 bg-white rounded-3xl animate-fade-in">
-            {otpStep === 'input' ? (
-              <form onSubmit={handleSendOtp} className="space-y-4">
+        {/* ── UNIFIED MIXED LOGIN CARD: PASSWORD OR MOBILE OTP ── */}
+        <div className="mt-6 card p-6 md:p-8 space-y-5 shadow-sm border border-ink-100 bg-white rounded-3xl animate-fade-in">
+          {otpStep === 'verify' ? (
+            /* OTP VERIFICATION VIEW */
+            <form onSubmit={handleVerifyOtp} className="space-y-4">
+              <div className="flex items-center justify-between pb-3 border-b border-gray-100">
                 <div>
-                  <label className="label">Enter Your Mobile Number</label>
-                  <div className="flex rounded-xl border border-ink-200 overflow-hidden focus-within:border-[#47576E] focus-within:ring-4 focus-within:ring-[#6A859F]/10 bg-white transition-all">
-                    <div className="flex items-center gap-1.5 border-r border-ink-200 bg-ink-50 px-3.5 py-3 text-xs font-black text-gray-700 select-none shrink-0">
-                      <span>🇮🇳</span>
-                      <span>+91</span>
-                    </div>
-                    <input
-                      type="tel"
-                      required
-                      maxLength={10}
-                      value={phone}
-                      onChange={(e) => {
-                        setPhone(e.target.value.replace(/\D/g, ''));
-                        setError(null);
-                      }}
-                      placeholder="Enter 10-digit mobile number"
-                      className="flex-1 bg-white px-3.5 py-3 text-ink-900 outline-none text-sm font-bold tracking-wider"
-                    />
-                  </div>
-                  <p className="text-[11px] text-gray-400 mt-1.5 flex items-center gap-1">
-                    <ShieldCheck className="h-3.5 w-3.5 text-emerald-600" />
-                    We'll send a 6-digit OTP code via SMS to verify.
-                  </p>
+                  <p className="text-xs text-gray-500 font-semibold">SMS OTP dispatched to:</p>
+                  <p className="text-sm font-black text-gray-900">+91 {phone}</p>
                 </div>
-
-                {/* Invisible Firebase ReCAPTCHA container */}
-                <div id="recaptcha-container" className="invisible" />
-
-                <button
-                  type="submit"
-                  disabled={loading || phone.replace(/\D/g, '').length !== 10}
-                  className="btn-primary w-full py-3 font-bold shadow-md hover:scale-[1.01] transition-transform flex items-center justify-center gap-2"
-                >
-                  {loading ? (
-                    <>
-                      <RefreshCw className="h-4 w-4 animate-spin" /> Sending OTP...
-                    </>
-                  ) : (
-                    <>
-                      Get OTP on Mobile <ArrowRight className="h-4 w-4" />
-                    </>
-                  )}
-                </button>
-              </form>
-            ) : (
-              <form onSubmit={handleVerifyOtp} className="space-y-4">
-                <div className="flex items-center justify-between pb-2 border-b border-gray-100">
-                  <div>
-                    <p className="text-xs text-gray-500 font-semibold">OTP sent via SMS to:</p>
-                    <p className="text-sm font-black text-gray-900">+91 {phone}</p>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setOtpStep('input');
-                      setError(null);
-                    }}
-                    className="text-xs text-[#344257] font-bold hover:underline"
-                  >
-                    Change Number
-                  </button>
-                </div>
-
-                <div>
-                  <label className="label text-center mb-2 block">Enter 6-Digit OTP</label>
-                  <div className="flex items-center justify-center gap-2 sm:gap-2.5">
-                    {otpDigits.map((digit, idx) => (
-                      <input
-                        key={idx}
-                        ref={(el) => (otpInputRefs.current[idx] = el)}
-                        type="text"
-                        inputMode="numeric"
-                        maxLength={1}
-                        value={digit}
-                        onChange={(e) => handleOtpDigitChange(idx, e.target.value)}
-                        onKeyDown={(e) => handleOtpKeyDown(idx, e)}
-                        className="w-10 sm:w-12 h-12 sm:h-14 text-center text-lg sm:text-xl font-black rounded-xl border border-gray-300 focus:border-[#47576E] focus:ring-4 focus:ring-[#6A859F]/10 outline-none transition bg-white"
-                      />
-                    ))}
-                  </div>
-                </div>
-
-                <button
-                  type="submit"
-                  disabled={loading || otpDigits.join('').length !== 6}
-                  className="btn-primary w-full py-3 font-bold shadow-md hover:scale-[1.01] transition-transform flex items-center justify-center gap-2 mt-2"
-                >
-                  {loading ? (
-                    <>
-                      <RefreshCw className="h-4 w-4 animate-spin" /> Verifying Code...
-                    </>
-                  ) : (
-                    <>
-                      Verify & Sign In <CheckCircle2 className="h-4 w-4" />
-                    </>
-                  )}
-                </button>
-
-                {/* Resend OTP */}
-                <div className="text-center pt-2">
-                  {otpCountdown > 0 ? (
-                    <p className="text-xs text-gray-400 font-semibold">
-                      Resend OTP in <span className="text-[#344257] font-bold">{otpCountdown}s</span>
-                    </p>
-                  ) : (
-                    <button
-                      type="button"
-                      onClick={handleSendOtp}
-                      disabled={loading}
-                      className="text-xs text-[#344257] font-bold hover:underline inline-flex items-center gap-1"
-                    >
-                      <RefreshCw className="h-3 w-3" /> Resend OTP Code
-                    </button>
-                  )}
-                </div>
-              </form>
-            )}
-
-            <div className="mt-4 text-center text-xs text-ink-500 pt-3 border-t border-ink-100">
-              New to Fundu? Sign in with mobile OTP automatically creates your account!
-            </div>
-          </div>
-        )}
-
-        {/* ── MODE 2: EMAIL & PASSWORD FORM (ADMIN & LEGACY) ── */}
-        {authMode === 'password' && (
-          <form onSubmit={handleLoginSubmit} className="mt-4 card p-6 md:p-8 space-y-4 shadow-sm border border-ink-100 bg-white rounded-3xl animate-fade-in">
-            {/* Unified Identifier Input */}
-            <div>
-              <label className="label">Mobile Number or Email Address</label>
-              <div className="flex rounded-xl border border-ink-200 overflow-hidden focus-within:border-brand-500 focus-within:ring-4 focus-within:ring-brand-500/10 bg-white transition-all">
-                <div className="flex items-center border-r border-ink-200 bg-ink-50 px-3.5 py-3 text-ink-500 select-none shrink-0">
-                  <UserIcon className="h-4 w-4 text-brand-500" />
-                </div>
-                <input
-                  type="text"
-                  required
-                  value={identifier}
-                  onChange={(e) => {
-                    setIdentifier(e.target.value);
-                    setError(null);
-                  }}
-                  placeholder="e.g. 9876543210 or user@gmail.com"
-                  className="flex-1 bg-white px-3.5 py-3 text-ink-900 outline-none text-sm font-medium"
-                />
-              </div>
-            </div>
-
-            {/* Password Input + Reset Password Link */}
-            <div>
-              <div className="flex items-center justify-between">
-                <label className="label">Account Password</label>
                 <button
                   type="button"
                   onClick={() => {
-                    setResetEmail(identifier);
-                    setResetModalOpen(true);
-                  }}
-                  className="text-xs font-bold text-brand-600 hover:underline hover:text-brand-800 flex items-center gap-1 mb-1"
-                >
-                  <KeyRound className="h-3 w-3" /> Reset Password?
-                </button>
-              </div>
-              <div className="flex rounded-xl border border-ink-200 overflow-hidden focus-within:border-brand-500 focus-within:ring-4 focus-within:ring-brand-500/10 bg-white transition-all">
-                <div className="flex items-center border-r border-ink-200 bg-ink-50 px-3.5 py-3 text-ink-500 select-none shrink-0">
-                  <Lock className="h-4 w-4 text-brand-500" />
-                </div>
-                <input
-                  type="password"
-                  required
-                  value={password}
-                  onChange={(e) => {
-                    setPassword(e.target.value);
+                    setOtpStep('input');
                     setError(null);
                   }}
-                  placeholder="••••••••"
-                  className="flex-1 bg-white px-3.5 py-3 text-ink-900 outline-none text-sm font-medium"
-                />
+                  className="text-xs text-brand-600 font-bold hover:underline"
+                >
+                  Change Number / Password
+                </button>
               </div>
-            </div>
 
-            {/* Submit Button */}
-            <button
-              type="submit"
-              disabled={loading || !identifier.trim() || !password}
-              className="btn-primary w-full mt-2 font-bold py-3 shadow-md hover:scale-[1.01] transition-transform"
-            >
-              {loading ? 'Signing in…' : 'Sign In with Password'} <ArrowRight className="h-4 w-4 ml-1" />
-            </button>
+              <div>
+                <label className="label text-center mb-2 block font-bold">Enter 6-Digit Mobile OTP</label>
+                <div className="flex items-center justify-center gap-2 sm:gap-2.5">
+                  {otpDigits.map((digit, idx) => (
+                    <input
+                      key={idx}
+                      ref={(el) => (otpInputRefs.current[idx] = el)}
+                      type="text"
+                      inputMode="numeric"
+                      maxLength={1}
+                      value={digit}
+                      onChange={(e) => handleOtpDigitChange(idx, e.target.value)}
+                      onKeyDown={(e) => handleOtpKeyDown(idx, e)}
+                      className="w-10 sm:w-12 h-12 sm:h-14 text-center text-lg sm:text-xl font-black rounded-xl border border-gray-300 focus:border-brand-500 focus:ring-4 focus:ring-brand-500/10 outline-none transition bg-white"
+                    />
+                  ))}
+                </div>
+              </div>
 
-            {/* Registration Redirect Link */}
-            <div className="mt-5 text-center text-xs text-ink-500 pt-2 border-t border-ink-100">
-              Don't have an account?{' '}
-              <Link to="/register" className="font-bold text-brand-600 hover:underline">
-                Create New Account
-              </Link>
-            </div>
-          </form>
-        )}
+              <button
+                type="submit"
+                disabled={loading || otpDigits.join('').length !== 6}
+                className="btn-primary w-full py-3 font-bold shadow-md hover:scale-[1.01] transition-transform flex items-center justify-center gap-2 mt-2"
+              >
+                {loading ? (
+                  <>
+                    <RefreshCw className="h-4 w-4 animate-spin" /> Verifying Code...
+                  </>
+                ) : (
+                  <>
+                    Verify & Sign In <CheckCircle2 className="h-4 w-4" />
+                  </>
+                )}
+              </button>
+
+              {/* Resend OTP */}
+              <div className="text-center pt-2">
+                {otpCountdown > 0 ? (
+                  <p className="text-xs text-gray-400 font-semibold">
+                    Resend OTP in <span className="text-gray-900 font-bold">{otpCountdown}s</span>
+                  </p>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => handleSendOtp()}
+                    disabled={loading}
+                    className="text-xs text-brand-600 font-bold hover:underline inline-flex items-center gap-1"
+                  >
+                    <RefreshCw className="h-3 w-3" /> Resend OTP Code
+                  </button>
+                )}
+              </div>
+
+              <div className="text-center pt-3 border-t border-ink-100">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setOtpStep('input');
+                    setError(null);
+                  }}
+                  className="text-xs text-ink-500 hover:text-ink-800 font-semibold"
+                >
+                  ← Back to Password Login
+                </button>
+              </div>
+            </form>
+          ) : (
+            /* MIXED LOGIN VIEW: PASSWORD OR OTP */
+            <form onSubmit={handleLoginSubmit} className="space-y-4">
+              {/* Unified Identifier Input */}
+              <div>
+                <label className="label">Mobile Number or Email Address</label>
+                <div className="flex rounded-xl border border-ink-200 overflow-hidden focus-within:border-brand-500 focus-within:ring-4 focus-within:ring-brand-500/10 bg-white transition-all">
+                  <div className="flex items-center border-r border-ink-200 bg-ink-50 px-3.5 py-3 text-ink-500 select-none shrink-0 font-bold text-xs">
+                    {identifier.replace(/\D/g, '').length >= 10 && !identifier.includes('@') ? (
+                      <span className="flex items-center gap-1 text-ink-700">🇮🇳 +91</span>
+                    ) : (
+                      <UserIcon className="h-4 w-4 text-brand-500" />
+                    )}
+                  </div>
+                  <input
+                    type="text"
+                    required
+                    value={identifier}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      setIdentifier(val);
+                      const digits = val.replace(/\D/g, '');
+                      if (digits.length <= 10) setPhone(digits);
+                      setError(null);
+                    }}
+                    placeholder="Enter 10-digit mobile number or email"
+                    className="flex-1 bg-white px-3.5 py-3 text-ink-900 outline-none text-sm font-semibold tracking-wide"
+                  />
+                </div>
+              </div>
+
+              {/* Password Input + Reset Password Link */}
+              <div>
+                <div className="flex items-center justify-between">
+                  <label className="label">
+                    Account Password <span className="text-ink-400 font-normal text-xs">(optional if logging in via OTP)</span>
+                  </label>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setResetEmail(identifier);
+                      setResetModalOpen(true);
+                    }}
+                    className="text-xs font-bold text-brand-600 hover:underline hover:text-brand-800 flex items-center gap-1 mb-1"
+                  >
+                    <KeyRound className="h-3 w-3" /> Forgot Password?
+                  </button>
+                </div>
+                <div className="flex rounded-xl border border-ink-200 overflow-hidden focus-within:border-brand-500 focus-within:ring-4 focus-within:ring-brand-500/10 bg-white transition-all">
+                  <div className="flex items-center border-r border-ink-200 bg-ink-50 px-3.5 py-3 text-ink-500 select-none shrink-0">
+                    <Lock className="h-4 w-4 text-brand-500" />
+                  </div>
+                  <input
+                    type="password"
+                    value={password}
+                    onChange={(e) => {
+                      setPassword(e.target.value);
+                      setError(null);
+                    }}
+                    placeholder="Enter your account password"
+                    className="flex-1 bg-white px-3.5 py-3 text-ink-900 outline-none text-sm font-medium"
+                  />
+                </div>
+              </div>
+
+              {/* Action 1: Sign in with Password */}
+              <button
+                type="submit"
+                disabled={loading || !identifier.trim() || !password}
+                className={`btn-primary w-full mt-2 font-bold py-3 shadow-md transition-all flex items-center justify-center gap-2 ${
+                  !password ? 'opacity-50 cursor-not-allowed' : 'hover:scale-[1.01]'
+                }`}
+              >
+                {loading ? (
+                  <>
+                    <RefreshCw className="h-4 w-4 animate-spin" /> Signing In...
+                  </>
+                ) : (
+                  <>
+                    Sign In with Password <ArrowRight className="h-4 w-4" />
+                  </>
+                )}
+              </button>
+
+              {/* Divider */}
+              <div className="relative my-4 text-center">
+                <div className="absolute inset-0 flex items-center">
+                  <div className="w-full border-t border-ink-200" />
+                </div>
+                <div className="relative inline-block bg-white px-3 text-xs font-bold text-ink-400 uppercase tracking-wider">
+                  Or Log In with Mobile OTP
+                </div>
+              </div>
+
+              {/* Invisible Firebase ReCAPTCHA container */}
+              <div id="recaptcha-container" className="invisible" />
+
+              {/* Action 2: Sign in with Mobile OTP */}
+              <button
+                type="button"
+                onClick={() => handleSendOtp()}
+                disabled={loading || identifier.replace(/\D/g, '').length !== 10}
+                className="w-full py-3 px-4 rounded-xl border-2 border-brand-500 bg-brand-50/50 hover:bg-brand-50 text-brand-700 font-bold text-sm transition-all flex items-center justify-center gap-2 shadow-xs hover:border-brand-600 disabled:opacity-40 disabled:cursor-not-allowed"
+              >
+                {loading ? (
+                  <>
+                    <RefreshCw className="h-4 w-4 animate-spin" /> Sending SMS OTP...
+                  </>
+                ) : (
+                  <>
+                    <Smartphone className="h-4 w-4 text-brand-600" />
+                    Get OTP on Mobile (+91)
+                  </>
+                )}
+              </button>
+              <p className="text-[11px] text-center text-ink-400">
+                Enter your 10-digit mobile number above to sign in instantly via SMS without entering a password.
+              </p>
+
+              {/* Registration Redirect Link */}
+              <div className="mt-5 text-center text-xs text-ink-500 pt-3 border-t border-ink-100">
+                Don't have an account?{' '}
+                <Link to="/register" className="font-bold text-brand-600 hover:underline">
+                  Create New Account
+                </Link>
+              </div>
+            </form>
+          )}
+        </div>
       </div>
 
       {/* ── RESET PASSWORD MODAL ── */}
