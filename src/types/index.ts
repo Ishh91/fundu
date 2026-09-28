@@ -486,7 +486,7 @@ export const PHONE_BRANDS = [
   'Motorola', 'Google', 'Nothing', 'Poco', 'Redmi', 'iQOO', 'Asus', 'Nokia',
 ];
 
-export const LUCKNOW_AREAS = [
+export const DOORSTEP_AREAS = [
   'Gomti Nagar', 'Hazratganj', 'Indira Nagar', 'Aliganj', 'Chowk',
   'Aminabad', 'Rajajipuram', 'Alambagh', 'Vikas Nagar', 'Janakipuram',
   'Faizabad Road', 'Sitapur Road', 'Telibagh', 'Jankipuram', 'Gomti Nagar Extension',

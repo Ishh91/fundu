@@ -606,7 +606,7 @@ export default function AdminHeroPosters() {
                   required
                   value={form.title}
                   onChange={(e) => setForm({ ...form, title: e.target.value })}
-                  placeholder="e.g. Festive Sell Offer Banner Lucknow"
+                  placeholder="e.g. Festive Sell Offer Banner Doorstep"
                   className="input text-xs"
                 />
               </div>

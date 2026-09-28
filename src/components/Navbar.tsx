@@ -37,7 +37,7 @@ import { MASTER_MODEL_CATALOG } from '../pages/SellPhone';
 import { fetchBrandCatalogFromApi, fetchDeviceAutocomplete } from '../lib/mobileApi';
 
 
-export const LUCKNOW_LOCALITIES = [
+export const DOORSTEP_LOCALITIES = [
   'Hazratganj',
   'Gomti Nagar',
   'Indira Nagar',
@@ -56,7 +56,7 @@ export const LUCKNOW_LOCALITIES = [
   'Aminabad',
 ];
 
-export const LUCKNOW_STORES = [
+export const DOORSTEP_STORES = [
   {
     id: 1,
     name: 'Hazratganj Flagship Store',
@@ -660,12 +660,12 @@ export default function Navbar() {
                   <BrandLogo imageClassName="h-11 sm:h-14 md:h-16 w-auto max-w-[240px] sm:max-w-[290px] md:max-w-[320px] filter drop-shadow-xs transition-transform duration-200 hover:scale-102" />
                 </Link>
 
-                {/* Location Selector (Lucknow) */}
+                {/* Location Selector (Doorstep) */}
                 <button
                   type="button"
                   onClick={() => setLocationModalOpen(true)}
                   className="hidden sm:flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-white/95 hover:text-white transition-colors py-1.5 px-3 rounded-full bg-white/10 hover:bg-white/20 border border-white/20 group cursor-pointer"
-                  title="Fundu services Lucknow"
+                  title="Fundu Doorstep Services"
                 >
                   <MapPin className="h-4 w-4 text-[#C0C8D8] shrink-0 group-hover:scale-110 transition-transform" />
                   <span className="font-bold text-white">
@@ -1177,7 +1177,7 @@ export default function Navbar() {
                     </div>
 
                     <div className="max-h-72 overflow-y-auto space-y-2 pr-1">
-                      {LUCKNOW_STORES.map((s) => (
+                      {DOORSTEP_STORES.map((s) => (
                         <div
                           key={s.id}
                           className="p-2.5 rounded-xl border border-gray-100 hover:border-[#C0C8D8] hover:bg-[#F0F0F5]/50 transition"
@@ -1332,7 +1332,7 @@ export default function Navbar() {
                     <MapPin className="h-4 w-4 text-[#47576E]" /> Our Stores (7 Hubs)
                   </span>
                   <span className="text-[10px] font-bold bg-[#344257] text-white px-2 py-0.5 rounded-full">
-                    Lucknow
+                    Doorstep
                   </span>
                 </Link>
               </div>
@@ -1376,7 +1376,7 @@ export default function Navbar() {
       </header>
 
       {/* ========================================================================= */}
-      {/* LUCKNOW LOCALITY SELECTION MODAL */}
+      {/* DOORSTEP LOCALITY SELECTION MODAL */}
       {/* ========================================================================= */}
       {locationModalOpen && (
         <div className="fixed inset-0 z-50 grid place-items-center bg-black/60 p-4 backdrop-blur-sm animate-fade-in">
@@ -1407,7 +1407,7 @@ export default function Navbar() {
                 Select Your Area for Free Doorstep Pickup
               </p>
               <div className="grid grid-cols-2 gap-2 max-h-72 overflow-y-auto pr-1">
-                {LUCKNOW_LOCALITIES.map((loc) => {
+                {DOORSTEP_LOCALITIES.map((loc) => {
                   const isSelected = selectedLocality === loc || selectedLocality.startsWith(loc);
                   return (
                     <button

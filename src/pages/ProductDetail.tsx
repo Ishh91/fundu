@@ -29,11 +29,11 @@ import { useCart } from '../context/CartContext';
 import { getCleanPhoneImage } from '../lib/phoneImages';
 import type { Product } from '../types';
 
-// Lucknow PIN code to Area mapping dictionary
-const LUCKNOW_PINCODE_MAP: Record<string, string> = {
+// Doorstep PIN code to Area mapping dictionary
+const DOORSTEP_PINCODE_MAP: Record<string, string> = {
   '226001': 'Hazratganj',
   '226002': 'Alambagh',
-  '226003': 'Chowk / Old Lucknow',
+  '226003': 'Chowk / Old City',
   '226004': 'Charbagh Station Area',
   '226005': 'Rajajipuram',
   '226006': 'Aashiana / Transport Nagar',
@@ -294,9 +294,9 @@ export default function ProductDetail() {
     setPincodeLoading(true);
     setPincodeError(null);
 
-    // 1. Check local Lucknow database first
-    if (LUCKNOW_PINCODE_MAP[targetPin]) {
-      setLocationName(LUCKNOW_PINCODE_MAP[targetPin]);
+    // 1. Check local service database first
+    if (DOORSTEP_PINCODE_MAP[targetPin]) {
+      setLocationName(DOORSTEP_PINCODE_MAP[targetPin]);
       setPincodeLoading(false);
       return;
     }

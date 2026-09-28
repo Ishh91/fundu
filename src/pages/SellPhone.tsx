@@ -36,7 +36,7 @@ import { getCleanPhoneImage, getCleanBrandLogo, BRAND_FRONT_FALLBACKS } from '..
 import { usePriceSync, applyPriceOverrides } from '../lib/priceSync';
 
 // Master Service Localities
-const LUCKNOW_LOCALITIES = [
+const DOORSTEP_LOCALITIES = [
   'Gomti Nagar',
   'Hazratganj',
   'Indira Nagar',
@@ -574,11 +574,11 @@ const FAQS_LIST = [
   { q: 'What happens to my personal data on the phone?', a: 'Fundu performs an automated, military-grade factory data wipe right at your doorstep before handing over the digital receipt.' },
   { q: 'Do you buy non-working or screen-damaged phones?', a: 'Yes! We buy phones in all conditions — flawless, minor body scratches, cracked display glass, or faulty battery.' },
   { q: 'How is the final cash quote calculated?', a: 'Our automated AI algorithm checks live resale market rates and adjusts for screen condition, body condition, hardware defects, warranty status, and original box/charger accessories.' },
-  { q: 'Can I cancel or reschedule my doorstep pickup slot?', a: 'Yes, you can easily reschedule or cancel your pickup slot anytime by calling our Lucknow helpline at +91-9839122345.' },
+  { q: 'Can I cancel or reschedule my doorstep pickup slot?', a: 'Yes, you can easily reschedule or cancel your pickup slot anytime by calling our Doorstep helpline at +91-9839122345.' },
   { q: 'Is Fundu better than local offline shops at your doorstep?', a: 'Yes! With Fundu, you get algorithmic highest price guarantee, zero market bargaining, free doorstep visit, and instant spot payment.' },
   { q: 'How long is the instant price quote valid?', a: 'Your Fundu price quote is guaranteed and locked in for 7 full days from the time of booking.' },
   { q: 'Can I sell multiple phones at once?', a: 'Absolutely! You can book individual sell requests or inform our executive during doorstep visit for bulk spot cash payouts.' },
-  { q: 'What if my phone brand is not listed?', a: 'You can use our live search bar or contact our Lucknow hotline +91-9839122345 for custom manual valuation.' },
+  { q: 'What if my phone brand is not listed?', a: 'You can use our live search bar or contact our customer hotline +91-9839122345 for custom manual valuation.' },
   { q: 'Do I get a legal seller invoice?', a: 'Yes, an official digital seller invoice & receipt is sent to your mobile number immediately upon completion of pickup.' },
 ];
 
@@ -651,7 +651,7 @@ export default function SellPhone() {
     payoutMethod: 'UPI' as 'UPI' | 'Cash' | 'Bank',
     payoutDetails: '',
     pickupAddress: '',
-    pickupArea: LUCKNOW_LOCALITIES[0] || 'Gomti Nagar',
+    pickupArea: DOORSTEP_LOCALITIES[0] || 'Gomti Nagar',
     pickupDate: new Date().toISOString().split('T')[0],
     pickupSlot: '10 AM - 12 PM',
     notes: '',
@@ -733,12 +733,12 @@ export default function SellPhone() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }, [step, form.brand, form.model]);
 
-  // Injected Schema.org JSON-LD LocalBusiness & MobilePhoneStore Structured Data for Lucknow
+  // Injected Schema.org JSON-LD LocalBusiness & MobilePhoneStore Structured Data for Doorstep
   useEffect(() => {
     const schemaData = {
       '@context': 'https://schema.org',
       '@type': ['LocalBusiness', 'MobilePhoneStore'],
-      name: 'Fundu - Sell Old Mobile Phone Lucknow',
+      name: 'Fundu - Sell Old Mobile Phone',
       url: 'https://thefundu.com/sell',
       logo: 'https://thefundu.com/logo.png',
       telephone: '+91-9839122345',
@@ -1192,7 +1192,7 @@ export default function SellPhone() {
               {form.brand ? `Sell Old ${form.brand} Mobile Phone Online At Best Price` : 'Sell Old Mobile Phone for Instant Cash'}
             </h1>
             <p className="text-xs md:text-sm text-gray-600">
-              Free doorstep pickup across Gomti Nagar, Hazratganj, Indira Nagar, Aliganj, Mahanagar & all Lucknow!
+              Free doorstep pickup across all active service zones!
             </p>
 
             {/* Checkmark Feature Pills */}
@@ -1643,17 +1643,17 @@ export default function SellPhone() {
               </div>
             </div>
 
-            {/* Customer Testimonials Grid (8-10 Lucknow Sellers) */}
+            {/* Customer Testimonials Grid (8-10 Doorstep Sellers) */}
             <div className="card p-8 rounded-[32px] bg-white border border-gray-200 space-y-6">
               <div className="flex flex-wrap items-center justify-between gap-4 border-b border-gray-100 pb-4">
                 <div>
-                  <span className="badge bg-[#F0F0F5] text-[#344257] border border-[#C0C8D8] font-bold text-xs">Verified Lucknow Feedback</span>
-                  <h2 className="font-display text-2xl font-black text-[#344257] mt-1">What Lucknow Sellers Say</h2>
+                  <span className="badge bg-[#F0F0F5] text-[#344257] border border-[#C0C8D8] font-bold text-xs">Verified Customer Feedback</span>
+                  <h2 className="font-display text-2xl font-black text-[#344257] mt-1">What Verified Sellers Say</h2>
                 </div>
                 <div className="flex items-center gap-2">
                   <span className="font-display font-black text-2xl text-[#344257]">4.9</span>
                   <span className="text-amber-500 text-lg">★★★★★</span>
-                  <span className="text-xs text-gray-500 font-medium">(12,400+ Verified Lucknow Deals)</span>
+                  <span className="text-xs text-gray-500 font-medium">(12,400+ Verified Deals)</span>
                 </div>
               </div>
 
@@ -1991,7 +1991,7 @@ export default function SellPhone() {
           <div className="max-w-2xl mx-auto space-y-6 animate-fade-in">
             <div className="card p-6 md:p-8 rounded-[28px] bg-white border border-gray-200 shadow-xl text-center space-y-6">
               <span className="badge bg-[#F0F0F5] text-[#344257] border border-[#C0C8D8] font-extrabold uppercase tracking-wider text-xs">
-                Pre-Approved Spot Cash Valuation · Lucknow
+                Pre-Approved Spot Cash Valuation
               </span>
 
               <div>
@@ -2136,7 +2136,7 @@ export default function SellPhone() {
           </div>
         )}
 
-        {/* STEP 4: Schedule Lucknow Doorstep Pickup & Auto-Assign Agent */}
+        {/* STEP 4: Schedule Doorstep Pickup & Auto-Assign Agent */}
         {step === 4 && (
           <div className="max-w-2xl mx-auto space-y-6 animate-fade-in">
             <div className="card p-6 md:p-8 rounded-[28px] bg-white border border-gray-200 shadow-xl space-y-6">
@@ -2144,7 +2144,7 @@ export default function SellPhone() {
                 <div>
                   <span className="badge bg-[#F0F0F5] text-[#344257] border border-[#C0C8D8] font-bold">Step 4 of 4</span>
                   <h2 className="mt-1 font-display text-xl font-extrabold text-[#344257]">
-                    Schedule Lucknow Doorstep Pickup
+                    Schedule Doorstep Pickup
                   </h2>
                   <p className="text-xs text-gray-500">
                     Guaranteed Payout: <span className="font-extrabold text-[#344257]">{formatINR(estimate)}</span> ({form.payoutMethod})
@@ -2160,13 +2160,13 @@ export default function SellPhone() {
 
               <div className="space-y-4 text-left">
                 <div>
-                  <label className="label">Select Lucknow Locality / Cluster</label>
+                  <label className="label">Select Locality / Cluster</label>
                   <select
                     value={form.pickupArea}
                     onChange={(e) => setForm({ ...form, pickupArea: e.target.value })}
                     className="input mt-1 focus:border-[#6A859F] focus:ring-4 focus:ring-[#6A859F]/15"
                   >
-                    {LUCKNOW_LOCALITIES.map((area) => (
+                    {DOORSTEP_LOCALITIES.map((area) => (
                       <option key={area} value={area}>
                         {area}
                       </option>

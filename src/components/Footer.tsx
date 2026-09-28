@@ -12,7 +12,7 @@ import {
   CheckCircle2,
 } from 'lucide-react';
 import BrandLogo from './BrandLogo';
-import { LUCKNOW_LOCALITIES } from './Navbar';
+import { DOORSTEP_LOCALITIES } from './Navbar';
 
 export default function Footer() {
   return (
@@ -120,7 +120,7 @@ export default function Footer() {
               Service Localities
             </h4>
             <div className="mt-4 grid grid-cols-2 gap-x-2 gap-y-1.5 text-xs text-[#47576E] font-medium">
-              {LUCKNOW_LOCALITIES.slice(0, 10).map((loc) => (
+              {DOORSTEP_LOCALITIES.slice(0, 10).map((loc) => (
                 <span key={loc} className="flex items-center gap-1 truncate">
                   <CheckCircle2 className="h-3 w-3 text-[#6A859F] shrink-0" />
                   {loc}

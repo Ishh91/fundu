@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, ShoppingCart, MapPin, Phone, User, CheckCircle2 } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
-import { LUCKNOW_AREAS } from '../types';
+import { DOORSTEP_AREAS } from '../types';
 import { formatINR } from '../lib/db';
 import { getCleanPhoneImage } from '../lib/phoneImages';
 
@@ -174,7 +174,7 @@ export default function Checkout() {
                   className="input"
                 >
                   <option value="">Select your area at your doorstep</option>
-                  {LUCKNOW_AREAS.map(area => (
+                  {DOORSTEP_AREAS.map(area => (
                     <option key={area} value={area}>{area}</option>
                   ))}
                 </select>

@@ -33,7 +33,7 @@ import {
   FileCode,
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
-import { LUCKNOW_AREAS } from '../types';
+import { DOORSTEP_AREAS } from '../types';
 import { db, formatINR } from '../lib/db';
 import { fetchPhoneModels, searchMobileApiDev } from '../lib/mobileApi';
 
@@ -265,7 +265,7 @@ export default function Repair() {
     storage: '',
     problemDetail: '',
     pickupAddress: '',
-    pickupArea: LUCKNOW_AREAS[0] || 'Gomti Nagar',
+    pickupArea: DOORSTEP_AREAS[0] || 'Gomti Nagar',
     pickupDate: new Date().toISOString().split('T')[0],
     pickupSlot: '10 AM - 12 PM',
   });
@@ -788,7 +788,7 @@ export default function Repair() {
                       >
                         {/* Top Subtle Pill */}
                         <span className="text-[10px] font-extrabold text-[#344257] bg-[#F0F0F5] border border-[#C0C8D8] group-hover:bg-[#344257] group-hover:text-white transition-colors px-2 py-0.5 rounded-full mb-2">
-                          Lucknow Express
+                          Express Service
                         </span>
 
                         {/* Centered Clean Device Image */}
@@ -911,7 +911,7 @@ export default function Repair() {
                         {form.brand || 'Device'}
                       </span>
                       <span className="badge bg-emerald-400/20 text-emerald-300 border border-emerald-400/30 text-[10px] sm:text-xs font-bold px-2.5 py-0.5">
-                        Lucknow Doorstep Repair
+                        Doorstep Repair
                       </span>
                     </div>
                     <h2 className="font-display text-xl sm:text-2xl font-black text-white tracking-tight">
@@ -1133,7 +1133,7 @@ export default function Repair() {
                   <div>
                     <span className="badge bg-brand-50 text-brand-700">Step 4 of 4</span>
                     <h2 className="mt-1 font-display text-xl font-extrabold text-ink-900">
-                      Schedule Lucknow Doorstep Repair
+                      Schedule Doorstep Repair
                     </h2>
                     <p className="text-xs text-ink-500">
                       Device: <span className="font-bold text-ink-900">{form.brand} {form.model}</span> ({selectedIssue?.label})
@@ -1150,13 +1150,13 @@ export default function Repair() {
 
               <div className="mt-6 space-y-4">
                 <div>
-                  <label className="label">Lucknow Repair Area / Locality</label>
+                  <label className="label">Repair Area / Locality</label>
                   <select
                     value={form.pickupArea}
                     onChange={(e) => setForm({ ...form, pickupArea: e.target.value })}
                     className="input mt-1"
                   >
-                    {LUCKNOW_AREAS.map((area) => (
+                    {DOORSTEP_AREAS.map((area) => (
                       <option key={area} value={area}>
                         {area}
                       </option>

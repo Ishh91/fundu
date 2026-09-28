@@ -424,7 +424,7 @@ export default function AdminSellRequests({
               {/* Doorstep Pickup & Executive Assignment */}
               <div className="p-4 rounded-2xl bg-brand-50/50 border border-brand-100 space-y-3">
                 <span className="text-xs font-bold text-brand-900 flex items-center gap-1.5">
-                  <UserCheck className="h-4 w-4 text-brand-600" /> Lucknow Doorstep Dispatch & Pickup Info
+                  <UserCheck className="h-4 w-4 text-brand-600" /> Doorstep Doorstep Dispatch & Pickup Info
                 </span>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">

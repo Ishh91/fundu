@@ -33,7 +33,7 @@ export default function AdminReviews({
             <MessageSquare className="h-3.5 w-3.5" /> Customer Feedback & Ratings
           </div>
           <h2 className="mt-2 font-display text-2xl font-black text-ink-900">Reviews & Testimonial Moderation</h2>
-          <p className="mt-1 text-xs text-ink-600">Approve verified customer feedback for Lucknow buy/sell/repair services.</p>
+          <p className="mt-1 text-xs text-ink-600">Approve verified customer feedback for Doorstep buy/sell/repair services.</p>
         </div>
       </div>
 

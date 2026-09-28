@@ -8,7 +8,7 @@ import {
   MapPin,
   CheckCircle2,
 } from 'lucide-react';
-import { LUCKNOW_LOCALITIES } from '../Navbar';
+import { DOORSTEP_LOCALITIES } from '../Navbar';
 
 const WHY_CHOOSE_PILLARS = [
   {
@@ -59,7 +59,7 @@ export default function WhyChooseFundu() {
             The Fundu Advantage
           </span>
           <h2 className="mt-3 font-display text-2xl sm:text-3xl font-extrabold text-[#344257]">
-            Why Lucknow Trusts Fundu Over Local Shops
+            Why Customers Trust Fundu Over Local Shops
           </h2>
           <p className="mt-2 text-xs sm:text-sm text-[#47576E]">
             Fair pricing, zero negotiation stress, transparent doorstep service, and certified guarantees.
@@ -109,7 +109,7 @@ export default function WhyChooseFundu() {
           </div>
 
           <div className="mt-4 flex flex-wrap gap-2">
-            {LUCKNOW_LOCALITIES.map((loc) => (
+            {DOORSTEP_LOCALITIES.map((loc) => (
               <span
                 key={loc}
                 className="inline-flex items-center gap-1.5 rounded-xl bg-white hover:border-[#6A859F] hover:text-[#344257] border border-[#C0C8D8]/70 px-3 py-1.5 text-xs font-bold text-[#47576E] transition cursor-default shadow-xs"

@@ -226,7 +226,7 @@ export default function AdminOrders({
             <Package className="h-3.5 w-3.5" /> Refurbished Phone Sales & Shipments
           </div>
           <h2 className="mt-2 font-display text-2xl font-black text-ink-900">Customer Orders & Deliveries</h2>
-          <p className="mt-1 text-xs text-ink-600">Track shipments, verified Lucknow doorstep delivery, and customer payments.</p>
+          <p className="mt-1 text-xs text-ink-600">Track shipments, verified Doorstep doorstep delivery, and customer payments.</p>
         </div>
 
         <div className="flex items-center gap-3">
@@ -465,9 +465,9 @@ export default function AdminOrders({
                   </p>
                 </div>
                 <div className="col-span-2 sm:col-span-3 pt-2 border-t border-ink-200/60">
-                  <p className="text-ink-500 font-medium">Lucknow Delivery Address</p>
+                  <p className="text-ink-500 font-medium">Doorstep Delivery Address</p>
                   <p className="font-bold text-ink-900 mt-0.5 flex items-center gap-1">
-                    <MapPin className="h-3.5 w-3.5 text-brand-600 shrink-0" /> {selectedOrder.delivery_address || 'Lucknow, Uttar Pradesh'}
+                    <MapPin className="h-3.5 w-3.5 text-brand-600 shrink-0" /> {selectedOrder.delivery_address || 'Doorstep, Uttar Pradesh'}
                   </p>
                 </div>
               </div>

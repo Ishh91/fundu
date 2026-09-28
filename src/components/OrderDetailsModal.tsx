@@ -213,7 +213,7 @@ export default function OrderDetailsModal({
             <div className="p-5 rounded-2xl bg-ink-50/80 border border-ink-100 space-y-4">
               <div className="flex items-center justify-between">
                 <h4 className="font-display text-xs font-black uppercase tracking-wider text-ink-600 flex items-center gap-1.5">
-                  <Truck className="h-4 w-4 text-brand-600" /> Doorstep Order Progress (Lucknow Express)
+                  <Truck className="h-4 w-4 text-brand-600" /> Doorstep Order Progress (Express Service)
                 </h4>
                 {order.tracking_id && (
                   <span className="text-[11px] font-mono font-bold text-brand-700 bg-brand-50 px-2 py-0.5 rounded-md border border-brand-200">
@@ -338,7 +338,7 @@ export default function OrderDetailsModal({
             {/* Delivery & Dispatch Agent Details */}
             <div className="p-4 rounded-2xl bg-ink-50/70 border border-ink-100 space-y-3 text-xs">
               <h4 className="font-display text-xs font-black uppercase tracking-wider text-ink-600 flex items-center gap-1.5">
-                <MapPin className="h-4 w-4 text-brand-600" /> Lucknow Delivery Address
+                <MapPin className="h-4 w-4 text-brand-600" /> Doorstep Delivery Address
               </h4>
               
               <div>
@@ -355,7 +355,7 @@ export default function OrderDetailsModal({
 
               <div>
                 <p className="text-ink-500 font-medium">Address & Locality:</p>
-                <p className="font-bold text-ink-900 mt-0.5">{order.delivery_address || 'Lucknow, Uttar Pradesh'}</p>
+                <p className="font-bold text-ink-900 mt-0.5">{order.delivery_address || 'Doorstep, Uttar Pradesh'}</p>
                 <span className="inline-block mt-1 rounded bg-brand-100/60 px-2 py-0.5 text-[10px] font-black text-brand-800">
                   📍 {order.delivery_area || 'Gomti Nagar / Hazratganj Cluster'}
                 </span>
@@ -393,7 +393,7 @@ export default function OrderDetailsModal({
                     <span className="font-bold">{formatINR(order.total_amount)}</span>
                   </div>
                   <div className="flex justify-between text-ink-600">
-                    <span>Lucknow Doorstep Delivery:</span>
+                    <span>Doorstep Doorstep Delivery:</span>
                     <span className="font-bold text-emerald-600">FREE</span>
                   </div>
                   <div className="flex justify-between text-ink-600">
@@ -486,7 +486,7 @@ export default function OrderDetailsModal({
             {supportSentAlert && (
               <div className="p-3 rounded-xl bg-emerald-100 text-emerald-800 text-xs font-bold flex items-center gap-2 animate-fade-in">
                 <CheckCircle2 className="h-4 w-4 text-emerald-600" />
-                Note sent to Fundu Admin! Our Lucknow team will take action right away.
+                Note sent to Fundu Admin! Our Doorstep team will take action right away.
               </div>
             )}
 
@@ -552,7 +552,7 @@ export default function OrderDetailsModal({
         {/* Footer Bar */}
         <div className="p-4 bg-ink-50 border-t border-ink-100 flex flex-wrap items-center justify-between gap-3">
           <p className="text-xs text-ink-500 font-medium">
-            Fundu Technologies Pvt Ltd • Lucknow Central Hub, Hazratganj
+            Fundu Technologies Pvt Ltd • Doorstep Central Hub, Hazratganj
           </p>
           <div className="flex items-center gap-2">
             {!['delivered', 'cancelled'].includes(order.status) && (

@@ -66,12 +66,12 @@ const FLOW_DATA = {
       {
         step: '03',
         title: '6 to 12 Months Warranty',
-        desc: 'Enjoy hassle-free replacement warranty and Lucknow doorstep customer support.',
+        desc: 'Enjoy hassle-free replacement warranty and dedicated doorstep customer support.',
         icon: ShieldCheck,
       },
       {
         step: '04',
-        title: 'Free Same-Day Lucknow Delivery',
+        title: 'Free Same-Day Doorstep Delivery',
         desc: 'Safe, sealed package delivered directly to your doorstep at your doorstep.',
         icon: Truck,
       },

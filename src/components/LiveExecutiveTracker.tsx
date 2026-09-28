@@ -27,21 +27,21 @@ export type TrackerProps = {
 };
 
 // Real GPS Centroids for Service Localities
-const LUCKNOW_GEO: Record<string, { x: number; y: number; label: string }> = {
-  'hazratganj': { x: 48, y: 52, label: 'Hazratganj, Central Lucknow' },
-  'gomti nagar': { x: 74, y: 44, label: 'Gomti Nagar, East Lucknow' },
+const DOORSTEP_GEO: Record<string, { x: number; y: number; label: string }> = {
+  'hazratganj': { x: 48, y: 52, label: 'Hazratganj, Central Zone' },
+  'gomti nagar': { x: 74, y: 44, label: 'Gomti Nagar, East Zone' },
   'indira nagar': { x: 68, y: 32, label: 'Indira Nagar, North-East' },
-  'aliganj': { x: 42, y: 28, label: 'Aliganj, North Lucknow' },
+  'aliganj': { x: 42, y: 28, label: 'Aliganj, North Zone' },
   'mahanagar': { x: 50, y: 38, label: 'Mahanagar, Central-North' },
-  'ashiyana': { x: 38, y: 76, label: 'Ashiyana, South Lucknow' },
+  'ashiyana': { x: 38, y: 76, label: 'Ashiyana, South Zone' },
   'charbagh': { x: 44, y: 64, label: 'Charbagh, Station Hub' },
-  'chowk': { x: 30, y: 40, label: 'Chowk, Old Lucknow' },
+  'chowk': { x: 30, y: 40, label: 'Chowk, Old City Zone' },
   'jankipuram': { x: 52, y: 18, label: 'Jankipuram, Outer North' },
   'vikas nagar': { x: 58, y: 26, label: 'Vikas Nagar, Sector 4' },
   'alambagh': { x: 36, y: 68, label: 'Alambagh, South-West' },
   'gomti nagar extension': { x: 84, y: 58, label: 'Gomti Nagar Extn, Shaheed Path' },
   'telibagh': { x: 46, y: 82, label: 'Telibagh, South Cantt' },
-  'rajajipuram': { x: 24, y: 56, label: 'Rajajipuram, West Lucknow' },
+  'rajajipuram': { x: 24, y: 56, label: 'Rajajipuram, West Zone' },
 };
 
 export default function LiveExecutiveTracker({
@@ -63,8 +63,8 @@ export default function LiveExecutiveTracker({
 
   // Match target locality
   const cleanLoc = locality ? locality.toLowerCase().trim() : 'gomti nagar';
-  const matchedKey = Object.keys(LUCKNOW_GEO).find((k) => cleanLoc.includes(k)) || 'gomti nagar';
-  const targetPos = LUCKNOW_GEO[matchedKey];
+  const matchedKey = Object.keys(DOORSTEP_GEO).find((k) => cleanLoc.includes(k)) || 'gomti nagar';
+  const targetPos = DOORSTEP_GEO[matchedKey];
 
   // Starting hub (Hazratganj central dispatch hub)
   const startPos = { x: 48, y: 52 };
@@ -170,7 +170,7 @@ export default function LiveExecutiveTracker({
           </button>
         </div>
 
-        {/* Live Lucknow Visual Map Canvas */}
+        {/* Live Visual Map Canvas */}
         <div className="relative h-64 sm:h-72 w-full bg-[#1e293b] overflow-hidden select-none">
           {/* Map Grid Pattern */}
           <div
@@ -203,7 +203,7 @@ export default function LiveExecutiveTracker({
 
           {/* Static Landmark Labels at your doorstep */}
           <div className="absolute left-4 top-4 rounded-md bg-black/60 px-2 py-1 text-[10px] font-bold text-gray-300 backdrop-blur-sm border border-white/10">
-            📍 Lucknow Central Hub (Hazratganj)
+            📍 Central Service Hub (Hazratganj)
           </div>
           <div className="absolute right-4 top-4 rounded-md bg-black/60 px-2 py-1 text-[10px] font-bold text-[#C0C8D8] backdrop-blur-sm border border-white/10">
             🏙️ Gomti Riverfront
@@ -398,7 +398,7 @@ export default function LiveExecutiveTracker({
                   <Sparkles className="h-3.5 w-3.5" /> Need Delivery Assistance? Connect with Admin
                 </p>
                 <p className="text-[11px] text-gray-300 mt-0.5">
-                  Direct support from Lucknow Central Desk for route updates or address change.
+                  Direct support from Central Service Desk for route updates or address change.
                 </p>
               </div>
 

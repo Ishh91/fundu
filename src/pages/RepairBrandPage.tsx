@@ -71,7 +71,7 @@ const BRAND_REPAIR_DETAILS: Record<
   realme: {
     logo: getCleanBrandLogo('Realme'),
     tagline: 'Doorstep Realme Mobile Phone Repair & Battery Replacement',
-    desc: 'Affordable doorstep screen & battery repair for Realme GT, Pro & C series across Gomti Nagar, Hazratganj & all Lucknow.',
+    desc: 'Affordable doorstep screen & battery repair for Realme GT, Pro & C series across all major service zones.',
     count: '35+ Realme Models Covered',
     series: ['All', 'Pro Series', 'GT Series', 'C Series'],
   },
@@ -239,7 +239,7 @@ export default function RepairBrandPage() {
               </div>
               <div>
                 <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#6A859F]/15 border border-[#6A859F]/30 text-[#344257] font-extrabold text-xs mb-2">
-                  <Wrench className="h-3.5 w-3.5 text-[#47576E]" /> Lucknow Doorstep Repair Center
+                  <Wrench className="h-3.5 w-3.5 text-[#47576E]" /> Doorstep Repair Center
                 </div>
                 <h1 className="font-display text-2xl md:text-3xl font-black text-[#344257]">
                   Doorstep {brandDisplayName} Doorstep Mobile Repair
@@ -419,7 +419,7 @@ export default function RepairBrandPage() {
               {
                 num: '2',
                 title: 'Book Free Time Slot',
-                desc: 'Select your preferred date & Lucknow location. Our certified technician visits your doorstep.',
+                desc: 'Select your preferred date & location. Our certified technician visits your doorstep.',
               },
               {
                 num: '3',

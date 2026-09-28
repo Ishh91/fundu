@@ -194,7 +194,7 @@ export default function RepairIssuePage() {
                 🛡️ {issueData.warranty}
               </span>
               <span className="badge bg-blue-500/20 text-blue-300 border border-blue-500/30 text-xs font-bold px-3 py-1">
-                📍 Free Lucknow Doorstep Visit
+                📍 Free Doorstep Visit
               </span>
             </div>
           </div>

@@ -87,7 +87,7 @@ export default function AdminRepairs({
       <div className="card p-6 rounded-[28px] bg-gradient-to-r from-purple-500/10 via-brand-500/10 to-blue-500/10 border border-purple-200/60 flex flex-wrap items-center justify-between gap-4">
         <div>
           <div className="inline-flex items-center gap-2 rounded-full bg-purple-100 px-3 py-1 text-xs font-black text-purple-800">
-            <Wrench className="h-3.5 w-3.5" /> Doorstep Repair Operations · Lucknow
+            <Wrench className="h-3.5 w-3.5" /> Doorstep Repair Operations · Doorstep
           </div>
           <h2 className="mt-2 font-display text-2xl font-black text-ink-900">
             Repair Diagnostics & Service Tracker
@@ -320,7 +320,7 @@ export default function AdminRepairs({
               {/* Doorstep Pickup Address */}
               <div className="p-4 rounded-2xl bg-purple-50/50 border border-purple-100 space-y-2 text-xs">
                 <span className="font-bold text-purple-900 flex items-center gap-1.5">
-                  <MapPin className="h-4 w-4 text-purple-600" /> Lucknow Doorstep Address & Slot
+                  <MapPin className="h-4 w-4 text-purple-600" /> Doorstep Doorstep Address & Slot
                 </span>
                 <p className="font-bold text-ink-900 mt-1">{selectedRepair.pickup_address || 'Gomti Nagar'}</p>
                 <div className="flex items-center gap-4 text-ink-500 mt-2">

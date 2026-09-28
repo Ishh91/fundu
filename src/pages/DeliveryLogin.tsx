@@ -52,7 +52,7 @@ export default function DeliveryLogin() {
           </h1>
           <p className="text-xs text-slate-400 flex items-center justify-center gap-1">
             <MapPin className="h-3.5 w-3.5 text-emerald-400" />
-            Lucknow Doorstep Device Inspection & Express Pickups
+            Doorstep Device Inspection & Express Pickups
           </p>
         </div>
 

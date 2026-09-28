@@ -11,7 +11,7 @@ export default function About() {
             Our most trusted phone marketplace & repair service
           </h1>
           <p className="mt-5 max-w-2xl mx-auto text-lg text-ink-600">
-            Born in the heart of Lucknow, Fundu makes buying, selling, and repairing smartphones effortless — with free doorstep pickup & drop across the city.
+            Born in the heart of Doorstep, Fundu makes buying, selling, and repairing smartphones effortless — with free doorstep pickup & drop across the city.
           </p>
         </div>
       </section>
@@ -57,7 +57,7 @@ export default function About() {
             {[
               { icon: Heart, title: 'Customer first', desc: 'Every decision starts with what\'s best for our customers. Fair prices, honest advice, no pushy upsells.' },
               { icon: ShieldCheck, title: 'Trust & transparency', desc: 'Certified phones, genuine parts, and clear pricing. What you see is exactly what you get.' },
-              { icon: Truck, title: 'Doorstep convenience', desc: 'We come to you. Free pickup and drop across all of Lucknow — no travel, no hassle.' },
+              { icon: Truck, title: 'Doorstep convenience', desc: 'We come to you. Free pickup and drop across all of Doorstep — no travel, no hassle.' },
             ].map((v) => (
               <div key={v.title} className="card p-6">
                 <div className="grid h-12 w-12 place-items-center rounded-xl bg-brand-50 text-brand-600"><v.icon className="h-6 w-6" /></div>
@@ -75,7 +75,7 @@ export default function About() {
             <div className="grid h-12 w-12 place-items-center rounded-xl bg-accent-50 text-accent-600"><Target className="h-6 w-6" /></div>
             <h2 className="mt-4 font-display text-2xl font-extrabold text-ink-900">Our Mission</h2>
             <p className="mt-3 text-ink-600 leading-relaxed">
-              To make smartphone ownership effortless and affordable for every resident of Lucknow — whether you're buying your first phone, upgrading to the latest model, or getting a cracked screen fixed.
+              To make smartphone ownership effortless and affordable for every resident of Doorstep — whether you're buying your first phone, upgrading to the latest model, or getting a cracked screen fixed.
             </p>
           </div>
           <div className="card p-8">

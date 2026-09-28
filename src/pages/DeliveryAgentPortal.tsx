@@ -648,7 +648,7 @@ export default function DeliveryAgentPortal() {
             </div>
             <h1 className="font-display text-2xl font-black">Fundu Field Rider Portal</h1>
             <p className="text-xs text-slate-400">
-              Private workspace for Lucknow doorstep inspection & delivery executives.
+              Private workspace for doorstep inspection & delivery executives.
             </p>
           </div>
 
@@ -1287,7 +1287,7 @@ export default function DeliveryAgentPortal() {
               activeOrderTasks.map((order) => {
                 const customerName = order.delivery_name || 'Customer';
                 const customerPhone = (order as any).delivery_phone || (order as any).phone || '9839122345';
-                const address = order.delivery_address || 'Lucknow, Uttar Pradesh';
+                const address = order.delivery_address || 'Doorstep, Uttar Pradesh';
                 const orderAmount = order.total_amount || 0;
 
                 return (

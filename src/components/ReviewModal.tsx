@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Star, X, CheckCircle2, MessageSquarePlus, MapPin } from 'lucide-react';
 import { db } from '../lib/db';
 import { useAuth } from '../context/AuthContext';
-import { LUCKNOW_AREAS } from '../types';
+import { DOORSTEP_AREAS } from '../types';
 
 type ReviewModalProps = {
   isOpen: boolean;
@@ -195,14 +195,14 @@ export default function ReviewModal({
               {/* Location at your doorstep */}
               <div>
                 <label className="block text-xs font-bold text-ink-700 uppercase tracking-wider mb-1 flex items-center gap-1">
-                  <MapPin className="h-3.5 w-3.5 text-brand-600" /> Lucknow Locality
+                  <MapPin className="h-3.5 w-3.5 text-brand-600" /> Doorstep Locality
                 </label>
                 <select
                   value={location}
                   onChange={(e) => setLocation(e.target.value)}
                   className="w-full rounded-xl border border-ink-200 bg-ink-50/50 px-3.5 py-2.5 text-sm text-ink-900 outline-none focus:border-brand-500 focus:bg-white"
                 >
-                  {LUCKNOW_AREAS.map((area) => (
+                  {DOORSTEP_AREAS.map((area) => (
                     <option key={area} value={`${area}`}>
                       {area}
                     </option>

@@ -164,7 +164,7 @@ export default function PhoneLookup({
             <span className="h-2 w-2 rounded-full bg-nature-500 animate-pulse"></span> 31,500+ Devices API Live
           </div>
           <div className="inline-flex items-center gap-2 rounded-full border border-ink-200 bg-ink-200/80 px-3 py-1 text-xs font-semibold text-ink-600">
-            <ShieldCheck className="h-3.5 w-3.5 text-nature-600" /> Lucknow Verified
+            <ShieldCheck className="h-3.5 w-3.5 text-nature-600" /> Doorstep Verified
           </div>
         </div>
       </div>

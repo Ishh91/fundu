@@ -60,10 +60,10 @@ export default function AdminDeliveryAgents({
       <div className="card p-6 rounded-[28px] bg-gradient-to-r from-slate-700/10 via-brand-500/10 to-[#344257]/10 border border-slate-200/60 flex flex-wrap items-center justify-between gap-4">
         <div>
           <div className="inline-flex items-center gap-2 rounded-full bg-emerald-100 px-3 py-1 text-xs font-black text-emerald-800">
-            <Truck className="h-3.5 w-3.5" /> Lucknow Doorstep Dispatch Fleet
+            <Truck className="h-3.5 w-3.5" /> Doorstep Doorstep Dispatch Fleet
           </div>
           <h2 className="mt-2 font-display text-2xl font-black text-ink-900">Delivery & Inspection Partners</h2>
-          <p className="mt-1 text-xs text-ink-600">Assign orders, manage Lucknow delivery zones, vehicle fleet, and live workload.</p>
+          <p className="mt-1 text-xs text-ink-600">Assign orders, manage Doorstep delivery zones, vehicle fleet, and live workload.</p>
         </div>
 
         <button

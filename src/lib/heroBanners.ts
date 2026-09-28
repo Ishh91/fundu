@@ -20,7 +20,7 @@ export const DEFAULT_HERO_POSTERS: HeroPoster[] = [
     secondaryHref: '/store',
     accent: 'from-[#0a2f32] to-[#86dedd]',
     image: '/assets/posters/poster_flagship_buy.jpg',
-    bullets: ['32-Pt Audit Passed', '6 Months Warranty', 'Doorstep Delivery Lucknow'],
+    bullets: ['32-Pt Audit Passed', '6 Months Warranty', 'Doorstep Delivery Doorstep'],
     is_active: true,
     is_full_banner: true,
     sort_order: 1,
@@ -42,7 +42,7 @@ export const DEFAULT_HERO_POSTERS: HeroPoster[] = [
     sort_order: 2,
   },
   {
-    id: 'poster-repair-lucknow',
+    id: 'poster-repair-doorstep',
     eyebrow: 'Doorstep Service',
     title: '30-Minute Doorstep Doorstep Mobile Repair',
     description: 'Certified technicians repair your phone right at your home or office with genuine parts.',

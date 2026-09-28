@@ -13,7 +13,7 @@ const DETAILED_FAQS = [
   {
     category: 'sell',
     q: 'How does Fundu calculate the resale value of my old phone?',
-    a: 'Our smart valuation algorithm evaluates your device model, storage, screen touch status, physical condition, battery health, and original accessories (bill/box/charger) against real-time Lucknow market demand to give you the highest guaranteed price.',
+    a: 'Our smart valuation algorithm evaluates your device model, storage, screen touch status, physical condition, battery health, and original accessories (bill/box/charger) against real-time Doorstep market demand to give you the highest guaranteed price.',
   },
   {
     category: 'sell',

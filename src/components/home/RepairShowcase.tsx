@@ -151,7 +151,7 @@ export default function RepairShowcase() {
           })}
         </div>
 
-        {/* Lucknow Repair Guarantees Strip */}
+        {/* Doorstep Repair Guarantees Strip */}
         <div className="mt-6 grid gap-3 sm:grid-cols-2 md:grid-cols-4 rounded-2xl bg-[#F7F7FA] p-4 border border-[#C0C8D8]/60">
           <div className="flex items-center gap-2.5">
             <Clock className="h-4 w-4 text-[#6A859F] shrink-0" />

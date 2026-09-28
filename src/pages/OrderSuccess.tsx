@@ -13,11 +13,11 @@ export default function OrderSuccess() {
           <CheckCircle2 className="h-12 w-12 text-nature-600" />
         </div>
         <span className="inline-block rounded-full bg-emerald-50 px-3.5 py-1 text-xs font-bold text-emerald-700 uppercase tracking-wider mb-2">
-          Lucknow Order Confirmed
+          Order Confirmed
         </span>
         <h1 className="font-display font-bold text-3xl text-ink-900 mb-2">Order Placed Successfully!</h1>
         <p className="text-ink-500 mb-6">
-          Thank you for your order! Our Lucknow doorstep delivery team is preparing your package.
+          Thank you for your order! Our doorstep delivery team is preparing your package.
         </p>
 
         {/* Review Prompt Banner */}
@@ -28,7 +28,7 @@ export default function OrderSuccess() {
             ))}
           </div>
           <p className="text-xs font-bold text-brand-900 uppercase tracking-wider">How was your ordering experience?</p>
-          <p className="text-xs text-ink-600 mt-1 mb-3">Help other Lucknow shoppers by rating your service</p>
+          <p className="text-xs text-ink-600 mt-1 mb-3">Help other shoppers by rating your service</p>
           <button
             type="button"
             onClick={() => setReviewModalOpen(true)}

@@ -52,7 +52,7 @@ export default function VendorLogin() {
           </h1>
           <p className="text-xs text-slate-400 flex items-center justify-center gap-1">
             <MapPin className="h-3.5 w-3.5 text-emerald-400" />
-            Lucknow Mobile Buyback & Repair Service Hub
+            Mobile Buyback & Repair Service Hub
           </p>
         </div>
 
@@ -121,7 +121,7 @@ export default function VendorLogin() {
           </form>
 
           <div className="pt-2 text-center border-t border-slate-800 text-[11px] text-slate-500 space-x-2">
-            <span>Lucknow Vendor Network · </span>
+            <span>Partner Vendor Network · </span>
             <Link to="/admin-login" className="text-brand-400 hover:underline">Admin Login</Link>
             <span>·</span>
             <Link to="/rider-login" className="text-emerald-400 hover:underline">Delivery Login</Link>

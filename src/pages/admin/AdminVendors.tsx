@@ -56,7 +56,7 @@ export default function AdminVendors() {
     fullName: '',
     email: '',
     phone: '',
-    vendorLocation: 'Lucknow Central',
+    vendorLocation: 'Doorstep Central',
     password: 'Vendor@123456',
     creditLimit: '200000',
     gstNumber: '',
@@ -154,7 +154,7 @@ export default function AdminVendors() {
         fullName: '',
         email: '',
         phone: '',
-        vendorLocation: 'Lucknow Central',
+        vendorLocation: 'Doorstep Central',
         password: 'Vendor@123456',
         creditLimit: '200000',
         gstNumber: '',
@@ -334,7 +334,7 @@ export default function AdminVendors() {
           <div className="inline-flex items-center gap-2 rounded-full bg-[#F0F0F5] border border-[#C0C8D8] px-3 py-1 text-xs font-black text-[#344257]">
             <Building2 className="h-3.5 w-3.5" /> Vendor Network & 10% Commission Manager
           </div>
-          <h2 className="mt-2 font-display text-2xl font-black text-ink-900">Lucknow Vendors & Lead Forwarding Hub</h2>
+          <h2 className="mt-2 font-display text-2xl font-black text-ink-900">Doorstep Vendors & Lead Forwarding Hub</h2>
           <p className="mt-1 text-xs text-ink-600">
             Forward unhandled mobile sell requests & location repair bookings to Vendors. Collect 10% platform commissions automatically.
           </p>
@@ -413,7 +413,7 @@ export default function AdminVendors() {
                   <div className="flex items-start justify-between gap-2">
                     <div>
                       <h3 className="font-display text-base font-bold text-ink-900">
-                        {vendor.business_name || vendor.full_name || 'Lucknow Vendor'}
+                        {vendor.business_name || vendor.full_name || 'Doorstep Vendor'}
                       </h3>
                       <p className="text-xs text-ink-500 flex items-center gap-1 mt-0.5">
                         <PhoneCall className="h-3 w-3 text-ink-400" /> {vendor.phone || 'No phone'}
@@ -671,7 +671,7 @@ export default function AdminVendors() {
                 required
                 value={addVendorForm.businessName}
                 onChange={(e) => setAddVendorForm({ ...addVendorForm, businessName: e.target.value })}
-                placeholder="e.g. Lucknow Mobile Care"
+                placeholder="e.g. Doorstep Mobile Care"
                 className="input mt-1 text-xs"
               />
             </div>
@@ -683,7 +683,7 @@ export default function AdminVendors() {
                 required
                 value={addVendorForm.email}
                 onChange={(e) => setAddVendorForm({ ...addVendorForm, email: e.target.value })}
-                placeholder="vendor@lucknow.com"
+                placeholder="vendor@doorstep.com"
                 className="input mt-1 text-xs"
               />
             </div>

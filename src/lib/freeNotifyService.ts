@@ -50,7 +50,7 @@ export async function sendFreeEmailResend(
     <div style="font-family: Arial, sans-serif; padding: 20px; color: #1e293b; max-width: 600px; margin: 0 auto; border: 1px solid #e2e8f0; border-radius: 16px;">
       <div style="background-color: #0f172a; padding: 16px; border-radius: 12px; text-align: center; color: white;">
         <h2 style="margin: 0; color: #14b8a6;">FUNDU DISPATCH ALERT</h2>
-        <p style="margin: 4px 0 0; font-size: 12px; color: #94a3b8;">Lucknow Doorstep Logistics Network</p>
+        <p style="margin: 4px 0 0; font-size: 12px; color: #94a3b8;">Doorstep Doorstep Logistics Network</p>
       </div>
 
       <div style="padding: 20px 0;">

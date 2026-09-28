@@ -52,7 +52,7 @@ export default function AdminLogin() {
             Admin Management Portal
           </h1>
           <p className="text-xs text-slate-400">
-            Exclusive entry for Lucknow Central Operations & Catalog Management
+            Exclusive entry for Central Operations & Catalog Management
           </p>
         </div>
 
@@ -117,7 +117,7 @@ export default function AdminLogin() {
           </form>
 
           <div className="pt-2 text-center border-t border-slate-800 text-[11px] text-slate-500 space-x-2">
-            <span>Lucknow Central Hub · </span>
+            <span>Central Hub · </span>
             <Link to="/wholesaler-login" className="text-brand-400 hover:underline">Wholesaler Portal</Link>
             <span>·</span>
             <Link to="/rider-login" className="text-emerald-400 hover:underline">Delivery Portal</Link>

@@ -587,7 +587,7 @@ const BUYER_FAQS = [
   },
   {
     q: 'How does the 6-Month Warranty work?',
-    a: 'Every refurbished phone includes a 6-month warranty covering manufacturing defects, display glitches, motherboard issues, and technical hardware failures. If an issue occurs, our Lucknow technician repairs or replaces it free of charge.',
+    a: 'Every refurbished phone includes a 6-month warranty covering manufacturing defects, display glitches, motherboard issues, and technical hardware failures. If an issue occurs, our certified technician repairs or replaces it free of charge.',
   },
   {
     q: 'Do I get free doorstep doorstep delivery?',
@@ -751,7 +751,7 @@ export default function BuyPhones() {
             <div className="max-w-2xl">
               <div className="inline-flex items-center gap-2 rounded-full bg-white/10 backdrop-blur-md px-3.5 py-1 text-xs font-bold text-[#C0C8D8] border border-white/15">
                 <Sparkles className="h-3.5 w-3.5 text-[#C0C8D8]" />
-                <span>Certified Refurbished Marketplace · Lucknow</span>
+                <span>Certified Refurbished Marketplace</span>
               </div>
               <h1 className="mt-3 font-display text-3xl md:text-5xl font-extrabold tracking-tight text-white leading-tight">
                 Buy Refurbished Mobile Phones
@@ -769,7 +769,7 @@ export default function BuyPhones() {
                   <Award className="h-3.5 w-3.5 text-[#C0C8D8]" /> 32-Point Quality Passed
                 </div>
                 <div className="flex items-center gap-1.5 bg-white/10 px-3 py-1 rounded-lg border border-white/10">
-                  <Truck className="h-3.5 w-3.5 text-[#C0C8D8]" /> Free Lucknow Delivery
+                  <Truck className="h-3.5 w-3.5 text-[#C0C8D8]" /> Free Doorstep Delivery
                 </div>
                 <div className="flex items-center gap-1.5 bg-white/10 px-3 py-1 rounded-lg border border-white/10">
                   <RotateCcw className="h-3.5 w-3.5 text-[#C0C8D8]" /> 7-Day Replacement

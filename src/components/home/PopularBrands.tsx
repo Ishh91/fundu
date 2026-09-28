@@ -74,7 +74,7 @@ export default function PopularBrands() {
               <span className="rounded-full bg-[#6A859F]/15 border border-[#6A859F]/30 px-3 py-1 text-xs font-extrabold uppercase tracking-wider text-[#344257]">
                 Brand Directory
               </span>
-              <span className="text-xs font-semibold text-[#8A9AAF]">Lucknow Doorstep Service</span>
+              <span className="text-xs font-semibold text-[#8A9AAF]">Doorstep Express Service</span>
             </div>
             <h2 className="mt-2 text-2xl font-black text-[#344257] sm:text-3xl">
               Select Your Mobile Brand

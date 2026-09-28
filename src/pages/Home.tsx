@@ -89,10 +89,10 @@ export default function Home() {
       {/* 5. How Fundu Works (Sell / Buy / Repair) */}
       <SellFlow />
 
-      {/* 6. Why Choose Fundu & Lucknow Coverage */}
+      {/* 6. Why Choose Fundu & Service Coverage */}
       <WhyChooseFundu />
 
-      {/* 7. Verified Lucknow Testimonials & Reviews */}
+      {/* 7. Verified Customer Testimonials & Reviews */}
       <TrustAndTestimonials />
 
       {/* 8. Categorized FAQs */}

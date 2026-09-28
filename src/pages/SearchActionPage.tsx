@@ -269,7 +269,7 @@ export default function SearchActionPage() {
                         <span>Fundu Re-Commerce Network</span>
                         <span>·</span>
                         <span className="text-[#344257] font-bold flex items-center gap-1">
-                          <Truck className="h-3.5 w-3.5 text-[#47576E]" /> Free Lucknow Doorstep Service
+                          <Truck className="h-3.5 w-3.5 text-[#47576E]" /> Free Doorstep Express Service
                         </span>
                       </p>
                     </div>
@@ -309,7 +309,7 @@ export default function SearchActionPage() {
                         Sell This Phone
                       </h3>
                       <p className="text-xs text-gray-500 leading-relaxed">
-                        Get instant cash quote with free Lucknow doorstep pickup and spot UPI payout.
+                        Get instant cash quote with free doorstep pickup and spot UPI payout.
                       </p>
 
                       <div className="pt-1">
@@ -351,7 +351,7 @@ export default function SearchActionPage() {
                       </h3>
                       <p className="text-xs text-gray-500 leading-relaxed">
                         {stockInfo.inStock
-                          ? '32-point tested, Grade A condition, 6-month warranty with same-day Lucknow delivery.'
+                          ? '32-point tested, Grade A condition, 6-month warranty with same-day doorstep delivery.'
                           : 'Currently out of stock at your doorstep warehouse. Click below to get restock SMS alert.'}
                       </p>
 

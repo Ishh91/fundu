@@ -69,7 +69,7 @@ export default function SEO({ title, description }: SEOProps) {
     let ogDesc = document.querySelector('meta[property="og:description"]');
     if (ogDesc) ogDesc.setAttribute('content', finalDescription);
 
-    // Geo Meta Tags for Lucknow Hyper-localization (26.8467, 80.9462)
+    // Geo Meta Tags for Doorstep Hyper-localization (26.8467, 80.9462)
     const setMeta = (name: string, content: string) => {
       let tag = document.querySelector(`meta[name="${name}"]`);
       if (!tag) {

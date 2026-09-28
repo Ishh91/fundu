@@ -189,9 +189,9 @@ export default function Vendor() {
     try {
       const orderData = {
         vendor_id: user.id,
-        vendor_name: profile?.full_name || profile?.business_name || 'Lucknow Mobile Vendor',
+        vendor_name: profile?.full_name || profile?.business_name || 'Partner Mobile Vendor',
         vendor_phone: profile?.phone || '+91 98391 00000',
-        business_name: profile?.business_name || 'Lucknow Partner Store',
+        business_name: profile?.business_name || 'Official Partner Store',
         items: cart.map((item) => ({
           inventory_id: item.id,
           brand: item.brand,
@@ -251,7 +251,7 @@ export default function Vendor() {
               <span className="font-extrabold text-lg tracking-tight text-white">
                 Fundu <span className="text-brand-400 text-xs uppercase px-2.5 py-0.5 rounded-full bg-brand-900/60 font-bold border border-brand-700">Official Vendor Portal</span>
               </span>
-              <p className="text-[10px] text-slate-400 font-medium">Lucknow Mobile Buyback & Repair Network</p>
+              <p className="text-[10px] text-slate-400 font-medium">Mobile Buyback & Repair Network</p>
             </div>
           </div>
 
@@ -276,7 +276,7 @@ export default function Vendor() {
           <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
             <div>
               <div className="inline-flex items-center gap-2 rounded-full bg-brand-50 px-3 py-1 text-xs font-bold text-brand-700">
-                <Building2 className="h-3.5 w-3.5" /> Official Vendor Hub · Lucknow
+                <Building2 className="h-3.5 w-3.5" /> Official Vendor Hub
               </div>
               <h1 className="mt-2 font-display text-2xl md:text-3xl font-extrabold text-ink-900">
                 {profile?.business_name && profile.business_name !== 'Fundu Admin'
@@ -708,7 +708,7 @@ export default function Vendor() {
             <div className="card p-6 md:p-8 rounded-[28px] bg-gradient-to-r from-[#1E2734] via-[#2B3646] to-[#344257] text-white shadow-lg">
               <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
                 <div>
-                  <span className="badge bg-white/20 text-white text-xs font-bold">Lucknow Vendor Limit & Wallet</span>
+                  <span className="badge bg-white/20 text-white text-xs font-bold">Vendor Limit & Wallet</span>
                   <h2 className="mt-2 font-display text-2xl md:text-3xl font-black">
                     Vendor Credit Limit & Commission Account
                   </h2>

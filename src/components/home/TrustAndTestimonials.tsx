@@ -28,11 +28,11 @@ const TRUST_STATS = [
   {
     icon: Star,
     value: '4.8 / 5.0',
-    label: 'Verified Lucknow Rating',
+    label: 'Verified Customer Rating',
   },
 ];
 
-const DEFAULT_LUCKNOW_TESTIMONIALS = [
+const DEFAULT_DOORSTEP_TESTIMONIALS = [
   {
     quote:
       'Sold my iPhone 13 right from my flat in Gomti Nagar. The executive arrived within 2 hours, checked the screen and transferred the full UPI payment immediately.',
@@ -113,7 +113,7 @@ export default function TrustAndTestimonials() {
       service: (r as any).phone_model ? `Serviced ${(r as any).phone_model}` : 'Verified Customer',
       rating: r.rating || 5,
     })),
-    ...DEFAULT_LUCKNOW_TESTIMONIALS,
+    ...DEFAULT_DOORSTEP_TESTIMONIALS,
   ];
 
   const visibleCount = 3;
@@ -133,7 +133,7 @@ export default function TrustAndTestimonials() {
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 border-b border-gray-800 pb-8">
           <div>
             <span className="rounded-full bg-[#6A859F]/20 border border-[#6A859F]/40 px-3 py-1 text-xs font-extrabold uppercase tracking-widest text-[#C0C8D8]">
-              Verified Lucknow Feedback
+              Verified Customer Feedback
             </span>
             <h2 className="mt-2 font-display text-2xl sm:text-3xl font-black text-white">
               Trusted by 25,000+ Customers At Your Doorstep

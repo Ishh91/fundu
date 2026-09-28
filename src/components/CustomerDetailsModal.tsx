@@ -224,7 +224,7 @@ export default function CustomerDetailsModal({ isOpen, onClose, customer }: Cust
           <div className="p-4 rounded-2xl bg-gray-50 border border-gray-200/80 space-y-2">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2 text-xs font-bold text-gray-500 uppercase tracking-wider">
-                <MapPin className="h-4 w-4 text-rose-600" /> Complete Doorstep Address (Lucknow)
+                <MapPin className="h-4 w-4 text-rose-600" /> Complete Doorstep Address
               </div>
               <span className="badge bg-rose-50 text-rose-700 font-bold text-[11px] px-2.5 py-0.5">
                 Cluster: {locality}

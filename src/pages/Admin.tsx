@@ -35,7 +35,7 @@ import type {
 } from './admin/adminTypes';
 import type { AdminTab } from './admin/adminTypes';
 import { savePriceOverride } from '../lib/priceSync';
-import { LUCKNOW_AREAS } from '../types';
+import { DOORSTEP_AREAS } from '../types';
 import { db, formatINR } from '../lib/db';
 import { ALL_INDIAN_PHONES_CATALOG } from '../data/indianPhonesCatalog';
 import {
@@ -1127,7 +1127,7 @@ export default function Admin() {
                 {tab === 'orders' && 'Store Customer Orders'}
                 {tab === 'products' && 'Refurbished Store Inventory'}
                 {tab === 'wholesalers' && 'B2B Wholesalers & Vendor Khata'}
-                {tab === 'agents' && 'Lucknow Delivery Fleet'}
+                {tab === 'agents' && 'Delivery Fleet'}
                 {tab === 'banners' && 'Hero Section Posters & Banners'}
                 {tab === 'parts' && 'Spare Parts & OEM Components'}
                 {tab === 'users' && 'User Accounts & Roles'}
@@ -2143,7 +2143,7 @@ export default function Admin() {
             <div className="flex items-center justify-between pb-3 border-b border-ink-100">
               <div>
                 <span className="badge bg-brand-50 text-brand-700 font-bold text-[10px] uppercase">
-                  Lucknow Dispatch Fleet
+                  Dispatch Fleet
                 </span>
                 <h3 className="font-display text-lg font-black text-ink-900 mt-0.5">
                   Register Partner & Issue Rider ID
@@ -2231,13 +2231,13 @@ export default function Admin() {
               </div>
 
               <div>
-                <label className="label text-xs">Primary Lucknow Operational Zone</label>
+                <label className="label text-xs">Primary Operational Zone</label>
                 <select
                   value={agentForm.current_locality}
                   onChange={(e) => setAgentForm({ ...agentForm, current_locality: e.target.value })}
                   className="input text-xs font-bold"
                 >
-                  {LUCKNOW_AREAS.map((area) => (
+                  {DOORSTEP_AREAS.map((area) => (
                     <option key={area} value={area}>
                       {area}
                     </option>

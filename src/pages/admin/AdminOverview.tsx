@@ -102,7 +102,7 @@ export default function AdminOverview({
         <div className="card p-6 rounded-[28px] bg-white border border-[#dce5e8] space-y-4">
           <div className="flex items-center justify-between pb-3 border-b border-ink-100">
             <h3 className="font-display text-lg font-black text-ink-900 flex items-center gap-2">
-              <BadgeIndianRupee className="h-5 w-5 text-amber-600" /> Recent Sell Inquiries (Lucknow)
+              <BadgeIndianRupee className="h-5 w-5 text-amber-600" /> Recent Sell Inquiries (Doorstep)
             </h3>
             <button
               onClick={() => onNavigateTab('sells')}

@@ -636,7 +636,7 @@ export default function SellBrandPage() {
                 <AlertCircle className="h-8 w-8 text-rose-500 mx-auto" />
                 <h3 className="font-bold text-lg text-gray-900">No {brandDisplayName} series available at this time</h3>
                 <p className="text-xs text-gray-500">
-                  Please call our Lucknow helpline at <span className="font-bold text-gray-900">+91-9839122345</span>.
+                  Please call our customer helpline at <span className="font-bold text-gray-900">+91-9839122345</span>.
                 </p>
               </div>
             )
@@ -701,11 +701,11 @@ export default function SellBrandPage() {
               {
                 icon: <Sparkles className="h-6 w-6 text-emerald-400" />,
                 title: 'Highest Valuation Guarantee',
-                desc: `Our AI algorithm checks live Lucknow market demand to guarantee maximum cash for your ${brandDisplayName}.`,
+                desc: `Our AI algorithm checks live market demand to guarantee maximum cash for your ${brandDisplayName}.`,
               },
               {
                 icon: <Truck className="h-6 w-6 text-[#9ac0dd]" />,
-                title: 'Free Lucknow Doorstep Visit',
+                title: 'Free Doorstep Visit',
                 desc: 'Zero shipping or visiting fees across Gomti Nagar, Hazratganj, Indira Nagar, Aliganj, Mahanagar & Chowk.',
               },
               {
@@ -746,7 +746,7 @@ export default function SellBrandPage() {
             {[
               {
                 q: `How is the cash quote for my old ${brandDisplayName} phone calculated?`,
-                a: `Our automated algorithm checks real-time Lucknow resale market demand for ${brandDisplayName} models and adjusts based on screen condition, body scuffs, hardware defects, warranty status, and original box/charger bonuses.`,
+                a: `Our automated algorithm checks real-time resale market demand for ${brandDisplayName} models and adjusts based on screen condition, body scuffs, hardware defects, warranty status, and original box/charger bonuses.`,
               },
               {
                 q: `Is doorstep pickup for ${brandDisplayName} 100% free at your doorstep?`,
