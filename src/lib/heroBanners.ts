@@ -51,7 +51,7 @@ export const DEFAULT_HERO_POSTERS: HeroPoster[] = [
     secondaryLabel: 'Contact Us',
     secondaryHref: '/contact',
     accent: 'from-[#0a2f32] to-[#86dedd]',
-    image: '/assets/posters/poster_repair_lucknow.jpg',
+    image: '/assets/posters/poster_repair.jpg',
     bullets: ['30-Min Fast Repair', 'Tested Genuine Parts', '6M Repair Warranty'],
     is_active: true,
     is_full_banner: true,
