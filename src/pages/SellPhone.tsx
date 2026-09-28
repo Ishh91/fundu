@@ -717,7 +717,6 @@ export default function SellPhone() {
   const [error, setError] = useState<string | null>(null);
 
   const [pricingConfig, setPricingConfig] = useState<SellPriceConfig | null>(null);
-  const [showImeiGuide, setShowImeiGuide] = useState(false);
 
   // 300ms Search Debounce Effect
   useEffect(() => {
@@ -1001,53 +1000,6 @@ export default function SellPhone() {
       ...f,
       accessories: f.accessories.includes(a) ? f.accessories.filter((x) => x !== a) : [...f.accessories, a],
     }));
-  };
-
-  // Photo reader helper
-  const handlePhotoUpload = (key: 'front' | 'back' | 'edges' | 'bill_box' | 'imei', file: File | null) => {
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      const base64 = e.target?.result as string;
-      if (key === 'imei') {
-        setForm((prev) => ({ ...prev, imeiPhoto: base64 }));
-      } else {
-        setForm((prev) => ({
-          ...prev,
-          devicePhotos: {
-            ...prev.devicePhotos,
-            [key]: base64,
-          },
-        }));
-      }
-    };
-    reader.readAsDataURL(file);
-  };
-
-  const isImeiValid = useMemo(() => {
-    if (!form.imei) return false;
-    const clean = form.imei.replace(/\D/g, '');
-    return clean.length === 15;
-  }, [form.imei]);
-
-  const hasDevicePhotos = useMemo(() => {
-    const { front, back, edges, bill_box } = form.devicePhotos;
-    return Boolean(front || back || edges || bill_box || form.imeiPhoto);
-  }, [form.devicePhotos, form.imeiPhoto]);
-
-  const [step3Error, setStep3Error] = useState<string | null>(null);
-
-  const handleStep3Continue = () => {
-    setStep3Error(null);
-    if (form.imei && form.imei.replace(/\D/g, '').length !== 15) {
-      setStep3Error('Please enter a valid 15-digit IMEI number, or leave it blank to verify during doorstep pickup.');
-      return;
-    }
-    if (!hasDevicePhotos) {
-      setStep3Error('Device Photo upload is mandatory! Please upload at least one clear photo of your device.');
-      return;
-    }
-    setStep(4);
   };
 
   const handleSubmit = async () => {
@@ -1376,15 +1328,14 @@ export default function SellPhone() {
       </section>
       )}
 
-      {/* STICKY 5-STEP PROGRESS INDICATOR BAR */}
+      {/* STICKY 4-STEP PROGRESS INDICATOR BAR */}
       <div className="sticky top-[64px] md:top-[116px] z-40 bg-white/95 backdrop-blur-md border-b border-gray-200 shadow-md py-3 px-4 transition-all">
         <div className="flex items-center justify-center flex-wrap sm:flex-nowrap gap-1.5 sm:gap-3 max-w-5xl mx-auto overflow-x-auto scrollbar-hide py-1">
           {[
             { s: 1, label: 'Select Phone' },
             { s: 2, label: 'Condition & Diagnostics' },
-            { s: 3, label: 'IMEI & Photos' },
-            { s: 4, label: 'Instant Quote' },
-            { s: 5, label: 'Schedule Pickup' },
+            { s: 3, label: 'Instant Quote' },
+            { s: 4, label: 'Schedule Pickup' },
           ].map(({ s, label }) => (
             <div key={s} className="flex items-center gap-1.5 sm:gap-2 shrink-0">
               <button
@@ -1403,7 +1354,7 @@ export default function SellPhone() {
                 </span>
                 <span className="whitespace-nowrap font-extrabold">{label}</span>
               </button>
-              {s < 5 && <div className={`h-0.5 w-2 sm:w-5 rounded-full ${step > s ? 'bg-[#344257]' : 'bg-gray-200'}`} />}
+              {s < 4 && <div className={`h-0.5 w-2 sm:w-5 rounded-full ${step > s ? 'bg-[#344257]' : 'bg-gray-200'}`} />}
             </div>
           ))}
         </div>
@@ -1855,7 +1806,7 @@ export default function SellPhone() {
                     Change Model
                   </button>
                   <span className="badge bg-[#F0F0F5] text-[#344257] border border-[#C0C8D8] text-[10px] font-bold px-2 py-0.5">
-                    Step 2 of 5
+                    Step 2 of 4
                   </span>
                 </div>
               </div>
@@ -2028,149 +1979,6 @@ export default function SellPhone() {
                   Back
                 </button>
                 <button type="button" onClick={() => setStep(3)} className="btn-primary flex items-center gap-2">
-                  Continue to IMEI & Photos <ArrowRight className="h-4 w-4" />
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* STEP 3: IMEI Verification & Photos */}
-        {step === 3 && (
-          <div className="max-w-3xl mx-auto space-y-6 animate-fade-in">
-            <div className="card p-6 md:p-8 rounded-[28px] bg-white border border-gray-200 shadow-xl space-y-6">
-              <div className="flex items-center justify-between border-b border-gray-100 pb-4">
-                <div>
-                  <span className="badge bg-[#F0F0F5] text-[#344257] border border-[#C0C8D8] font-bold">Step 3 of 5</span>
-                  <h2 className="mt-1 font-display text-xl font-extrabold text-[#344257]">
-                    15-Digit IMEI Verification & Photos
-                  </h2>
-                  <p className="text-xs text-gray-500">
-                    Evaluating: <span className="font-bold text-[#344257]">{form.brand} {form.model}</span>
-                  </p>
-                </div>
-              </div>
-
-              {step3Error && (
-                <div className="p-4 rounded-2xl bg-rose-50 border border-rose-200 text-xs text-rose-700 flex items-center gap-2 font-bold animate-shake">
-                  <AlertCircle className="h-5 w-5 text-rose-600 shrink-0" />
-                  <span>{step3Error}</span>
-                </div>
-              )}
-
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <label className="label text-sm font-extrabold text-[#344257]">
-                    1. Enter 15-Digit Device IMEI Number <span className="text-xs font-normal text-gray-500">(Optional)</span>
-                  </label>
-                  {form.imei ? (
-                    isImeiValid ? (
-                      <span className="badge bg-emerald-50 text-emerald-700 border border-emerald-200 font-bold text-[10px]">
-                        ✓ Valid 15-Digit IMEI
-                      </span>
-                    ) : (
-                      <span className="badge bg-amber-50 text-amber-700 border border-amber-200 font-bold text-[10px]">
-                        15 Digits Needed
-                      </span>
-                    )
-                  ) : (
-                    <span className="badge bg-[#F0F0F5] text-[#47576E] border border-[#C0C8D8] font-bold text-[10px]">
-                      Optional · Doorstep Verification
-                    </span>
-                  )}
-                </div>
-
-                <div className="flex items-center gap-2">
-                  <input
-                    type="text"
-                    maxLength={15}
-                    value={form.imei}
-                    onChange={(e) => {
-                      setStep3Error(null);
-                      setForm({ ...form, imei: e.target.value.replace(/\D/g, '') });
-                    }}
-                    placeholder="e.g. 356891094827105 (Optional)"
-                    className={`input font-mono tracking-wider font-bold focus:border-[#6A859F] focus:ring-4 focus:ring-[#6A859F]/15 ${
-                      form.imei && !isImeiValid ? 'border-amber-400 text-amber-700 focus:border-amber-500' : 'text-[#344257]'
-                    }`}
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowImeiGuide(!showImeiGuide)}
-                    className="px-3 py-3 rounded-xl border border-[#C0C8D8] text-xs font-bold text-[#344257] bg-[#F0F0F5] hover:bg-[#E4E7F0] transition shrink-0"
-                  >
-                    How to find?
-                  </button>
-                </div>
-
-                {showImeiGuide && (
-                  <div className="p-4 rounded-2xl bg-[#F7F7FA] border border-[#C0C8D8] text-xs text-gray-700 space-y-1">
-                    <p className="font-bold text-[#344257] flex items-center gap-1.5">
-                      <HelpCircle className="h-4 w-4 text-[#6A859F]" /> Dial *#06# on your phone
-                    </p>
-                    <p>Open your phone dialer and type <span className="font-mono font-bold bg-white px-1.5 py-0.5 rounded border border-[#C0C8D8] text-[#344257]">*#06#</span>. A 15-digit IMEI number will pop up on your screen. You can enter it now or skip it—our rider can verify it at your doorstep.</p>
-                  </div>
-                )}
-              </div>
-
-              {/* Photo Uploads */}
-              <div className="space-y-3">
-                <div className="flex items-center justify-between">
-                  <label className="label text-sm font-extrabold text-[#344257]">
-                    2. Upload Device Photos <span className="text-rose-500 font-bold">*</span>
-                  </label>
-                  {hasDevicePhotos ? (
-                    <span className="badge bg-emerald-50 text-emerald-700 border border-emerald-200 font-bold text-[10px]">
-                      ✓ Photo Uploaded
-                    </span>
-                  ) : (
-                    <span className="badge bg-rose-50 text-rose-700 border border-rose-200 font-bold text-[10px]">
-                      At Least 1 Photo Mandatory
-                    </span>
-                  )}
-                </div>
-
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                  {[
-                    { key: 'front' as const, label: 'Front Display' },
-                    { key: 'back' as const, label: 'Back Panel' },
-                    { key: 'edges' as const, label: 'Side Edges' },
-                    { key: 'bill_box' as const, label: 'Bill / Box' },
-                  ].map(({ key, label }) => {
-                    const img = form.devicePhotos[key];
-                    return (
-                      <div key={key} className="space-y-1 text-center">
-                        <span className="text-[11px] font-bold text-gray-700">{label}</span>
-                        {img ? (
-                          <div className="relative rounded-xl overflow-hidden border border-emerald-300 bg-gray-50 h-24">
-                            <img src={img} alt="" className="h-full w-full object-cover" />
-                          </div>
-                        ) : (
-                          <label className="flex flex-col items-center justify-center h-24 rounded-xl border border-dashed border-[#C0C8D8] bg-[#F7F7FA] hover:border-[#6A859F] hover:bg-[#F0F0F5] cursor-pointer transition">
-                            <Camera className="h-5 w-5 text-[#8A9AAF]" />
-                            <span className="text-[10px] font-bold text-[#344257] mt-1">Upload *</span>
-                            <input
-                              type="file"
-                              accept="image/*"
-                              className="hidden"
-                              onChange={(e) => {
-                                setStep3Error(null);
-                                handlePhotoUpload(key, e.target.files?.[0] || null);
-                              }}
-                            />
-                          </label>
-                        )}
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-
-              <div className="flex justify-between gap-3 pt-4 border-t border-gray-100">
-                <button type="button" onClick={() => setStep(2)} className="btn-outline text-sm">
-                  Back
-                </button>
-                <button type="button" onClick={handleStep3Continue} className="btn-primary flex items-center gap-2">
                   View Guaranteed Quote <ArrowRight className="h-4 w-4" />
                 </button>
               </div>
@@ -2178,8 +1986,8 @@ export default function SellPhone() {
           </div>
         )}
 
-        {/* STEP 4: Instant Quote & Cashify Price Breakdown */}
-        {step === 4 && (
+        {/* STEP 3: Instant Quote & Cashify Price Breakdown */}
+        {step === 3 && (
           <div className="max-w-2xl mx-auto space-y-6 animate-fade-in">
             <div className="card p-6 md:p-8 rounded-[28px] bg-white border border-gray-200 shadow-xl text-center space-y-6">
               <span className="badge bg-emerald-50 text-emerald-800 border border-emerald-200 font-extrabold uppercase tracking-wider text-xs">
@@ -2191,7 +1999,7 @@ export default function SellPhone() {
                   {form.brand} {form.model} ({form.storage})
                 </h2>
                 <p className="text-xs text-gray-500 mt-1">
-                  Condition: {form.condition} · IMEI: {form.imei || 'Doorstep Verification'}
+                  Condition: {form.condition} · Doorstep Verification
                 </p>
               </div>
 
@@ -2317,10 +2125,10 @@ export default function SellPhone() {
               </div>
 
               <div className="flex justify-between gap-3 pt-4 border-t border-gray-100">
-                <button type="button" onClick={() => setStep(3)} className="btn-outline text-sm">
+                <button type="button" onClick={() => setStep(2)} className="btn-outline text-sm">
                   Back
                 </button>
-                <button type="button" onClick={() => setStep(5)} className="btn-primary flex items-center gap-2">
+                <button type="button" onClick={() => setStep(4)} className="btn-primary flex items-center gap-2">
                   Accept & Schedule Pickup <ArrowRight className="h-4 w-4" />
                 </button>
               </div>
@@ -2328,13 +2136,13 @@ export default function SellPhone() {
           </div>
         )}
 
-        {/* STEP 5: Schedule Lucknow Doorstep Pickup & Auto-Assign Agent */}
-        {step === 5 && (
+        {/* STEP 4: Schedule Lucknow Doorstep Pickup & Auto-Assign Agent */}
+        {step === 4 && (
           <div className="max-w-2xl mx-auto space-y-6 animate-fade-in">
             <div className="card p-6 md:p-8 rounded-[28px] bg-white border border-gray-200 shadow-xl space-y-6">
               <div className="flex items-center justify-between border-b border-gray-100 pb-4">
                 <div>
-                  <span className="badge bg-[#F0F0F5] text-[#344257] border border-[#C0C8D8] font-bold">Step 5 of 5</span>
+                  <span className="badge bg-[#F0F0F5] text-[#344257] border border-[#C0C8D8] font-bold">Step 4 of 4</span>
                   <h2 className="mt-1 font-display text-xl font-extrabold text-[#344257]">
                     Schedule Lucknow Doorstep Pickup
                   </h2>
@@ -2421,7 +2229,7 @@ export default function SellPhone() {
               </div>
 
               <div className="flex justify-between gap-3 pt-4 border-t border-gray-100">
-                <button type="button" onClick={() => setStep(4)} className="btn-outline text-sm">
+                <button type="button" onClick={() => setStep(3)} className="btn-outline text-sm">
                   Back
                 </button>
                 <button

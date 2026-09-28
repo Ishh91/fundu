@@ -47,9 +47,9 @@ export default function OurServices() {
               <Link
                 key={s.title}
                 to={s.href}
-                className="group flex flex-col items-center text-center p-4 rounded-2xl bg-white border border-[#C0C8D8]/70 shadow-xs hover:border-[#6A859F] hover:shadow-md transition-all duration-300 cursor-pointer"
+                className="group flex flex-col items-center text-center p-4 rounded-2xl bg-[#D9DFE9] border border-[#C0C8D8] shadow-[0_6px_20px_rgba(52,66,87,0.12)] hover:shadow-[0_12px_28px_rgba(52,66,87,0.18)] hover:-translate-y-1 hover:border-[#6A859F] transition-all duration-300 cursor-pointer"
               >
-                <div className="w-16 h-16 rounded-2xl bg-[#F0F0F5] border border-[#C0C8D8]/80 p-2 flex items-center justify-center group-hover:scale-105 transition-transform overflow-hidden">
+                <div className="w-16 h-16 rounded-2xl bg-white border border-[#C0C8D8] p-2 flex items-center justify-center group-hover:scale-105 transition-transform overflow-hidden shadow-xs">
                   <img
                     src={s.image}
                     alt={s.title}
@@ -60,10 +60,10 @@ export default function OurServices() {
                     }}
                   />
                 </div>
-                <span className="mt-3 text-sm font-black text-[#344257] group-hover:text-[#47576E] transition-colors">
+                <span className="mt-3 text-sm font-black text-[#344257] group-hover:text-[#1E2734] transition-colors">
                   {s.title}
                 </span>
-                <span className="text-[11px] font-semibold text-[#47576E] mt-0.5">
+                <span className="text-[11px] font-bold text-[#47576E] mt-0.5">
                   {s.subtitle}
                 </span>
               </Link>

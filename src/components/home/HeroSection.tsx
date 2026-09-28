@@ -123,11 +123,11 @@ export default function HeroSection() {
           </div>
         )}
 
-        {/* Bottom Feature Strip (Gradient: #F7F7FA -> #E4E7F0) */}
-        <div className="rounded-2xl sm:rounded-3xl border border-[#C0C8D8]/70 fundu-feature-strip-gradient p-4 sm:p-5 shadow-xs">
+        {/* Bottom Feature Strip (Using #D9DFE9 with outer elevation) */}
+        <div className="rounded-2xl sm:rounded-3xl border border-[#C0C8D8] bg-[#D9DFE9] p-4 sm:p-5 shadow-[0_6px_20px_rgba(52,66,87,0.12)]">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center sm:text-left">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-white border border-[#C0C8D8]/80 grid place-items-center shrink-0 shadow-xs">
+              <div className="w-10 h-10 rounded-xl bg-white border border-[#C0C8D8] grid place-items-center shrink-0 shadow-xs">
                 <span className="text-lg">⚡</span>
               </div>
               <div>
@@ -137,7 +137,7 @@ export default function HeroSection() {
             </div>
 
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-white border border-[#C0C8D8]/80 grid place-items-center shrink-0 shadow-xs">
+              <div className="w-10 h-10 rounded-xl bg-white border border-[#C0C8D8] grid place-items-center shrink-0 shadow-xs">
                 <span className="text-lg">🚚</span>
               </div>
               <div>
@@ -147,7 +147,7 @@ export default function HeroSection() {
             </div>
 
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-white border border-[#C0C8D8]/80 grid place-items-center shrink-0 shadow-xs">
+              <div className="w-10 h-10 rounded-xl bg-white border border-[#C0C8D8] grid place-items-center shrink-0 shadow-xs">
                 <span className="text-lg">🛡️</span>
               </div>
               <div>
@@ -157,7 +157,7 @@ export default function HeroSection() {
             </div>
 
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-white border border-[#C0C8D8]/80 grid place-items-center shrink-0 shadow-xs">
+              <div className="w-10 h-10 rounded-xl bg-white border border-[#C0C8D8] grid place-items-center shrink-0 shadow-xs">
                 <span className="text-lg">🔒</span>
               </div>
               <div>
