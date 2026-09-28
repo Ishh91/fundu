@@ -1,4 +1,5 @@
 import { initializeApp, getApps, getApp } from 'firebase/app';
+import { getAnalytics, isSupported } from 'firebase/analytics';
 import {
   getAuth,
   RecaptchaVerifier,
@@ -7,17 +8,28 @@ import {
 } from 'firebase/auth';
 
 const firebaseConfig = {
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY || 'AIzaSyB92qlzzsihGxswaOTLfVMijqh4nPrbKNw',
-  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || 'fundu-4ea17.firebaseapp.com',
-  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || 'fundu-4ea17',
-  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || 'fundu-4ea17.firebasestorage.app',
-  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || '153465133346',
-  appId: import.meta.env.VITE_FIREBASE_APP_ID || '1:153465133346:web:0d89a488ae42b48c972d7b',
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY || 'AIzaSyBBlO3OuntuKlCg7MK0460ax7kXXTUVVTI',
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || 'thefundu-3700a.firebaseapp.com',
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || 'thefundu-3700a',
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || 'thefundu-3700a.firebasestorage.app',
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || '723412623861',
+  appId: import.meta.env.VITE_FIREBASE_APP_ID || '1:723412623861:web:8e1bef52dd90ea462740bc',
+  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID || 'G-7YMXPYPBTR',
 };
 
 // Initialize or reuse Firebase app
-const app = getApps().length > 0 ? getApp() : initializeApp(firebaseConfig);
+export const app = getApps().length > 0 ? getApp() : initializeApp(firebaseConfig);
 export const auth = getAuth(app);
+
+// Initialize analytics safely if in browser
+export let analytics: ReturnType<typeof getAnalytics> | null = null;
+if (typeof window !== 'undefined') {
+  isSupported().then((supported) => {
+    if (supported) {
+      analytics = getAnalytics(app);
+    }
+  }).catch(() => {});
+}
 
 // Default language for SMS
 auth.languageCode = 'en';

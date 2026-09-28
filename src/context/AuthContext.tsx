@@ -91,38 +91,26 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const sendOtp = async (phone: string) => {
-    // 1. Primary: Send real SMS via Firebase Phone Authentication (10,000 free SMS/mo)
+    // Send real SMS exclusively via Firebase Phone Authentication
     try {
       const fbResult = await sendFirebasePhoneOtp(phone);
       if (fbResult.success) {
         return { error: null };
       }
-      console.warn('Firebase Phone OTP failed, falling back to server dispatch:', fbResult.error);
+      return { error: fbResult.error || 'Failed to send OTP via SMS.' };
     } catch (fbErr: any) {
-      console.warn('Firebase OTP failed, falling back to server dispatch:', fbErr);
+      return { error: fbErr?.message || 'Failed to send OTP via SMS.' };
     }
-
-    // 2. Fallback to server-side SMS provider if Firebase client fails
-    const { data, error } = await db.auth.sendOtp(phone);
-    if (error) return { error: error.message };
-    return { error: null, devOtp: data?.devOtp };
   };
 
   const verifyOtp = async (phone: string, otp: string) => {
-    // 1. If Firebase confirmation result is present, verify code with Firebase
-    if (typeof window !== 'undefined' && window.confirmationResult) {
-      const fbVerify = await verifyFirebasePhoneOtp(otp);
-      if (fbVerify.success) {
-        const { data, error } = await db.auth.verifyFirebaseSession(phone);
-        if (error) return { error: error.message };
-        if (!data?.session) return { error: 'Login failed. Please try again.' };
-        return { error: null, isNewUser: data.isNewUser };
-      }
+    // Verify code exclusively with Firebase
+    const fbVerify = await verifyFirebasePhoneOtp(otp);
+    if (!fbVerify.success) {
       return { error: fbVerify.error || 'Invalid OTP code.' };
     }
 
-    // 2. Fallback to server-side verification
-    const { data, error } = await db.auth.verifyOtp(phone, otp);
+    const { data, error } = await db.auth.verifyFirebaseSession(phone);
     if (error) return { error: error.message };
     if (!data?.session) return { error: 'Login failed. Please try again.' };
     return { error: null, isNewUser: data.isNewUser };
