@@ -28,7 +28,7 @@ type AuthContextValue = {
   /** Send OTP to a phone number. Returns devOtp string in dev mode. */
   sendOtp: (phone: string) => Promise<{ error: string | null; devOtp?: string }>;
   /** Verify OTP and complete login (auto-registers new users). */
-  verifyOtp: (phone: string, otp: string) => Promise<{ error: string | null; isNewUser?: boolean }>;
+  verifyOtp: (phone: string, otp: string, options?: { fullName?: string; email?: string }) => Promise<{ error: string | null; isNewUser?: boolean }>;
 };
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
@@ -103,14 +103,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  const verifyOtp = async (phone: string, otp: string) => {
+  const verifyOtp = async (phone: string, otp: string, options?: { fullName?: string; email?: string }) => {
     // Verify code exclusively with Firebase
     const fbVerify = await verifyFirebasePhoneOtp(otp);
     if (!fbVerify.success) {
       return { error: fbVerify.error || 'Invalid OTP code.' };
     }
 
-    const { data, error } = await db.auth.verifyFirebaseSession(phone);
+    const { data, error } = await db.auth.verifyFirebaseSession(phone, options?.fullName, options?.email);
     if (error) return { error: error.message };
     if (!data?.session) return { error: 'Login failed. Please try again.' };
     return { error: null, isNewUser: data.isNewUser };

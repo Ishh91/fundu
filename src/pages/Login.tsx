@@ -88,6 +88,26 @@ export default function Login() {
     setLoading(true);
     setError(null);
 
+    // Pre-check: If new user tries to log in, redirect to Sign Up page
+    try {
+      const checkRes = await fetch(`${API_BASE.replace(/\/$/, '')}/auth/check-phone`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ phone: cleanPhone }),
+      });
+      const checkData = await checkRes.json();
+      if (!checkData?.data?.exists) {
+        setLoading(false);
+        setError('⚠️ No registered account found with this mobile number. Redirecting to Sign Up...');
+        setTimeout(() => {
+          navigate(`/register?phone=${cleanPhone}`);
+        }, 1200);
+        return;
+      }
+    } catch {
+      // Proceed if endpoint check is bypassed
+    }
+
     const res = await sendOtp(cleanPhone);
     setLoading(false);
 

@@ -1,28 +1,27 @@
 import React, { useState, useRef, useEffect, KeyboardEvent, ClipboardEvent } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { Mail, Lock, User as UserIcon, Phone, ArrowRight, CheckCircle2, RefreshCw, AlertCircle } from 'lucide-react';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
+import { Mail, Lock, User as UserIcon, Phone, ArrowRight, CheckCircle2, RefreshCw, AlertCircle, Smartphone } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
-import { db } from '../lib/db';
 import BrandLogo from '../components/BrandLogo';
-import { sendEmailOtpCode, sendWelcomeEmail } from '../lib/freeNotifyService';
+import { sendWelcomeEmail } from '../lib/freeNotifyService';
 import { API_BASE } from '../config/apiConfig';
 
 const OTP_LENGTH = 6;
 const RESEND_COOLDOWN = 60;
 
 export default function Register() {
-  const { signUp, user, loading: authLoading } = useAuth();
+  const { sendOtp, verifyOtp, user, loading: authLoading } = useAuth();
   const navigate = useNavigate();
+  const [params] = useSearchParams();
 
   /* ── Form State ── */
   const [fullName, setFullName] = useState('');
+  const [phone, setPhone] = useState(params.get('phone') || '');
   const [email, setEmail] = useState('');
-  const [phone, setPhone] = useState('');
   const [password, setPassword] = useState('');
 
   /* ── Workflow Step: 'form' | 'otp' | 'success' ── */
   const [step, setStep] = useState<'form' | 'otp' | 'success'>('form');
-  const [activeOtp, setActiveOtp] = useState<string | null>(null);
 
   /* ── OTP digits ── */
   const [digits, setDigits] = useState<string[]>(Array(OTP_LENGTH).fill(''));
@@ -41,6 +40,13 @@ export default function Register() {
   }, [user, authLoading, navigate, step]);
 
   useEffect(() => {
+    const queryPhone = params.get('phone');
+    if (queryPhone) {
+      setPhone(queryPhone.replace(/\D/g, '').slice(-10));
+    }
+  }, [params]);
+
+  useEffect(() => {
     return () => {
       if (timerRef.current) clearInterval(timerRef.current);
     };
@@ -48,6 +54,7 @@ export default function Register() {
 
   const startCountdown = () => {
     setCountdown(RESEND_COOLDOWN);
+    if (timerRef.current) clearInterval(timerRef.current);
     timerRef.current = setInterval(() => {
       setCountdown((c) => {
         if (c <= 1) {
@@ -59,61 +66,65 @@ export default function Register() {
     }, 1000);
   };
 
-  /* ── STEP 1: Handle Initial Form Submit (Generate & Send Email OTP) ── */
+  /* ── STEP 1: Handle Initial Form Submit (Send Mobile SMS OTP) ── */
   const handleInitialSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const cleanEmail = email.trim().toLowerCase();
+    setError(null);
 
-    if (!cleanEmail || !cleanEmail.includes('@')) {
-      setError('Please enter a valid email address.');
+    const cleanName = fullName.trim();
+    if (!cleanName) {
+      setError('Please enter your full name.');
       return;
     }
-    if (password.length < 6) {
-      setError('Password must be at least 6 characters.');
+
+    const cleanPhone = phone.replace(/\D/g, '').slice(-10);
+    if (cleanPhone.length !== 10) {
+      setError('Please enter a valid 10-digit Indian mobile number.');
+      return;
+    }
+
+    const cleanEmail = email.trim().toLowerCase();
+    if (cleanEmail && !cleanEmail.includes('@')) {
+      setError('Please enter a valid email address, or leave it blank.');
       return;
     }
 
     setLoading(true);
-    setError(null);
 
-    // Pre-check database for existing email before sending EmailJS OTP
-    try {
-      const baseUrl = API_BASE;
-      const targetUrl = `${baseUrl.replace(/\/$/, '')}/auth/check-email`;
-
-      const checkRes = await fetch(targetUrl, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: cleanEmail }),
-      });
-
-      if (checkRes.ok) {
-        const checkData = await checkRes.json();
-        if (checkData?.data?.exists) {
-          setLoading(false);
-          setError(`⚠️ Email address "${cleanEmail}" is ALREADY registered! Please Sign In instead.`);
-          return;
+    // If email is provided, pre-check if email is already taken by another account
+    if (cleanEmail) {
+      try {
+        const checkRes = await fetch(`${API_BASE.replace(/\/$/, '')}/auth/check-email`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: cleanEmail }),
+        });
+        if (checkRes.ok) {
+          const checkData = await checkRes.json();
+          if (checkData?.data?.exists) {
+            setLoading(false);
+            setError(`⚠️ Email address "${cleanEmail}" is already registered. Please use another email or Sign In.`);
+            return;
+          }
         }
+      } catch {
+        // Continue if server check endpoint unreachable
       }
-    } catch {
-      // Continue if server check endpoint unreachable
     }
 
-    // Generate 6-digit Email OTP
-    const generatedOtp = Math.floor(100000 + Math.random() * 900000).toString();
-    setActiveOtp(generatedOtp);
-
-    // Send Email OTP via EmailJS
-    try {
-      await sendEmailOtpCode(cleanEmail, generatedOtp, fullName.trim() || 'User');
-    } catch (emailErr) {
-      console.error('Email OTP dispatch error:', emailErr);
-    }
-
+    // Send Mobile SMS OTP via Firebase
+    const otpRes = await sendOtp(cleanPhone);
     setLoading(false);
+
+    if (otpRes.error) {
+      setError(`❌ ${otpRes.error}`);
+      return;
+    }
+
     setStep('otp');
+    setDigits(Array(OTP_LENGTH).fill(''));
     startCountdown();
-    setTimeout(() => inputRefs.current[0]?.focus(), 100);
+    setTimeout(() => inputRefs.current[0]?.focus(), 150);
   };
 
   /* ── OTP Handlers ── */
@@ -143,7 +154,7 @@ export default function Register() {
     inputRefs.current[Math.min(pasted.length, OTP_LENGTH - 1)]?.focus();
   };
 
-  /* ── STEP 2: Verify Email OTP & Complete Signup ── */
+  /* ── STEP 2: Verify Mobile OTP & Complete Signup ── */
   const handleVerifyOtpAndSignup = async (e: React.FormEvent) => {
     e.preventDefault();
     const enteredOtp = digits.join('');
@@ -155,30 +166,28 @@ export default function Register() {
     setLoading(true);
     setError(null);
 
-    // Verify against generated Email OTP or universal fallback codes
-    const isUniversalDemoOtp = ['676767', '123456', '000000'].includes(enteredOtp);
-    if (activeOtp && enteredOtp !== activeOtp && !isUniversalDemoOtp) {
-      setLoading(false);
-      setError('Invalid OTP code. Please check your email inbox or click Auto-Fill Code above.');
-      return;
-    }
-
-    // Register User Account
+    const cleanPhone = phone.replace(/\D/g, '').slice(-10);
     const cleanEmail = email.trim().toLowerCase();
-    const cleanedPhone = phone.replace(/\D/g, '');
-    const signUpRes = await signUp(cleanEmail, password, fullName.trim(), cleanedPhone);
 
-    if (signUpRes.error) {
+    // Verify OTP with Firebase and register profile in MongoDB
+    const verifyRes = await verifyOtp(cleanPhone, enteredOtp, {
+      fullName: fullName.trim(),
+      email: cleanEmail || undefined,
+    });
+
+    if (verifyRes.error) {
       setLoading(false);
-      setError(signUpRes.error);
+      setError(verifyRes.error);
       return;
     }
 
-    // Send Welcome Email via EmailJS
-    try {
-      await sendWelcomeEmail(cleanEmail, fullName.trim() || 'User');
-    } catch (welcomeErr) {
-      console.error('Welcome email dispatch notice:', welcomeErr);
+    // Send Welcome Email if email was provided for record
+    if (cleanEmail) {
+      try {
+        await sendWelcomeEmail(cleanEmail, fullName.trim() || 'User');
+      } catch (welcomeErr) {
+        console.error('Welcome email notice:', welcomeErr);
+      }
     }
 
     setLoading(false);
@@ -191,20 +200,22 @@ export default function Register() {
     }, 1500);
   };
 
-  /* ── Resend Email OTP Handler ── */
+  /* ── Resend Mobile SMS OTP Handler ── */
   const handleResendOtp = async () => {
     if (countdown > 0) return;
+    const cleanPhone = phone.replace(/\D/g, '').slice(-10);
     setDigits(Array(OTP_LENGTH).fill(''));
     setError(null);
     setLoading(true);
 
-    const generatedOtp = Math.floor(100000 + Math.random() * 900000).toString();
-    setActiveOtp(generatedOtp);
-
-    const cleanEmail = email.trim().toLowerCase();
-    await sendEmailOtpCode(cleanEmail, generatedOtp, fullName.trim() || 'User');
-
+    const res = await sendOtp(cleanPhone);
     setLoading(false);
+
+    if (res.error) {
+      setError(`❌ ${res.error}`);
+      return;
+    }
+
     startCountdown();
     setTimeout(() => inputRefs.current[0]?.focus(), 100);
   };
@@ -219,13 +230,13 @@ export default function Register() {
           </Link>
           <h1 className="mt-5 font-display text-3xl font-extrabold text-ink-900">
             {step === 'form' && 'Create Your Fundu Account'}
-            {step === 'otp' && 'Verify Your Email'}
+            {step === 'otp' && 'Verify Mobile Number'}
             {step === 'success' && 'Account Activated! 🎉'}
           </h1>
           <p className="mt-2 text-sm text-ink-500">
-            {step === 'form' && 'Enter your details below to register with Email OTP verification.'}
-            {step === 'otp' && `Enter the 6-digit OTP code sent to ${email}`}
-            {step === 'success' && 'Your email verification and account registration are complete!'}
+            {step === 'form' && 'Enter your details below to register with Instant Mobile OTP.'}
+            {step === 'otp' && `Enter the 6-digit OTP code sent via SMS to +91 ${phone.replace(/\D/g, '').slice(-10)}`}
+            {step === 'success' && 'Your mobile verification and account registration are complete!'}
           </p>
         </div>
 
@@ -240,7 +251,9 @@ export default function Register() {
         {step === 'form' && (
           <form onSubmit={handleInitialSubmit} className="mt-8 card p-6 md:p-8 space-y-4">
             <div>
-              <label className="label">Full Name</label>
+              <label className="label">
+                Full Name <span className="text-red-500 font-bold">*</span>
+              </label>
               <div className="flex rounded-xl border border-ink-200 overflow-hidden focus-within:border-brand-500 focus-within:ring-4 focus-within:ring-brand-500/10 bg-white">
                 <div className="flex items-center border-r border-ink-200 bg-ink-50 px-3.5 py-3 text-ink-500">
                   <UserIcon className="h-4 w-4 text-brand-500" />
@@ -257,32 +270,19 @@ export default function Register() {
             </div>
 
             <div>
-              <label className="label">Email Address (For OTP Verification)</label>
+              <label className="label">
+                Mobile Number <span className="text-red-500 font-bold">*</span> (Mandatory for OTP verification)
+              </label>
               <div className="flex rounded-xl border border-ink-200 overflow-hidden focus-within:border-brand-500 focus-within:ring-4 focus-within:ring-brand-500/10 bg-white">
-                <div className="flex items-center border-r border-ink-200 bg-ink-50 px-3.5 py-3 text-ink-500">
-                  <Mail className="h-4 w-4 text-brand-500" />
-                </div>
-                <input
-                  type="email"
-                  required
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="user@gmail.com"
-                  className="flex-1 bg-white px-3.5 py-3 text-ink-900 outline-none text-sm font-medium"
-                />
-              </div>
-            </div>
-
-            <div>
-              <label className="label">Mobile Number (Optional)</label>
-              <div className="flex rounded-xl border border-ink-200 overflow-hidden focus-within:border-brand-500 focus-within:ring-4 focus-within:ring-brand-500/10 bg-white">
-                <div className="flex items-center border-r border-ink-200 bg-ink-50 px-3.5 py-3 text-ink-500">
-                  <Phone className="h-4 w-4 text-brand-500" />
+                <div className="flex items-center border-r border-ink-200 bg-ink-50 px-3 py-3 text-ink-700 font-bold text-xs">
+                  <Phone className="h-4 w-4 text-brand-500 mr-1.5" /> +91
                 </div>
                 <input
                   type="tel"
+                  required
+                  maxLength={10}
                   value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
+                  onChange={(e) => setPhone(e.target.value.replace(/\D/g, '').slice(0, 10))}
                   placeholder="9876543210"
                   className="flex-1 bg-white px-3.5 py-3 text-ink-900 outline-none text-sm font-medium"
                 />
@@ -290,17 +290,39 @@ export default function Register() {
             </div>
 
             <div>
-              <label className="label">Account Password</label>
+              <label className="label">
+                Email Address <span className="text-ink-400 font-normal">(Optional — kept for record & invoices)</span>
+              </label>
+              <div className="flex rounded-xl border border-ink-200 overflow-hidden focus-within:border-brand-500 focus-within:ring-4 focus-within:ring-brand-500/10 bg-white">
+                <div className="flex items-center border-r border-ink-200 bg-ink-50 px-3.5 py-3 text-ink-500">
+                  <Mail className="h-4 w-4 text-brand-500" />
+                </div>
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="your.email@example.com (optional)"
+                  className="flex-1 bg-white px-3.5 py-3 text-ink-900 outline-none text-sm font-medium"
+                />
+              </div>
+              <p className="text-[11px] text-ink-400 mt-1 pl-1">
+                OTP will NOT be sent to email. Email is saved strictly for receipts and order tracking.
+              </p>
+            </div>
+
+            <div>
+              <label className="label">
+                Account Password <span className="text-ink-400 font-normal">(Optional — for password login)</span>
+              </label>
               <div className="flex rounded-xl border border-ink-200 overflow-hidden focus-within:border-brand-500 focus-within:ring-4 focus-within:ring-brand-500/10 bg-white">
                 <div className="flex items-center border-r border-ink-200 bg-ink-50 px-3.5 py-3 text-ink-500">
                   <Lock className="h-4 w-4 text-brand-500" />
                 </div>
                 <input
                   type="password"
-                  required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  placeholder="••••••••"
+                  placeholder="Create a password (optional)"
                   className="flex-1 bg-white px-3.5 py-3 text-ink-900 outline-none text-sm font-medium"
                 />
               </div>
@@ -308,10 +330,10 @@ export default function Register() {
 
             <button
               type="submit"
-              disabled={loading || !email.trim() || password.length < 6}
+              disabled={loading || !fullName.trim() || phone.replace(/\D/g, '').length !== 10}
               className="btn-primary w-full mt-2 font-bold py-3"
             >
-              {loading ? 'Sending Email OTP…' : 'Register & Get Email OTP'} <ArrowRight className="h-4 w-4 ml-1" />
+              {loading ? 'Sending SMS OTP…' : 'Register & Send Mobile OTP'} <ArrowRight className="h-4 w-4 ml-1" />
             </button>
 
             <p className="text-center text-xs text-ink-500 pt-2">
@@ -323,21 +345,21 @@ export default function Register() {
           </form>
         )}
 
-        {/* ── STEP 2: Email OTP Input ── */}
+        {/* ── STEP 2: Mobile OTP Input ── */}
         {step === 'otp' && (
           <form onSubmit={handleVerifyOtpAndSignup} className="mt-8 card p-6 md:p-8 space-y-5">
             <div className="p-4 rounded-2xl bg-[#F0F0F5] border border-[#C0C8D8] text-[#344257] text-xs space-y-1.5">
               <div className="flex items-center justify-between font-bold">
                 <span className="flex items-center gap-1.5 text-[#1E2734]">
-                  <Mail className="h-4 w-4 text-[#47576E]" /> Email OTP Verification Code
+                  <Smartphone className="h-4 w-4 text-[#47576E]" /> Mobile SMS Verification
                 </span>
               </div>
               <p>
-                We have sent a 6-digit verification code to <strong>{email}</strong>. Please check your email inbox or spam folder.
+                We have dispatched a 6-digit SMS verification code to <strong>+91 {phone.replace(/\D/g, '').slice(-10)}</strong>.
               </p>
             </div>
 
-            <label className="label text-center block font-bold">Enter 6-Digit Email Verification Code</label>
+            <label className="label text-center block font-bold">Enter 6-Digit Mobile Verification Code</label>
 
             {/* 6-box OTP input */}
             <div className="flex justify-center gap-2.5" onPaste={handlePaste}>
@@ -367,12 +389,12 @@ export default function Register() {
               disabled={loading || digits.join('').length !== OTP_LENGTH}
               className="btn-primary w-full font-bold py-3"
             >
-              {loading ? 'Verifying & Creating Account…' : 'Verify Email OTP & Create Account'} <ArrowRight className="h-4 w-4 ml-1" />
+              {loading ? 'Verifying & Creating Account…' : 'Verify Mobile OTP & Complete Registration'} <ArrowRight className="h-4 w-4 ml-1" />
             </button>
 
             <div className="text-center text-xs text-ink-500 pt-1">
               {countdown > 0 ? (
-                <span>Resend Email OTP in <strong className="text-ink-700">{countdown}s</strong></span>
+                <span>Resend SMS OTP in <strong className="text-ink-700">{countdown}s</strong></span>
               ) : (
                 <button
                   type="button"
@@ -380,9 +402,22 @@ export default function Register() {
                   disabled={loading}
                   className="inline-flex items-center gap-1.5 font-bold text-[#344257] hover:underline"
                 >
-                  <RefreshCw className="h-3.5 w-3.5" /> Resend Email OTP
+                  <RefreshCw className="h-3.5 w-3.5" /> Resend Mobile OTP
                 </button>
               )}
+            </div>
+
+            <div className="text-center pt-2 border-t border-ink-100">
+              <button
+                type="button"
+                onClick={() => {
+                  setStep('form');
+                  setError(null);
+                }}
+                className="text-xs text-ink-500 hover:text-ink-800 underline"
+              >
+                ← Edit mobile number or details
+              </button>
             </div>
           </form>
         )}
@@ -401,12 +436,18 @@ export default function Register() {
 
             <div className="p-4 rounded-2xl bg-emerald-50 border border-emerald-200 text-xs text-emerald-950 text-left space-y-2">
               <p className="flex items-center gap-2 font-bold">
-                <Mail className="h-4 w-4 text-[#47576E] shrink-0" />
-                Email Address ({email}) Verified
+                <Smartphone className="h-4 w-4 text-[#47576E] shrink-0" />
+                Mobile Number (+91 {phone.replace(/\D/g, '').slice(-10)}) Verified
               </p>
-              <p className="text-slate-600 text-[11px] pt-1 border-t border-emerald-200/60">
-                A welcome email has been sent to your inbox via EmailJS.
-              </p>
+              {email ? (
+                <p className="text-slate-600 text-[11px] pt-1 border-t border-emerald-200/60">
+                  Email <strong>{email}</strong> recorded for your receipts and order updates.
+                </p>
+              ) : (
+                <p className="text-slate-600 text-[11px] pt-1 border-t border-emerald-200/60">
+                  Account verified strictly via Mobile SMS OTP.
+                </p>
+              )}
             </div>
 
             <p className="text-xs font-extrabold text-brand-600 animate-pulse text-center">

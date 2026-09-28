@@ -263,7 +263,7 @@ type AuthApi = {
   /** Verify OTP and log in (auto-creates account if new user). */
   verifyOtp: (phone: string, otp: string) => AuthResponse<{ session: Session; user: User; isNewUser: boolean }>;
   /** Verify Firebase-authenticated phone and issue backend session */
-  verifyFirebaseSession: (phone: string, fullName?: string) => AuthResponse<{ session: Session; user: User; isNewUser: boolean }>;
+  verifyFirebaseSession: (phone: string, fullName?: string, email?: string) => AuthResponse<{ session: Session; user: User; isNewUser: boolean }>;
 };
 
 export const auth: AuthApi = {
@@ -387,12 +387,12 @@ export const auth: AuthApi = {
     };
   },
 
-  async verifyFirebaseSession(phone, fullName) {
+  async verifyFirebaseSession(phone, fullName, email) {
     const response = await apiRequest<{ session: Session; profile: unknown; isNewUser: boolean }>(
       '/auth/otp/verify-firebase',
       {
         method: 'POST',
-        body: JSON.stringify({ phone, fullName }),
+        body: JSON.stringify({ phone, fullName, email }),
       },
       false,
     );
