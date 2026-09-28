@@ -566,7 +566,7 @@ const HARDWARE_DEFECTS = [
 ];
 
 const FAQS_LIST = [
-  { q: 'Why is IMEI number required for selling phone on Fundu?', a: 'IMEI (International Mobile Equipment Identity) is required to legally verify device ownership, check blacklist records, and ensure seamless spot cash/UPI payout at your doorstep in Lucknow.' },
+  { q: 'Is entering the IMEI number required while booking online?', a: 'No, entering your IMEI number online is completely optional! If you prefer, our executive will simply verify it at your doorstep during pickup.' },
   { q: 'How do I check my phone IMEI number?', a: 'Simply open your phone dialer app and type *#06#. A 15-digit IMEI number will appear instantly on screen.' },
   { q: 'When do I get paid for my old phone?', a: 'Payout is instant! Our Lucknow pickup executive inspects your device at your doorstep and transfers cash or UPI directly into your account on spot before taking the phone.' },
   { q: 'Is doorstep pickup 100% free across all Lucknow localities?', a: 'Yes! Pickup is 100% FREE with zero hidden charges across all Lucknow areas including Gomti Nagar, Hazratganj, Indira Nagar, Aliganj, Mahanagar, Ashiyana, Chowk, Rajajipuram, and Jankipuram.' },
@@ -1039,8 +1039,8 @@ export default function SellPhone() {
 
   const handleStep3Continue = () => {
     setStep3Error(null);
-    if (!isImeiValid) {
-      setStep3Error('15-Digit IMEI Number is mandatory! Please enter a valid 15-digit numeric IMEI (Dial *#06# on dialer).');
+    if (form.imei && form.imei.replace(/\D/g, '').length !== 15) {
+      setStep3Error('Please enter a valid 15-digit IMEI number, or leave it blank to verify during doorstep pickup.');
       return;
     }
     if (!hasDevicePhotos) {
@@ -1131,7 +1131,7 @@ export default function SellPhone() {
       <span>
         {parts.map((part, i) =>
           part.toLowerCase() === query.toLowerCase() ? (
-            <mark key={i} className="bg-teal-100 text-[#00a896] font-black px-0.5 rounded">
+            <mark key={i} className="bg-[#C0C8D8]/50 text-[#344257] font-black px-0.5 rounded">
               {part}
             </mark>
           ) : (
@@ -1145,45 +1145,45 @@ export default function SellPhone() {
   // SUCCESS CONFIRMATION SCREEN
   if (successData) {
     return (
-      <div className="min-h-screen bg-[#f4f7f8] py-12 px-4 flex items-center justify-center">
+      <div className="min-h-screen bg-[#F7F7FA] py-12 px-4 flex items-center justify-center text-[#344257]">
         <div className="max-w-md w-full card p-8 rounded-[32px] text-center bg-white border border-gray-200 shadow-2xl animate-fade-in space-y-6">
-          <div className="mx-auto grid h-16 w-16 place-items-center rounded-full bg-emerald-100 text-[#00a896] shadow-md">
+          <div className="mx-auto grid h-16 w-16 place-items-center rounded-full bg-emerald-100 text-emerald-800 shadow-md">
             <CheckCircle2 className="h-10 w-10" />
           </div>
 
           <div>
-            <span className="badge bg-emerald-50 text-emerald-800 text-xs font-bold">Booking Confirmed</span>
-            <h2 className="mt-2 font-display text-2xl font-black text-gray-900">Doorstep Pickup Scheduled!</h2>
+            <span className="badge bg-emerald-50 text-emerald-800 border border-emerald-200 text-xs font-bold">Booking Confirmed</span>
+            <h2 className="mt-2 font-display text-2xl font-black text-[#344257]">Doorstep Pickup Scheduled!</h2>
             <p className="mt-1 text-xs text-gray-500">
-              Tracking ID: <span className="font-mono font-bold text-gray-900">{successData.id}</span>
+              Tracking ID: <span className="font-mono font-bold text-[#344257]">{successData.id}</span>
             </p>
           </div>
 
-          <div className="rounded-2xl bg-teal-50/80 p-5 text-left border border-teal-200/80 space-y-2 text-xs">
-            <div className="flex justify-between border-b border-teal-200/60 pb-2">
+          <div className="rounded-2xl bg-[#F0F0F5] p-5 text-left border border-[#C0C8D8] space-y-2 text-xs">
+            <div className="flex justify-between border-b border-[#C0C8D8]/60 pb-2">
               <span className="text-gray-500 font-medium">Device:</span>
-              <span className="font-bold text-gray-900">{form.brand} {form.model} ({form.storage})</span>
+              <span className="font-bold text-[#344257]">{form.brand} {form.model} ({form.storage})</span>
             </div>
-            <div className="flex justify-between border-b border-teal-200/60 pb-2">
+            <div className="flex justify-between border-b border-[#C0C8D8]/60 pb-2">
               <span className="text-gray-500 font-medium">Spot Payout:</span>
-              <span className="font-black text-[#00a896] text-sm">{formatINR(estimate)}</span>
+              <span className="font-black text-[#344257] text-sm">{formatINR(estimate)}</span>
             </div>
-            <div className="flex justify-between border-b border-teal-200/60 pb-2">
+            <div className="flex justify-between border-b border-[#C0C8D8]/60 pb-2">
               <span className="text-gray-500 font-medium">Pickup Rider:</span>
-              <span className="font-bold text-gray-900">{successData.pickup_person_name}</span>
+              <span className="font-bold text-[#344257]">{successData.pickup_person_name}</span>
             </div>
-            <div className="flex justify-between border-b border-teal-200/60 pb-2">
+            <div className="flex justify-between border-b border-[#C0C8D8]/60 pb-2">
               <span className="text-gray-500 font-medium">Helpline Hotline:</span>
-              <span className="font-bold text-gray-900">{successData.pickup_person_phone}</span>
+              <span className="font-bold text-[#344257]">{successData.pickup_person_phone}</span>
             </div>
             <div className="flex justify-between">
               <span className="text-gray-500 font-medium">Arrival Slot:</span>
-              <span className="font-bold text-gray-900">{successData.estimated_arrival_time}</span>
+              <span className="font-bold text-[#344257]">{successData.estimated_arrival_time}</span>
             </div>
           </div>
 
           <div className="flex justify-center gap-3">
-            <button onClick={() => navigate('/dashboard')} className="btn-primary bg-[#00a896] hover:bg-[#008f80]">
+            <button onClick={() => navigate('/dashboard')} className="btn-primary">
               View Order Tracking
             </button>
             <button
@@ -1204,17 +1204,17 @@ export default function SellPhone() {
   }
 
   return (
-    <div className="min-h-screen bg-[#f4f7f8] pb-24">
+    <div className="min-h-screen bg-[#F7F7FA] pb-24 text-[#344257]">
       {/* Top Breadcrumb Navigation */}
       <div className="bg-white border-b border-gray-100 py-2.5 px-4 text-xs font-semibold text-gray-500">
         <div className="max-w-7xl mx-auto flex items-center gap-1.5 flex-wrap">
-          <Link to="/" className="hover:text-[#00a896] transition">Home</Link>
+          <Link to="/" className="hover:text-[#344257] transition">Home</Link>
           <span>&gt;</span>
-          <Link to="/sell" className="hover:text-[#00a896] transition">Sell</Link>
+          <Link to="/sell" className="hover:text-[#344257] transition">Sell</Link>
           {form.brand && (
             <>
               <span>&gt;</span>
-              <Link to={`/sell/${form.brand.toLowerCase()}`} className="hover:text-[#00a896] transition">
+              <Link to={`/sell/${form.brand.toLowerCase()}`} className="hover:text-[#344257] transition">
                 {form.brand}
               </Link>
             </>
@@ -1222,7 +1222,7 @@ export default function SellPhone() {
           {form.model && (
             <>
               <span>&gt;</span>
-              <span className="text-[#00a896] font-extrabold">{form.model}</span>
+              <span className="text-[#344257] font-extrabold">{form.model}</span>
             </>
           )}
         </div>
@@ -1231,12 +1231,12 @@ export default function SellPhone() {
       {/* Cashify Exact Hero Banner with Prominent Debounced Search (Hidden on Model Evaluation Page) */}
       {!modelSlug && !form.model && step === 1 && (
         <section className="py-6 px-4">
-        <div className="max-w-7xl mx-auto rounded-3xl bg-[#f8fafb] border border-gray-200/80 p-6 md:p-10 flex flex-col md:flex-row items-center justify-between gap-8 relative shadow-xs">
+        <div className="max-w-7xl mx-auto rounded-3xl bg-[#F0F0F5] border border-[#C0C8D8] p-6 md:p-10 flex flex-col md:flex-row items-center justify-between gap-8 relative shadow-xs">
           <div className="flex-1 space-y-4 max-w-xl">
-            <div className="inline-flex items-center gap-1.5 rounded-full bg-teal-50 px-3 py-1 text-xs font-bold text-[#00a896] border border-teal-200">
-              <Zap className="h-3.5 w-3.5" /> Instant Spot Cash · Doorstep Pickup Across Lucknow
+            <div className="inline-flex items-center gap-1.5 rounded-full bg-white px-3 py-1 text-xs font-bold text-[#344257] border border-[#C0C8D8]">
+              <Zap className="h-3.5 w-3.5 text-amber-500" /> Instant Spot Cash · Doorstep Pickup Across Lucknow
             </div>
-            <h1 className="font-display text-3xl md:text-4xl font-extrabold text-gray-900 leading-tight">
+            <h1 className="font-display text-3xl md:text-4xl font-extrabold text-[#344257] leading-tight">
               {form.brand ? `Sell Old ${form.brand} Mobile Phone Online At Best Price` : 'Sell Old Mobile Phone for Instant Cash'}
             </h1>
             <p className="text-xs md:text-sm text-gray-600">
@@ -1244,15 +1244,15 @@ export default function SellPhone() {
             </p>
 
             {/* Checkmark Feature Pills */}
-            <div className="flex flex-wrap items-center gap-3 text-xs font-bold text-gray-700">
-              <span className="flex items-center gap-1 text-[#00a896]">
-                <Check className="h-4 w-4 text-[#00a896]" /> Maximum Value
+            <div className="flex flex-wrap items-center gap-3 text-xs font-bold text-[#344257]">
+              <span className="flex items-center gap-1 text-[#344257]">
+                <Check className="h-4 w-4 text-[#344257]" /> Maximum Value
               </span>
-              <span className="flex items-center gap-1 text-[#00a896]">
-                <Check className="h-4 w-4 text-[#00a896]" /> Safe & Hassle-free
+              <span className="flex items-center gap-1 text-[#344257]">
+                <Check className="h-4 w-4 text-[#344257]" /> Safe & Hassle-free
               </span>
-              <span className="flex items-center gap-1 text-[#00a896]">
-                <Check className="h-4 w-4 text-[#00a896]" /> Free Doorstep Pickup
+              <span className="flex items-center gap-1 text-[#344257]">
+                <Check className="h-4 w-4 text-[#344257]" /> Free Doorstep Pickup
               </span>
             </div>
 
@@ -1267,10 +1267,10 @@ export default function SellPhone() {
                   onChange={(e) => setRawSearchQuery(e.target.value)}
                   onKeyDown={handleKeyDown}
                   placeholder="Search any mobile phone (e.g. iPhone 13, Galaxy S23, OnePlus 11)..."
-                  className="w-full pl-12 pr-10 py-3.5 rounded-2xl bg-white border border-gray-300 text-sm font-medium shadow-sm focus:border-[#00a896] focus:ring-4 focus:ring-[#00a896]/10 outline-none transition"
+                  className="w-full pl-12 pr-10 py-3.5 rounded-2xl bg-white border border-[#C0C8D8] text-sm font-medium shadow-sm focus:border-[#6A859F] focus:ring-4 focus:ring-[#6A859F]/15 outline-none transition text-[#344257] placeholder:text-gray-400"
                 />
                 {isSearching && (
-                  <RefreshCw className="absolute right-4 top-1/2 -translate-y-1/2 h-4 w-4 text-[#00a896] animate-spin" />
+                  <RefreshCw className="absolute right-4 top-1/2 -translate-y-1/2 h-4 w-4 text-[#6A859F] animate-spin" />
                 )}
               </div>
 
@@ -1295,7 +1295,7 @@ export default function SellPhone() {
                             setRawSearchQuery('');
                           }}
                           className={`w-full flex items-center justify-between p-3 transition border-b border-gray-50 text-left cursor-pointer ${
-                            focusedSearchIndex === idx ? 'bg-teal-50/90 border-l-4 border-l-[#00a896]' : 'hover:bg-teal-50/50'
+                            focusedSearchIndex === idx ? 'bg-[#F0F0F5] border-l-4 border-l-[#344257]' : 'hover:bg-[#F7F7FA]'
                           }`}
                         >
                           <div className="flex items-center gap-3">
@@ -1307,7 +1307,7 @@ export default function SellPhone() {
                               <p className="text-xs text-gray-500">{item.storage}</p>
                             </div>
                           </div>
-                          <span className="badge bg-emerald-50 text-emerald-800 font-extrabold text-xs">
+                          <span className="badge bg-emerald-50 text-emerald-800 border border-emerald-200 font-extrabold text-xs">
                             Up to {formatINR(item.price)}
                           </span>
                         </button>
@@ -1315,7 +1315,7 @@ export default function SellPhone() {
                     </>
                   ) : isSearchingApi ? (
                     <div className="p-6 text-center space-y-2">
-                      <RefreshCw className="h-6 w-6 text-[#00a896] animate-spin mx-auto" />
+                      <RefreshCw className="h-6 w-6 text-[#6A859F] animate-spin mx-auto" />
                       <p className="font-bold text-sm text-gray-900">Searching MobileAPI live catalog for "{rawSearchQuery}"...</p>
                     </div>
                   ) : (
@@ -1323,7 +1323,7 @@ export default function SellPhone() {
                       <AlertCircle className="h-6 w-6 text-rose-500 mx-auto" />
                       <p className="font-bold text-sm text-gray-900">No models found for "{rawSearchQuery}"</p>
                       <p className="text-xs text-gray-500">
-                        Try searching for popular brands like <span className="font-bold text-[#00a896]">Apple, Samsung, OnePlus</span> or call our helpline <span className="font-bold text-gray-800">+91-9839122345</span>.
+                        Try searching for popular brands like <span className="font-bold text-[#344257]">Apple, Samsung, OnePlus</span> or call our helpline <span className="font-bold text-gray-800">+91-9839122345</span>.
                       </p>
                     </div>
                   )}
@@ -1346,8 +1346,8 @@ export default function SellPhone() {
                     onClick={() => handleBrandSelect(b.name)}
                     className={`px-3.5 py-1.5 rounded-xl border text-xs font-bold transition flex items-center gap-1.5 ${
                       form.brand === b.name
-                        ? 'border-[#00a896] bg-teal-50 text-[#00a896] ring-2 ring-[#00a896]/20'
-                        : 'border-gray-200 bg-white text-gray-800 hover:border-[#00a896] hover:bg-teal-50/30'
+                        ? 'border-[#344257] bg-[#F0F0F5] text-[#344257] ring-2 ring-[#344257]/20'
+                        : 'border-gray-200 bg-white text-gray-800 hover:border-[#6A859F] hover:bg-[#F0F0F5]'
                     }`}
                   >
                     <img src={b.logo} alt="" className="h-4 w-4 object-contain rounded-full" />
@@ -1360,13 +1360,13 @@ export default function SellPhone() {
 
           {/* Hero Visual Graphic */}
           <div className="shrink-0 hidden md:block">
-            <div className="relative w-80 h-72 rounded-3xl overflow-hidden shadow-xl border border-teal-100/60 bg-gradient-to-br from-teal-50 to-emerald-50 p-1 flex items-center justify-center group">
+            <div className="relative w-80 h-72 rounded-3xl overflow-hidden shadow-xl border border-[#C0C8D8] bg-gradient-to-br from-[#F0F0F5] to-[#E4E7F0] p-1 flex items-center justify-center group">
               <img
                 src="/sell-hero-3d.jpg"
                 alt="Instant Mobile Cash Best Deals"
                 className="w-full h-full object-cover rounded-2xl group-hover:scale-105 transition-transform duration-500"
               />
-              <div className="absolute bottom-3 left-1/2 -translate-x-1/2 bg-white/95 backdrop-blur-md rounded-2xl shadow-xl px-4 py-2 border border-teal-100 flex items-center gap-2 whitespace-nowrap">
+              <div className="absolute bottom-3 left-1/2 -translate-x-1/2 bg-white/95 backdrop-blur-md rounded-2xl shadow-xl px-4 py-2 border border-[#C0C8D8] flex items-center gap-2 whitespace-nowrap">
                 <BadgeIndianRupee className="h-5 w-5 text-emerald-600" />
                 <span className="font-extrabold text-xs text-gray-900">Spot Cash at Doorstep</span>
               </div>
@@ -1392,18 +1392,18 @@ export default function SellPhone() {
                 onClick={() => step > s && setStep(s)}
                 className={`flex items-center gap-1.5 sm:gap-2 rounded-full px-3.5 py-1.5 text-xs font-bold transition-all duration-200 ${
                   step === s
-                    ? 'bg-[#00a896] text-white shadow-sm'
+                    ? 'bg-gradient-to-r from-[#344257] to-[#47576E] text-white shadow-md'
                     : step > s
-                    ? 'bg-emerald-100 text-emerald-800 hover:bg-emerald-200 cursor-pointer'
-                    : 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                    ? 'bg-[#F0F0F5] text-[#344257] hover:bg-[#E4E7F0] border border-[#C0C8D8] cursor-pointer'
+                    : 'bg-[#F7F7FA] text-gray-400 cursor-not-allowed border border-transparent'
                 }`}
               >
-                <span className="grid h-5 w-5 place-items-center rounded-full bg-white/25 text-xs font-black">
-                  {step > s ? <Check className="h-3.5 w-3.5" /> : s}
+                <span className={`grid h-5 w-5 place-items-center rounded-full text-xs font-black ${step === s ? 'bg-white/20 text-white' : step > s ? 'bg-[#344257] text-white' : 'bg-gray-200 text-gray-500'}`}>
+                  {step > s ? <Check className="h-3 w-3" /> : s}
                 </span>
                 <span className="whitespace-nowrap font-extrabold">{label}</span>
               </button>
-              {s < 5 && <div className={`h-0.5 w-2 sm:w-5 rounded-full ${step > s ? 'bg-[#00a896]' : 'bg-gray-200'}`} />}
+              {s < 5 && <div className={`h-0.5 w-2 sm:w-5 rounded-full ${step > s ? 'bg-[#344257]' : 'bg-gray-200'}`} />}
             </div>
           ))}
         </div>
@@ -1419,8 +1419,8 @@ export default function SellPhone() {
               <div className="card p-6 md:p-8 rounded-[28px] bg-white border border-gray-200 shadow-sm">
                 <div className="flex items-center justify-between border-b border-gray-100 pb-4">
                   <div>
-                    <h2 className="font-display text-xl font-extrabold text-gray-900 flex items-center gap-2">
-                      <Smartphone className="h-5 w-5 text-[#00a896]" /> Select Phone Brand
+                    <h2 className="font-display text-xl font-extrabold text-[#344257] flex items-center gap-2">
+                      <Smartphone className="h-5 w-5 text-[#6A859F]" /> Select Phone Brand
                     </h2>
                     <p className="mt-0.5 text-xs text-gray-500">Pick your phone manufacturer to view all models</p>
                   </div>
@@ -1432,12 +1432,12 @@ export default function SellPhone() {
                       key={item.name}
                       type="button"
                       onClick={() => handleBrandSelect(item.name)}
-                      className="group relative flex flex-col items-center justify-center p-5 rounded-2xl border border-gray-200/90 bg-white hover:border-[#00a896] hover:bg-teal-50/40 hover:shadow-xl transition-all duration-300 active:scale-95 cursor-pointer"
+                      className="group relative flex flex-col items-center justify-center p-5 rounded-2xl border border-gray-200/90 bg-white hover:border-[#6A859F] hover:bg-[#F0F0F5] hover:shadow-xl transition-all duration-300 active:scale-95 cursor-pointer"
                     >
                       <div className="h-12 w-12 flex items-center justify-center rounded-xl p-2 bg-gray-50 group-hover:bg-white transition-all">
                         <img src={getCleanBrandLogo(item.name)} alt={item.name} className="h-full w-full object-contain group-hover:scale-110 transition-transform" />
                       </div>
-                      <span className="mt-2.5 text-sm font-extrabold text-gray-900 group-hover:text-[#00a896] transition-colors">{item.name}</span>
+                      <span className="mt-2.5 text-sm font-extrabold text-gray-900 group-hover:text-[#344257] transition-colors">{item.name}</span>
                       <span className="text-[10px] text-gray-400 font-semibold">{item.count}</span>
                     </button>
                   ))}
@@ -1447,17 +1447,17 @@ export default function SellPhone() {
 
             {/* DEDICATED BRAND PAGE VIEW (Renders at top when Brand is selected or URL is /sell/{brand}) */}
             {form.brand && (
-              <div className="card p-6 md:p-8 rounded-[28px] space-y-6 border border-teal-300 bg-white shadow-xl animate-fade-in">
+              <div className="card p-6 md:p-8 rounded-[28px] space-y-6 border border-[#C0C8D8] bg-white shadow-xl animate-fade-in">
                 <div className="flex flex-wrap items-center justify-between gap-3 border-b border-gray-100 pb-4">
                   <div className="flex items-center gap-3">
-                    <div className="h-10 w-10 rounded-xl bg-teal-50 border border-teal-200 grid place-items-center font-black text-[#00a896] text-base shadow-xs">
+                    <div className="h-10 w-10 rounded-xl bg-[#F0F0F5] border border-[#C0C8D8] grid place-items-center font-black text-[#344257] text-base shadow-xs">
                       {form.brand[0]}
                     </div>
                     <div>
-                      <span className="badge bg-teal-100 text-teal-800 font-bold text-xs">
+                      <span className="badge bg-[#F0F0F5] text-[#344257] border border-[#C0C8D8] font-bold text-xs">
                         Selling Brand: {form.brand}
                       </span>
-                      <h2 className="mt-0.5 font-display text-xl font-black text-gray-900">
+                      <h2 className="mt-0.5 font-display text-xl font-black text-[#344257]">
                         Sell Old {form.brand} Mobile Phone Online At Best Price
                       </h2>
                     </div>
@@ -1465,7 +1465,7 @@ export default function SellPhone() {
                   <button
                     type="button"
                     onClick={() => { setForm((f) => ({ ...f, brand: '', model: '' })); navigate('/sell'); }}
-                    className="text-xs text-[#00a896] hover:underline font-bold bg-teal-50 px-3 py-1.5 rounded-xl border border-teal-200"
+                    className="text-xs text-[#344257] hover:underline font-bold bg-[#F0F0F5] px-3 py-1.5 rounded-xl border border-[#C0C8D8]"
                   >
                     ← All Brands
                   </button>
@@ -1482,8 +1482,8 @@ export default function SellPhone() {
                         onClick={() => setSelectedSeries(ser)}
                         className={`px-3.5 py-1.5 rounded-full text-xs font-bold transition shrink-0 ${
                           selectedSeries === ser
-                            ? 'bg-[#00a896] text-white shadow-xs'
-                            : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                            ? 'bg-[#344257] text-white shadow-xs'
+                            : 'bg-[#F0F0F5] text-[#47576E] hover:bg-[#E4E7F0]'
                         }`}
                       >
                         {ser}
@@ -1499,7 +1499,7 @@ export default function SellPhone() {
                   ).map((m) => (
                     <div
                       key={`${m.brand}-${m.model}`}
-                      className="p-4 rounded-2xl border border-gray-200 bg-white hover:border-[#00a896] hover:shadow-lg transition-all duration-300 space-y-3 cursor-pointer group"
+                      className="p-4 rounded-2xl border border-gray-200 bg-white hover:border-[#6A859F] hover:shadow-lg transition-all duration-300 space-y-3 cursor-pointer group"
                     >
                       <div className="flex items-center gap-3">
                         <div className="h-16 w-16 shrink-0 overflow-hidden rounded-xl bg-white p-1 border border-gray-100 flex items-center justify-center">
@@ -1516,8 +1516,8 @@ export default function SellPhone() {
                           />
                         </div>
                         <div>
-                          <p className="font-extrabold text-sm text-gray-900 group-hover:text-[#00a896] transition-colors">{m.model}</p>
-                          <span className="badge bg-emerald-50 text-emerald-800 font-extrabold text-[11px] mt-1">
+                          <p className="font-extrabold text-sm text-gray-900 group-hover:text-[#344257] transition-colors">{m.model}</p>
+                          <span className="badge bg-emerald-50 text-emerald-800 border border-emerald-200 font-extrabold text-[11px] mt-1">
                             Up to {formatINR(m.price)}
                           </span>
                         </div>
@@ -1534,8 +1534,8 @@ export default function SellPhone() {
                             }}
                             className={`px-2.5 py-1 rounded-lg text-xs font-bold transition ${
                               form.model === m.model && form.storage === stg
-                                ? 'bg-[#00a896] text-white shadow-xs'
-                                : 'bg-gray-100 text-gray-700 hover:bg-teal-100 hover:text-teal-800'
+                                ? 'bg-[#344257] text-white shadow-xs'
+                                : 'bg-[#F0F0F5] text-[#47576E] hover:bg-[#E4E7F0] hover:text-[#344257]'
                             }`}
                           >
                             {stg}
@@ -1548,7 +1548,7 @@ export default function SellPhone() {
                         onClick={() => {
                           handleQuickModelSelect({ brand: form.brand, model: m.model, storage: form.storage || '128 GB' });
                         }}
-                        className="btn-primary w-full text-xs py-2 bg-[#00a896] hover:bg-[#008f80] flex items-center justify-center gap-1 font-bold shadow-xs"
+                        className="btn-primary w-full text-xs py-2 flex items-center justify-center gap-1 font-bold shadow-xs"
                       >
                         Get Instant Price Quote <ArrowRight className="h-3.5 w-3.5" />
                       </button>
@@ -1562,8 +1562,8 @@ export default function SellPhone() {
             <div className="card p-6 md:p-8 rounded-[28px] bg-white border border-gray-200 shadow-sm space-y-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <h3 className="font-display text-lg font-bold text-gray-900 flex items-center gap-2">
-                    <Sparkles className="h-5 w-5 text-[#00a896]" /> Popular Mobiles Sold in Lucknow
+                  <h3 className="font-display text-lg font-bold text-[#344257] flex items-center gap-2">
+                    <Sparkles className="h-5 w-5 text-[#6A859F]" /> Popular Mobiles Sold in Lucknow
                   </h3>
                   <p className="mt-0.5 text-xs text-gray-500">Tap any model for instant cash quote</p>
                 </div>
@@ -1575,7 +1575,7 @@ export default function SellPhone() {
                     key={`${item.brand}-${item.model}`}
                     type="button"
                     onClick={() => handleQuickModelSelect(item)}
-                    className="p-3.5 rounded-2xl border border-gray-200 bg-white hover:border-[#00a896] hover:shadow-lg transition-all duration-300 flex flex-col items-center text-center cursor-pointer group"
+                    className="p-3.5 rounded-2xl border border-gray-200 bg-white hover:border-[#6A859F] hover:shadow-lg transition-all duration-300 flex flex-col items-center text-center cursor-pointer group"
                   >
                     <div className="h-20 w-full overflow-hidden rounded-xl p-1 bg-white flex items-center justify-center">
                       <img
@@ -1590,8 +1590,8 @@ export default function SellPhone() {
                         }}
                       />
                     </div>
-                    <p className="mt-2 text-xs font-extrabold text-gray-900 group-hover:text-[#00a896] transition-colors truncate w-full">{item.model}</p>
-                    <span className="mt-1 badge bg-emerald-50 text-emerald-800 font-extrabold text-[10px]">
+                    <p className="mt-2 text-xs font-extrabold text-gray-900 group-hover:text-[#344257] transition-colors truncate w-full">{item.model}</p>
+                    <span className="mt-1 badge bg-emerald-50 text-emerald-800 border border-emerald-200 font-extrabold text-[10px]">
                       Up to {formatINR(item.price)}
                     </span>
                   </button>
@@ -1602,8 +1602,8 @@ export default function SellPhone() {
             {/* How It Works (3 Steps) */}
             <div className="card p-8 rounded-[32px] bg-white border border-gray-200 space-y-6">
               <div className="text-center max-w-xl mx-auto space-y-1">
-                <span className="badge bg-teal-50 text-[#00a896] text-xs font-bold">Simple 3-Step Flow</span>
-                <h2 className="font-display text-2xl font-black text-gray-900">How Selling Works On Fundu</h2>
+                <span className="badge bg-[#F0F0F5] text-[#344257] border border-[#C0C8D8] text-xs font-bold">Simple 3-Step Flow</span>
+                <h2 className="font-display text-2xl font-black text-[#344257]">How Selling Works On Fundu</h2>
                 <p className="text-xs text-gray-500">Sell your mobile phone in under 2 minutes from home</p>
               </div>
 
@@ -1625,11 +1625,11 @@ export default function SellPhone() {
                     desc: 'Our rider inspects your phone at your doorstep and transfers spot cash or UPI instantly to your account!',
                   },
                 ].map((stepItem) => (
-                  <div key={stepItem.num} className="p-6 rounded-2xl bg-teal-50/50 border border-teal-100 flex flex-col items-center text-center space-y-3">
-                    <div className="grid h-12 w-12 place-items-center rounded-2xl bg-[#00a896] text-white font-display font-black text-xl shadow-md shadow-teal-500/20">
+                  <div key={stepItem.num} className="p-6 rounded-2xl bg-[#F7F7FA] border border-[#C0C8D8] flex flex-col items-center text-center space-y-3">
+                    <div className="grid h-12 w-12 place-items-center rounded-2xl bg-gradient-to-r from-[#344257] to-[#47576E] text-white font-display font-black text-xl shadow-md">
                       {stepItem.num}
                     </div>
-                    <h3 className="font-extrabold text-base text-gray-900">{stepItem.title}</h3>
+                    <h3 className="font-extrabold text-base text-[#344257]">{stepItem.title}</h3>
                     <p className="text-xs text-gray-600 leading-relaxed">{stepItem.desc}</p>
                   </div>
                 ))}
