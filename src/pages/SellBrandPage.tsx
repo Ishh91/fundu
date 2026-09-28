@@ -136,12 +136,6 @@ const BRAND_DETAILS: Record<
     desc: 'Sell used Infinix GT, Zero, Note & Hot series phones online at your doorstep for top guaranteed cash.',
     count: '30+ Infinix Models',
   },
-  lava: {
-    logo: getCleanBrandLogo('lava'),
-    tagline: 'Sell Old Lava Mobile Phone Online for Maximum Spot Payout',
-    desc: 'Sell used Lava Agni, Blaze, Storm & Yuva series smartphones at your doorstep with zero hassle and instant cash.',
-    count: '20+ Lava Models',
-  },
   honor: {
     logo: getCleanBrandLogo('honor'),
     tagline: 'Sell Old Honor Smartphone Online at Highest Market Value',

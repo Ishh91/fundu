@@ -156,18 +156,6 @@ export const MODEL_EXACT_RENDERS: Array<{ keyword: string; url: string }> = [
   { keyword: 'nothing phone', url: 'https://fdn2.gsmarena.com/vv/bigpic/nothing-phone-2a.jpg' },
   { keyword: 'cmf', url: 'https://fdn2.gsmarena.com/vv/bigpic/cmf-phone-1.jpg' },
 
-  // Lava
-  { keyword: 'agni 3', url: 'https://fdn2.gsmarena.com/vv/bigpic/lava-agni2-5g.jpg' },
-  { keyword: 'agni 2', url: 'https://fdn2.gsmarena.com/vv/bigpic/lava-agni2-5g.jpg' },
-  { keyword: 'agni', url: 'https://fdn2.gsmarena.com/vv/bigpic/lava-agni2-5g.jpg' },
-  { keyword: 'blaze curve', url: 'https://fdn2.gsmarena.com/vv/bigpic/lava-blaze-curve-5g.jpg' },
-  { keyword: 'blaze 2', url: 'https://fdn2.gsmarena.com/vv/bigpic/lava-blaze2-5g.jpg' },
-  { keyword: 'blaze', url: 'https://fdn2.gsmarena.com/vv/bigpic/lava-blaze-curve-5g.jpg' },
-  { keyword: 'yuva 3', url: 'https://fdn2.gsmarena.com/vv/bigpic/lava-yuva-3-pro.jpg' },
-  { keyword: 'yuva', url: 'https://fdn2.gsmarena.com/vv/bigpic/lava-yuva-3-pro.jpg' },
-  { keyword: 'storm', url: 'https://fdn2.gsmarena.com/vv/bigpic/lava-storm-5g.jpg' },
-  { keyword: 'lava', url: 'https://fdn2.gsmarena.com/vv/bigpic/lava-agni2-5g.jpg' },
-
   // Tecno
   { keyword: 'camon 30', url: 'https://fdn2.gsmarena.com/vv/bigpic/tecno-camon-30-pro.jpg' },
   { keyword: 'camon', url: 'https://fdn2.gsmarena.com/vv/bigpic/tecno-camon-30-pro.jpg' },
@@ -232,7 +220,6 @@ export const BRAND_FRONT_FALLBACKS: Record<string, string> = {
   infinix: 'https://fdn2.gsmarena.com/vv/bigpic/infinix-gt-20-pro.jpg',
   tecno: 'https://fdn2.gsmarena.com/vv/bigpic/tecno-camon-30-pro.jpg',
   itel: 'https://fdn2.gsmarena.com/vv/bigpic/itel-s24.jpg',
-  lava: 'https://fdn2.gsmarena.com/vv/bigpic/lava-agni2-5g.jpg',
   honor: 'https://fdn2.gsmarena.com/vv/bigpic/honor-200.jpg',
 };
 

@@ -114,7 +114,6 @@ export default function AdminCatalog({
     'Infinix',
     'Tecno',
     'Honor',
-    'Lava',
   ];
 
   return (

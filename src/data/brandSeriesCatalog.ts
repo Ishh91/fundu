@@ -1171,47 +1171,6 @@ export const BRAND_SERIES_DEFINITIONS: Record<string, BrandSeriesDefinition[]> =
     },
   ],
 
-  lava: [
-    {
-      id: 'lava-agni',
-      slug: 'lava-agni-series',
-      name: 'Agni Flagship Series',
-      brand: 'Lava',
-      image: 'https://fdn2.gsmarena.com/vv/bigpic/lava-agni2-5g.jpg',
-      description: 'Lava Agni 3 5G, Agni 2 5G',
-      pattern: /\bagni\b/i,
-      defaultModels: [
-        { brand: 'Lava', series: 'Agni Flagship Series', model: 'Lava Agni 3 5G', storage: '128 GB', price: 14000, image: 'https://fdn2.gsmarena.com/vv/bigpic/lava-agni2-5g.jpg' },
-        { brand: 'Lava', series: 'Agni Flagship Series', model: 'Lava Agni 2 5G', storage: '128 GB', price: 11500, image: 'https://fdn2.gsmarena.com/vv/bigpic/lava-agni2-5g.jpg' },
-      ],
-    },
-    {
-      id: 'lava-blaze',
-      slug: 'lava-blaze-series',
-      name: 'Blaze Series',
-      brand: 'Lava',
-      image: 'https://fdn2.gsmarena.com/vv/bigpic/lava-blaze-curve-5g.jpg',
-      description: 'Lava Blaze Curve 5G, Blaze 2 5G, Blaze 5G',
-      pattern: /\bblaze\b/i,
-      defaultModels: [
-        { brand: 'Lava', series: 'Blaze Series', model: 'Lava Blaze Curve 5G', storage: '128 GB', price: 10200, image: 'https://fdn2.gsmarena.com/vv/bigpic/lava-blaze-curve-5g.jpg' },
-        { brand: 'Lava', series: 'Blaze Series', model: 'Lava Blaze 2 5G', storage: '64 GB', price: 6800, image: 'https://fdn2.gsmarena.com/vv/bigpic/lava-blaze2-5g.jpg' },
-      ],
-    },
-    {
-      id: 'lava-yuva',
-      slug: 'lava-yuva-series',
-      name: 'Yuva Series',
-      brand: 'Lava',
-      image: 'https://fdn2.gsmarena.com/vv/bigpic/lava-yuva-3-pro.jpg',
-      description: 'Lava Yuva 3 Pro, Yuva 3, Yuva 2 Pro',
-      pattern: /\byuva\b/i,
-      defaultModels: [
-        { brand: 'Lava', series: 'Yuva Series', model: 'Lava Yuva 3 Pro', storage: '128 GB', price: 5200, image: 'https://fdn2.gsmarena.com/vv/bigpic/lava-yuva-3-pro.jpg' },
-      ],
-    },
-  ],
-
   tecno: [
     {
       id: 'tecno-camon',

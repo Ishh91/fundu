@@ -28,7 +28,6 @@ export const LOOKUP_BRANDS = [
   'Infinix',
   'Tecno',
   'Honor',
-  'Lava',
   'Asus',
   'Nokia',
   'Micromax',

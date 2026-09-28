@@ -231,7 +231,17 @@ export default function Navbar() {
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
 
   const [selectedLocality, setSelectedLocality] = useState(() => {
-    return localStorage.getItem('fundu_lucknow_area') || 'Doorstep Service';
+    try {
+      const saved = localStorage.getItem('fundu_locality_area');
+      if (saved) {
+        const clean = saved.replace(/,?\s*lucknow/gi, '').trim();
+        if (clean !== saved) {
+          localStorage.setItem('fundu_locality_area', clean || 'Doorstep Service');
+        }
+        return clean || 'Doorstep Service';
+      }
+    } catch {}
+    return 'Doorstep Service';
   });
 
   const [search, setSearch] = useState('');
@@ -355,7 +365,7 @@ export default function Navbar() {
   const handleSelectLocality = (loc: string) => {
     const fullLoc = `${loc}`;
     setSelectedLocality(loc);
-    localStorage.setItem('fundu_lucknow_area', fullLoc);
+    localStorage.setItem('fundu_locality_area', fullLoc);
     setLocationModalOpen(false);
   };
 

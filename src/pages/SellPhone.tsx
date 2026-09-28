@@ -66,7 +66,6 @@ const BRAND_TILES = [
   { name: 'Poco', logo: getCleanBrandLogo('Poco'), count: '25+ Models' },
   { name: 'iQOO', logo: getCleanBrandLogo('iQOO'), count: '20+ Models' },
   { name: 'Infinix', logo: getCleanBrandLogo('Infinix'), count: '25+ Models' },
-  { name: 'Lava', logo: getCleanBrandLogo('Lava'), count: '15+ Models' },
 ];
 
 // Master Model Catalog Database (Easily Updatable JSON/Array)
@@ -540,12 +539,6 @@ export const MASTER_MODEL_CATALOG = [
   { brand: 'iQOO', series: 'Z Series', model: 'iQOO Z9s 5G', storage: '128 GB', price: 13500, image: 'https://fdn2.gsmarena.com/vv/bigpic/vivo-iqoo-z9s.jpg' },
   { brand: 'iQOO', series: 'Z Series', model: 'iQOO Z9 5G', storage: '128 GB', price: 12000, image: 'https://fdn2.gsmarena.com/vv/bigpic/vivo-iqoo-z9.jpg' },
   { brand: 'iQOO', series: 'Z Series', model: 'iQOO Z9x 5G', storage: '128 GB', price: 9200, image: 'https://fdn2.gsmarena.com/vv/bigpic/vivo-iqoo-z9x.jpg' },
-  // Lava
-  { brand: 'Lava', series: 'Agni Flagship Series', model: 'Lava Agni 3 5G', storage: '128 GB', price: 14000, image: 'https://fdn2.gsmarena.com/vv/bigpic/lava-agni2-5g.jpg' },
-  { brand: 'Lava', series: 'Agni Flagship Series', model: 'Lava Agni 2 5G', storage: '128 GB', price: 11500, image: 'https://fdn2.gsmarena.com/vv/bigpic/lava-agni2-5g.jpg' },
-  { brand: 'Lava', series: 'Blaze Series', model: 'Lava Blaze Curve 5G', storage: '128 GB', price: 10200, image: 'https://fdn2.gsmarena.com/vv/bigpic/lava-blaze-curve-5g.jpg' },
-  { brand: 'Lava', series: 'Blaze Series', model: 'Lava Blaze 2 5G', storage: '64 GB', price: 6800, image: 'https://fdn2.gsmarena.com/vv/bigpic/lava-blaze2-5g.jpg' },
-  { brand: 'Lava', series: 'Yuva Series', model: 'Lava Yuva 3 Pro', storage: '128 GB', price: 5200, image: 'https://fdn2.gsmarena.com/vv/bigpic/lava-yuva-3-pro.jpg' },
 ];
 
 const STORAGE_OPTIONS = ['64 GB', '128 GB', '256 GB', '512 GB', '1 TB'];
