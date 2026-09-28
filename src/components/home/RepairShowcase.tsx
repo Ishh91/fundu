@@ -82,14 +82,14 @@ export default function RepairShowcase() {
                 Doorstep Repair Hub
               </span>
               <span className="text-xs font-semibold text-[#8A9AAF]">
-                📍 Repaired in 30 Mins across Lucknow
+                📍 Repaired in 30 Mins at your doorstep
               </span>
             </div>
             <h2 className="mt-2 font-display text-2xl sm:text-3xl font-extrabold text-[#344257]">
               Mobile Screen & Battery Repair at Your Doorstep
             </h2>
             <p className="mt-1 text-xs sm:text-sm text-[#47576E]">
-              Certified technician visits your home or office in Lucknow. Repaired right in front of you with 6M warranty.
+              Certified technician visits your home or office at your doorstep. Repaired right in front of you with 6M warranty.
             </p>
           </div>
 
@@ -167,7 +167,7 @@ export default function RepairShowcase() {
           </div>
           <div className="flex items-center gap-2.5">
             <MapPin className="h-4 w-4 text-[#6A859F] shrink-0" />
-            <span className="text-xs font-bold text-[#344257]">Free Visit across all Lucknow Localities</span>
+            <span className="text-xs font-bold text-[#344257]">Free Visit across all Service Localities</span>
           </div>
         </div>
       </div>

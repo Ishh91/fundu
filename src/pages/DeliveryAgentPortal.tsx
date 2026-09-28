@@ -55,7 +55,7 @@ function RiderTaskMapWidget({
   title: string;
   onOpenFullMap: () => void;
 }) {
-  const encodedAddress = encodeURIComponent(`${address}, Lucknow, Uttar Pradesh`);
+  const encodedAddress = encodeURIComponent(`${address}, Uttar Pradesh`);
   const googleDirUrl = `https://www.google.com/maps/dir/?api=1&destination=${encodedAddress}`;
   const appleMapUrl = `https://maps.apple.com/?daddr=${encodedAddress}`;
   const embedMapUrl = `https://maps.google.com/maps?q=${encodedAddress}&t=&z=15&ie=UTF8&iwloc=&output=embed`;
@@ -569,7 +569,7 @@ export default function DeliveryAgentPortal() {
       `🔨 *Frame & Body:* ${bodyCondition}\n` +
       `💰 *Initial Web Quote:* ₹${(sell.estimated_price || 0).toLocaleString('en-IN')}\n` +
       `💵 *Proposed Spot Payout:* ₹${(Number(proposedPayout) || sell.estimated_price || 0).toLocaleString('en-IN')}\n` +
-      `📍 *Customer Address:* ${sell.pickup_address || 'Lucknow'}\n\n` +
+      `📍 *Customer Address:* ${sell.pickup_address || 'Doorstep Service'}\n\n` +
       `Please approve spot payout clearance on Admin Console!`;
     return `https://wa.me/919839122345?text=${encodeURIComponent(text)}`;
   };
@@ -895,7 +895,7 @@ export default function DeliveryAgentPortal() {
                 const isApproved = isApprovedStatus(sell.status);
                 const customerName = (sell as any).full_name || (sell as any).customer_name || 'Customer';
                 const customerPhone = (sell as any).phone || (sell as any).customer_phone || '9839122345';
-                const address = sell.pickup_address || sell.pickup_area || 'Gomti Nagar, Lucknow';
+                const address = sell.pickup_address || sell.pickup_area || 'Gomti Nagar';
                 const payoutAmount = sell.final_price || sell.estimated_price || 0;
 
                 return (
@@ -1104,7 +1104,7 @@ export default function DeliveryAgentPortal() {
               activeRepairTasks.map((repair) => {
                 const customerName = (repair as any).customer_name || (repair as any).full_name || 'Customer';
                 const customerPhone = (repair as any).phone || (repair as any).customer_phone || '9839122345';
-                const address = repair.pickup_address || 'Gomti Nagar, Lucknow';
+                const address = repair.pickup_address || 'Gomti Nagar';
                 const repairCost = repair.final_cost || repair.estimated_cost || 0;
 
                 return (
@@ -2107,7 +2107,7 @@ export default function DeliveryAgentPortal() {
               <div className="relative rounded-2xl overflow-hidden border border-slate-200 bg-slate-100 h-80">
                 <iframe
                   title="Full Interactive Route Map"
-                  src={`https://maps.google.com/maps?q=${encodeURIComponent(activeMapTask.address + ', Lucknow, Uttar Pradesh')}&t=&z=15&ie=UTF8&iwloc=&output=embed`}
+                  src={`https://maps.google.com/maps?q=${encodeURIComponent(activeMapTask.address + ', Uttar Pradesh')}&t=&z=15&ie=UTF8&iwloc=&output=embed`}
                   className="w-full h-full border-0"
                   loading="lazy"
                 />
@@ -2135,7 +2135,7 @@ export default function DeliveryAgentPortal() {
 
               <div className="flex items-center gap-2">
                 <a
-                  href={`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(activeMapTask.address + ', Lucknow, Uttar Pradesh')}`}
+                  href={`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(activeMapTask.address + ', Uttar Pradesh')}`}
                   target="_blank"
                   rel="noreferrer"
                   className="btn bg-blue-600 hover:bg-blue-700 text-white font-black text-xs px-5 py-2.5 rounded-xl flex items-center gap-2 shadow-md"

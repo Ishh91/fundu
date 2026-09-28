@@ -244,7 +244,7 @@ export default function AdminDeliveryAgents({
 
               <div className="p-4 rounded-2xl bg-emerald-50/60 border border-emerald-200 text-xs">
                 <p className="font-bold text-emerald-900 flex items-center gap-1.5">
-                  <MapPin className="h-4 w-4 text-emerald-600" /> Operational Lucknow Localities
+                  <MapPin className="h-4 w-4 text-emerald-600" /> Operational Service Localities
                 </p>
                 <div className="flex flex-wrap gap-1.5 mt-2">
                   {selectedAgent.zones?.map((zone) => (
@@ -279,7 +279,7 @@ export default function AdminDeliveryAgents({
                             <span className="badge bg-[#F0F0F5] text-[#344257] border border-[#C0C8D8] font-bold text-[10px]">Store Order</span>
                             <span className="font-bold text-slate-900">#{o.id.slice(0, 8).toUpperCase()}</span>
                           </div>
-                          <p className="text-slate-600 mt-0.5">{o.delivery_name || 'Customer'} · {o.delivery_address || 'Lucknow'}</p>
+                          <p className="text-slate-600 mt-0.5">{o.delivery_name || 'Customer'} · {o.delivery_address || 'Doorstep Service'}</p>
                         </div>
                         <span className="font-black text-brand-700">₹{(o.total_amount || 0).toLocaleString('en-IN')}</span>
                       </div>
@@ -293,7 +293,7 @@ export default function AdminDeliveryAgents({
                             <span className="badge bg-amber-100 text-amber-800 font-bold text-[10px]">Sell Pickup</span>
                             <span className="font-bold text-slate-900">#{s.id.slice(0, 8).toUpperCase()}</span>
                           </div>
-                          <p className="text-slate-600 mt-0.5">{s.brand} {s.model} · {s.pickup_address || s.pickup_area || 'Lucknow'}</p>
+                          <p className="text-slate-600 mt-0.5">{s.brand} {s.model} · {s.pickup_address || s.pickup_area || 'Doorstep Service'}</p>
                         </div>
                         <span className="font-black text-emerald-700">₹{(s.final_price || s.estimated_price || 0).toLocaleString('en-IN')}</span>
                       </div>

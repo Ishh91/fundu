@@ -18,7 +18,7 @@ const TRUST_STATS = [
   {
     icon: IndianRupee,
     value: '₹14.2 Cr.+',
-    label: 'Instant Cash Paid in Lucknow',
+    label: 'Instant Cash Paid at your doorstep',
   },
   {
     icon: Smartphone,
@@ -37,7 +37,7 @@ const DEFAULT_LUCKNOW_TESTIMONIALS = [
     quote:
       'Sold my iPhone 13 right from my flat in Gomti Nagar. The executive arrived within 2 hours, checked the screen and transferred the full UPI payment immediately.',
     name: 'Tarun Singh Verma',
-    location: 'Gomti Nagar, Lucknow',
+    location: 'Gomti Nagar',
     service: 'Sold iPhone 13',
     rating: 5,
   },
@@ -45,7 +45,7 @@ const DEFAULT_LUCKNOW_TESTIMONIALS = [
     quote:
       'Bought a refurbished Galaxy S22 at Hazratganj. Flawless condition, genuine battery health, and got 6 months warranty card on delivery. Super impressed!',
     name: 'Karan Sharma',
-    location: 'Hazratganj, Lucknow',
+    location: 'Hazratganj',
     service: 'Bought Galaxy S22',
     rating: 5,
   },
@@ -53,7 +53,7 @@ const DEFAULT_LUCKNOW_TESTIMONIALS = [
     quote:
       'Screen replacement done at my doorstep in Indira Nagar in just 25 minutes! The technician replaced the display right in front of me with genuine warranty.',
     name: 'Abhiyash Srivastava',
-    location: 'Indira Nagar, Lucknow',
+    location: 'Indira Nagar',
     service: 'Screen Repair',
     rating: 5,
   },
@@ -61,7 +61,7 @@ const DEFAULT_LUCKNOW_TESTIMONIALS = [
     quote:
       'Doorstep phone evaluation in Aliganj was extremely transparent. No unfair bargaining like local markets. Got exact quoted price paid to GPay instantly.',
     name: 'Vinit Kumar',
-    location: 'Aliganj, Lucknow',
+    location: 'Aliganj',
     service: 'Sold OnePlus Nord',
     rating: 5,
   },
@@ -69,7 +69,7 @@ const DEFAULT_LUCKNOW_TESTIMONIALS = [
     quote:
       'Super fast battery replacement service in Mahanagar. My iPhone was dying in 2 hours, now it lasts whole day. 6-month warranty included.',
     name: 'Neha Gupta',
-    location: 'Mahanagar, Lucknow',
+    location: 'Mahanagar',
     service: 'Battery Replacement',
     rating: 5,
   },
@@ -109,7 +109,7 @@ export default function TrustAndTestimonials() {
     ...dbReviews.map((r) => ({
       quote: r.comment,
       name: r.reviewer_name,
-      location: r.location || 'Lucknow',
+      location: r.location || 'Doorstep Service',
       service: (r as any).phone_model ? `Serviced ${(r as any).phone_model}` : 'Verified Customer',
       rating: r.rating || 5,
     })),
@@ -136,10 +136,10 @@ export default function TrustAndTestimonials() {
               Verified Lucknow Feedback
             </span>
             <h2 className="mt-2 font-display text-2xl sm:text-3xl font-black text-white">
-              Trusted by 25,000+ Customers Across Lucknow
+              Trusted by 25,000+ Customers At Your Doorstep
             </h2>
             <p className="mt-1 text-xs sm:text-sm text-gray-400">
-              Read authentic reviews from buyers, sellers, and repair clients in Lucknow.
+              Read authentic reviews from buyers, sellers, and repair clients at your doorstep.
             </p>
           </div>
 

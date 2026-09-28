@@ -119,7 +119,7 @@ export default function DeliveryLogin() {
           </form>
 
           <div className="pt-2 text-center border-t border-slate-800 text-[11px] text-slate-500 space-x-2">
-            <span>Lucknow Operations · </span>
+            <span>Doorstep Operations · </span>
             <Link to="/admin-login" className="text-brand-400 hover:underline">Admin Login</Link>
             <span>·</span>
             <Link to="/wholesaler-login" className="text-amber-400 hover:underline">Wholesaler Login</Link>

@@ -231,7 +231,7 @@ export default function Navbar() {
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
 
   const [selectedLocality, setSelectedLocality] = useState(() => {
-    return localStorage.getItem('fundu_lucknow_area') || 'Lucknow';
+    return localStorage.getItem('fundu_lucknow_area') || 'Doorstep Service';
   });
 
   const [search, setSearch] = useState('');
@@ -353,7 +353,7 @@ export default function Navbar() {
   }, [search]);
 
   const handleSelectLocality = (loc: string) => {
-    const fullLoc = `${loc}, Lucknow`;
+    const fullLoc = `${loc}`;
     setSelectedLocality(loc);
     localStorage.setItem('fundu_lucknow_area', fullLoc);
     setLocationModalOpen(false);
@@ -669,7 +669,7 @@ export default function Navbar() {
                 >
                   <MapPin className="h-4 w-4 text-[#C0C8D8] shrink-0 group-hover:scale-110 transition-transform" />
                   <span className="font-bold text-white">
-                    {selectedLocality === 'Lucknow' ? 'Lucknow' : `${selectedLocality}`}
+                    {selectedLocality === 'Doorstep Service' ? 'Doorstep Service' : `${selectedLocality}`}
                   </span>
                   <ChevronDown className="h-3.5 w-3.5 text-white/70 group-hover:text-white transition-transform" />
                 </button>
@@ -777,7 +777,7 @@ export default function Navbar() {
                               {cartItem.item.title}
                             </h4>
                             <p className="text-xs text-gray-500 font-medium capitalize">
-                              {cartItem.type.replace('_', ' ')} • Lucknow Free Delivery
+                              {cartItem.type.replace('_', ' ')} • Free Doorstep Delivery
                             </p>
                             <p className="text-sm font-extrabold text-[#344257] mt-0.5">
                               {formatINR(cartItem.item.price)}
@@ -1168,7 +1168,7 @@ export default function Navbar() {
                   <div className="absolute right-0 top-full mt-1 w-[460px] rounded-2xl border border-gray-200 bg-white p-4 shadow-2xl z-50 animate-fade-in">
                     <div className="flex items-center justify-between pb-2 border-b border-gray-100 mb-3">
                       <div>
-                        <span className="text-xs font-bold text-gray-900">7 Lucknow Store & Pickup Hubs</span>
+                        <span className="text-xs font-bold text-gray-900">7 Store & Pickup Hubs</span>
                         <p className="text-[11px] text-[#47576E] font-medium">Walk-in for instant cash or phone pickup</p>
                       </div>
                       <Link to="/store" className="text-xs font-bold text-[#344257] hover:underline">
@@ -1253,7 +1253,7 @@ export default function Navbar() {
               >
                 <span className="flex items-center gap-2">
                   <MapPin className="h-4 w-4 text-[#344257]" />
-                  <span>{selectedLocality}, Lucknow</span>
+                  <span>{selectedLocality}</span>
                 </span>
                 <span className="text-xs font-bold text-[#344257] underline">Change Area</span>
               </button>
@@ -1389,7 +1389,7 @@ export default function Navbar() {
                 <div>
                   <h3 className="font-display font-bold text-lg text-gray-900">Select Locality</h3>
                   <p className="text-xs font-semibold text-[#47576E]">
-                    Fundu is exclusively operational across Lucknow
+                    Fundu is exclusively operational at your doorstep
                   </p>
                 </div>
               </div>
@@ -1404,7 +1404,7 @@ export default function Navbar() {
 
             <div className="mt-4">
               <p className="text-xs font-bold uppercase tracking-wider text-gray-400 mb-3">
-                Select Your Lucknow Area for Free Doorstep Pickup
+                Select Your Area for Free Doorstep Pickup
               </p>
               <div className="grid grid-cols-2 gap-2 max-h-72 overflow-y-auto pr-1">
                 {LUCKNOW_LOCALITIES.map((loc) => {
@@ -1429,7 +1429,7 @@ export default function Navbar() {
 
             <div className="mt-6 rounded-2xl bg-[#F0F0F5] p-3 text-center text-xs font-semibold text-[#344257] flex items-center justify-center gap-2 border border-[#C0C8D8]">
               <ShieldCheck className="h-4 w-4 text-emerald-600 shrink-0" />
-              Free doorstep pickup & instant payment across all 16 Lucknow zones!
+              Free doorstep pickup & instant payment across all service zones!
             </div>
           </div>
         </div>

@@ -63,7 +63,7 @@ export default function Contact() {
         {/* Contact info */}
         <div className="space-y-4">
           {[
-            { icon: MapPin, title: 'Visit us', lines: ['Hazratganj, Lucknow', 'Uttar Pradesh 226001'] },
+            { icon: MapPin, title: 'Visit us', lines: ['Hazratganj', 'Uttar Pradesh 226001'] },
             { icon: Phone, title: 'Call us', lines: ['+91 98765 43210', 'Mon–Sun, 10am–8pm'] },
             { icon: Mail, title: 'Email us', lines: ['hello@fundu.in', 'We reply within hours'] },
             { icon: Clock, title: 'Service hours', lines: ['Pickup: 10am–8pm daily', 'Repairs: 24–48 hr turnaround'] },

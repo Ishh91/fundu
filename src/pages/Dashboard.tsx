@@ -173,7 +173,7 @@ export default function Dashboard() {
   const handleOpenTracker = (item: any) => {
     setTrackerModal({
       isOpen: true,
-      locality: item.locality || 'Lucknow',
+      locality: item.locality || 'Doorstep Service',
       executiveName: item.executiveName || item.pickup_person_name || item.delivery_person_name || 'Field Executive',
       executivePhone: item.executivePhone || item.pickup_person_phone || item.delivery_person_phone || '+91 98391 22345',
       orderType: item.orderType || (item.type as any) || 'buy',
@@ -400,7 +400,7 @@ export default function Dashboard() {
             <Wrench className="h-5 w-5 text-nature-600" />
             <div className="flex-1">
               <p className="font-semibold text-ink-900 text-sm">Book Repair</p>
-              <p className="text-xs text-ink-500">Doorstep pickup & repair in Lucknow</p>
+              <p className="text-xs text-ink-500">Doorstep pickup & doorstep repair</p>
             </div>
             <ArrowRight className="h-4 w-4 text-ink-300" />
           </Link>
@@ -615,7 +615,7 @@ function SellsTab({
   onOpenTracker?: (item: any) => void;
 }) {
   if (sells.length === 0) {
-    return <EmptyState icon={BadgeIndianRupee} title="No sell requests yet" desc="Sell your old phone at the best price with free doorstep pickup anywhere in Lucknow." cta={{ to: '/sell', label: 'Sell Your Phone' }} />;
+    return <EmptyState icon={BadgeIndianRupee} title="No sell requests yet" desc="Sell your old phone at the best price with free doorstep pickup anywhere at your doorstep." cta={{ to: '/sell', label: 'Sell Your Phone' }} />;
   }
   return (
     <div className="space-y-4">
@@ -785,7 +785,7 @@ function RepairsTab({
   onOpenTracker?: (item: any) => void;
 }) {
   if (repairs.length === 0) {
-    return <EmptyState icon={Wrench} title="No repair bookings yet" desc="Book a doorstep repair — free pickup & drop anywhere in Lucknow." cta={{ to: '/repair', label: 'Book a Repair' }} />;
+    return <EmptyState icon={Wrench} title="No repair bookings yet" desc="Book a doorstep repair — free pickup & drop anywhere at your doorstep." cta={{ to: '/repair', label: 'Book a Repair' }} />;
   }
   return (
     <div className="space-y-4">
@@ -1097,7 +1097,7 @@ function OrderCard({
 
           <a
             href={`https://wa.me/919839122345?text=${encodeURIComponent(
-              `Hi Fundu Admin, I have a query regarding my Order #${o.id.slice(0, 8).toUpperCase()} for delivery in Lucknow. Status: ${effectiveStatus}. Please assist.`
+              `Hi Fundu Admin, I have a query regarding my Order #${o.id.slice(0, 8).toUpperCase()} for doorstep delivery. Status: ${effectiveStatus}. Please assist.`
             )}`}
             target="_blank"
             rel="noreferrer"

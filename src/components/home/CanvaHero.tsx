@@ -14,7 +14,7 @@ export default function CanvaHero() {
             Westmire Wired
           </span>
           <span className="ml-2 rounded-full bg-[#86dedd]/30 px-2.5 py-0.5 text-xs font-bold text-slate-800 border border-[#86dedd]/50">
-            📍 Lucknow Exclusive
+            📍 Exclusive
           </span>
         </div>
 
@@ -28,7 +28,7 @@ export default function CanvaHero() {
             </h1>
 
             <p className="max-w-lg text-base sm:text-lg text-slate-700 font-medium leading-relaxed">
-              Experience studio-grade acoustics and certified refurbished tech across Lucknow.
+              Experience studio-grade acoustics and certified refurbished tech at your doorstep.
               Doorstep delivery, instant spot cash, and verified quality.
             </p>
 

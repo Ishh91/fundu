@@ -25,8 +25,8 @@ const WHY_CHOOSE_PILLARS = [
   },
   {
     icon: Truck,
-    title: 'Free Lucknow Doorstep Pickup',
-    desc: 'Zero hidden charges, zero travel hassle. Our executive comes to your home or workplace anywhere in Lucknow.',
+    title: 'Free Doorstep Pickup',
+    desc: 'Zero hidden charges, zero travel hassle. Our executive comes to your home or workplace anywhere at your doorstep.',
     color: 'bg-[#F0F0F5] text-[#344257]',
   },
   {
@@ -87,7 +87,7 @@ export default function WhyChooseFundu() {
           })}
         </div>
 
-        {/* Lucknow Localities Coverage Box */}
+        {/* Service Localities Coverage Box */}
         <div className="mt-8 rounded-2xl border border-[#C0C8D8]/60 bg-[#F7F7FA] p-5 sm:p-6">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#C0C8D8]/40 pb-4">
             <div className="flex items-center gap-2.5">
@@ -96,7 +96,7 @@ export default function WhyChooseFundu() {
               </div>
               <div>
                 <h4 className="text-sm font-extrabold text-[#344257]">
-                  Doorstep Mobile Service Coverage in Lucknow
+                  Doorstep Mobile Service Coverage at your doorstep
                 </h4>
                 <p className="text-xs text-[#8A9AAF]">
                   Free pickup & 30-min doorstep repair available in these areas today

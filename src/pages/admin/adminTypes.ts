@@ -72,6 +72,6 @@ export const POPULAR_OFFER_TAGS = [
   '🎉 Festival Special',
   '👑 Bestseller',
   '🛡️ Certified Refurbished',
-  '📍 Lucknow Exclusive',
+  '📍 Exclusive',
   '⚡ Flash Deal',
 ];

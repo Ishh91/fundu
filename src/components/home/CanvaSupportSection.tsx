@@ -34,11 +34,11 @@ export default function CanvaSupportSection() {
               <div className="space-y-2.5 text-sm text-slate-700 font-medium">
                 <p className="flex items-center gap-2">
                   <MapPin className="h-4 w-4 text-[#47576E] shrink-0" />
-                  <span><strong>Hazratganj Flagship:</strong> MG Marg, Near Cathedral, Lucknow</span>
+                  <span><strong>Hazratganj Flagship:</strong> MG Marg, Near Cathedral</span>
                 </p>
                 <p className="flex items-center gap-2">
                   <MapPin className="h-4 w-4 text-[#47576E] shrink-0" />
-                  <span><strong>Gomti Nagar Super Hub:</strong> Viram Khand 1, Patrakarpuram, Lucknow</span>
+                  <span><strong>Gomti Nagar Super Hub:</strong> Viram Khand 1, Patrakarpuram</span>
                 </p>
                 <p className="flex items-center gap-2">
                   <MapPin className="h-4 w-4 text-[#47576E] shrink-0" />
@@ -66,7 +66,7 @@ export default function CanvaSupportSection() {
             <div className="canva-arch-card w-full max-w-[520px] aspect-[4/3] relative group overflow-hidden bg-white/60">
               <img
                 src="/assets/theme/expert_support.jpg"
-                alt="Expert Support in Lucknow"
+                alt="Expert Support at your doorstep"
                 className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
               />
             </div>

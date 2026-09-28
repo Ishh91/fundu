@@ -42,7 +42,7 @@ export default function SpareParts() {
       <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
         <div>
           <h1 className="font-display text-3xl md:text-4xl font-extrabold text-ink-900">Spare Parts</h1>
-          <p className="mt-2 text-ink-500">Genuine OEM-grade parts for DIYers and repair shops across Lucknow.</p>
+          <p className="mt-2 text-ink-500">Genuine OEM-grade parts for DIYers and repair shops at your doorstep.</p>
         </div>
         <div className="relative">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-ink-400" />

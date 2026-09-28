@@ -35,7 +35,7 @@ import { ALL_INDIAN_PHONES_CATALOG } from '../data/indianPhonesCatalog';
 import { getCleanPhoneImage, getCleanBrandLogo, BRAND_FRONT_FALLBACKS } from '../lib/phoneImages';
 import { usePriceSync, applyPriceOverrides } from '../lib/priceSync';
 
-// Master Lucknow Localities
+// Master Service Localities
 const LUCKNOW_LOCALITIES = [
   'Gomti Nagar',
   'Hazratganj',
@@ -568,14 +568,14 @@ const HARDWARE_DEFECTS = [
 const FAQS_LIST = [
   { q: 'Is entering the IMEI number required while booking online?', a: 'No, entering your IMEI number online is completely optional! If you prefer, our executive will simply verify it at your doorstep during pickup.' },
   { q: 'How do I check my phone IMEI number?', a: 'Simply open your phone dialer app and type *#06#. A 15-digit IMEI number will appear instantly on screen.' },
-  { q: 'When do I get paid for my old phone?', a: 'Payout is instant! Our Lucknow pickup executive inspects your device at your doorstep and transfers cash or UPI directly into your account on spot before taking the phone.' },
-  { q: 'Is doorstep pickup 100% free across all Lucknow localities?', a: 'Yes! Pickup is 100% FREE with zero hidden charges across all Lucknow areas including Gomti Nagar, Hazratganj, Indira Nagar, Aliganj, Mahanagar, Ashiyana, Chowk, Rajajipuram, and Jankipuram.' },
+  { q: 'When do I get paid for my old phone?', a: 'Payout is instant! Our Doorstep pickup executive inspects your device at your doorstep and transfers cash or UPI directly into your account on spot before taking the phone.' },
+  { q: 'Is doorstep pickup 100% free across all service localities?', a: 'Yes! Pickup is 100% FREE with zero hidden charges across all service areas areas including Gomti Nagar, Hazratganj, Indira Nagar, Aliganj, Mahanagar, Ashiyana, Chowk, Rajajipuram, and Jankipuram.' },
   { q: 'What documents are required to sell an old phone?', a: 'You only need a valid Govt ID proof (Aadhaar Card or Driving License) and the phone itself. Having the original box or invoice gives you extra cash bonuses!' },
   { q: 'What happens to my personal data on the phone?', a: 'Fundu performs an automated, military-grade factory data wipe right at your doorstep before handing over the digital receipt.' },
   { q: 'Do you buy non-working or screen-damaged phones?', a: 'Yes! We buy phones in all conditions — flawless, minor body scratches, cracked display glass, or faulty battery.' },
   { q: 'How is the final cash quote calculated?', a: 'Our automated AI algorithm checks live resale market rates and adjusts for screen condition, body condition, hardware defects, warranty status, and original box/charger accessories.' },
   { q: 'Can I cancel or reschedule my doorstep pickup slot?', a: 'Yes, you can easily reschedule or cancel your pickup slot anytime by calling our Lucknow helpline at +91-9839122345.' },
-  { q: 'Is Fundu better than local offline shops in Lucknow?', a: 'Yes! With Fundu, you get algorithmic highest price guarantee, zero market bargaining, free doorstep visit, and instant spot payment.' },
+  { q: 'Is Fundu better than local offline shops at your doorstep?', a: 'Yes! With Fundu, you get algorithmic highest price guarantee, zero market bargaining, free doorstep visit, and instant spot payment.' },
   { q: 'How long is the instant price quote valid?', a: 'Your Fundu price quote is guaranteed and locked in for 7 full days from the time of booking.' },
   { q: 'Can I sell multiple phones at once?', a: 'Absolutely! You can book individual sell requests or inform our executive during doorstep visit for bulk spot cash payouts.' },
   { q: 'What if my phone brand is not listed?', a: 'You can use our live search bar or contact our Lucknow hotline +91-9839122345 for custom manual valuation.' },
@@ -743,11 +743,11 @@ export default function SellPhone() {
       logo: 'https://thefundu.com/logo.png',
       telephone: '+91-9839122345',
       priceRange: '₹₹',
-      description: 'Sell old used mobile phone online in Lucknow for instant spot cash. Free doorstep pickup across Gomti Nagar, Hazratganj, Indira Nagar, Aliganj, Mahanagar, Ashiyana, Chowk.',
+      description: 'Sell old used mobile phone online at your doorstep for instant spot cash. Free doorstep pickup across Gomti Nagar, Hazratganj, Indira Nagar, Aliganj, Mahanagar, Ashiyana, Chowk.',
       address: {
         '@type': 'PostalAddress',
         streetAddress: 'Hazratganj Main Market',
-        addressLocality: 'Lucknow',
+        addressLocality: 'Doorstep Service',
         addressRegion: 'Uttar Pradesh',
         postalCode: '226001',
         addressCountry: 'IN',
@@ -1009,7 +1009,7 @@ export default function SellPhone() {
     }
 
     if (!form.pickupAddress.trim()) {
-      setError('Please provide full doorstep pickup address in Lucknow.');
+      setError('Please provide full doorstep pickup address at your doorstep.');
       return;
     }
 
@@ -1058,7 +1058,7 @@ export default function SellPhone() {
 
       setSuccessData({
         id: data?.id || `FND-LKO-${Math.floor(100000 + Math.random() * 900000)}`,
-        pickup_person_name: 'Rajesh Kumar (Fundu Lucknow Rider)',
+        pickup_person_name: 'Rajesh Kumar (Fundu Rider)',
         pickup_person_phone: '+91-9839122345',
         estimated_arrival_time: `${form.pickupDate} (${form.pickupSlot})`,
       });
@@ -1066,7 +1066,7 @@ export default function SellPhone() {
       console.error('Submission error:', err);
       setSuccessData({
         id: `FND-LKO-${Math.floor(100000 + Math.random() * 900000)}`,
-        pickup_person_name: 'Rajesh Kumar (Fundu Lucknow Rider)',
+        pickup_person_name: 'Rajesh Kumar (Fundu Rider)',
         pickup_person_phone: '+91-9839122345',
         estimated_arrival_time: `${form.pickupDate} (${form.pickupSlot})`,
       });
@@ -1186,7 +1186,7 @@ export default function SellPhone() {
         <div className="max-w-7xl mx-auto rounded-3xl bg-[#F0F0F5] border border-[#C0C8D8] p-6 md:p-10 flex flex-col md:flex-row items-center justify-between gap-8 relative shadow-xs">
           <div className="flex-1 space-y-4 max-w-xl">
             <div className="inline-flex items-center gap-1.5 rounded-full bg-white px-3 py-1 text-xs font-bold text-[#344257] border border-[#C0C8D8]">
-              <Zap className="h-3.5 w-3.5 text-amber-500" /> Instant Spot Cash · Doorstep Pickup Across Lucknow
+              <Zap className="h-3.5 w-3.5 text-amber-500" /> Instant Spot Cash · Doorstep Pickup At Your Doorstep
             </div>
             <h1 className="font-display text-3xl md:text-4xl font-extrabold text-[#344257] leading-tight">
               {form.brand ? `Sell Old ${form.brand} Mobile Phone Online At Best Price` : 'Sell Old Mobile Phone for Instant Cash'}
@@ -1514,7 +1514,7 @@ export default function SellPhone() {
               <div className="flex items-center justify-between">
                 <div>
                   <h3 className="font-display text-lg font-bold text-[#344257] flex items-center gap-2">
-                    <Sparkles className="h-5 w-5 text-[#6A859F]" /> Popular Mobiles Sold in Lucknow
+                    <Sparkles className="h-5 w-5 text-[#6A859F]" /> Popular Mobiles Sold at your doorstep
                   </h3>
                   <p className="mt-0.5 text-xs text-gray-500">Tap any model for instant cash quote</p>
                 </div>
@@ -1568,7 +1568,7 @@ export default function SellPhone() {
                   {
                     num: '2',
                     title: 'Schedule Free Pickup',
-                    desc: 'Select your preferred date & time slot. Our automated dispatch system assigns the nearest Lucknow rider.',
+                    desc: 'Select your preferred date & time slot. Our automated dispatch system assigns the nearest delivery rider.',
                   },
                   {
                     num: '3',
@@ -1591,10 +1591,10 @@ export default function SellPhone() {
             <div className="card p-8 rounded-[32px] bg-gradient-to-r from-[#1E2734] via-[#344257] to-[#47576E] text-white shadow-xl space-y-6">
               <div className="text-center max-w-2xl mx-auto space-y-2">
                 <span className="badge bg-white/10 text-white border border-white/20 text-xs font-bold px-3 py-1">
-                  Lucknow's #1 Phone Buyback Network
+                  Our #1 Phone Buyback Network
                 </span>
                 <h2 className="font-display text-2xl md:text-3xl font-black text-white">
-                  Why Choose Fundu Lucknow?
+                  Why Choose Fundu?
                 </h2>
                 <p className="text-xs text-gray-300">
                   India's most trusted, instant cash doorstep mobile re-commerce network.
@@ -1611,11 +1611,11 @@ export default function SellPhone() {
                   {
                     icon: <Sparkles className="h-6 w-6 text-[#9ac0dd]" />,
                     title: 'Highest Valuation Guarantee',
-                    desc: 'Our AI valuation algorithm checks live resale market rates to guarantee you the absolute highest cash price in Lucknow.',
+                    desc: 'Our AI valuation algorithm checks live resale market rates to guarantee you the absolute highest cash price at your doorstep.',
                   },
                   {
                     icon: <Truck className="h-6 w-6 text-[#9ac0dd]" />,
-                    title: 'Free Lucknow Doorstep Pickup',
+                    title: 'Free Doorstep Pickup',
                     desc: 'Zero shipping fees across Gomti Nagar, Hazratganj, Indira Nagar, Aliganj, Mahanagar, Ashiyana & Chowk.',
                   },
                   {
@@ -1675,7 +1675,7 @@ export default function SellPhone() {
                         <p className="text-gray-600 leading-relaxed italic">"{rev.comment}"</p>
                       </div>
                       <div className="pt-2 border-t border-gray-200/60 text-[11px] font-bold text-[#344257] flex items-center gap-1">
-                        <MapPin className="h-3 w-3" /> {rev.location || 'Lucknow'}
+                        <MapPin className="h-3 w-3" /> {rev.location || 'Doorstep Service'}
                       </div>
                     </div>
                   ))}
@@ -1688,7 +1688,7 @@ export default function SellPhone() {
               <div className="text-center max-w-xl mx-auto space-y-1">
                 <span className="badge bg-[#F0F0F5] text-[#344257] border border-[#C0C8D8] text-xs font-bold">Clear Answers</span>
                 <h2 className="font-display text-2xl font-black text-[#344257]">Frequently Asked Questions</h2>
-                <p className="text-xs text-gray-500 font-medium">Everything you need to know about selling mobile on Fundu Lucknow</p>
+                <p className="text-xs text-gray-500 font-medium">Everything you need to know about selling mobile on Fundu</p>
               </div>
 
               <div className="space-y-3 max-w-4xl mx-auto">
@@ -1724,15 +1724,15 @@ export default function SellPhone() {
 
             {/* SEO Content & Footer Rating Summary */}
             <div className="p-8 rounded-[32px] bg-gray-100 border border-gray-200 text-xs text-gray-600 space-y-3 leading-relaxed">
-              <h3 className="font-bold text-gray-900 text-sm">Sell Old Mobile Phone Online in Lucknow — Fundu Mobile Re-Commerce Hub</h3>
+              <h3 className="font-bold text-gray-900 text-sm">Sell Old Mobile Phone Online at your doorstep — Fundu Mobile Re-Commerce Hub</h3>
               <p>
-                Looking to sell your old mobile phone for instant spot cash in Lucknow? Fundu is Lucknow's largest, most trusted online platform for selling used smartphones across top brands like Apple iPhone, Samsung, OnePlus, Xiaomi Redmi, Vivo, Oppo, Realme, Google Pixel, and Poco.
+                Looking to sell your old mobile phone for instant spot cash at your doorstep? Fundu is a premier largest, most trusted online platform for selling used smartphones across top brands like Apple iPhone, Samsung, OnePlus, Xiaomi Redmi, Vivo, Oppo, Realme, Google Pixel, and Poco.
               </p>
               <p>
-                Whether your mobile phone is in brand new condition, has minor body scratches, or has a cracked screen, Fundu's instant AI valuation algorithm calculates the highest guaranteed cash price for your device. Enjoy free doorstep pickup across all Lucknow areas including Gomti Nagar, Hazratganj, Indira Nagar, Aliganj, Mahanagar, Ashiyana, Chowk, Rajajipuram, Jankipuram, and Kanpur Road.
+                Whether your mobile phone is in brand new condition, has minor body scratches, or has a cracked screen, Fundu's instant AI valuation algorithm calculates the highest guaranteed cash price for your device. Enjoy free doorstep pickup across all service areas areas including Gomti Nagar, Hazratganj, Indira Nagar, Aliganj, Mahanagar, Ashiyana, Chowk, Rajajipuram, Jankipuram, and Kanpur Road.
               </p>
               <div className="pt-3 border-t border-gray-300/60 flex flex-wrap items-center justify-between gap-2 text-xs font-bold text-gray-800">
-                <span>Fundu Lucknow Helpline: +91-9839122345</span>
+                <span>Fundu Helpline: +91-9839122345</span>
                 <span>Average User Rating: 4.9 / 5.0 (12,400+ Verified Deals)</span>
               </div>
             </div>
@@ -2005,11 +2005,11 @@ export default function SellPhone() {
 
               {/* Fundu Theme Dark Quote Box */}
               <div className="rounded-3xl bg-gradient-to-r from-[#1E2734] via-[#344257] to-[#47576E] p-8 text-white shadow-2xl relative overflow-hidden space-y-3">
-                <p className="text-xs font-bold uppercase tracking-widest text-[#9ac0dd]">Guaranteed Lucknow Payout Quote</p>
+                <p className="text-xs font-bold uppercase tracking-widest text-[#9ac0dd]">Guaranteed Payout Quote</p>
                 <div className="font-display text-4xl sm:text-5xl font-black text-white">
                   {formatINR(estimate)}
                 </div>
-                <p className="text-xs text-gray-300">Valid for 7 full days · Price match guarantee across Lucknow</p>
+                <p className="text-xs text-gray-300">Valid for 7 full days · Price match guarantee at your doorstep</p>
 
                 <div className="flex flex-wrap justify-center gap-2 text-xs font-semibold pt-2">
                   <span className="inline-flex items-center gap-1 rounded-full bg-white/15 px-3 py-1 text-white border border-white/20">
@@ -2168,7 +2168,7 @@ export default function SellPhone() {
                   >
                     {LUCKNOW_LOCALITIES.map((area) => (
                       <option key={area} value={area}>
-                        {area}, Lucknow
+                        {area}
                       </option>
                     ))}
                   </select>

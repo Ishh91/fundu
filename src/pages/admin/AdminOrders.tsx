@@ -185,11 +185,11 @@ export default function AdminOrders({
     const targetPhone = phone.length === 10 ? `91${phone}` : phone;
     const resolved = getOrderResolvedItems(order, products, parts);
     const itemNames = resolved.map((it) => `• ${it.title}${it.storage ? ` (${it.storage})` : ''} - Qty: ${it.quantity}`).join('\n');
-    const text = `🎉 *FUNDU LUCKNOW DISPATCH UPDATE*\n\n` +
+    const text = `🎉 *Fundu DISPATCH UPDATE*\n\n` +
       `Hi *${order.delivery_name || 'Customer'}*,\n` +
       `Your refurbished order *#${order.id.slice(0, 8).toUpperCase()}* is dispatched with our certified executive *${order.delivery_person_name || 'Rohit'}*.\n\n` +
       `📱 *Ordered Device(s):*\n${itemNames}\n\n` +
-      `📍 *Delivery To:* ${order.delivery_address || 'Lucknow'}\n` +
+      `📍 *Delivery To:* ${order.delivery_address || 'Doorstep Service'}\n` +
       `💰 *Total Amount:* ₹${order.total_amount?.toLocaleString('en-IN')}\n` +
       `💳 *Payment Method:* ${order.payment_method || 'COD'}\n\n` +
       `You can track your executive live on your Fundu Dashboard!`;
@@ -205,14 +205,14 @@ export default function AdminOrders({
       `📋 *Order ID:* #${order.id.slice(0, 8).toUpperCase()}\n` +
       `👤 *Customer Name:* ${order.delivery_name || 'Customer'}\n` +
       `📞 *Customer Phone:* ${order.delivery_phone || 'N/A'}\n` +
-      `📍 *Delivery Address:* ${order.delivery_address || 'Lucknow'}\n` +
-      `🏙️ *Locality:* ${order.delivery_area || 'Lucknow'}\n` +
+      `📍 *Delivery Address:* ${order.delivery_address || 'Doorstep Service'}\n` +
+      `🏙️ *Locality:* ${order.delivery_area || 'Doorstep Service'}\n` +
       `⏰ *Delivery Slot:* ${order.delivery_slot || 'Today Same-Day Express'}\n\n` +
       `🛍️ *ORDERED DEVICE(S) & PAYMENT:*\n` +
       `${itemsSummary}\n` +
       `• *Total Payable:* ₹${(order.total_amount || 0).toLocaleString('en-IN')}\n` +
       `• *Payment Mode:* ${order.payment_method || 'COD'} (${order.payment_status || 'Prepaid/Pending'})\n\n` +
-      `🚚 *Instructions:* Collect payment (if COD) and hand over verified sealed package to customer doorstep in Lucknow.`;
+      `🚚 *Instructions:* Collect payment (if COD) and hand over verified sealed package to customer doorstep at your doorstep.`;
     return `https://wa.me/${targetPhone}?text=${encodeURIComponent(text)}`;
   };
 
@@ -250,7 +250,7 @@ export default function AdminOrders({
             <Truck className="h-4 w-4 text-brand-600" /> Executive Order Assignment Overview
           </span>
           <span className="text-[11px] font-bold text-slate-500">
-            {agents.length} Registered Lucknow Riders
+            {agents.length} Registered Delivery Riders
           </span>
         </div>
 
@@ -742,11 +742,11 @@ export default function AdminOrders({
                   <p><strong className="text-slate-500">SUBJECT:</strong> 🚨 NEW DISPATCH TASK: Order #{reassignModalData.order.id.slice(0, 8).toUpperCase()}</p>
                   <div className="pt-2 border-t border-slate-100 font-sans text-xs text-slate-700 space-y-1">
                     <p>Hi <strong>{reassignModalData.newAgent.name}</strong>,</p>
-                    <p>You have been assigned a new doorstep delivery task in Lucknow:</p>
+                    <p>You have been assigned a new doorstep delivery task at your doorstep:</p>
                     <p>• <strong>Order ID:</strong> #{reassignModalData.order.id.slice(0, 8).toUpperCase()}</p>
                     <p>• <strong>Customer Name:</strong> {reassignModalData.order.delivery_name || 'Customer'}</p>
                     <p>• <strong>Customer Phone:</strong> {reassignModalData.order.delivery_phone || 'N/A'}</p>
-                    <p>• <strong>Delivery Address:</strong> {reassignModalData.order.delivery_address || 'Lucknow'}</p>
+                    <p>• <strong>Delivery Address:</strong> {reassignModalData.order.delivery_address || 'Doorstep Service'}</p>
                     <p>• <strong>Total Payable Amount:</strong> ₹{reassignModalData.order.total_amount?.toLocaleString('en-IN')}</p>
                   </div>
                 </div>
@@ -781,7 +781,7 @@ export default function AdminOrders({
                 <div className="bg-white p-3 rounded-xl border border-emerald-200 font-mono text-[11px] text-slate-800">
                   <p className="text-slate-500 text-[10px] mb-1 font-bold uppercase">SMS TEXT PAYLOAD (Sent to {reassignModalData.newAgent.phone}):</p>
                   <p className="text-slate-800">
-                    [FUNDU DISPATCH] New task assigned: Order #{reassignModalData.order.id.slice(0, 8).toUpperCase()} for {reassignModalData.order.delivery_name || 'Customer'}. Address: {reassignModalData.order.delivery_address || 'Lucknow'}. Phone: {reassignModalData.order.delivery_phone}. Open map: https://maps.google.com/?q={encodeURIComponent(reassignModalData.order.delivery_address || 'Lucknow')}
+                    [FUNDU DISPATCH] New task assigned: Order #{reassignModalData.order.id.slice(0, 8).toUpperCase()} for {reassignModalData.order.delivery_name || 'Customer'}. Address: {reassignModalData.order.delivery_address || 'Doorstep Service'}. Phone: {reassignModalData.order.delivery_phone}. Open map: https://maps.google.com/?q={encodeURIComponent(reassignModalData.order.delivery_address || 'Doorstep Service')}
                   </p>
                 </div>
 

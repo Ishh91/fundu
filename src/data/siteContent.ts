@@ -51,7 +51,7 @@ export const HOME_HERO_SLIDES: HomeHeroSlide[] = [
 
 export const HOME_HERO_HIGHLIGHTS: HomeHighlight[] = [
   { icon: 'Clock3', title: 'Fast quote', text: 'Quick estimate after exact device selection.' },
-  { icon: 'Truck', title: 'Doorstep support', text: 'Pickup and drop assistance across Lucknow.' },
+  { icon: 'Truck', title: 'Doorstep support', text: 'Pickup and drop assistance at your doorstep.' },
   { icon: 'ShieldCheck', title: 'Trust layers', text: 'Warranty, verification, and guided updates.' },
 ];
 
@@ -84,7 +84,7 @@ export const HOME_FAQS: HomeFaq[] = [
   },
   {
     question: 'Is doorstep pickup available for both sell and repair?',
-    answer: 'Yes. Fundu offers scheduled doorstep pickup across Lucknow for sell requests and repair bookings.',
+    answer: 'Yes. Fundu offers scheduled doorstep pickup at your doorstep for sell requests and repair bookings.',
   },
   {
     question: 'Can I browse by brand and storage before buying?',
@@ -123,7 +123,7 @@ export const HOME_COUPONS: HomeCoupon[] = [
 ];
 
 export const PROMO_MESSAGES = [
-  'Free pickup across Lucknow',
+  'Free pickup at your doorstep',
   'AI-assisted device verification',
   'Exclusive store pricing this week',
   'Document Doctor consultation is free',
@@ -201,7 +201,7 @@ export const HOME_SELL_STEPS: HomeSellStep[] = [
 export const HOME_BENEFITS = [
   'Instant price guidance for old phones',
   'Refurbished phones with visible warranty info',
-  'Free pickup and drop support across Lucknow',
+  'Free pickup and drop support at your doorstep',
   'AI-assisted verification and cleaner device lookup',
   'Dedicated business sourcing and store collections',
   'Repair booking designed for speed, not confusion',
@@ -297,7 +297,7 @@ export const DEFAULT_SITE_CONTENT_BLOCKS: SiteContentBlock[] = [
   buildBlock('marquee', 110, {
     items: [
       'Sell in minutes with lookup-first valuation',
-      'Doorstep pickup across Lucknow',
+      'Doorstep pickup at your doorstep',
       'Repair offers and booking support live now',
       'Exclusive store collections available',
       'Coupon codes visible across categories',

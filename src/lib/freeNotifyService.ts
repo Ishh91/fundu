@@ -22,13 +22,13 @@ export function sendFreeWhatsAppNotification(payload: NotificationPayload) {
   const text =
     `🚨 *FUNDU NEW DISPATCH TASK ASSIGNED*\n\n` +
     `Hi *${payload.agentName}*,\n` +
-    `You have been assigned a new doorstep delivery task in Lucknow!\n\n` +
+    `You have been assigned a new doorstep delivery task at your doorstep!\n\n` +
     `📋 *Order ID:* #${payload.orderId.slice(0, 8).toUpperCase()}\n` +
     `👤 *Customer Name:* ${payload.customerName}\n` +
     `📞 *Customer Phone:* ${payload.customerPhone}\n` +
     `📍 *Delivery Address:* ${payload.deliveryAddress}\n` +
     `💰 *Payable Amount:* ₹${payload.totalAmount.toLocaleString('en-IN')}\n\n` +
-    `🧭 *GPS Navigation:* https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(payload.deliveryAddress + ', Lucknow')}\n\n` +
+    `🧭 *GPS Navigation:* https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(payload.deliveryAddress + '')}\n\n` +
     `Please log in to your private fleet desk: ${window.location.origin}/fleet-desk`;
 
   const whatsappUrl = `https://wa.me/${targetPhone}?text=${encodeURIComponent(text)}`;
@@ -77,7 +77,7 @@ export async function sendFreeEmailResend(
         </table>
 
         <div style="text-align: center; margin-top: 24px;">
-          <a href="https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(payload.deliveryAddress + ', Lucknow')}"
+          <a href="https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(payload.deliveryAddress + '')}"
              style="background-color: #2563eb; color: white; padding: 12px 24px; text-decoration: none; font-weight: bold; border-radius: 10px; display: inline-block;">
             📍 Open Turn-by-Turn GPS Navigation
           </a>

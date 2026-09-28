@@ -152,7 +152,7 @@ export default function AdminLiveNotifier({
               {/* Action Button */}
               <div className="mt-3 pt-2.5 border-t border-white/15 flex items-center justify-between">
                 <span className="text-[10px] text-white/70">
-                  Auto-assigned to Lucknow Agent
+                  Auto-assigned to Service Agent
                 </span>
                 <button
                   type="button"

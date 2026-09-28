@@ -47,7 +47,7 @@ const ISSUE_DETAILS: Record<
   screen: {
     title: 'Doorstep Screen & Display Replacement',
     tagline: 'Get Broken Screen Replaced at Your Home in 30 Minutes',
-    desc: 'Cracked glass, blank display, OLED lines, screen flickering, or touch unresponsive? Get original quality screen panel replaced at your doorstep in Lucknow with 6 months warranty.',
+    desc: 'Cracked glass, blank display, OLED lines, screen flickering, or touch unresponsive? Get original quality screen panel replaced at your doorstep at your doorstep with 6 months warranty.',
     cost: 2999,
     time: '30 Mins Doorstep',
     warranty: '6 Months Warranty',
@@ -180,7 +180,7 @@ export default function RepairIssuePage() {
               <IssueIcon className="h-4 w-4 text-purple-400" /> {issueData.time} Guarantee
             </div>
             <h1 className="font-display text-2xl md:text-4xl font-black text-white">
-              {issueData.title} in Lucknow
+              {issueData.title} at your doorstep
             </h1>
             <p className="text-sm text-slate-300 leading-relaxed">
               {issueData.desc}

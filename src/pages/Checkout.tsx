@@ -173,7 +173,7 @@ export default function Checkout() {
                   onChange={(e) => setForm(prev => ({ ...prev, area: e.target.value }))}
                   className="input"
                 >
-                  <option value="">Select your area in Lucknow</option>
+                  <option value="">Select your area at your doorstep</option>
                   {LUCKNOW_AREAS.map(area => (
                     <option key={area} value={area}>{area}</option>
                   ))}

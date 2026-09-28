@@ -83,7 +83,7 @@ export default function Home() {
       {/* 3. Refurbished Mobiles Best Deals */}
       <BestDeals products={products} loading={loading} />
 
-      {/* 4. Doorstep Mobile Repair Hub in Lucknow */}
+      {/* 4. Doorstep Mobile Repair Hub at your doorstep */}
       <RepairShowcase />
 
       {/* 5. How Fundu Works (Sell / Buy / Repair) */}

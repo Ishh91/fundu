@@ -116,8 +116,8 @@ export default function CustomerDetailsModal({ isOpen, onClose, customer }: Cust
     customer.email ||
     fetchedProfile?.email ||
     'Not Provided';
-  const address = customer.pickup_address || customer.delivery_address || 'Lucknow Address Not Specified';
-  const locality = customer.pickup_area || customer.delivery_area || 'Lucknow';
+  const address = customer.pickup_address || customer.delivery_address || 'Doorstep Address Not Specified';
+  const locality = customer.pickup_area || customer.delivery_area || 'Doorstep Service';
 
   const copyToClipboard = (text: string, label: string) => {
     navigator.clipboard.writeText(text);

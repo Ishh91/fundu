@@ -73,7 +73,7 @@ export default function AdminSellRequests({
 
   const getWhatsAppLink = (sell: SellRequest) => {
     const phone = (sell as any).phone || (sell as any).contact_phone || '9839100000';
-    const text = `Hi, this is Fundu Lucknow regarding your sell request #${sell.id.slice(0, 8)} for ${sell.brand} ${sell.model}. Your pickup executive ${sell.pickup_person_name || 'is on the way'}. Guaranteed Spot Payout: ${formatINR(sell.estimated_price || 0)}.`;
+    const text = `Hi, this is Fundu regarding your sell request #${sell.id.slice(0, 8)} for ${sell.brand} ${sell.model}. Your pickup executive ${sell.pickup_person_name || 'is on the way'}. Guaranteed Spot Payout: ${formatINR(sell.estimated_price || 0)}.`;
     const cleanPhone = String(phone).replace(/\D/g, '');
     const fullPhone = cleanPhone.length === 10 ? `91${cleanPhone}` : cleanPhone;
     return `https://wa.me/${fullPhone}?text=${encodeURIComponent(text)}`;
@@ -96,8 +96,8 @@ export default function AdminSellRequests({
       `📋 *Request ID:* #${sell.id.slice(0, 8).toUpperCase()}\n` +
       `👤 *Customer Name:* ${(sell as any).full_name || (sell as any).customer_name || 'Customer'}\n` +
       `📞 *Customer Phone:* ${(sell as any).phone || (sell as any).customer_phone || (sell.payout_details ?? 'N/A')}\n` +
-      `📍 *Pickup Address:* ${sell.pickup_address || 'Lucknow'}\n` +
-      `🏙️ *Locality:* ${sell.pickup_area || 'Lucknow'}\n` +
+      `📍 *Pickup Address:* ${sell.pickup_address || 'Doorstep Service'}\n` +
+      `🏙️ *Locality:* ${sell.pickup_area || 'Doorstep Service'}\n` +
       `⏰ *Pickup Slot:* ${sell.pickup_date || ''} (${sell.pickup_slot || ''})\n\n` +
       `📱 *DEVICE SPECIFICATIONS & QUOTATION:*\n` +
       `• *Device:* ${sell.brand} ${sell.model} (${sell.storage || '128GB'})\n` +
@@ -106,7 +106,7 @@ export default function AdminSellRequests({
       `• *Payout Method:* ${sell.payout_method || 'UPI on spot inspection'}\n` +
       `• *IMEI:* ${sell.imei || 'Perform *#06# doorstep check'}\n` +
       `• *Accessories with Phone:* ${sell.accessories?.join(', ') || 'None'}\n\n` +
-      `🔍 *Inspection Guidelines:* Verify display touch, battery health, cameras, and physical edges before processing spot payout in Lucknow.`;
+      `🔍 *Inspection Guidelines:* Verify display touch, battery health, cameras, and physical edges before processing spot payout at your doorstep.`;
     return `https://wa.me/${targetPhone}?text=${encodeURIComponent(text)}`;
   };
 
@@ -119,7 +119,7 @@ export default function AdminSellRequests({
             <BadgeIndianRupee className="h-3.5 w-3.5" /> Doorstep Mobile Buyback Management
           </div>
           <h2 className="mt-2 font-display text-2xl font-black text-ink-900">
-            Sell Requests & Lucknow Pickups
+            Sell Requests & Doorstep Pickups
           </h2>
           <p className="mt-1 text-xs text-ink-600">
             Verify 15-digit IMEIs, inspect uploaded device photos, reassign field agents, and approve spot payouts.
@@ -227,7 +227,7 @@ export default function AdminSellRequests({
                         {formatINR(s.final_price || s.estimated_price || 0)}
                       </span>
                       <span className="text-ink-400 flex items-center gap-1">
-                        <MapPin className="h-3 w-3 text-brand-600" /> {s.pickup_area || 'Lucknow'}
+                        <MapPin className="h-3 w-3 text-brand-600" /> {s.pickup_area || 'Doorstep Service'}
                       </span>
                     </div>
 
@@ -431,10 +431,10 @@ export default function AdminSellRequests({
                   <div>
                     <p className="text-ink-500 font-medium">Pickup Locality Cluster:</p>
                     <p className="font-black text-ink-900 text-sm mt-0.5 flex items-center gap-1">
-                      <MapPin className="h-3.5 w-3.5 text-brand-600" /> {selectedSell.pickup_area || 'Gomti Nagar, Lucknow'}
+                      <MapPin className="h-3.5 w-3.5 text-brand-600" /> {selectedSell.pickup_area || 'Gomti Nagar'}
                     </p>
                     <p className="text-ink-500 font-medium mt-2">Full Address:</p>
-                    <p className="font-bold text-ink-900 mt-0.5">{selectedSell.pickup_address || 'Lucknow'}</p>
+                    <p className="font-bold text-ink-900 mt-0.5">{selectedSell.pickup_address || 'Doorstep Service'}</p>
                     <p className="text-ink-500 mt-1 flex items-center gap-1">
                       <Clock className="h-3.5 w-3.5 text-ink-400" /> Slot: {selectedSell.pickup_slot} ({selectedSell.pickup_date})
                     </p>

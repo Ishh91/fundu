@@ -75,7 +75,7 @@ export default function AdminVendors() {
     const loginUrl = `${window.location.origin}/vendor-login`;
     const passwordText = pass || 'Vendor@123456';
 
-    const message = `🏬 *FUNDU LUCKNOW VENDOR PARTNER PORTAL*\n\n` +
+    const message = `🏬 *Fundu VENDOR PARTNER PORTAL*\n\n` +
       `Hi *${vendor.full_name || vendor.business_name || 'Vendor'}* (*${vendor.business_name || 'Vendor Partner'}*),\n` +
       `Your Official Vendor Account is created! Please check your email for the EmailJS Verification OTP code to verify your account.\n\n` +
       `🌐 *Login Portal:* ${loginUrl}\n` +
@@ -90,7 +90,7 @@ export default function AdminVendors() {
     const loginUrl = `${window.location.origin}/vendor-login`;
     const passwordText = pass || 'Vendor@123456';
     const emailTo = (vendor as any).email || '';
-    const subject = `Fundu Lucknow Vendor Account Created — Verification Required`;
+    const subject = `Fundu Vendor Account Created — Verification Required`;
     const body = `Hi ${vendor.full_name || vendor.business_name || 'Vendor Partner'},\n\n` +
       `Your Fundu Vendor Partner account has been created.\n\n` +
       `Login Portal: ${loginUrl}\n` +
@@ -270,7 +270,7 @@ export default function AdminVendors() {
         type: 'cash_repayment',
         amount: amountNum,
         payment_mode: paymentMode,
-        notes: paymentNotes || 'Cash received at Fundu Lucknow Hub',
+        notes: paymentNotes || 'Cash received at Fundu Hub',
         recorded_by: 'Admin',
       });
 
@@ -581,7 +581,7 @@ export default function AdminVendors() {
                       <span className="badge bg-ink-100 text-ink-800 text-[10px] font-bold capitalize">{r.status}</span>
                     </div>
                     <p className="text-xs text-ink-500 mt-1">
-                      Problem: <strong className="text-rose-700">{r.problem}</strong> on {r.brand} {r.model} · Area: {r.pickup_area || 'Lucknow'}
+                      Problem: <strong className="text-rose-700">{r.problem}</strong> on {r.brand} {r.model} · Area: {r.pickup_area || 'Doorstep Service'}
                     </p>
                   </div>
 

@@ -31,21 +31,21 @@ import type { Product } from '../types';
 
 // Lucknow PIN code to Area mapping dictionary
 const LUCKNOW_PINCODE_MAP: Record<string, string> = {
-  '226001': 'Hazratganj, Lucknow',
-  '226002': 'Alambagh, Lucknow',
+  '226001': 'Hazratganj',
+  '226002': 'Alambagh',
   '226003': 'Chowk / Old Lucknow',
-  '226004': 'Charbagh Station Area, Lucknow',
-  '226005': 'Rajajipuram, Lucknow',
-  '226006': 'Aashiana / Transport Nagar, Lucknow',
-  '226010': 'Gomti Nagar, Lucknow',
-  '226012': 'Kanpur Road / Amausi, Lucknow',
-  '226016': 'Indira Nagar, Lucknow',
-  '226017': 'Jankipuram, Lucknow',
-  '226020': 'Mahanagar, Lucknow',
-  '226022': 'Nishatganj / IT Crossing, Lucknow',
-  '226024': 'Vikas Nagar, Lucknow',
-  '226028': 'Chinhat / Faizabad Road, Lucknow',
-  '226030': 'Gomti Nagar Extension, Lucknow',
+  '226004': 'Charbagh Station Area',
+  '226005': 'Rajajipuram',
+  '226006': 'Aashiana / Transport Nagar',
+  '226010': 'Gomti Nagar',
+  '226012': 'Kanpur Road / Amausi',
+  '226016': 'Indira Nagar',
+  '226017': 'Jankipuram',
+  '226020': 'Mahanagar',
+  '226022': 'Nishatganj / IT Crossing',
+  '226024': 'Vikas Nagar',
+  '226028': 'Chinhat / Faizabad Road',
+  '226030': 'Gomti Nagar Extension',
 };
 
 const CONDITION_GRADES = [
@@ -89,7 +89,7 @@ const SAMPLE_PRODUCTS: Record<string, Product> = {
     original_price: 59900,
     discount_percent: 35,
     warranty_months: 6,
-    description: 'Refurbished Superb condition Apple iPhone 13. Passed 32-point inspection, battery health guaranteed above 88%. Comes with USB-C cable and 6-month Fundu warranty in Lucknow.',
+    description: 'Refurbished Superb condition Apple iPhone 13. Passed 32-point inspection, battery health guaranteed above 88%. Comes with USB-C cable and 6-month Fundu replacement warranty.',
     images: [
       'https://images.unsplash.com/photo-1695048133142-1a20484d2569?w=800&auto=format&fit=crop&q=80',
       'https://images.unsplash.com/photo-1632661674596-df8be070a5c5?w=800&auto=format&fit=crop&q=80',
@@ -140,7 +140,7 @@ const SAMPLE_PRODUCTS: Record<string, Product> = {
     original_price: 74999,
     discount_percent: 42,
     warranty_months: 6,
-    description: 'Flagship Snapdragon performance. Thoroughly sanitized and tested. Free express delivery across Gomti Nagar, Hazratganj, and all Lucknow areas.',
+    description: 'Flagship Snapdragon performance. Thoroughly sanitized and tested. Free express delivery across Gomti Nagar, Hazratganj, and all service areas.',
     images: [
       'https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?w=800&auto=format&fit=crop&q=80',
       'https://images.unsplash.com/photo-1678685888221-cda773a3dcdb?w=800&auto=format&fit=crop&q=80',
@@ -186,7 +186,7 @@ export default function ProductDetail() {
   const [newReview, setNewReview] = useState({
     rating: 5,
     reviewer_name: '',
-    location: 'Lucknow',
+    location: 'Doorstep Service',
     comment: '',
   });
   const [reviewSubmitting, setReviewSubmitting] = useState(false);
@@ -216,7 +216,7 @@ export default function ProductDetail() {
         service_type: 'buy',
         rating: newReview.rating,
         reviewer_name: newReview.reviewer_name.trim(),
-        location: newReview.location.trim() || 'Lucknow',
+        location: newReview.location.trim() || 'Doorstep Service',
         comment: newReview.comment.trim(),
         is_approved: false,
       };
@@ -226,7 +226,7 @@ export default function ProductDetail() {
 
       alert('🎉 Thank you for your review! It has been submitted for verification.');
       setShowReviewModal(false);
-      setNewReview({ rating: 5, reviewer_name: '', location: 'Lucknow', comment: '' });
+      setNewReview({ rating: 5, reviewer_name: '', location: 'Doorstep Service', comment: '' });
     } catch (err: any) {
       alert(err?.message || 'Failed to submit review');
     } finally {
@@ -237,7 +237,7 @@ export default function ProductDetail() {
   // Pincode & Location Auto-lookup State
   const [pincode, setPincode] = useState<string>('226010');
   const [pincodeLoading, setPincodeLoading] = useState(false);
-  const [locationName, setLocationName] = useState<string>('Gomti Nagar, Lucknow');
+  const [locationName, setLocationName] = useState<string>('Gomti Nagar');
   const [pincodeError, setPincodeError] = useState<string | null>(null);
 
   // Accordion & Modal States
@@ -402,7 +402,7 @@ export default function ProductDetail() {
               <span className="text-[#344257] font-bold truncate max-w-xs">{product.brand} {product.model}</span>
             </div>
             <div className="flex items-center gap-1 text-[11px] font-bold text-[#344257] bg-[#F0F0F5] border border-[#C0C8D8] px-2.5 py-1 rounded-full">
-              <Building2 className="h-3 w-3 text-[#47576E]" /> Lucknow Certified Warehouse Stock
+              <Building2 className="h-3 w-3 text-[#47576E]" /> Certified Warehouse Stock
             </div>
           </div>
         </div>
@@ -511,7 +511,7 @@ export default function ProductDetail() {
                   {product.brand} {product.model} ({selectedStorage}) - {selectedColor || product.color}
                 </h1>
                 <p className="mt-1 text-xs text-ink-500">
-                  Certified Refurbished · Lucknow Hub Stock · Free 6M Warranty Included
+                  Certified Refurbished · Service Hub Stock · Free 6M Warranty Included
                 </p>
               </div>
 
@@ -872,7 +872,7 @@ export default function ProductDetail() {
                         type="text"
                         value={newReview.location}
                         onChange={(e) => setNewReview({ ...newReview, location: e.target.value })}
-                        placeholder="e.g. Gomti Nagar, Lucknow"
+                        placeholder="e.g. Gomti Nagar"
                         className="input text-xs font-bold"
                       />
                     </div>

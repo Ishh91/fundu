@@ -37,31 +37,31 @@ const BRAND_DETAILS: Record<
   apple: {
     logo: getCleanBrandLogo('apple'),
     tagline: 'Sell Old Apple iPhone Online for Instant Cash at Doorstep',
-    desc: 'Get highest guaranteed spot cash for your old Apple iPhone in Lucknow. Free doorstep pickup & instant UPI payment across all Lucknow localities.',
+    desc: 'Get highest guaranteed spot cash for your old Apple iPhone at your doorstep. Free doorstep pickup & instant UPI payment across all service localities.',
     count: '46+ iPhone Models',
   },
   samsung: {
     logo: getCleanBrandLogo('samsung'),
     tagline: 'Sell Old Samsung Galaxy Mobile Online at Best Resale Valuation',
-    desc: 'Sell used Samsung Galaxy S, Z Fold/Flip, A & M series smartphones online in Lucknow for maximum spot payment.',
+    desc: 'Sell used Samsung Galaxy S, Z Fold/Flip, A & M series smartphones online at your doorstep for maximum spot payment.',
     count: '105+ Galaxy Models',
   },
   oneplus: {
     logo: getCleanBrandLogo('oneplus'),
     tagline: 'Sell Old OnePlus Smartphone Online at Highest Cash Rates',
-    desc: 'Sell old OnePlus 13, 12, 11, Nord & Open series phones at best doorstep cash rates in Lucknow with instant data wipe.',
+    desc: 'Sell old OnePlus 13, 12, 11, Nord & Open series phones at best doorstep cash rates at your doorstep with instant data wipe.',
     count: '40+ OnePlus Models',
   },
   xiaomi: {
     logo: getCleanBrandLogo('xiaomi'),
-    tagline: 'Get Maximum Resale Cash Value for Your Old Xiaomi / Redmi Phone in Lucknow',
-    desc: 'Sell used Xiaomi Mi, Redmi Note & POCO smartphones online in Lucknow for instant spot cash & 100% free doorstep pickup across Gomti Nagar, Hazratganj, Indira Nagar & Aliganj.',
+    tagline: 'Get Maximum Resale Cash Value for Your Old Xiaomi / Redmi Phone at your doorstep',
+    desc: 'Sell used Xiaomi Mi, Redmi Note & POCO smartphones online at your doorstep for instant spot cash & 100% free doorstep pickup across Gomti Nagar, Hazratganj, Indira Nagar & Aliganj.',
     count: '60+ Xiaomi Models',
   },
   redmi: {
     logo: getCleanBrandLogo('redmi'),
     tagline: 'Sell Old Redmi Mobile Phone Online for Instant Cash',
-    desc: 'Sell used Redmi Note 13, 12, 11 & C series phones online in Lucknow for instant spot payment.',
+    desc: 'Sell used Redmi Note 13, 12, 11 & C series phones online at your doorstep for instant spot payment.',
     count: '40+ Redmi Models',
   },
   poco: {
@@ -73,79 +73,79 @@ const BRAND_DETAILS: Record<
   realme: {
     logo: getCleanBrandLogo('realme'),
     tagline: 'Sell Old Realme Mobile Phone Online at Best Price',
-    desc: 'Sell used Realme GT, Number Pro, Narzo & C series phones online in Lucknow for instant cash in hand.',
+    desc: 'Sell used Realme GT, Number Pro, Narzo & C series phones online at your doorstep for instant cash in hand.',
     count: '40+ Realme Models',
   },
   oppo: {
     logo: getCleanBrandLogo('oppo'),
     tagline: 'Sell Old Oppo Mobile Phone Online for Instant Cash',
-    desc: 'Sell old Oppo Find, Reno, F & A series mobiles in Lucknow with zero hassle and instant GPay/PhonePe transfer.',
+    desc: 'Sell old Oppo Find, Reno, F & A series mobiles at your doorstep with zero hassle and instant GPay/PhonePe transfer.',
     count: '35+ Oppo Models',
   },
   vivo: {
     logo: getCleanBrandLogo('vivo'),
     tagline: 'Sell Old Vivo Mobile Online for Instant Spot Payout',
-    desc: 'Sell used Vivo X, V, T & Y series smartphones in Lucknow with free doorstep pickup & guaranteed valuation.',
+    desc: 'Sell used Vivo X, V, T & Y series smartphones at your doorstep with free doorstep pickup & guaranteed valuation.',
     count: '45+ Vivo Models',
   },
   iqoo: {
     logo: getCleanBrandLogo('iqoo'),
     tagline: 'Sell Old iQOO Gaming Smartphone Online at Best Value',
-    desc: 'Sell used iQOO 12, 11, Neo & Z series performance phones for instant doorstep payment in Lucknow.',
+    desc: 'Sell used iQOO 12, 11, Neo & Z series performance phones for instant doorstep payment at your doorstep.',
     count: '15+ iQOO Models',
   },
   google: {
     logo: getCleanBrandLogo('google'),
     tagline: 'Sell Old Google Pixel Phone Online at Best Resale Value',
-    desc: 'Sell used Google Pixel 9, 8, 7, 6 & Fold series phones in Lucknow at highest market value.',
+    desc: 'Sell used Google Pixel 9, 8, 7, 6 & Fold series phones at your doorstep at highest market value.',
     count: '25+ Pixel Models',
   },
   motorola: {
     logo: getCleanBrandLogo('motorola'),
     tagline: 'Sell Old Motorola Moto Phone Online for Instant Cash',
-    desc: 'Sell used Motorola Razr, Edge & Moto G series smartphones in Lucknow for maximum spot payment.',
+    desc: 'Sell used Motorola Razr, Edge & Moto G series smartphones at your doorstep for maximum spot payment.',
     count: '30+ Moto Models',
   },
   moto: {
     logo: getCleanBrandLogo('motorola'),
     tagline: 'Sell Old Moto Smartphone Online for Quick Doorstep Cash',
-    desc: 'Sell used Moto G, Edge & Razr series phones online in Lucknow with free doorstep pickup.',
+    desc: 'Sell used Moto G, Edge & Razr series phones online at your doorstep with free doorstep pickup.',
     count: '30+ Moto Models',
   },
   nothing: {
     logo: getCleanBrandLogo('nothing'),
     tagline: 'Sell Old Nothing Phone Online at Top Guaranteed Price',
-    desc: 'Sell used Nothing Phone (2), (1), (2a) & CMF Phone 1 in Lucknow for instant spot cash.',
+    desc: 'Sell used Nothing Phone (2), (1), (2a) & CMF Phone 1 at your doorstep for instant spot cash.',
     count: '10+ Nothing Models',
   },
   tecno: {
     logo: getCleanBrandLogo('tecno'),
     tagline: 'Sell Old Tecno Smartphone Online for Instant Cash at Doorstep',
-    desc: 'Sell used Tecno Camon, Pova, Phantom & Spark series smartphones online in Lucknow for maximum spot payment.',
+    desc: 'Sell used Tecno Camon, Pova, Phantom & Spark series smartphones online at your doorstep for maximum spot payment.',
     count: '25+ Tecno Models',
   },
   itel: {
     logo: getCleanBrandLogo('itel'),
     tagline: 'Sell Old Itel Mobile Phone Online for Instant Cash',
-    desc: 'Sell used Itel Color Pro, S24, P55, A70 & A60 series smartphones in Lucknow with free doorstep pickup & instant payment.',
+    desc: 'Sell used Itel Color Pro, S24, P55, A70 & A60 series smartphones at your doorstep with free doorstep pickup & instant payment.',
     count: '20+ Itel Models',
   },
   infinix: {
     logo: getCleanBrandLogo('infinix'),
     tagline: 'Sell Old Infinix Smartphone Online at Best Resale Value',
-    desc: 'Sell used Infinix GT, Zero, Note & Hot series phones online in Lucknow for top guaranteed cash.',
+    desc: 'Sell used Infinix GT, Zero, Note & Hot series phones online at your doorstep for top guaranteed cash.',
     count: '30+ Infinix Models',
   },
   lava: {
     logo: getCleanBrandLogo('lava'),
     tagline: 'Sell Old Lava Mobile Phone Online for Maximum Spot Payout',
-    desc: 'Sell used Lava Agni, Blaze, Storm & Yuva series smartphones in Lucknow with zero hassle and instant cash.',
+    desc: 'Sell used Lava Agni, Blaze, Storm & Yuva series smartphones at your doorstep with zero hassle and instant cash.',
     count: '20+ Lava Models',
   },
   honor: {
     logo: getCleanBrandLogo('honor'),
     tagline: 'Sell Old Honor Smartphone Online at Highest Market Value',
-    desc: 'Sell used Honor 200, 90, X9b & Magic series smartphones online in Lucknow for instant spot payment.',
+    desc: 'Sell used Honor 200, 90, X9b & Magic series smartphones online at your doorstep for instant spot payment.',
     count: '15+ Honor Models',
   },
 };
@@ -187,7 +187,7 @@ export default function SellBrandPage() {
   const brandInfo = BRAND_DETAILS[brandCleanKey] || BRAND_DETAILS[brandCanonicalKey] || {
     logo: getCleanBrandLogo(brandDisplayName),
     tagline: `Sell Old ${brandDisplayName} Mobile Phone Online At Best Price`,
-    desc: `Sell used ${brandDisplayName} smartphones online in Lucknow for instant spot cash & free doorstep pickup.`,
+    desc: `Sell used ${brandDisplayName} smartphones online at your doorstep for instant spot cash & free doorstep pickup.`,
     count: `30+ ${brandDisplayName} Models`,
   };
 
@@ -418,8 +418,8 @@ export default function SellBrandPage() {
               </h1>
               <p className="text-xs text-[#47576E] mt-1">
                 {effectiveSeriesSlug
-                  ? `Select your exact ${currentSeriesGroup?.name || brandDisplayName} model below for instant spot valuation & doorstep pickup in Lucknow`
-                  : `Select your ${brandDisplayName} model series below for instant spot cash & doorstep pickup in Lucknow`}
+                  ? `Select your exact ${currentSeriesGroup?.name || brandDisplayName} model below for instant spot valuation & doorstep pickup at your doorstep`
+                  : `Select your ${brandDisplayName} model series below for instant spot cash & doorstep pickup at your doorstep`}
               </p>
             </div>
 
@@ -661,7 +661,7 @@ export default function SellBrandPage() {
               {
                 num: '2',
                 title: 'Schedule Free Doorstep Pickup',
-                desc: 'Pick your preferred date & time slot. Our automated Lucknow rider is dispatched to your location.',
+                desc: 'Pick your preferred date & time slot. Our automated delivery rider is dispatched to your location.',
               },
               {
                 num: '3',
@@ -684,7 +684,7 @@ export default function SellBrandPage() {
         <div className="card p-8 rounded-[32px] bg-gradient-to-r from-[#1E2734] via-[#344257] to-[#47576E] text-white shadow-xl space-y-6">
           <div className="text-center max-w-2xl mx-auto space-y-2">
             <span className="badge bg-white/10 text-white border border-white/20 text-xs font-bold px-3 py-1">
-              Lucknow's #1 Mobile Buyback Network
+              Our #1 Mobile Buyback Network
             </span>
             <h2 className="font-display text-2xl md:text-3xl font-black text-white">
               Why Sell Old {brandDisplayName} Phone On Fundu?
@@ -738,7 +738,7 @@ export default function SellBrandPage() {
           <div className="text-center max-w-xl mx-auto space-y-1">
             <span className="badge bg-[#F0F0F5] text-[#344257] border border-[#C0C8D8] text-xs font-bold">Frequently Asked Questions</span>
             <h2 className="font-display text-2xl font-black text-[#344257]">
-              Selling {brandDisplayName} on Fundu Lucknow
+              Selling {brandDisplayName} on Fundu
             </h2>
           </div>
 
@@ -749,8 +749,8 @@ export default function SellBrandPage() {
                 a: `Our automated algorithm checks real-time Lucknow resale market demand for ${brandDisplayName} models and adjusts based on screen condition, body scuffs, hardware defects, warranty status, and original box/charger bonuses.`,
               },
               {
-                q: `Is doorstep pickup for ${brandDisplayName} 100% free in Lucknow?`,
-                a: `Yes! Doorstep pickup is 100% FREE with zero visiting fees across all Lucknow areas including Gomti Nagar, Hazratganj, Indira Nagar, Aliganj, Mahanagar, Ashiyana, Chowk, and Rajajipuram.`,
+                q: `Is doorstep pickup for ${brandDisplayName} 100% free at your doorstep?`,
+                a: `Yes! Doorstep pickup is 100% FREE with zero visiting fees across all service areas areas including Gomti Nagar, Hazratganj, Indira Nagar, Aliganj, Mahanagar, Ashiyana, Chowk, and Rajajipuram.`,
               },
               {
                 q: `Do I get instant payment when selling my ${brandDisplayName}?`,
@@ -788,15 +788,15 @@ export default function SellBrandPage() {
 
         {/* SEO FOOTER CONTENT BLOCK */}
         <div className="p-8 rounded-[32px] bg-gray-100 border border-gray-200 text-xs text-gray-600 space-y-3 leading-relaxed">
-          <h3 className="font-bold text-gray-900 text-sm">Sell Old {brandDisplayName} Mobile Phone Online in Lucknow — Fundu Re-Commerce Hub</h3>
+          <h3 className="font-bold text-gray-900 text-sm">Sell Old {brandDisplayName} Mobile Phone Online at your doorstep — Fundu Re-Commerce Hub</h3>
           <p>
-            Looking to sell your old {brandDisplayName} mobile phone for instant spot cash in Lucknow? Fundu is Lucknow's largest, most trusted online platform for selling used {brandDisplayName} smartphones across all series.
+            Looking to sell your old {brandDisplayName} mobile phone for instant spot cash at your doorstep? Fundu is a premier largest, most trusted online platform for selling used {brandDisplayName} smartphones across all series.
           </p>
           <p>
-            Enjoy free doorstep pickup across all Lucknow areas including Gomti Nagar, Hazratganj, Indira Nagar, Aliganj, Mahanagar, Ashiyana, Chowk, Rajajipuram, Jankipuram, and Kanpur Road.
+            Enjoy free doorstep pickup across all service areas areas including Gomti Nagar, Hazratganj, Indira Nagar, Aliganj, Mahanagar, Ashiyana, Chowk, Rajajipuram, Jankipuram, and Kanpur Road.
           </p>
           <div className="pt-3 border-t border-gray-300/60 flex flex-wrap items-center justify-between gap-2 text-xs font-bold text-gray-800">
-            <span>Fundu Lucknow Helpline: +91-9839122345</span>
+            <span>Fundu Helpline: +91-9839122345</span>
             <span>Average User Rating: 4.9 / 5.0 (12,400+ Verified Deals)</span>
           </div>
         </div>

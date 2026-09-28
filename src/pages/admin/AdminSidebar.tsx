@@ -166,7 +166,7 @@ export default function AdminSidebar({
             <div>
               <span className="font-display text-lg font-black tracking-tight text-ink-900">Fundu Admin</span>
               <p className="text-[10px] font-bold text-brand-600 flex items-center gap-1">
-                <MapPin className="h-3 w-3 text-emerald-600" /> Lucknow Hub
+                <MapPin className="h-3 w-3 text-emerald-600" /> Service Hub
               </p>
             </div>
           </Link>

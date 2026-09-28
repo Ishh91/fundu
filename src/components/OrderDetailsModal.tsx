@@ -42,7 +42,7 @@ type OrderDetailsModalProps = {
 };
 
 const ORDER_LIFECYCLE_STEPS = [
-  { id: 'pending', label: 'Order Placed', desc: 'Received at Fundu Lucknow' },
+  { id: 'pending', label: 'Order Placed', desc: 'Received at Fundu' },
   { id: 'confirmed', label: 'Confirmed', desc: 'Verified & assigned to hub' },
   { id: 'packed', label: 'Packed & Inspected', desc: '32-point check passed' },
   { id: 'dispatched', label: 'Out for Delivery', desc: 'Executive on the way' },
@@ -138,8 +138,8 @@ export default function OrderDetailsModal({
   const getWhatsAppAdminLink = () => {
     const orderId = order.id.slice(0, 8).toUpperCase();
     const customerName = order.delivery_name || 'Customer';
-    const locality = order.delivery_area || 'Lucknow';
-    const text = `Hi Fundu Admin, I have a query regarding my Order #${orderId} for delivery at ${locality}, Lucknow. Current Status: ${effectiveStatus}. Customer Name: ${customerName}. Please assist.`;
+    const locality = order.delivery_area || 'Doorstep Service';
+    const text = `Hi Fundu Admin, I have a query regarding my Order #${orderId} for delivery at ${locality}. Current Status: ${effectiveStatus}. Customer Name: ${customerName}. Please assist.`;
     return `https://wa.me/919839122345?text=${encodeURIComponent(text)}`;
   };
 
@@ -261,7 +261,7 @@ export default function OrderDetailsModal({
                   <div className="flex items-center gap-2">
                     <span className="h-2.5 w-2.5 rounded-full bg-emerald-500 animate-ping" />
                     <span className="text-xs font-bold text-brand-900">
-                      Live Delivery Executive GPS is active in Lucknow
+                      Live Delivery Executive GPS is active at your doorstep
                     </span>
                   </div>
                   <button
@@ -269,7 +269,7 @@ export default function OrderDetailsModal({
                     onClick={() => {
                       onClose();
                       onOpenTracker?.({
-                        locality: order.delivery_area || order.delivery_address || 'Lucknow',
+                        locality: order.delivery_area || order.delivery_address || 'Doorstep Service',
                         executiveName: disp?.delivery_person_name || order.delivery_person_name || 'Rohit Verma',
                         executivePhone: disp?.delivery_person_phone || order.delivery_person_phone || '+91 98391 22345',
                         orderType: 'buy',
@@ -437,7 +437,7 @@ export default function OrderDetailsModal({
                   Need Help or Delivery Instructions? Connect with Admin
                 </h4>
                 <p className="text-xs text-ink-600">
-                  Change delivery timing, add landmark details, or resolve payment issues directly with Fundu Lucknow Admin desk.
+                  Change delivery timing, add landmark details, or resolve payment issues directly with Fundu Admin desk.
                 </p>
               </div>
 
@@ -506,7 +506,7 @@ export default function OrderDetailsModal({
                     >
                       <div className="flex items-center justify-between gap-2 mb-0.5">
                         <span className="font-bold text-[10px]">
-                          {msg.sender === 'admin' ? 'Fundu Lucknow Admin' : 'You'}
+                          {msg.sender === 'admin' ? 'Fundu Admin' : 'You'}
                         </span>
                         <span className="text-[9px] text-ink-400">
                           {new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
@@ -531,7 +531,7 @@ export default function OrderDetailsModal({
                   </h4>
                 </div>
                 <p className="text-xs text-emerald-700 mt-0.5">
-                  We hope you love your certified refurbished device. How was your delivery experience in Lucknow?
+                  We hope you love your certified refurbished device. How was your delivery experience at your doorstep?
                 </p>
               </div>
               <button

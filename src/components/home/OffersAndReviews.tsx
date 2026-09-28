@@ -26,7 +26,7 @@ export default function OffersAndReviews() {
           <p className="text-sm font-bold uppercase tracking-[0.24em] text-brand-700">Offers & Coupons</p>
           <h2 className="mt-2 font-display text-3xl font-extrabold text-ink-900">Active Deals & Promos</h2>
           <p className="mt-3 text-sm leading-7 text-ink-600">
-            Exclusive Fundu promo discounts and instant cash bonuses available for Lucknow customers.
+            Exclusive Fundu promo discounts and instant cash bonuses available for customers.
           </p>
 
           <div className="mt-6 grid gap-4 md:grid-cols-3">

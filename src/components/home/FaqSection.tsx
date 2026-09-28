@@ -17,13 +17,13 @@ const DETAILED_FAQS = [
   },
   {
     category: 'sell',
-    q: 'When and how do I receive payment for selling my phone in Lucknow?',
-    a: 'Payment is 100% instant! Our Lucknow pickup executive inspects your device at your doorstep and transfers UPI (Google Pay, PhonePe, Paytm), IMPS Bank Transfer, or Cash into your hands on the spot before leaving.',
+    q: 'When and how do I receive payment for selling my phone?',
+    a: 'Payment is 100% instant! Our Doorstep pickup executive inspects your device at your doorstep and transfers UPI (Google Pay, PhonePe, Paytm), IMPS Bank Transfer, or Cash into your hands on the spot before leaving.',
   },
   {
     category: 'sell',
-    q: 'Is doorstep pickup really free across all Lucknow localities?',
-    a: 'Yes, 100% free! Whether you are located in Gomti Nagar, Hazratganj, Indira Nagar, Aliganj, Mahanagar, Ashiyana, or any other area in Lucknow, there are zero pickup or convenience fees.',
+    q: 'Is doorstep pickup really free across all service localities?',
+    a: 'Yes, 100% free! Whether you are located in Gomti Nagar, Hazratganj, Indira Nagar, Aliganj, Mahanagar, Ashiyana, or any other area at your doorstep, there are zero pickup or convenience fees.',
   },
   {
     category: 'sell',
@@ -38,7 +38,7 @@ const DETAILED_FAQS = [
   {
     category: 'buy',
     q: 'What warranty is provided on refurbished smartphones?',
-    a: 'All refurbished phones come with a 6-month comprehensive replacement warranty backed by Fundu, along with dedicated customer support across Lucknow.',
+    a: 'All refurbished phones come with a 6-month comprehensive replacement warranty backed by Fundu, along with dedicated customer support at your doorstep.',
   },
   {
     category: 'buy',
@@ -47,7 +47,7 @@ const DETAILED_FAQS = [
   },
   {
     category: 'repair',
-    q: 'How does 30-minute doorstep mobile repair work in Lucknow?',
+    q: 'How does 30-minute doorstep mobile repair work at your doorstep?',
     a: 'You select your mobile brand, model, and issue (e.g. cracked screen or dead battery). Our certified technician arrives at your chosen home or office slot with specialized tools and repairs the phone right in front of you within 20-30 minutes.',
   },
   {
@@ -86,7 +86,7 @@ export default function FaqSection() {
                 Everything You Need to Know About Fundu
               </h2>
               <p className="mt-2 text-xs sm:text-sm text-[#8A9AAF] leading-relaxed">
-                Got questions about selling, buying refurbished, or booking doorstep repair in Lucknow? We've got you covered.
+                Got questions about selling, buying refurbished, or booking doorstep doorstep repair? We've got you covered.
               </p>
 
               {/* Category selector pills */}
@@ -115,7 +115,7 @@ export default function FaqSection() {
             <div className="mt-8 rounded-xl bg-[#F7F7FA] p-4 border border-[#C0C8D8]/60">
               <p className="text-xs font-bold text-[#344257]">Still have questions?</p>
               <p className="text-xs text-[#8A9AAF] mt-0.5">
-                Our Lucknow support desk is available 7 days a week (9 AM - 9 PM).
+                Our support desk is available 7 days a week (9 AM - 9 PM).
               </p>
               <div className="mt-3 flex items-center justify-between">
                 <a

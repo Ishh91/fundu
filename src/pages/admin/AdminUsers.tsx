@@ -210,7 +210,7 @@ export default function AdminUsers({
   const getWhatsAppUserLink = (user: UserProfile) => {
     const phone = (user.phone || '9839122345').replace(/\D/g, '');
     const targetPhone = phone.length === 10 ? `91${phone}` : phone;
-    const text = `Hi ${user.full_name || 'Customer'}, greetings from Fundu Lucknow Central Desk! How can we assist you today?`;
+    const text = `Hi ${user.full_name || 'Customer'}, greetings from Fundu Central Desk! How can we assist you today?`;
     return `https://wa.me/${targetPhone}?text=${encodeURIComponent(text)}`;
   };
 
@@ -473,7 +473,7 @@ export default function AdminUsers({
                         <div key={s.id} className="p-4 rounded-2xl bg-amber-50/40 border border-amber-200/60 flex flex-wrap items-center justify-between gap-3 text-xs">
                           <div>
                             <p className="font-bold text-ink-900 text-sm">{(s as any).device_name || `${s.brand} ${s.model}`}</p>
-                            <p className="text-ink-500 mt-0.5">Condition: {s.condition} • Address: {s.pickup_address || 'Lucknow'}</p>
+                            <p className="text-ink-500 mt-0.5">Condition: {s.condition} • Address: {s.pickup_address || 'Doorstep Service'}</p>
                           </div>
                           <div className="text-right">
                             <p className="font-black text-amber-900 text-sm">{formatINR(s.final_price || s.estimated_price || 0)}</p>
@@ -494,7 +494,7 @@ export default function AdminUsers({
                         <div key={o.id} className="p-4 rounded-2xl bg-indigo-50/40 border border-indigo-200/60 flex flex-wrap items-center justify-between gap-3 text-xs">
                           <div>
                             <p className="font-bold text-ink-900 text-sm">Order #{o.id.slice(0, 8).toUpperCase()}</p>
-                            <p className="text-ink-500 mt-0.5">Payment: {o.payment_status || 'COD'} • Delivery: {o.delivery_address || 'Lucknow'}</p>
+                            <p className="text-ink-500 mt-0.5">Payment: {o.payment_status || 'COD'} • Delivery: {o.delivery_address || 'Doorstep Service'}</p>
                           </div>
                           <div className="text-right">
                             <p className="font-black text-indigo-900 text-sm">{formatINR(o.total_amount || 0)}</p>
@@ -515,7 +515,7 @@ export default function AdminUsers({
                         <div key={r.id} className="p-4 rounded-2xl bg-purple-50/40 border border-purple-200/60 flex flex-wrap items-center justify-between gap-3 text-xs">
                           <div>
                             <p className="font-bold text-ink-900 text-sm">{r.device_model} ({r.issue_type || 'Repair'})</p>
-                            <p className="text-ink-500 mt-0.5">Address: {r.address || 'Lucknow'}</p>
+                            <p className="text-ink-500 mt-0.5">Address: {r.address || 'Doorstep Service'}</p>
                           </div>
                           <div className="text-right">
                             <p className="font-black text-purple-900 text-sm">{formatINR(r.estimated_cost || 0)}</p>

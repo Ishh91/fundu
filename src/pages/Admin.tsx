@@ -174,7 +174,7 @@ export default function Admin() {
     vehicle_number: 'UP 32 BK 4421',
     max_capacity: 6,
     status: 'available' as 'available' | 'offline',
-    current_locality: 'Gomti Nagar, Lucknow',
+    current_locality: 'Gomti Nagar',
   });
   const [agentSaving, setAgentSaving] = useState(false);
 
@@ -376,7 +376,7 @@ export default function Admin() {
               type: 'sell',
               title: `${newest.brand} ${newest.model}`,
               subtitle: `Estimated Valuation: ₹${newest.estimated_price?.toLocaleString('en-IN') || '—'}`,
-              locality: newest.pickup_area || 'Lucknow',
+              locality: newest.pickup_area || 'Doorstep Service',
               amount: newest.estimated_price,
               timestamp: new Date(),
               tabTarget: 'sells',
@@ -396,7 +396,7 @@ export default function Admin() {
               type: 'repair',
               title: `${newest.brand} ${newest.model}`,
               subtitle: `Problem: ${newest.problem}`,
-              locality: newest.pickup_area || 'Lucknow',
+              locality: newest.pickup_area || 'Doorstep Service',
               amount: newest.estimated_cost,
               timestamp: new Date(),
               tabTarget: 'repairs',
@@ -416,7 +416,7 @@ export default function Admin() {
               type: 'order',
               title: `Order #${newest.id.slice(0, 8).toUpperCase()}`,
               subtitle: `Total Amount: ₹${newest.total_amount?.toLocaleString('en-IN')}`,
-              locality: newest.delivery_area || 'Lucknow',
+              locality: newest.delivery_area || 'Doorstep Service',
               amount: newest.total_amount,
               timestamp: new Date(),
               tabTarget: 'orders',
@@ -442,7 +442,7 @@ export default function Admin() {
       type: 'sell',
       title: 'Apple iPhone 14 Pro Max (256GB)',
       subtitle: 'Excellent Condition • Box & Charger available',
-      locality: 'Gomti Nagar, Lucknow',
+      locality: 'Gomti Nagar',
       amount: 68500,
       timestamp: new Date(),
       tabTarget: 'sells',
@@ -548,7 +548,7 @@ export default function Admin() {
       offer_tag: phone.popular_tag ? `🔥 ${phone.popular_tag}` : '⚡ Hot Deal',
       warranty_months: '6',
       stock: '2',
-      description: `Certified refurbished ${phone.brand} ${phone.model}. Powered by ${phone.processor || 'high performance processor'}. Camera: ${phone.camera_spec || '50MP camera'}. Battery: ${phone.battery_spec || '5000mAh'}. 32-point inspection passed with 6-month Fundu Lucknow warranty.`,
+      description: `Certified refurbished ${phone.brand} ${phone.model}. Powered by ${phone.processor || 'high performance processor'}. Camera: ${phone.camera_spec || '50MP camera'}. Battery: ${phone.battery_spec || '5000mAh'}. 32-point inspection passed with 6-month Fundu warranty.`,
       images: phone.image_url || 'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=800&auto=format&fit=crop&q=80',
     });
     setListPhoneModal({ phone });
@@ -1012,7 +1012,7 @@ export default function Admin() {
             </div>
             <h1 className="font-display text-2xl font-black">Fundu Central Admin</h1>
             <p className="text-xs text-slate-400">
-              Restricted management console for Lucknow Operations.
+              Restricted management console for Doorstep Operations.
             </p>
           </div>
 
@@ -1136,7 +1136,7 @@ export default function Admin() {
                 {tab === 'overview' && 'Admin Control Center'}
               </h1>
               <p className="text-[11px] font-bold text-emerald-600 flex items-center gap-1">
-                <MapPin className="h-3 w-3 text-emerald-600" /> Lucknow Hub Operational
+                <MapPin className="h-3 w-3 text-emerald-600" /> Service Hub Operational
               </p>
             </div>
           </div>
@@ -2239,7 +2239,7 @@ export default function Admin() {
                 >
                   {LUCKNOW_AREAS.map((area) => (
                     <option key={area} value={area}>
-                      {area}, Lucknow
+                      {area}
                     </option>
                   ))}
                 </select>

@@ -107,7 +107,7 @@ export async function sendEmailJSContact(contactData: {
       message: contactData.message,
       to_email: 'trustiqueassist0003@gmail.com',
       reply_to: contactData.email,
-      app_name: 'Fundu Lucknow',
+      app_name: 'Fundu',
     };
 
     const response = await emailjs.send(serviceId, templateIdContact, templateParams, publicKey);

@@ -35,14 +35,14 @@ const BRAND_REPAIR_DETAILS: Record<
 > = {
   apple: {
     logo: getCleanBrandLogo('Apple'),
-    tagline: 'Doorstep iPhone Repair Services in Lucknow with Up to 6 Months Warranty',
-    desc: 'Get certified doorstep Apple iPhone screen, battery, camera & back glass repair in Lucknow. 30-minute repair right in front of your eyes at home or office.',
+    tagline: 'Doorstep iPhone Repair Our Services with Up to 6 Months Warranty',
+    desc: 'Get certified doorstep Apple iPhone screen, battery, camera & back glass doorstep repair. 30-minute repair right in front of your eyes at home or office.',
     count: '30+ iPhone Models Covered',
     series: ['All', 'iPhone 15 Series', 'iPhone 14 Series', 'iPhone 13 Series', 'iPhone 12 Series', 'iPhone 11 Series'],
   },
   samsung: {
     logo: getCleanBrandLogo('Samsung'),
-    tagline: 'Doorstep Samsung Galaxy Phone Repair & Display Replacement in Lucknow',
+    tagline: 'Doorstep Samsung Galaxy Phone Repair & Display Replacement at your doorstep',
     desc: 'Original Super AMOLED screen replacement, battery health fix & motherboard IC repair for Samsung S, Z Fold, A & M series at your doorstep.',
     count: '45+ Samsung Models Covered',
     series: ['All', 'Galaxy S Series', 'Galaxy Z Series', 'Galaxy A Series', 'Galaxy M Series'],
@@ -50,13 +50,13 @@ const BRAND_REPAIR_DETAILS: Record<
   oneplus: {
     logo: getCleanBrandLogo('OnePlus'),
     tagline: 'Doorstep OnePlus Mobile Screen, Battery & Charging Port Repair',
-    desc: 'Quick 30-minute doorstep repair for OnePlus 12, 11, Nord & R series in Lucknow with 100% genuine spare parts.',
+    desc: 'Quick 30-minute doorstep repair for OnePlus 12, 11, Nord & R series at your doorstep with 100% genuine spare parts.',
     count: '25+ OnePlus Models Covered',
     series: ['All', 'Number Series', 'Nord Series', 'R Series'],
   },
   xiaomi: {
     logo: getCleanBrandLogo('Xiaomi'),
-    tagline: 'Fast Doorstep Xiaomi / Redmi / POCO Phone Repair in Lucknow',
+    tagline: 'Fast Doorstep Xiaomi / Redmi / POCO Phone Doorstep Repair',
     desc: 'Expert display change, battery replacement & liquid damage diagnosis for Xiaomi Mi, Redmi Note & POCO mobiles at home.',
     count: '50+ Xiaomi Models Covered',
     series: ['All', 'Redmi Note Series', 'Mi Series', 'Redmi Series', 'Poco Series'],
@@ -64,7 +64,7 @@ const BRAND_REPAIR_DETAILS: Record<
   vivo: {
     logo: getCleanBrandLogo('Vivo'),
     tagline: 'Doorstep Vivo Mobile Display & Glass Replacement Service',
-    desc: 'Get your Vivo X, V & Y series phone repaired at your doorstep in Lucknow. Original parts & up to 6 months warranty.',
+    desc: 'Get your Vivo X, V & Y series phone repaired at your doorstep at your doorstep. Original parts & up to 6 months warranty.',
     count: '40+ Vivo Models Covered',
     series: ['All', 'X Series', 'V Series', 'Y Series'],
   },
@@ -78,28 +78,28 @@ const BRAND_REPAIR_DETAILS: Record<
   oppo: {
     logo: getCleanBrandLogo('Oppo'),
     tagline: 'Doorstep Oppo Mobile Screen & Charging Port Repair',
-    desc: 'Certified repair for Oppo Reno, Find & A series at your doorstep in Lucknow with zero visiting fees.',
+    desc: 'Certified repair for Oppo Reno, Find & A series at your doorstep at your doorstep with zero visiting fees.',
     count: '30+ Oppo Models Covered',
     series: ['All', 'Reno Series', 'Find Series', 'A Series'],
   },
   google: {
     logo: getCleanBrandLogo('Google'),
-    tagline: 'Doorstep Google Pixel Display & Battery Repair in Lucknow',
+    tagline: 'Doorstep Google Pixel Display & Battery Doorstep Repair',
     desc: 'Specialized doorstep repair for Google Pixel 8, 7 & 6 series with OEM screen panels & original batteries.',
     count: '15+ Pixel Models Covered',
     series: ['All', 'Pixel Series'],
   },
   motorola: {
     logo: getCleanBrandLogo('Motorola'),
-    tagline: 'Doorstep Motorola Phone Display & Battery Repair in Lucknow',
-    desc: 'Certified repair for Motorola Edge, Moto G & Razr series in Lucknow with genuine replacement parts.',
+    tagline: 'Doorstep Motorola Phone Display & Battery Doorstep Repair',
+    desc: 'Certified repair for Motorola Edge, Moto G & Razr series at your doorstep with genuine replacement parts.',
     count: '25+ Motorola Models Covered',
     series: ['All', 'Edge Series', 'G Series', 'Razr Series'],
   },
   nothing: {
     logo: getCleanBrandLogo('Nothing'),
     tagline: 'Doorstep Nothing Phone Repair & Glyph Interface Diagnostics',
-    desc: 'Doorstep transparent back glass, OLED display & battery repair for Nothing Phone (1), (2), (2a) & CMF in Lucknow.',
+    desc: 'Doorstep transparent back glass, OLED display & battery repair for Nothing Phone (1), (2), (2a) & CMF at your doorstep.',
     count: '4+ Nothing Models Covered',
     series: ['All', 'Phone Series', 'CMF Series'],
   },
@@ -131,8 +131,8 @@ export default function RepairBrandPage() {
 
   const brandInfo = BRAND_REPAIR_DETAILS[brandCleanKey] || {
     logo: 'https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=150&auto=format&fit=crop&q=80',
-    tagline: `Doorstep ${brandDisplayName} Mobile Repair Service in Lucknow`,
-    desc: `Get certified doorstep ${brandDisplayName} mobile screen, battery, camera & motherboard repair in Lucknow with up to 6 months warranty.`,
+    tagline: `Doorstep ${brandDisplayName} Mobile Repair Service at your doorstep`,
+    desc: `Get certified doorstep ${brandDisplayName} mobile screen, battery, camera & motherboard doorstep repair with up to 6 months warranty.`,
     count: `30+ ${brandDisplayName} Models Covered`,
     series: ['All'],
   };
@@ -242,7 +242,7 @@ export default function RepairBrandPage() {
                   <Wrench className="h-3.5 w-3.5 text-[#47576E]" /> Lucknow Doorstep Repair Center
                 </div>
                 <h1 className="font-display text-2xl md:text-3xl font-black text-[#344257]">
-                  Doorstep {brandDisplayName} Mobile Repair in Lucknow
+                  Doorstep {brandDisplayName} Doorstep Mobile Repair
                 </h1>
                 <p className="text-xs text-[#47576E] mt-1 max-w-2xl font-medium">
                   {brandInfo.desc}
@@ -442,7 +442,7 @@ export default function RepairBrandPage() {
         <div className="card p-8 rounded-[32px] bg-[#344257] text-white border border-[#47576E] shadow-xl space-y-6">
           <div className="text-center max-w-2xl mx-auto space-y-2">
             <span className="badge bg-[#6A859F]/20 text-[#C0C8D8] border border-[#6A859F]/40 text-xs font-bold px-3 py-1">
-              Lucknow's #1 Doorstep Mobile Service
+              Our #1 Doorstep Mobile Service
             </span>
             <h2 className="font-display text-2xl md:text-3xl font-black text-white">
               Why Choose Fundu for {brandDisplayName} Repair?
@@ -503,7 +503,7 @@ export default function RepairBrandPage() {
           <div className="space-y-3 max-w-4xl mx-auto">
             {[
               {
-                q: `How long does it take to repair a ${brandDisplayName} phone at my doorstep in Lucknow?`,
+                q: `How long does it take to repair a ${brandDisplayName} phone at my doorstep at your doorstep?`,
                 a: `Most screen, battery, camera, and charging port replacements are completed within 20 to 30 minutes right in front of you.`,
               },
               {

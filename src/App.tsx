@@ -135,8 +135,8 @@ function MainLayout() {
           <Route path="/repair/:brandSlug" element={<RepairBrandPage />} />
           <Route path="/repair/:brandSlug/:modelSlug" element={<Repair />} />
           <Route path="/repair/issue/:issueSlug" element={<RepairIssuePage />} />
-          <Route path="/mobile-repair-in-lucknow" element={<Repair />} />
-          <Route path="/mobile-repair-in-lucknow/repair-:brandSlug" element={<RepairBrandPage />} />
+          <Route path="/mobile-repair" element={<Repair />} />
+          <Route path="/mobile-repair/repair-:brandSlug" element={<RepairBrandPage />} />
           <Route path="/doorstep-mobile-repair" element={<Repair />} />
           <Route path="/doorstep-mobile-repair/:issueSlug" element={<RepairIssuePage />} />
           <Route path="/spare-parts" element={<SpareParts />} />

@@ -26,7 +26,7 @@ export type TrackerProps = {
   trackingId?: string;
 };
 
-// Real GPS Centroids for Lucknow Localities
+// Real GPS Centroids for Service Localities
 const LUCKNOW_GEO: Record<string, { x: number; y: number; label: string }> = {
   'hazratganj': { x: 48, y: 52, label: 'Hazratganj, Central Lucknow' },
   'gomti nagar': { x: 74, y: 44, label: 'Gomti Nagar, East Lucknow' },
@@ -201,7 +201,7 @@ export default function LiveExecutiveTracker({
             />
           </svg>
 
-          {/* Static Landmark Labels in Lucknow */}
+          {/* Static Landmark Labels at your doorstep */}
           <div className="absolute left-4 top-4 rounded-md bg-black/60 px-2 py-1 text-[10px] font-bold text-gray-300 backdrop-blur-sm border border-white/10">
             📍 Lucknow Central Hub (Hazratganj)
           </div>
@@ -405,7 +405,7 @@ export default function LiveExecutiveTracker({
               <div className="flex items-center gap-2">
                 <a
                   href={`https://wa.me/919839122345?text=${encodeURIComponent(
-                    `Hi Fundu Admin, I am currently tracking my ${actionText} (#${trackingId || 'LIVE'}) for ${deviceInfo} in ${locality || 'Lucknow'}. Please assist me with live delivery updates.`
+                    `Hi Fundu Admin, I am currently tracking my ${actionText} (#${trackingId || 'LIVE'}) for ${deviceInfo} in ${locality || 'Doorstep Service'}. Please assist me with live delivery updates.`
                   )}`}
                   target="_blank"
                   rel="noreferrer"

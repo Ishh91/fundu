@@ -124,7 +124,7 @@ export default function AdminOverview({
                     {s.brand} {s.model}
                   </p>
                   <p className="text-ink-500 font-medium">
-                    {s.pickup_area || 'Lucknow'} · {s.condition}
+                    {s.pickup_area || 'Doorstep Service'} · {s.condition}
                   </p>
                 </div>
                 <div className="text-right">

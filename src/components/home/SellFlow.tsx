@@ -15,7 +15,7 @@ import {
 const FLOW_DATA = {
   sell: {
     title: 'How to Sell Your Phone on Fundu',
-    desc: 'Get the highest resale value for your old smartphone in 4 easy steps without stepping out of your home in Lucknow.',
+    desc: 'Get the highest resale value for your old smartphone in 4 easy steps without stepping out of your home at your doorstep.',
     ctaText: 'Sell Phone Now',
     ctaHref: '/sell',
     steps: [
@@ -33,8 +33,8 @@ const FLOW_DATA = {
       },
       {
         step: '03',
-        title: 'Free Lucknow Doorstep Pickup',
-        desc: 'Choose your convenient date and time slot for doorstep inspection in Lucknow.',
+        title: 'Free Doorstep Pickup',
+        desc: 'Choose your convenient date and time slot for doorstep inspection at your doorstep.',
         icon: Truck,
       },
       {
@@ -47,7 +47,7 @@ const FLOW_DATA = {
   },
   buy: {
     title: 'How to Buy Refurbished Mobiles on Fundu',
-    desc: 'Own top flagship smartphones at up to 70% off retail prices with complete peace of mind and warranty in Lucknow.',
+    desc: 'Own top flagship smartphones at up to 70% off retail prices with complete peace of mind and replacement warranty.',
     ctaText: 'Explore Refurbished Store',
     ctaHref: '/buy',
     steps: [
@@ -72,14 +72,14 @@ const FLOW_DATA = {
       {
         step: '04',
         title: 'Free Same-Day Lucknow Delivery',
-        desc: 'Safe, sealed package delivered directly to your doorstep in Lucknow.',
+        desc: 'Safe, sealed package delivered directly to your doorstep at your doorstep.',
         icon: Truck,
       },
     ],
   },
   repair: {
     title: 'How Doorstep Phone Repair Works',
-    desc: 'Broken screen or dead battery? Our certified technician repairs your phone at your home/office in Lucknow in 30 minutes.',
+    desc: 'Broken screen or dead battery? Our certified technician repairs your phone at your home/office at your doorstep in 30 minutes.',
     ctaText: 'Book Doorstep Repair',
     ctaHref: '/repair',
     steps: [
@@ -98,7 +98,7 @@ const FLOW_DATA = {
       {
         step: '03',
         title: 'Technician Visits Your Doorstep',
-        desc: 'Certified repair engineer visits your Lucknow address at your selected time.',
+        desc: 'Certified repair engineer visits your doorstep address at your selected time.',
         icon: Wrench,
       },
       {
@@ -200,7 +200,7 @@ export default function SellFlow() {
 
                 <div className="mt-5 pt-3 border-t border-gray-100 flex items-center gap-1.5 text-[11px] font-bold text-[#344257]">
                   <CheckCircle2 className="h-3.5 w-3.5 text-[#6A859F]" />
-                  <span>Guaranteed in Lucknow</span>
+                  <span>Guaranteed at your doorstep</span>
                 </div>
               </div>
             );
@@ -212,7 +212,7 @@ export default function SellFlow() {
           <div className="flex items-center gap-3">
             <Zap className="h-6 w-6 text-amber-300 shrink-0" />
             <div>
-              <p className="text-sm font-black">Ready to get started in Lucknow?</p>
+              <p className="text-sm font-black">Ready to get started at your doorstep?</p>
               <p className="text-xs text-[#C0C8D8]">
                 Over 25,000+ happy customers across Gomti Nagar, Hazratganj, Indira Nagar & more.
               </p>

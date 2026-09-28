@@ -207,7 +207,7 @@ export default function Vendor() {
         payment_method: paymentMethod,
         payment_status: paymentMethod === 'credit' ? 'credit_due' : 'paid',
         status: 'confirmed',
-        delivery_address: profile?.vendor_location || 'Fundu Lucknow Central Hub (Self Pickup / Delivery Executive)',
+        delivery_address: profile?.vendor_location || 'Fundu Central Hub (Self Pickup / Delivery Executive)',
         notes: `Vendor Lot Order for ${cart.length} used phone(s)`,
       };
 
@@ -285,7 +285,7 @@ export default function Vendor() {
               </h1>
               <p className="mt-1 text-xs md:text-sm text-ink-500 flex items-center gap-1.5">
                 <MapPin className="h-3.5 w-3.5 text-emerald-600" />
-                Location: {profile?.vendor_location || 'Lucknow Store'} · Buyback & Repair Lead Handling
+                Location: {profile?.vendor_location || 'Store Hub'} · Buyback & Repair Lead Handling
               </p>
             </div>
 
@@ -434,7 +434,7 @@ export default function Vendor() {
                       estimated_price: 32500,
                       customer_name: 'Siddharth Roy',
                       customer_phone: '+91 98391 88990',
-                      pickup_address: 'Hazratganj Main Market, Lucknow',
+                      pickup_address: 'Hazratganj Main Market',
                       pickup_area: 'Hazratganj',
                       assigned_vendor_id: user.id,
                       status: 'assigned',
@@ -534,7 +534,7 @@ export default function Vendor() {
                           <h4 className="font-bold text-blue-900 flex items-center gap-1.5 text-sm">
                             <UserCheck className="h-4 w-4 text-blue-700" /> Customer Details
                           </h4>
-                          <p className="text-ink-800">Address: <strong>{lead.pickup_address || 'Lucknow Pickup'}</strong> ({lead.pickup_area})</p>
+                          <p className="text-ink-800">Address: <strong>{lead.pickup_address || 'Doorstep Pickup'}</strong> ({lead.pickup_area})</p>
                           <p className="text-ink-800">Slot: <strong>{lead.pickup_date || 'Today'} ({lead.pickup_slot || 'Anytime'})</strong></p>
                           {lead.pickup_person_phone && (
                             <p className="text-ink-800 font-semibold text-blue-800">Phone: {lead.pickup_person_phone}</p>
@@ -597,7 +597,7 @@ export default function Vendor() {
               <div className="card p-12 text-center bg-white rounded-2xl">
                 <Wrench className="h-10 w-10 text-ink-300 mx-auto" />
                 <h3 className="mt-3 font-display font-bold text-ink-800">No Repair Requests Assigned Yet</h3>
-                <p className="text-xs text-ink-500 mt-1">Repair requests near your shop address ({profile?.vendor_location || 'Lucknow'}) will appear here.</p>
+                <p className="text-xs text-ink-500 mt-1">Repair requests near your shop address ({profile?.vendor_location || 'Doorstep Service'}) will appear here.</p>
               </div>
             ) : (
               <div className="space-y-4">
@@ -628,7 +628,7 @@ export default function Vendor() {
                             </span>
                           </div>
                           <p className="text-xs text-ink-500 mt-1">
-                            Booked on {new Date(repair.created_at).toLocaleDateString('en-IN')} · Customer Area: <strong>{repair.pickup_area || 'Lucknow'}</strong>
+                            Booked on {new Date(repair.created_at).toLocaleDateString('en-IN')} · Customer Area: <strong>{repair.pickup_area || 'Doorstep Service'}</strong>
                           </p>
                         </div>
 
@@ -846,7 +846,7 @@ export default function Vendor() {
               <div className="card p-12 text-center bg-white rounded-2xl">
                 <Smartphone className="h-10 w-10 text-ink-300 mx-auto" />
                 <h3 className="mt-3 font-display font-bold text-ink-800">No phones available in this category</h3>
-                <p className="text-xs text-ink-500 mt-1">Fresh inventory from customer sell requests is added daily at Fundu Lucknow Hub.</p>
+                <p className="text-xs text-ink-500 mt-1">Fresh inventory from customer sell requests is added daily at Fundu Hub.</p>
               </div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">

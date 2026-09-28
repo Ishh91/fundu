@@ -68,7 +68,7 @@ export default function HeroSection() {
                 )}
                 <img
                   src={currentSlide.image}
-                  alt={currentSlide.title || 'Fundu Lucknow Poster'}
+                  alt={currentSlide.title || 'Fundu Poster'}
                   className="w-full h-auto max-h-[550px] object-contain sm:object-cover transition-transform duration-700 group-hover:scale-[1.01] mx-auto block"
                   onError={(e) => {
                     (e.target as HTMLImageElement).src =
@@ -141,7 +141,7 @@ export default function HeroSection() {
                 <span className="text-lg">🚚</span>
               </div>
               <div>
-                <h4 className="text-xs sm:text-sm font-extrabold text-[#344257]">Free Lucknow Pickup</h4>
+                <h4 className="text-xs sm:text-sm font-extrabold text-[#344257]">Free Doorstep Pickup</h4>
                 <p className="text-[11px] text-[#47576E] font-medium">Zero travel or pickup fee</p>
               </div>
             </div>

@@ -24,7 +24,7 @@ const FALLBACK_REFURBISHED_PHONES: Product[] = [
     original_price: 59900,
     discount_percent: 35,
     warranty_months: 6,
-    description: 'Refurbished Superb condition. 32-Point inspection passed. Battery health above 88%. Free doorstep delivery in Lucknow.',
+    description: 'Refurbished Superb condition. 32-Point inspection passed. Battery health above 88%. Free doorstep doorstep delivery.',
     images: ['https://images.unsplash.com/photo-1695048133142-1a20484d2569?w=600&auto=format&fit=crop&q=80'],
     is_approved: true,
     is_featured: true,
@@ -113,7 +113,7 @@ export default function BestDeals({ products, loading }: BestDealsProps) {
             <span className="rounded-full bg-[#F0F0F5] border border-[#C0C8D8] px-3 py-1 text-xs font-extrabold uppercase tracking-wider text-[#344257]">
               Refurbished Store
             </span>
-            <span className="text-xs font-semibold text-gray-500">📍 Lucknow Stock Ready</span>
+            <span className="text-xs font-semibold text-gray-500">📍 Stock Ready</span>
           </div>
           <h2 className="mt-2 font-display text-2xl sm:text-3xl font-extrabold text-gray-900">
             Top Deals on Certified Refurbished Phones

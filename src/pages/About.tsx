@@ -8,7 +8,7 @@ export default function About() {
         <div className="container-page py-16 md:py-24 text-center">
           <p className="text-sm font-bold uppercase tracking-wider text-brand-600">About Fundu</p>
           <h1 className="mt-3 font-display text-4xl md:text-5xl font-extrabold text-ink-900 text-balance max-w-3xl mx-auto">
-            Lucknow's most trusted phone marketplace & repair service
+            Our most trusted phone marketplace & repair service
           </h1>
           <p className="mt-5 max-w-2xl mx-auto text-lg text-ink-600">
             Born in the heart of Lucknow, Fundu makes buying, selling, and repairing smartphones effortless — with free doorstep pickup & drop across the city.
@@ -21,13 +21,13 @@ export default function About() {
           <div>
             <h2 className="font-display text-3xl font-extrabold text-ink-900">Our story</h2>
             <p className="mt-4 text-ink-600 leading-relaxed">
-              Fundu started with a simple frustration: getting a phone fixed or sold in Lucknow meant haggling at markets, traveling across the city, and never quite knowing if you got a fair deal.
+              Fundu started with a simple frustration: getting a phone fixed or sold at your doorstep meant haggling at markets, traveling across the city, and never quite knowing if you got a fair deal.
             </p>
             <p className="mt-3 text-ink-600 leading-relaxed">
               We built Fundu to change that. Transparent pricing, certified refurbished phones, genuine spare parts, and expert technicians who come to your door — whether you live in Gomti Nagar, Hazratganj, or the far corners of Telibagh.
             </p>
             <p className="mt-3 text-ink-600 leading-relaxed">
-              Today, we serve thousands of happy customers across Lucknow with a promise: fair prices, genuine parts, and free doorstep service, always.
+              Today, we serve thousands of happy customers at your doorstep with a promise: fair prices, genuine parts, and free doorstep service, always.
             </p>
           </div>
           <div className="grid grid-cols-2 gap-4">
@@ -91,7 +91,7 @@ export default function About() {
       <section className="container-page pb-16">
         <div className="surface-panel p-10 md:p-14 text-center">
           <MapPin className="mx-auto h-10 w-10 text-brand-400" />
-          <h2 className="mt-4 font-display text-3xl font-extrabold">Proudly based in Lucknow</h2>
+          <h2 className="mt-4 font-display text-3xl font-extrabold">Proudly based at your doorstep</h2>
           <p className="mt-3 text-ink-300">Serving all areas — from Hazratganj to Gomti Nagar, Aliganj to Telibagh.</p>
           <div className="mt-6 flex flex-wrap justify-center gap-3">
             <Link to="/contact" className="btn border border-ink-200 bg-ink-100 px-5 py-3 text-ink-900 hover:bg-ink-200">Get in Touch</Link>

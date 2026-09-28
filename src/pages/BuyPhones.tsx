@@ -119,7 +119,7 @@ const SAMPLE_BEST_SELLING_PHONES: Product[] = [
     original_price: 59900,
     discount_percent: 37,
     warranty_months: 6,
-    description: 'Refurbished Superb condition. 32-Point inspection passed. Battery health above 89%. Free doorstep delivery in Lucknow.',
+    description: 'Refurbished Superb condition. 32-Point inspection passed. Battery health above 89%. Free doorstep doorstep delivery.',
     images: ['https://images.unsplash.com/photo-1510557880182-3d4d3cba35a5?w=600&auto=format&fit=crop&q=80'],
     is_approved: true,
     is_featured: true,
@@ -163,7 +163,7 @@ const SAMPLE_BEST_SELLING_PHONES: Product[] = [
     original_price: 74999,
     discount_percent: 47,
     warranty_months: 6,
-    description: 'Flagship Snapdragon 8 Gen 2 performance. Thoroughly sanitized and tested. Free express delivery in Lucknow.',
+    description: 'Flagship Snapdragon 8 Gen 2 performance. Thoroughly sanitized and tested. Free express doorstep delivery.',
     images: ['https://images.unsplash.com/photo-1580910051074-3eb694886505?w=600&auto=format&fit=crop&q=80'],
     is_approved: true,
     is_featured: true,
@@ -579,7 +579,7 @@ const QUALITY_CHECK_POINTS = [
 const BUYER_FAQS = [
   {
     q: 'What is a Fundu Certified Refurbished Phone?',
-    a: 'A Fundu Certified Refurbished phone is a gently used or pre-owned smartphone that has undergone rigorous 32-point diagnostic inspection by certified engineers in Lucknow. Every component — including display, battery health, cameras, motherboard, and sensors — is verified 100% functional. Devices are professionally sanitized, graded honestly, and backed by a free 6-month Fundu warranty.',
+    a: 'A Fundu Certified Refurbished phone is a gently used or pre-owned smartphone that has undergone rigorous 32-point diagnostic inspection by certified engineers at your doorstep. Every component — including display, battery health, cameras, motherboard, and sensors — is verified 100% functional. Devices are professionally sanitized, graded honestly, and backed by a free 6-month Fundu warranty.',
   },
   {
     q: 'What are the Refurbished Condition Grades (Superb vs Good vs Fair)?',
@@ -590,12 +590,12 @@ const BUYER_FAQS = [
     a: 'Every refurbished phone includes a 6-month warranty covering manufacturing defects, display glitches, motherboard issues, and technical hardware failures. If an issue occurs, our Lucknow technician repairs or replaces it free of charge.',
   },
   {
-    q: 'Do I get free doorstep delivery in Lucknow?',
-    a: 'Yes! We offer 100% free doorstep delivery across all Lucknow locations including Gomti Nagar, Hazratganj, Indira Nagar, Aliganj, Mahanagar, Sushant Golf City, Jankipuram, and surrounding areas. Delivery is typically completed within 2 to 24 hours.',
+    q: 'Do I get free doorstep doorstep delivery?',
+    a: 'Yes! We offer 100% free doorstep delivery across all service areas locations including Gomti Nagar, Hazratganj, Indira Nagar, Aliganj, Mahanagar, Sushant Golf City, Jankipuram, and surrounding areas. Delivery is typically completed within 2 to 24 hours.',
   },
   {
     q: 'Can I inspect the phone before accepting delivery?',
-    a: 'Yes! Our doorstep delivery executive in Lucknow allows you an Open Box Inspection. You can verify the cosmetic condition, camera, display, and charging before making payment or signing the receipt.',
+    a: 'Yes! Our doorstep delivery executive at your doorstep allows you an Open Box Inspection. You can verify the cosmetic condition, camera, display, and charging before making payment or signing the receipt.',
   },
   {
     q: 'What is the 7-Day Replacement Guarantee?',
@@ -757,7 +757,7 @@ export default function BuyPhones() {
                 Buy Refurbished Mobile Phones
               </h1>
               <p className="mt-2 text-xs md:text-sm text-[#C0C8D8] leading-relaxed">
-                Save up to 50% on top smartphones. 32-Point inspection certified, 6-Month warranty, & free doorstep delivery across Lucknow.
+                Save up to 50% on top smartphones. 32-Point inspection certified, 6-Month warranty, & free doorstep delivery at your doorstep.
               </p>
 
               {/* Cashify Feature Badges */}
@@ -1072,7 +1072,7 @@ export default function BuyPhones() {
                   </p>
                   <p className="flex items-center gap-1.5">
                     <CheckCircle2 className="h-3.5 w-3.5 text-[#47576E] shrink-0" />
-                    Free Doorstep Delivery in Lucknow
+                    Free Doorstep Doorstep Delivery
                   </p>
                 </div>
               </div>
@@ -1083,7 +1083,7 @@ export default function BuyPhones() {
           <main className="space-y-6">
             <div className="flex items-center justify-between text-xs font-bold text-gray-500">
               <p>
-                Showing <span className="text-[#344257] font-extrabold">{filteredProducts.length}</span> certified refurbished devices in Lucknow
+                Showing <span className="text-[#344257] font-extrabold">{filteredProducts.length}</span> certified refurbished devices
               </p>
               {selectedBrand !== 'All' && (
                 <button
@@ -1111,7 +1111,7 @@ export default function BuyPhones() {
                   No Refurbished Phones Found
                 </h3>
                 <p className="text-xs text-gray-500 max-w-md mx-auto">
-                  We currently do not have matching inventory for your filters. Our stock refreshes daily across Lucknow!
+                  We currently do not have matching inventory for your filters. Our stock refreshes daily at your doorstep!
                 </p>
                 <div className="pt-2 flex flex-wrap items-center justify-center gap-3">
                   <button
@@ -1123,7 +1123,7 @@ export default function BuyPhones() {
                   </button>
                   <a
                     href={`https://wa.me/919839122345?text=${encodeURIComponent(
-                      `Hi Fundu Lucknow, I am searching for ${search || selectedBrand || 'a refurbished phone'}. Please notify me when it's available!`
+                      `Hi Fundu, I am searching for ${search || selectedBrand || 'a refurbished phone'}. Please notify me when it's available!`
                     )}`}
                     target="_blank"
                     rel="noreferrer"
@@ -1216,7 +1216,7 @@ export default function BuyPhones() {
                           {/* 6 Months Warranty Pill */}
                           <div className="mt-2.5 flex items-center gap-1 text-[10px] font-bold text-[#344257] bg-[#F0F0F5] border border-[#C0C8D8] px-2 py-0.5 rounded w-max">
                             <ShieldCheck className="h-3 w-3 text-[#47576E]" />
-                            <span>6 Months Warranty in Lucknow</span>
+                            <span>6 Months Replacement Warranty</span>
                           </div>
                         </div>
                       </div>
@@ -1287,7 +1287,7 @@ export default function BuyPhones() {
               The 32-Point Quality Inspection
             </h2>
             <p className="mt-1.5 text-xs md:text-sm text-gray-500">
-              Every refurbished phone undergoes strict mechanical, electronic, and software inspection before arriving at your doorstep in Lucknow.
+              Every refurbished phone undergoes strict mechanical, electronic, and software inspection before arriving at your doorstep at your doorstep.
             </p>
           </div>
 
@@ -1328,7 +1328,7 @@ export default function BuyPhones() {
               Refurbished Condition Grading Guide
             </h2>
             <p className="mt-1 text-xs text-gray-500">
-              Transparent assessment — zero surprises when you open your box in Lucknow
+              Transparent assessment — zero surprises when you open your box at your doorstep
             </p>
           </div>
 

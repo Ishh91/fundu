@@ -12,8 +12,8 @@ export const DEFAULT_HERO_POSTERS: HeroPoster[] = [
   {
     id: 'poster-flagship-buy',
     eyebrow: 'Exclusive Deals',
-    title: 'Discover Your Next Flagship in Lucknow',
-    description: 'Certified refurbished smartphones with 6 months warranty and doorstep delivery in Lucknow.',
+    title: 'Discover Your Next Flagship at your doorstep',
+    description: 'Certified refurbished smartphones with 6 months warranty and doorstep doorstep delivery.',
     primaryLabel: 'Shop Now',
     primaryHref: '/buy',
     secondaryLabel: 'Explore Catalog',
@@ -28,8 +28,8 @@ export const DEFAULT_HERO_POSTERS: HeroPoster[] = [
   {
     id: 'poster-sell-cash',
     eyebrow: 'Instant Cash',
-    title: 'Sell Old Phone Get Instant Cash in Lucknow',
-    description: 'Highest valuation, doorstep pickup, and spot cash/UPI payment across Lucknow.',
+    title: 'Sell Old Phone Get Instant Cash at your doorstep',
+    description: 'Highest valuation, doorstep pickup, and spot cash/UPI payment at your doorstep.',
     primaryLabel: 'Sell Now',
     primaryHref: '/sell',
     secondaryLabel: 'Check Value',
@@ -44,7 +44,7 @@ export const DEFAULT_HERO_POSTERS: HeroPoster[] = [
   {
     id: 'poster-repair-lucknow',
     eyebrow: 'Doorstep Service',
-    title: '30-Minute Doorstep Mobile Repair in Lucknow',
+    title: '30-Minute Doorstep Doorstep Mobile Repair',
     description: 'Certified technicians repair your phone right at your home or office with genuine parts.',
     primaryLabel: 'Book Repair',
     primaryHref: '/repair',

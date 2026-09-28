@@ -183,7 +183,7 @@ export default function SearchActionPage() {
                 {query ? `Search Results for "${query}"` : 'Search Any Phone'}
               </h1>
               <p className="text-xs text-gray-500 mt-0.5">
-                Choose whether you want to Buy, Sell, or Repair this device in Lucknow with instant doorstep service.
+                Choose whether you want to Buy, Sell, or Repair this device at your doorstep with instant doorstep service.
               </p>
             </div>
           </div>
@@ -352,7 +352,7 @@ export default function SearchActionPage() {
                       <p className="text-xs text-gray-500 leading-relaxed">
                         {stockInfo.inStock
                           ? '32-point tested, Grade A condition, 6-month warranty with same-day Lucknow delivery.'
-                          : 'Currently out of stock in Lucknow warehouse. Click below to get restock SMS alert.'}
+                          : 'Currently out of stock at your doorstep warehouse. Click below to get restock SMS alert.'}
                       </p>
 
                       <div className="pt-1">
@@ -446,7 +446,7 @@ export default function SearchActionPage() {
                 </div>
                 <h3 className="text-xl font-black text-gray-900">Restock Alert Confirmed!</h3>
                 <p className="text-xs text-gray-600 max-w-xs mx-auto">
-                  We have registered your restock request for <span className="font-bold text-gray-900">{notifyModal.phoneModel}</span>. You'll receive a notification as soon as units arrive in Lucknow!
+                  We have registered your restock request for <span className="font-bold text-gray-900">{notifyModal.phoneModel}</span>. You'll receive a notification as soon as units arrive at your doorstep!
                 </p>
               </div>
             ) : (
@@ -462,7 +462,7 @@ export default function SearchActionPage() {
                 </div>
 
                 <div className="p-3.5 rounded-2xl bg-amber-50 border border-amber-200/80 text-xs text-amber-900 leading-relaxed">
-                  Currently, this exact model is sold out in Lucknow. Leave your phone number or email below to receive an instant WhatsApp/SMS notification the moment a tested unit is certified!
+                  Currently, this exact model is sold out at your doorstep. Leave your phone number or email below to receive an instant WhatsApp/SMS notification the moment a tested unit is certified!
                 </div>
 
                 <div className="space-y-1.5">

@@ -27,13 +27,13 @@ export default function Footer() {
         <div className="container-page flex flex-col md:flex-row items-center justify-between gap-6 relative z-10">
           <div>
             <span className="rounded-full bg-white/15 border border-white/20 text-white px-3.5 py-1 text-[11px] font-extrabold uppercase tracking-wider shadow-sm">
-              📍 Lucknow Exclusive Hub
+              📍 Exclusive Hub
             </span>
             <h3 className="mt-2.5 font-display text-2xl sm:text-3xl lg:text-4xl font-black text-white">
               Sell Old Phone, Buy Refurbished or Repair at Doorstep.
             </h3>
             <p className="mt-1.5 text-xs sm:text-sm text-[#C0C8D8] font-semibold">
-              Free doorstep pickup, spot cash/UPI payment & 6 months warranty across Lucknow.
+              Free doorstep pickup, spot cash/UPI payment & 6 months warranty at your doorstep.
             </p>
           </div>
 
@@ -65,7 +65,7 @@ export default function Footer() {
               <BrandLogo imageClassName="h-11 sm:h-14 md:h-16 w-auto max-w-[240px] sm:max-w-[290px] md:max-w-[320px]" />
             </Link>
             <p className="text-xs leading-relaxed text-[#47576E] font-medium">
-              Fundu is Lucknow's dedicated smartphone re-commerce platform. We simplify selling old mobiles, buying certified refurbished devices, and getting doorstep phone repairs done in 30 minutes.
+              Fundu is a premier dedicated smartphone re-commerce platform. We simplify selling old mobiles, buying certified refurbished devices, and getting doorstep phone repairs done in 30 minutes.
             </p>
             <div className="flex flex-wrap gap-2 pt-1">
               <span className="inline-flex items-center gap-1 rounded-full bg-[#F0F0F5] border border-[#C0C8D8] px-2.5 py-1 text-[11px] font-bold text-[#344257]">
@@ -80,10 +80,10 @@ export default function Footer() {
             </div>
           </div>
 
-          {/* Col 2: Services in Lucknow */}
+          {/* Col 2: Our Services */}
           <div>
             <h4 className="font-display text-xs font-black uppercase tracking-wider text-[#344257]">
-              Services in Lucknow
+              Our Services
             </h4>
             <ul className="mt-4 space-y-2.5 text-xs font-semibold text-[#47576E]">
               <li>
@@ -114,10 +114,10 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* Col 3: Lucknow Localities Covered */}
+          {/* Col 3: Service Localities Covered */}
           <div>
             <h4 className="font-display text-xs font-black uppercase tracking-wider text-[#344257]">
-              Lucknow Localities
+              Service Localities
             </h4>
             <div className="mt-4 grid grid-cols-2 gap-x-2 gap-y-1.5 text-xs text-[#47576E] font-medium">
               {LUCKNOW_LOCALITIES.slice(0, 10).map((loc) => (
@@ -128,7 +128,7 @@ export default function Footer() {
               ))}
             </div>
             <p className="mt-3 text-[11px] font-bold text-[#47576E]">
-              + All other Lucknow pin codes supported!
+              + All other pin codes supported!
             </p>
           </div>
 
@@ -140,7 +140,7 @@ export default function Footer() {
             <ul className="mt-4 space-y-3 text-xs text-[#47576E] font-medium">
               <li className="flex items-start gap-2.5">
                 <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-[#6A859F]" />
-                <span>Hazratganj, Lucknow, Uttar Pradesh 226001</span>
+                <span>Hazratganj, Uttar Pradesh 226001</span>
               </li>
               <li className="flex items-center gap-2.5">
                 <Phone className="h-4 w-4 shrink-0 text-[#6A859F]" />
@@ -159,7 +159,7 @@ export default function Footer() {
                   to="/partner"
                   className="inline-flex items-center gap-1.5 rounded-full bg-gradient-to-r from-[#344257] to-[#5D6A82] text-white px-4 py-2 text-xs font-bold hover:brightness-110 transition shadow-sm"
                 >
-                  Partner With Us in Lucknow →
+                  Partner With Us at your doorstep →
                 </Link>
               </li>
             </ul>

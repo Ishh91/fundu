@@ -69,8 +69,8 @@ export default function AdminRepairs({
       `📋 *Booking ID:* ${repair.tracking_id || repair.id.slice(0, 8).toUpperCase()}\n` +
       `👤 *Customer Name:* ${repair.user_name || 'Customer'}\n` +
       `📞 *Customer Phone:* ${repair.user_phone || 'N/A'}\n` +
-      `📍 *Address:* ${repair.pickup_address || 'Lucknow'}\n` +
-      `🏙️ *Locality:* ${repair.locality || 'Lucknow'}\n` +
+      `📍 *Address:* ${repair.pickup_address || 'Doorstep Service'}\n` +
+      `🏙️ *Locality:* ${repair.locality || 'Doorstep Service'}\n` +
       `⏰ *Preferred Slot:* ${repair.pickup_date || ''} (${repair.pickup_slot || ''})\n\n` +
       `📱 *DEVICE & ISSUE DETAILS:*\n` +
       `• *Device:* ${repair.brand} ${repair.model}\n` +
@@ -93,7 +93,7 @@ export default function AdminRepairs({
             Repair Diagnostics & Service Tracker
           </h2>
           <p className="mt-1 text-xs text-ink-600">
-            Manage doorstep device collection, 32-point technician diagnosis, genuine part replacements, and return delivery across Lucknow.
+            Manage doorstep device collection, 32-point technician diagnosis, genuine part replacements, and return delivery at your doorstep.
           </p>
         </div>
 
@@ -202,7 +202,7 @@ export default function AdminRepairs({
                         {formatINR(r.final_cost || r.estimated_cost || 0)}
                       </span>
                       <span className="text-ink-400 flex items-center gap-1">
-                        <MapPin className="h-3 w-3 text-purple-600" /> {r.pickup_address ? 'Lucknow' : 'Pickup'}
+                        <MapPin className="h-3 w-3 text-purple-600" /> {r.pickup_address ? 'Doorstep Service' : 'Pickup'}
                       </span>
                     </div>
                   </div>
@@ -322,7 +322,7 @@ export default function AdminRepairs({
                 <span className="font-bold text-purple-900 flex items-center gap-1.5">
                   <MapPin className="h-4 w-4 text-purple-600" /> Lucknow Doorstep Address & Slot
                 </span>
-                <p className="font-bold text-ink-900 mt-1">{selectedRepair.pickup_address || 'Gomti Nagar, Lucknow'}</p>
+                <p className="font-bold text-ink-900 mt-1">{selectedRepair.pickup_address || 'Gomti Nagar'}</p>
                 <div className="flex items-center gap-4 text-ink-500 mt-2">
                   <span className="flex items-center gap-1">
                     <Clock className="h-3.5 w-3.5 text-purple-600" /> Date: {selectedRepair.pickup_date || 'Scheduled'}

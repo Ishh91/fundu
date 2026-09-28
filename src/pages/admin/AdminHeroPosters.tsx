@@ -246,7 +246,7 @@ export default function AdminHeroPosters() {
   };
 
   const handleResetDefaults = async () => {
-    if (!window.confirm('Reset all hero posters to default Fundu Lucknow banners?')) return;
+    if (!window.confirm('Reset all hero posters to default Fundu banners?')) return;
     await resetPosters();
     setSelectedPosterId(null);
     showToast('Reset to default poster banners');

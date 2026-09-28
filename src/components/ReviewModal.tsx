@@ -22,7 +22,7 @@ export default function ReviewModal({
   const [hoverRating, setHoverRating] = useState(0);
   const [serviceType, setServiceType] = useState<'buy' | 'sell' | 'repair' | 'spare_parts' | 'general'>(defaultServiceType);
   const [reviewerName, setReviewerName] = useState(profile?.full_name || user?.email?.split('@')[0] || '');
-  const [location, setLocation] = useState('Gomti Nagar, Lucknow');
+  const [location, setLocation] = useState('Gomti Nagar');
   const [comment, setComment] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
@@ -49,7 +49,7 @@ export default function ReviewModal({
       rating,
       comment: comment.trim(),
       reviewer_name: reviewerName.trim(),
-      location: location.trim() || 'Lucknow',
+      location: location.trim() || 'Doorstep Service',
       is_approved: false,
     });
 
@@ -109,7 +109,7 @@ export default function ReviewModal({
               </div>
               <div>
                 <h3 className="font-display font-bold text-xl text-ink-900">Share Your Experience</h3>
-                <p className="text-xs text-ink-500">Review Fundu Lucknow services</p>
+                <p className="text-xs text-ink-500">Review Fundu services</p>
               </div>
             </div>
 
@@ -192,7 +192,7 @@ export default function ReviewModal({
                 />
               </div>
 
-              {/* Location in Lucknow */}
+              {/* Location at your doorstep */}
               <div>
                 <label className="block text-xs font-bold text-ink-700 uppercase tracking-wider mb-1 flex items-center gap-1">
                   <MapPin className="h-3.5 w-3.5 text-brand-600" /> Lucknow Locality
@@ -203,8 +203,8 @@ export default function ReviewModal({
                   className="w-full rounded-xl border border-ink-200 bg-ink-50/50 px-3.5 py-2.5 text-sm text-ink-900 outline-none focus:border-brand-500 focus:bg-white"
                 >
                   {LUCKNOW_AREAS.map((area) => (
-                    <option key={area} value={`${area}, Lucknow`}>
-                      {area}, Lucknow
+                    <option key={area} value={`${area}`}>
+                      {area}
                     </option>
                   ))}
                 </select>
@@ -218,7 +218,7 @@ export default function ReviewModal({
                 <textarea
                   value={comment}
                   onChange={(e) => setComment(e.target.value)}
-                  placeholder="Tell us about your experience with pickup, pricing, or repair in Lucknow..."
+                  placeholder="Tell us about your experience with pickup, pricing, or doorstep repair..."
                   rows={4}
                   className="w-full rounded-xl border border-ink-200 bg-ink-50/50 px-3.5 py-2.5 text-sm text-ink-900 outline-none focus:border-brand-500 focus:bg-white resize-none"
                   required

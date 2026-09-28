@@ -8,36 +8,36 @@ type SEOProps = {
 
 const ROUTE_SEO_MAP: Record<string, { title: string; description: string }> = {
   '/': {
-    title: 'Fundu Lucknow — Sell Old Phone for Instant Cash, Buy Refurbished & Doorstep Repair',
-    description: 'Sell old smartphones for instant UPI/cash in Lucknow, buy certified refurbished iPhones & Galaxy phones with 6M warranty, and book 30-minute doorstep repair.',
+    title: 'Fundu — Sell Old Phone for Instant Cash, Buy Refurbished & Doorstep Repair',
+    description: 'Sell old smartphones for instant UPI/cash at your doorstep, buy certified refurbished iPhones & Galaxy phones with 6M warranty, and book 30-minute doorstep repair.',
   },
   '/sell': {
-    title: 'Sell Old Phone for Instant Cash in Lucknow | Doorstep Pickup — Fundu',
-    description: 'Get highest instant valuation for your old smartphone in Lucknow. Free doorstep pickup & spot cash/UPI payment across Gomti Nagar, Hazratganj, Indira Nagar & Aliganj.',
+    title: 'Sell Old Phone for Instant Cash at your doorstep | Doorstep Pickup — Fundu',
+    description: 'Get highest instant valuation for your old smartphone at your doorstep. Free doorstep pickup & spot cash/UPI payment across Gomti Nagar, Hazratganj, Indira Nagar & Aliganj.',
   },
   '/buy': {
-    title: 'Buy Certified Refurbished Mobiles in Lucknow with 6M Warranty — Fundu',
-    description: 'Buy 32-point quality inspected refurbished iPhones, Samsung Galaxy & OnePlus phones in Lucknow with 6 months warranty and doorstep delivery.',
+    title: 'Buy Certified Refurbished Mobiles at your doorstep with 6M Warranty — Fundu',
+    description: 'Buy 32-point quality inspected refurbished iPhones, Samsung Galaxy & OnePlus phones at your doorstep with 6 months warranty and doorstep delivery.',
   },
   '/repair': {
-    title: '30-Minute Doorstep Mobile Repair in Lucknow | Screen & Battery Replacement — Fundu',
-    description: 'Book certified mobile repair at home/office in Lucknow. 30-minute screen & battery replacement with genuine parts & 6-month repair warranty.',
+    title: '30-Minute Doorstep Doorstep Mobile Repair | Screen & Battery Replacement — Fundu',
+    description: 'Book certified mobile repair at home/office at your doorstep. 30-minute screen & battery replacement with genuine parts & 6-month repair warranty.',
   },
   '/spare-parts': {
-    title: 'Buy Genuine Mobile Spare Parts in Lucknow | Screens, Batteries, Cables — Fundu',
-    description: 'OEM specification replacement screens, batteries, camera modules, and charging ports for iPhone, Samsung, OnePlus & Xiaomi in Lucknow.',
+    title: 'Buy Genuine Mobile Spare Parts at your doorstep | Screens, Batteries, Cables — Fundu',
+    description: 'OEM specification replacement screens, batteries, camera modules, and charging ports for iPhone, Samsung, OnePlus & Xiaomi at your doorstep.',
   },
   '/about': {
-    title: 'About Fundu Lucknow | Hyperlocal Refurbished & Doorstep Mobile Ecosystem',
-    description: 'Learn about Fundu Lucknow — Lucknow’s trusted hyperlocal platform for selling old phones, buying audited refurbished mobiles, and doorstep repairs.',
+    title: 'About Fundu | Hyperlocal Refurbished & Doorstep Mobile Ecosystem',
+    description: 'Learn about Fundu — Our trusted hyperlocal platform for selling old phones, buying audited refurbished mobiles, and doorstep repairs.',
   },
   '/contact': {
-    title: 'Contact Fundu Lucknow | Doorstep Support & Pickup Hubs',
-    description: 'Contact Fundu Lucknow customer support team, book doorstep pickup, or visit our Ashiyana, Gomti Nagar & Chowk trade hubs.',
+    title: 'Contact Fundu | Doorstep Support & Pickup Hubs',
+    description: 'Contact Fundu customer support team, book doorstep pickup, or visit our Ashiyana, Gomti Nagar & Chowk trade hubs.',
   },
   '/partner': {
-    title: 'Partner with Fundu Lucknow | B2B Mobile Wholesalers & Retail Network',
-    description: 'Join Fundu’s B2B wholesale partner program in Lucknow. Trade phone lots, manage vendor khata, and source certified refurbished inventory.',
+    title: 'Partner with Fundu | B2B Mobile Wholesalers & Retail Network',
+    description: 'Join Fundu’s B2B wholesale partner program at your doorstep. Trade phone lots, manage vendor khata, and source certified refurbished inventory.',
   },
 };
 
@@ -46,8 +46,8 @@ export default function SEO({ title, description }: SEOProps) {
 
   useEffect(() => {
     const routeSeo = ROUTE_SEO_MAP[location.pathname] || {
-      title: 'Fundu Lucknow — Smart Choice Smart Price',
-      description: 'Lucknow’s trusted portal for selling old phones, buying certified refurbished smartphones, and 30-minute doorstep mobile repair.',
+      title: 'Fundu — Smart Choice Smart Price',
+      description: 'Our trusted portal for selling old phones, buying certified refurbished smartphones, and 30-minute doorstep mobile repair.',
     };
 
     const finalTitle = title || routeSeo.title;
@@ -81,7 +81,7 @@ export default function SEO({ title, description }: SEOProps) {
     };
 
     setMeta('geo.region', 'IN-UP');
-    setMeta('geo.placename', 'Lucknow');
+    setMeta('geo.placename', 'Doorstep Service');
     setMeta('geo.position', '26.8467;80.9462');
     setMeta('ICBM', '26.8467, 80.9462');
   }, [location.pathname, title, description]);
