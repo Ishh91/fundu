@@ -1099,12 +1099,12 @@ export default function SellPhone() {
     return (
       <div className="min-h-screen bg-[#F7F7FA] py-12 px-4 flex items-center justify-center text-[#344257]">
         <div className="max-w-md w-full card p-8 rounded-[32px] text-center bg-white border border-gray-200 shadow-2xl animate-fade-in space-y-6">
-          <div className="mx-auto grid h-16 w-16 place-items-center rounded-full bg-emerald-100 text-emerald-800 shadow-md">
+          <div className="mx-auto grid h-16 w-16 place-items-center rounded-full bg-[#E4E7F0] text-[#344257] shadow-md">
             <CheckCircle2 className="h-10 w-10" />
           </div>
 
           <div>
-            <span className="badge bg-emerald-50 text-emerald-800 border border-emerald-200 text-xs font-bold">Booking Confirmed</span>
+            <span className="badge bg-[#F0F0F5] text-[#344257] border border-[#C0C8D8] text-xs font-bold">Booking Confirmed</span>
             <h2 className="mt-2 font-display text-2xl font-black text-[#344257]">Doorstep Pickup Scheduled!</h2>
             <p className="mt-1 text-xs text-gray-500">
               Tracking ID: <span className="font-mono font-bold text-[#344257]">{successData.id}</span>
@@ -1259,7 +1259,7 @@ export default function SellPhone() {
                               <p className="text-xs text-gray-500">{item.storage}</p>
                             </div>
                           </div>
-                          <span className="badge bg-emerald-50 text-emerald-800 border border-emerald-200 font-extrabold text-xs">
+                          <span className="badge bg-[#F0F0F5] text-[#344257] border border-[#C0C8D8] font-extrabold text-xs">
                             Up to {formatINR(item.price)}
                           </span>
                         </button>
@@ -1319,7 +1319,7 @@ export default function SellPhone() {
                 className="w-full h-full object-cover rounded-2xl group-hover:scale-105 transition-transform duration-500"
               />
               <div className="absolute bottom-3 left-1/2 -translate-x-1/2 bg-white/95 backdrop-blur-md rounded-2xl shadow-xl px-4 py-2 border border-[#C0C8D8] flex items-center gap-2 whitespace-nowrap">
-                <BadgeIndianRupee className="h-5 w-5 text-emerald-600" />
+                <BadgeIndianRupee className="h-5 w-5 text-[#47576E]" />
                 <span className="font-extrabold text-xs text-gray-900">Spot Cash at Doorstep</span>
               </div>
             </div>
@@ -1468,7 +1468,7 @@ export default function SellPhone() {
                         </div>
                         <div>
                           <p className="font-extrabold text-sm text-gray-900 group-hover:text-[#344257] transition-colors">{m.model}</p>
-                          <span className="badge bg-emerald-50 text-emerald-800 border border-emerald-200 font-extrabold text-[11px] mt-1">
+                          <span className="badge bg-[#F0F0F5] text-[#344257] border border-[#C0C8D8] font-extrabold text-[11px] mt-1">
                             Up to {formatINR(m.price)}
                           </span>
                         </div>
@@ -1542,7 +1542,7 @@ export default function SellPhone() {
                       />
                     </div>
                     <p className="mt-2 text-xs font-extrabold text-gray-900 group-hover:text-[#344257] transition-colors truncate w-full">{item.model}</p>
-                    <span className="mt-1 badge bg-emerald-50 text-emerald-800 border border-emerald-200 font-extrabold text-[10px]">
+                    <span className="mt-1 badge bg-[#F0F0F5] text-[#344257] border border-[#C0C8D8] font-extrabold text-[10px]">
                       Up to {formatINR(item.price)}
                     </span>
                   </button>
@@ -1609,7 +1609,7 @@ export default function SellPhone() {
                     desc: 'Get instant UPI (GPay/PhonePe) or hard cash transfer directly into your hand before handing over your mobile.',
                   },
                   {
-                    icon: <Sparkles className="h-6 w-6 text-emerald-400" />,
+                    icon: <Sparkles className="h-6 w-6 text-[#9ac0dd]" />,
                     title: 'Highest Valuation Guarantee',
                     desc: 'Our AI valuation algorithm checks live resale market rates to guarantee you the absolute highest cash price in Lucknow.',
                   },
@@ -1647,7 +1647,7 @@ export default function SellPhone() {
             <div className="card p-8 rounded-[32px] bg-white border border-gray-200 space-y-6">
               <div className="flex flex-wrap items-center justify-between gap-4 border-b border-gray-100 pb-4">
                 <div>
-                  <span className="badge bg-emerald-50 text-emerald-800 border border-emerald-200 font-bold text-xs">Verified Lucknow Feedback</span>
+                  <span className="badge bg-[#F0F0F5] text-[#344257] border border-[#C0C8D8] font-bold text-xs">Verified Lucknow Feedback</span>
                   <h2 className="font-display text-2xl font-black text-[#344257] mt-1">What Lucknow Sellers Say</h2>
                 </div>
                 <div className="flex items-center gap-2">
@@ -1825,7 +1825,7 @@ export default function SellPhone() {
                         type="button"
                         onClick={() => setForm((f) => ({ ...f, canMakeCalls: true }))}
                         className={`px-3 py-1.5 rounded-xl text-xs font-bold transition ${
-                          form.canMakeCalls ? 'bg-emerald-600 text-white shadow-xs' : 'bg-white text-gray-600 border border-gray-200'
+                          form.canMakeCalls ? 'bg-[#344257] text-white shadow-xs' : 'bg-white text-gray-600 border border-gray-200'
                         }`}
                       >
                         Yes
@@ -1852,7 +1852,7 @@ export default function SellPhone() {
                         type="button"
                         onClick={() => setForm((f) => ({ ...f, underWarranty: true }))}
                         className={`px-3 py-1.5 rounded-xl text-xs font-bold transition ${
-                          form.underWarranty ? 'bg-emerald-600 text-white shadow-xs' : 'bg-white text-gray-600 border border-gray-200'
+                          form.underWarranty ? 'bg-[#344257] text-white shadow-xs' : 'bg-white text-gray-600 border border-gray-200'
                         }`}
                       >
                         Yes
@@ -1990,7 +1990,7 @@ export default function SellPhone() {
         {step === 3 && (
           <div className="max-w-2xl mx-auto space-y-6 animate-fade-in">
             <div className="card p-6 md:p-8 rounded-[28px] bg-white border border-gray-200 shadow-xl text-center space-y-6">
-              <span className="badge bg-emerald-50 text-emerald-800 border border-emerald-200 font-extrabold uppercase tracking-wider text-xs">
+              <span className="badge bg-[#F0F0F5] text-[#344257] border border-[#C0C8D8] font-extrabold uppercase tracking-wider text-xs">
                 Pre-Approved Spot Cash Valuation · Lucknow
               </span>
 
@@ -2012,13 +2012,13 @@ export default function SellPhone() {
                 <p className="text-xs text-gray-300">Valid for 7 full days · Price match guarantee across Lucknow</p>
 
                 <div className="flex flex-wrap justify-center gap-2 text-xs font-semibold pt-2">
-                  <span className="inline-flex items-center gap-1 rounded-full bg-white/10 px-3 py-1 text-emerald-300">
+                  <span className="inline-flex items-center gap-1 rounded-full bg-white/15 px-3 py-1 text-white border border-white/20">
                     <BadgeIndianRupee className="h-3.5 w-3.5" /> Instant Spot Payment
                   </span>
-                  <span className="inline-flex items-center gap-1 rounded-full bg-white/10 px-3 py-1 text-emerald-300">
+                  <span className="inline-flex items-center gap-1 rounded-full bg-white/15 px-3 py-1 text-white border border-white/20">
                     <Truck className="h-3.5 w-3.5" /> Free Doorstep Pickup
                   </span>
-                  <span className="inline-flex items-center gap-1 rounded-full bg-white/10 px-3 py-1 text-emerald-300">
+                  <span className="inline-flex items-center gap-1 rounded-full bg-white/15 px-3 py-1 text-white border border-white/20">
                     <Lock className="h-3.5 w-3.5" /> 100% Data Wipe Guaranteed
                   </span>
                 </div>
@@ -2067,14 +2067,14 @@ export default function SellPhone() {
                 ))}
 
                 {cashifyValuation.warrantyBonus > 0 && (
-                  <div className="flex justify-between text-emerald-700 font-medium">
+                  <div className="flex justify-between text-[#344257] font-medium">
                     <span>Brand Warranty Bonus:</span>
                     <span className="font-bold">+ {formatINR(cashifyValuation.warrantyBonus)}</span>
                   </div>
                 )}
 
                 {cashifyValuation.accessoriesBonus > 0 && (
-                  <div className="flex justify-between text-emerald-700 font-medium">
+                  <div className="flex justify-between text-[#344257] font-medium">
                     <span>Original Accessories & Box Bonus:</span>
                     <span className="font-bold">+ {formatINR(cashifyValuation.accessoriesBonus)}</span>
                   </div>

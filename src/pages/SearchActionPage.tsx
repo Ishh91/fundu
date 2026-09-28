@@ -268,8 +268,8 @@ export default function SearchActionPage() {
                       <p className="text-xs text-gray-500 flex items-center gap-2">
                         <span>Fundu Re-Commerce Network</span>
                         <span>·</span>
-                        <span className="text-emerald-700 font-bold flex items-center gap-1">
-                          <Truck className="h-3.5 w-3.5 text-emerald-600" /> Free Lucknow Doorstep Service
+                        <span className="text-[#344257] font-bold flex items-center gap-1">
+                          <Truck className="h-3.5 w-3.5 text-[#47576E]" /> Free Lucknow Doorstep Service
                         </span>
                       </p>
                     </div>
@@ -297,7 +297,7 @@ export default function SearchActionPage() {
                   <div className="p-5 rounded-2xl bg-gradient-to-br from-emerald-50/80 via-white to-emerald-50/30 border border-emerald-200 shadow-xs flex flex-col justify-between space-y-4 hover:border-emerald-400 transition-colors group">
                     <div className="space-y-2">
                       <div className="flex items-center justify-between">
-                        <div className="grid h-10 w-10 place-items-center rounded-xl bg-emerald-100 text-emerald-700 shadow-xs">
+                        <div className="grid h-10 w-10 place-items-center rounded-xl bg-emerald-100 text-[#344257] shadow-xs">
                           <BadgeIndianRupee className="h-5 w-5" />
                         </div>
                         <span className="badge bg-emerald-600 text-white font-extrabold text-[10px] px-2 py-0.5">
@@ -305,7 +305,7 @@ export default function SearchActionPage() {
                         </span>
                       </div>
 
-                      <h3 className="font-extrabold text-base text-gray-900 group-hover:text-emerald-700 transition-colors">
+                      <h3 className="font-extrabold text-base text-gray-900 group-hover:text-[#344257] transition-colors">
                         Sell This Phone
                       </h3>
                       <p className="text-xs text-gray-500 leading-relaxed">
@@ -314,7 +314,7 @@ export default function SearchActionPage() {
 
                       <div className="pt-1">
                         <p className="text-[11px] text-gray-400 font-bold uppercase tracking-wider">Estimated Valuation:</p>
-                        <p className="text-lg font-black text-emerald-700">
+                        <p className="text-lg font-black text-[#344257]">
                           Up to {formatINR(phone.price)}
                         </p>
                       </div>
@@ -441,7 +441,7 @@ export default function SearchActionPage() {
 
             {notifySuccess ? (
               <div className="text-center py-6 space-y-3">
-                <div className="grid h-16 w-16 place-items-center rounded-full bg-emerald-100 text-emerald-600 mx-auto shadow-sm">
+                <div className="grid h-16 w-16 place-items-center rounded-full bg-emerald-100 text-[#47576E] mx-auto shadow-sm">
                   <CheckCircle2 className="h-8 w-8" />
                 </div>
                 <h3 className="text-xl font-black text-gray-900">Restock Alert Confirmed!</h3>

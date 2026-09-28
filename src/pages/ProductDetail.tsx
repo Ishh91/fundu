@@ -69,7 +69,7 @@ const CONDITION_GRADES = [
     id: 'Superb',
     label: 'Superb (Like New)',
     badge: 'Flawless Grade A',
-    color: 'bg-emerald-600 text-white',
+    color: 'bg-[#344257] text-white',
     desc: 'Zero visible scratches, looks and works brand new. Battery health guaranteed >90%.',
     priceMultiplier: 1.0,
   },
@@ -401,8 +401,8 @@ export default function ProductDetail() {
               <ChevronRight className="h-3.5 w-3.5 text-ink-300" />
               <span className="text-[#344257] font-bold truncate max-w-xs">{product.brand} {product.model}</span>
             </div>
-            <div className="flex items-center gap-1 text-[11px] font-bold text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-full">
-              <Building2 className="h-3 w-3 text-emerald-600" /> Lucknow Certified Warehouse Stock
+            <div className="flex items-center gap-1 text-[11px] font-bold text-[#344257] bg-[#F0F0F5] border border-[#C0C8D8] px-2.5 py-1 rounded-full">
+              <Building2 className="h-3 w-3 text-[#47576E]" /> Lucknow Certified Warehouse Stock
             </div>
           </div>
         </div>
@@ -464,16 +464,16 @@ export default function ProductDetail() {
             <div className="card p-6 rounded-[28px] bg-gradient-to-br from-white to-[#f0f9f8] border border-emerald-100 shadow-sm space-y-3">
               <div className="flex items-center justify-between">
                 <h4 className="text-xs font-extrabold text-ink-900 uppercase tracking-wider flex items-center gap-2">
-                  <ShieldCheck className="h-4 w-4 text-emerald-600" /> 32-Point Quality Inspected
+                  <ShieldCheck className="h-4 w-4 text-[#47576E]" /> 32-Point Quality Inspected
                 </h4>
-                <span className="badge bg-emerald-100 text-emerald-800 text-[10px] font-bold">Passed</span>
+                <span className="badge bg-[#E4E7F0] text-[#344257] border border-[#C0C8D8] text-[10px] font-bold">Passed</span>
               </div>
 
               <div className="grid grid-cols-2 gap-2.5 text-xs text-ink-700 font-bold pt-1">
-                <span className="flex items-center gap-1.5"><Check className="h-3.5 w-3.5 text-emerald-600 shrink-0" /> Original Display</span>
-                <span className="flex items-center gap-1.5"><Check className="h-3.5 w-3.5 text-emerald-600 shrink-0" /> Battery Health &gt; 88%</span>
-                <span className="flex items-center gap-1.5"><Check className="h-3.5 w-3.5 text-emerald-600 shrink-0" /> 100% Data Wiped</span>
-                <span className="flex items-center gap-1.5"><Check className="h-3.5 w-3.5 text-emerald-600 shrink-0" /> Hardware Verified</span>
+                <span className="flex items-center gap-1.5"><Check className="h-3.5 w-3.5 text-[#47576E] shrink-0" /> Original Display</span>
+                <span className="flex items-center gap-1.5"><Check className="h-3.5 w-3.5 text-[#47576E] shrink-0" /> Battery Health &gt; 88%</span>
+                <span className="flex items-center gap-1.5"><Check className="h-3.5 w-3.5 text-[#47576E] shrink-0" /> 100% Data Wiped</span>
+                <span className="flex items-center gap-1.5"><Check className="h-3.5 w-3.5 text-[#47576E] shrink-0" /> Hardware Verified</span>
               </div>
             </div>
 
@@ -533,8 +533,8 @@ export default function ProductDetail() {
                   </div>
 
                   {currentSavings > 0 && (
-                    <div className="rounded-2xl bg-emerald-500 text-white px-4 py-2 text-right shadow-xs">
-                      <p className="text-[10px] uppercase font-black tracking-wider text-emerald-100">Total Instant Savings</p>
+                    <div className="rounded-2xl bg-[#344257] text-white px-4 py-2 text-right shadow-xs">
+                      <p className="text-[10px] uppercase font-black tracking-wider text-[#E4E7F0]">Total Instant Savings</p>
                       <p className="text-lg font-black">{formatINR(currentSavings)} OFF</p>
                     </div>
                   )}
@@ -604,7 +604,7 @@ export default function ProductDetail() {
                         </div>
                         <div>
                           <span className="font-display font-black text-sm text-ink-900">{formatINR(displayPrice)}</span>
-                          <span className="ml-1 text-[10px] text-emerald-700 font-bold block">{g.badge}</span>
+                          <span className="ml-1 text-[10px] text-[#344257] font-bold block">{g.badge}</span>
                         </div>
                       </button>
                     );
@@ -648,9 +648,9 @@ export default function ProductDetail() {
               <div className="rounded-3xl border border-ink-200 p-5 space-y-3 bg-[#fbfdfd] shadow-xs">
                 <div className="flex items-center justify-between">
                   <label className="text-xs font-extrabold text-ink-900 flex items-center gap-1.5">
-                    <MapPin className="h-4 w-4 text-emerald-600" /> Enter PIN Code for Delivery Date & Location
+                    <MapPin className="h-4 w-4 text-[#47576E]" /> Enter PIN Code for Delivery Date & Location
                   </label>
-                  <span className="text-[10px] font-extrabold text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full">
+                  <span className="text-[10px] font-extrabold text-[#344257] bg-[#F0F0F5] border border-[#C0C8D8] px-2.5 py-0.5 rounded-full">
                     Express Dispatch
                   </span>
                 </div>
@@ -685,17 +685,17 @@ export default function ProductDetail() {
                 )}
 
                 {locationName && !pincodeError && (
-                  <div className="rounded-2xl bg-emerald-50/90 border border-emerald-200 p-3.5 space-y-1 text-xs text-emerald-900 font-semibold">
-                    <p className="font-bold text-emerald-950 flex items-center gap-1.5 text-sm">
-                      <MapPin className="h-4 w-4 text-emerald-600 shrink-0" />
+                  <div className="rounded-2xl bg-[#F0F0F5] border border-[#C0C8D8] p-3.5 space-y-1 text-xs text-emerald-900 font-semibold">
+                    <p className="font-bold text-[#344257] flex items-center gap-1.5 text-sm">
+                      <MapPin className="h-4 w-4 text-[#47576E] shrink-0" />
                       Location: <span className="underline font-black">{locationName}</span>
                     </p>
-                    <p className="flex items-center gap-1.5 text-emerald-800">
-                      <Truck className="h-3.5 w-3.5 text-emerald-600 shrink-0" />
-                      Estimated Delivery: <strong className="font-black text-emerald-950">Tomorrow by 5:00 PM</strong> (Free Delivery)
+                    <p className="flex items-center gap-1.5 text-[#47576E]">
+                      <Truck className="h-3.5 w-3.5 text-[#47576E] shrink-0" />
+                      Estimated Delivery: <strong className="font-black text-[#344257]">Tomorrow by 5:00 PM</strong> (Free Delivery)
                     </p>
-                    <p className="flex items-center gap-1.5 text-emerald-800">
-                      <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600 shrink-0" />
+                    <p className="flex items-center gap-1.5 text-[#47576E]">
+                      <CheckCircle2 className="h-3.5 w-3.5 text-[#47576E] shrink-0" />
                       Cash on Delivery (COD) & Pay on Doorstep Available
                     </p>
                   </div>
@@ -705,17 +705,17 @@ export default function ProductDetail() {
               {/* TRUST GUARANTEES PILLS */}
               <div className="grid grid-cols-3 gap-3 text-center">
                 <div className="p-3.5 rounded-2xl border border-ink-100 bg-[#f8fafb]">
-                  <ShieldCheck className="mx-auto h-6 w-6 text-emerald-600" />
+                  <ShieldCheck className="mx-auto h-6 w-6 text-[#47576E]" />
                   <p className="mt-1 text-xs font-bold text-ink-900">6 Months Warranty</p>
                   <p className="text-[10px] text-ink-400">Free Replacement</p>
                 </div>
                 <div className="p-3.5 rounded-2xl border border-ink-100 bg-[#f8fafb]">
-                  <RotateCcw className="mx-auto h-6 w-6 text-emerald-600" />
+                  <RotateCcw className="mx-auto h-6 w-6 text-[#47576E]" />
                   <p className="mt-1 text-xs font-bold text-ink-900">7 Days Money Back</p>
                   <p className="text-[10px] text-ink-400">No Questions Asked</p>
                 </div>
                 <div className="p-3.5 rounded-2xl border border-ink-100 bg-[#f8fafb]">
-                  <Award className="mx-auto h-6 w-6 text-emerald-600" />
+                  <Award className="mx-auto h-6 w-6 text-[#47576E]" />
                   <p className="mt-1 text-xs font-bold text-ink-900">32-Point Verified</p>
                   <p className="text-[10px] text-ink-400">Quality Assured</p>
                 </div>
@@ -784,13 +784,13 @@ export default function ProductDetail() {
             {/* 32-POINT CHECKLIST FULL GRID */}
             <div className="card p-6 md:p-8 rounded-[32px] bg-white border border-ink-100 space-y-4 shadow-soft">
               <h3 className="font-display text-lg font-black text-ink-900 flex items-center gap-2">
-                <CheckCircle2 className="h-5 w-5 text-emerald-600" /> Full 32-Point Quality Checklist
+                <CheckCircle2 className="h-5 w-5 text-[#47576E]" /> Full 32-Point Quality Checklist
               </h3>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs font-semibold text-ink-700">
                 {INSPECTION_POINTS.map((pt, idx) => (
                   <div key={idx} className="flex items-center gap-2 p-3 rounded-xl bg-emerald-50/60 border border-emerald-100">
-                    <Check className="h-4 w-4 text-emerald-600 shrink-0" />
+                    <Check className="h-4 w-4 text-[#47576E] shrink-0" />
                     <span>{pt}</span>
                   </div>
                 ))}
@@ -930,7 +930,7 @@ export default function ProductDetail() {
           <div className="flex items-center gap-4">
             <div className="text-right hidden md:block">
               <span className="font-display font-black text-lg text-ink-900">{formatINR(currentPrice)}</span>
-              {currentSavings > 0 && <span className="text-[10px] text-emerald-600 font-bold block">Save {formatINR(currentSavings)}</span>}
+              {currentSavings > 0 && <span className="text-[10px] text-[#47576E] font-bold block">Save {formatINR(currentSavings)}</span>}
             </div>
 
             <div className="flex items-center gap-2">

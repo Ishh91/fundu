@@ -468,10 +468,10 @@ export default function Repair() {
       <div className="min-h-screen bg-[#f4f7f8] py-16">
         <div className="container-page">
           <div className="max-w-xl mx-auto card p-8 md:p-10 text-center rounded-[32px] shadow-soft border border-[#dce5e8]">
-            <div className="mx-auto grid h-20 w-20 place-items-center rounded-full bg-emerald-100 text-emerald-600 shadow-inner">
+            <div className="mx-auto grid h-20 w-20 place-items-center rounded-full bg-emerald-100 text-[#47576E] shadow-inner">
               <CheckCircle2 className="h-10 w-10" />
             </div>
-            <span className="mt-4 inline-block rounded-full bg-emerald-50 px-3.5 py-1 text-xs font-bold text-emerald-700 uppercase tracking-wider">
+            <span className="mt-4 inline-block rounded-full bg-emerald-50 px-3.5 py-1 text-xs font-bold text-[#344257] uppercase tracking-wider">
               Technician Slot Reserved
             </span>
             <h2 className="mt-2 font-display text-3xl font-black text-ink-900">
@@ -547,8 +547,8 @@ export default function Repair() {
         <div className="container-page">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
             <div>
-              <div className="inline-flex items-center gap-2 rounded-full bg-emerald-50 px-3 py-1 text-xs font-bold text-emerald-700">
-                <Wrench className="h-3.5 w-3.5 text-emerald-600" /> 30-Minute Doorstep Mobile Repair
+              <div className="inline-flex items-center gap-2 rounded-full bg-emerald-50 px-3 py-1 text-xs font-bold text-[#344257]">
+                <Wrench className="h-3.5 w-3.5 text-[#47576E]" /> 30-Minute Doorstep Mobile Repair
               </div>
               <h1 className="mt-2 font-display text-2xl md:text-4xl font-extrabold text-[#344257]">
                 Mobile Repair at Your Doorstep in Lucknow
@@ -650,7 +650,7 @@ export default function Repair() {
                   step === s
                     ? 'bg-gradient-to-r from-[#344257] to-[#47576E] text-white shadow-md'
                     : step > s
-                    ? 'bg-emerald-100 text-emerald-700 hover:bg-emerald-200 cursor-pointer'
+                    ? 'bg-emerald-100 text-[#344257] hover:bg-emerald-200 cursor-pointer'
                     : 'bg-gray-100 text-gray-400 cursor-not-allowed'
                 }`}
               >
@@ -991,7 +991,7 @@ export default function Repair() {
                         <p className="mt-1 text-xs text-ink-500 leading-relaxed">{issue.desc}</p>
                         <div className="mt-3 flex items-center justify-between text-[10px] font-bold">
                           <div className="flex items-center gap-2">
-                            <span className="badge bg-emerald-50 text-emerald-700">{issue.warranty}</span>
+                            <span className="badge bg-emerald-50 text-[#344257]">{issue.warranty}</span>
                             <span className="badge bg-purple-50 text-purple-700">{issue.time}</span>
                           </div>
                           <span className={`px-2.5 py-1 rounded-full text-[10px] font-black transition ${isSelected ? 'bg-[#344257] text-white' : 'bg-gray-100 text-gray-600 hover:bg-[#F0F0F5] hover:text-[#344257]'}`}>
@@ -1054,7 +1054,7 @@ export default function Repair() {
         {step === 3 && (
           <div className="max-w-2xl mx-auto space-y-6 animate-fade-in">
             <div className="card p-6 md:p-8 rounded-[28px] text-center">
-              <span className="badge bg-emerald-50 text-emerald-700 font-extrabold uppercase tracking-wider">
+              <span className="badge bg-emerald-50 text-[#344257] font-extrabold uppercase tracking-wider">
                 Upfront Repair Estimate ({selectedIssues.length} Issue{selectedIssues.length > 1 ? 's' : ''})
               </span>
 
@@ -1271,7 +1271,7 @@ export default function Repair() {
 
           <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             <div className="p-5 rounded-2xl border border-ink-100 bg-white">
-              <div className="grid h-10 w-10 place-items-center rounded-xl bg-emerald-100 text-emerald-700">
+              <div className="grid h-10 w-10 place-items-center rounded-xl bg-emerald-100 text-[#344257]">
                 <ShieldCheck className="h-5 w-5" />
               </div>
               <h4 className="mt-3 font-bold text-ink-900 text-sm">6 Months Warranty</h4>

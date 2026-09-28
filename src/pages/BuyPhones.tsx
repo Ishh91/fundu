@@ -1059,19 +1059,19 @@ export default function BuyPhones() {
                 </div>
                 <div className="space-y-1.5 text-[11px] text-gray-600">
                   <p className="flex items-center gap-1.5">
-                    <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600 shrink-0" />
+                    <CheckCircle2 className="h-3.5 w-3.5 text-[#47576E] shrink-0" />
                     32-Point diagnostic tested
                   </p>
                   <p className="flex items-center gap-1.5">
-                    <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600 shrink-0" />
+                    <CheckCircle2 className="h-3.5 w-3.5 text-[#47576E] shrink-0" />
                     6 Months Free Warranty
                   </p>
                   <p className="flex items-center gap-1.5">
-                    <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600 shrink-0" />
+                    <CheckCircle2 className="h-3.5 w-3.5 text-[#47576E] shrink-0" />
                     7 Days Replacement Policy
                   </p>
                   <p className="flex items-center gap-1.5">
-                    <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600 shrink-0" />
+                    <CheckCircle2 className="h-3.5 w-3.5 text-[#47576E] shrink-0" />
                     Free Doorstep Delivery in Lucknow
                   </p>
                 </div>
@@ -1156,7 +1156,7 @@ export default function BuyPhones() {
                           <span
                             className={`absolute top-3 left-3 z-10 text-[10px] font-extrabold px-2.5 py-1 rounded-full shadow-xs ${
                               isSuperb
-                                ? 'bg-emerald-600 text-white'
+                                ? 'bg-[#344257] text-white'
                                 : 'bg-[#47576E] text-white'
                             }`}
                           >
@@ -1184,7 +1184,7 @@ export default function BuyPhones() {
 
                           {/* 32-Point Quality Badge Bottom Overlay */}
                           <div className="absolute bottom-2 left-3 right-3 flex items-center justify-center gap-1 bg-white/90 backdrop-blur-xs py-1 px-2 rounded-lg text-[10px] font-bold text-[#344257] border border-gray-200/60 shadow-xs">
-                            <CheckCircle2 className="h-3 w-3 text-emerald-600 shrink-0" />
+                            <CheckCircle2 className="h-3 w-3 text-[#47576E] shrink-0" />
                             <span>32-Point Certified Refurbished</span>
                           </div>
                         </div>
@@ -1214,8 +1214,8 @@ export default function BuyPhones() {
                           </div>
 
                           {/* 6 Months Warranty Pill */}
-                          <div className="mt-2.5 flex items-center gap-1 text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded w-max">
-                            <ShieldCheck className="h-3 w-3 text-emerald-600" />
+                          <div className="mt-2.5 flex items-center gap-1 text-[10px] font-bold text-[#344257] bg-[#F0F0F5] border border-[#C0C8D8] px-2 py-0.5 rounded w-max">
+                            <ShieldCheck className="h-3 w-3 text-[#47576E]" />
                             <span>6 Months Warranty in Lucknow</span>
                           </div>
                         </div>
@@ -1235,7 +1235,7 @@ export default function BuyPhones() {
                             )}
                           </div>
                           {savings && (
-                            <span className="text-[10px] font-extrabold text-emerald-700 bg-emerald-100/60 px-1.5 py-0.5 rounded">
+                            <span className="text-[10px] font-extrabold text-[#344257] bg-[#F0F0F5] border border-[#C0C8D8] px-1.5 py-0.5 rounded">
                               Save {formatINR(savings)}
                             </span>
                           )}
@@ -1309,7 +1309,7 @@ export default function BuyPhones() {
                     <ul className="mt-2.5 space-y-1.5">
                       {cat.points.map((pt) => (
                         <li key={pt} className="text-[11px] text-gray-600 flex items-start gap-1.5 leading-tight">
-                          <CheckCircle2 className="h-3 w-3 text-emerald-600 mt-0.5 shrink-0" />
+                          <CheckCircle2 className="h-3 w-3 text-[#47576E] mt-0.5 shrink-0" />
                           <span>{pt}</span>
                         </li>
                       ))}
@@ -1333,15 +1333,15 @@ export default function BuyPhones() {
           </div>
 
           <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-5">
-            <div className="rounded-2xl border-2 border-emerald-500/80 bg-emerald-50/20 p-5 space-y-3">
-              <div className="inline-flex items-center gap-1.5 bg-emerald-600 text-white text-xs font-extrabold px-3 py-1 rounded-full">
+            <div className="rounded-2xl border-2 border-[#47576E] bg-[#F0F0F5] p-5 space-y-3">
+              <div className="inline-flex items-center gap-1.5 bg-[#344257] text-white text-xs font-extrabold px-3 py-1 rounded-full">
                 Superb (Like New)
               </div>
               <h4 className="font-bold text-sm text-[#344257]">Almost Indistinguishable From New</h4>
               <p className="text-xs text-gray-600 leading-relaxed">
                 Zero scratches on screen, flawless body or near-invisible handling marks. Battery health guaranteed &gt;88%. 100% original OEM display and camera modules.
               </p>
-              <div className="text-[11px] font-bold text-emerald-700 pt-2 border-t border-emerald-200">
+              <div className="text-[11px] font-bold text-[#344257] pt-2 border-t border-[#C0C8D8]">
                 ✓ Best for buyers wanting a showroom feel at up to 40% off
               </div>
             </div>
