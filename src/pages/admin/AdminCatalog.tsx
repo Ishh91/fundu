@@ -120,7 +120,7 @@ export default function AdminCatalog({
   return (
     <div className="space-y-6">
       {/* Top Banner */}
-      <div className="card p-6 rounded-[28px] bg-gradient-to-r from-emerald-500/10 via-brand-500/10 to-teal-500/10 border border-emerald-200/60 flex flex-wrap items-center justify-between gap-4">
+      <div className="card p-6 rounded-[28px] bg-gradient-to-r from-slate-700/10 via-brand-500/10 to-[#344257]/10 border border-slate-200/60 flex flex-wrap items-center justify-between gap-4">
         <div>
           <div className="inline-flex items-center gap-2 rounded-full bg-emerald-100 px-3 py-1 text-xs font-black text-emerald-800">
             <Smartphone className="h-3.5 w-3.5" /> 31,500+ Live Device API & Indian Phone Database

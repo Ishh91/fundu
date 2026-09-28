@@ -123,7 +123,7 @@ export default function AdminSidebar({
           label: 'Vendors (10% Comm.)',
           icon: Building2,
           badge: 'Vendor Hub',
-          badgeColor: 'bg-teal-600 text-white',
+          badgeColor: 'bg-[#344257] text-white',
           path: '/admin/wholesalers',
         },
         { id: 'users' as AdminTab, label: 'Users & Roles', icon: Users, path: '/admin?tab=users' },
@@ -137,7 +137,7 @@ export default function AdminSidebar({
           label: 'Hero Sliders & Banners',
           icon: ImageIcon,
           badge: 'Live',
-          badgeColor: 'bg-teal-600 text-white',
+          badgeColor: 'bg-[#344257] text-white',
           path: '/admin/banners',
         },
         { id: 'reviews' as AdminTab, label: 'Customer Reviews', icon: MessageSquare, path: '/admin?tab=reviews' },
@@ -238,7 +238,7 @@ export default function AdminSidebar({
         </Link>
         <Link
           to="/delivery"
-          className="flex items-center justify-between rounded-xl px-3 py-2 text-xs font-bold text-teal-700 bg-teal-50 hover:bg-teal-100"
+          className="flex items-center justify-between rounded-xl px-3 py-2 text-xs font-bold text-[#344257] bg-[#F0F0F5] hover:bg-[#E2E8F0]"
         >
           <span>Field Rider Portal</span>
           <ExternalLink className="h-3.5 w-3.5" />

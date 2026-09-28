@@ -124,7 +124,7 @@ function AgentCard({
           <button
             type="button"
             onClick={onTrackMap}
-            className="inline-flex items-center gap-1.5 rounded-xl bg-teal-600 hover:bg-teal-700 px-3 py-1.5 text-xs font-black text-white shadow-sm transition active:scale-95"
+            className="inline-flex items-center gap-1.5 rounded-xl bg-[#344257] hover:bg-[#2B3646] px-3 py-1.5 text-xs font-black text-white shadow-sm transition active:scale-95"
           >
             <span className="h-2 w-2 rounded-full bg-emerald-300 animate-ping" />
             <Navigation className="h-3.5 w-3.5" />
@@ -269,7 +269,7 @@ export default function Dashboard() {
       {/* ── Header ── */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="flex items-center gap-3">
-          <div className="grid h-12 w-12 place-items-center rounded-xl bg-teal-50 text-teal-700 overflow-hidden border border-teal-200 shrink-0">
+          <div className="grid h-12 w-12 place-items-center rounded-xl bg-[#F0F0F5] text-[#344257] overflow-hidden border border-[#C0C8D8] shrink-0">
             {profile?.avatar_url ? (
               <img src={profile.avatar_url} alt="User Avatar" className="h-full w-full object-cover" />
             ) : (
@@ -838,7 +838,7 @@ function RepairCard({
 
       {/* Vendor Repair Quotation Alert Card */}
       {r.vendor_quotation_amount && (
-        <div className="mt-4 p-4 rounded-2xl bg-gradient-to-r from-purple-50 to-teal-50 border border-purple-200/80 shadow-xs space-y-3">
+        <div className="mt-4 p-4 rounded-2xl bg-gradient-to-r from-purple-50 to-slate-50 border border-purple-200/80 shadow-xs space-y-3">
           <div className="flex flex-wrap items-center justify-between gap-2">
             <div>
               <span className="badge bg-purple-600 text-white text-[10px] font-bold">🏬 Vendor Repair Quotation Uploaded</span>
@@ -1039,7 +1039,7 @@ function OrderCard({
                     trackingId: o.tracking_id,
                   })
                 }
-                className="inline-flex items-center gap-1 rounded-lg bg-teal-600 px-2.5 py-1 text-[11px] font-bold text-white shadow-sm hover:bg-teal-700 transition"
+                className="inline-flex items-center gap-1 rounded-lg bg-[#344257] px-2.5 py-1 text-[11px] font-bold text-white shadow-sm hover:bg-[#2B3646] transition"
               >
                 <Navigation className="h-3 w-3" /> Track Map
               </button>
@@ -1089,9 +1089,9 @@ function OrderCard({
                   trackingId: o.tracking_id,
                 })
               }
-              className="btn-outline text-xs px-3 py-1.5 flex items-center gap-1.5 border-teal-500 text-teal-700 hover:bg-teal-50 font-bold"
+              className="btn-outline text-xs px-3 py-1.5 flex items-center gap-1.5 border-[#47576E] text-[#344257] hover:bg-[#F0F0F5] font-bold"
             >
-              <Navigation className="h-3.5 w-3.5 text-teal-600" /> Live GPS Tracker
+              <Navigation className="h-3.5 w-3.5 text-[#47576E]" /> Live GPS Tracker
             </button>
           )}
 

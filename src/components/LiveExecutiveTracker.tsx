@@ -177,7 +177,7 @@ export default function LiveExecutiveTracker({
             className="absolute inset-0 opacity-20"
             style={{
               backgroundImage:
-                'radial-gradient(#14c8ba 1.5px, transparent 1.5px), radial-gradient(#38bdf8 1.5px, #1e293b 1.5px)',
+                'radial-gradient(#6A859F 1.5px, transparent 1.5px), radial-gradient(#47576E 1.5px, #1e293b 1.5px)',
               backgroundSize: '30px 30px',
               backgroundPosition: '0 0, 15px 15px',
             }}

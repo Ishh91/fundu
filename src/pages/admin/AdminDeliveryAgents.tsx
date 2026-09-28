@@ -57,7 +57,7 @@ export default function AdminDeliveryAgents({
 
   return (
     <div className="space-y-6">
-      <div className="card p-6 rounded-[28px] bg-gradient-to-r from-emerald-500/10 via-brand-500/10 to-teal-500/10 border border-emerald-200/60 flex flex-wrap items-center justify-between gap-4">
+      <div className="card p-6 rounded-[28px] bg-gradient-to-r from-slate-700/10 via-brand-500/10 to-[#344257]/10 border border-slate-200/60 flex flex-wrap items-center justify-between gap-4">
         <div>
           <div className="inline-flex items-center gap-2 rounded-full bg-emerald-100 px-3 py-1 text-xs font-black text-emerald-800">
             <Truck className="h-3.5 w-3.5" /> Lucknow Doorstep Dispatch Fleet
@@ -209,7 +209,7 @@ export default function AdminDeliveryAgents({
                   </div>
                   <div>
                     <span className="text-slate-400 text-[10px] block">STATUS:</span>
-                    <span className="font-bold text-teal-300">Active & Verified Fleet</span>
+                    <span className="font-bold text-[#C0C8D8]">Active & Verified Fleet</span>
                   </div>
                 </div>
 
@@ -276,7 +276,7 @@ export default function AdminDeliveryAgents({
                       <div key={o.id} className="p-3 rounded-xl bg-white border border-blue-200 flex items-center justify-between">
                         <div>
                           <div className="flex items-center gap-1.5">
-                            <span className="badge bg-teal-100 text-teal-800 font-bold text-[10px]">Store Order</span>
+                            <span className="badge bg-[#F0F0F5] text-[#344257] border border-[#C0C8D8] font-bold text-[10px]">Store Order</span>
                             <span className="font-bold text-slate-900">#{o.id.slice(0, 8).toUpperCase()}</span>
                           </div>
                           <p className="text-slate-600 mt-0.5">{o.delivery_name || 'Customer'} · {o.delivery_address || 'Lucknow'}</p>

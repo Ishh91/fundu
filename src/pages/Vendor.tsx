@@ -489,9 +489,9 @@ export default function Vendor() {
                         <div className="flex items-center gap-2">
                           <button
                             onClick={() => setCustomerModalData({ ...lead, type: 'sell' })}
-                            className="btn-outline text-xs px-3 py-1.5 text-teal-700 border-teal-200 hover:bg-teal-50 flex items-center gap-1.5 font-bold rounded-xl"
+                            className="btn-outline text-xs px-3 py-1.5 text-[#344257] border-[#C0C8D8] hover:bg-[#F0F0F5] flex items-center gap-1.5 font-bold rounded-xl"
                           >
-                            <Eye className="h-3.5 w-3.5 text-teal-600" /> Customer Details
+                            <Eye className="h-3.5 w-3.5 text-[#47576E]" /> Customer Details
                           </button>
                           {!isAccepted && (
                             <button
@@ -571,7 +571,7 @@ export default function Vendor() {
         {activeTab === 'repair-leads' && (
           <div className="space-y-6">
             {/* Header Banner */}
-            <div className="card p-6 rounded-[28px] bg-gradient-to-r from-purple-600/10 via-brand-500/10 to-teal-500/10 border border-purple-200/60 flex flex-wrap items-center justify-between gap-4">
+            <div className="card p-6 rounded-[28px] bg-gradient-to-r from-purple-600/10 via-slate-500/10 to-[#344257]/10 border border-purple-200/60 flex flex-wrap items-center justify-between gap-4">
               <div>
                 <div className="inline-flex items-center gap-2 rounded-full bg-purple-100 px-3 py-1 text-xs font-black text-purple-800">
                   <Wrench className="h-3.5 w-3.5" /> Task 2: Nearby Location Repair Requests
@@ -635,9 +635,9 @@ export default function Vendor() {
                         <div className="flex items-center gap-2">
                           <button
                             onClick={() => setCustomerModalData({ ...repair, type: 'repair' })}
-                            className="btn-outline text-xs px-3 py-1.5 text-teal-700 border-teal-200 hover:bg-teal-50 flex items-center gap-1.5 font-bold rounded-xl"
+                            className="btn-outline text-xs px-3 py-1.5 text-[#344257] border-[#C0C8D8] hover:bg-[#F0F0F5] flex items-center gap-1.5 font-bold rounded-xl"
                           >
-                            <Eye className="h-3.5 w-3.5 text-teal-600" /> Customer Details
+                            <Eye className="h-3.5 w-3.5 text-[#47576E]" /> Customer Details
                           </button>
                           {!isPaid && (
                             <button
@@ -705,7 +705,7 @@ export default function Vendor() {
         {activeTab === 'wallet-khata' && (
           <div className="space-y-6">
             {/* Big Wallet Banner */}
-            <div className="card p-6 md:p-8 rounded-[28px] bg-gradient-to-r from-ink-900 via-brand-950 to-teal-950 text-white shadow-lg">
+            <div className="card p-6 md:p-8 rounded-[28px] bg-gradient-to-r from-[#1E2734] via-[#2B3646] to-[#344257] text-white shadow-lg">
               <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
                 <div>
                   <span className="badge bg-white/20 text-white text-xs font-bold">Lucknow Vendor Limit & Wallet</span>
@@ -717,7 +717,7 @@ export default function Vendor() {
                   </p>
                 </div>
                 <div className="text-left md:text-right bg-white/10 p-4 rounded-2xl backdrop-blur-xs border border-white/20">
-                  <p className="text-xs font-bold uppercase tracking-wider text-teal-200">Current Outstanding Balance</p>
+                  <p className="text-xs font-bold uppercase tracking-wider text-[#C0C8D8]">Current Outstanding Balance</p>
                   <p className="mt-1 font-display text-3xl font-black text-white">{formatINR(outstandingBalance)}</p>
                   <p className="text-[11px] text-white/70 mt-1">Available Credit Limit: {formatINR(availableCredit)}</p>
                 </div>

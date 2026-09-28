@@ -235,9 +235,9 @@ export default function AdminRepairs({
                 <div className="flex items-center gap-2">
                   <button
                     onClick={() => setCustomerModalData({ ...selectedRepair, type: 'repair' })}
-                    className="btn-outline text-xs px-3 py-1.5 text-teal-700 border-teal-200 hover:bg-teal-50 flex items-center gap-1.5 font-bold shadow-xs rounded-xl"
+                    className="btn-outline text-xs px-3 py-1.5 text-[#344257] border-[#C0C8D8] hover:bg-[#F0F0F5] flex items-center gap-1.5 font-bold shadow-xs rounded-xl"
                   >
-                    <UserCheck className="h-3.5 w-3.5 text-teal-600" /> Customer Details
+                    <UserCheck className="h-3.5 w-3.5 text-[#47576E]" /> Customer Details
                   </button>
 
                   <select

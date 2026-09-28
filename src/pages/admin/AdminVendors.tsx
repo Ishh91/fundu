@@ -329,9 +329,9 @@ export default function AdminVendors() {
   return (
     <div className="space-y-6">
       {/* Header Stat Cards */}
-      <div className="card p-6 rounded-[28px] bg-gradient-to-r from-teal-500/10 via-brand-500/10 to-indigo-500/10 border border-teal-200/60 flex flex-wrap items-center justify-between gap-4">
+      <div className="card p-6 rounded-[28px] bg-gradient-to-r from-slate-700/10 via-brand-500/10 to-[#344257]/10 border border-slate-200/60 flex flex-wrap items-center justify-between gap-4">
         <div>
-          <div className="inline-flex items-center gap-2 rounded-full bg-teal-100 px-3 py-1 text-xs font-black text-teal-800">
+          <div className="inline-flex items-center gap-2 rounded-full bg-[#F0F0F5] border border-[#C0C8D8] px-3 py-1 text-xs font-black text-[#344257]">
             <Building2 className="h-3.5 w-3.5" /> Vendor Network & 10% Commission Manager
           </div>
           <h2 className="mt-2 font-display text-2xl font-black text-ink-900">Lucknow Vendors & Lead Forwarding Hub</h2>
@@ -482,9 +482,9 @@ export default function AdminVendors() {
                           alert('Failed to send EmailJS OTP.');
                         }
                       }}
-                      className="inline-flex items-center gap-1 text-teal-700 font-bold hover:underline"
+                      className="inline-flex items-center gap-1 text-[#344257] font-bold hover:underline"
                     >
-                      <Mail className="h-3 w-3 text-teal-600" /> Send Email OTP
+                      <Mail className="h-3 w-3 text-[#47576E]" /> Send Email OTP
                     </button>
 
                     <button

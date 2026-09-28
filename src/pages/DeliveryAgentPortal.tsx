@@ -732,7 +732,7 @@ export default function DeliveryAgentPortal() {
             </span>
             <Link
               to="/"
-              className="bg-teal-900/80 hover:bg-teal-800 text-teal-200 px-2 py-0.5 rounded text-[10px] font-bold"
+              className="bg-[#1E2734] hover:bg-[#344257] text-[#C0C8D8] px-2 py-0.5 rounded text-[10px] font-bold"
             >
               Store View
             </Link>
@@ -1294,7 +1294,7 @@ export default function DeliveryAgentPortal() {
                   <div key={order.id} className="card p-5 sm:p-6 rounded-3xl bg-white shadow-xs border border-slate-200 space-y-4">
                     <div className="flex flex-wrap items-start justify-between gap-3 pb-3 border-b border-slate-100">
                       <div>
-                        <span className="badge bg-teal-100 text-teal-800 font-bold text-xs">
+                        <span className="badge bg-[#F0F0F5] text-[#344257] border border-[#C0C8D8] font-bold text-xs">
                           #ORD-{order.id.slice(0, 8).toUpperCase()}
                         </span>
                         <h3 className="font-display font-black text-lg text-slate-900 mt-1.5">
@@ -1322,7 +1322,7 @@ export default function DeliveryAgentPortal() {
                         <div className="flex items-center gap-2 pt-1">
                           <a
                             href={`tel:${customerPhone}`}
-                            className="btn-outline text-xs px-2.5 py-1 rounded-lg flex items-center gap-1 font-bold text-teal-700 bg-white"
+                            className="btn-outline text-xs px-2.5 py-1 rounded-lg flex items-center gap-1 font-bold text-[#344257] border-[#C0C8D8] bg-white"
                           >
                             <PhoneCall className="h-3 w-3" /> Call Customer
                           </a>
@@ -1340,7 +1340,7 @@ export default function DeliveryAgentPortal() {
                       <div className="space-y-1">
                         <p className="text-slate-400 font-bold uppercase text-[10px]">Delivery Address</p>
                         <p className="font-bold text-slate-900 flex items-start gap-1">
-                          <MapPin className="h-3.5 w-3.5 text-teal-600 shrink-0 mt-0.5" />
+                          <MapPin className="h-3.5 w-3.5 text-[#47576E] shrink-0 mt-0.5" />
                           <span>{address}</span>
                         </p>
                       </div>
@@ -1491,7 +1491,7 @@ export default function DeliveryAgentPortal() {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/70 backdrop-blur-xs p-4 overflow-y-auto">
           <div className="w-full max-w-2xl bg-white rounded-[28px] shadow-2xl border border-slate-200 my-8 overflow-hidden animate-fade-in flex flex-col max-h-[90vh]">
             {/* Modal Header */}
-            <div className="p-6 bg-gradient-to-r from-brand-600 via-teal-600 to-emerald-600 text-white flex items-center justify-between shrink-0">
+            <div className="p-6 bg-gradient-to-r from-[#1E2734] via-[#2B3646] to-[#344257] text-white flex items-center justify-between shrink-0">
               <div>
                 <span className="badge bg-white/20 text-white text-[10px] font-bold">
                   Fundu 32-Point Doorstep Evaluation
@@ -1589,10 +1589,10 @@ export default function DeliveryAgentPortal() {
               </div>
 
               {/* SECTION 2: 4-ANGLE REAL-TIME PHOTO UPLOADS */}
-              <div className="space-y-3 p-4 rounded-2xl bg-teal-50/50 border border-teal-100">
+              <div className="space-y-3 p-4 rounded-2xl bg-[#F0F0F5] border border-[#C0C8D8]">
                 <div className="flex items-center justify-between">
-                  <label className="font-bold text-teal-950 flex items-center gap-1.5 text-xs">
-                    <Camera className="h-4 w-4 text-teal-600" />
+                  <label className="font-bold text-[#1E2734] flex items-center gap-1.5 text-xs">
+                    <Camera className="h-4 w-4 text-[#47576E]" />
                     2. Real-Time Doorstep Photo Upload (Admin Inspection Proof)
                   </label>
                   <button
@@ -1603,7 +1603,7 @@ export default function DeliveryAgentPortal() {
                       handleCaptureSamplePhoto('edges');
                       handleCaptureSamplePhoto('imei');
                     }}
-                    className="text-[10px] font-bold text-teal-800 bg-teal-100 px-2 py-0.5 rounded-full hover:bg-teal-200"
+                    className="text-[10px] font-bold text-[#344257] bg-white border border-[#C0C8D8] px-2 py-0.5 rounded-full hover:bg-gray-50"
                   >
                     ⚡ Auto-Fill 4 Inspection Photos
                   </button>
@@ -1611,7 +1611,7 @@ export default function DeliveryAgentPortal() {
 
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
                   {/* Photo 1: Front Display */}
-                  <div className="border border-teal-200 rounded-2xl p-2.5 bg-white text-center space-y-1.5">
+                  <div className="border border-[#C0C8D8] rounded-2xl p-2.5 bg-white text-center space-y-1.5">
                     <p className="font-bold text-[10px] text-slate-700">📸 Front Display (ON)</p>
                     {photoFront ? (
                       <div className="relative aspect-square rounded-xl overflow-hidden bg-slate-100">
@@ -1625,9 +1625,9 @@ export default function DeliveryAgentPortal() {
                         </button>
                       </div>
                     ) : (
-                      <label className="flex flex-col items-center justify-center aspect-square border-2 border-dashed border-teal-200 rounded-xl cursor-pointer hover:bg-teal-50/50 p-2">
-                        <Upload className="h-4 w-4 text-teal-600" />
-                        <span className="text-[10px] text-teal-700 font-semibold mt-1">Upload Photo</span>
+                      <label className="flex flex-col items-center justify-center aspect-square border-2 border-dashed border-[#C0C8D8] rounded-xl cursor-pointer hover:bg-[#F0F0F5] p-2">
+                        <Upload className="h-4 w-4 text-[#47576E]" />
+                        <span className="text-[10px] text-[#344257] font-semibold mt-1">Upload Photo</span>
                         <input
                           type="file"
                           accept="image/*"
@@ -1639,7 +1639,7 @@ export default function DeliveryAgentPortal() {
                   </div>
 
                   {/* Photo 2: Back Panel */}
-                  <div className="border border-teal-200 rounded-2xl p-2.5 bg-white text-center space-y-1.5">
+                  <div className="border border-[#C0C8D8] rounded-2xl p-2.5 bg-white text-center space-y-1.5">
                     <p className="font-bold text-[10px] text-slate-700">📸 Back & Cameras</p>
                     {photoBack ? (
                       <div className="relative aspect-square rounded-xl overflow-hidden bg-slate-100">
@@ -1653,9 +1653,9 @@ export default function DeliveryAgentPortal() {
                         </button>
                       </div>
                     ) : (
-                      <label className="flex flex-col items-center justify-center aspect-square border-2 border-dashed border-teal-200 rounded-xl cursor-pointer hover:bg-teal-50/50 p-2">
-                        <Upload className="h-4 w-4 text-teal-600" />
-                        <span className="text-[10px] text-teal-700 font-semibold mt-1">Upload Photo</span>
+                      <label className="flex flex-col items-center justify-center aspect-square border-2 border-dashed border-[#C0C8D8] rounded-xl cursor-pointer hover:bg-[#F0F0F5] p-2">
+                        <Upload className="h-4 w-4 text-[#47576E]" />
+                        <span className="text-[10px] text-[#344257] font-semibold mt-1">Upload Photo</span>
                         <input
                           type="file"
                           accept="image/*"
@@ -1667,7 +1667,7 @@ export default function DeliveryAgentPortal() {
                   </div>
 
                   {/* Photo 3: Side Edges */}
-                  <div className="border border-teal-200 rounded-2xl p-2.5 bg-white text-center space-y-1.5">
+                  <div className="border border-[#C0C8D8] rounded-2xl p-2.5 bg-white text-center space-y-1.5">
                     <p className="font-bold text-[10px] text-slate-700">📸 Side Bezels / Dents</p>
                     {photoEdges ? (
                       <div className="relative aspect-square rounded-xl overflow-hidden bg-slate-100">
@@ -1681,9 +1681,9 @@ export default function DeliveryAgentPortal() {
                         </button>
                       </div>
                     ) : (
-                      <label className="flex flex-col items-center justify-center aspect-square border-2 border-dashed border-teal-200 rounded-xl cursor-pointer hover:bg-teal-50/50 p-2">
-                        <Upload className="h-4 w-4 text-teal-600" />
-                        <span className="text-[10px] text-teal-700 font-semibold mt-1">Upload Photo</span>
+                      <label className="flex flex-col items-center justify-center aspect-square border-2 border-dashed border-[#C0C8D8] rounded-xl cursor-pointer hover:bg-[#F0F0F5] p-2">
+                        <Upload className="h-4 w-4 text-[#47576E]" />
+                        <span className="text-[10px] text-[#344257] font-semibold mt-1">Upload Photo</span>
                         <input
                           type="file"
                           accept="image/*"
@@ -1695,7 +1695,7 @@ export default function DeliveryAgentPortal() {
                   </div>
 
                   {/* Photo 4: IMEI / Bill */}
-                  <div className="border border-teal-200 rounded-2xl p-2.5 bg-white text-center space-y-1.5">
+                  <div className="border border-[#C0C8D8] rounded-2xl p-2.5 bg-white text-center space-y-1.5">
                     <p className="font-bold text-[10px] text-slate-700">📸 *#06# IMEI Screen</p>
                     {photoImei ? (
                       <div className="relative aspect-square rounded-xl overflow-hidden bg-slate-100">
@@ -1709,9 +1709,9 @@ export default function DeliveryAgentPortal() {
                         </button>
                       </div>
                     ) : (
-                      <label className="flex flex-col items-center justify-center aspect-square border-2 border-dashed border-teal-200 rounded-xl cursor-pointer hover:bg-teal-50/50 p-2">
-                        <Upload className="h-4 w-4 text-teal-600" />
-                        <span className="text-[10px] text-teal-700 font-semibold mt-1">Upload Photo</span>
+                      <label className="flex flex-col items-center justify-center aspect-square border-2 border-dashed border-[#C0C8D8] rounded-xl cursor-pointer hover:bg-[#F0F0F5] p-2">
+                        <Upload className="h-4 w-4 text-[#47576E]" />
+                        <span className="text-[10px] text-[#344257] font-semibold mt-1">Upload Photo</span>
                         <input
                           type="file"
                           accept="image/*"
@@ -2022,11 +2022,11 @@ export default function DeliveryAgentPortal() {
               </button>
             </div>
 
-            <div className="p-4 rounded-2xl bg-teal-50 border border-teal-100 text-xs space-y-2">
-              <p className="font-bold text-teal-950">
+            <div className="p-4 rounded-2xl bg-[#F0F0F5] border border-[#C0C8D8] text-xs space-y-2">
+              <p className="font-bold text-[#1E2734]">
                 Total Collectible Amount: <span className="text-lg font-black text-brand-700">{formatINR(deliveringOrder.total_amount)}</span>
               </p>
-              <p className="text-teal-700">Payment Mode: {deliveringOrder.payment_method || 'COD'} ({deliveringOrder.payment_status})</p>
+              <p className="text-[#344257]">Payment Mode: {deliveringOrder.payment_method || 'COD'} ({deliveringOrder.payment_status})</p>
             </div>
 
             <div className="space-y-2 text-xs">

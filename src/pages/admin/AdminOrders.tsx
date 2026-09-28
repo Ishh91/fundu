@@ -355,8 +355,8 @@ export default function AdminOrders({
                     key={o.id}
                     onClick={() => onSelectOrder(o.id)}
                     className={`card p-4 rounded-2xl cursor-pointer transition-all ${isSelected
-                        ? 'border-teal-600 bg-teal-50/60 shadow-md ring-2 ring-teal-500/20'
-                        : 'bg-white hover:border-teal-300 hover:shadow-xs'
+                        ? 'border-[#344257] bg-[#F0F0F5] shadow-md ring-2 ring-[#6A859F]/30'
+                        : 'bg-white hover:border-[#6A859F] hover:shadow-xs'
                       }`}
                   >
                     <div className="flex items-start justify-between gap-2">
@@ -409,9 +409,9 @@ export default function AdminOrders({
                 <div className="flex items-center gap-2 flex-wrap">
                   <button
                     onClick={() => setCustomerModalData({ ...selectedOrder, type: 'order' })}
-                    className="btn-outline text-xs px-3 py-1.5 text-teal-700 border-teal-200 hover:bg-teal-50 flex items-center gap-1.5 font-bold shadow-xs rounded-xl"
+                    className="btn-outline text-xs px-3 py-1.5 text-[#344257] border-[#C0C8D8] hover:bg-[#F0F0F5] flex items-center gap-1.5 font-bold shadow-xs rounded-xl"
                   >
-                    <MessageCircle className="h-3.5 w-3.5 text-teal-600" /> Customer Details
+                    <MessageCircle className="h-3.5 w-3.5 text-[#47576E]" /> Customer Details
                   </button>
 
                   <select
@@ -609,23 +609,23 @@ export default function AdminOrders({
               </div>
 
               {/* Customer Live Tracking Inquiries & Notes */}
-              <div className="p-4 rounded-2xl bg-teal-50/70 border border-teal-200 space-y-3">
+              <div className="p-4 rounded-2xl bg-[#F0F0F5] border border-[#C0C8D8] space-y-3">
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-bold text-teal-900 flex items-center gap-1.5">
-                    <MessageSquare className="h-4 w-4 text-teal-600" /> Customer Tracking Instructions & Live Chat
+                  <span className="text-xs font-bold text-[#344257] flex items-center gap-1.5">
+                    <MessageSquare className="h-4 w-4 text-[#47576E]" /> Customer Tracking Instructions & Live Chat
                   </span>
-                  <span className="rounded-full bg-teal-200/60 px-2 py-0.5 text-[10px] font-black text-teal-800">
+                  <span className="rounded-full bg-white border border-[#C0C8D8] px-2 py-0.5 text-[10px] font-black text-[#344257]">
                     Live Support
                   </span>
                 </div>
 
                 {selectedOrder.customer_notes ? (
-                  <div className="p-3 bg-white rounded-xl border border-teal-100 text-xs">
+                  <div className="p-3 bg-white rounded-xl border border-[#C0C8D8] text-xs">
                     <p className="text-[10px] font-bold uppercase text-ink-400">Latest Customer Note:</p>
                     <p className="font-semibold text-ink-800 mt-0.5">"{selectedOrder.customer_notes}"</p>
                   </div>
                 ) : (
-                  <p className="text-xs text-teal-700 italic">No special instructions from customer yet.</p>
+                  <p className="text-xs text-[#47576E] italic">No special instructions from customer yet.</p>
                 )}
 
                 {/* Messages conversation thread */}
@@ -636,8 +636,8 @@ export default function AdminOrders({
                         key={idx}
                         className={`p-2.5 rounded-xl text-xs ${
                           m.sender === 'admin'
-                            ? 'bg-teal-600 text-white ml-6 font-medium'
-                            : 'bg-white text-slate-800 border border-teal-200 mr-6 font-medium'
+                            ? 'bg-[#344257] text-white ml-6 font-medium'
+                            : 'bg-white text-slate-800 border border-[#C0C8D8] mr-6 font-medium'
                         }`}
                       >
                         <div className="flex items-center justify-between mb-1">
@@ -666,7 +666,7 @@ export default function AdminOrders({
                   <button
                     type="button"
                     onClick={() => handleSendAdminReply(selectedOrder)}
-                    className="btn-primary text-xs px-3.5 py-1.5 bg-teal-600 hover:bg-teal-700 font-bold flex items-center gap-1 shadow-xs"
+                    className="btn-primary text-xs px-3.5 py-1.5 bg-[#344257] hover:bg-[#2B3646] font-bold flex items-center gap-1 shadow-xs"
                   >
                     <Send className="h-3.5 w-3.5" /> Reply Customer
                   </button>

@@ -326,10 +326,10 @@ export default function Register() {
         {/* ── STEP 2: Email OTP Input ── */}
         {step === 'otp' && (
           <form onSubmit={handleVerifyOtpAndSignup} className="mt-8 card p-6 md:p-8 space-y-5">
-            <div className="p-4 rounded-2xl bg-teal-50 border border-teal-200 text-teal-900 text-xs space-y-1.5">
+            <div className="p-4 rounded-2xl bg-[#F0F0F5] border border-[#C0C8D8] text-[#344257] text-xs space-y-1.5">
               <div className="flex items-center justify-between font-bold">
-                <span className="flex items-center gap-1.5 text-teal-950">
-                  <Mail className="h-4 w-4 text-teal-600" /> Email OTP Verification Code
+                <span className="flex items-center gap-1.5 text-[#1E2734]">
+                  <Mail className="h-4 w-4 text-[#47576E]" /> Email OTP Verification Code
                 </span>
               </div>
               <p>
@@ -356,7 +356,7 @@ export default function Register() {
                   onKeyDown={(e) => handleKeyDown(idx, e)}
                   className="w-11 h-14 rounded-xl border-2 text-center text-xl font-bold text-ink-900 outline-none transition-all duration-200 bg-white"
                   style={{
-                    borderColor: d ? '#14c8ba' : '#e2e8f0',
+                    borderColor: d ? '#344257' : '#C0C8D8',
                   }}
                 />
               ))}
@@ -378,7 +378,7 @@ export default function Register() {
                   type="button"
                   onClick={handleResendOtp}
                   disabled={loading}
-                  className="inline-flex items-center gap-1.5 font-bold text-brand-600 hover:underline"
+                  className="inline-flex items-center gap-1.5 font-bold text-[#344257] hover:underline"
                 >
                   <RefreshCw className="h-3.5 w-3.5" /> Resend Email OTP
                 </button>
@@ -401,7 +401,7 @@ export default function Register() {
 
             <div className="p-4 rounded-2xl bg-emerald-50 border border-emerald-200 text-xs text-emerald-950 text-left space-y-2">
               <p className="flex items-center gap-2 font-bold">
-                <Mail className="h-4 w-4 text-teal-600 shrink-0" />
+                <Mail className="h-4 w-4 text-[#47576E] shrink-0" />
                 Email Address ({email}) Verified
               </p>
               <p className="text-slate-600 text-[11px] pt-1 border-t border-emerald-200/60">

@@ -62,10 +62,10 @@ export default function AdminContactQueries() {
   return (
     <div className="space-y-6">
       {/* Header Banner */}
-      <div className="card p-6 rounded-[28px] bg-gradient-to-r from-teal-900 via-slate-900 to-emerald-950 text-white shadow-xl flex flex-wrap items-center justify-between gap-4">
+      <div className="card p-6 rounded-[28px] bg-gradient-to-r from-[#1E2734] via-[#2B3646] to-[#344257] text-white shadow-xl flex flex-wrap items-center justify-between gap-4">
         <div>
-          <div className="inline-flex items-center gap-2 rounded-full bg-teal-500/20 border border-teal-400/30 px-3 py-1 text-xs font-black text-teal-300 uppercase tracking-wider">
-            <Mail className="h-3.5 w-3.5 text-teal-400" /> Contact Us Messages & Support Queries
+          <div className="inline-flex items-center gap-2 rounded-full bg-[#47576E]/30 border border-[#6A859F]/40 px-3 py-1 text-xs font-black text-[#C0C8D8] uppercase tracking-wider">
+            <Mail className="h-3.5 w-3.5 text-[#C0C8D8]" /> Contact Us Messages & Support Queries
           </div>
           <h2 className="mt-2 font-display text-2xl font-black text-white">Customer Help & Support Queries</h2>
           <p className="mt-1 text-xs text-slate-300 font-medium">
@@ -74,7 +74,7 @@ export default function AdminContactQueries() {
         </div>
         <button
           onClick={fetchQueries}
-          className="btn text-xs px-4 py-2 bg-teal-500 hover:bg-teal-600 text-slate-950 font-black rounded-xl shadow-md transition"
+          className="btn text-xs px-4 py-2 bg-[#344257] hover:bg-[#2B3646] text-white border border-[#6A859F]/40 font-black rounded-xl shadow-md transition"
         >
           Refresh Queries
         </button>
@@ -146,7 +146,7 @@ export default function AdminContactQueries() {
             <div className="card p-6 md:p-8 rounded-[28px] space-y-6 shadow-sm border border-gray-200 bg-white">
               <div className="flex items-start justify-between pb-4 border-b border-gray-100 gap-4">
                 <div>
-                  <span className="badge bg-teal-50 text-teal-800 font-extrabold text-xs">
+                  <span className="badge bg-[#F0F0F5] text-[#344257] border border-[#C0C8D8] font-extrabold text-xs">
                     Subject: {selectedQuery.subject}
                   </span>
                   <h2 className="font-display text-2xl font-black text-gray-900 mt-2">
@@ -163,7 +163,7 @@ export default function AdminContactQueries() {
                     className={`btn text-xs px-3.5 py-2 font-bold rounded-xl ${
                       selectedQuery.status === 'resolved'
                         ? 'bg-emerald-100 text-emerald-800 hover:bg-emerald-200'
-                        : 'bg-teal-600 text-white hover:bg-teal-700'
+                        : 'bg-[#344257] text-white hover:bg-[#2B3646]'
                     }`}
                   >
                     {selectedQuery.status === 'resolved' ? '✓ Mark Open' : '✓ Mark Resolved'}
@@ -175,7 +175,7 @@ export default function AdminContactQueries() {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
                 <div className="p-3.5 rounded-2xl bg-gray-50 border border-gray-200/70 space-y-1">
                   <p className="text-[10px] font-bold uppercase tracking-wider text-gray-400">Email Address</p>
-                  <a href={`mailto:${selectedQuery.email}`} className="font-bold text-teal-700 hover:underline flex items-center gap-1.5">
+                  <a href={`mailto:${selectedQuery.email}`} className="font-bold text-[#344257] hover:underline flex items-center gap-1.5">
                     <Mail className="h-3.5 w-3.5" /> {selectedQuery.email}
                   </a>
                 </div>
@@ -184,7 +184,7 @@ export default function AdminContactQueries() {
                   <p className="text-[10px] font-bold uppercase tracking-wider text-gray-400">Phone Number</p>
                   {selectedQuery.phone ? (
                     <a href={`tel:${selectedQuery.phone}`} className="font-bold text-gray-900 hover:underline flex items-center gap-1.5">
-                      <Phone className="h-3.5 w-3.5 text-teal-600" /> {selectedQuery.phone}
+                      <Phone className="h-3.5 w-3.5 text-[#47576E]" /> {selectedQuery.phone}
                     </a>
                   ) : (
                     <span className="text-gray-400 italic">Not Provided</span>

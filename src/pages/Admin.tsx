@@ -1007,7 +1007,7 @@ export default function Admin() {
       <div className="min-h-screen bg-slate-950 text-white flex flex-col items-center justify-center p-4 font-sans">
         <div className="w-full max-w-md bg-slate-900 border border-slate-800 rounded-3xl p-8 shadow-2xl space-y-6 animate-fade-in">
           <div className="text-center space-y-2">
-            <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-brand-600 to-teal-500 text-white grid place-items-center mx-auto shadow-lg">
+            <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-[#344257] to-[#5D6A82] text-white grid place-items-center mx-auto shadow-lg">
               <Lock className="h-7 w-7" />
             </div>
             <h1 className="font-display text-2xl font-black">Fundu Central Admin</h1>
@@ -1066,7 +1066,7 @@ export default function Admin() {
 
           <div className="pt-2 border-t border-slate-800 flex items-center justify-between text-xs text-slate-400">
             <Link to="/" className="hover:text-white">← Main Store</Link>
-            <Link to="/delivery" className="text-teal-400 hover:underline">Field Rider Portal →</Link>
+            <Link to="/delivery" className="text-[#C0C8D8] hover:underline">Field Rider Portal →</Link>
           </div>
         </div>
       </div>
@@ -1175,9 +1175,9 @@ export default function Admin() {
         </header>
 
         {/* Quick Action Hub Bar */}
-        <div className="px-4 lg:px-8 py-3 bg-gradient-to-r from-teal-900 to-slate-900 border-b border-teal-800 text-white flex flex-wrap items-center justify-between gap-3 shadow-inner">
+        <div className="px-4 lg:px-8 py-3 bg-gradient-to-r from-[#1E2734] via-[#2B3646] to-[#344257] border-b border-[#47576E]/40 text-white flex flex-wrap items-center justify-between gap-3 shadow-inner">
           <div className="flex items-center gap-2">
-            <span className="text-xs font-black tracking-wide text-teal-300 uppercase flex items-center gap-1">
+            <span className="text-xs font-black tracking-wide text-[#C0C8D8] uppercase flex items-center gap-1">
               ⚡ Admin Quick Actions:
             </span>
           </div>
@@ -1219,7 +1219,7 @@ export default function Admin() {
                 setTab('catalog');
                 setCustomPhoneModalOpen(true);
               }}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-teal-300 border border-teal-500/30 text-xs font-bold transition cursor-pointer"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#47576E] hover:bg-[#344257] text-white border border-[#6A859F]/40 text-xs font-bold transition cursor-pointer"
             >
               <Plus className="h-3.5 w-3.5" /> Add Phone to Catalog
             </button>
@@ -1998,19 +1998,19 @@ export default function Admin() {
               </div>
 
               {/* Grade Display Mode on Product Detail Page */}
-              <div className="p-3 rounded-2xl bg-teal-50/70 border border-teal-200/80">
-                <label className="label text-xs font-extrabold text-teal-800 flex items-center gap-1.5 mb-1">
-                  <Sparkles className="h-3.5 w-3.5 text-teal-700" /> Condition Grade View Mode on Website
+              <div className="p-3 rounded-2xl bg-[#F0F0F5] border border-[#C0C8D8]">
+                <label className="label text-xs font-extrabold text-[#344257] flex items-center gap-1.5 mb-1">
+                  <Sparkles className="h-3.5 w-3.5 text-[#47576E]" /> Condition Grade View Mode on Website
                 </label>
                 <select
                   value={productForm.show_all_grades ? 'all' : 'single'}
                   onChange={(e) => setProductForm({ ...productForm, show_all_grades: e.target.value === 'all' })}
-                  className="input text-xs font-extrabold text-gray-900 bg-white border-teal-300"
+                  className="input text-xs font-extrabold text-gray-900 bg-white border-[#C0C8D8]"
                 >
                   <option value="all">Show All 3 Grade Cards (Fair, Good, Superb)</option>
                   <option value="single">Show Only Single Selected Grade Card ({productForm.condition})</option>
                 </select>
-                <p className="text-[11px] text-teal-700 font-medium mt-1">
+                <p className="text-[11px] text-[#47576E] font-medium mt-1">
                   Select "Show Only Single Selected Grade" if you want the customer to view only 1 condition card on the product page.
                 </p>
               </div>

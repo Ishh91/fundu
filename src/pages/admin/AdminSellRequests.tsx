@@ -287,16 +287,16 @@ export default function AdminSellRequests({
 
                   <button
                     onClick={() => handleTransferToWholesale(selectedSell)}
-                    className="btn-primary text-xs px-3 py-1.5 flex items-center gap-1.5 bg-teal-600 hover:bg-teal-700 font-bold shadow-xs"
+                    className="btn-primary text-xs px-3 py-1.5 flex items-center gap-1.5 bg-[#344257] hover:bg-[#2B3646] font-bold shadow-xs"
                   >
                     <Building2 className="h-3.5 w-3.5" /> Send to B2B Wholesale
                   </button>
 
                   <button
                     onClick={() => setCustomerModalData({ ...selectedSell, type: 'sell' })}
-                    className="btn-outline text-xs px-3 py-1.5 text-teal-700 border-teal-200 hover:bg-teal-50 flex items-center gap-1.5 font-bold shadow-xs rounded-xl"
+                    className="btn-outline text-xs px-3 py-1.5 text-[#344257] border-[#C0C8D8] hover:bg-[#F0F0F5] flex items-center gap-1.5 font-bold shadow-xs rounded-xl"
                   >
-                    <UserCheck className="h-3.5 w-3.5 text-teal-600" /> Customer Details
+                    <UserCheck className="h-3.5 w-3.5 text-[#47576E]" /> Customer Details
                   </button>
 
                   <a

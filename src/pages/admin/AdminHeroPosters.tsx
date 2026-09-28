@@ -255,7 +255,7 @@ export default function AdminHeroPosters() {
   if (loading) {
     return (
       <div className="p-8 text-center">
-        <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-teal-500 border-r-transparent" />
+        <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-[#47576E] border-r-transparent" />
         <p className="mt-2 text-xs text-slate-500 font-bold">Loading Custom Posters...</p>
       </div>
     );
@@ -266,7 +266,7 @@ export default function AdminHeroPosters() {
       {/* Toast Alert */}
       {toastMessage && (
         <div className="fixed bottom-6 right-6 z-50 rounded-2xl bg-slate-900 text-white px-5 py-3 text-xs font-bold shadow-2xl flex items-center gap-2 border border-slate-700 animate-bounce">
-          <Sparkles className="h-4 w-4 text-teal-400" />
+          <Sparkles className="h-4 w-4 text-[#C0C8D8]" />
           <span>{toastMessage}</span>
         </div>
       )}
@@ -275,7 +275,7 @@ export default function AdminHeroPosters() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white/90 backdrop-blur-xl p-6 rounded-3xl border border-slate-200/80 shadow-sm">
         <div>
           <h2 className="text-xl font-black text-slate-900 flex items-center gap-2">
-            <ImageIcon className="h-6 w-6 text-teal-600" />
+            <ImageIcon className="h-6 w-6 text-[#47576E]" />
             <span>Custom Hero Poster Banners</span>
           </h2>
           <p className="text-xs text-slate-500 mt-1 font-medium">
@@ -287,9 +287,9 @@ export default function AdminHeroPosters() {
           <button
             type="button"
             onClick={() => setShowSizeGuide(true)}
-            className="btn text-xs px-3.5 py-2 rounded-xl border border-teal-200 bg-teal-50 text-teal-800 font-bold hover:bg-teal-100 flex items-center gap-1.5 cursor-pointer"
+            className="btn text-xs px-3.5 py-2 rounded-xl border border-[#C0C8D8] bg-[#F0F0F5] text-[#344257] font-bold hover:bg-[#E2E8F0] flex items-center gap-1.5 cursor-pointer"
           >
-            <HelpCircle className="h-4 w-4 text-teal-600" />
+            <HelpCircle className="h-4 w-4 text-[#47576E]" />
             <span>📐 Exact Device Sizes</span>
           </button>
 
@@ -314,9 +314,9 @@ export default function AdminHeroPosters() {
       </div>
 
       {/* DEVICE SIZES GUIDE BANNER (Quick Reference) */}
-      <div className="rounded-3xl border border-teal-200/80 bg-gradient-to-r from-teal-50/70 via-cyan-50/70 to-emerald-50/70 p-5 shadow-xs">
+      <div className="rounded-3xl border border-[#C0C8D8] bg-[#F0F0F5] p-5 shadow-xs">
         <div className="flex items-center justify-between gap-4 mb-3">
-          <div className="flex items-center gap-2 text-teal-950">
+          <div className="flex items-center gap-2 text-[#344257]">
             <span className="text-lg">📐</span>
             <h3 className="text-xs font-black uppercase tracking-wider">
               Exact Poster Banner Sizes for Canva / Photoshop
@@ -325,7 +325,7 @@ export default function AdminHeroPosters() {
           <button
             type="button"
             onClick={() => setShowSizeGuide(!showSizeGuide)}
-            className="text-xs font-extrabold text-teal-700 hover:underline cursor-pointer"
+            className="text-xs font-extrabold text-[#344257] hover:underline cursor-pointer"
           >
             {showSizeGuide ? 'Hide Full Guide' : 'Expand Full Details →'}
           </button>
@@ -333,36 +333,36 @@ export default function AdminHeroPosters() {
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           {/* Desktop */}
-          <div className="bg-white/90 rounded-2xl p-3.5 border border-teal-100 shadow-2xs">
+          <div className="bg-white rounded-2xl p-3.5 border border-[#C0C8D8] shadow-2xs">
             <div className="flex items-center gap-2 text-slate-900 font-extrabold text-xs">
-              <Monitor className="h-4 w-4 text-teal-600" />
+              <Monitor className="h-4 w-4 text-[#47576E]" />
               <span>Desktop / Laptop (Full HD)</span>
             </div>
-            <p className="text-base font-black text-teal-700 mt-1">1920 × 750 px</p>
+            <p className="text-base font-black text-[#344257] mt-1">1920 × 750 px</p>
             <p className="text-[11px] text-slate-500 mt-0.5">
               Aspect: <b>2.5:1</b> (Safe Text Zone: Center 1200px)
             </p>
           </div>
 
           {/* Tablet */}
-          <div className="bg-white/90 rounded-2xl p-3.5 border border-teal-100 shadow-2xs">
+          <div className="bg-white rounded-2xl p-3.5 border border-[#C0C8D8] shadow-2xs">
             <div className="flex items-center gap-2 text-slate-900 font-extrabold text-xs">
-              <Tablet className="h-4 w-4 text-teal-600" />
+              <Tablet className="h-4 w-4 text-[#47576E]" />
               <span>iPad & Tablets</span>
             </div>
-            <p className="text-base font-black text-teal-700 mt-1">1440 × 600 px</p>
+            <p className="text-base font-black text-[#344257] mt-1">1440 × 600 px</p>
             <p className="text-[11px] text-slate-500 mt-0.5">
               Aspect: <b>2.4:1</b> (Medium widescreen)
             </p>
           </div>
 
           {/* Mobile */}
-          <div className="bg-white/90 rounded-2xl p-3.5 border border-teal-100 shadow-2xs">
+          <div className="bg-white rounded-2xl p-3.5 border border-[#C0C8D8] shadow-2xs">
             <div className="flex items-center gap-2 text-slate-900 font-extrabold text-xs">
-              <Smartphone className="h-4 w-4 text-teal-600" />
+              <Smartphone className="h-4 w-4 text-[#47576E]" />
               <span>Mobile Devices (All Phones)</span>
             </div>
-            <p className="text-base font-black text-teal-700 mt-1">1080 × 608 px</p>
+            <p className="text-base font-black text-[#344257] mt-1">1080 × 608 px</p>
             <p className="text-[11px] text-slate-500 mt-0.5">
               Aspect: <b>16:9</b> (Keep text 10% away from edges)
             </p>
@@ -378,7 +378,7 @@ export default function AdminHeroPosters() {
             <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">
               Live Slides ({posters.length})
             </span>
-            <span className="text-[11px] text-teal-700 font-bold">
+            <span className="text-[11px] text-[#344257] font-bold">
               {posters.filter((p) => p.is_active !== false).length} Active
             </span>
           </div>
@@ -389,12 +389,12 @@ export default function AdminHeroPosters() {
               const isActive = poster.is_active !== false;
 
               return (
-                <div
+                 <div
                   key={poster.id}
                   onClick={() => setSelectedPosterId(poster.id)}
                   className={`group relative overflow-hidden rounded-2xl border transition-all cursor-pointer p-3.5 ${
                     isSelected
-                      ? 'border-teal-500 bg-teal-50/50 shadow-md ring-2 ring-teal-500/20'
+                      ? 'border-[#344257] bg-[#F0F0F5] shadow-md ring-2 ring-[#6A859F]/30'
                       : 'border-slate-200/80 bg-white hover:border-slate-300 hover:shadow-sm'
                   }`}
                 >
@@ -420,7 +420,7 @@ export default function AdminHeroPosters() {
                     {/* Info */}
                     <div className="min-w-0 flex-1">
                       <div className="flex items-center gap-1.5">
-                        <span className="text-[10px] font-extrabold text-teal-700 bg-teal-100/80 px-2 py-0.5 rounded-full">
+                        <span className="text-[10px] font-extrabold text-[#344257] bg-white border border-[#C0C8D8] px-2 py-0.5 rounded-full">
                           Slide #{index + 1}
                         </span>
                         <span className="text-[10px] font-medium text-slate-400 truncate">
@@ -456,7 +456,7 @@ export default function AdminHeroPosters() {
                         type="button"
                         onClick={(e) => handleToggleActive(poster.id, e)}
                         className={`p-1 rounded-lg ${
-                          isActive ? 'text-teal-600 hover:bg-teal-50' : 'text-slate-400 hover:bg-slate-100'
+                          isActive ? 'text-[#344257] hover:bg-[#F0F0F5]' : 'text-slate-400 hover:bg-slate-100'
                         }`}
                         title={isActive ? 'Deactivate' : 'Activate'}
                       >
@@ -493,12 +493,12 @@ export default function AdminHeroPosters() {
         <div className="lg:col-span-7 space-y-4 sticky top-6">
           <div className="flex items-center justify-between px-1">
             <h3 className="text-xs font-black uppercase tracking-wider text-slate-600 flex items-center gap-1.5">
-              <Sparkles className="h-3.5 w-3.5 text-teal-600" /> Live Homepage Hero Poster Preview
+              <Sparkles className="h-3.5 w-3.5 text-[#47576E]" /> Live Homepage Hero Poster Preview
             </h3>
             {currentPreviewPoster && (
               <button
                 onClick={() => handleOpenEdit(currentPreviewPoster)}
-                className="btn text-xs px-3 py-1.5 rounded-xl border border-teal-300 bg-teal-50 text-teal-700 font-bold hover:bg-teal-100 flex items-center gap-1 cursor-pointer"
+                className="btn text-xs px-3 py-1.5 rounded-xl border border-[#C0C8D8] bg-[#F0F0F5] text-[#344257] font-bold hover:bg-[#E2E8F0] flex items-center gap-1 cursor-pointer"
               >
                 <Edit2 className="h-3 w-3" /> Edit Poster
               </button>
@@ -521,11 +521,11 @@ export default function AdminHeroPosters() {
 
                 {/* Floating Preview Overlay */}
                 <div className="absolute top-3 left-3 rounded-full bg-slate-950/70 backdrop-blur-md px-3 py-1 text-[11px] font-bold text-white border border-white/20 flex items-center gap-1.5">
-                  <CheckCircle2 className="h-3.5 w-3.5 text-teal-400" />
+                  <CheckCircle2 className="h-3.5 w-3.5 text-[#C0C8D8]" />
                   <span>{currentPreviewPoster.title || 'Fundu Custom Poster'}</span>
                 </div>
 
-                <div className="absolute bottom-3 right-3 rounded-full bg-teal-500/90 backdrop-blur-md px-3.5 py-1 text-xs font-black text-slate-950 shadow-lg flex items-center gap-1">
+                <div className="absolute bottom-3 right-3 rounded-full bg-[#344257]/90 backdrop-blur-md px-3.5 py-1 text-xs font-black text-white shadow-lg flex items-center gap-1 border border-white/20">
                   <LinkIcon className="h-3.5 w-3.5" />
                   <span>Click Target: {currentPreviewPoster.primaryHref || '/'}</span>
                 </div>
@@ -540,7 +540,7 @@ export default function AdminHeroPosters() {
                   </div>
                   <div className="bg-white p-3 rounded-xl border border-slate-200">
                     <span className="text-[10px] text-slate-400 font-bold uppercase block">Target Click Link</span>
-                    <p className="font-bold text-teal-700 truncate mt-0.5">{currentPreviewPoster.primaryHref}</p>
+                    <p className="font-bold text-[#344257] truncate mt-0.5">{currentPreviewPoster.primaryHref}</p>
                   </div>
                   <div className="bg-white p-3 rounded-xl border border-slate-200">
                     <span className="text-[10px] text-slate-400 font-bold uppercase block">Homepage Visibility</span>
@@ -551,7 +551,7 @@ export default function AdminHeroPosters() {
                 </div>
 
                 <div className="text-[11px] text-slate-500 flex items-center gap-1.5">
-                  <ExternalLink className="h-3.5 w-3.5 text-teal-600" />
+                  <ExternalLink className="h-3.5 w-3.5 text-[#47576E]" />
                   <span>
                     When a visitor clicks this banner on the homepage, they are directed straight to <b>{currentPreviewPoster.primaryHref}</b>.
                   </span>
@@ -576,7 +576,7 @@ export default function AdminHeroPosters() {
           <div className="w-full max-w-xl max-h-[88vh] bg-white rounded-3xl shadow-2xl border border-slate-200 overflow-hidden flex flex-col my-auto animate-fade-in">
             <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100 bg-slate-50/90 shrink-0">
               <div className="flex items-center gap-2">
-                <div className="grid h-9 w-9 place-items-center rounded-xl bg-teal-50 text-teal-700">
+                <div className="grid h-9 w-9 place-items-center rounded-xl bg-[#F0F0F5] text-[#344257] border border-[#C0C8D8]">
                   <ImageIcon className="h-5 w-5" />
                 </div>
                 <div>
@@ -617,7 +617,7 @@ export default function AdminHeroPosters() {
                   <h4 className="text-xs font-black uppercase tracking-wider text-slate-800 flex items-center gap-1.5">
                     <span>📱 3 Device Poster Graphics (Responsive Upload)</span>
                   </h4>
-                  <span className="text-[10px] text-teal-700 font-extrabold bg-teal-50 px-2 py-0.5 rounded-md border border-teal-200">
+                  <span className="text-[10px] text-[#344257] font-extrabold bg-[#F0F0F5] px-2 py-0.5 rounded-md border border-[#C0C8D8]">
                     Auto-Adjusts Height Per Screen
                   </span>
                 </div>
@@ -626,7 +626,7 @@ export default function AdminHeroPosters() {
                 <div className="p-3.5 bg-slate-50 rounded-2xl border border-slate-200 space-y-2">
                   <div className="flex items-center justify-between">
                     <label className="block text-xs font-bold text-slate-900 flex items-center gap-1.5">
-                      <Monitor className="h-4 w-4 text-teal-600" />
+                      <Monitor className="h-4 w-4 text-[#47576E]" />
                       <span>1. Laptop & Desktop Poster (Default)</span> <span className="text-red-500">*</span>
                     </label>
                     <span className="text-[10px] text-slate-500 font-extrabold">Wide Aspect ~2.5:1 (1920×750 px)</span>
@@ -647,7 +647,7 @@ export default function AdminHeroPosters() {
                       placeholder="Paste Desktop poster URL or upload"
                       className="input text-xs flex-1"
                     />
-                    <label className="btn text-xs px-3.5 py-2 rounded-xl border border-teal-400 bg-teal-600 font-bold text-white hover:bg-teal-700 cursor-pointer flex items-center gap-1.5 shrink-0 shadow-xs">
+                    <label className="btn text-xs px-3.5 py-2 rounded-xl border border-[#47576E] bg-[#344257] font-bold text-white hover:bg-[#2B3646] cursor-pointer flex items-center gap-1.5 shrink-0 shadow-xs">
                       <Upload className="h-3.5 w-3.5" />
                       <span>Upload Desktop</span>
                       <input type="file" accept="image/*" onChange={handleDeviceFileUpload('desktop')} className="hidden" />
@@ -659,7 +659,7 @@ export default function AdminHeroPosters() {
                 <div className="p-3.5 bg-slate-50 rounded-2xl border border-slate-200 space-y-2">
                   <div className="flex items-center justify-between">
                     <label className="block text-xs font-bold text-slate-900 flex items-center gap-1.5">
-                      <Tablet className="h-4 w-4 text-teal-600" />
+                      <Tablet className="h-4 w-4 text-[#47576E]" />
                       <span>2. Tablet & iPad Poster</span> <span className="text-[10px] font-bold text-slate-400">(Optional - falls back to Desktop)</span>
                     </label>
                     <span className="text-[10px] text-slate-500 font-extrabold">Aspect ~2.4:1 (1440×600 px)</span>
@@ -672,7 +672,7 @@ export default function AdminHeroPosters() {
                       placeholder="Paste Tablet poster URL or upload (Optional)"
                       className="input text-xs flex-1"
                     />
-                    <label className="btn text-xs px-3.5 py-2 rounded-xl border border-teal-400 bg-teal-600 font-bold text-white hover:bg-teal-700 cursor-pointer flex items-center gap-1.5 shrink-0 shadow-xs">
+                    <label className="btn text-xs px-3.5 py-2 rounded-xl border border-[#47576E] bg-[#344257] font-bold text-white hover:bg-[#2B3646] cursor-pointer flex items-center gap-1.5 shrink-0 shadow-xs">
                       <Upload className="h-3.5 w-3.5" />
                       <span>Upload Tablet</span>
                       <input type="file" accept="image/*" onChange={handleDeviceFileUpload('tablet')} className="hidden" />
@@ -684,7 +684,7 @@ export default function AdminHeroPosters() {
                 <div className="p-3.5 bg-slate-50 rounded-2xl border border-slate-200 space-y-2">
                   <div className="flex items-center justify-between">
                     <label className="block text-xs font-bold text-slate-900 flex items-center gap-1.5">
-                      <Smartphone className="h-4 w-4 text-teal-600" />
+                      <Smartphone className="h-4 w-4 text-[#47576E]" />
                       <span>3. Mobile Phone Poster</span> <span className="text-[10px] font-bold text-slate-400">(Optional - falls back to Desktop)</span>
                     </label>
                     <span className="text-[10px] text-slate-500 font-extrabold">Aspect 16:9 / 4:3 (1080×608 px)</span>
@@ -697,7 +697,7 @@ export default function AdminHeroPosters() {
                       placeholder="Paste Mobile poster URL or upload (Optional)"
                       className="input text-xs flex-1"
                     />
-                    <label className="btn text-xs px-3.5 py-2 rounded-xl border border-teal-400 bg-teal-600 font-bold text-white hover:bg-teal-700 cursor-pointer flex items-center gap-1.5 shrink-0 shadow-xs">
+                    <label className="btn text-xs px-3.5 py-2 rounded-xl border border-[#47576E] bg-[#344257] font-bold text-white hover:bg-[#2B3646] cursor-pointer flex items-center gap-1.5 shrink-0 shadow-xs">
                       <Upload className="h-3.5 w-3.5" />
                       <span>Upload Mobile</span>
                       <input type="file" accept="image/*" onChange={handleDeviceFileUpload('mobile')} className="hidden" />
@@ -727,7 +727,7 @@ export default function AdminHeroPosters() {
                         className={`text-xs px-3.5 py-2 rounded-xl font-bold flex items-center gap-1.5 shadow-xs transition active:scale-95 cursor-pointer ${
                           form.is_bg_removed
                             ? 'bg-slate-700 hover:bg-slate-600 text-white border border-slate-500'
-                            : 'bg-teal-500 hover:bg-teal-400 text-slate-950 font-black'
+                            : 'bg-[#344257] hover:bg-[#2B3646] text-white font-black'
                         }`}
                       >
                         <Wand2 className={`h-3.5 w-3.5 ${isRemovingBg ? 'animate-spin' : ''}`} />
@@ -745,7 +745,7 @@ export default function AdminHeroPosters() {
                     <div
                       className={`overflow-hidden rounded-xl p-2 flex flex-col items-center justify-center border-2 border-dashed ${
                         form.is_bg_removed
-                          ? 'bg-[radial-gradient(#cbd5e1_1px,transparent_1px)] [background-size:12px_12px] bg-slate-800 border-teal-400'
+                          ? 'bg-[radial-gradient(#cbd5e1_1px,transparent_1px)] [background-size:12px_12px] bg-slate-800 border-[#6A859F]'
                           : 'bg-slate-950 border-slate-700'
                       }`}
                     >
@@ -781,8 +781,8 @@ export default function AdminHeroPosters() {
                       onClick={() => setForm({ ...form, primaryHref: quickLink.value })}
                       className={`text-xs py-1.5 px-3 rounded-xl border font-bold text-left transition cursor-pointer ${
                         form.primaryHref === quickLink.value
-                          ? 'bg-teal-600 text-white border-teal-600 shadow-sm'
-                          : 'bg-slate-50 text-slate-700 border-slate-200 hover:border-teal-400'
+                          ? 'bg-[#344257] text-white border-[#344257] shadow-sm'
+                          : 'bg-slate-50 text-slate-700 border-slate-200 hover:border-[#6A859F]'
                       }`}
                     >
                       {quickLink.label}
@@ -809,7 +809,7 @@ export default function AdminHeroPosters() {
                   type="checkbox"
                   checked={form.is_active}
                   onChange={(e) => setForm({ ...form, is_active: e.target.checked })}
-                  className="h-5 w-5 accent-teal-600 rounded cursor-pointer"
+                  className="h-5 w-5 accent-[#344257] rounded cursor-pointer"
                 />
               </div>
 
@@ -839,7 +839,7 @@ export default function AdminHeroPosters() {
       {showSizeGuide && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/70 backdrop-blur-md p-4 sm:p-6 overflow-hidden">
           <div className="w-full max-w-2xl max-h-[88vh] bg-white rounded-3xl shadow-2xl border border-slate-200 overflow-hidden flex flex-col my-auto animate-fade-in">
-            <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100 bg-teal-50/70 shrink-0">
+            <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100 bg-[#F0F0F5] shrink-0">
               <div className="flex items-center gap-2">
                 <span className="text-xl">📐</span>
                 <div>
@@ -860,12 +860,12 @@ export default function AdminHeroPosters() {
 
             <div className="flex-1 overflow-y-auto p-6 space-y-5">
               {/* Gold Standard */}
-              <div className="p-4 rounded-2xl bg-teal-600 text-white shadow-md">
+              <div className="p-4 rounded-2xl bg-[#344257] text-white shadow-md">
                 <span className="text-[10px] font-extrabold uppercase tracking-widest bg-white/20 px-2.5 py-0.5 rounded-full inline-block mb-1">
                   ⭐ Master Recommended Standard
                 </span>
                 <h4 className="text-lg font-black mt-1">1920 × 750 Pixels (Aspect 2.5:1)</h4>
-                <p className="text-xs text-teal-50 mt-1 leading-relaxed">
+                <p className="text-xs text-gray-200 mt-1 leading-relaxed">
                   Design your Canva canvas at <b>1920 × 750 px</b>. This single master size scales smoothly across all Desktops, Laptops, Tablets, and Smartphones without distortion!
                 </p>
               </div>
@@ -879,42 +879,42 @@ export default function AdminHeroPosters() {
                 <div className="space-y-2.5 text-xs">
                   <div className="flex items-center justify-between p-3 rounded-xl bg-slate-50 border border-slate-200">
                     <div className="flex items-center gap-2.5">
-                      <Monitor className="h-4 w-4 text-teal-600" />
+                      <Monitor className="h-4 w-4 text-[#47576E]" />
                       <div>
                         <span className="font-bold text-slate-900 block">Desktop / Large Screens</span>
                         <span className="text-[11px] text-slate-500">1920px+ width screens</span>
                       </div>
                     </div>
                     <div className="text-right">
-                      <span className="font-black text-teal-700 text-sm">1920 × 750 px</span>
+                      <span className="font-black text-[#344257] text-sm">1920 × 750 px</span>
                       <span className="text-[10px] text-slate-400 block">Aspect Ratio 2.5:1</span>
                     </div>
                   </div>
 
                   <div className="flex items-center justify-between p-3 rounded-xl bg-slate-50 border border-slate-200">
                     <div className="flex items-center gap-2.5">
-                      <Tablet className="h-4 w-4 text-teal-600" />
+                      <Tablet className="h-4 w-4 text-[#47576E]" />
                       <div>
                         <span className="font-bold text-slate-900 block">Laptops & iPads / Tablets</span>
                         <span className="text-[11px] text-slate-500">768px to 1440px screens</span>
                       </div>
                     </div>
                     <div className="text-right">
-                      <span className="font-black text-teal-700 text-sm">1440 × 600 px</span>
+                      <span className="font-black text-[#344257] text-sm">1440 × 600 px</span>
                       <span className="text-[10px] text-slate-400 block">Aspect Ratio 2.4:1</span>
                     </div>
                   </div>
 
                   <div className="flex items-center justify-between p-3 rounded-xl bg-slate-50 border border-slate-200">
                     <div className="flex items-center gap-2.5">
-                      <Smartphone className="h-4 w-4 text-teal-600" />
+                      <Smartphone className="h-4 w-4 text-[#47576E]" />
                       <div>
                         <span className="font-bold text-slate-900 block">Mobile Phones</span>
                         <span className="text-[11px] text-slate-500">Android & iPhones (360px - 480px)</span>
                       </div>
                     </div>
                     <div className="text-right">
-                      <span className="font-black text-teal-700 text-sm">1080 × 608 px</span>
+                      <span className="font-black text-[#344257] text-sm">1080 × 608 px</span>
                       <span className="text-[10px] text-slate-400 block">Aspect Ratio 16:9</span>
                     </div>
                   </div>

@@ -377,9 +377,9 @@ export default function AdminUsers({
                     <button
                       onClick={() => handleResendEmailVerification(selectedUser)}
                       disabled={resendingEmailId === selectedUser.id}
-                      className="btn-outline text-xs px-3 py-1.5 font-bold rounded-xl text-teal-800 border-teal-300 hover:bg-teal-50 flex items-center gap-1.5 shadow-xs"
+                      className="btn-outline text-xs px-3 py-1.5 font-bold rounded-xl text-[#344257] border-[#C0C8D8] hover:bg-[#F0F0F5] flex items-center gap-1.5 shadow-xs"
                     >
-                      <RefreshCw className={`h-3.5 w-3.5 text-teal-600 ${resendingEmailId === selectedUser.id ? 'animate-spin' : ''}`} />
+                      <RefreshCw className={`h-3.5 w-3.5 text-[#47576E] ${resendingEmailId === selectedUser.id ? 'animate-spin' : ''}`} />
                       {resendingEmailId === selectedUser.id ? 'Sending Email…' : 'Resend Email Verification'}
                     </button>
                   )}
@@ -639,9 +639,9 @@ export default function AdminUsers({
                 </div>
               </div>
 
-              <div className="p-3 rounded-xl bg-teal-50 border border-teal-200 text-teal-900 text-[11px] space-y-1">
+              <div className="p-3 rounded-xl bg-[#F0F0F5] border border-[#C0C8D8] text-[#344257] text-[11px] space-y-1">
                 <p className="font-bold flex items-center gap-1.5">
-                  <Mail className="h-3.5 w-3.5 text-teal-600" /> Email Verification OTP Dispatch
+                  <Mail className="h-3.5 w-3.5 text-[#47576E]" /> Email Verification OTP Dispatch
                 </p>
                 <p className="text-slate-600">
                   Submitting this form will create the account and send an <strong>Email Verification OTP via EmailJS</strong> to {addUserForm.email || 'the user email'}.
