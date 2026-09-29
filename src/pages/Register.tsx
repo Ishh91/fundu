@@ -3,7 +3,7 @@ import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { Mail, Lock, User as UserIcon, Phone, ArrowRight, CheckCircle2, RefreshCw, AlertCircle, Smartphone } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import BrandLogo from '../components/BrandLogo';
-import { sendWelcomeEmail } from '../lib/freeNotifyService';
+import { sendWelcomeEmail, sendEmailOtpCode } from '../lib/freeNotifyService';
 import { API_BASE } from '../config/apiConfig';
 
 const OTP_LENGTH = 6;
@@ -123,8 +123,15 @@ export default function Register() {
       return;
     }
 
-    if (otpRes.devOtp) {
-      setDevOtp(otpRes.devOtp);
+    const currentOtp = otpRes.devOtp;
+    if (currentOtp) {
+      setDevOtp(currentOtp);
+      // Dispatch directly to user's email inbox via EmailJS if email was entered
+      if (cleanEmail) {
+        sendEmailOtpCode(cleanEmail, currentOtp, cleanName).catch((err) => {
+          console.warn('EmailJS browser dispatch notice:', err);
+        });
+      }
     }
     setDeliveryNotice(otpRes.message || null);
 
@@ -225,8 +232,14 @@ export default function Register() {
       return;
     }
 
-    if (res.devOtp) {
-      setDevOtp(res.devOtp);
+    const currentOtp = res.devOtp;
+    if (currentOtp) {
+      setDevOtp(currentOtp);
+      if (cleanEmail) {
+        sendEmailOtpCode(cleanEmail, currentOtp, fullName.trim() || 'User').catch((err) => {
+          console.warn('EmailJS browser resend notice:', err);
+        });
+      }
     }
     setDeliveryNotice(res.message || null);
 

@@ -94,20 +94,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const cleanPhone = phone.replace(/\D/g, '').slice(-10);
     const cleanEmail = email ? email.trim().toLowerCase() : undefined;
 
-    // 1. If no email is provided, try Firebase Phone SMS first
-    if (!cleanEmail) {
-      try {
-        const fbResult = await sendFirebasePhoneOtp(cleanPhone);
-        if (fbResult.success) {
-          return { error: null };
-        }
-        console.warn('Firebase SMS failed/quota-limited, falling back to server OTP:', fbResult.error);
-      } catch (fbErr: any) {
-        console.warn('Firebase SMS error, falling back to server OTP:', fbErr);
-      }
-    }
-
-    // 2. Dispatch via Server OTP (dispatches SMS and optional Email via Gmail SMTP)
+    // 1. Dispatch via Server OTP (authoritative 6-digit OTP code)
     try {
       const serverRes = await db.auth.sendOtp(cleanPhone, cleanEmail, fullName);
       if (serverRes.data) {
@@ -126,7 +113,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const verifyOtp = async (phone: string, otp: string, options?: { fullName?: string; email?: string; password?: string }) => {
     const cleanPhone = phone.replace(/\D/g, '').slice(-10);
 
-    // 1. If Firebase verification session exists, try it first
+    // 1. Verify via Server OTP
+    const serverVerify = await db.auth.verifyOtp(cleanPhone, otp, options);
+    if (!serverVerify.error && serverVerify.data?.session) {
+      return { error: null, isNewUser: serverVerify.data.isNewUser };
+    }
+
+    // 2. Fallback to Firebase if Firebase session was active
     if (window.confirmationResult) {
       try {
         const fbVerify = await verifyFirebasePhoneOtp(otp);
@@ -137,16 +130,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           return { error: null, isNewUser: data.isNewUser };
         }
       } catch (fbErr) {
-        console.warn('Firebase verification error, falling back to server verification:', fbErr);
+        console.warn('Firebase verification error:', fbErr);
       }
     }
 
-    // 2. Verify via Server OTP
-    const serverVerify = await db.auth.verifyOtp(cleanPhone, otp, options);
-    if (serverVerify.error) {
-      return { error: serverVerify.error.message };
-    }
-    return { error: null, isNewUser: serverVerify.data?.isNewUser };
+    return { error: serverVerify.error?.message || 'Invalid OTP code. Please check and try again.' };
   };
 
   const signOut = async () => {
