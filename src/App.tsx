@@ -16,7 +16,6 @@ import SpareParts from './pages/SpareParts';
 import About from './pages/About';
 import Contact from './pages/Contact';
 import Login from './pages/Login';
-import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
 import Admin from './pages/Admin';
 import Vendor from './pages/Vendor';
@@ -105,7 +104,7 @@ function MainLayout() {
   const isProfilePath =
     location.pathname.startsWith('/profile') ||
     location.pathname.startsWith('/dashboard');
-  const isAuthPage = location.pathname === '/login' || location.pathname === '/register';
+  const isAuthPage = location.pathname === '/login';
   const isStandaloneApp = isAdminPath || isDeliveryPath || isVendorPath || isAuthPage;
   const hideFooter = isStandaloneApp || isProfilePath;
 
@@ -143,7 +142,7 @@ function MainLayout() {
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
+          <Route path="/register" element={<Navigate to="/login" replace />} />
 
           {/* User Protected Routes */}
           <Route

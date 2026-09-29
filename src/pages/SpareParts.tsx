@@ -133,7 +133,7 @@ export default function SpareParts() {
             <p className="mt-2 text-ink-600">Get bulk pricing on genuine spare parts. Register as a wholesaler to unlock trade rates.</p>
           </div>
           <div className="flex gap-3 md:justify-end">
-            <Link to="/register" className="btn border border-ink-200 bg-ink-100 px-5 py-3 text-ink-900 hover:bg-ink-200">Become a Wholesaler</Link>
+            <Link to="/contact" className="btn border border-ink-200 bg-ink-100 px-5 py-3 text-ink-900 hover:bg-ink-200">Become a Wholesaler</Link>
             <Link to="/contact" className="btn border border-ink-200 bg-ink-200/40 px-5 py-3 text-ink-900 hover:bg-ink-200">Contact Sales</Link>
           </div>
         </div>
