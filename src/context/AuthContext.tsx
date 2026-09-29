@@ -92,34 +92,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const sendOtp = async (phone: string, email?: string, fullName?: string) => {
     const cleanPhone = phone.replace(/\D/g, '').slice(-10);
-    const cleanEmail = email ? email.trim().toLowerCase() : undefined;
 
-    // 1. Dispatch via Server OTP (authoritative 6-digit OTP code)
+    // Dispatch real SMS directly to user's phone via Firebase Phone Authentication
     try {
-      const serverRes = await db.auth.sendOtp(cleanPhone, cleanEmail, fullName);
-      if (serverRes.data) {
-        return {
-          error: null,
-          devOtp: serverRes.data.devOtp,
-          message: serverRes.data.message,
-        };
+      const fbResult = await sendFirebasePhoneOtp(cleanPhone);
+      if (fbResult.success) {
+        return { error: null };
       }
-      return { error: serverRes.error?.message || 'Failed to send OTP.' };
-    } catch (serverErr: any) {
-      return { error: serverErr?.message || 'Failed to send OTP.' };
+      return { error: fbResult.error || 'Failed to send OTP via SMS.' };
+    } catch (fbErr: any) {
+      return { error: fbErr?.message || 'Failed to send OTP via SMS.' };
     }
   };
 
   const verifyOtp = async (phone: string, otp: string, options?: { fullName?: string; email?: string; password?: string }) => {
     const cleanPhone = phone.replace(/\D/g, '').slice(-10);
 
-    // 1. Verify via Server OTP
-    const serverVerify = await db.auth.verifyOtp(cleanPhone, otp, options);
-    if (!serverVerify.error && serverVerify.data?.session) {
-      return { error: null, isNewUser: serverVerify.data.isNewUser };
-    }
-
-    // 2. Fallback to Firebase if Firebase session was active
+    // 1. Verify code directly with Firebase
     if (window.confirmationResult) {
       try {
         const fbVerify = await verifyFirebasePhoneOtp(otp);
@@ -129,9 +118,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           if (!data?.session) return { error: 'Login failed. Please try again.' };
           return { error: null, isNewUser: data.isNewUser };
         }
-      } catch (fbErr) {
-        console.warn('Firebase verification error:', fbErr);
+        return { error: fbVerify.error || 'Invalid OTP code. Please check and try again.' };
+      } catch (fbErr: any) {
+        return { error: fbErr?.message || 'Verification failed. Please try again.' };
       }
+    }
+
+    // 2. Fallback to server verify
+    const serverVerify = await db.auth.verifyOtp(cleanPhone, otp, options);
+    if (!serverVerify.error && serverVerify.data?.session) {
+      return { error: null, isNewUser: serverVerify.data.isNewUser };
     }
 
     return { error: serverVerify.error?.message || 'Invalid OTP code. Please check and try again.' };

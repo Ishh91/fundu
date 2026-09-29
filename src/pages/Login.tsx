@@ -43,7 +43,6 @@ export default function Login() {
   const [error, setError] = useState<string | null>(null);
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
-  const [loginDevOtp, setLoginDevOtp] = useState<string | null>(null);
 
   /* ── Reset Password Modal States ── */
   const [resetModalOpen, setResetModalOpen] = useState(false);
@@ -115,10 +114,6 @@ export default function Login() {
     if (res.error) {
       setError(`❌ ${res.error}`);
       return;
-    }
-
-    if (res.devOtp) {
-      setLoginDevOtp(res.devOtp);
     }
 
     setOtpStep('verify');
@@ -413,23 +408,6 @@ export default function Login() {
                   Change Number / Password
                 </button>
               </div>
-
-              {loginDevOtp && (
-                <div className="flex items-center justify-between p-3 rounded-xl bg-blue-50 border border-blue-200 text-blue-900 text-xs font-semibold">
-                  <span>🔑 OTP Code: <strong className="font-mono text-sm tracking-wider text-blue-700">{loginDevOtp}</strong></span>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      const arr = loginDevOtp.split('').slice(0, 6);
-                      setOtpDigits(arr);
-                      otpInputRefs.current[5]?.focus();
-                    }}
-                    className="px-2.5 py-1 rounded-lg bg-blue-600 text-white font-bold hover:bg-blue-700 transition"
-                  >
-                    Auto-fill
-                  </button>
-                </div>
-              )}
 
               <div>
                 <label className="label text-center mb-2 block font-bold">Enter 6-Digit Mobile OTP</label>

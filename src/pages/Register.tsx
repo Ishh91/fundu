@@ -32,7 +32,6 @@ export default function Register() {
   /* ── Common State ── */
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
-  const [devOtp, setDevOtp] = useState<string | null>(null);
   const [deliveryNotice, setDeliveryNotice] = useState<string | null>(null);
 
   useEffect(() => {
@@ -114,7 +113,7 @@ export default function Register() {
       }
     }
 
-    // Send OTP to Mobile (and to Email if provided)
+    // Send SMS OTP directly to user's phone via Firebase
     const otpRes = await sendOtp(cleanPhone, cleanEmail || undefined, cleanName);
     setLoading(false);
 
@@ -123,16 +122,6 @@ export default function Register() {
       return;
     }
 
-    const currentOtp = otpRes.devOtp;
-    if (currentOtp) {
-      setDevOtp(currentOtp);
-      // Dispatch directly to user's email inbox via EmailJS if email was entered
-      if (cleanEmail) {
-        sendEmailOtpCode(cleanEmail, currentOtp, cleanName).catch((err) => {
-          console.warn('EmailJS browser dispatch notice:', err);
-        });
-      }
-    }
     setDeliveryNotice(otpRes.message || null);
 
     setStep('otp');
@@ -232,15 +221,6 @@ export default function Register() {
       return;
     }
 
-    const currentOtp = res.devOtp;
-    if (currentOtp) {
-      setDevOtp(currentOtp);
-      if (cleanEmail) {
-        sendEmailOtpCode(cleanEmail, currentOtp, fullName.trim() || 'User').catch((err) => {
-          console.warn('EmailJS browser resend notice:', err);
-        });
-      }
-    }
     setDeliveryNotice(res.message || null);
 
     startCountdown();
@@ -389,23 +369,6 @@ export default function Register() {
                 )}
               </p>
             </div>
-
-            {devOtp && (
-              <div className="flex items-center justify-between p-3 rounded-xl bg-blue-50 border border-blue-200 text-blue-900 text-xs font-semibold">
-                <span>🔑 OTP Code: <strong className="font-mono text-sm tracking-wider text-blue-700">{devOtp}</strong></span>
-                <button
-                  type="button"
-                  onClick={() => {
-                    const arr = devOtp.split('').slice(0, OTP_LENGTH);
-                    setDigits(arr);
-                    inputRefs.current[OTP_LENGTH - 1]?.focus();
-                  }}
-                  className="px-2.5 py-1 rounded-lg bg-blue-600 text-white font-bold hover:bg-blue-700 transition"
-                >
-                  Auto-fill
-                </button>
-              </div>
-            )}
 
             <label className="label text-center block font-bold">
               {email ? 'Enter 6-Digit Code (Sent to Mobile / Email)' : 'Enter 6-Digit Mobile Verification Code'}
