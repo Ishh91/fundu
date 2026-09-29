@@ -93,22 +93,34 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const sendOtp = async (phone: string, email?: string, fullName?: string) => {
     const cleanPhone = phone.replace(/\D/g, '').slice(-10);
 
-    // Dispatch real SMS directly to user's phone via Firebase Phone Authentication
+    // 1. Dispatch real SMS directly to user's phone via Firebase Phone Authentication
     try {
       const fbResult = await sendFirebasePhoneOtp(cleanPhone);
       if (fbResult.success) {
-        return { error: null };
+        // Also trigger background email OTP if optional email is supplied
+        if (email) {
+          db.auth.sendOtp(cleanPhone, email, fullName).catch(() => {});
+        }
+        return { error: null, message: `OTP dispatched to +91 ${cleanPhone}.` };
       }
-      return { error: fbResult.error || 'Failed to send OTP via SMS.' };
+      console.warn('Firebase Phone Auth failed, attempting server OTP dispatch:', fbResult.error);
     } catch (fbErr: any) {
-      return { error: fbErr?.message || 'Failed to send OTP via SMS.' };
+      console.warn('Firebase Phone Auth exception, attempting server OTP dispatch:', fbErr);
     }
+
+    // 2. Fallback to backend OTP (supports Fast2SMS, Twilio, MSG91 & Email)
+    const serverRes = await db.auth.sendOtp(cleanPhone, email, fullName);
+    if (!serverRes.error && serverRes.data) {
+      return { error: null, message: serverRes.data.message };
+    }
+
+    return { error: serverRes.error?.message || 'Failed to send verification OTP. Please try again.' };
   };
 
   const verifyOtp = async (phone: string, otp: string, options?: { fullName?: string; email?: string; password?: string }) => {
     const cleanPhone = phone.replace(/\D/g, '').slice(-10);
 
-    // 1. Verify code directly with Firebase
+    // 1. Verify code directly with Firebase if confirmationResult is active
     if (window.confirmationResult) {
       try {
         const fbVerify = await verifyFirebasePhoneOtp(otp);
@@ -118,13 +130,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           if (!data?.session) return { error: 'Login failed. Please try again.' };
           return { error: null, isNewUser: data.isNewUser };
         }
-        return { error: fbVerify.error || 'Invalid OTP code. Please check and try again.' };
+        console.warn('Firebase confirmation failed, trying server OTP verification:', fbVerify.error);
       } catch (fbErr: any) {
-        return { error: fbErr?.message || 'Verification failed. Please try again.' };
+        console.warn('Firebase confirmation exception, trying server OTP verification:', fbErr);
       }
     }
 
-    // 2. Fallback to server verify
+    // 2. Fallback to server verify (for backend SMS or email OTP)
     const serverVerify = await db.auth.verifyOtp(cleanPhone, otp, options);
     if (!serverVerify.error && serverVerify.data?.session) {
       return { error: null, isNewUser: serverVerify.data.isNewUser };

@@ -345,6 +345,9 @@ export default function Login() {
           </p>
         </div>
 
+        {/* Permanent reCAPTCHA container for Firebase Phone Auth */}
+        <div id="recaptcha-container" className="invisible" />
+
         {/* Success Banner */}
         {successMsg && (
           <div className="mt-5 p-4 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-900 text-xs font-semibold flex items-center gap-2.5 shadow-xs">

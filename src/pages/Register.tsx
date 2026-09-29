@@ -254,6 +254,9 @@ export default function Register() {
           </div>
         )}
 
+        {/* Permanent reCAPTCHA container for Firebase Phone Auth */}
+        <div id="recaptcha-container" className="invisible" />
+
         {/* ── STEP 1: Registration Form ── */}
         {step === 'form' && (
           <form onSubmit={handleInitialSubmit} className="mt-8 card p-6 md:p-8 space-y-4">
