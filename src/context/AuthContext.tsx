@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 import { Session, User, db } from '../lib/db';
-import { verifyFirebasePhoneOtp } from '../lib/firebase';
+import { sendFirebasePhoneOtp, verifyFirebasePhoneOtp } from '../lib/firebase';
 
 export type Profile = {
   id: string;
