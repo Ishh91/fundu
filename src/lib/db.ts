@@ -258,10 +258,10 @@ type AuthApi = {
     };
   }) => AuthResponse<{ session: Session; user: User }>;
   signOut: () => AuthResponse<null>;
-  /** Send OTP to a phone number. In dev mode returns devOtp in data. */
-  sendOtp: (phone: string) => Promise<QueryResponse<{ message: string; devOtp?: string }>>;
+  /** Send OTP to a phone number and optional email. In dev mode returns devOtp in data. */
+  sendOtp: (phone: string, email?: string, fullName?: string) => Promise<QueryResponse<{ message: string; devOtp?: string; emailSent?: boolean; smsSent?: boolean }>>;
   /** Verify OTP and log in (auto-creates account if new user). */
-  verifyOtp: (phone: string, otp: string) => AuthResponse<{ session: Session; user: User; isNewUser: boolean }>;
+  verifyOtp: (phone: string, otp: string, options?: { fullName?: string; email?: string; password?: string }) => AuthResponse<{ session: Session; user: User; isNewUser: boolean }>;
   /** Verify Firebase-authenticated phone and issue backend session */
   verifyFirebaseSession: (phone: string, fullName?: string, email?: string) => AuthResponse<{ session: Session; user: User; isNewUser: boolean }>;
 };
@@ -354,19 +354,25 @@ export const auth: AuthApi = {
     return { data: null, error: null };
   },
 
-  async sendOtp(phone) {
-    return apiRequest<{ message: string; devOtp?: string }>('/auth/otp/send', {
+  async sendOtp(phone, email, fullName) {
+    return apiRequest<{ message: string; devOtp?: string; emailSent?: boolean; smsSent?: boolean }>('/auth/otp/send', {
       method: 'POST',
-      body: JSON.stringify({ phone }),
+      body: JSON.stringify({ phone, email, fullName }),
     }, false);
   },
 
-  async verifyOtp(phone, otp) {
+  async verifyOtp(phone, otp, options) {
     const response = await apiRequest<{ session: Session; profile: unknown; isNewUser: boolean }>(
       '/auth/otp/verify',
       {
         method: 'POST',
-        body: JSON.stringify({ phone, otp }),
+        body: JSON.stringify({
+          phone,
+          otp,
+          fullName: options?.fullName,
+          email: options?.email,
+          password: options?.password,
+        }),
       },
       false,
     );

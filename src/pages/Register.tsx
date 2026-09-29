@@ -32,6 +32,8 @@ export default function Register() {
   /* ── Common State ── */
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [devOtp, setDevOtp] = useState<string | null>(null);
+  const [deliveryNotice, setDeliveryNotice] = useState<string | null>(null);
 
   useEffect(() => {
     if (!authLoading && user && step === 'form') {
@@ -112,14 +114,19 @@ export default function Register() {
       }
     }
 
-    // Send Mobile SMS OTP via Firebase
-    const otpRes = await sendOtp(cleanPhone);
+    // Send OTP to Mobile (and to Email if provided)
+    const otpRes = await sendOtp(cleanPhone, cleanEmail || undefined, cleanName);
     setLoading(false);
 
     if (otpRes.error) {
       setError(`❌ ${otpRes.error}`);
       return;
     }
+
+    if (otpRes.devOtp) {
+      setDevOtp(otpRes.devOtp);
+    }
+    setDeliveryNotice(otpRes.message || null);
 
     setStep('otp');
     setDigits(Array(OTP_LENGTH).fill(''));
@@ -169,10 +176,11 @@ export default function Register() {
     const cleanPhone = phone.replace(/\D/g, '').slice(-10);
     const cleanEmail = email.trim().toLowerCase();
 
-    // Verify OTP with Firebase and register profile in MongoDB
+    // Verify OTP with Server/Firebase and register profile in MongoDB
     const verifyRes = await verifyOtp(cleanPhone, enteredOtp, {
       fullName: fullName.trim(),
       email: cleanEmail || undefined,
+      password: password || undefined,
     });
 
     if (verifyRes.error) {
@@ -200,21 +208,27 @@ export default function Register() {
     }, 1500);
   };
 
-  /* ── Resend Mobile SMS OTP Handler ── */
+  /* ── Resend OTP Handler ── */
   const handleResendOtp = async () => {
     if (countdown > 0) return;
     const cleanPhone = phone.replace(/\D/g, '').slice(-10);
+    const cleanEmail = email.trim().toLowerCase();
     setDigits(Array(OTP_LENGTH).fill(''));
     setError(null);
     setLoading(true);
 
-    const res = await sendOtp(cleanPhone);
+    const res = await sendOtp(cleanPhone, cleanEmail || undefined, fullName.trim() || 'User');
     setLoading(false);
 
     if (res.error) {
       setError(`❌ ${res.error}`);
       return;
     }
+
+    if (res.devOtp) {
+      setDevOtp(res.devOtp);
+    }
+    setDeliveryNotice(res.message || null);
 
     startCountdown();
     setTimeout(() => inputRefs.current[0]?.focus(), 100);
@@ -349,15 +363,40 @@ export default function Register() {
             <div className="p-4 rounded-2xl bg-[#F0F0F5] border border-[#C0C8D8] text-[#344257] text-xs space-y-1.5">
               <div className="flex items-center justify-between font-bold">
                 <span className="flex items-center gap-1.5 text-[#1E2734]">
-                  <Smartphone className="h-4 w-4 text-[#47576E]" /> Mobile SMS Verification
+                  <Smartphone className="h-4 w-4 text-[#47576E]" /> {email ? 'Mobile & Email Verification' : 'Mobile SMS Verification'}
                 </span>
               </div>
               <p>
-                We have dispatched a 6-digit SMS verification code to <strong>+91 {phone.replace(/\D/g, '').slice(-10)}</strong>.
+                {deliveryNotice ? (
+                  <span>{deliveryNotice}</span>
+                ) : email ? (
+                  <span>We have sent a 6-digit verification code to <strong>+91 {phone.replace(/\D/g, '').slice(-10)}</strong> and <strong>{email.trim()}</strong>.</span>
+                ) : (
+                  <span>We have dispatched a 6-digit SMS verification code to <strong>+91 {phone.replace(/\D/g, '').slice(-10)}</strong>.</span>
+                )}
               </p>
             </div>
 
-            <label className="label text-center block font-bold">Enter 6-Digit Mobile Verification Code</label>
+            {devOtp && (
+              <div className="flex items-center justify-between p-3 rounded-xl bg-blue-50 border border-blue-200 text-blue-900 text-xs font-semibold">
+                <span>🔑 OTP Code: <strong className="font-mono text-sm tracking-wider text-blue-700">{devOtp}</strong></span>
+                <button
+                  type="button"
+                  onClick={() => {
+                    const arr = devOtp.split('').slice(0, OTP_LENGTH);
+                    setDigits(arr);
+                    inputRefs.current[OTP_LENGTH - 1]?.focus();
+                  }}
+                  className="px-2.5 py-1 rounded-lg bg-blue-600 text-white font-bold hover:bg-blue-700 transition"
+                >
+                  Auto-fill
+                </button>
+              </div>
+            )}
+
+            <label className="label text-center block font-bold">
+              {email ? 'Enter 6-Digit Code (Sent to Mobile / Email)' : 'Enter 6-Digit Mobile Verification Code'}
+            </label>
 
             {/* 6-box OTP input */}
             <div className="flex justify-center gap-2.5" onPaste={handlePaste}>
@@ -387,12 +426,12 @@ export default function Register() {
               disabled={loading || digits.join('').length !== OTP_LENGTH}
               className="btn-primary w-full font-bold py-3"
             >
-              {loading ? 'Verifying & Creating Account…' : 'Verify Mobile OTP & Complete Registration'} <ArrowRight className="h-4 w-4 ml-1" />
+              {loading ? 'Verifying & Creating Account…' : 'Verify OTP & Complete Registration'} <ArrowRight className="h-4 w-4 ml-1" />
             </button>
 
             <div className="text-center text-xs text-ink-500 pt-1">
               {countdown > 0 ? (
-                <span>Resend SMS OTP in <strong className="text-ink-700">{countdown}s</strong></span>
+                <span>Resend OTP in <strong className="text-ink-700">{countdown}s</strong></span>
               ) : (
                 <button
                   type="button"
@@ -400,7 +439,7 @@ export default function Register() {
                   disabled={loading}
                   className="inline-flex items-center gap-1.5 font-bold text-[#344257] hover:underline"
                 >
-                  <RefreshCw className="h-3.5 w-3.5" /> Resend Mobile OTP
+                  <RefreshCw className="h-3.5 w-3.5" /> Resend OTP
                 </button>
               )}
             </div>
@@ -417,6 +456,7 @@ export default function Register() {
                 ← Edit mobile number or details
               </button>
             </div>
+            <div id="recaptcha-container" className="invisible" />
           </form>
         )}
 
