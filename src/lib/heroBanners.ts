@@ -76,20 +76,32 @@ export const getStoredHeroPosters = (): HeroPoster[] => {
 
 export const saveStoredHeroPosters = async (posters: HeroPoster[]): Promise<boolean> => {
   if (typeof window === 'undefined') return false;
-  try {
-    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(posters));
-    window.dispatchEvent(new CustomEvent(EVENT_NAME, { detail: posters }));
 
-    // Async sync to database site_content
-    db.from('site_content')
-      .upsert({
+  try {
+    // 1. Primary: Save directly to MongoDB Atlas site_content and AWAIT it
+    try {
+      const dbRes = await db.from('site_content').upsert({
         key: 'hero_slides',
         title: 'Hero Posters Carousel',
         items: posters,
         is_active: true,
-      })
-      .then(() => {})
-      .catch((err: any) => console.warn('Could not sync hero posters to DB:', err));
+      });
+      if (dbRes.error) {
+        console.warn('Database upsert warning for hero posters:', dbRes.error);
+      }
+    } catch (dbErr) {
+      console.warn('Network error syncing hero posters to DB:', dbErr);
+    }
+
+    // 2. Secondary: Safe local cache (prevent quota errors from breaking app)
+    try {
+      window.localStorage.setItem(STORAGE_KEY, JSON.stringify(posters));
+    } catch (storageErr) {
+      console.warn('localStorage full (skipping local cache, posters saved in DB):', storageErr);
+    }
+
+    // 3. Dispatch live update event to all listening components
+    window.dispatchEvent(new CustomEvent(EVENT_NAME, { detail: posters }));
 
     return true;
   } catch (err) {
@@ -123,11 +135,13 @@ export const useHeroPosters = () => {
           if (isMounted) {
             const dbPosters = data.items as HeroPoster[];
             setPosters(dbPosters);
-            window.localStorage.setItem(STORAGE_KEY, JSON.stringify(dbPosters));
+            try {
+              window.localStorage.setItem(STORAGE_KEY, JSON.stringify(dbPosters));
+            } catch {}
           }
         }
       } catch (err) {
-        // Fallback to localStorage
+        console.warn('Notice loading posters from DB, using cached:', err);
       } finally {
         if (isMounted) setLoading(false);
       }

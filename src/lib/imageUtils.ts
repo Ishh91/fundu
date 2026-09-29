@@ -116,3 +116,73 @@ export async function removeImageBackground(
     }
   });
 }
+
+/**
+ * Compresses an image file or data URL into a lightweight, high-performance WebP/JPEG data URL.
+ * Prevents browser localStorage QuotaExceededError and database payload bloat.
+ */
+export async function compressImage(
+  source: File | Blob | string,
+  maxWidth = 1920,
+  maxHeight = 1080,
+  quality = 0.82
+): Promise<string> {
+  return new Promise((resolve) => {
+    let srcUrl = '';
+    let shouldRevoke = false;
+
+    if (typeof source === 'string') {
+      srcUrl = source;
+    } else {
+      srcUrl = URL.createObjectURL(source);
+      shouldRevoke = true;
+    }
+
+    const img = new Image();
+    img.crossOrigin = 'anonymous';
+
+    img.onload = () => {
+      try {
+        let width = img.naturalWidth || img.width;
+        let height = img.naturalHeight || img.height;
+
+        if (width > maxWidth || height > maxHeight) {
+          const ratio = Math.min(maxWidth / width, maxHeight / height);
+          width = Math.round(width * ratio);
+          height = Math.round(height * ratio);
+        }
+
+        const canvas = document.createElement('canvas');
+        canvas.width = width;
+        canvas.height = height;
+
+        const ctx = canvas.getContext('2d');
+        if (!ctx) {
+          if (shouldRevoke) URL.revokeObjectURL(srcUrl);
+          resolve(srcUrl);
+          return;
+        }
+
+        ctx.drawImage(img, 0, 0, width, height);
+
+        let dataUrl = canvas.toDataURL('image/webp', quality);
+        if (!dataUrl.startsWith('data:image/webp')) {
+          dataUrl = canvas.toDataURL('image/jpeg', quality);
+        }
+
+        if (shouldRevoke) URL.revokeObjectURL(srcUrl);
+        resolve(dataUrl);
+      } catch (err) {
+        if (shouldRevoke) URL.revokeObjectURL(srcUrl);
+        resolve(typeof source === 'string' ? source : '');
+      }
+    };
+
+    img.onerror = () => {
+      if (shouldRevoke) URL.revokeObjectURL(srcUrl);
+      resolve(typeof source === 'string' ? source : '');
+    };
+
+    img.src = srcUrl;
+  });
+}

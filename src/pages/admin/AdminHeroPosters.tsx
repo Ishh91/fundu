@@ -24,7 +24,7 @@ import {
 } from 'lucide-react';
 import type { HeroPoster } from './adminTypes';
 import { useHeroPosters, DEFAULT_HERO_POSTERS } from '../../lib/heroBanners';
-import { removeImageBackground } from '../../lib/imageUtils';
+import { removeImageBackground, compressImage } from '../../lib/imageUtils';
 
 const QUICK_LINKS = [
   { label: '📱 Sell Old Phone (/sell)', value: '/sell' },
@@ -128,32 +128,51 @@ export default function AdminHeroPosters() {
     showToast('Poster order updated');
   };
 
-  const handleDeviceFileUpload = (device: 'desktop' | 'tablet' | 'mobile') => (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleDeviceFileUpload = (device: 'desktop' | 'tablet' | 'mobile') => async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    if (file.size > 10 * 1024 * 1024) {
-      alert('Poster size exceeds 10MB. Please choose a compressed web graphic.');
+    if (file.size > 20 * 1024 * 1024) {
+      alert('Poster file size is too large (over 20MB). Please select an image under 20MB.');
       return;
     }
 
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      if (typeof event.target?.result === 'string') {
-        const rawData = event.target!.result as string;
-        setForm((prev) => {
-          if (device === 'desktop') {
-            return { ...prev, image: rawData, originalImage: rawData, is_bg_removed: false };
-          } else if (device === 'tablet') {
-            return { ...prev, image_tablet: rawData };
-          } else {
-            return { ...prev, image_mobile: rawData };
-          }
-        });
-        showToast(`Selected ${device} poster graphic! 🖼️`);
-      }
-    };
-    reader.readAsDataURL(file);
+    showToast(`Optimizing & loading ${device} poster... ⚡`);
+
+    try {
+      const maxDim = device === 'desktop' ? { w: 1920, h: 1080 } : device === 'tablet' ? { w: 1280, h: 800 } : { w: 800, h: 1200 };
+      const optimizedData = await compressImage(file, maxDim.w, maxDim.h, 0.85);
+
+      setForm((prev) => {
+        if (device === 'desktop') {
+          return { ...prev, image: optimizedData, originalImage: optimizedData, is_bg_removed: false };
+        } else if (device === 'tablet') {
+          return { ...prev, image_tablet: optimizedData };
+        } else {
+          return { ...prev, image_mobile: optimizedData };
+        }
+      });
+      showToast(`Selected & optimized ${device} poster graphic! 🖼️`);
+    } catch (err) {
+      console.warn('Image optimization fallback:', err);
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        if (typeof event.target?.result === 'string') {
+          const rawData = event.target!.result as string;
+          setForm((prev) => {
+            if (device === 'desktop') {
+              return { ...prev, image: rawData, originalImage: rawData, is_bg_removed: false };
+            } else if (device === 'tablet') {
+              return { ...prev, image_tablet: rawData };
+            } else {
+              return { ...prev, image_mobile: rawData };
+            }
+          });
+          showToast(`Selected ${device} poster graphic! 🖼️`);
+        }
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
   // Background Removal Toggle Handler
