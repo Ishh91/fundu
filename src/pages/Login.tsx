@@ -88,26 +88,7 @@ export default function Login() {
     setLoading(true);
     setError(null);
 
-    // Pre-check: If new user tries to log in, redirect to Sign Up page
-    try {
-      const checkRes = await fetch(`${API_BASE.replace(/\/$/, '')}/auth/check-phone`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ phone: cleanPhone }),
-      });
-      const checkData = await checkRes.json();
-      if (!checkData?.data?.exists) {
-        setLoading(false);
-        setError('⚠️ No registered account found with this mobile number. Redirecting to Sign Up...');
-        setTimeout(() => {
-          navigate(`/register?phone=${cleanPhone}`);
-        }, 1200);
-        return;
-      }
-    } catch {
-      // Proceed if endpoint check is bypassed
-    }
-
+    // Dispatch OTP directly to user's mobile number (new users auto-register on OTP verify)
     const res = await sendOtp(cleanPhone);
     setLoading(false);
 
@@ -146,6 +127,10 @@ export default function Login() {
     }
 
     setSuccessMsg('✅ Mobile number verified successfully! Redirecting...');
+    if (res.isNewUser) {
+      navigate('/profile?setup=true');
+      return;
+    }
   };
 
   const handleOtpDigitChange = (index: number, val: string) => {
@@ -185,6 +170,10 @@ export default function Login() {
 
   useEffect(() => {
     if (!authLoading && user) {
+      if (!profile?.full_name) {
+        navigate('/profile?setup=true');
+        return;
+      }
       const activeRole = profile?.role || user?.role || 'customer';
       if (activeRole === 'admin') navigate('/admin');
       else if (activeRole === 'vendor' || activeRole === 'wholesaler') navigate('/vendor');
@@ -367,9 +356,16 @@ export default function Login() {
               <p className="text-rose-800 font-medium leading-relaxed">{error}</p>
               {error.includes('Not Registered') && (
                 <div className="pt-1">
-                  <Link to="/register" className="inline-flex items-center gap-1 font-extrabold text-brand-700 underline hover:text-brand-900 text-xs">
-                    Click here to Create New Account <ArrowRight className="h-3 w-3" />
-                  </Link>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setMode('otp');
+                      setError(null);
+                    }}
+                    className="inline-flex items-center gap-1 font-extrabold text-brand-700 underline hover:text-brand-900 text-xs"
+                  >
+                    Click here to Sign in via Mobile OTP <ArrowRight className="h-3 w-3" />
+                  </button>
                 </div>
               )}
               {error.includes('Incorrect') && (
@@ -597,12 +593,9 @@ export default function Login() {
                 Enter your 10-digit mobile number above to sign in instantly via SMS without entering a password.
               </p>
 
-              {/* Registration Redirect Link */}
+              {/* Notice for new users */}
               <div className="mt-5 text-center text-xs text-ink-500 pt-3 border-t border-ink-100">
-                Don't have an account?{' '}
-                <Link to="/register" className="font-bold text-brand-600 hover:underline">
-                  Create New Account
-                </Link>
+                New to Fundu? Enter your mobile number above to sign in instantly with OTP. No registration needed!
               </div>
             </form>
           )}
@@ -634,13 +627,17 @@ export default function Login() {
                 <p>{resetError}</p>
                 {resetError.includes('Not Registered') && (
                   <div className="pt-1">
-                    <Link
-                      to="/register"
-                      onClick={() => setResetModalOpen(false)}
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setResetModalOpen(false);
+                        setMode('otp');
+                        setError(null);
+                      }}
                       className="inline-flex items-center gap-1 font-extrabold text-brand-700 underline hover:text-brand-900 text-xs"
                     >
-                      Click here to Create New Account <ArrowRight className="h-3.5 w-3.5" />
-                    </Link>
+                      Sign In with Mobile OTP <ArrowRight className="h-3.5 w-3.5" />
+                    </button>
                   </div>
                 )}
               </div>
