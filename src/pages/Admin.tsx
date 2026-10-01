@@ -227,7 +227,7 @@ export default function Admin() {
     ram: '',
     storage: '',
     color: '',
-    condition: 'Excellent' as 'Excellent' | 'Good' | 'Fair',
+    condition: 'Excellent' as Product['condition'],
     price: '',
     original_price: '',
     discount_percent: '0',
@@ -238,7 +238,7 @@ export default function Admin() {
     is_approved: true,
     is_featured: false,
     show_all_grades: true,
-    stock: '0',
+    stock: '1',
   });
   const [productSaving, setProductSaving] = useState(false);
 
@@ -825,6 +825,31 @@ export default function Admin() {
     setProducts((prev) => prev.filter((p) => p.id !== id));
   };
 
+  const openAddProductModal = (initialData?: Partial<typeof productForm>) => {
+    setTab('products');
+    setProductForm({
+      title: initialData?.title || '',
+      brand: initialData?.brand || 'Apple',
+      model: initialData?.model || '',
+      ram: initialData?.ram || '',
+      storage: initialData?.storage || '128GB',
+      color: initialData?.color || 'Midnight Black',
+      condition: (initialData?.condition || 'Excellent') as Product['condition'],
+      price: initialData?.price || '',
+      original_price: initialData?.original_price || '',
+      discount_percent: initialData?.discount_percent || '0',
+      offer_tag: initialData?.offer_tag || '🔥 Hot Deal',
+      warranty_months: initialData?.warranty_months || '6',
+      description: initialData?.description || '',
+      images: initialData?.images || '',
+      is_approved: initialData?.is_approved ?? true,
+      is_featured: initialData?.is_featured ?? false,
+      show_all_grades: initialData?.show_all_grades ?? true,
+      stock: initialData?.stock || '1',
+    });
+    setProductModal({ product: null });
+  };
+
   const saveProduct = async () => {
     setProductSaving(true);
     try {
@@ -1288,32 +1313,10 @@ export default function Admin() {
           <div className="flex items-center gap-2 flex-wrap">
             <button
               type="button"
-              onClick={() => {
-                setTab('products');
-                setProductForm({
-                  title: '',
-                  brand: '',
-                  model: '',
-                  ram: '',
-                  storage: '',
-                  color: '',
-                  condition: 'Excellent',
-                  price: '',
-                  original_price: '',
-                  discount_percent: '0',
-                  offer_tag: '🔥 Hot Deal',
-                  warranty_months: '6',
-                  description: '',
-                  images: '',
-                  is_approved: true,
-                  is_featured: false,
-                  stock: '1',
-                });
-                setProductModal({ product: null });
-              }}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#344257] hover:bg-[#47576E] text-white text-xs font-extrabold shadow-sm transition cursor-pointer"
+              onClick={() => openAddProductModal()}
+              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-black shadow-md transition cursor-pointer"
             >
-              <Plus className="h-3.5 w-3.5" /> Add Store Product
+              <Plus className="h-3.5 w-3.5" /> Add Product to Stock
             </button>
 
             <button
@@ -1384,6 +1387,7 @@ export default function Admin() {
               agents={agents}
               masterPhones={masterPhones}
               onNavigateTab={(t) => setTab(t)}
+              onOpenAddProduct={() => openAddProductModal()}
             />
           )}
 
@@ -1397,28 +1401,7 @@ export default function Admin() {
               onUpdateStatus={(id, status) => updateStatus('sell_requests', id, status)}
               onReassignAgent={reassignSellAgent}
               onApproveAndListToStore={openListPhoneToStore}
-              onOpenProductModal={() => {
-                setProductForm({
-                  title: '',
-                  brand: '',
-                  model: '',
-                  ram: '',
-                  storage: '',
-                  color: '',
-                  condition: 'Excellent',
-                  price: '',
-                  original_price: '',
-                  discount_percent: '0',
-                  offer_tag: '🔥 Hot Deal',
-                  warranty_months: '6',
-                  description: '',
-                  images: '',
-                  is_approved: true,
-                  is_featured: false,
-                  stock: '1',
-                });
-                setProductModal({ product: null });
-              }}
+              onOpenProductModal={() => openAddProductModal()}
             />
           )}
 
@@ -1585,29 +1568,10 @@ export default function Admin() {
                     show_all_grades: product.show_all_grades !== false,
                     stock: String(product.stock),
                   });
+                  setProductModal({ product });
                 } else {
-                  setProductForm({
-                    title: '',
-                    brand: '',
-                    model: '',
-                    ram: '',
-                    storage: '',
-                    color: '',
-                    condition: 'Excellent',
-                    price: '',
-                    original_price: '',
-                    discount_percent: '0',
-                    offer_tag: '🔥 Hot Deal',
-                    warranty_months: '6',
-                    description: '',
-                    images: '',
-                    is_approved: true,
-                    is_featured: false,
-                    show_all_grades: true,
-                    stock: '1',
-                  });
+                  openAddProductModal();
                 }
-                setProductModal({ product });
               }}
               onToggleApproval={(id, current) => toggleApproval('products', id, current)}
               onDeleteProduct={deleteProduct}
@@ -2036,7 +2000,29 @@ export default function Admin() {
 
             <div className="space-y-3">
               <div>
-                <label className="label text-xs">Product Title</label>
+                <div className="flex items-center justify-between mb-1">
+                  <label className="label text-xs">Product Title</label>
+                  {(productForm.brand || productForm.model) && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const parts = [
+                          productForm.brand,
+                          productForm.model,
+                          productForm.storage,
+                          productForm.color ? `(${productForm.color})` : '',
+                        ].filter(Boolean);
+                        setProductForm((prev) => ({
+                          ...prev,
+                          title: parts.join(' ').replace(/\s+/g, ' ').trim(),
+                        }));
+                      }}
+                      className="text-[11px] font-bold text-blue-600 hover:text-blue-800 hover:underline cursor-pointer"
+                    >
+                      ⚡ Auto-Fill Title from Specs
+                    </button>
+                  )}
+                </div>
                 <input
                   type="text"
                   value={productForm.title}
@@ -2131,13 +2117,24 @@ export default function Admin() {
                 </p>
               </div>
 
-              <div className="grid grid-cols-3 gap-3">
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                 <div>
-                  <label className="label text-xs">Selling Price (₹)</label>
+                  <label className="label text-xs font-bold">Selling Price (₹)</label>
                   <input
                     type="number"
                     value={productForm.price}
-                    onChange={(e) => setProductForm({ ...productForm, price: e.target.value })}
+                    onChange={(e) => {
+                      const newPrice = e.target.value;
+                      const orig = Number(productForm.original_price);
+                      const sp = Number(newPrice);
+                      const disc = orig > sp && orig > 0 ? Math.round(((orig - sp) / orig) * 100) : 0;
+                      setProductForm({
+                        ...productForm,
+                        price: newPrice,
+                        discount_percent: disc > 0 ? String(disc) : productForm.discount_percent,
+                      });
+                    }}
+                    placeholder="e.g. 34999"
                     className="input text-xs font-black text-brand-700"
                   />
                 </div>
@@ -2146,12 +2143,33 @@ export default function Admin() {
                   <input
                     type="number"
                     value={productForm.original_price}
-                    onChange={(e) => setProductForm({ ...productForm, original_price: e.target.value })}
+                    onChange={(e) => {
+                      const newOrig = e.target.value;
+                      const orig = Number(newOrig);
+                      const sp = Number(productForm.price);
+                      const disc = orig > sp && orig > 0 ? Math.round(((orig - sp) / orig) * 100) : 0;
+                      setProductForm({
+                        ...productForm,
+                        original_price: newOrig,
+                        discount_percent: disc > 0 ? String(disc) : productForm.discount_percent,
+                      });
+                    }}
+                    placeholder="e.g. 59999"
                     className="input text-xs"
                   />
                 </div>
                 <div>
-                  <label className="label text-xs">Stock Units</label>
+                  <label className="label text-xs">Discount %</label>
+                  <input
+                    type="number"
+                    value={productForm.discount_percent}
+                    onChange={(e) => setProductForm({ ...productForm, discount_percent: e.target.value })}
+                    placeholder="e.g. 40"
+                    className="input text-xs font-semibold text-emerald-700"
+                  />
+                </div>
+                <div>
+                  <label className="label text-xs font-bold">Stock Units</label>
                   <input
                     type="number"
                     value={productForm.stock}
@@ -2159,6 +2177,72 @@ export default function Admin() {
                     className="input text-xs font-bold"
                   />
                 </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label className="label text-xs">Offer Tag / Promotional Badge</label>
+                  <input
+                    type="text"
+                    value={productForm.offer_tag}
+                    onChange={(e) => setProductForm({ ...productForm, offer_tag: e.target.value })}
+                    placeholder="e.g. 🔥 Hot Deal, ⚡ Best Seller, ✨ Like New"
+                    className="input text-xs"
+                  />
+                </div>
+                <div>
+                  <label className="label text-xs">Warranty Guarantee</label>
+                  <select
+                    value={productForm.warranty_months}
+                    onChange={(e) => setProductForm({ ...productForm, warranty_months: e.target.value })}
+                    className="input text-xs font-semibold"
+                  >
+                    <option value="3">3 Months Warranty</option>
+                    <option value="6">6 Months Warranty (Fundu Standard)</option>
+                    <option value="12">12 Months (1 Year) Warranty</option>
+                    <option value="24">24 Months Warranty</option>
+                  </select>
+                </div>
+              </div>
+
+              <div>
+                <label className="label text-xs">Description & Key Highlights</label>
+                <textarea
+                  rows={2}
+                  value={productForm.description}
+                  onChange={(e) => setProductForm({ ...productForm, description: e.target.value })}
+                  placeholder="Battery health (e.g. 98%), cosmetic condition, all accessories included, 32-point tested..."
+                  className="input text-xs"
+                />
+              </div>
+
+              {/* Storefront Visibility and Featured Toggles */}
+              <div className="p-3 rounded-2xl bg-emerald-50/70 border border-emerald-200 flex flex-wrap items-center justify-between gap-3">
+                <label className="flex items-center gap-2.5 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={productForm.is_approved}
+                    onChange={(e) => setProductForm({ ...productForm, is_approved: e.target.checked })}
+                    className="rounded border-emerald-300 text-emerald-600 focus:ring-emerald-500 h-4 w-4"
+                  />
+                  <div>
+                    <span className="text-xs font-extrabold text-emerald-950 block">Live on Store Website</span>
+                    <span className="text-[10px] text-emerald-700">Customers can immediately browse and order this phone</span>
+                  </div>
+                </label>
+
+                <label className="flex items-center gap-2.5 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={productForm.is_featured}
+                    onChange={(e) => setProductForm({ ...productForm, is_featured: e.target.checked })}
+                    className="rounded border-purple-300 text-purple-600 focus:ring-purple-500 h-4 w-4"
+                  />
+                  <div>
+                    <span className="text-xs font-extrabold text-purple-950 block">Feature on Homepage</span>
+                    <span className="text-[10px] text-purple-700">Display in top recommended deals</span>
+                  </div>
+                </label>
               </div>
 
               {/* 📷 CUSTOM PRODUCT IMAGE UPLOADER & MANAGEMENT */}

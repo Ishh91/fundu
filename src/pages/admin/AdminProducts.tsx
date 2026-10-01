@@ -41,9 +41,9 @@ export default function AdminProducts({
 
         <button
           onClick={() => onOpenProductModal(null)}
-          className="btn-primary text-xs px-4 py-2 flex items-center gap-1.5 bg-brand-600 hover:bg-brand-700 font-bold"
+          className="btn-primary text-xs px-4 py-2 flex items-center gap-1.5 bg-blue-600 hover:bg-blue-700 font-extrabold shadow-md cursor-pointer transition"
         >
-          <Plus className="h-3.5 w-3.5" /> Add New Product
+          <Plus className="h-4 w-4" /> Add Product to Stock
         </button>
       </div>
 
@@ -65,9 +65,16 @@ export default function AdminProducts({
 
           <div className="space-y-2 max-h-[calc(100vh-300px)] overflow-y-auto pr-1">
             {filteredProducts.length === 0 ? (
-              <div className="card p-8 text-center bg-white">
+              <div className="card p-8 text-center bg-white space-y-3">
                 <Store className="h-8 w-8 text-ink-300 mx-auto" />
-                <p className="text-xs font-bold text-ink-700 mt-2">No products found</p>
+                <p className="text-xs font-bold text-ink-700">No products found</p>
+                <button
+                  type="button"
+                  onClick={() => onOpenProductModal(null)}
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-extrabold text-xs shadow-sm transition mx-auto cursor-pointer"
+                >
+                  <Plus className="h-3.5 w-3.5" /> Add New Product to Stock
+                </button>
               </div>
             ) : (
               filteredProducts.map((p) => {

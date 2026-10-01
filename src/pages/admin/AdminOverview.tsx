@@ -22,6 +22,7 @@ type AdminOverviewProps = {
   agents: DeliveryAgent[];
   masterPhones: MasterPhone[];
   onNavigateTab: (tab: any) => void;
+  onOpenAddProduct?: () => void;
 };
 
 export default function AdminOverview({
@@ -32,6 +33,7 @@ export default function AdminOverview({
   agents,
   masterPhones,
   onNavigateTab,
+  onOpenAddProduct,
 }: AdminOverviewProps) {
   const totalSalesRevenue = orders.reduce((sum, o) => sum + (o.total_amount || 0), 0);
   const pendingSellRequests = sells.filter((s) => s.status === 'pending' || s.status === 'assigned');
@@ -70,6 +72,42 @@ export default function AdminOverview({
 
   return (
     <div className="space-y-6">
+      {/* Quick Operations Bar */}
+      <div className="card p-4 rounded-2xl bg-white border border-slate-200 shadow-xs flex flex-wrap items-center justify-between gap-3">
+        <div className="flex items-center gap-2">
+          <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
+          <span className="text-xs font-black text-slate-800 uppercase tracking-wider">
+            Quick Store Operations
+          </span>
+        </div>
+
+        <div className="flex items-center gap-2 flex-wrap">
+          {onOpenAddProduct && (
+            <button
+              type="button"
+              onClick={onOpenAddProduct}
+              className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-extrabold text-xs shadow-sm transition"
+            >
+              <Store className="h-3.5 w-3.5" /> + Add New Product to Stock
+            </button>
+          )}
+          <button
+            type="button"
+            onClick={() => onNavigateTab('products')}
+            className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition"
+          >
+            Manage Store Stock ({products.length})
+          </button>
+          <button
+            type="button"
+            onClick={() => onNavigateTab('repair_pricing')}
+            className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-purple-50 hover:bg-purple-100 text-purple-800 font-bold text-xs transition"
+          >
+            <Wrench className="h-3.5 w-3.5" /> Repair Catalog
+          </button>
+        </div>
+      </div>
+
       {/* Metrics Row */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {stats.map((st) => {

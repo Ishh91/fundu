@@ -6,7 +6,7 @@ export type Product = {
   ram: string | null;
   storage: string | null;
   color: string | null;
-  condition: 'Excellent' | 'Good' | 'Fair';
+  condition: 'Superb' | 'Excellent' | 'Good' | 'Fair';
   price: number;
   original_price: number | null;
   discount_percent: number;
