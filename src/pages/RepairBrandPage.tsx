@@ -28,6 +28,7 @@ import { formatINR } from '../lib/db';
 import { MASTER_MODEL_CATALOG } from './SellPhone';
 import { getCleanPhoneImage, getCleanBrandLogo, BRAND_FRONT_FALLBACKS } from '../lib/phoneImages';
 import { ALL_INDIAN_PHONES_CATALOG } from '../data/indianPhonesCatalog';
+import { useRepairPriceSync, getModelRepairPricing } from '../lib/repairPriceSync';
 
 const BRAND_REPAIR_DETAILS: Record<
   string,
@@ -118,6 +119,7 @@ export default function RepairBrandPage() {
   const { brandSlug } = useParams<{ brandSlug: string }>();
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { configs: repairConfigs } = useRepairPriceSync();
 
   const brandCleanKey = useMemo(() => {
     if (!brandSlug) return 'apple';
@@ -317,23 +319,25 @@ export default function RepairBrandPage() {
                   ? m.model
                   : `${brandDisplayName} ${m.model}`;
 
+                const { basePrice } = getModelRepairPricing(m.brand || brandDisplayName, m.model, 'smartphone', repairConfigs);
+
                 return (
                   <div
                     key={m.model}
                     onClick={() => handleBookRepair(m.model, 'screen')}
-                    className="p-3.5 sm:p-5 rounded-2xl border border-gray-100 bg-white hover:border-[#6A859F] hover:shadow-lg transition-all duration-200 group cursor-pointer flex flex-col items-center justify-between text-center min-h-[175px] sm:min-h-[210px]"
+                    className="p-3.5 sm:p-5 rounded-2xl border border-gray-100 bg-white hover:border-[#6A859F] hover:shadow-lg transition-all duration-200 group cursor-pointer flex flex-col items-center justify-between text-center min-h-[195px] sm:min-h-[230px]"
                   >
                     {/* Centered Clean Device Image Container */}
                     <div className="h-32 sm:h-40 w-full flex items-center justify-center p-2.5 relative">
                       <img
-                        src={getCleanPhoneImage(m.brand || brandDisplayName, m.model, m.image)}
+                        src={getCleanPhoneImage(m.brand || brandDisplayName, m.model, m.image || undefined)}
                         alt={displayName}
                         className="max-h-full max-w-full w-auto h-auto object-contain group-hover:scale-105 transition-transform duration-300 filter drop-shadow-sm mix-blend-multiply"
                         loading="lazy"
                         referrerPolicy="no-referrer"
                         onError={(e) => {
                           const target = e.currentTarget;
-                          const fallback = BRAND_FRONT_FALLBACKS[brandCleanKey] || BRAND_FRONT_FALLBACKS[brandCanonicalKey] || getCleanPhoneImage(brandDisplayName);
+                          const fallback = BRAND_FRONT_FALLBACKS[brandCleanKey] || getCleanPhoneImage(brandDisplayName);
                           if (target.src !== fallback) {
                             target.src = fallback;
                           }
@@ -344,6 +348,13 @@ export default function RepairBrandPage() {
                     <p className="mt-2 text-xs sm:text-sm font-semibold text-gray-800 group-hover:text-[#344257] transition-colors line-clamp-2 leading-snug">
                       {displayName}
                     </p>
+
+                    <div className="mt-2.5 w-full flex items-center justify-between gap-1 pt-2 border-t border-gray-100 text-[11px]">
+                      <span className="text-gray-400 font-bold">From</span>
+                      <span className="font-extrabold text-[#344257] text-xs">
+                        {formatINR(basePrice)}
+                      </span>
+                    </div>
                   </div>
                 );
               })}

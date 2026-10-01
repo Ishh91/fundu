@@ -9,6 +9,7 @@ import type {
   DeliveryAgent,
   MasterPhone,
   HeroPoster,
+  RepairPriceConfig,
 } from '../../types';
 
 export type {
@@ -22,6 +23,7 @@ export type {
   DeliveryAgent,
   MasterPhone,
   HeroPoster,
+  RepairPriceConfig,
 };
 
 export type AdminTab =
@@ -30,6 +32,7 @@ export type AdminTab =
   | 'sells'
   | 'orders'
   | 'repairs'
+  | 'repair_pricing'
   | 'wholesalers'
   | 'agents'
   | 'products'

@@ -92,6 +92,33 @@ export type SellPriceConfig = {
   updated_at: string;
 };
 
+export type RepairProductType = 'smartphone' | 'laptop' | 'tablet' | 'smartwatch' | 'audio' | 'other';
+
+export type RepairServiceItem = {
+  service_id: string;
+  name: string;
+  price: number;
+  original_price?: number | null;
+  warranty?: string;
+  turnaround_time?: string;
+  is_available?: boolean;
+};
+
+export type RepairPriceConfig = {
+  id: string;
+  product_type: RepairProductType;
+  brand: string;
+  model: string;
+  device_series?: string | null;
+  release_year?: number | null;
+  image_url?: string | null;
+  base_repair_price: number;
+  services: RepairServiceItem[];
+  is_active: boolean;
+  created_at?: string;
+  updated_at?: string;
+};
+
 export type RepairBooking = {
   [x: string]: any;
   delivery_person_name: string;

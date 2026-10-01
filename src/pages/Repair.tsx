@@ -36,6 +36,7 @@ import { useAuth } from '../context/AuthContext';
 import { DOORSTEP_AREAS } from '../types';
 import { db, formatINR } from '../lib/db';
 import { fetchPhoneModels, searchMobileApiDev } from '../lib/mobileApi';
+import { useRepairPriceSync, getModelRepairPricing } from '../lib/repairPriceSync';
 
 const BRAND_CARDS = [
   { name: 'Apple', logo: getCleanBrandLogo('Apple') },
@@ -188,12 +189,54 @@ export default function Repair() {
 
   const modelSectionRef = useRef<HTMLDivElement>(null);
 
+  const { configs: repairConfigs } = useRepairPriceSync();
+
+  const [form, setForm] = useState({
+    brand: '',
+    model: '',
+    storage: '',
+    problemDetail: '',
+    pickupAddress: '',
+    pickupArea: DOORSTEP_AREAS[0] || 'Gomti Nagar',
+    pickupDate: new Date().toISOString().split('T')[0],
+    pickupSlot: '10 AM - 12 PM',
+  });
+
   const [selectedIssueIds, setSelectedIssueIds] = useState<string[]>(['screen']);
 
+  // Dynamic model-wise repair pricing computation
+  const modelPricing = useMemo(() => {
+    return getModelRepairPricing(form.brand, form.model, 'smartphone', repairConfigs);
+  }, [form.brand, form.model, repairConfigs]);
+
+  const modelServicePriceMap = useMemo(() => {
+    const map: Record<string, { price: number; warranty?: string; turnaround_time?: string }> = {};
+    modelPricing.services.forEach((s) => {
+      map[s.service_id] = {
+        price: s.price,
+        warranty: s.warranty,
+        turnaround_time: s.turnaround_time,
+      };
+    });
+    return map;
+  }, [modelPricing]);
+
+  const effectiveRepairIssues = useMemo(() => {
+    return REPAIR_ISSUES.map((issue) => {
+      const custom = modelServicePriceMap[issue.id];
+      return {
+        ...issue,
+        cost: custom?.price !== undefined ? custom.price : issue.cost,
+        warranty: custom?.warranty || issue.warranty,
+        time: custom?.turnaround_time || issue.time,
+      };
+    });
+  }, [modelServicePriceMap]);
+
   const selectedIssues = useMemo(() => {
-    const list = REPAIR_ISSUES.filter((i) => selectedIssueIds.includes(i.id));
-    return list.length > 0 ? list : [REPAIR_ISSUES[0]];
-  }, [selectedIssueIds]);
+    const list = effectiveRepairIssues.filter((i) => selectedIssueIds.includes(i.id));
+    return list.length > 0 ? list : [effectiveRepairIssues[0]];
+  }, [effectiveRepairIssues, selectedIssueIds]);
 
   const totalRepairCost = useMemo(() => {
     return selectedIssues.reduce((sum, item) => sum + (item.cost || 0), 0);
@@ -258,17 +301,6 @@ export default function Repair() {
   const [liveSearchResults, setLiveSearchResults] = useState<Array<{ brand: string; model: string }>>([]);
   const [isSearchingLive, setIsSearchingLive] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
-
-  const [form, setForm] = useState({
-    brand: '',
-    model: '',
-    storage: '',
-    problemDetail: '',
-    pickupAddress: '',
-    pickupArea: DOORSTEP_AREAS[0] || 'Gomti Nagar',
-    pickupDate: new Date().toISOString().split('T')[0],
-    pickupSlot: '10 AM - 12 PM',
-  });
 
   const [modelsList, setModelsList] = useState<Array<{ name: string; storages: string[] }>>([]);
   const [modelFilter, setModelFilter] = useState('');
@@ -507,7 +539,7 @@ export default function Repair() {
               <button onClick={() => navigate('/dashboard')} className="btn-primary">
                 Track My Repair
               </button>
-              <button onClick={() => { goToStep(1); setSelectedIssueId('screen'); }} className="btn-outline">
+              <button onClick={() => { goToStep(1); setSelectedIssueIds(['screen']); }} className="btn-outline">
                 Book Another Repair
               </button>
             </div>
@@ -963,9 +995,9 @@ export default function Repair() {
                 </Link>
               </div>
 
-              {/* Repair Issues Grid */}
+              {/* Repair Issues Grid with Dynamic Model Pricing */}
               <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
-                {REPAIR_ISSUES.map((issue) => {
+                {effectiveRepairIssues.map((issue) => {
                   const IconComp = issue.icon;
                   const isSelected = selectedIssueIds.includes(issue.id);
 

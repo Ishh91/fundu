@@ -52,6 +52,7 @@ import AdminSellRequests from './admin/AdminSellRequests';
 import AdminRepairs from './admin/AdminRepairs';
 import AdminCatalog from './admin/AdminCatalog';
 import AdminPricingRules from './admin/AdminPricingRules';
+import AdminRepairPricing from './admin/AdminRepairPricing';
 import AdminOrders from './admin/AdminOrders';
 import AdminProducts from './admin/AdminProducts';
 import AdminDeliveryAgents from './admin/AdminDeliveryAgents';
@@ -61,6 +62,12 @@ import AdminReviews from './admin/AdminReviews';
 import AdminHeroPosters from './admin/AdminHeroPosters';
 import AdminWholesalers from './admin/AdminWholesalers';
 import AdminContactQueries from './admin/AdminContactQueries';
+import {
+  buildConfigFromSeedItem,
+  SEED_REPAIR_MODELS,
+  saveLocalRepairConfigs,
+} from '../lib/repairPriceSync';
+import type { RepairPriceConfig } from '../types';
 
 export default function Admin() {
   const { user, profile, loading, signIn, signOut } = useAuth();
@@ -101,6 +108,9 @@ export default function Admin() {
   const [masterPhones, setMasterPhones] = useState<MasterPhone[]>(ALL_INDIAN_PHONES_CATALOG);
   const [sells, setSells] = useState<SellRequest[]>([]);
   const [sellPriceConfigs, setSellPriceConfigs] = useState<SellPriceConfig[]>([]);
+  const [repairPriceConfigs, setRepairPriceConfigs] = useState<RepairPriceConfig[]>([]);
+  const [selectedRepairPricingId, setSelectedRepairPricingId] = useState<string | null>(null);
+  const [generatingRepairSeed, setGeneratingRepairSeed] = useState(false);
   const [repairs, setRepairs] = useState<RepairBooking[]>([]);
   const [orders, setOrders] = useState<Order[]>([]);
   const [parts, setParts] = useState<SparePart[]>([]);
@@ -135,12 +145,17 @@ export default function Admin() {
   // Sync tab with URL parameter
   useEffect(() => {
     if (subtab) {
+      if (subtab === 'repair-pricing' || subtab === 'repair_pricing') {
+        setTab('repair_pricing');
+        return;
+      }
       const validTabs: AdminTab[] = [
         'overview',
         'catalog',
         'sells',
         'orders',
         'repairs',
+        'repair_pricing',
         'wholesalers',
         'agents',
         'products',
@@ -157,7 +172,11 @@ export default function Admin() {
     }
     const queryTab = searchParams.get('tab');
     if (queryTab) {
-      setTab(queryTab as AdminTab);
+      if (queryTab === 'repair-pricing' || queryTab === 'repair_pricing') {
+        setTab('repair_pricing');
+      } else {
+        setTab(queryTab as AdminTab);
+      }
     }
   }, [subtab, searchParams]);
 
@@ -293,7 +312,7 @@ export default function Admin() {
     setFetchError(null);
     try {
       // Fetch all tables independently so one failure doesn't block others
-      const [productsRes, sellsRes, pricingRes, repairsRes, ordersRes, partsRes, profilesRes, reviewsRes, agentsRes, masterPhonesRes] =
+      const [productsRes, sellsRes, pricingRes, repairsRes, ordersRes, partsRes, profilesRes, reviewsRes, agentsRes, masterPhonesRes, repairPricingRes] =
         await Promise.all([
           db.from('products').select('*').limit(250).sort({ field: 'created_at', ascending: false }),
           db.from('sell_requests').select('*').limit(250).sort({ field: 'created_at', ascending: false }),
@@ -305,6 +324,7 @@ export default function Admin() {
           db.from('reviews').select('*').limit(250).sort({ field: 'created_at', ascending: false }),
           db.from('delivery_agents').select('*').limit(100).sort({ field: 'created_at', ascending: false }),
           db.from('master_phones').select('*').limit(150).sort({ field: 'release_year', ascending: false }),
+          db.from('repair_price_configs').select('*').limit(500).sort({ field: 'created_at', ascending: false }),
         ]);
 
       // Log any per-table errors but keep loading the rest
@@ -317,6 +337,11 @@ export default function Admin() {
 
       if (pricingRes.error) errors.push(`pricing: ${pricingRes.error.message}`);
       else if (pricingRes.data) setSellPriceConfigs(pricingRes.data as SellPriceConfig[]);
+
+      if (repairPricingRes?.data) {
+        setRepairPriceConfigs(repairPricingRes.data as RepairPriceConfig[]);
+        saveLocalRepairConfigs(repairPricingRes.data as RepairPriceConfig[]);
+      }
 
       if (repairsRes.error) errors.push(`repairs: ${repairsRes.error.message}`);
       else if (repairsRes.data) setRepairs(repairsRes.data as RepairBooking[]);
@@ -698,6 +723,84 @@ export default function Admin() {
       return;
     }
     setSellPriceConfigs((prev) => prev.filter((c) => c.id !== id));
+  };
+
+  // Repair Price Catalog Handlers
+  const handleSaveRepairConfig = async (configData: Partial<RepairPriceConfig>) => {
+    if (configData.id) {
+      const { data, error } = await db
+        .from('repair_price_configs')
+        .update(configData)
+        .eq('id', configData.id)
+        .select('*')
+        .single();
+      if (error) throw error;
+      const updated = data as RepairPriceConfig;
+      setRepairPriceConfigs((prev) => {
+        const next = prev.map((c) => (c.id === configData.id ? updated : c));
+        saveLocalRepairConfigs(next);
+        return next;
+      });
+    } else {
+      const { data, error } = await db
+        .from('repair_price_configs')
+        .insert(configData)
+        .select('*')
+        .single();
+      if (error) throw error;
+      const created = data as RepairPriceConfig;
+      setRepairPriceConfigs((prev) => {
+        const next = [created, ...prev];
+        saveLocalRepairConfigs(next);
+        return next;
+      });
+      setSelectedRepairPricingId(created.id);
+    }
+  };
+
+  const handleToggleRepairConfigActive = async (id: string, current: boolean) => {
+    await db.from('repair_price_configs').update({ is_active: !current }).eq('id', id);
+    setRepairPriceConfigs((prev) => {
+      const next = prev.map((c) => (c.id === id ? { ...c, is_active: !current } : c));
+      saveLocalRepairConfigs(next);
+      return next;
+    });
+  };
+
+  const handleDeleteRepairConfig = async (id: string) => {
+    const { error } = await db.from('repair_price_configs').delete().eq('id', id);
+    if (error) {
+      alert(error.message);
+      return;
+    }
+    setRepairPriceConfigs((prev) => {
+      const next = prev.filter((c) => c.id !== id);
+      saveLocalRepairConfigs(next);
+      return next;
+    });
+    if (selectedRepairPricingId === id) setSelectedRepairPricingId(null);
+  };
+
+  const handleAutoGenerateRepairSeed = async () => {
+    setGeneratingRepairSeed(true);
+    try {
+      let insertedCount = 0;
+      for (const item of SEED_REPAIR_MODELS) {
+        const payload = buildConfigFromSeedItem(item);
+        await db.from('repair_price_configs').upsert(payload);
+        insertedCount++;
+      }
+      const { data } = await db.from('repair_price_configs').select('*').limit(500);
+      if (data) {
+        setRepairPriceConfigs(data as RepairPriceConfig[]);
+        saveLocalRepairConfigs(data as RepairPriceConfig[]);
+      }
+      alert(`🎉 Successfully populated ${insertedCount} bestselling device repair models into the catalog!`);
+    } catch (err: any) {
+      alert(err?.message || 'Failed to auto-generate repair catalog');
+    } finally {
+      setGeneratingRepairSeed(false);
+    }
   };
 
   // Product actions
@@ -1426,6 +1529,19 @@ export default function Admin() {
               onDeleteConfig={deletePricingRule}
               onAutoGenerateRules={handleAutoGenerateIndianPricingRules}
               generatingRules={generatingPricingRules}
+            />
+          )}
+
+          {tab === 'repair_pricing' && (
+            <AdminRepairPricing
+              configs={repairPriceConfigs}
+              selectedConfigId={selectedRepairPricingId}
+              onSelectConfig={(id) => setSelectedRepairPricingId(id)}
+              onSaveConfig={handleSaveRepairConfig}
+              onDeleteConfig={handleDeleteRepairConfig}
+              onToggleActive={handleToggleRepairConfigActive}
+              onAutoGenerateSeed={handleAutoGenerateRepairSeed}
+              generating={generatingRepairSeed}
             />
           )}
 

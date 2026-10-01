@@ -100,9 +100,17 @@ export default function AdminSidebar({
         },
         {
           id: 'pricing' as AdminTab,
-          label: 'Pricing Engine',
+          label: 'Sell Pricing Engine',
           icon: TrendingUp,
           path: '/admin/pricing',
+        },
+        {
+          id: 'repair_pricing' as AdminTab,
+          label: 'Repair Price Catalog',
+          icon: Wrench,
+          badge: 'Model Rates',
+          badgeColor: 'bg-emerald-600 text-white',
+          path: '/admin/repair-pricing',
         },
         { id: 'parts' as AdminTab, label: 'Spare Parts Stock', icon: Wrench, path: '/admin?tab=parts' },
       ],
