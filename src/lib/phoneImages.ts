@@ -29,6 +29,11 @@ export const BRAND_OFFICIAL_LOGOS: Record<string, string> = {
 // Model-Specific Official Studio Renders
 export const MODEL_EXACT_RENDERS: Array<{ keyword: string; url: string }> = [
   // Apple iPhone
+  { keyword: 'iphone 17 pro max', url: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-16-pro-max.jpg' },
+  { keyword: 'iphone 17 pro', url: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-16-pro.jpg' },
+  { keyword: 'iphone 17 air', url: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-16.jpg' },
+  { keyword: 'iphone 17 slim', url: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-16.jpg' },
+  { keyword: 'iphone 17', url: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-16.jpg' },
   { keyword: 'iphone 16 pro max', url: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-16-pro-max.jpg' },
   { keyword: 'iphone 16 pro', url: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-16-pro.jpg' },
   { keyword: 'iphone 16', url: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-16.jpg' },

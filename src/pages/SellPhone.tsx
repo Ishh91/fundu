@@ -70,6 +70,10 @@ const BRAND_TILES = [
 
 // Master Model Catalog Database (Easily Updatable JSON/Array)
 export const MASTER_MODEL_CATALOG = [
+  { brand: 'Apple', series: 'iPhone 17 Series', model: 'Apple iPhone 17 Pro Max', storage: '256 GB', price: 118000, image: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-16-pro-max.jpg' },
+  { brand: 'Apple', series: 'iPhone 17 Series', model: 'Apple iPhone 17 Pro', storage: '256 GB', price: 104000, image: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-16-pro.jpg' },
+  { brand: 'Apple', series: 'iPhone 17 Series', model: 'Apple iPhone 17 Air', storage: '128 GB', price: 82000, image: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-16.jpg' },
+  { brand: 'Apple', series: 'iPhone 17 Series', model: 'Apple iPhone 17', storage: '128 GB', price: 72000, image: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-16.jpg' },
   { brand: 'Apple', series: 'iPhone 16 Series', model: 'Apple iPhone 16 Pro Max', storage: '256 GB', price: 98000, image: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-16-pro-max.jpg' },
   { brand: 'Apple', series: 'iPhone 16 Series', model: 'Apple iPhone 16 Pro', storage: '128 GB', price: 88000, image: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-16-pro.jpg' },
   { brand: 'Apple', series: 'iPhone 16 Series', model: 'Apple iPhone 16 Plus', storage: '128 GB', price: 68000, image: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-16.jpg' },

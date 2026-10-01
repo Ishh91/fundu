@@ -183,7 +183,7 @@ export default function PhoneLookup({
             onFocus={() => {
               if (suggestions.length > 0) setShowSuggestions(true);
             }}
-            placeholder="Type any model (e.g., iPhone 16 Pro, Galaxy S24, OnePlus 12)..."
+            placeholder="Type any model (e.g., iPhone 17 Pro, Galaxy S25, OnePlus 13)..."
             className="input pl-10 pr-10"
           />
           {searchingLive && (

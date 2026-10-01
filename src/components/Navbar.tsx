@@ -625,7 +625,7 @@ export default function Navbar() {
           </p>
           <div className="mt-2 grid grid-cols-2 sm:grid-cols-4 gap-2">
             {[
-              { name: 'Apple', sub: 'iPhone 16 down to 1' },
+              { name: 'Apple', sub: 'iPhone 17 down to 1' },
               { name: 'Samsung', sub: 'Galaxy S24, S23, Fold' },
               { name: 'OnePlus', sub: '12, 12R, Nord series' },
               { name: 'Xiaomi', sub: 'Redmi Note 13, 12' },
@@ -700,7 +700,7 @@ export default function Navbar() {
                       setSearch(e.target.value);
                       setSearchOpen(true);
                     }}
-                    placeholder="Search brand or model (iPhone 16, Galaxy S24, OnePlus 12...)"
+                    placeholder="Search brand or model (iPhone 17, Galaxy S25, OnePlus 13...)"
                     className="w-full bg-transparent text-xs sm:text-sm font-medium text-[#344257] outline-none placeholder:text-[#8A9AAF]"
                   />
                   {isSearchingApi && (

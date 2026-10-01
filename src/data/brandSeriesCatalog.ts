@@ -29,6 +29,21 @@ export type SeriesGroup = {
 export const BRAND_SERIES_DEFINITIONS: Record<string, BrandSeriesDefinition[]> = {
   apple: [
     {
+      id: 'iphone-17',
+      slug: 'iphone-17-series',
+      name: 'iPhone 17 Series',
+      brand: 'Apple',
+      image: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-16-pro-max.jpg',
+      description: '17 Pro Max, 17 Pro, 17 Air / Slim, 17',
+      pattern: /\biphone\s*17\b/i,
+      defaultModels: [
+        { brand: 'Apple', series: 'iPhone 17 Series', model: 'Apple iPhone 17 Pro Max', storage: '256 GB', price: 118000, image: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-16-pro-max.jpg' },
+        { brand: 'Apple', series: 'iPhone 17 Series', model: 'Apple iPhone 17 Pro', storage: '256 GB', price: 104000, image: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-16-pro.jpg' },
+        { brand: 'Apple', series: 'iPhone 17 Series', model: 'Apple iPhone 17 Air', storage: '128 GB', price: 82000, image: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-16.jpg' },
+        { brand: 'Apple', series: 'iPhone 17 Series', model: 'Apple iPhone 17', storage: '128 GB', price: 72000, image: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-16.jpg' },
+      ],
+    },
+    {
       id: 'iphone-16',
       slug: 'iphone-16-series',
       name: 'iPhone 16 Series',

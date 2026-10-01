@@ -6,6 +6,13 @@ dotenv.config({ path: path.resolve(__dirname, '..', '.env') });
 
 const SEED_REPAIR_MODELS = [
   // --- APPLE iPHONES ---
+  { product_type: 'smartphone', brand: 'Apple', model: 'iPhone 17 Pro Max', device_series: 'iPhone 17 Series', screenPrice: 24999, batteryPrice: 4499, chargingPrice: 1799, cameraPrice: 6999, backglassPrice: 6499, motherboardPrice: 1299 },
+  { product_type: 'smartphone', brand: 'Apple', model: 'iPhone 17 Pro', device_series: 'iPhone 17 Series', screenPrice: 22999, batteryPrice: 4299, chargingPrice: 1799, cameraPrice: 6499, backglassPrice: 5999, motherboardPrice: 1299 },
+  { product_type: 'smartphone', brand: 'Apple', model: 'iPhone 17 Air', device_series: 'iPhone 17 Series', screenPrice: 16999, batteryPrice: 3899, chargingPrice: 1599, cameraPrice: 5499, backglassPrice: 4999, motherboardPrice: 999 },
+  { product_type: 'smartphone', brand: 'Apple', model: 'iPhone 17', device_series: 'iPhone 17 Series', screenPrice: 13999, batteryPrice: 3499, chargingPrice: 1399, cameraPrice: 4499, backglassPrice: 3999, motherboardPrice: 899 },
+  { product_type: 'smartphone', brand: 'Apple', model: 'iPhone 16 Pro Max', device_series: 'iPhone 16 Series', screenPrice: 21999, batteryPrice: 4199, chargingPrice: 1699, cameraPrice: 6499, backglassPrice: 5999, motherboardPrice: 1199 },
+  { product_type: 'smartphone', brand: 'Apple', model: 'iPhone 16 Pro', device_series: 'iPhone 16 Series', screenPrice: 19999, batteryPrice: 3999, chargingPrice: 1699, cameraPrice: 5999, backglassPrice: 5499, motherboardPrice: 1199 },
+  { product_type: 'smartphone', brand: 'Apple', model: 'iPhone 16', device_series: 'iPhone 16 Series', screenPrice: 10999, batteryPrice: 3299, chargingPrice: 1299, cameraPrice: 3999, backglassPrice: 3499, motherboardPrice: 799 },
   { product_type: 'smartphone', brand: 'Apple', model: 'iPhone 15 Pro Max', device_series: 'iPhone 15 Series', screenPrice: 19999, batteryPrice: 3899, chargingPrice: 1499, cameraPrice: 5999, backglassPrice: 5499, motherboardPrice: 999 },
   { product_type: 'smartphone', brand: 'Apple', model: 'iPhone 15 Pro', device_series: 'iPhone 15 Series', screenPrice: 17999, batteryPrice: 3699, chargingPrice: 1499, cameraPrice: 5499, backglassPrice: 4999, motherboardPrice: 999 },
   { product_type: 'smartphone', brand: 'Apple', model: 'iPhone 15', device_series: 'iPhone 15 Series', screenPrice: 8999, batteryPrice: 2999, chargingPrice: 1199, cameraPrice: 3499, backglassPrice: 2999, motherboardPrice: 699 },

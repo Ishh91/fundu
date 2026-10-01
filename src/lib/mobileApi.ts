@@ -666,6 +666,7 @@ export function detectSeries(brand: string, modelName: string): string {
   const m = modelName.toLowerCase();
 
   if (b === 'apple' || b === 'iphone') {
+    if (/iphone 17/i.test(modelName)) return 'iPhone 17 Series';
     if (/iphone 16/i.test(modelName)) return 'iPhone 16 Series';
     if (/iphone 15/i.test(modelName)) return 'iPhone 15 Series';
     if (/iphone 14/i.test(modelName)) return 'iPhone 14 Series';
