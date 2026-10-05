@@ -29,6 +29,7 @@ import {
   Award,
 } from 'lucide-react';
 import { computeDetailedCashifyValuation, fetchSellPriceConfig, fetchPhoneModels, searchMobileApiDev, type SellPriceConfig } from '../lib/mobileApi';
+import { getFunduPhoneQuote, type FunduQuoteResponse } from '../lib/quoteEngine';
 import { db, formatINR } from '../lib/db';
 import { useAuth } from '../context/AuthContext';
 import { ALL_INDIAN_PHONES_CATALOG } from '../data/indianPhonesCatalog';
@@ -548,18 +549,16 @@ export const MASTER_MODEL_CATALOG = [
 const STORAGE_OPTIONS = ['64 GB', '128 GB', '256 GB', '512 GB', '1 TB'];
 
 const ACCESSORIES_LIST = [
-  { id: 'Original Box', label: 'Original Box with IMEI', bonus: '+ ₹400' },
-  { id: 'Charger', label: 'Original Brand Charger', bonus: '+ ₹400' },
-  { id: 'Bill', label: 'Valid Purchase Bill / Invoice', bonus: '+ ₹300' },
+  { id: 'Original Box', label: 'Original Box with IMEI', bonus: '+ ₹300' },
+  { id: 'Original Charger', label: 'Original Brand Charger', bonus: '+ ₹300' },
+  { id: 'Valid Bill', label: 'Valid Purchase Bill / Invoice', bonus: '+ ₹200' },
 ];
 
 const HARDWARE_DEFECTS = [
-  { id: 'cameras', label: 'Front / Rear Camera Issue (Blur or Fault)' },
-  { id: 'battery', label: 'Battery Health Warning / Fast Drain' },
-  { id: 'speaker_mic', label: 'Speaker / Microphone Sound Fault' },
-  { id: 'charging_port', label: 'Charging Port Loose / Connection Issue' },
-  { id: 'biometrics', label: 'Fingerprint / Face ID Sensor Fault' },
-  { id: 'network', label: 'Wi-Fi / Bluetooth Connectivity Fault' },
+  { id: 'camera', label: 'Camera Fault (Front/Back Lens or Autofocus Issue)' },
+  { id: 'charging_port', label: 'Charging Port / Connection Fault' },
+  { id: 'speaker_mic', label: 'Speaker / Earpiece / Microphone Fault' },
+  { id: 'biometrics', label: 'Biometrics Fault (Face ID or Fingerprint)' },
 ];
 
 const FAQS_LIST = [
@@ -622,9 +621,14 @@ export default function SellPhone() {
     model: '',
     ram: '',
     storage: '',
-    condition: 'Excellent',
-    screenCondition: 'flawless' as 'flawless' | 'scratches' | 'cracked',
-    bodyCondition: 'flawless' as 'flawless' | 'scratches' | 'dents_bent',
+    powersOn: true,
+    activationLockCleared: true,
+    ownershipVerified: true,
+    liquidDamage: false,
+    cosmeticCondition: 'good' as 'flawless' | 'good' | 'fair',
+    screenCondition: 'flawless' as 'flawless' | 'scratched' | 'cracked' | 'touch_fault' | 'display_lines',
+    bodyCondition: 'flawless' as 'flawless' | 'minor_scratches' | 'dents_bent',
+    batteryHealth: 'healthy' as 'healthy' | 'degraded_service' | 'unknown',
     canMakeCalls: true,
     underWarranty: false,
     defects: [] as string[],
@@ -644,7 +648,7 @@ export default function SellPhone() {
       speaker_mic: true,
       charging_port: true,
     },
-    accessories: ['Original Box', 'Charger'] as string[],
+    accessories: ['Original Box', 'Original Charger'] as string[],
     payoutMethod: 'UPI' as 'UPI' | 'Cash' | 'Bank',
     payoutDetails: '',
     pickupAddress: '',
@@ -653,6 +657,9 @@ export default function SellPhone() {
     pickupSlot: '10 AM - 12 PM',
     notes: '',
   });
+
+  const [funduQuote, setFunduQuote] = useState<FunduQuoteResponse | null>(null);
+  const [loadingQuote, setLoadingQuote] = useState(false);
 
   const [modelsList, setModelsList] = useState<Array<{ name: string; storages: string[] }>>([]);
   const [loadingModels, setLoadingModels] = useState(false);
@@ -864,24 +871,62 @@ export default function SellPhone() {
     };
   }, [form.brand, form.model, form.storage]);
 
-  const cashifyValuation = useMemo(() => {
-    return computeDetailedCashifyValuation(
-      pricingConfig,
-      {
-        screenCondition: form.screenCondition,
-        bodyCondition: form.bodyCondition,
-        canMakeCalls: form.canMakeCalls,
-        underWarranty: form.underWarranty,
-        defects: form.defects,
-        accessories: form.accessories,
-      },
-      form.brand,
-      form.model,
-      form.storage
-    );
-  }, [pricingConfig, form.brand, form.model, form.storage, form.screenCondition, form.bodyCondition, form.canMakeCalls, form.underWarranty, form.defects, form.accessories]);
+  useEffect(() => {
+    let active = true;
 
-  const estimate = cashifyValuation.finalEstimate;
+    if (!form.brand || !form.model) {
+      setFunduQuote(null);
+      return;
+    }
+
+    setLoadingQuote(true);
+    getFunduPhoneQuote({
+      brand: form.brand,
+      model: form.model,
+      storage: form.storage || '128 GB',
+      powers_on: form.powersOn,
+      activation_lock_cleared: form.activationLockCleared,
+      ownership_verified: form.ownershipVerified,
+      liquid_damage: form.liquidDamage,
+      cosmetic_condition: form.cosmeticCondition,
+      screen_condition: form.screenCondition,
+      body_condition: form.bodyCondition,
+      battery_health: form.batteryHealth,
+      defects: form.defects,
+      accessories: form.accessories,
+      under_warranty: form.underWarranty,
+    })
+      .then((quote) => {
+        if (active) setFunduQuote(quote);
+      })
+      .catch(() => {
+        if (active) setFunduQuote(null);
+      })
+      .finally(() => {
+        if (active) setLoadingQuote(false);
+      });
+
+    return () => {
+      active = false;
+    };
+  }, [
+    form.brand,
+    form.model,
+    form.storage,
+    form.powersOn,
+    form.activationLockCleared,
+    form.ownershipVerified,
+    form.liquidDamage,
+    form.cosmeticCondition,
+    form.screenCondition,
+    form.bodyCondition,
+    form.batteryHealth,
+    form.defects,
+    form.accessories,
+    form.underWarranty,
+  ]);
+
+  const estimate = funduQuote?.offerAmount ?? 0;
 
   // Filtered Master Models for Search Autocomplete (Combines Master Catalog, Indian Phones Catalog, & MobileAPI Live Fallback)
   const searchResults = useMemo(() => {
@@ -1025,7 +1070,7 @@ export default function SellPhone() {
         device_image: getCleanPhoneImage(form.brand, form.model),
         ram: form.ram,
         storage: form.storage,
-        condition: form.condition,
+        condition: form.cosmeticCondition,
         screen_condition: form.screenCondition,
         body_condition: form.bodyCondition,
         can_make_calls: form.canMakeCalls,
@@ -1034,10 +1079,20 @@ export default function SellPhone() {
         imei: form.imei || null,
         imei_photo: form.imeiPhoto || null,
         device_photos: form.devicePhotos,
-        diagnostics: form.diagnostics,
+        diagnostics: {
+          ...form.diagnostics,
+          powers_on: form.powersOn,
+          activation_lock_cleared: form.activationLockCleared,
+          ownership_verified: form.ownershipVerified,
+          liquid_damage: form.liquidDamage,
+          battery_health: form.batteryHealth,
+        },
         accessories: form.accessories,
         estimated_price: estimate,
         valuation_price: estimate,
+        quote_id: funduQuote?.quoteId || null,
+        policy_version: funduQuote?.policyVersion || null,
+        condition_summary: funduQuote?.conditionSummary || [],
         cashify_breakdown: cashifyValuation,
         payout_method: form.payoutMethod,
         payout_details: form.payoutDetails,
@@ -1045,8 +1100,8 @@ export default function SellPhone() {
         pickup_area: form.pickupArea,
         pickup_date: form.pickupDate,
         pickup_slot: form.pickupSlot,
-        notes: form.notes,
-        status: 'pending',
+        notes: form.notes || (funduQuote?.status === 'requires_manual_review' ? `Manual Inspection: ${funduQuote.reviewReason || 'Manual review required'}` : ''),
+        status: funduQuote?.status === 'requires_manual_review' ? 'manual_review' : 'pending',
       };
 
       const { data, error: insertErr } = await db.from('sell_requests').insert([payload]).select().single();
@@ -1808,30 +1863,111 @@ export default function SellPhone() {
                 </div>
               </div>
 
-              {/* 1. Core Functionality & Warranty */}
+              {/* 1. Critical Device Status & Ownership */}
               <div className="space-y-3">
-                <label className="label text-sm font-extrabold text-gray-900">1. Core Functionality & Warranty Check</label>
+                <div className="flex items-center justify-between">
+                  <label className="label text-sm font-extrabold text-gray-900">
+                    1. Device Power, Security & Ownership
+                  </label>
+                  <span className="text-[11px] text-[#6A859F] font-bold">Mandatory Verification</span>
+                </div>
+
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  <div className="p-4 rounded-2xl border border-gray-200 bg-gray-50/50 flex items-center justify-between">
-                    <div>
-                      <p className="font-bold text-xs text-gray-900">Can you make/receive calls?</p>
-                      <p className="text-[11px] text-gray-500">SIM slot & network working</p>
+                  {/* Powers On */}
+                  <div className={`p-4 rounded-2xl border transition-all ${
+                    form.powersOn ? 'bg-white border-gray-200' : 'bg-amber-50/70 border-amber-300'
+                  }`}>
+                    <div className="flex items-start justify-between gap-2">
+                      <div>
+                        <p className="font-bold text-xs text-gray-900">Does phone turn on & stay on?</p>
+                        <p className="text-[11px] text-gray-500 mt-0.5">Powers on without being plugged in</p>
+                      </div>
+                      <div className="flex gap-1 shrink-0">
+                        <button
+                          type="button"
+                          onClick={() => setForm((f) => ({ ...f, powersOn: true }))}
+                          className={`px-3 py-1.5 rounded-xl text-xs font-bold transition ${
+                            form.powersOn ? 'bg-[#344257] text-white shadow-xs' : 'bg-white text-gray-600 border border-gray-200'
+                          }`}
+                        >
+                          Yes
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setForm((f) => ({ ...f, powersOn: false }))}
+                          className={`px-3 py-1.5 rounded-xl text-xs font-bold transition ${
+                            !form.powersOn ? 'bg-rose-600 text-white shadow-xs' : 'bg-white text-gray-600 border border-gray-200'
+                          }`}
+                        >
+                          No
+                        </button>
+                      </div>
                     </div>
-                    <div className="flex gap-1">
+                    {!form.powersOn && (
+                      <p className="mt-2 text-[10px] text-rose-700 font-bold bg-rose-100/70 px-2 py-1 rounded-lg">
+                        ⚠️ Non-powering devices are routed to manual doorstep physical inspection.
+                      </p>
+                    )}
+                  </div>
+
+                  {/* Activation Locks Cleared */}
+                  <div className={`p-4 rounded-2xl border transition-all ${
+                    form.activationLockCleared ? 'bg-white border-gray-200' : 'bg-amber-50/70 border-amber-300'
+                  }`}>
+                    <div className="flex items-start justify-between gap-2">
+                      <div>
+                        <p className="font-bold text-xs text-gray-900">Activation locks removed?</p>
+                        <p className="text-[11px] text-gray-500 mt-0.5">iCloud, Google, Mi Account logged out</p>
+                      </div>
+                      <div className="flex gap-1 shrink-0">
+                        <button
+                          type="button"
+                          onClick={() => setForm((f) => ({ ...f, activationLockCleared: true }))}
+                          className={`px-3 py-1.5 rounded-xl text-xs font-bold transition ${
+                            form.activationLockCleared ? 'bg-[#344257] text-white shadow-xs' : 'bg-white text-gray-600 border border-gray-200'
+                          }`}
+                        >
+                          Yes
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setForm((f) => ({ ...f, activationLockCleared: false }))}
+                          className={`px-3 py-1.5 rounded-xl text-xs font-bold transition ${
+                            !form.activationLockCleared ? 'bg-rose-600 text-white shadow-xs' : 'bg-white text-gray-600 border border-gray-200'
+                          }`}
+                        >
+                          No
+                        </button>
+                      </div>
+                    </div>
+                    {!form.activationLockCleared && (
+                      <p className="mt-2 text-[10px] text-rose-700 font-bold bg-rose-100/70 px-2 py-1 rounded-lg">
+                        ⚠️ Accounts must be signed out before or during technician pickup.
+                      </p>
+                    )}
+                  </div>
+
+                  {/* Proof of Ownership */}
+                  <div className="p-4 rounded-2xl border border-gray-200 bg-white flex items-center justify-between">
+                    <div>
+                      <p className="font-bold text-xs text-gray-900">Can provide proof of ownership?</p>
+                      <p className="text-[11px] text-gray-500 mt-0.5">Govt Photo ID (Aadhaar / Driving License)</p>
+                    </div>
+                    <div className="flex gap-1 shrink-0">
                       <button
                         type="button"
-                        onClick={() => setForm((f) => ({ ...f, canMakeCalls: true }))}
+                        onClick={() => setForm((f) => ({ ...f, ownershipVerified: true }))}
                         className={`px-3 py-1.5 rounded-xl text-xs font-bold transition ${
-                          form.canMakeCalls ? 'bg-[#344257] text-white shadow-xs' : 'bg-white text-gray-600 border border-gray-200'
+                          form.ownershipVerified ? 'bg-[#344257] text-white shadow-xs' : 'bg-white text-gray-600 border border-gray-200'
                         }`}
                       >
                         Yes
                       </button>
                       <button
                         type="button"
-                        onClick={() => setForm((f) => ({ ...f, canMakeCalls: false }))}
+                        onClick={() => setForm((f) => ({ ...f, ownershipVerified: false }))}
                         className={`px-3 py-1.5 rounded-xl text-xs font-bold transition ${
-                          !form.canMakeCalls ? 'bg-rose-600 text-white shadow-xs' : 'bg-white text-gray-600 border border-gray-200'
+                          !form.ownershipVerified ? 'bg-rose-600 text-white shadow-xs' : 'bg-white text-gray-600 border border-gray-200'
                         }`}
                       >
                         No
@@ -1839,43 +1975,60 @@ export default function SellPhone() {
                     </div>
                   </div>
 
-                  <div className="p-4 rounded-2xl border border-gray-200 bg-gray-50/50 flex items-center justify-between">
-                    <div>
-                      <p className="font-bold text-xs text-gray-900">Is phone under brand warranty?</p>
-                      <p className="text-[11px] text-gray-500">Invoice required for bonus</p>
+                  {/* Liquid Damage */}
+                  <div className={`p-4 rounded-2xl border transition-all ${
+                    !form.liquidDamage ? 'bg-white border-gray-200' : 'bg-amber-50/70 border-amber-300'
+                  }`}>
+                    <div className="flex items-start justify-between gap-2">
+                      <div>
+                        <p className="font-bold text-xs text-gray-900">Any liquid or water exposure?</p>
+                        <p className="text-[11px] text-gray-500 mt-0.5">Dropped in water, steam, or moisture</p>
+                      </div>
+                      <div className="flex gap-1 shrink-0">
+                        <button
+                          type="button"
+                          onClick={() => setForm((f) => ({ ...f, liquidDamage: false }))}
+                          className={`px-3 py-1.5 rounded-xl text-xs font-bold transition ${
+                            !form.liquidDamage ? 'bg-[#344257] text-white shadow-xs' : 'bg-white text-gray-600 border border-gray-200'
+                          }`}
+                        >
+                          No
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setForm((f) => ({ ...f, liquidDamage: true }))}
+                          className={`px-3 py-1.5 rounded-xl text-xs font-bold transition ${
+                            form.liquidDamage ? 'bg-rose-600 text-white shadow-xs' : 'bg-white text-gray-600 border border-gray-200'
+                          }`}
+                        >
+                          Yes
+                        </button>
+                      </div>
                     </div>
-                    <div className="flex gap-1">
-                      <button
-                        type="button"
-                        onClick={() => setForm((f) => ({ ...f, underWarranty: true }))}
-                        className={`px-3 py-1.5 rounded-xl text-xs font-bold transition ${
-                          form.underWarranty ? 'bg-[#344257] text-white shadow-xs' : 'bg-white text-gray-600 border border-gray-200'
-                        }`}
-                      >
-                        Yes
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => setForm((f) => ({ ...f, underWarranty: false }))}
-                        className={`px-3 py-1.5 rounded-xl text-xs font-bold transition ${
-                          !form.underWarranty ? 'bg-gray-700 text-white shadow-xs' : 'bg-white text-gray-600 border border-gray-200'
-                        }`}
-                      >
-                        No
-                      </button>
-                    </div>
+                    {form.liquidDamage && (
+                      <p className="mt-2 text-[10px] text-amber-800 font-bold bg-amber-100/70 px-2 py-1 rounded-lg">
+                        ⚠️ Liquid-damaged phones require physical inspection for safety.
+                      </p>
+                    )}
                   </div>
                 </div>
               </div>
 
-              {/* 2. Screen Condition */}
+              {/* 2. Screen & Touch Condition */}
               <div className="space-y-3">
-                <label className="label text-sm font-extrabold text-gray-900">2. Screen / Display Glass Condition</label>
+                <div className="flex items-center justify-between">
+                  <label className="label text-sm font-extrabold text-gray-900">
+                    2. Screen / Display & Touch Condition
+                  </label>
+                  <span className="text-[11px] text-gray-500">Select exact state</span>
+                </div>
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                   {[
-                    { id: 'flawless', label: '🌟 Flawless Display', desc: 'Zero scratches, scuffs or lines' },
-                    { id: 'scratches', label: '🔍 Minor Scratches', desc: 'Light micro-scratches on glass' },
-                    { id: 'cracked', label: '⚡ Cracked Screen', desc: 'Glass cracked / display lines' },
+                    { id: 'flawless', label: '🌟 Flawless Screen', desc: 'No scratches, scuffs, or glass marks' },
+                    { id: 'scratched', label: '🔍 Light Scratches', desc: 'Minor hairline scratches on glass' },
+                    { id: 'cracked', label: '⚡ Cracked Glass', desc: 'Cracked or shattered outer screen glass' },
+                    { id: 'touch_fault', label: '👆 Touch Issues / Dead Zones', desc: 'Touch unresponsive in parts' },
+                    { id: 'display_lines', label: '🌈 Display Lines / Bleed', desc: 'Black spots, green/white lines' },
                   ].map((sc) => (
                     <button
                       key={sc.id}
@@ -1894,19 +2047,45 @@ export default function SellPhone() {
                 </div>
               </div>
 
-              {/* 3. Body Condition */}
+              {/* 3. Cosmetic Body Condition */}
               <div className="space-y-3">
-                <label className="label text-sm font-extrabold text-gray-900">3. Body / Back Panel Condition</label>
+                <div className="flex items-center justify-between">
+                  <label className="label text-sm font-extrabold text-gray-900">
+                    3. Body / Frame Cosmetic Condition
+                  </label>
+                  <span className="text-[11px] text-gray-500">Back panel & sides</span>
+                </div>
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                   {[
-                    { id: 'flawless', label: '🌟 Flawless Body', desc: 'Like new, zero scratches' },
-                    { id: 'scratches', label: '🔨 Minor Scratches', desc: 'Normal wear scuffs on body' },
-                    { id: 'dents_bent', label: '💥 Heavy Dents / Bent', desc: 'Heavy scuffs, dents, or cracked back' },
+                    {
+                      id: 'flawless',
+                      cosmetic: 'flawless' as const,
+                      label: '🌟 Flawless / Like New',
+                      desc: 'Zero marks, zero dents, looks brand new',
+                    },
+                    {
+                      id: 'minor_scratches',
+                      cosmetic: 'good' as const,
+                      label: '🔨 Normal Daily Wear',
+                      desc: 'Minor hairline scratches or pocket scuffs',
+                    },
+                    {
+                      id: 'dents_bent',
+                      cosmetic: 'fair' as const,
+                      label: '💥 Heavy Dents / Bent / Back Crack',
+                      desc: 'Noticeable dents, back cracked or frame bent',
+                    },
                   ].map((bc) => (
                     <button
                       key={bc.id}
                       type="button"
-                      onClick={() => setForm((f) => ({ ...f, bodyCondition: bc.id as any }))}
+                      onClick={() =>
+                        setForm((f) => ({
+                          ...f,
+                          bodyCondition: bc.id as any,
+                          cosmeticCondition: bc.cosmetic,
+                        }))
+                      }
                       className={`p-4 rounded-2xl border text-left transition-all duration-200 cursor-pointer ${
                         form.bodyCondition === bc.id
                           ? 'border-[#344257] bg-[#F0F0F5] shadow-md ring-2 ring-[#344257]/20 -translate-y-1'
@@ -1920,9 +2099,57 @@ export default function SellPhone() {
                 </div>
               </div>
 
-              {/* 4. Hardware Defects Checklist */}
+              {/* 4. Battery Health */}
               <div className="space-y-3">
-                <label className="label text-sm font-extrabold text-gray-900">4. Hardware Defects (Select if any)</label>
+                <div className="flex items-center justify-between">
+                  <label className="label text-sm font-extrabold text-gray-900">
+                    4. Battery Health (if known)
+                  </label>
+                  <span className="text-[11px] text-gray-500">Capacity & backup</span>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                  {[
+                    {
+                      id: 'healthy',
+                      label: '🔋 Healthy (85%+ / Normal)',
+                      desc: 'Holds full day charge without quick drain',
+                    },
+                    {
+                      id: 'degraded_service',
+                      label: '⚠️ Degraded / Service (<80%)',
+                      desc: 'Needs frequent charging or shows Service',
+                    },
+                    {
+                      id: 'unknown',
+                      label: '❓ Unknown / Cannot Check',
+                      desc: 'Not sure or Android without % indicator',
+                    },
+                  ].map((bat) => (
+                    <button
+                      key={bat.id}
+                      type="button"
+                      onClick={() => setForm((f) => ({ ...f, batteryHealth: bat.id as any }))}
+                      className={`p-4 rounded-2xl border text-left transition-all duration-200 cursor-pointer ${
+                        form.batteryHealth === bat.id
+                          ? 'border-[#344257] bg-[#F0F0F5] shadow-md ring-2 ring-[#344257]/20 -translate-y-1'
+                          : 'border-gray-200 bg-white hover:border-[#6A859F] hover:bg-[#F7F7FA]'
+                      }`}
+                    >
+                      <p className="font-extrabold text-xs text-gray-900">{bat.label}</p>
+                      <p className="mt-1 text-[11px] text-gray-500 leading-snug">{bat.desc}</p>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* 5. Known Hardware Faults */}
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <label className="label text-sm font-extrabold text-gray-900">
+                    5. Other Known Faults (Select any that apply)
+                  </label>
+                  <span className="text-[11px] text-gray-500">Leave unchecked if working</span>
+                </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                   {HARDWARE_DEFECTS.map((def) => {
                     const hasDefect = form.defects.includes(def.id);
@@ -1937,7 +2164,11 @@ export default function SellPhone() {
                             : 'border-gray-200 bg-white text-gray-700 hover:border-gray-300'
                         }`}
                       >
-                        <div className={`grid h-5 w-5 place-items-center rounded-md transition-colors ${hasDefect ? 'bg-rose-600 text-white' : 'border border-gray-300'}`}>
+                        <div
+                          className={`grid h-5 w-5 place-items-center rounded-md transition-colors ${
+                            hasDefect ? 'bg-rose-600 text-white' : 'border border-gray-300'
+                          }`}
+                        >
                           {hasDefect && <Check className="h-3.5 w-3.5" />}
                         </div>
                         {def.label}
@@ -1947,9 +2178,42 @@ export default function SellPhone() {
                 </div>
               </div>
 
-              {/* 5. Accessories Included */}
+              {/* 6. Warranty & Original Accessories */}
               <div className="space-y-3">
-                <label className="label text-sm font-extrabold text-gray-900">5. Available Original Accessories</label>
+                <div className="flex items-center justify-between">
+                  <label className="label text-sm font-extrabold text-gray-900">
+                    6. Warranty & Included Original Accessories
+                  </label>
+                  <span className="text-[11px] text-emerald-600 font-bold">Earns Extra Bonus</span>
+                </div>
+
+                <div className="p-4 rounded-2xl border border-gray-200 bg-gray-50/50 flex items-center justify-between mb-2">
+                  <div>
+                    <p className="font-bold text-xs text-gray-900">Is phone under valid brand warranty?</p>
+                    <p className="text-[11px] text-gray-500">Original manufacturer warranty invoice available</p>
+                  </div>
+                  <div className="flex gap-1 shrink-0">
+                    <button
+                      type="button"
+                      onClick={() => setForm((f) => ({ ...f, underWarranty: true }))}
+                      className={`px-3 py-1.5 rounded-xl text-xs font-bold transition ${
+                        form.underWarranty ? 'bg-[#344257] text-white shadow-xs' : 'bg-white text-gray-600 border border-gray-200'
+                      }`}
+                    >
+                      Yes
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setForm((f) => ({ ...f, underWarranty: false }))}
+                      className={`px-3 py-1.5 rounded-xl text-xs font-bold transition ${
+                        !form.underWarranty ? 'bg-gray-700 text-white shadow-xs' : 'bg-white text-gray-600 border border-gray-200'
+                      }`}
+                    >
+                      No
+                    </button>
+                  </div>
+                </div>
+
                 <div className="flex flex-wrap gap-2">
                   {ACCESSORIES_LIST.map((acc) => {
                     const isSel = form.accessories.includes(acc.id);
@@ -1975,161 +2239,226 @@ export default function SellPhone() {
                 <button type="button" onClick={() => setStep(1)} className="btn-outline text-sm">
                   Back
                 </button>
-                <button type="button" onClick={() => setStep(3)} className="btn-primary flex items-center gap-2">
-                  View Guaranteed Quote <ArrowRight className="h-4 w-4" />
+                <button
+                  type="button"
+                  onClick={() => setStep(3)}
+                  className="btn-primary flex items-center gap-2"
+                >
+                  {funduQuote?.status === 'requires_manual_review'
+                    ? 'View Inspection Details'
+                    : 'View Conditional Estimate'}{' '}
+                  <ArrowRight className="h-4 w-4" />
                 </button>
               </div>
             </div>
           </div>
         )}
 
-        {/* STEP 3: Instant Quote & Cashify Price Breakdown */}
+        {/* STEP 3: Fundu Buyback Quotation / Manual Review Path */}
         {step === 3 && (
           <div className="max-w-2xl mx-auto space-y-6 animate-fade-in">
-            <div className="card p-6 md:p-8 rounded-[28px] bg-white border border-gray-200 shadow-xl text-center space-y-6">
-              <span className="badge bg-[#F0F0F5] text-[#344257] border border-[#C0C8D8] font-extrabold uppercase tracking-wider text-xs">
-                Pre-Approved Spot Cash Valuation
-              </span>
+            {funduQuote?.status === 'requires_manual_review' ? (
+              /* MANUAL REVIEW / PHYSICAL INSPECTION PATH (No Fabricated Prices) */
+              <div className="card p-6 md:p-8 rounded-[28px] bg-white border border-amber-200 shadow-xl text-center space-y-6">
+                <span className="badge bg-amber-100 text-amber-900 border border-amber-300 font-extrabold uppercase tracking-wider text-xs">
+                  Physical Doorstep Inspection Required
+                </span>
 
-              <div>
-                <h2 className="font-display text-2xl font-black text-[#344257]">
-                  {form.brand} {form.model} ({form.storage})
-                </h2>
-                <p className="text-xs text-gray-500 mt-1">
-                  Condition: {form.condition} · Doorstep Verification
-                </p>
-              </div>
-
-              {/* Fundu Theme Dark Quote Box */}
-              <div className="rounded-3xl bg-gradient-to-r from-[#1E2734] via-[#344257] to-[#47576E] p-8 text-white shadow-2xl relative overflow-hidden space-y-3">
-                <p className="text-xs font-bold uppercase tracking-widest text-[#9ac0dd]">Guaranteed Payout Quote</p>
-                <div className="font-display text-4xl sm:text-5xl font-black text-white">
-                  {formatINR(estimate)}
-                </div>
-                <p className="text-xs text-gray-300">Valid for 7 full days · Price match guarantee at your doorstep</p>
-
-                <div className="flex flex-wrap justify-center gap-2 text-xs font-semibold pt-2">
-                  <span className="inline-flex items-center gap-1 rounded-full bg-white/15 px-3 py-1 text-white border border-white/20">
-                    <BadgeIndianRupee className="h-3.5 w-3.5" /> Instant Spot Payment
-                  </span>
-                  <span className="inline-flex items-center gap-1 rounded-full bg-white/15 px-3 py-1 text-white border border-white/20">
-                    <Truck className="h-3.5 w-3.5" /> Free Doorstep Pickup
-                  </span>
-                  <span className="inline-flex items-center gap-1 rounded-full bg-white/15 px-3 py-1 text-white border border-white/20">
-                    <Lock className="h-3.5 w-3.5" /> 100% Data Wipe Guaranteed
-                  </span>
-                </div>
-              </div>
-
-              {/* Fundu Live Price Breakdown Card */}
-              <div className="p-5 rounded-2xl bg-gray-50 border border-gray-200 text-left space-y-2.5 text-xs">
-                <div className="flex items-center justify-between border-b border-gray-200 pb-2">
-                  <span className="font-extrabold text-[#344257] uppercase tracking-wider text-[11px] flex items-center gap-1.5">
-                    <Sparkles className="h-3.5 w-3.5 text-[#6A859F]" /> Fundu Instant Valuation Breakdown
-                  </span>
-                  <span className="badge bg-[#F0F0F5] text-[#344257] border border-[#C0C8D8] text-[10px] font-bold">Guaranteed</span>
+                <div>
+                  <h2 className="font-display text-2xl font-black text-[#344257]">
+                    {form.brand} {form.model} ({form.storage || '128 GB'})
+                  </h2>
+                  <p className="text-xs text-gray-500 mt-1">
+                    Transparent On-Site Evaluation · No Fabricated Online Pricing
+                  </p>
                 </div>
 
-                <div className="flex justify-between font-semibold text-gray-700">
-                  <span>Base Resale Market Price:</span>
-                  <span className="font-bold text-gray-900">{formatINR(cashifyValuation.basePrice)}</span>
+                {/* Clear explanation banner */}
+                <div className="rounded-3xl bg-gradient-to-r from-[#2A3442] via-[#344257] to-[#40536C] p-6 text-white text-left space-y-3 shadow-lg">
+                  <div className="flex items-center gap-2 text-amber-300 font-bold text-sm">
+                    <AlertCircle className="h-5 w-5 shrink-0" />
+                    <span>Evaluation Trigger: {funduQuote.reviewReason || 'Manual Verification'}</span>
+                  </div>
+                  <p className="text-xs text-gray-200 leading-relaxed">
+                    {funduQuote.reviewMessage ||
+                      'This device condition requires a direct physical inspection by a trained Fundu technician before a guaranteed spot cash quote can be confirmed.'}
+                  </p>
+
+                  {funduQuote.missingConfig && (
+                    <div className="p-3 rounded-xl bg-black/20 border border-white/10 text-[11px] text-amber-200">
+                      <strong>Configuration Note:</strong> Pricing benchmark for variant{' '}
+                      <code>{funduQuote.missingConfig}</code> is awaiting catalog policy update. Fundu never fabricates quotes.
+                    </div>
+                  )}
+
+                  <div className="pt-2 border-t border-white/10 flex flex-wrap gap-2 text-[11px] text-gray-300">
+                    <span className="flex items-center gap-1">
+                      <Truck className="h-3.5 w-3.5 text-emerald-400" /> Free Doorstep Visit
+                    </span>
+                    <span className="flex items-center gap-1">
+                      <ShieldCheck className="h-3.5 w-3.5 text-emerald-400" /> Zero Obligation / Cancel Anytime
+                    </span>
+                    <span className="flex items-center gap-1">
+                      <BadgeIndianRupee className="h-3.5 w-3.5 text-emerald-400" /> Spot Payout Upon Verification
+                    </span>
+                  </div>
                 </div>
 
-                {cashifyValuation.screenDeduction > 0 && (
-                  <div className="flex justify-between text-rose-700 font-medium">
-                    <span>Screen Condition Deduction ({form.screenCondition}):</span>
-                    <span className="font-bold">- {formatINR(cashifyValuation.screenDeduction)}</span>
-                  </div>
-                )}
-
-                {cashifyValuation.bodyDeduction > 0 && (
-                  <div className="flex justify-between text-rose-700 font-medium">
-                    <span>Body Condition Deduction ({form.bodyCondition}):</span>
-                    <span className="font-bold">- {formatINR(cashifyValuation.bodyDeduction)}</span>
-                  </div>
-                )}
-
-                {cashifyValuation.callDeduction > 0 && (
-                  <div className="flex justify-between text-rose-700 font-medium">
-                    <span>Calling Capability Fault Deduction:</span>
-                    <span className="font-bold">- {formatINR(cashifyValuation.callDeduction)}</span>
-                  </div>
-                )}
-
-                {cashifyValuation.defectsBreakdown.map((def, idx) => (
-                  <div key={idx} className="flex justify-between text-rose-700 font-medium pl-2 border-l-2 border-rose-300">
-                    <span>{def.name}:</span>
-                    <span className="font-bold">- {formatINR(def.amount)}</span>
-                  </div>
-                ))}
-
-                {cashifyValuation.warrantyBonus > 0 && (
-                  <div className="flex justify-between text-[#344257] font-medium">
-                    <span>Brand Warranty Bonus:</span>
-                    <span className="font-bold">+ {formatINR(cashifyValuation.warrantyBonus)}</span>
-                  </div>
-                )}
-
-                {cashifyValuation.accessoriesBonus > 0 && (
-                  <div className="flex justify-between text-[#344257] font-medium">
-                    <span>Original Accessories & Box Bonus:</span>
-                    <span className="font-bold">+ {formatINR(cashifyValuation.accessoriesBonus)}</span>
-                  </div>
-                )}
-
-                <div className="pt-2 border-t border-gray-200 flex justify-between font-extrabold text-sm text-gray-900">
-                  <span>Net Doorstep Cash Offer:</span>
-                  <span className="text-[#344257] font-black text-base">{formatINR(cashifyValuation.finalEstimate)}</span>
+                {/* Doorstep Action Steps */}
+                <div className="p-5 rounded-2xl bg-gray-50 border border-gray-200 text-left space-y-2 text-xs">
+                  <p className="font-extrabold text-[#344257] text-xs uppercase tracking-wide">
+                    How Doorstep Inspection Works
+                  </p>
+                  <ol className="list-decimal list-inside space-y-1.5 text-gray-600 leading-relaxed">
+                    <li>A Fundu certified technician visits your address at your scheduled time.</li>
+                    <li>They run physical hardware, motherboard, and display diagnostics in front of you.</li>
+                    <li>You receive an exact guaranteed cash offer on the spot.</li>
+                    <li>If you accept, receive instant UPI or Cash payment immediately. If not, zero charge.</li>
+                  </ol>
                 </div>
-              </div>
 
-              {/* Payout Method Selector */}
-              <div className="text-left space-y-2">
-                <label className="label text-xs font-bold text-gray-900">Choose Instant Payout Method</label>
-                <div className="grid grid-cols-3 gap-3">
-                  {[
-                    { id: 'UPI', label: 'Instant UPI / GPay' },
-                    { id: 'Cash', label: 'Spot Hard Cash' },
-                    { id: 'Bank', label: 'Bank IMPS Transfer' },
-                  ].map((p) => (
-                    <button
-                      key={p.id}
-                      type="button"
-                      onClick={() => setForm({ ...form, payoutMethod: p.id as any })}
-                      className={`p-3 rounded-xl border text-center transition cursor-pointer ${
-                        form.payoutMethod === p.id
-                          ? 'border-[#344257] bg-[#F0F0F5] font-extrabold text-[#344257] ring-2 ring-[#344257]/20'
-                          : 'border-gray-200 bg-white text-gray-700 hover:border-gray-300'
-                      }`}
+                <div className="flex flex-col sm:flex-row justify-between gap-3 pt-2">
+                  <button type="button" onClick={() => setStep(2)} className="btn-outline text-sm">
+                    Back to Edit Answers
+                  </button>
+                  <div className="flex gap-2">
+                    <a
+                      href="tel:+919839122345"
+                      className="btn-outline text-xs flex items-center justify-center gap-1.5 border-[#C0C8D8] text-[#344257]"
                     >
-                      <p className="text-xs font-bold">{p.label}</p>
+                      <PhoneCall className="h-3.5 w-3.5" /> Call Helpline
+                    </a>
+                    <button
+                      type="button"
+                      onClick={() => setStep(4)}
+                      className="btn-primary flex items-center justify-center gap-2"
+                    >
+                      Book Free Doorstep Inspection <ArrowRight className="h-4 w-4" />
                     </button>
-                  ))}
+                  </div>
+                </div>
+              </div>
+            ) : (
+              /* REGULAR CONDITIONAL ESTIMATE QUOTE PATH */
+              <div className="card p-6 md:p-8 rounded-[28px] bg-white border border-gray-200 shadow-xl text-center space-y-6">
+                <div>
+                  <span className="badge bg-[#F0F0F5] text-[#344257] border border-[#C0C8D8] font-extrabold uppercase tracking-wider text-xs">
+                    Conditional Estimate · Subject to Doorstep Inspection
+                  </span>
+                  <h2 className="font-display text-2xl font-black text-[#344257] mt-2">
+                    {form.brand} {form.model} ({form.storage || '128 GB'})
+                  </h2>
+                  <p className="text-xs text-gray-500 mt-1">
+                    Cosmetic Grade: <span className="capitalize font-bold text-gray-700">{form.cosmeticCondition}</span> · Policy Version: {funduQuote?.policyVersion || 'v2026.1'}
+                  </p>
                 </div>
 
-                {form.payoutMethod === 'UPI' && (
-                  <div className="pt-2">
-                    <label className="label text-xs">UPI ID / Phone Number (Optional)</label>
-                    <input
-                      type="text"
-                      value={form.payoutDetails}
-                      onChange={(e) => setForm({ ...form, payoutDetails: e.target.value })}
-                      placeholder="e.g. yourname@oksbi or 9839122345"
-                      className="input mt-1 text-xs focus:border-[#6A859F] focus:ring-4 focus:ring-[#6A859F]/15"
-                    />
+                {/* Fundu Theme Dark Quote Box */}
+                <div className="rounded-3xl bg-gradient-to-r from-[#1E2734] via-[#344257] to-[#47576E] p-8 text-white shadow-2xl relative overflow-hidden space-y-3">
+                  <p className="text-xs font-bold uppercase tracking-widest text-[#9ac0dd]">
+                    Estimated Buyback Offer
+                  </p>
+                  <div className="font-display text-4xl sm:text-5xl font-black text-white">
+                    {formatINR(funduQuote?.offerAmount ?? estimate)}
                   </div>
-                )}
-              </div>
+                  <p className="text-xs text-gray-300">
+                    Conditional estimate subject to physical inspection · Valid for 7 days
+                  </p>
 
-              <div className="flex justify-between gap-3 pt-4 border-t border-gray-100">
-                <button type="button" onClick={() => setStep(2)} className="btn-outline text-sm">
-                  Back
-                </button>
-                <button type="button" onClick={() => setStep(4)} className="btn-primary flex items-center gap-2">
-                  Accept & Schedule Pickup <ArrowRight className="h-4 w-4" />
-                </button>
+                  <div className="flex flex-wrap justify-center gap-2 text-xs font-semibold pt-2">
+                    <span className="inline-flex items-center gap-1 rounded-full bg-white/15 px-3 py-1 text-white border border-white/20">
+                      <BadgeIndianRupee className="h-3.5 w-3.5" /> Instant Spot Payment
+                    </span>
+                    <span className="inline-flex items-center gap-1 rounded-full bg-white/15 px-3 py-1 text-white border border-white/20">
+                      <Truck className="h-3.5 w-3.5" /> Free Doorstep Pickup
+                    </span>
+                    <span className="inline-flex items-center gap-1 rounded-full bg-white/15 px-3 py-1 text-white border border-white/20">
+                      <Lock className="h-3.5 w-3.5" /> 100% Data Wipe Guaranteed
+                    </span>
+                  </div>
+                </div>
+
+                {/* Understandable Condition-Related Reasons (Confidential Economics Kept on Server) */}
+                <div className="p-5 rounded-2xl bg-gray-50 border border-gray-200 text-left space-y-3 text-xs">
+                  <div className="flex items-center justify-between border-b border-gray-200 pb-2">
+                    <span className="font-extrabold text-[#344257] uppercase tracking-wider text-[11px] flex items-center gap-1.5">
+                      <Sparkles className="h-3.5 w-3.5 text-[#6A859F]" /> Valuation Condition Summary
+                    </span>
+                    <span className="badge bg-[#F0F0F5] text-[#344257] border border-[#C0C8D8] text-[10px] font-bold">
+                      Algorithm Verified
+                    </span>
+                  </div>
+
+                  <ul className="space-y-1.5 text-gray-700">
+                    {funduQuote?.conditionSummary && funduQuote.conditionSummary.length > 0 ? (
+                      funduQuote.conditionSummary.map((item, idx) => (
+                        <li key={idx} className="flex items-center gap-2">
+                          <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600 shrink-0" />
+                          <span>{item}</span>
+                        </li>
+                      ))
+                    ) : (
+                      <li className="text-gray-500">Device in evaluated standard condition.</li>
+                    )}
+                  </ul>
+
+                  <div className="mt-3 p-3 rounded-xl bg-blue-50/70 border border-blue-200/80 text-[11px] text-blue-900 leading-relaxed">
+                    <strong>Inspection Discrepancy Rule:</strong> If the inspected phone materially differs from your answers above, our technician will explain the mismatch, present a revised offer, and require your explicit acceptance before payment proceeds.
+                  </div>
+                </div>
+
+                {/* Payout Method Selector */}
+                <div className="text-left space-y-2">
+                  <label className="label text-xs font-bold text-gray-900">Choose Instant Payout Method</label>
+                  <div className="grid grid-cols-3 gap-3">
+                    {[
+                      { id: 'UPI', label: 'Instant UPI / GPay' },
+                      { id: 'Cash', label: 'Spot Hard Cash' },
+                      { id: 'Bank', label: 'Bank IMPS Transfer' },
+                    ].map((p) => (
+                      <button
+                        key={p.id}
+                        type="button"
+                        onClick={() => setForm({ ...form, payoutMethod: p.id as any })}
+                        className={`p-3 rounded-xl border text-center transition cursor-pointer ${
+                          form.payoutMethod === p.id
+                            ? 'border-[#344257] bg-[#F0F0F5] font-extrabold text-[#344257] ring-2 ring-[#344257]/20'
+                            : 'border-gray-200 bg-white text-gray-700 hover:border-gray-300'
+                        }`}
+                      >
+                        <p className="text-xs font-bold">{p.label}</p>
+                      </button>
+                    ))}
+                  </div>
+
+                  {form.payoutMethod === 'UPI' && (
+                    <div className="pt-2">
+                      <label className="label text-xs">UPI ID / Phone Number (Optional)</label>
+                      <input
+                        type="text"
+                        value={form.payoutDetails}
+                        onChange={(e) => setForm({ ...form, payoutDetails: e.target.value })}
+                        placeholder="e.g. yourname@oksbi or 9839122345"
+                        className="input mt-1 text-xs focus:border-[#6A859F] focus:ring-4 focus:ring-[#6A859F]/15"
+                      />
+                    </div>
+                  )}
+                </div>
+
+                <div className="flex justify-between gap-3 pt-4 border-t border-gray-100">
+                  <button type="button" onClick={() => setStep(2)} className="btn-outline text-sm">
+                    Back to Edit Answers
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setStep(4)}
+                    className="btn-primary flex items-center gap-2"
+                  >
+                    Accept & Schedule Pickup <ArrowRight className="h-4 w-4" />
+                  </button>
+                </div>
               </div>
-            </div>
+            )}
           </div>
         )}
 

@@ -32,6 +32,8 @@ const STATUS_META: Record<string, { color: string; dot: string; label: string }>
   rejected:          { color: 'bg-accent-50 text-accent-700 border-accent-200', dot: 'bg-accent-500',  label: 'Rejected' },
   dispatched:        { color: 'bg-weather-50 text-weather-700 border-weather-200', dot: 'bg-weather-500', label: 'Dispatched' },
   in_transit:        { color: 'bg-brand-50 text-brand-700 border-brand-200',    dot: 'bg-brand-500',   label: 'In Transit' },
+  manual_review:      { color: 'bg-amber-50 text-amber-800 border-amber-300',    dot: 'bg-amber-500',   label: 'Physical Inspection' },
+  inspection_mismatch:{ color: 'bg-rose-50 text-rose-800 border-rose-300',      dot: 'bg-rose-500',    label: 'Action Required: Revised Offer' },
 };
 
 function StatusBadge({ status }: { status: string }) {
@@ -659,34 +661,49 @@ function SellCard({
         </div>
       </div>
 
-      {/* Vendor Physical Inspection Valuation Quote Alert Card */}
-      {s.vendor_quote_price && (
-        <div className="mt-4 p-4 rounded-2xl bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200/80 shadow-xs space-y-3">
+      {/* Physical Inspection Mismatch / Revised Quote Alert Card */}
+      {(s.vendor_quote_price || s.status === 'inspection_mismatch') && (
+        <div className="mt-4 p-4 rounded-2xl bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-300 shadow-xs space-y-3">
           <div className="flex flex-wrap items-center justify-between gap-2">
             <div>
-              <span className="badge bg-blue-600 text-white text-[10px] font-bold">🏬 Physical Inspection Quote</span>
-              <p className="font-display text-lg font-black text-blue-900 mt-1">
-                Vendor Offered Valuation: {formatINR(s.vendor_quote_price)}
+              <span className="badge bg-[#344257] text-white text-[10px] font-bold">
+                🔍 Physical Inspection Valuation
+              </span>
+              <p className="font-display text-lg font-black text-gray-900 mt-1">
+                Revised Offer: {formatINR(s.vendor_quote_price || s.final_price || s.estimated_price)}
               </p>
-              {s.vendor_notes && <p className="text-xs text-blue-800 italic mt-0.5">"{s.vendor_notes}"</p>}
+              {s.vendor_notes ? (
+                <p className="text-xs text-amber-900 font-medium mt-1">
+                  <strong>Discrepancy Note:</strong> {s.vendor_notes}
+                </p>
+              ) : s.status === 'inspection_mismatch' ? (
+                <p className="text-xs text-amber-900 font-medium mt-1">
+                  <strong>Discrepancy:</strong> Physical condition differed from online submission. Please review and confirm the revised offer.
+                </p>
+              ) : null}
             </div>
             <div>
-              {s.vendor_quote_status === 'user_accepted' ? (
-                <span className="badge bg-emerald-600 text-white font-bold text-xs px-3 py-1">✓ Valuation Accepted & Paid</span>
-              ) : s.vendor_quote_status === 'user_rejected' ? (
-                <span className="badge bg-rose-600 text-white font-bold text-xs px-3 py-1">Declined</span>
+              {s.vendor_quote_status === 'user_accepted' || s.status === 'completed' ? (
+                <span className="badge bg-emerald-600 text-white font-bold text-xs px-3 py-1">
+                  ✓ Valuation Accepted & Paid
+                </span>
+              ) : s.vendor_quote_status === 'user_rejected' || s.status === 'cancelled' ? (
+                <span className="badge bg-rose-600 text-white font-bold text-xs px-3 py-1">
+                  Declined · Phone Returned
+                </span>
               ) : (
                 <div className="flex items-center gap-2">
                   <button
                     onClick={async () => {
                       try {
+                        const price = s.vendor_quote_price || s.final_price || s.estimated_price;
                         const { error } = await db.from('sell_requests').update({
                           vendor_quote_status: 'user_accepted',
                           status: 'completed',
-                          final_price: s.vendor_quote_price,
+                          final_price: price,
                         }).eq('id', s.id);
                         if (error) throw error;
-                        alert(`🎉 Valuation of ${formatINR(s.vendor_quote_price)} accepted! Payment processed via Vendor limit to your website account.`);
+                        alert(`🎉 Revised offer of ${formatINR(price)} accepted! Payment is dispatched immediately.`);
                         window.location.reload();
                       } catch (err) {
                         alert(err instanceof Error ? err.message : 'Failed to accept quote');
@@ -694,16 +711,20 @@ function SellCard({
                     }}
                     className="btn bg-emerald-600 hover:bg-emerald-700 text-white text-xs px-3 py-1.5 font-bold rounded-xl shadow-xs"
                   >
-                    Accept Valuation & Receive Payment
+                    Accept Revised Offer
                   </button>
                   <button
                     onClick={async () => {
-                      await db.from('sell_requests').update({ vendor_quote_status: 'user_rejected' }).eq('id', s.id);
+                      if (!window.confirm('Are you sure you want to decline the revised offer? Your phone will be handed back to you with zero fee.')) return;
+                      await db.from('sell_requests').update({
+                        vendor_quote_status: 'user_rejected',
+                        status: 'cancelled',
+                      }).eq('id', s.id);
                       window.location.reload();
                     }}
                     className="btn-outline text-xs px-3 py-1.5 text-rose-600 border-rose-200"
                   >
-                    Decline
+                    Decline & Return Phone
                   </button>
                 </div>
               )}

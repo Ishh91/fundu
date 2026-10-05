@@ -8,6 +8,7 @@
     "dev:server": "node --watch server/index.js",
     "server": "node server/index.js",
     "build": "vite build",
+    "test": "node --test test/quote.test.js",
     "lint": "eslint .",
     "preview": "vite preview",
     "typecheck": "tsc --noEmit -p tsconfig.app.json"
