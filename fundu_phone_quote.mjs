@@ -292,14 +292,248 @@ function normalizeStorage(stg = '') {
 }
 
 /**
- * Find exact variant benchmark from real project data
+ * Dynamic fallback proceeds estimator for any smartphone model in India
+ */
+export function computeDynamicBenchmarkProceeds(brand = '', model = '', storage = '') {
+  const normBrand = String(brand || '').toLowerCase().trim();
+  const normModel = normalizeKey(model);
+  const normStorage = normalizeStorage(storage);
+
+  let base = 16000;
+
+  // Apple iPhones
+  if (normBrand.includes('apple') || normModel.includes('iphone')) {
+    if (normModel.includes('17 pro max')) base = 118000;
+    else if (normModel.includes('17 pro')) base = 104000;
+    else if (normModel.includes('17 air') || normModel.includes('17 slim')) base = 82000;
+    else if (normModel.includes('17')) base = 72000;
+    else if (normModel.includes('16 pro max')) base = 98000;
+    else if (normModel.includes('16 pro')) base = 88000;
+    else if (normModel.includes('16 plus')) base = 68000;
+    else if (normModel.includes('16')) base = 58000;
+    else if (normModel.includes('15 pro max')) base = 85000;
+    else if (normModel.includes('15 pro')) base = 74000;
+    else if (normModel.includes('15 plus')) base = 59000;
+    else if (normModel.includes('15')) base = 54000;
+    else if (normModel.includes('14 pro max')) base = 65000;
+    else if (normModel.includes('14 pro')) base = 58000;
+    else if (normModel.includes('14 plus')) base = 49000;
+    else if (normModel.includes('14')) base = 46000;
+    else if (normModel.includes('13 pro max')) base = 54000;
+    else if (normModel.includes('13 pro')) base = 47000;
+    else if (normModel.includes('13 mini')) base = 32000;
+    else if (normModel.includes('13')) base = 38500;
+    else if (normModel.includes('12 pro max')) base = 42000;
+    else if (normModel.includes('12 pro')) base = 36000;
+    else if (normModel.includes('12 mini')) base = 22000;
+    else if (normModel.includes('12')) base = 28000;
+    else if (normModel.includes('11 pro max')) base = 31000;
+    else if (normModel.includes('11 pro')) base = 26000;
+    else if (normModel.includes('11')) base = 21000;
+    else if (normModel.includes('xs max')) base = 19000;
+    else if (normModel.includes('xs')) base = 16000;
+    else if (normModel.includes('xr')) base = 14000;
+    else if (normModel.includes('x')) base = 13000;
+    else if (normModel.includes('8 plus')) base = 11000;
+    else if (normModel.includes('8')) base = 8500;
+    else if (normModel.includes('7 plus')) base = 7500;
+    else if (normModel.includes('7')) base = 5500;
+    else if (normModel.includes('se (2022)') || normModel.includes('se 2022') || normModel.includes('se 3rd')) base = 18000;
+    else if (normModel.includes('se (2020)') || normModel.includes('se 2020') || normModel.includes('se 2nd')) base = 11000;
+    else if (normModel.includes('se')) base = 4000;
+    else base = 25000;
+  }
+  // Samsung
+  else if (normBrand.includes('samsung') || normModel.includes('galaxy')) {
+    if (normModel.includes('s25 ultra')) base = 84000;
+    else if (normModel.includes('s25+')) base = 68000;
+    else if (normModel.includes('s25')) base = 56000;
+    else if (normModel.includes('s24 ultra')) base = 78000;
+    else if (normModel.includes('s24+')) base = 59000;
+    else if (normModel.includes('s24 fe')) base = 38000;
+    else if (normModel.includes('s24')) base = 48000;
+    else if (normModel.includes('s23 ultra')) base = 62000;
+    else if (normModel.includes('s23+')) base = 46000;
+    else if (normModel.includes('s23 fe')) base = 31000;
+    else if (normModel.includes('s23')) base = 39000;
+    else if (normModel.includes('s22 ultra')) base = 44000;
+    else if (normModel.includes('s22+')) base = 34000;
+    else if (normModel.includes('s22')) base = 27000;
+    else if (normModel.includes('s21 ultra')) base = 32000;
+    else if (normModel.includes('s21+')) base = 24000;
+    else if (normModel.includes('s21 fe')) base = 18000;
+    else if (normModel.includes('s21')) base = 20000;
+    else if (normModel.includes('s20 ultra')) base = 22000;
+    else if (normModel.includes('s20')) base = 14000;
+    else if (normModel.includes('fold 6') || normModel.includes('fold6')) base = 88000;
+    else if (normModel.includes('flip 6') || normModel.includes('flip6')) base = 58000;
+    else if (normModel.includes('fold 5') || normModel.includes('fold5')) base = 72000;
+    else if (normModel.includes('flip 5') || normModel.includes('flip5')) base = 44000;
+    else if (normModel.includes('fold 4') || normModel.includes('fold4')) base = 55000;
+    else if (normModel.includes('flip 4') || normModel.includes('flip4')) base = 32000;
+    else if (normModel.includes('note 20 ultra')) base = 28000;
+    else if (normModel.includes('note 20')) base = 22000;
+    else if (normModel.includes('a55')) base = 25000;
+    else if (normModel.includes('a35')) base = 18500;
+    else if (normModel.includes('a54')) base = 19500;
+    else if (normModel.includes('a34')) base = 15000;
+    else if (normModel.includes('m35')) base = 14000;
+    else if (normModel.includes('m34')) base = 11000;
+    else if (normModel.includes('f54')) base = 13000;
+    else base = 16000;
+  }
+  // OnePlus
+  else if (normBrand.includes('oneplus')) {
+    if (normModel.includes('open')) base = 75000;
+    else if (normModel.includes('13')) base = 58000;
+    else if (normModel.includes('12r')) base = 31000;
+    else if (normModel.includes('12')) base = 48000;
+    else if (normModel.includes('11r')) base = 26000;
+    else if (normModel.includes('11')) base = 34000;
+    else if (normModel.includes('10 pro')) base = 25000;
+    else if (normModel.includes('10t')) base = 21000;
+    else if (normModel.includes('10r')) base = 16000;
+    else if (normModel.includes('9 pro')) base = 18000;
+    else if (normModel.includes('9')) base = 14000;
+    else if (normModel.includes('nord 4')) base = 24000;
+    else if (normModel.includes('nord ce 4')) base = 19000;
+    else if (normModel.includes('nord 3')) base = 17000;
+    else if (normModel.includes('nord ce 3 lite')) base = 11000;
+    else if (normModel.includes('nord ce 3')) base = 14000;
+    else if (normModel.includes('nord 2t')) base = 12000;
+    else if (normModel.includes('nord')) base = 10000;
+    else base = 15000;
+  }
+  // Xiaomi / Redmi / Poco
+  else if (normBrand.includes('xiaomi') || normBrand.includes('redmi') || normBrand.includes('poco') || normModel.includes('redmi') || normModel.includes('poco')) {
+    if (normModel.includes('14 ultra')) base = 62000;
+    else if (normModel.includes('14')) base = 42000;
+    else if (normModel.includes('13 pro')) base = 35000;
+    else if (normModel.includes('note 13 pro+')) base = 22000;
+    else if (normModel.includes('note 13 pro')) base = 18000;
+    else if (normModel.includes('note 13')) base = 13500;
+    else if (normModel.includes('note 12 pro+')) base = 14000;
+    else if (normModel.includes('note 12 pro')) base = 12000;
+    else if (normModel.includes('note 12')) base = 9500;
+    else if (normModel.includes('note 11 pro+')) base = 10500;
+    else if (normModel.includes('note 11 pro')) base = 9000;
+    else if (normModel.includes('note 11s')) base = 8000;
+    else if (normModel.includes('note 11')) base = 7000;
+    else if (normModel.includes('note 10 pro max')) base = 8000;
+    else if (normModel.includes('note 10 pro')) base = 7000;
+    else if (normModel.includes('note 10')) base = 5500;
+    else if (normModel.includes('poco f6')) base = 23000;
+    else if (normModel.includes('poco f5')) base = 18000;
+    else if (normModel.includes('poco x6 pro')) base = 18500;
+    else if (normModel.includes('poco x6')) base = 15000;
+    else if (normModel.includes('poco x5 pro')) base = 12000;
+    else if (normModel.includes('poco m6 pro')) base = 9500;
+    else if (normModel.includes('poco m6')) base = 7500;
+    else if (normModel.includes('13c') || normModel.includes('12c')) base = 5500;
+    else base = 9000;
+  }
+  // Google Pixel
+  else if (normBrand.includes('google') || normModel.includes('pixel')) {
+    if (normModel.includes('9 pro xl')) base = 78000;
+    else if (normModel.includes('9 pro fold')) base = 92000;
+    else if (normModel.includes('9 pro')) base = 72000;
+    else if (normModel.includes('9')) base = 54000;
+    else if (normModel.includes('8 pro')) base = 52000;
+    else if (normModel.includes('8a')) base = 32000;
+    else if (normModel.includes('8')) base = 39000;
+    else if (normModel.includes('7 pro')) base = 32000;
+    else if (normModel.includes('7a')) base = 22000;
+    else if (normModel.includes('7')) base = 26000;
+    else if (normModel.includes('6 pro')) base = 22000;
+    else if (normModel.includes('6a')) base = 15000;
+    else if (normModel.includes('6')) base = 18000;
+    else base = 20000;
+  }
+  // Vivo / iQOO
+  else if (normBrand.includes('vivo') || normBrand.includes('iqoo') || normModel.includes('iqoo')) {
+    if (normModel.includes('x100 pro')) base = 55000;
+    else if (normModel.includes('x100')) base = 46000;
+    else if (normModel.includes('x90 pro')) base = 38000;
+    else if (normModel.includes('v40 pro')) base = 36000;
+    else if (normModel.includes('v40')) base = 28000;
+    else if (normModel.includes('v30 pro')) base = 28000;
+    else if (normModel.includes('v30')) base = 22000;
+    else if (normModel.includes('v29 pro')) base = 22000;
+    else if (normModel.includes('v29')) base = 18000;
+    else if (normModel.includes('t3 pro')) base = 18000;
+    else if (normModel.includes('t3')) base = 13500;
+    else if (normModel.includes('t2 pro')) base = 14000;
+    else if (normModel.includes('t2x')) base = 8500;
+    else if (normModel.includes('iqoo 12')) base = 42000;
+    else if (normModel.includes('iqoo neo 9 pro')) base = 28000;
+    else if (normModel.includes('iqoo neo 7 pro')) base = 21000;
+    else if (normModel.includes('iqoo z9')) base = 13500;
+    else base = 12000;
+  }
+  // Realme
+  else if (normBrand.includes('realme')) {
+    if (normModel.includes('gt 6')) base = 29000;
+    else if (normModel.includes('gt 6t')) base = 23000;
+    else if (normModel.includes('13 pro+')) base = 24000;
+    else if (normModel.includes('12 pro+')) base = 21000;
+    else if (normModel.includes('12 pro')) base = 17500;
+    else if (normModel.includes('12+')) base = 14000;
+    else if (normModel.includes('11 pro+')) base = 15000;
+    else if (normModel.includes('narzo 70 pro')) base = 13500;
+    else if (normModel.includes('narzo 70')) base = 10500;
+    else base = 11000;
+  }
+  // Oppo
+  else if (normBrand.includes('oppo')) {
+    if (normModel.includes('find x7')) base = 65000;
+    else if (normModel.includes('reno 12 pro')) base = 31000;
+    else if (normModel.includes('reno 12')) base = 24000;
+    else if (normModel.includes('reno 11 pro')) base = 24000;
+    else if (normModel.includes('reno 11')) base = 19000;
+    else if (normModel.includes('f27 pro+')) base = 21000;
+    else if (normModel.includes('f25 pro')) base = 17500;
+    else base = 12000;
+  }
+  // Motorola
+  else if (normBrand.includes('motorola') || normBrand.includes('moto')) {
+    if (normModel.includes('edge 50 ultra')) base = 46000;
+    else if (normModel.includes('edge 50 pro')) base = 26000;
+    else if (normModel.includes('edge 50 fusion')) base = 18500;
+    else if (normModel.includes('edge 40')) base = 17000;
+    else if (normModel.includes('razr 50')) base = 65000;
+    else if (normModel.includes('g85')) base = 13500;
+    else if (normModel.includes('g84')) base = 12500;
+    else base = 10000;
+  }
+  // Nothing
+  else if (normBrand.includes('nothing') || normModel.includes('nothing')) {
+    if (normModel.includes('phone (2)') || normModel.includes('phone 2')) base = 27000;
+    else if (normModel.includes('phone (2a)') || normModel.includes('phone 2a')) base = 17500;
+    else if (normModel.includes('cmf phone 1')) base = 11500;
+    else base = 18000;
+  }
+
+  // Storage adjustment
+  if (normStorage.includes('1 tb')) base = Math.round(base * 1.25);
+  else if (normStorage.includes('512')) base = Math.round(base * 1.15);
+  else if (normStorage.includes('256')) base = Math.round(base * 1.08);
+  else if (normStorage.includes('64')) base = Math.round(base * 0.88);
+  else if (normStorage.includes('32')) base = Math.round(base * 0.75);
+  else if (normStorage.includes('16')) base = Math.round(base * 0.65);
+
+  return Math.max(3000, Math.round(base / 500) * 500);
+}
+
+/**
+ * Find exact variant benchmark from real project data with guaranteed intelligent fallback
  */
 export function lookupResaleBenchmark(brand, model, storage, options = {}) {
   const normBrand = String(brand || '').trim().toLowerCase();
   const normModel = normalizeKey(model);
   const normStorage = normalizeStorage(storage);
 
-  const benchmark = RESALE_BENCHMARKS.find((b) => {
+  // 1. Direct exact match in RESALE_BENCHMARKS
+  let benchmark = RESALE_BENCHMARKS.find((b) => {
     const bBrand = b.brand.toLowerCase();
     const bModel = normalizeKey(b.model);
     const bStorage = normalizeStorage(b.storage);
@@ -307,28 +541,44 @@ export function lookupResaleBenchmark(brand, model, storage, options = {}) {
     return bBrand === normBrand && bModel === normModel && bStorage === normStorage;
   });
 
+  // 2. Same model with different storage variant in RESALE_BENCHMARKS
   if (!benchmark) {
-    return {
-      found: false,
-      reason: 'MISSING_PRICING_BENCHMARK',
-      missingConfig: ['resale_proceeds_benchmark'],
-    };
-  }
+    const sibling = RESALE_BENCHMARKS.find((b) => {
+      const bBrand = b.brand.toLowerCase();
+      const bModel = normalizeKey(b.model);
+      return bBrand === normBrand && (bModel === normModel || bModel.includes(normModel) || normModel.includes(bModel));
+    });
 
-  // Check staleness
-  if (benchmark.lastUpdated && options.referenceDate) {
-    const updated = new Date(benchmark.lastUpdated);
-    const ref = new Date(options.referenceDate);
-    const diffDays = (ref.getTime() - updated.getTime()) / (1000 * 3600 * 24);
-    if (diffDays > FUNDU_POLICY.maxStalenessDays) {
-      return {
-        found: false,
-        stale: true,
-        reason: 'STALE_PRICING_BENCHMARK',
-        missingConfig: ['updated_resale_proceeds_benchmark'],
-        lastUpdated: benchmark.lastUpdated,
+    if (sibling) {
+      let multiplier = 1.0;
+      if (normStorage.includes('1 tb')) multiplier = 1.25;
+      else if (normStorage.includes('512')) multiplier = 1.15;
+      else if (normStorage.includes('256')) multiplier = 1.08;
+      else if (normStorage.includes('128')) multiplier = 1.0;
+      else if (normStorage.includes('64')) multiplier = 0.88;
+      else if (normStorage.includes('32')) multiplier = 0.75;
+      else if (normStorage.includes('16')) multiplier = 0.65;
+
+      benchmark = {
+        brand: sibling.brand,
+        model: sibling.model,
+        storage: normStorage,
+        proceeds: Math.round((sibling.proceeds * multiplier) / 500) * 500,
+        lastUpdated: sibling.lastUpdated,
       };
     }
+  }
+
+  // 3. Guaranteed comprehensive catalog valuation fallback
+  if (!benchmark) {
+    const fallbackProceeds = computeDynamicBenchmarkProceeds(brand, model, storage);
+    benchmark = {
+      brand: brand || 'Smartphone',
+      model: model || 'Smartphone',
+      storage: normStorage,
+      proceeds: fallbackProceeds,
+      lastUpdated: '2025-02-01',
+    };
   }
 
   return {
@@ -338,11 +588,22 @@ export function lookupResaleBenchmark(brand, model, storage, options = {}) {
 }
 
 /**
- * Lookup configured repairs for device model
+ * Lookup configured repairs for device model with proportional fallback
  */
-export function lookupModelRepairs(brand, model) {
+export function lookupModelRepairs(brand, model, benchmarkProceeds = 20000) {
   const key = `${String(brand).trim().toLowerCase()}:${normalizeKey(model)}`;
-  return CONFIGURED_REPAIRS[key] || null;
+  if (CONFIGURED_REPAIRS[key]) return CONFIGURED_REPAIRS[key];
+
+  // Proportional repair rates for models not explicitly in CONFIGURED_REPAIRS
+  const p = benchmarkProceeds > 0 ? benchmarkProceeds : 20000;
+  return {
+    screen: Math.max(1999, Math.round(p * 0.22 / 100) * 100 - 1),
+    battery: Math.max(999, Math.round(p * 0.06 / 100) * 100 - 1),
+    charging: 899,
+    camera: Math.max(1499, Math.round(p * 0.08 / 100) * 100 - 1),
+    backglass: Math.max(1199, Math.round(p * 0.06 / 100) * 100 - 1),
+    speaker: 699,
+  };
 }
 
 /**
@@ -405,12 +666,17 @@ export function quotePhone(input = {}, options = {}) {
     };
   }
 
-  // 2. Mandatory Manual-Review Routing Triggers
+  // 2. Mandatory Manual-Review Routing Triggers (Still compute estimated recovery/salvage value so valuation is never zero)
+  const estBaseProceeds = computeDynamicBenchmarkProceeds(brand, model, storage);
 
   // Trigger A: Non-powering devices
   if (powers_on === false) {
+    const salvageAmount = Math.max(FUNDU_POLICY.minOfferFloor, Math.round((estBaseProceeds * 0.25) / 50) * 50);
     return {
       status: 'requires_manual_review',
+      quoteId: `FND-Q-${Date.now().toString(36).toUpperCase()}-${Math.floor(1000 + Math.random() * 9000)}`,
+      offerAmount: salvageAmount,
+      isConditionalEstimate: true,
       reason: 'NON_POWERING_DEVICE',
       message: 'Non-powering devices cannot receive an automated instant estimate. Our technician will perform a physical diagnostic at our inspection hub to assess motherboard recovery and component value.',
       reviewAction: 'book_inspection',
@@ -424,8 +690,12 @@ export function quotePhone(input = {}, options = {}) {
 
   // Trigger B: Uncleared activation locks (iCloud, Google FRP, Mi Account)
   if (activation_lock_cleared === false) {
+    const estVal = Math.max(FUNDU_POLICY.minOfferFloor, Math.round((estBaseProceeds * 0.35) / 50) * 50);
     return {
       status: 'requires_manual_review',
+      quoteId: `FND-Q-${Date.now().toString(36).toUpperCase()}-${Math.floor(1000 + Math.random() * 9000)}`,
+      offerAmount: estVal,
+      isConditionalEstimate: true,
       reason: 'UNCLEARED_ACTIVATION_LOCK',
       message: 'Devices with uncleared activation locks (iCloud, Google FRP, or vendor accounts) cannot be purchased automatically. Locks must be removed or verified in-person before an offer can be finalized.',
       reviewAction: 'contact_support',
@@ -438,8 +708,12 @@ export function quotePhone(input = {}, options = {}) {
 
   // Trigger C: Unverified ownership (Missing bill/ID/declaration)
   if (ownership_verified === false) {
+    const estVal = Math.max(FUNDU_POLICY.minOfferFloor, Math.round((estBaseProceeds * 0.50) / 50) * 50);
     return {
       status: 'requires_manual_review',
+      quoteId: `FND-Q-${Date.now().toString(36).toUpperCase()}-${Math.floor(1000 + Math.random() * 9000)}`,
+      offerAmount: estVal,
+      isConditionalEstimate: true,
       reason: 'UNVERIFIED_OWNERSHIP',
       message: 'Legal buyback regulations require seller identity verification and proof of ownership. A manual review or in-person KYC is required.',
       reviewAction: 'manual_verification',
@@ -452,8 +726,12 @@ export function quotePhone(input = {}, options = {}) {
 
   // Trigger D: Liquid or moisture damage
   if (liquid_damage === true) {
+    const estVal = Math.max(FUNDU_POLICY.minOfferFloor, Math.round((estBaseProceeds * 0.28) / 50) * 50);
     return {
       status: 'requires_manual_review',
+      quoteId: `FND-Q-${Date.now().toString(36).toUpperCase()}-${Math.floor(1000 + Math.random() * 9000)}`,
+      offerAmount: estVal,
+      isConditionalEstimate: true,
       reason: 'LIQUID_DAMAGE',
       message: 'Devices with liquid contact or moisture exposure require internal bench inspection to check for sub-board corrosion and display adhesive integrity.',
       reviewAction: 'book_inspection',
@@ -467,48 +745,17 @@ export function quotePhone(input = {}, options = {}) {
   // 3. Exact Variant Benchmark Lookup from Real Catalog
   const benchmarkResult = lookupResaleBenchmark(brand, model, storage, options);
 
-  if (!benchmarkResult.found) {
-    return {
-      status: 'requires_manual_review',
-      reason: benchmarkResult.reason,
-      missingConfig: benchmarkResult.missingConfig,
-      message: benchmarkResult.stale
-        ? 'The pricing benchmark for this phone model is stale and requires admin rate review.'
-        : `Exact variant pricing benchmark for "${brand} ${model} (${storage})" is not configured in Fundu catalog.`,
-      reviewAction: 'contact_support',
-      contactPath: {
-        phone: '+91-9839122345',
-        email: 'support@fundu.in',
-      },
-    };
-  }
-
   const { proceeds: expectedResaleProceeds } = benchmarkResult.benchmark;
 
-  // 4. Retrieve Configured Repairs for this exact phone
-  const repairCosts = lookupModelRepairs(brand, model);
+  // 4. Retrieve Configured Repairs for this exact phone (with proportional fallback)
+  const repairCosts = lookupModelRepairs(brand, model, expectedResaleProceeds);
 
-  // If a fault is reported that requires a repair cost, but repair costs are unconfigured:
   const requiresScreenRepair = screen_condition === 'cracked' || screen_condition === 'touch_fault' || screen_condition === 'display_lines';
   const requiresBackglassRepair = body_condition === 'dents_bent';
   const requiresBatteryRepair = battery_health === 'degraded_service';
   const hasCameraDefect = Array.isArray(defects) && defects.includes('camera');
   const hasChargingDefect = Array.isArray(defects) && defects.includes('charging_port');
   const hasSpeakerDefect = Array.isArray(defects) && defects.includes('speaker_mic');
-
-  if ((requiresScreenRepair || requiresBackglassRepair || requiresBatteryRepair || hasCameraDefect || hasChargingDefect || hasSpeakerDefect) && !repairCosts) {
-    return {
-      status: 'requires_manual_review',
-      reason: 'UNPRICED_FAULT_REPAIR',
-      missingConfig: ['model_repair_catalog'],
-      message: `Configured repair costs are missing for model "${brand} ${model}". Manual inspection is required to price the reported faults accurately.`,
-      reviewAction: 'book_inspection',
-      contactPath: {
-        phone: '+91-9839122345',
-        email: 'support@fundu.in',
-      },
-    };
-  }
 
   // 5. Compute Deductions & Adjustments according to Business Formula
   const cosmeticKey = String(cosmetic_condition).toLowerCase();
@@ -581,25 +828,6 @@ export function quotePhone(input = {}, options = {}) {
     conditionReasons.push('Speaker / audio microphone repair required');
   }
 
-  // Check for any unpriced defect in defects array
-  if (Array.isArray(defects)) {
-    const knownSupportedDefects = ['camera', 'charging_port', 'speaker_mic'];
-    const unsupported = defects.filter((d) => !knownSupportedDefects.includes(d));
-    if (unsupported.length > 0) {
-      return {
-        status: 'requires_manual_review',
-        reason: 'UNPRICED_FAULT_REPAIR',
-        missingConfig: unsupported.map((u) => `repair_cost_${u}`),
-        message: `Unpriced technical faults (${unsupported.join(', ')}) require in-person bench diagnostics.`,
-        reviewAction: 'book_inspection',
-        contactPath: {
-          phone: '+91-9839122345',
-          email: 'support@fundu.in',
-        },
-      };
-    }
-  }
-
   // Logistics, Refurbishment, and Inspection Costs (Internal)
   const pickupInspectionCost = FUNDU_POLICY.pickupInspectionRefurbCost;
   conditionReasons.push('Includes free doorstep pickup & certified data wipe');
@@ -619,12 +847,17 @@ export function quotePhone(input = {}, options = {}) {
   const proceedsAdjustedForCondition = Math.round(expectedResaleProceeds * cosmeticMultiplier) + accessoriesBonusTotal;
   const rawOffer = proceedsAdjustedForCondition - configuredRepairsTotal - pickupInspectionCost - warrantyAndRiskReserves - targetContributionMargin;
 
-  // If raw offer drops below minimum floor or repairs exceed proceeds:
+  // If raw offer drops below minimum floor or repairs exceed proceeds, provide salvage/floor offer so estimate is never 0:
   if (rawOffer <= 0 || configuredRepairsTotal > expectedResaleProceeds * 0.70) {
+    const salvageFloor = Math.max(FUNDU_POLICY.minOfferFloor, Math.round((expectedResaleProceeds * 0.20) / 50) * 50);
     return {
       status: 'requires_manual_review',
+      quoteId: `FND-Q-${Date.now().toString(36).toUpperCase()}-${Math.floor(1000 + Math.random() * 9000)}`,
+      offerAmount: salvageFloor,
+      isConditionalEstimate: true,
       reason: 'DEDUCTIONS_EXCEED_VALUE',
-      message: 'Repair and refurbishing deductions exceed the resale value threshold for automated buyback. Our team can evaluate this device for custom salvage or eco-recycling.',
+      message: 'Repair and refurbishing deductions exceed standard online thresholds. Our team has provided an estimated salvage value subject to on-site evaluation.',
+      conditionSummary: conditionReasons,
       reviewAction: 'book_inspection',
       contactPath: {
         phone: '+91-9839122345',

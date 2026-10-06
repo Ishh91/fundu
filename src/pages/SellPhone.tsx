@@ -924,9 +924,94 @@ export default function SellPhone() {
     form.defects,
     form.accessories,
     form.underWarranty,
+  // Compute base resale value for any model using local master catalog, Indian phones catalog, or dynamic formula
+  const baseModelPrice = useMemo(() => {
+    if (!form.model) return 0;
+    const modelNorm = form.model.toLowerCase().trim();
+    const brandNorm = (form.brand || '').toLowerCase().trim();
+
+    const master = MASTER_MODEL_CATALOG.find((m) =>
+      m.model.toLowerCase() === modelNorm ||
+      `${m.brand} ${m.model}`.toLowerCase() === `${brandNorm} ${modelNorm}` ||
+      m.model.toLowerCase().includes(modelNorm)
+    );
+    if (master?.price) return master.price;
+
+    const indian = Array.isArray(ALL_INDIAN_PHONES_CATALOG)
+      ? ALL_INDIAN_PHONES_CATALOG.find((p) =>
+          p.model.toLowerCase() === modelNorm ||
+          `${p.brand} ${p.model}`.toLowerCase() === `${brandNorm} ${modelNorm}`
+        )
+      : null;
+    if (indian?.base_resale_value) return indian.base_resale_value;
+    if (indian?.default_mrp) return Math.round(indian.default_mrp * 0.55);
+
+    const fallback = getDynamicFallbackConfig(form.brand, form.model, form.storage);
+    return fallback.base_price || 15000;
+  }, [form.brand, form.model, form.storage]);
+
+  // Guaranteed non-zero smartphone valuation estimate
+  const estimate = useMemo(() => {
+    if (funduQuote?.offerAmount && funduQuote.offerAmount > 0) {
+      return funduQuote.offerAmount;
+    }
+
+    if (baseModelPrice > 0) {
+      let val = baseModelPrice;
+      if (form.cosmeticCondition === 'good') val *= 0.92;
+      else if (form.cosmeticCondition === 'fair') val *= 0.82;
+      if (form.screenCondition === 'scratched') val *= 0.90;
+      else if (form.screenCondition === 'cracked') val *= 0.68;
+      else if (form.screenCondition === 'touch_fault' || form.screenCondition === 'display_lines') val *= 0.60;
+      if (form.bodyCondition === 'minor_scratches') val *= 0.95;
+      else if (form.bodyCondition === 'dents_bent') val *= 0.82;
+      if (form.batteryHealth === 'degraded_service') val *= 0.92;
+      if (form.powersOn === false) val *= 0.35;
+      if (form.liquidDamage) val *= 0.50;
+      if (form.canMakeCalls === false) val *= 0.85;
+      if (form.underWarranty) val *= 1.05;
+      if (Array.isArray(form.defects)) {
+        val -= form.defects.length * (baseModelPrice * 0.08);
+      }
+      if (Array.isArray(form.accessories)) {
+        val += form.accessories.length * 300;
+      }
+      return Math.max(800, Math.round(val / 50) * 50);
+    }
+
+    return 5000;
+  }, [
+    funduQuote?.offerAmount,
+    baseModelPrice,
+    form.cosmeticCondition,
+    form.screenCondition,
+    form.bodyCondition,
+    form.batteryHealth,
+    form.powersOn,
+    form.liquidDamage,
+    form.canMakeCalls,
+    form.underWarranty,
+    form.defects,
+    form.accessories,
   ]);
 
-  const estimate = funduQuote?.offerAmount ?? 0;
+  // Complete diagnostic valuation breakdown
+  const cashifyValuation = useMemo(() => {
+    return computeDetailedCashifyValuation(
+      pricingConfig,
+      {
+        screenCondition: form.screenCondition === 'cracked' ? 'cracked' : form.screenCondition === 'scratched' ? 'scratches' : 'flawless',
+        bodyCondition: form.bodyCondition === 'dents_bent' ? 'dents_bent' : form.bodyCondition === 'minor_scratches' ? 'scratches' : 'flawless',
+        canMakeCalls: form.canMakeCalls,
+        underWarranty: form.underWarranty,
+        defects: form.defects,
+        accessories: form.accessories,
+      },
+      form.brand,
+      form.model,
+      form.storage
+    );
+  }, [pricingConfig, form.screenCondition, form.bodyCondition, form.canMakeCalls, form.underWarranty, form.defects, form.accessories, form.brand, form.model, form.storage]);
 
   // Filtered Master Models for Search Autocomplete (Combines Master Catalog, Indian Phones Catalog, & MobileAPI Live Fallback)
   const searchResults = useMemo(() => {
