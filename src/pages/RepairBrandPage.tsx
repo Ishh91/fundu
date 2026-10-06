@@ -311,7 +311,7 @@ export default function RepairBrandPage() {
             </div>
           )}
 
-          {/* EXACT CASHIFY-STYLE 6-COLUMN RESPONSIVE MODEL PRODUCT TILE GRID */}
+          {/* 6-COLUMN RESPONSIVE MODEL PRODUCT TILE GRID */}
           {brandModels.length > 0 ? (
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 sm:gap-4 md:gap-5">
               {brandModels.map((m) => {

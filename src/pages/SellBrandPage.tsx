@@ -22,7 +22,7 @@ import { formatINR } from '../lib/db';
 import { getCleanPhoneImage, getCleanBrandLogo, BRAND_FRONT_FALLBACKS } from '../lib/phoneImages';
 import { usePriceSync, applyPriceOverrides } from '../lib/priceSync';
 import { MASTER_MODEL_CATALOG } from './SellPhone';
-import { fetchBrandCatalogFromApi, getDynamicFallbackConfig, calculateCashifyComparison, type CatalogModelItem } from '../lib/mobileApi';
+import { fetchBrandCatalogFromApi, getDynamicFallbackConfig, calculateMarketPriceComparison, type CatalogModelItem } from '../lib/mobileApi';
 import { ALL_INDIAN_PHONES_CATALOG } from '../data/indianPhonesCatalog';
 import {
   groupModelsBySeries,
@@ -412,7 +412,7 @@ export default function SellBrandPage() {
 
   return (
     <div className="min-h-screen bg-transparent pb-24">
-      {/* CASHIFY EXACT BREADCRUMB NAVIGATION */}
+      {/* BREADCRUMB NAVIGATION */}
       <div className="bg-white/90 backdrop-blur-md border-b border-[#C0C8D8]/70 py-2.5 px-4 text-xs font-semibold text-[#47576E]">
         <div className="max-w-7xl mx-auto flex items-center gap-1.5 flex-wrap">
           <Link to="/" className="hover:text-[#344257] transition">Home</Link>
@@ -573,7 +573,7 @@ export default function SellBrandPage() {
                         </p>
                         {(() => {
                           const funduPrice = getModelEstimatedPrice(m);
-                          const comp = calculateCashifyComparison(funduPrice);
+                          const comp = calculateMarketPriceComparison(funduPrice);
                           return (
                             <div className="flex flex-col items-center gap-1 mt-1">
                               <span className="badge bg-[#F0F0F5] text-[#344257] border border-[#C0C8D8] font-black text-[11px]">
@@ -645,7 +645,7 @@ export default function SellBrandPage() {
                         </p>
                         {(() => {
                           const funduPrice = getModelEstimatedPrice(m);
-                          const comp = calculateCashifyComparison(funduPrice);
+                          const comp = calculateMarketPriceComparison(funduPrice);
                           return (
                             <div className="flex flex-col items-center gap-1 mt-1">
                               <span className="badge bg-[#F0F0F5] text-[#344257] border border-[#C0C8D8] font-black text-[11px]">
@@ -731,7 +731,7 @@ export default function SellBrandPage() {
           )}
         </div>
 
-        {/* CASHIFY "HOW IT WORKS" 3-STEP FLOW */}
+        {/* FUNDU "HOW IT WORKS" 3-STEP FLOW */}
         <div className="card p-8 rounded-[32px] bg-white border border-gray-200 space-y-6">
           <div className="text-center max-w-xl mx-auto space-y-1">
             <span className="badge bg-[#F0F0F5] text-[#344257] border border-[#C0C8D8] text-xs font-bold">Simple 3-Step Process</span>
@@ -768,7 +768,7 @@ export default function SellBrandPage() {
           </div>
         </div>
 
-        {/* CASHIFY WHY SELL BRAND ON FUNDU (6 USPs) */}
+        {/* WHY SELL BRAND ON FUNDU (6 USPs) */}
         <div className="card p-8 rounded-[32px] bg-gradient-to-r from-[#1E2734] via-[#344257] to-[#47576E] text-white shadow-xl space-y-6">
           <div className="text-center max-w-2xl mx-auto space-y-2">
             <span className="badge bg-white/10 text-white border border-white/20 text-xs font-bold px-3 py-1">

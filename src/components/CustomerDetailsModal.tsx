@@ -310,7 +310,7 @@ export default function CustomerDetailsModal({ isOpen, onClose, customer }: Cust
                 )}
               </div>
 
-              {/* Cashify Hardware Diagnostics & Accessories Summary */}
+              {/* Diagnostics & Accessories Summary */}
               {((customer as any).screenCondition || (customer as any).bodyCondition || (customer as any).defects || (customer as any).accessories) && (
                 <div className="p-3.5 rounded-xl bg-white border border-gray-200 text-xs space-y-2">
                   <span className="font-bold text-gray-900 block text-[11px] uppercase tracking-wider text-[#344257]">

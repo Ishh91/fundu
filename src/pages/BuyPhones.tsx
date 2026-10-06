@@ -32,7 +32,7 @@ import { useCart } from '../context/CartContext';
 import { getCleanPhoneImage, getCleanBrandLogo } from '../lib/phoneImages';
 import type { Product } from '../types';
 
-// Cashify-style circular brand filters with brand logos
+// Circular brand filters with brand logos
 const BRAND_PILLS = [
   { name: 'All', label: 'All Brands' },
   { name: 'Apple', label: 'Apple' },
@@ -737,7 +737,7 @@ export default function BuyPhones() {
 
   return (
     <div className="min-h-screen bg-[#F7F7FA] pb-24 text-[#344257]">
-      {/* CASHIFY-STYLE HERO & TOP BAR WITH FUNDU PALETTE */}
+      {/* HERO & TOP BAR WITH FUNDU PALETTE */}
       <section
         style={{
           background: 'linear-gradient(135deg, #1E2734 0%, #344257 55%, #47576E 100%)',
@@ -760,7 +760,7 @@ export default function BuyPhones() {
                 Save up to 50% on top smartphones. 32-Point inspection certified, 6-Month warranty, & free doorstep delivery at your doorstep.
               </p>
 
-              {/* Cashify Feature Badges */}
+              {/* Feature Badges */}
               <div className="mt-4 flex flex-wrap items-center gap-3 text-xs font-semibold text-white/90">
                 <div className="flex items-center gap-1.5 bg-white/10 px-3 py-1 rounded-lg border border-white/10">
                   <ShieldCheck className="h-3.5 w-3.5 text-[#C0C8D8]" /> 6 Months Warranty
@@ -819,7 +819,7 @@ export default function BuyPhones() {
         </div>
       </section>
 
-      {/* CASHIFY-STYLE HORIZONTAL CIRCULAR BRAND LOGO CAROUSEL */}
+      {/* HORIZONTAL CIRCULAR BRAND LOGO CAROUSEL */}
       <section className="bg-white border-b border-gray-200 sticky top-0 z-30 shadow-xs">
         <div className="container-page py-3">
           <div className="flex items-center justify-between mb-2">
@@ -946,7 +946,7 @@ export default function BuyPhones() {
         </div>
       </section>
 
-      {/* MAIN CONTAINER: SIDEBAR + CASHIFY PRODUCT GRID */}
+      {/* MAIN CONTAINER: SIDEBAR + PRODUCT GRID */}
       <div className="container-page mt-6">
         {/* Grade Tabs & Sort Bar */}
         <div className="bg-white p-3 rounded-2xl mb-6 flex flex-wrap items-center justify-between gap-3 border border-gray-200 shadow-xs">
@@ -1079,7 +1079,7 @@ export default function BuyPhones() {
             </div>
           </aside>
 
-          {/* CASHIFY PRODUCT GRID */}
+          {/* PRODUCT GRID */}
           <main className="space-y-6">
             <div className="flex items-center justify-between text-xs font-bold text-gray-500">
               <p>
@@ -1152,7 +1152,7 @@ export default function BuyPhones() {
                       <div>
                         {/* Image Showcase Container */}
                         <div className="relative bg-[#F8F9FA] p-4 flex items-center justify-center overflow-hidden border-b border-gray-100">
-                          {/* Grade Pill (Cashify style) */}
+                          {/* Certified Grade Pill */}
                           <span
                             className={`absolute top-3 left-3 z-10 text-[10px] font-extrabold px-2.5 py-1 rounded-full shadow-xs ${
                               isSuperb
@@ -1241,7 +1241,7 @@ export default function BuyPhones() {
                           )}
                         </div>
 
-                        {/* Cashify EMI line */}
+                        {/* Low Cost EMI Line */}
                         <p className="text-[10px] text-gray-500 mb-3 font-medium flex items-center gap-1">
                           <Zap className="h-2.5 w-2.5 text-amber-500" />
                           <span>Or EMI starting at <strong>{formatINR(emiAmount)}/mo</strong></span>
@@ -1277,7 +1277,7 @@ export default function BuyPhones() {
           </main>
         </div>
 
-        {/* CASHIFY-STYLE 32-POINT INSPECTION CHECKLIST SECTION */}
+        {/* 32-POINT INSPECTION CHECKLIST SECTION */}
         <section className="mt-16 bg-white rounded-3xl p-6 md:p-10 border border-gray-200 shadow-xs">
           <div className="text-center max-w-2xl mx-auto">
             <div className="inline-flex items-center gap-1.5 rounded-full bg-[#344257]/10 px-3 py-1 text-xs font-bold text-[#344257]">
@@ -1308,7 +1308,7 @@ export default function BuyPhones() {
                     </h4>
                     <ul className="mt-2.5 space-y-1.5">
                       {cat.points.map((pt) => (
-                        <li key={pt} className="text-[11px] text-gray-600 flex items-start gap-1.5 leading-tight">
+                         <li key={pt} className="text-[11px] text-gray-600 flex items-start gap-1.5 leading-tight">
                           <CheckCircle2 className="h-3 w-3 text-[#47576E] mt-0.5 shrink-0" />
                           <span>{pt}</span>
                         </li>
@@ -1321,7 +1321,7 @@ export default function BuyPhones() {
           </div>
         </section>
 
-        {/* CASHIFY-STYLE REFURBISHED GRADING GUIDE */}
+        {/* REFURBISHED GRADING GUIDE */}
         <section className="mt-8 bg-white rounded-3xl p-6 md:p-10 border border-gray-200 shadow-xs">
           <div className="text-center max-w-xl mx-auto">
             <h2 className="font-display text-2xl font-extrabold text-[#344257]">

@@ -1005,7 +1005,7 @@ export default function DeliveryAgentPortal() {
                       }
                     />
 
-                    {/* Cashify Rider Handover Milestone Actions Bar */}
+                    {/* Rider Handover Milestone Actions Bar */}
                     <div className="space-y-2 pt-2 border-t border-slate-100">
                       <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
                         Fundu Rider Handover Actions:

@@ -158,7 +158,7 @@ export default function SearchActionPage() {
 
   return (
     <div className="min-h-screen bg-[#f4f7f8] pb-24">
-      {/* CASHIFY EXACT BREADCRUMB NAVIGATION */}
+      {/* BREADCRUMB NAVIGATION */}
       <div className="bg-white border-b border-gray-100 py-2.5 px-4 text-xs font-semibold text-gray-500">
         <div className="max-w-7xl mx-auto flex items-center gap-1.5 flex-wrap">
           <Link to="/" className="hover:text-[#344257] transition">Home</Link>

@@ -8,7 +8,7 @@ import {
   MapPin,
   CheckCircle2,
 } from 'lucide-react';
-import { DOORSTEP_LOCALITIES } from '../Navbar';
+import { PAN_INDIA_POPULAR_CITIES } from '../../lib/locationService';
 
 const WHY_CHOOSE_PILLARS = [
   {
@@ -96,28 +96,31 @@ export default function WhyChooseFundu() {
               </div>
               <div>
                 <h4 className="text-sm font-extrabold text-[#344257]">
-                  Doorstep Mobile Service Coverage at your doorstep
+                  Pan-India Doorstep Mobile Service Coverage
                 </h4>
                 <p className="text-xs text-[#8A9AAF]">
-                  Free pickup & 30-min doorstep repair available in these areas today
+                  Free doorstep pickup & instant payment available across 19,000+ Indian Pin codes today
                 </p>
               </div>
             </div>
             <span className="rounded-full bg-white px-3 py-1 text-xs font-bold text-[#344257] border border-[#C0C8D8] self-start sm:self-auto shadow-xs">
-              ✓ All Pin Codes Active
+              ✓ 19,000+ Pin Codes Active
             </span>
           </div>
 
           <div className="mt-4 flex flex-wrap gap-2">
-            {DOORSTEP_LOCALITIES.map((loc) => (
+            {PAN_INDIA_POPULAR_CITIES.map((c) => (
               <span
-                key={loc}
+                key={c.city}
                 className="inline-flex items-center gap-1.5 rounded-xl bg-white hover:border-[#6A859F] hover:text-[#344257] border border-[#C0C8D8]/70 px-3 py-1.5 text-xs font-bold text-[#47576E] transition cursor-default shadow-xs"
               >
                 <CheckCircle2 className="h-3.5 w-3.5 text-[#6A859F]" />
-                {loc}
+                {c.city}
               </span>
             ))}
+            <span className="inline-flex items-center gap-1.5 rounded-xl bg-[#F0F0F5] border border-[#C0C8D8] px-3 py-1.5 text-xs font-extrabold text-[#344257]">
+              + All Other Cities & Towns Supported
+            </span>
           </div>
         </div>
       </div>

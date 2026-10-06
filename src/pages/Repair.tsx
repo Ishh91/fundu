@@ -574,7 +574,7 @@ export default function Repair() {
         </div>
       </div>
 
-      {/* Cashify Top Search & Header */}
+      {/* Top Search & Header */}
       <section className="bg-white border-b border-[#e5ecef] py-8">
         <div className="container-page">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
@@ -1103,7 +1103,7 @@ export default function Repair() {
                 {form.brand} {form.model}
               </h2>
 
-              {/* Cashify Upfront Quote Box */}
+              {/* Upfront Quote Box */}
               <div className="mt-6 rounded-3xl bg-gradient-to-r from-[#0a1b1d] via-[#11292d] to-[#0a1b1d] p-6 sm:p-8 text-white shadow-xl relative overflow-hidden space-y-5">
                 <div>
                   <p className="text-xs font-bold uppercase tracking-widest text-emerald-400">Total Upfront Repair Price (Incl. Parts & Labor)</p>

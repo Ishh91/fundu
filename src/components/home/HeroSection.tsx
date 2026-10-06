@@ -32,7 +32,7 @@ export default function HeroSection() {
   return (
     <section className="py-4 space-y-4">
       <div className="container-page space-y-4">
-        {/* Cashify Top Search Bar (Mobile Only) */}
+        {/* Mobile Search Bar */}
         <div className="max-w-3xl mx-auto md:hidden">
           <div
             onClick={() => navigate('/sell')}
@@ -168,7 +168,7 @@ export default function HeroSection() {
           </div>
         </div>
 
-        {/* Cashify 4-Column Services Section */}
+        {/* 4-Column Services Section */}
         <OurServices />
       </div>
     </section>

@@ -515,7 +515,7 @@ export default function ProductDetail() {
                 </p>
               </div>
 
-              {/* CASHIFY-STYLE PRICE & NO-COST EMI BLOCK */}
+              {/* PRICE & NO-COST EMI BLOCK */}
               <div className="rounded-3xl bg-gradient-to-br from-[#f8fafb] to-[#f1f5f7] p-6 border border-ink-100 space-y-4">
                 <div className="flex flex-wrap items-baseline justify-between gap-3">
                   <div>

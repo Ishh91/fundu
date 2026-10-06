@@ -12,7 +12,7 @@ import {
   CheckCircle2,
 } from 'lucide-react';
 import BrandLogo from './BrandLogo';
-import { DOORSTEP_LOCALITIES } from './Navbar';
+import { PAN_INDIA_POPULAR_CITIES } from '../lib/locationService';
 
 export default function Footer() {
   return (
@@ -114,21 +114,21 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* Col 3: Service Localities Covered */}
+          {/* Col 3: Service Coverage */}
           <div>
             <h4 className="font-display text-xs font-black uppercase tracking-wider text-[#344257]">
-              Service Localities
+              Pan-India Coverage
             </h4>
             <div className="mt-4 grid grid-cols-2 gap-x-2 gap-y-1.5 text-xs text-[#47576E] font-medium">
-              {DOORSTEP_LOCALITIES.slice(0, 10).map((loc) => (
-                <span key={loc} className="flex items-center gap-1 truncate">
+              {PAN_INDIA_POPULAR_CITIES.slice(0, 10).map((loc) => (
+                <span key={loc.city} className="flex items-center gap-1 truncate">
                   <CheckCircle2 className="h-3 w-3 text-[#6A859F] shrink-0" />
-                  {loc}
+                  {loc.city}
                 </span>
               ))}
             </div>
             <p className="mt-3 text-[11px] font-bold text-[#47576E]">
-              + All other pin codes supported!
+              + 19,000+ Pin codes across India supported!
             </p>
           </div>
 
