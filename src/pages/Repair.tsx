@@ -896,27 +896,31 @@ export default function Repair() {
                   </div>
 
                   <div className="mt-6 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3.5">
-                    {POPULAR_REPAIR_MODELS.map((item) => (
-                      <button
-                        key={item.model}
-                        type="button"
-                        onClick={() => handleQuickModelSelect(item)}
-                        className="group flex flex-col items-center p-4 rounded-2xl border border-gray-200/80 bg-white hover:border-[#47576E] hover:shadow-lg hover:-translate-y-1 transition-all text-center"
-                      >
-                        <div className="h-24 sm:h-28 w-full flex items-center justify-center p-1.5 mb-1 relative">
-                          <img
-                            src={getCleanPhoneImage(item.brand, item.model, item.image)}
-                            alt={item.model}
-                            className="max-h-full max-w-full w-auto h-auto object-contain drop-shadow-sm mix-blend-multiply group-hover:scale-105 transition-transform duration-300"
-                            loading="lazy"
-                          />
-                        </div>
-                        <p className="mt-2 text-xs font-black text-ink-900 group-hover:text-[#344257] truncate w-full transition-colors">{item.model}</p>
-                        <span className="mt-2 badge bg-emerald-50 text-emerald-800 font-black text-[10px]">
-                          From {formatINR(item.price)}
-                        </span>
-                      </button>
-                    ))}
+                    {POPULAR_REPAIR_MODELS.map((item) => {
+                      const popularPricing = getModelRepairPricing(item.brand, item.model, 'smartphone', repairConfigs);
+                      const displayPrice = popularPricing.basePrice || item.price;
+                      return (
+                        <button
+                          key={item.model}
+                          type="button"
+                          onClick={() => handleQuickModelSelect(item)}
+                          className="group flex flex-col items-center p-4 rounded-2xl border border-gray-200/80 bg-white hover:border-[#47576E] hover:shadow-lg hover:-translate-y-1 transition-all text-center"
+                        >
+                          <div className="h-24 sm:h-28 w-full flex items-center justify-center p-1.5 mb-1 relative">
+                            <img
+                              src={getCleanPhoneImage(item.brand, item.model, item.image)}
+                              alt={item.model}
+                              className="max-h-full max-w-full w-auto h-auto object-contain drop-shadow-sm mix-blend-multiply group-hover:scale-105 transition-transform duration-300"
+                              loading="lazy"
+                            />
+                          </div>
+                          <p className="mt-2 text-xs font-black text-ink-900 group-hover:text-[#344257] truncate w-full transition-colors">{item.model}</p>
+                          <span className="mt-2 badge bg-emerald-50 text-emerald-800 font-black text-[10px]">
+                            From {formatINR(displayPrice)}
+                          </span>
+                        </button>
+                      );
+                    })}
                   </div>
                 </div>
               </>

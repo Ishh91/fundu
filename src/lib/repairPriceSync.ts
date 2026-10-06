@@ -91,11 +91,23 @@ export function saveLocalRepairConfigs(configs: RepairPriceConfig[]) {
 }
 
 /**
- * Generate normalized lookup key
+ * Strips brand prefix and normalizes model name for robust matching
+ */
+export function cleanModelString(brand: string, model: string): string {
+  const b = (brand || '').trim().toLowerCase().replace(/[\s-]+/g, '');
+  let m = (model || '').trim().toLowerCase().replace(/[\s-]+/g, '');
+  if (b && m.startsWith(b)) {
+    m = m.slice(b.length);
+  }
+  return m;
+}
+
+/**
+ * Generate normalized lookup key with brand-prefix normalization
  */
 export function makeCatalogLookupKey(brand: string, model: string, productType: string = 'smartphone'): string {
   const b = (brand || '').trim().toLowerCase();
-  const m = (model || '').trim().toLowerCase().replace(/[\s-]+/g, '');
+  const m = cleanModelString(brand, model);
   const p = (productType || 'smartphone').toLowerCase();
   return `${p}:${b}:${m}`;
 }
@@ -331,15 +343,65 @@ export function getModelRepairPricing(
     return { config: null, services, basePrice: services[0]?.price || 1499 };
   }
 
-  const lookupKey = makeCatalogLookupKey(brand, model, productType);
-  const matched = configsList.find((c) => {
-    if (!c.is_active) return false;
-    const cKey = makeCatalogLookupKey(c.brand, c.model, c.product_type || 'smartphone');
-    return cKey === lookupKey;
+  const targetKey = makeCatalogLookupKey(brand, model, productType);
+  const targetClean = cleanModelString(brand, model);
+  const targetBrandLower = (brand || '').trim().toLowerCase();
+  const targetProd = (productType || 'smartphone').toLowerCase();
+
+  // Filter candidate configs matching brand & product type (allowing is_active undefined/null or true)
+  const activeConfigs = (configsList || []).filter((c) => {
+    if (c.is_active === false) return false;
+    const cBrand = (c.brand || '').trim().toLowerCase();
+    const cProd = (c.product_type || 'smartphone').toLowerCase();
+    return cBrand === targetBrandLower && cProd === targetProd;
   });
 
+  // Pass 1: Exact normalized key match (brand prefix stripped)
+  let matched = activeConfigs.find((c) => {
+    const cKey = makeCatalogLookupKey(c.brand, c.model, c.product_type || 'smartphone');
+    return cKey === targetKey;
+  });
+
+  // Pass 2: Clean model exact match
+  if (!matched) {
+    matched = activeConfigs.find((c) => {
+      const cClean = cleanModelString(c.brand, c.model);
+      return cClean === targetClean;
+    });
+  }
+
+  // Pass 3: Raw normalized string match (ignoring whitespace and dashes)
+  if (!matched) {
+    const rawTarget = (model || '').trim().toLowerCase().replace(/[\s-]+/g, '');
+    matched = activeConfigs.find((c) => {
+      const rawC = (c.model || '').trim().toLowerCase().replace(/[\s-]+/g, '');
+      return rawC === rawTarget;
+    });
+  }
+
+  // Pass 4: Best candidate substring match (prefer closest length match to prevent false positives)
+  if (!matched && targetClean.length >= 3) {
+    const candidates = activeConfigs.filter((c) => {
+      const cClean = cleanModelString(c.brand, c.model);
+      return (
+        cClean.length >= 3 &&
+        (cClean === targetClean || cClean.includes(targetClean) || targetClean.includes(cClean))
+      );
+    });
+
+    if (candidates.length > 0) {
+      candidates.sort((a, b) => {
+        const aDiff = Math.abs(cleanModelString(a.brand, a.model).length - targetClean.length);
+        const bDiff = Math.abs(cleanModelString(b.brand, b.model).length - targetClean.length);
+        return aDiff - bDiff;
+      });
+      matched = candidates[0];
+    }
+  }
+
   if (matched && matched.services && matched.services.length > 0) {
-    const minServicePrice = Math.min(...matched.services.map((s) => s.price));
+    const validPrices = matched.services.map((s) => Number(s.price) || 0).filter((p) => p > 0);
+    const minServicePrice = validPrices.length > 0 ? Math.min(...validPrices) : 499;
     return {
       config: matched,
       services: matched.services,
@@ -516,8 +578,18 @@ export function useRepairPriceSync() {
       setConfigs(getLocalRepairConfigs());
     };
 
+    const handleStorage = (e: StorageEvent) => {
+      if (e.key === REPAIR_OVERRIDES_STORAGE_KEY) {
+        setConfigs(getLocalRepairConfigs());
+      }
+    };
+
     window.addEventListener('fundu_repair_price_updated', handleUpdate);
-    return () => window.removeEventListener('fundu_repair_price_updated', handleUpdate);
+    window.addEventListener('storage', handleStorage);
+    return () => {
+      window.removeEventListener('fundu_repair_price_updated', handleUpdate);
+      window.removeEventListener('storage', handleStorage);
+    };
   }, []);
 
   return { configs, loading, refetch: fetchConfigs };

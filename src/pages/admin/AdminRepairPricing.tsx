@@ -212,9 +212,13 @@ export default function AdminRepairPricing({
         return edited !== undefined ? { ...s, price: Number(edited) } : s;
       });
 
+      const validPrices = updatedServices.map((s) => Number(s.price) || 0).filter((p) => p > 0);
+      const newBasePrice = validPrices.length > 0 ? Math.min(...validPrices) : (selectedConfig.base_repair_price || 499);
+
       await onSaveConfig({
         id: selectedConfig.id,
         services: updatedServices,
+        base_repair_price: newBasePrice,
       });
       setInlinePriceEdits({});
       alert('✅ Repair service rates saved successfully!');

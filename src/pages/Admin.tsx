@@ -727,24 +727,32 @@ export default function Admin() {
 
   // Repair Price Catalog Handlers
   const handleSaveRepairConfig = async (configData: Partial<RepairPriceConfig>) => {
-    if (configData.id) {
+    const payload = { ...configData };
+    if (payload.services && payload.services.length > 0) {
+      const validPrices = payload.services.map((s) => Number(s.price) || 0).filter((p) => p > 0);
+      if (validPrices.length > 0) {
+        payload.base_repair_price = Math.min(...validPrices);
+      }
+    }
+
+    if (payload.id) {
       const { data, error } = await db
         .from('repair_price_configs')
-        .update(configData)
-        .eq('id', configData.id)
+        .update(payload)
+        .eq('id', payload.id)
         .select('*')
         .single();
       if (error) throw error;
       const updated = data as RepairPriceConfig;
       setRepairPriceConfigs((prev) => {
-        const next = prev.map((c) => (c.id === configData.id ? updated : c));
+        const next = prev.map((c) => (c.id === payload.id ? updated : c));
         saveLocalRepairConfigs(next);
         return next;
       });
     } else {
       const { data, error } = await db
         .from('repair_price_configs')
-        .insert(configData)
+        .insert(payload)
         .select('*')
         .single();
       if (error) throw error;

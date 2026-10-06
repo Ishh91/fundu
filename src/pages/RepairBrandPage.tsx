@@ -214,6 +214,23 @@ export default function RepairBrandPage() {
     navigate(targetUrl);
   };
 
+  const brandCommonServices = useMemo(() => {
+    return COMMON_REPAIR_SERVICES.map((srv) => {
+      const brandConfigs = (repairConfigs || []).filter(
+        (c) => (c.brand || '').toLowerCase() === brandCleanKey && c.is_active !== false
+      );
+      const prices = brandConfigs
+        .map((c) => c.services?.find((s) => s.service_id === srv.id)?.price)
+        .filter((p): p is number => typeof p === 'number' && p > 0);
+
+      const lowestPrice = prices.length > 0 ? Math.min(...prices) : srv.cost;
+      return {
+        ...srv,
+        cost: lowestPrice,
+      };
+    });
+  }, [brandCleanKey, repairConfigs]);
+
   return (
     <div className="min-h-screen bg-[#F0F0F5] pb-24">
       {/* BREADCRUMB NAVIGATION */}
@@ -390,7 +407,7 @@ export default function RepairBrandPage() {
           </div>
 
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
-            {COMMON_REPAIR_SERVICES.map((srv) => {
+            {brandCommonServices.map((srv) => {
               const IconComp = srv.icon;
               return (
                 <div
