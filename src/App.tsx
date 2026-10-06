@@ -123,11 +123,12 @@ function MainLayout() {
           <Route path="/sell/:brandSlug" element={<SellBrandPage />} />
           <Route path="/sell/:brandSlug/series/:seriesSlug" element={<SellBrandPage />} />
           <Route path="/sell/:brandSlug/:modelSlug" element={<SellModelOrSeriesRoute />} />
+
+          {/* Legacy / Direct Buyback URLs */}
           <Route path="/sell-old-mobile-phone" element={<SellPhone />} />
-          <Route path="/sell-old-mobile-phone/sell-:brandSlug" element={<SellBrandPage />} />
-          <Route path="/sell-old-mobile-phone/sell-:brandSlug/series/:seriesSlug" element={<SellBrandPage />} />
-          <Route path="/sell-old-mobile-phone/sell-:brandSlug/sell-:modelSlug" element={<SellModelOrSeriesRoute />} />
-          <Route path="/sell-old-mobile-phone/sell-:brandSlug/:modelSlug" element={<SellModelOrSeriesRoute />} />
+          <Route path="/sell-old-mobile-phone/:brandSlug" element={<SellBrandPage />} />
+          <Route path="/sell-old-mobile-phone/:brandSlug/series/:seriesSlug" element={<SellBrandPage />} />
+          <Route path="/sell-old-mobile-phone/:brandSlug/:modelSlug" element={<SellModelOrSeriesRoute />} />
 
           {/* Repair Ecosystem & Dynamic Sub-Pages */}
           <Route path="/repair" element={<Repair />} />
@@ -135,7 +136,7 @@ function MainLayout() {
           <Route path="/repair/:brandSlug/:modelSlug" element={<Repair />} />
           <Route path="/repair/issue/:issueSlug" element={<RepairIssuePage />} />
           <Route path="/mobile-repair" element={<Repair />} />
-          <Route path="/mobile-repair/repair-:brandSlug" element={<RepairBrandPage />} />
+          <Route path="/mobile-repair/:brandSlug" element={<RepairBrandPage />} />
           <Route path="/doorstep-mobile-repair" element={<Repair />} />
           <Route path="/doorstep-mobile-repair/:issueSlug" element={<RepairIssuePage />} />
           <Route path="/spare-parts" element={<SpareParts />} />

@@ -35,6 +35,13 @@ import BrandLogo from './BrandLogo';
 import { PHONE_LOOKUP_CATALOG } from '../data/phoneLookup';
 import { MASTER_MODEL_CATALOG } from '../pages/SellPhone';
 import { fetchBrandCatalogFromApi, fetchDeviceAutocomplete } from '../lib/mobileApi';
+import {
+  getPanIndiaLocation,
+  savePanIndiaLocation,
+  searchPanIndiaLocations,
+  PAN_INDIA_POPULAR_CITIES,
+  type PanIndiaLocation,
+} from '../lib/locationService';
 
 
 export const DOORSTEP_LOCALITIES = [
@@ -230,19 +237,57 @@ export default function Navbar() {
   const [locationModalOpen, setLocationModalOpen] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
 
+  const [selectedLocation, setSelectedLocation] = useState<PanIndiaLocation>(() => getPanIndiaLocation());
   const [selectedLocality, setSelectedLocality] = useState(() => {
-    try {
-      const saved = localStorage.getItem('fundu_locality_area');
-      if (saved) {
-        const clean = saved.replace(/,?\s*lucknow/gi, '').trim();
-        if (clean !== saved) {
-          localStorage.setItem('fundu_locality_area', clean || 'Doorstep Service');
-        }
-        return clean || 'Doorstep Service';
-      }
-    } catch {}
-    return 'Doorstep Service';
+    const loc = getPanIndiaLocation();
+    return `${loc.city} (${loc.pincode})`;
   });
+
+  const [locationSearch, setLocationSearch] = useState('');
+  const [locationResults, setLocationResults] = useState<PanIndiaLocation[]>(PAN_INDIA_POPULAR_CITIES);
+  const [isSearchingLocation, setIsSearchingLocation] = useState(false);
+
+  // Sync location across windows or from SellPhone updates
+  useEffect(() => {
+    const handleLocChange = (e: any) => {
+      if (e.detail && e.detail.city) {
+        setSelectedLocation(e.detail);
+        setSelectedLocality(`${e.detail.city} (${e.detail.pincode})`);
+      }
+    };
+    window.addEventListener('fundu_location_changed', handleLocChange);
+    return () => window.removeEventListener('fundu_location_changed', handleLocChange);
+  }, []);
+
+  // Debounced Pan-India Location Search (supports Pincode, City, Town)
+  useEffect(() => {
+    let active = true;
+    const q = locationSearch.trim();
+    if (!q) {
+      setLocationResults(PAN_INDIA_POPULAR_CITIES);
+      setIsSearchingLocation(false);
+      return;
+    }
+
+    setIsSearchingLocation(true);
+    const timer = setTimeout(async () => {
+      try {
+        const res = await searchPanIndiaLocations(q);
+        if (active) {
+          setLocationResults(res);
+        }
+      } catch {
+        // Keep previous or fallback
+      } finally {
+        if (active) setIsSearchingLocation(false);
+      }
+    }, 160);
+
+    return () => {
+      active = false;
+      clearTimeout(timer);
+    };
+  }, [locationSearch]);
 
   const [search, setSearch] = useState('');
   const [searchOpen, setSearchOpen] = useState(false);
@@ -362,11 +407,13 @@ export default function Navbar() {
     };
   }, [search]);
 
-  const handleSelectLocality = (loc: string) => {
-    const fullLoc = `${loc}`;
-    setSelectedLocality(loc);
-    localStorage.setItem('fundu_locality_area', fullLoc);
+  const handleSelectPanIndiaLocation = (loc: PanIndiaLocation) => {
+    setSelectedLocation(loc);
+    setSelectedLocality(`${loc.city} (${loc.pincode})`);
+    savePanIndiaLocation(loc);
+    localStorage.setItem('fundu_locality_area', `${loc.city}, ${loc.state}`);
     setLocationModalOpen(false);
+    setLocationSearch('');
   };
 
   const submitSearch = (event: React.FormEvent) => {
@@ -670,16 +717,16 @@ export default function Navbar() {
                   <BrandLogo imageClassName="h-11 sm:h-14 md:h-16 w-auto max-w-[240px] sm:max-w-[290px] md:max-w-[320px] filter drop-shadow-xs transition-transform duration-200 hover:scale-102" />
                 </Link>
 
-                {/* Location Selector (Doorstep) */}
+                {/* Location Selector (Pan-India Doorstep) */}
                 <button
                   type="button"
                   onClick={() => setLocationModalOpen(true)}
                   className="hidden sm:flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-white/95 hover:text-white transition-colors py-1.5 px-3 rounded-full bg-white/10 hover:bg-white/20 border border-white/20 group cursor-pointer"
-                  title="Fundu Doorstep Services"
+                  title="Fundu Pan-India Doorstep Services"
                 >
                   <MapPin className="h-4 w-4 text-[#C0C8D8] shrink-0 group-hover:scale-110 transition-transform" />
                   <span className="font-bold text-white">
-                    {selectedLocality === 'Doorstep Service' ? 'Doorstep Service' : `${selectedLocality}`}
+                    {selectedLocation.city} ({selectedLocation.pincode})
                   </span>
                   <ChevronDown className="h-3.5 w-3.5 text-white/70 group-hover:text-white transition-transform" />
                 </button>
@@ -731,7 +778,7 @@ export default function Navbar() {
                 className="flex sm:hidden items-center gap-1 rounded-full bg-white/15 border border-white/25 px-2.5 py-1 text-xs font-bold text-white"
               >
                 <MapPin className="h-3 w-3 text-[#C0C8D8]" />
-                <span className="max-w-[70px] truncate">{selectedLocality.split(',')[0]}</span>
+                <span className="max-w-[75px] truncate">{selectedLocation.city}</span>
               </button>
 
               {/* Cart Button */}
@@ -1386,60 +1433,180 @@ export default function Navbar() {
       </header>
 
       {/* ========================================================================= */}
-      {/* DOORSTEP LOCALITY SELECTION MODAL */}
+      {/* PAN-INDIA PINCODE & CITY/TOWN LOCATION SELECTION MODAL */}
       {/* ========================================================================= */}
       {locationModalOpen && (
         <div className="fixed inset-0 z-50 grid place-items-center bg-black/60 p-4 backdrop-blur-sm animate-fade-in">
-          <div className="w-full max-w-md rounded-3xl bg-white p-6 shadow-2xl border border-gray-100">
-            <div className="flex items-center justify-between border-b border-gray-100 pb-4">
+          <div className="w-full max-w-lg rounded-3xl bg-white p-5 sm:p-6 shadow-2xl border border-gray-100 flex flex-col max-h-[90vh]">
+            {/* Modal Header */}
+            <div className="flex items-center justify-between border-b border-gray-100 pb-3.5 shrink-0">
               <div className="flex items-center gap-2.5">
                 <div className="grid h-10 w-10 place-items-center rounded-2xl bg-[#F0F0F5] text-[#344257] border border-[#C0C8D8]">
                   <MapPin className="h-5 w-5" />
                 </div>
                 <div>
-                  <h3 className="font-display font-bold text-lg text-gray-900">Select Locality</h3>
+                  <h3 className="font-display font-bold text-base sm:text-lg text-gray-900">Select Location (Pan-India)</h3>
                   <p className="text-xs font-semibold text-[#47576E]">
-                    Fundu is exclusively operational at your doorstep
+                    Serving 19,000+ Pin codes across all Indian States
                   </p>
                 </div>
               </div>
               <button
                 type="button"
-                onClick={() => setLocationModalOpen(false)}
+                onClick={() => {
+                  setLocationModalOpen(false);
+                  setLocationSearch('');
+                }}
                 className="rounded-full p-1.5 text-gray-400 hover:bg-gray-100 hover:text-gray-700 transition"
               >
                 <X className="h-5 w-5" />
               </button>
             </div>
 
-            <div className="mt-4">
-              <p className="text-xs font-bold uppercase tracking-wider text-gray-400 mb-3">
-                Select Your Area for Free Doorstep Pickup
-              </p>
-              <div className="grid grid-cols-2 gap-2 max-h-72 overflow-y-auto pr-1">
-                {DOORSTEP_LOCALITIES.map((loc) => {
-                  const isSelected = selectedLocality === loc || selectedLocality.startsWith(loc);
-                  return (
-                    <button
-                      key={loc}
-                      type="button"
-                      onClick={() => handleSelectLocality(loc)}
-                      className={`flex items-center justify-between rounded-xl p-2.5 text-left text-xs font-bold transition cursor-pointer ${isSelected
-                          ? 'border-2 border-[#344257] bg-[#F0F0F5] text-[#344257] shadow-sm'
-                          : 'border border-gray-200 bg-white text-gray-700 hover:border-[#6A859F] hover:bg-[#F0F0F5]/50'
-                        }`}
-                    >
-                      <span>{loc}</span>
-                      {isSelected && <Check className="h-4 w-4 text-[#344257]" />}
-                    </button>
-                  );
-                })}
+            {/* Pincode & City Instant Search Input */}
+            <div className="mt-4 shrink-0">
+              <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">
+                Enter Pincode or City / Town Name
+              </label>
+              <div className="relative flex items-center rounded-2xl border-2 border-[#C0C8D8] focus-within:border-[#344257] bg-[#F7F7FA] px-3.5 py-2.5 transition">
+                <Search className="h-4 w-4 text-[#6A859F] shrink-0 mr-2.5" />
+                <input
+                  type="text"
+                  autoFocus
+                  value={locationSearch}
+                  onChange={(e) => setLocationSearch(e.target.value)}
+                  placeholder="e.g. 110001, 226001, 560001 or Delhi, Pune..."
+                  className="w-full bg-transparent text-sm font-semibold text-gray-900 outline-none placeholder:text-gray-400"
+                />
+                {isSearchingLocation && (
+                  <RefreshCw className="h-4 w-4 text-[#344257] animate-spin shrink-0 ml-2" />
+                )}
+                {locationSearch && (
+                  <button
+                    type="button"
+                    onClick={() => setLocationSearch('')}
+                    className="text-gray-400 hover:text-gray-600 transition ml-2 p-0.5"
+                  >
+                    <X className="h-3.5 w-3.5" />
+                  </button>
+                )}
               </div>
             </div>
 
-            <div className="mt-6 rounded-2xl bg-[#F0F0F5] p-3 text-center text-xs font-semibold text-[#344257] flex items-center justify-center gap-2 border border-[#C0C8D8]">
+            {/* Currently Active Badge */}
+            <div className="mt-3 shrink-0 flex items-center justify-between rounded-xl bg-[#F0F0F5] px-3 py-1.5 border border-[#C0C8D8]/60 text-xs">
+              <span className="text-gray-500 font-medium">Active Location:</span>
+              <span className="font-extrabold text-[#344257] flex items-center gap-1">
+                <Check className="h-3.5 w-3.5 text-emerald-600" />
+                {selectedLocation.city}, {selectedLocation.state} ({selectedLocation.pincode})
+              </span>
+            </div>
+
+            {/* Search Results / Suggestions Area */}
+            <div className="mt-3 flex-1 overflow-y-auto pr-1 space-y-1.5 min-h-[160px] max-h-[260px]">
+              {locationResults.length > 0 ? (
+                <>
+                  <p className="text-[11px] font-bold text-gray-400 uppercase tracking-wider px-1 pt-1">
+                    {locationSearch.trim() ? `Search Results (${locationResults.length})` : 'Popular Indian Cities'}
+                  </p>
+                  {locationResults.map((loc) => {
+                    const isSelected = selectedLocation.pincode === loc.pincode && selectedLocation.city.toLowerCase() === loc.city.toLowerCase();
+                    return (
+                      <button
+                        key={`${loc.city}-${loc.pincode}-${loc.displayLabel}`}
+                        type="button"
+                        onClick={() => handleSelectPanIndiaLocation(loc)}
+                        className={`w-full flex items-center justify-between rounded-xl p-2.5 text-left text-xs transition cursor-pointer ${
+                          isSelected
+                            ? 'border-2 border-[#344257] bg-[#F0F0F5] text-[#344257] font-extrabold shadow-xs'
+                            : 'border border-gray-200 bg-white text-gray-700 hover:border-[#6A859F] hover:bg-[#F0F0F5]/50 font-bold'
+                        }`}
+                      >
+                        <div className="flex items-center gap-2.5 min-w-0">
+                          <MapPin className={`h-4 w-4 shrink-0 ${isSelected ? 'text-[#344257]' : 'text-gray-400'}`} />
+                          <div className="truncate">
+                            <p className="truncate text-xs font-bold text-gray-900">{loc.city}</p>
+                            <p className="text-[11px] text-gray-500 truncate">
+                              {loc.district && loc.district !== loc.city ? `${loc.district}, ` : ''}{loc.state} • PIN: <span className="font-extrabold text-[#344257]">{loc.pincode}</span>
+                            </p>
+                          </div>
+                        </div>
+                        {isSelected ? (
+                          <span className="shrink-0 flex items-center gap-1 text-[11px] font-extrabold text-[#344257] bg-white px-2 py-0.5 rounded-md border border-[#344257]/30">
+                            <Check className="h-3.5 w-3.5" /> Selected
+                          </span>
+                        ) : (
+                          <span className="shrink-0 text-[10px] font-bold text-gray-400 bg-gray-100 px-2 py-0.5 rounded-md">
+                            Select
+                          </span>
+                        )}
+                      </button>
+                    );
+                  })}
+                </>
+              ) : (
+                <div className="py-6 text-center space-y-3">
+                  <p className="text-xs text-gray-500 font-medium">
+                    No registered city found for "{locationSearch}".
+                  </p>
+                  {/^\d{6}$/.test(locationSearch.trim()) ? (
+                    <button
+                      type="button"
+                      onClick={() =>
+                        handleSelectPanIndiaLocation({
+                          city: `Pincode ${locationSearch.trim()}`,
+                          state: 'India',
+                          pincode: locationSearch.trim(),
+                          displayLabel: `Pincode ${locationSearch.trim()}`,
+                        })
+                      }
+                      className="btn-primary text-xs px-4 py-2 font-bold"
+                    >
+                      Use Pincode {locationSearch.trim()} for Doorstep Service
+                    </button>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={() =>
+                        handleSelectPanIndiaLocation({
+                          city: locationSearch.trim(),
+                          state: 'India',
+                          pincode: 'Doorstep',
+                          displayLabel: locationSearch.trim(),
+                        })
+                      }
+                      className="btn-primary text-xs px-4 py-2 font-bold"
+                    >
+                      Select "{locationSearch.trim()}" Directly
+                    </button>
+                  )}
+                </div>
+              )}
+            </div>
+
+            {/* Quick Popular City Chips */}
+            <div className="mt-3 pt-3 border-t border-gray-100 shrink-0">
+              <p className="text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-2">
+                Quick Select Tier-1 & Tier-2 Hubs:
+              </p>
+              <div className="flex flex-wrap gap-1.5 max-h-16 overflow-y-auto">
+                {PAN_INDIA_POPULAR_CITIES.slice(0, 10).map((cityItem) => (
+                  <button
+                    key={cityItem.city}
+                    type="button"
+                    onClick={() => handleSelectPanIndiaLocation(cityItem)}
+                    className="rounded-lg bg-gray-100 hover:bg-[#F0F0F5] hover:text-[#344257] text-gray-700 px-2 py-1 text-[11px] font-semibold border border-gray-200 transition"
+                  >
+                    {cityItem.city}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Footer Trust Banner */}
+            <div className="mt-4 rounded-2xl bg-[#F0F0F5] p-2.5 text-center text-xs font-semibold text-[#344257] flex items-center justify-center gap-2 border border-[#C0C8D8] shrink-0">
               <ShieldCheck className="h-4 w-4 text-emerald-600 shrink-0" />
-              Free doorstep pickup & instant payment across all service zones!
+              Free doorstep pickup & instant payment active across all 19,000+ Indian Pin codes!
             </div>
           </div>
         </div>

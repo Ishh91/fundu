@@ -1281,7 +1281,7 @@ export default function BuyPhones() {
         <section className="mt-16 bg-white rounded-3xl p-6 md:p-10 border border-gray-200 shadow-xs">
           <div className="text-center max-w-2xl mx-auto">
             <div className="inline-flex items-center gap-1.5 rounded-full bg-[#344257]/10 px-3 py-1 text-xs font-bold text-[#344257]">
-              <ShieldCheck className="h-3.5 w-3.5 text-[#344257]" /> Cashify-Grade Standards
+              <ShieldCheck className="h-3.5 w-3.5 text-[#344257]" /> Fundu-Certified Standards
             </div>
             <h2 className="mt-2 font-display text-2xl md:text-3xl font-extrabold text-[#344257]">
               The 32-Point Quality Inspection

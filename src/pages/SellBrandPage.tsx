@@ -22,7 +22,8 @@ import { formatINR } from '../lib/db';
 import { getCleanPhoneImage, getCleanBrandLogo, BRAND_FRONT_FALLBACKS } from '../lib/phoneImages';
 import { usePriceSync, applyPriceOverrides } from '../lib/priceSync';
 import { MASTER_MODEL_CATALOG } from './SellPhone';
-import { fetchBrandCatalogFromApi, type CatalogModelItem } from '../lib/mobileApi';
+import { fetchBrandCatalogFromApi, getDynamicFallbackConfig, calculateCashifyComparison, type CatalogModelItem } from '../lib/mobileApi';
+import { ALL_INDIAN_PHONES_CATALOG } from '../data/indianPhonesCatalog';
 import {
   groupModelsBySeries,
   getSeriesBySlug,
@@ -141,6 +142,12 @@ const BRAND_DETAILS: Record<
     tagline: 'Sell Old Honor Smartphone Online at Highest Market Value',
     desc: 'Sell used Honor 200, 90, X9b & Magic series smartphones online at your doorstep for instant spot payment.',
     count: '15+ Honor Models',
+  },
+  lenovo: {
+    logo: getCleanBrandLogo('lenovo'),
+    tagline: 'Sell Old Lenovo Mobile Phone Online for Instant Cash at Doorstep',
+    desc: 'Sell used Lenovo K Note, Legion Gaming, Z Series & Vibe smartphones online for guaranteed highest cash with free doorstep pickup.',
+    count: '18+ Lenovo Models',
   },
 };
 
@@ -313,15 +320,15 @@ export default function SellBrandPage() {
     let list = currentSeriesGroup.models;
 
     // Fallback: if group models array is unexpectedly empty, search allBrandModels
-    if (list.length === 0) {
-      const terms = (currentSeriesGroup.name || effectiveSeriesSlug || '')
-        .toLowerCase()
-        .replace(/series/g, '')
-        .trim()
-        .split(/\s+/);
+    if (!list || list.length === 0) {
+      const cleanSlug = (effectiveSeriesSlug || '').toLowerCase().replace(/series/g, '').replace(/[-_]/g, ' ').trim();
+      const terms = cleanSlug.split(/\s+/).filter(Boolean);
       list = allBrandModels.filter((m) => {
-        const text = `${m.model} ${m.series}`.toLowerCase();
-        return terms.some((t) => t.length > 2 && text.includes(t));
+        const text = `${m.model} ${m.series || ''}`.toLowerCase();
+        return terms.some((t) => {
+          if (t === 'oppo' || t === 'brand' || t === '&' || t === 'and') return false;
+          return text.includes(t);
+        });
       });
     }
 
@@ -339,13 +346,49 @@ export default function SellBrandPage() {
     return allBrandModels.filter((m) => m.model.toLowerCase().includes(q));
   }, [allBrandModels, debouncedQuery]);
 
+  // Helper to resolve guaranteed non-zero estimated valuation for any phone model
+  const getModelEstimatedPrice = (m: CatalogModelItem): number => {
+    if (m.price && m.price > 0) return m.price;
+    if (m.base_resale_value && m.base_resale_value > 0) return m.base_resale_value;
+    const modelNorm = m.model.toLowerCase().trim();
+    const brandNorm = (m.brand || brandDisplayName).toLowerCase().trim();
+
+    const match = MASTER_MODEL_CATALOG.find((x) =>
+      x.model.toLowerCase() === modelNorm ||
+      `${x.brand} ${x.model}`.toLowerCase() === `${brandNorm} ${modelNorm}` ||
+      x.model.toLowerCase().includes(modelNorm)
+    );
+    if (match?.price && match.price > 0) return match.price;
+
+    const indian = Array.isArray(ALL_INDIAN_PHONES_CATALOG)
+      ? ALL_INDIAN_PHONES_CATALOG.find((p) =>
+          p.model.toLowerCase() === modelNorm ||
+          `${p.brand} ${p.model}`.toLowerCase() === `${brandNorm} ${modelNorm}`
+        )
+      : null;
+    if (indian?.base_resale_value) return indian.base_resale_value;
+    if (indian?.default_mrp) return Math.round(indian.default_mrp * 0.55);
+
+    const fallback = getDynamicFallbackConfig(m.brand || brandDisplayName, m.model, m.storage || '128 GB');
+    return fallback.base_price || 12000;
+  };
+
+  const getSeriesEstimatedPrice = (ser: SeriesGroup): number => {
+    if (ser.models && ser.models.length > 0) {
+      const prices = ser.models.map((m) => getModelEstimatedPrice(m)).filter((p) => p > 0);
+      if (prices.length > 0) return Math.max(...prices);
+    }
+    const fallback = getDynamicFallbackConfig(brandDisplayName, ser.name, '128 GB');
+    return fallback.base_price || 20000;
+  };
+
   const handleSelectModel = (modelName: string, storage: string) => {
     const modelSlugClean = modelName.toLowerCase().replace(/\s+/g, '-');
-    navigate(`/sell/${brandCleanKey}/${modelSlugClean}?storage=${encodeURIComponent(storage)}`);
+    navigate(`/sell-old-mobile-phone/sell-${brandCleanKey}/sell-${modelSlugClean}?storage=${encodeURIComponent(storage)}`);
   };
 
   const handleSelectSeries = (series: SeriesGroup) => {
-    navigate(`/sell/${brandCleanKey}/${series.slug}`);
+    navigate(`/sell-old-mobile-phone/sell-${brandCleanKey}/series/${series.slug}`);
   };
 
   // Highlight matching search query text
@@ -374,18 +417,18 @@ export default function SellBrandPage() {
         <div className="max-w-7xl mx-auto flex items-center gap-1.5 flex-wrap">
           <Link to="/" className="hover:text-[#344257] transition">Home</Link>
           <span>&gt;</span>
-          <Link to="/sell" className="hover:text-[#344257] transition">Sell</Link>
+          <Link to="/sell-old-mobile-phone" className="hover:text-[#344257] transition">Sell Old Mobile Phone</Link>
           <span>&gt;</span>
           {effectiveSeriesSlug ? (
             <>
-              <Link to={`/sell/${brandCleanKey}`} className="hover:text-[#344257] transition">
-                {brandDisplayName}
+              <Link to={`/sell-old-mobile-phone/sell-${brandCleanKey}`} className="hover:text-[#344257] transition">
+                Sell Old {brandDisplayName}
               </Link>
               <span>&gt;</span>
-              <span className="text-[#344257] font-extrabold">{currentSeriesGroup?.name || effectiveSeriesSlug}</span>
+              <span className="text-[#344257] font-extrabold">Sell Old {currentSeriesGroup?.name || effectiveSeriesSlug}</span>
             </>
           ) : (
-            <span className="text-[#344257] font-extrabold">{brandDisplayName}</span>
+            <span className="text-[#344257] font-extrabold">Sell Old {brandDisplayName}</span>
           )}
         </div>
       </div>
@@ -415,6 +458,20 @@ export default function SellBrandPage() {
                   ? `Select your exact ${currentSeriesGroup?.name || brandDisplayName} model below for instant spot valuation & doorstep pickup at your doorstep`
                   : `Select your ${brandDisplayName} model series below for instant spot cash & doorstep pickup at your doorstep`}
               </p>
+            </div>
+
+            {/* Fundu Best Price Guarantee Banner */}
+            <div className="w-full mt-2 rounded-2xl bg-[#F0F0F5] border border-[#C0C8D8] p-3 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
+              <div className="flex items-center gap-2">
+                <span className="h-2.5 w-2.5 rounded-full bg-emerald-500 shrink-0" />
+                <p className="font-extrabold text-[#344257]">
+                  <span className="text-[#344257] uppercase tracking-wider text-[11px] font-black mr-1">Best Price Guarantee:</span>
+                  Get maximum market payout with instant spot cash & 100% free doorstep pickup on every {brandDisplayName} model.
+                </p>
+              </div>
+              <span className="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-800 bg-emerald-50 border border-emerald-200 px-3 py-1 rounded-xl shrink-0 self-start sm:self-auto">
+                Instant Spot Payment
+              </span>
             </div>
 
             {/* Search Bar Aligned at Right Corner */}
@@ -510,9 +567,25 @@ export default function SellBrandPage() {
                           }}
                         />
                       </div>
-                      <p className="mt-2 text-xs sm:text-sm font-semibold text-gray-800 group-hover:text-[#344257] transition-colors line-clamp-2 leading-snug">
-                        {highlightMatch(displayName, debouncedQuery)}
-                      </p>
+                      <div className="w-full mt-2 space-y-1">
+                        <p className="text-xs sm:text-sm font-semibold text-gray-800 group-hover:text-[#344257] transition-colors line-clamp-2 leading-snug">
+                          {highlightMatch(displayName, debouncedQuery)}
+                        </p>
+                        {(() => {
+                          const funduPrice = getModelEstimatedPrice(m);
+                          const comp = calculateCashifyComparison(funduPrice);
+                          return (
+                            <div className="flex flex-col items-center gap-1 mt-1">
+                              <span className="badge bg-[#F0F0F5] text-[#344257] border border-[#C0C8D8] font-black text-[11px]">
+                                Up to {formatINR(funduPrice)}
+                              </span>
+                              <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-1.5 py-0.5 rounded-full">
+                                Best Price Guarantee
+                              </span>
+                            </div>
+                          );
+                        })()}
+                      </div>
                     </div>
                   );
                 })}
@@ -566,9 +639,25 @@ export default function SellBrandPage() {
                           }}
                         />
                       </div>
-                      <p className="mt-2 text-xs sm:text-sm font-semibold text-gray-800 group-hover:text-[#344257] transition-colors line-clamp-2 leading-snug">
-                        {displayName}
-                      </p>
+                      <div className="w-full mt-2 space-y-1">
+                        <p className="text-xs sm:text-sm font-semibold text-gray-800 group-hover:text-[#344257] transition-colors line-clamp-2 leading-snug">
+                          {displayName}
+                        </p>
+                        {(() => {
+                          const funduPrice = getModelEstimatedPrice(m);
+                          const comp = calculateCashifyComparison(funduPrice);
+                          return (
+                            <div className="flex flex-col items-center gap-1 mt-1">
+                              <span className="badge bg-[#F0F0F5] text-[#344257] border border-[#C0C8D8] font-black text-[11px]">
+                                Up to {formatINR(funduPrice)}
+                              </span>
+                              <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-1.5 py-0.5 rounded-full">
+                                Best Price Guarantee
+                              </span>
+                            </div>
+                          );
+                        })()}
+                      </div>
                     </div>
                   );
                 })}
@@ -618,9 +707,14 @@ export default function SellBrandPage() {
                       <p className="text-xs sm:text-sm font-bold text-[#344257] group-hover:text-[#47576E] transition-colors line-clamp-2 leading-snug">
                         {ser.name}
                       </p>
-                      <p className="text-[11px] font-medium text-gray-400 mt-0.5">
-                        {ser.modelsCount} Models
-                      </p>
+                      <div className="flex flex-col items-center gap-1 mt-1">
+                        <span className="text-[10px] font-extrabold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full">
+                          Up to {formatINR(getSeriesEstimatedPrice(ser))} (Top Market Price)
+                        </span>
+                        <span className="text-[10px] font-medium text-gray-400">
+                          {ser.modelsCount} Models
+                        </span>
+                      </div>
                     </div>
                   </div>
                 ))}

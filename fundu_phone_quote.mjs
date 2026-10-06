@@ -176,6 +176,15 @@ export const RESALE_BENCHMARKS = [
   { brand: 'Realme', model: 'Realme GT 6', storage: '256 GB', proceeds: 29000, lastUpdated: '2025-01-15' },
   { brand: 'Nothing', model: 'Nothing Phone (2)', storage: '128 GB', proceeds: 27000, lastUpdated: '2025-01-10' },
   { brand: 'Nothing', model: 'Nothing Phone (2a)', storage: '128 GB', proceeds: 17500, lastUpdated: '2025-01-10' },
+
+  // --- LENOVO ---
+  { brand: 'Lenovo', model: 'Lenovo K10 Note', storage: '64 GB', proceeds: 1490, lastUpdated: '2025-02-15' },
+  { brand: 'Lenovo', model: 'Lenovo K10 Note', storage: '128 GB', proceeds: 1565, lastUpdated: '2025-02-15' },
+  { brand: 'Lenovo', model: 'Lenovo K10 Plus', storage: '64 GB', proceeds: 3100, lastUpdated: '2025-02-15' },
+  { brand: 'Lenovo', model: 'Lenovo K9 Note', storage: '64 GB', proceeds: 2700, lastUpdated: '2025-02-15' },
+  { brand: 'Lenovo', model: 'Lenovo K8 Note', storage: '64 GB', proceeds: 2400, lastUpdated: '2025-02-15' },
+  { brand: 'Lenovo', model: 'Lenovo Legion Duel 2', storage: '256 GB', proceeds: 18500, lastUpdated: '2025-02-15' },
+  { brand: 'Lenovo', model: 'Lenovo Z6 Pro', storage: '128 GB', proceeds: 8500, lastUpdated: '2025-02-15' },
 ];
 
 // Configured Repair Costs Catalog (From scripts/seed_repair_catalog.cjs & RepairPriceCatalog)
@@ -267,6 +276,12 @@ export const CONFIGURED_REPAIRS = {
   'realme:realme gt 6': { screen: 6999, battery: 2199, charging: 899, camera: 2799, backglass: 1899, speaker: 649 },
   'nothing:nothing phone (2)': { screen: 7999, battery: 2499, charging: 899, camera: 2999, backglass: 2999, speaker: 749 },
   'nothing:nothing phone (2a)': { screen: 4499, battery: 1699, charging: 699, camera: 1899, backglass: 1699, speaker: 599 },
+
+  // Lenovo
+  'lenovo:lenovo k10 note': { screen: 1199, battery: 699, charging: 349, camera: 599, backglass: 399, speaker: 249 },
+  'lenovo:k10 note': { screen: 1199, battery: 699, charging: 349, camera: 599, backglass: 399, speaker: 249 },
+  'lenovo:k10 plus': { screen: 1099, battery: 649, charging: 349, camera: 549, backglass: 349, speaker: 249 },
+  'lenovo:k8 note': { screen: 999, battery: 599, charging: 299, camera: 499, backglass: 299, speaker: 249 },
 };
 
 /**
@@ -294,7 +309,7 @@ function normalizeStorage(stg = '') {
 /**
  * Dynamic fallback proceeds estimator for any smartphone model in India
  */
-export function computeDynamicBenchmarkProceeds(brand = '', model = '', storage = '') {
+export function computeDynamicBenchmarkProceeds(brand = '', model = '', storage = '', ram = '') {
   const normBrand = String(brand || '').toLowerCase().trim();
   const normModel = normalizeKey(model);
   const normStorage = normalizeStorage(storage);
@@ -512,16 +527,66 @@ export function computeDynamicBenchmarkProceeds(brand = '', model = '', storage 
     else if (normModel.includes('cmf phone 1')) base = 11500;
     else base = 18000;
   }
+  // Lenovo
+  else if (normBrand.includes('lenovo') || normModel.includes('lenovo')) {
+    if (normModel.includes('legion duel 2')) base = 18500;
+    else if (normModel.includes('legion y90')) base = 22000;
+    else if (normModel.includes('legion pro')) base = 14000;
+    else if (normModel.includes('z6 pro')) base = 8500;
+    else if (normModel.includes('z6 lite')) base = 4200;
+    else if (normModel.includes('z5 pro gt')) base = 6800;
+    else if (normModel.includes('k10 note')) base = 1500;
+    else if (normModel.includes('k10 plus')) base = 3100;
+    else if (normModel.includes('k9 note')) base = 2700;
+    else if (normModel.includes('k8 note')) base = 2400;
+    else if (normModel.includes('k8 plus')) base = 2100;
+    else if (normModel.includes('a6 note')) base = 2200;
+    else base = 3000;
+  }
 
-  // Storage adjustment
-  if (normStorage.includes('1 tb')) base = Math.round(base * 1.25);
-  else if (normStorage.includes('512')) base = Math.round(base * 1.15);
-  else if (normStorage.includes('256')) base = Math.round(base * 1.08);
-  else if (normStorage.includes('64')) base = Math.round(base * 0.88);
-  else if (normStorage.includes('32')) base = Math.round(base * 0.75);
-  else if (normStorage.includes('16')) base = Math.round(base * 0.65);
+  // Apply unified Hardware Multiplier for Storage and RAM
+  const mult = calculateHardwareVariantMultiplier(normStorage, ram, brand);
+  base = Math.round(base * mult);
 
-  return Math.max(3000, Math.round(base / 500) * 500);
+  return Math.max(1000, Math.round(base / 50) * 50);
+}
+
+/**
+ * Calculates deterministic dynamic price multiplier based on RAM + Storage combination.
+ * Standard baseline: 6GB RAM + 128GB Storage = 1.000x multiplier.
+ */
+export function calculateHardwareVariantMultiplier(storage = '128 GB', ram = '', brand = '') {
+  const normStorage = normalizeStorage(storage).toLowerCase();
+  const isApple = String(brand || '').toLowerCase().includes('apple');
+
+  // 1. Storage Multiplier (against 128GB standard)
+  let storageMult = 1.0;
+  if (normStorage.includes('1 tb') || normStorage.includes('1024')) storageMult = 1.42;
+  else if (normStorage.includes('512')) storageMult = 1.26;
+  else if (normStorage.includes('256')) storageMult = 1.12;
+  else if (normStorage.includes('128')) storageMult = 1.00;
+  else if (normStorage.includes('64')) storageMult = 0.88;
+  else if (normStorage.includes('32')) storageMult = 0.76;
+  else if (normStorage.includes('16')) storageMult = 0.65;
+
+  // 2. RAM Multiplier (against 6GB standard, Apple is fixed 1.0)
+  let ramMult = 1.0;
+  if (!isApple && ram) {
+    const ramMatch = String(ram).match(/(\d+)/);
+    if (ramMatch) {
+      const r = parseInt(ramMatch[1], 10);
+      if (r >= 24) ramMult = 1.38;
+      else if (r >= 16) ramMult = 1.28;
+      else if (r >= 12) ramMult = 1.18;
+      else if (r >= 8) ramMult = 1.08;
+      else if (r >= 6) ramMult = 1.00;
+      else if (r >= 4) ramMult = 0.95;
+      else if (r >= 3) ramMult = 0.92;
+      else if (r >= 2) ramMult = 0.88;
+    }
+  }
+
+  return Number((storageMult * ramMult).toFixed(4));
 }
 
 /**
@@ -531,6 +596,7 @@ export function lookupResaleBenchmark(brand, model, storage, options = {}) {
   const normBrand = String(brand || '').trim().toLowerCase();
   const normModel = normalizeKey(model);
   const normStorage = normalizeStorage(storage);
+  const ram = options.ram || '';
 
   // 1. Direct exact match in RESALE_BENCHMARKS
   let benchmark = RESALE_BENCHMARKS.find((b) => {
@@ -550,20 +616,15 @@ export function lookupResaleBenchmark(brand, model, storage, options = {}) {
     });
 
     if (sibling) {
-      let multiplier = 1.0;
-      if (normStorage.includes('1 tb')) multiplier = 1.25;
-      else if (normStorage.includes('512')) multiplier = 1.15;
-      else if (normStorage.includes('256')) multiplier = 1.08;
-      else if (normStorage.includes('128')) multiplier = 1.0;
-      else if (normStorage.includes('64')) multiplier = 0.88;
-      else if (normStorage.includes('32')) multiplier = 0.75;
-      else if (normStorage.includes('16')) multiplier = 0.65;
+      const siblingMult = calculateHardwareVariantMultiplier(sibling.storage, '', sibling.brand);
+      const targetMult = calculateHardwareVariantMultiplier(normStorage, ram, brand);
+      const ratio = targetMult / (siblingMult || 1.0);
 
       benchmark = {
         brand: sibling.brand,
         model: sibling.model,
         storage: normStorage,
-        proceeds: Math.round((sibling.proceeds * multiplier) / 500) * 500,
+        proceeds: Math.round((sibling.proceeds * ratio) / 50) * 50,
         lastUpdated: sibling.lastUpdated,
       };
     }
@@ -571,7 +632,7 @@ export function lookupResaleBenchmark(brand, model, storage, options = {}) {
 
   // 3. Guaranteed comprehensive catalog valuation fallback
   if (!benchmark) {
-    const fallbackProceeds = computeDynamicBenchmarkProceeds(brand, model, storage);
+    const fallbackProceeds = computeDynamicBenchmarkProceeds(brand, model, storage, ram);
     benchmark = {
       brand: brand || 'Smartphone',
       model: model || 'Smartphone',
@@ -579,6 +640,14 @@ export function lookupResaleBenchmark(brand, model, storage, options = {}) {
       proceeds: fallbackProceeds,
       lastUpdated: '2025-02-01',
     };
+  }
+
+  // 4. Variant adjustments for RAM on direct matches (where benchmark storage matched, but RAM differs)
+  if (ram && benchmark && benchmark.proceeds) {
+    const ramRatio = calculateHardwareVariantMultiplier(normStorage, ram, brand) / calculateHardwareVariantMultiplier(normStorage, '', brand);
+    if (Math.abs(ramRatio - 1.0) > 0.001) {
+      benchmark.proceeds = Math.round((benchmark.proceeds * ramRatio) / 50) * 50;
+    }
   }
 
   return {
@@ -628,6 +697,7 @@ export function quotePhone(input = {}, options = {}) {
     brand,
     model,
     storage,
+    ram,
     powers_on,
     activation_lock_cleared = true,
     ownership_verified = true,
@@ -667,7 +737,7 @@ export function quotePhone(input = {}, options = {}) {
   }
 
   // 2. Mandatory Manual-Review Routing Triggers (Still compute estimated recovery/salvage value so valuation is never zero)
-  const estBaseProceeds = computeDynamicBenchmarkProceeds(brand, model, storage);
+  const estBaseProceeds = computeDynamicBenchmarkProceeds(brand, model, storage, ram);
 
   // Trigger A: Non-powering devices
   if (powers_on === false) {
@@ -743,7 +813,7 @@ export function quotePhone(input = {}, options = {}) {
   }
 
   // 3. Exact Variant Benchmark Lookup from Real Catalog
-  const benchmarkResult = lookupResaleBenchmark(brand, model, storage, options);
+  const benchmarkResult = lookupResaleBenchmark(brand, model, storage, { ...options, ram });
 
   const { proceeds: expectedResaleProceeds } = benchmarkResult.benchmark;
 
@@ -884,6 +954,7 @@ export function quotePhone(input = {}, options = {}) {
       brand: benchmarkResult.benchmark.brand,
       model: benchmarkResult.benchmark.model,
       storage: normalizeStorage(storage),
+      ...(ram ? { ram: String(ram).trim() } : {}),
     },
     policyVersion: FUNDU_POLICY.version,
     validForDays: 7,

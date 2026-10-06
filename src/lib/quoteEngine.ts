@@ -10,6 +10,7 @@ export interface FunduQuoteRequest {
   brand: string;
   model: string;
   storage: string;
+  ram?: string;
   powers_on: boolean;
   activation_lock_cleared?: boolean;
   ownership_verified?: boolean;
@@ -35,6 +36,7 @@ export interface FunduQuoteResponse {
     brand: string;
     model: string;
     storage: string;
+    ram?: string;
   };
   policyVersion?: string;
   validForDays?: number;

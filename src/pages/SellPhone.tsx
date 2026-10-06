@@ -28,13 +28,14 @@ import {
   FileText,
   Award,
 } from 'lucide-react';
-import { computeDetailedCashifyValuation, fetchSellPriceConfig, fetchPhoneModels, searchMobileApiDev, type SellPriceConfig } from '../lib/mobileApi';
+import { computeDetailedCashifyValuation, fetchSellPriceConfig, fetchPhoneModels, searchMobileApiDev, calculateCashifyComparison, type SellPriceConfig } from '../lib/mobileApi';
 import { getFunduPhoneQuote, type FunduQuoteResponse } from '../lib/quoteEngine';
 import { db, formatINR } from '../lib/db';
 import { useAuth } from '../context/AuthContext';
 import { ALL_INDIAN_PHONES_CATALOG } from '../data/indianPhonesCatalog';
 import { getCleanPhoneImage, getCleanBrandLogo, BRAND_FRONT_FALLBACKS } from '../lib/phoneImages';
 import { usePriceSync, applyPriceOverrides } from '../lib/priceSync';
+import { getModelHardwareSpecs, calculateHardwareVariantMultiplier } from '../lib/deviceSpecs';
 
 // Master Service Localities
 const DOORSTEP_LOCALITIES = [
@@ -67,6 +68,7 @@ const BRAND_TILES = [
   { name: 'Poco', logo: getCleanBrandLogo('Poco'), count: '25+ Models' },
   { name: 'iQOO', logo: getCleanBrandLogo('iQOO'), count: '20+ Models' },
   { name: 'Infinix', logo: getCleanBrandLogo('Infinix'), count: '25+ Models' },
+  { name: 'Lenovo', logo: getCleanBrandLogo('Lenovo'), count: '18+ Models' },
 ];
 
 // Master Model Catalog Database (Easily Updatable JSON/Array)
@@ -544,6 +546,23 @@ export const MASTER_MODEL_CATALOG = [
   { brand: 'iQOO', series: 'Z Series', model: 'iQOO Z9s 5G', storage: '128 GB', price: 13500, image: 'https://fdn2.gsmarena.com/vv/bigpic/vivo-iqoo-z9s.jpg' },
   { brand: 'iQOO', series: 'Z Series', model: 'iQOO Z9 5G', storage: '128 GB', price: 12000, image: 'https://fdn2.gsmarena.com/vv/bigpic/vivo-iqoo-z9.jpg' },
   { brand: 'iQOO', series: 'Z Series', model: 'iQOO Z9x 5G', storage: '128 GB', price: 9200, image: 'https://fdn2.gsmarena.com/vv/bigpic/vivo-iqoo-z9x.jpg' },
+  // Lenovo
+  { brand: 'Lenovo', series: 'K Note Series', model: 'Lenovo K10 Note', storage: '64 GB', price: 1490, image: 'https://fdn2.gsmarena.com/vv/bigpic/lenovo-k10-note.jpg' },
+  { brand: 'Lenovo', series: 'K Note Series', model: 'Lenovo K10 Note', storage: '128 GB', price: 1565, image: 'https://fdn2.gsmarena.com/vv/bigpic/lenovo-k10-note.jpg' },
+  { brand: 'Lenovo', series: 'K Note Series', model: 'Lenovo K10 Plus', storage: '64 GB', price: 3100, image: 'https://fdn2.gsmarena.com/vv/bigpic/lenovo-k10-plus.jpg' },
+  { brand: 'Lenovo', series: 'K Note Series', model: 'Lenovo K9 Note', storage: '64 GB', price: 2700, image: 'https://fdn2.gsmarena.com/vv/bigpic/lenovo-k9-note.jpg' },
+  { brand: 'Lenovo', series: 'K Note Series', model: 'Lenovo K8 Note', storage: '64 GB', price: 2400, image: 'https://fdn2.gsmarena.com/vv/bigpic/lenovo-k8-note.jpg' },
+  { brand: 'Lenovo', series: 'K Note Series', model: 'Lenovo K8 Plus', storage: '32 GB', price: 2100, image: 'https://fdn2.gsmarena.com/vv/bigpic/lenovo-k8-plus.jpg' },
+  { brand: 'Lenovo', series: 'Legion Gaming Series', model: 'Lenovo Legion Duel 2', storage: '256 GB', price: 18500, image: 'https://fdn2.gsmarena.com/vv/bigpic/lenovo-legion-duel-2.jpg' },
+  { brand: 'Lenovo', series: 'Legion Gaming Series', model: 'Lenovo Legion Pro', storage: '128 GB', price: 14000, image: 'https://fdn2.gsmarena.com/vv/bigpic/lenovo-legion-pro.jpg' },
+  { brand: 'Lenovo', series: 'Legion Gaming Series', model: 'Lenovo Legion Y90', storage: '256 GB', price: 22000, image: 'https://fdn2.gsmarena.com/vv/bigpic/lenovo-legion-y90.jpg' },
+  { brand: 'Lenovo', series: 'Z Series Flagships', model: 'Lenovo Z6 Pro', storage: '128 GB', price: 8500, image: 'https://fdn2.gsmarena.com/vv/bigpic/lenovo-z6-pro.jpg' },
+  { brand: 'Lenovo', series: 'Z Series Flagships', model: 'Lenovo Z6 Lite', storage: '64 GB', price: 4200, image: 'https://fdn2.gsmarena.com/vv/bigpic/lenovo-z6-lite.jpg' },
+  { brand: 'Lenovo', series: 'Z Series Flagships', model: 'Lenovo Z5 Pro GT', storage: '128 GB', price: 6800, image: 'https://fdn2.gsmarena.com/vv/bigpic/lenovo-z5-pro-gt.jpg' },
+  { brand: 'Lenovo', series: 'Z Series Flagships', model: 'Lenovo Z5s', storage: '64 GB', price: 3800, image: 'https://fdn2.gsmarena.com/vv/bigpic/lenovo-z5s.jpg' },
+  { brand: 'Lenovo', series: 'A & Vibe Series', model: 'Lenovo A6 Note', storage: '32 GB', price: 2200, image: 'https://fdn2.gsmarena.com/vv/bigpic/lenovo-a6-note.jpg' },
+  { brand: 'Lenovo', series: 'A & Vibe Series', model: 'Lenovo Vibe K5 Note', storage: '32 GB', price: 1800, image: 'https://fdn2.gsmarena.com/vv/bigpic/lenovo-vibe-k5-note.jpg' },
+  { brand: 'Lenovo', series: 'A & Vibe Series', model: 'Lenovo Vibe P1m', storage: '16 GB', price: 1500, image: 'https://fdn2.gsmarena.com/vv/bigpic/lenovo-vibe-p1m.jpg' },
 ];
 
 const STORAGE_OPTIONS = ['64 GB', '128 GB', '256 GB', '512 GB', '1 TB'];
@@ -850,6 +869,50 @@ export default function SellPhone() {
       .finally(() => setLoadingModels(false));
   }, [form.brand, debouncedQuery]);
 
+  // Model-accurate hardware variant specifications (Storage & RAM options)
+  const currentDeviceSpecs = useMemo(() => {
+    return getModelHardwareSpecs(form.brand, form.model, MASTER_MODEL_CATALOG);
+  }, [form.brand, form.model]);
+
+  // Dynamic RAM options strictly dependent on the CURRENT selected storage
+  const availableRams = useMemo(() => {
+    return currentDeviceSpecs.getRamsForStorage(form.storage || currentDeviceSpecs.defaultStorage);
+  }, [currentDeviceSpecs, form.storage]);
+
+  // Synchronize form storage & RAM when device model or selected storage changes
+  useEffect(() => {
+    if (!form.model) return;
+    setForm((cur) => {
+      let changed = false;
+      let nextStorage = cur.storage;
+      let nextRam = cur.ram;
+
+      // 1. Ensure storage is valid for this model
+      if (!currentDeviceSpecs.storages.includes(cur.storage)) {
+        nextStorage = currentDeviceSpecs.defaultStorage;
+        changed = true;
+      }
+
+      // 2. Ensure RAM is strictly valid for THIS exact storage
+      const validRams = currentDeviceSpecs.getRamsForStorage(nextStorage);
+      if (validRams.length > 0) {
+        if (!validRams.includes(cur.ram)) {
+          nextRam = validRams[0];
+          changed = true;
+        }
+      } else if (cur.ram) {
+        // e.g. Apple or single-tier where RAM is not selectable
+        nextRam = '';
+        changed = true;
+      }
+
+      if (changed) {
+        return { ...cur, storage: nextStorage, ram: nextRam };
+      }
+      return cur;
+    });
+  }, [form.model, form.storage, currentDeviceSpecs]);
+
   useEffect(() => {
     let active = true;
 
@@ -883,7 +946,8 @@ export default function SellPhone() {
     getFunduPhoneQuote({
       brand: form.brand,
       model: form.model,
-      storage: form.storage || '128 GB',
+      storage: form.storage || currentDeviceSpecs.defaultStorage,
+      ram: form.ram,
       powers_on: form.powersOn,
       activation_lock_cleared: form.activationLockCleared,
       ownership_verified: form.ownershipVerified,
@@ -913,6 +977,7 @@ export default function SellPhone() {
     form.brand,
     form.model,
     form.storage,
+    form.ram,
     form.powersOn,
     form.activationLockCleared,
     form.ownershipVerified,
@@ -924,6 +989,8 @@ export default function SellPhone() {
     form.defects,
     form.accessories,
     form.underWarranty,
+  ]);
+
   // Compute base resale value for any model using local master catalog, Indian phones catalog, or dynamic formula
   const baseModelPrice = useMemo(() => {
     if (!form.model) return 0;
@@ -935,20 +1002,39 @@ export default function SellPhone() {
       `${m.brand} ${m.model}`.toLowerCase() === `${brandNorm} ${modelNorm}` ||
       m.model.toLowerCase().includes(modelNorm)
     );
-    if (master?.price) return master.price;
 
-    const indian = Array.isArray(ALL_INDIAN_PHONES_CATALOG)
-      ? ALL_INDIAN_PHONES_CATALOG.find((p) =>
-          p.model.toLowerCase() === modelNorm ||
-          `${p.brand} ${p.model}`.toLowerCase() === `${brandNorm} ${modelNorm}`
-        )
-      : null;
-    if (indian?.base_resale_value) return indian.base_resale_value;
-    if (indian?.default_mrp) return Math.round(indian.default_mrp * 0.55);
+    let rawBase = 0;
+    let catalogStorage = '128 GB';
 
-    const fallback = getDynamicFallbackConfig(form.brand, form.model, form.storage);
-    return fallback.base_price || 15000;
-  }, [form.brand, form.model, form.storage]);
+    if (master?.price) {
+      rawBase = master.price;
+      catalogStorage = master.storage || '128 GB';
+    } else {
+      const indian = Array.isArray(ALL_INDIAN_PHONES_CATALOG)
+        ? ALL_INDIAN_PHONES_CATALOG.find((p) =>
+            p.model.toLowerCase() === modelNorm ||
+            `${p.brand} ${p.model}`.toLowerCase() === `${brandNorm} ${modelNorm}`
+          )
+        : null;
+      if (indian?.base_resale_value) {
+        rawBase = indian.base_resale_value;
+        catalogStorage = indian.storage_options?.[0] || '128 GB';
+      } else if (indian?.default_mrp) {
+        rawBase = Math.round(indian.default_mrp * 0.55);
+        catalogStorage = indian.storage_options?.[0] || '128 GB';
+      } else {
+        const fallback = getDynamicFallbackConfig(form.brand, form.model, form.storage, form.ram);
+        return fallback.base_price || 15000;
+      }
+    }
+
+    // Dynamic variant multiplier based on exact RAM + Storage combination:
+    const catalogMult = calculateHardwareVariantMultiplier(catalogStorage, '', form.brand);
+    const selectedMult = calculateHardwareVariantMultiplier(form.storage, form.ram, form.brand);
+    const variantRatio = selectedMult / (catalogMult || 1.0);
+
+    return Math.max(1000, Math.round((rawBase * variantRatio) / 50) * 50);
+  }, [form.brand, form.model, form.storage, form.ram]);
 
   // Guaranteed non-zero smartphone valuation estimate
   const estimate = useMemo(() => {
@@ -1009,9 +1095,10 @@ export default function SellPhone() {
       },
       form.brand,
       form.model,
-      form.storage
+      form.storage,
+      form.ram
     );
-  }, [pricingConfig, form.screenCondition, form.bodyCondition, form.canMakeCalls, form.underWarranty, form.defects, form.accessories, form.brand, form.model, form.storage]);
+  }, [pricingConfig, form.screenCondition, form.bodyCondition, form.canMakeCalls, form.underWarranty, form.defects, form.accessories, form.brand, form.model, form.storage, form.ram]);
 
   // Filtered Master Models for Search Autocomplete (Combines Master Catalog, Indian Phones Catalog, & MobileAPI Live Fallback)
   const searchResults = useMemo(() => {
@@ -1299,19 +1386,19 @@ export default function SellPhone() {
         <div className="max-w-7xl mx-auto flex items-center gap-1.5 flex-wrap">
           <Link to="/" className="hover:text-[#344257] transition">Home</Link>
           <span>&gt;</span>
-          <Link to="/sell" className="hover:text-[#344257] transition">Sell</Link>
+          <Link to="/sell-old-mobile-phone" className="hover:text-[#344257] transition">Sell Old Mobile Phone</Link>
           {form.brand && (
             <>
               <span>&gt;</span>
-              <Link to={`/sell/${form.brand.toLowerCase()}`} className="hover:text-[#344257] transition">
-                {form.brand}
+              <Link to={`/sell-old-mobile-phone/sell-${form.brand.toLowerCase()}`} className="hover:text-[#344257] transition">
+                Sell Old {form.brand}
               </Link>
             </>
           )}
           {form.model && (
             <>
               <span>&gt;</span>
-              <span className="text-[#344257] font-extrabold">{form.model}</span>
+              <span className="text-[#344257] font-extrabold">Sell Old {form.model}</span>
             </>
           )}
         </div>
@@ -1396,9 +1483,14 @@ export default function SellPhone() {
                               <p className="text-xs text-gray-500">{item.storage}</p>
                             </div>
                           </div>
-                          <span className="badge bg-[#F0F0F5] text-[#344257] border border-[#C0C8D8] font-extrabold text-xs">
-                            Up to {formatINR(item.price)}
-                          </span>
+                          <div className="flex flex-col items-end gap-0.5 shrink-0">
+                            <span className="badge bg-[#F0F0F5] text-[#344257] border border-[#C0C8D8] font-extrabold text-xs">
+                              Up to {formatINR(item.price)}
+                            </span>
+                            <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200">
+                              Best Resale Price
+                            </span>
+                          </div>
                         </button>
                       ))}
                     </>
@@ -1605,20 +1697,25 @@ export default function SellPhone() {
                         </div>
                         <div>
                           <p className="font-extrabold text-sm text-gray-900 group-hover:text-[#344257] transition-colors">{m.model}</p>
-                          <span className="badge bg-[#F0F0F5] text-[#344257] border border-[#C0C8D8] font-extrabold text-[11px] mt-1">
-                            Up to {formatINR(m.price)}
-                          </span>
+                          <div className="flex items-center gap-1.5 mt-1 flex-wrap">
+                            <span className="badge bg-[#F0F0F5] text-[#344257] border border-[#C0C8D8] font-extrabold text-[11px]">
+                              Up to {formatINR(m.price)}
+                            </span>
+                            <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200">
+                              Best Resale Price
+                            </span>
+                          </div>
                         </div>
                       </div>
 
                       {/* Storage Selection Pills */}
                       <div className="flex flex-wrap gap-1.5 pt-1">
-                        {STORAGE_OPTIONS.map((stg) => (
+                        {getModelHardwareSpecs(m.brand || form.brand, m.model, MASTER_MODEL_CATALOG).storages.map((stg) => (
                           <button
                             key={stg}
                             type="button"
                             onClick={() => {
-                              handleQuickModelSelect({ brand: form.brand, model: m.model, storage: stg });
+                              handleQuickModelSelect({ brand: form.brand || m.brand, model: m.model, storage: stg });
                             }}
                             className={`px-2.5 py-1 rounded-lg text-xs font-bold transition ${
                               form.model === m.model && form.storage === stg
@@ -1902,18 +1999,22 @@ export default function SellPhone() {
                       {form.brand}
                     </span>
                     <h3 className="font-extrabold text-base sm:text-lg text-gray-900">
-                      {form.model}
+                      {form.model} {form.ram ? `(${form.ram} / ${form.storage})` : `(${form.storage})`}
                     </h3>
                   </div>
 
                   {/* Quick Storage Variant Switcher */}
                   <div className="flex items-center justify-center sm:justify-start gap-1.5 flex-wrap">
                     <span className="text-[11px] font-bold text-gray-500 mr-1">Storage:</span>
-                    {STORAGE_OPTIONS.map((stg) => (
+                    {currentDeviceSpecs.storages.map((stg) => (
                       <button
                         key={stg}
                         type="button"
-                        onClick={() => setForm((f) => ({ ...f, storage: stg }))}
+                        onClick={() => {
+                          const nextRams = currentDeviceSpecs.getRamsForStorage(stg);
+                          const nextRam = nextRams.includes(form.ram) ? form.ram : (nextRams[0] || '');
+                          setForm((f) => ({ ...f, storage: stg, ram: nextRam }));
+                        }}
                         className={`px-2.5 py-1 rounded-lg text-xs font-bold transition ${
                           form.storage === stg
                             ? 'bg-[#344257] text-white shadow-xs'
@@ -1925,13 +2026,44 @@ export default function SellPhone() {
                     ))}
                   </div>
 
-                  {/* Maximum Resale Cash Value Callout */}
-                  <div className="flex items-center justify-center sm:justify-start gap-2 pt-0.5">
-                    <span className="text-xs text-gray-500 font-medium">Spot Cash Quote:</span>
-                    <span className="font-black text-sm sm:text-base text-[#344257]">
-                      Up to {formatINR(estimate)}
-                    </span>
-                  </div>
+                  {/* Quick RAM Variant Switcher (strictly displays only officially launched RAMs for the chosen storage) */}
+                  {availableRams.length > 0 && (
+                    <div className="flex items-center justify-center sm:justify-start gap-1.5 flex-wrap">
+                      <span className="text-[11px] font-bold text-gray-500 mr-1">RAM:</span>
+                      {availableRams.map((ramVal) => (
+                        <button
+                          key={ramVal}
+                          type="button"
+                          onClick={() => setForm((f) => ({ ...f, ram: ramVal }))}
+                          className={`px-2.5 py-1 rounded-lg text-xs font-bold transition ${
+                            form.ram === ramVal
+                              ? 'bg-[#344257] text-white shadow-xs'
+                              : 'bg-white text-gray-700 border border-[#C0C8D8] hover:bg-[#F0F0F5] hover:border-[#6A859F]'
+                          }`}
+                        >
+                          {ramVal}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+
+                  {/* Maximum Resale Cash Value Callout with Cashify +5-7% Comparison */}
+                  {(() => {
+                    const comp = calculateCashifyComparison(estimate);
+                    return (
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-center sm:justify-start gap-1 sm:gap-2.5 pt-0.5">
+                        <div className="flex items-center gap-1.5">
+                          <span className="text-xs text-gray-500 font-medium">Fundu Quote:</span>
+                          <span className="font-black text-sm sm:text-base text-[#344257]">
+                            Up to {formatINR(estimate)}
+                          </span>
+                        </div>
+                        <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full inline-block">
+                          Best Price Guaranteed • Top Market Payout
+                        </span>
+                      </div>
+                    );
+                  })()}
                 </div>
 
                 <div className="shrink-0 flex flex-col items-center sm:items-end gap-1.5">
@@ -2358,6 +2490,19 @@ export default function SellPhone() {
                   </p>
                 </div>
 
+                {/* Prominently show Estimated Phone Valuation */}
+                <div className="rounded-3xl bg-gradient-to-r from-[#1E2734] via-[#344257] to-[#47576E] p-6 text-white shadow-xl space-y-2 text-center">
+                  <p className="text-xs font-bold uppercase tracking-widest text-[#9ac0dd]">
+                    Estimated Buyback Value
+                  </p>
+                  <div className="font-display text-4xl sm:text-5xl font-black text-white">
+                    {formatINR(funduQuote.offerAmount || estimate)}
+                  </div>
+                  <p className="text-xs text-amber-200 font-semibold">
+                    Estimated valuation · Final spot payment verified upon doorstep inspection
+                  </p>
+                </div>
+
                 {/* Clear explanation banner */}
                 <div className="rounded-3xl bg-gradient-to-r from-[#2A3442] via-[#344257] to-[#40536C] p-6 text-white text-left space-y-3 shadow-lg">
                   <div className="flex items-center gap-2 text-amber-300 font-bold text-sm">
@@ -2462,6 +2607,50 @@ export default function SellPhone() {
                     </span>
                   </div>
                 </div>
+
+                {/* Dedicated Fundu Price Match (+5% Extra Cash Guaranteed) Widget */}
+                {(() => {
+                  const finalAmt = funduQuote?.offerAmount ?? estimate;
+                  const comparison = calculateCashifyComparison(finalAmt);
+                  return (
+                    <div className="rounded-2xl border-2 border-emerald-500/40 bg-gradient-to-br from-emerald-50/80 via-white to-teal-50/60 p-5 text-left space-y-3.5 shadow-sm">
+                      <div className="flex flex-wrap items-center justify-between gap-2">
+                        <div className="flex items-center gap-2">
+                          <span className="h-2.5 w-2.5 rounded-full bg-emerald-500 animate-pulse" />
+                          <h4 className="font-extrabold text-xs uppercase tracking-wider text-emerald-950 flex items-center gap-1.5">
+                            <Zap className="h-4 w-4 text-emerald-600" /> Fundu Best Price Guarantee
+                          </h4>
+                        </div>
+                        <span className="text-[11px] font-bold text-emerald-700 bg-emerald-100/60 px-2.5 py-0.5 rounded-full">
+                          Guaranteed Highest Payout
+                        </span>
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-3 text-center">
+                        <div className="bg-white p-3.5 rounded-xl border border-gray-200/90 shadow-2xs">
+                          <p className="text-[11px] font-bold text-gray-500">Standard Market Value</p>
+                          <p className="text-base sm:text-lg font-black text-gray-600 line-through decoration-rose-500 decoration-2 mt-0.5">
+                            {formatINR(comparison.cashifyPrice)}
+                          </p>
+                          <span className="text-[10px] text-gray-400 font-medium">Other Buyback Sites</span>
+                        </div>
+                        <div className="bg-gradient-to-r from-emerald-600 to-teal-600 text-white p-3.5 rounded-xl shadow-md">
+                          <p className="text-[11px] font-bold text-emerald-100">Fundu Spot Cash Offer</p>
+                          <p className="text-base sm:text-lg font-black text-white mt-0.5">
+                            {formatINR(comparison.funduPrice)}
+                          </p>
+                          <span className="text-[10px] text-emerald-100 font-extrabold">+5% Extra Cash Bonus</span>
+                        </div>
+                      </div>
+
+                      <div className="p-2.5 rounded-xl bg-emerald-100/70 border border-emerald-200 text-center">
+                        <p className="text-xs text-emerald-950 font-bold">
+                          🎉 You receive <span className="font-black text-emerald-900 underline">+{formatINR(comparison.extraBonus)} Extra Cash</span> over standard market rates with 100% free doorstep pickup & instant payment!
+                        </p>
+                      </div>
+                    </div>
+                  );
+                })()}
 
                 {/* Understandable Condition-Related Reasons (Confidential Economics Kept on Server) */}
                 <div className="p-5 rounded-2xl bg-gray-50 border border-gray-200 text-left space-y-3 text-xs">

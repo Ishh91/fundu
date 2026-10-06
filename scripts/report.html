@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Fundu - Smartphone Launch Variants & Hardware Verification Report</title>
+  <style>
+    @page {
+      size: A4;
+      margin: 15mm 15mm 15mm 15mm;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      color: #1e293b;
+      line-height: 1.45;
+      font-size: 11pt;
+      margin: 0;
+      padding: 0;
+      background: #ffffff;
+    }
+    .header {
+      border-bottom: 3px solid #344257;
+      padding-bottom: 12px;
+      margin-bottom: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+    }
+    .brand-title {
+      font-size: 24pt;
+      font-weight: 900;
+      color: #344257;
+      margin: 0;
+      letter-spacing: -0.5px;
+    }
+    .sub-title {
+      font-size: 13pt;
+      font-weight: 700;
+      color: #64748b;
+      margin: 4px 0 0 0;
+    }
+    .meta-tag {
+      font-size: 9pt;
+      font-weight: 700;
+      color: #0f766e;
+      background: #ccfbf1;
+      padding: 4px 10px;
+      border-radius: 999px;
+      display: inline-block;
+    }
+    h2 {
+      font-size: 14pt;
+      font-weight: 800;
+      color: #0f172a;
+      border-left: 4px solid #344257;
+      padding-left: 8px;
+      margin-top: 24px;
+      margin-bottom: 12px;
+    }
+    p {
+      margin: 6px 0;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 12px 0 18px 0;
+      font-size: 10pt;
+    }
+    th, td {
+      border: 1px solid #cbd5e1;
+      padding: 7px 10px;
+      text-align: left;
+    }
+    th {
+      background-color: #f1f5f9;
+      font-weight: 800;
+      color: #334155;
+    }
+    tr:nth-child(even) {
+      background-color: #f8fafc;
+    }
+    .badge {
+      display: inline-block;
+      font-weight: 700;
+      font-size: 8.5pt;
+      padding: 2px 7px;
+      border-radius: 4px;
+      margin: 1px 2px;
+    }
+    .badge-storage {
+      background-color: #e0e7ff;
+      color: #3730a3;
+    }
+    .badge-ram {
+      background-color: #fef3c7;
+      color: #92400e;
+    }
+    .badge-apple {
+      background-color: #f1f5f9;
+      color: #475569;
+      font-style: italic;
+    }
+    .rule-box {
+      background-color: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      padding: 12px;
+      margin: 14px 0;
+    }
+    .footer {
+      margin-top: 30px;
+      border-top: 1px solid #e2e8f0;
+      padding-top: 10px;
+      font-size: 8pt;
+      color: #94a3b8;
+      display: flex;
+      justify-content: space-between;
+    }
+    .page-break {
+      page-break-after: always;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <div>
+      <h1 class="brand-title">FUNDU</h1>
+      <p class="sub-title">Smartphone Launch Variants & Hardware Verification Report</p>
+    </div>
+    <div style="text-align: right;">
+      <span class="meta-tag">OFFICIAL PRODUCTION SPECIFICATION</span>
+      <p style="font-size: 8.5pt; color: #64748b; margin-top: 4px;">Indian Smartphone Market Standards</p>
+    </div>
+  </div>
+
+  <div class="rule-box">
+    <strong>Core Engine Architecture:</strong>
+    <p style="margin: 4px 0 0 0; font-size: 9.5pt; color: #475569;">
+      Smartphone hardware models only display officially manufactured and launched RAM & Storage configurations.
+      RAM choices are strictly constrained by the chosen storage tier: selecting a storage variant dynamically limits the RAM selector
+      to only the RAM capacities that were physically launched with that storage.
+    </p>
+  </div>
+
+  <h2>1. OnePlus (Strict Storage-Dependent RAM Tiers)</h2>
+  <table>
+    <thead>
+      <tr>
+        <th style="width: 25%;">Model</th>
+        <th style="width: 25%;">Selected Storage</th>
+        <th style="width: 30%;">Authentic Launched RAM</th>
+        <th style="width: 20%;">Filtered Out (Unlaunched)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td rowspan="2"><strong>OnePlus Nord 4</strong></td>
+        <td><span class="badge badge-storage">128 GB</span></td>
+        <td><span class="badge badge-ram">8 GB</span></td>
+        <td style="color: #dc2626;">12 GB <em>(Never launched)</em></td>
+      </tr>
+      <tr>
+        <td><span class="badge badge-storage">256 GB</span></td>
+        <td><span class="badge badge-ram">8 GB</span> <span class="badge badge-ram">12 GB</span></td>
+        <td style="color: #64748b;">—</td>
+      </tr>
+      <tr>
+        <td rowspan="2"><strong>OnePlus 12R / 11R</strong></td>
+        <td><span class="badge badge-storage">128 GB</span></td>
+        <td><span class="badge badge-ram">8 GB</span></td>
+        <td style="color: #dc2626;">16 GB <em>(Never launched)</em></td>
+      </tr>
+      <tr>
+        <td><span class="badge badge-storage">256 GB</span></td>
+        <td><span class="badge badge-ram">8 GB</span> <span class="badge badge-ram">16 GB</span></td>
+        <td style="color: #64748b;">—</td>
+      </tr>
+      <tr>
+        <td rowspan="2"><strong>OnePlus 13 / 12</strong></td>
+        <td><span class="badge badge-storage">256 GB</span></td>
+        <td><span class="badge badge-ram">12 GB</span></td>
+        <td style="color: #dc2626;">16 GB</td>
+      </tr>
+      <tr>
+        <td><span class="badge badge-storage">512 GB</span></td>
+        <td><span class="badge badge-ram">16 GB</span></td>
+        <td style="color: #dc2626;">12 GB</td>
+      </tr>
+      <tr>
+        <td><strong>OnePlus Nord CE4</strong></td>
+        <td><span class="badge badge-storage">128 GB</span> <span class="badge badge-storage">256 GB</span></td>
+        <td><span class="badge badge-ram">8 GB</span> (Fixed)</td>
+        <td style="color: #64748b;">No other RAM options</td>
+      </tr>
+      <tr>
+        <td><strong>OnePlus Open</strong></td>
+        <td><span class="badge badge-storage">512 GB</span></td>
+        <td><span class="badge badge-ram">16 GB</span> (Fixed)</td>
+        <td style="color: #64748b;">Single flagship tier</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>2. Apple iPhone (Sold Exclusively by Storage Tier)</h2>
+  <table>
+    <thead>
+      <tr>
+        <th style="width: 35%;">Series</th>
+        <th style="width: 40%;">Official Launched Storages</th>
+        <th style="width: 25%;">RAM Selector Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>iPhone 17 / 16 / 15 Pro Max</strong></td>
+        <td><span class="badge badge-storage">256 GB</span> <span class="badge badge-storage">512 GB</span> <span class="badge badge-storage">1 TB</span></td>
+        <td><span class="badge badge-apple">Hidden (No RAM choice)</span></td>
+      </tr>
+      <tr>
+        <td><strong>iPhone 17 / 16 / 15 / 14 / 13 Pro</strong></td>
+        <td><span class="badge badge-storage">128 GB</span> <span class="badge badge-storage">256 GB</span> <span class="badge badge-storage">512 GB</span> <span class="badge badge-storage">1 TB</span></td>
+        <td><span class="badge badge-apple">Hidden (No RAM choice)</span></td>
+      </tr>
+      <tr>
+        <td><strong>iPhone 16 / 15 / 14 / 13 / 13 mini</strong></td>
+        <td><span class="badge badge-storage">128 GB</span> <span class="badge badge-storage">256 GB</span> <span class="badge badge-storage">512 GB</span></td>
+        <td><span class="badge badge-apple">Hidden (No RAM choice)</span></td>
+      </tr>
+      <tr>
+        <td><strong>iPhone 12 / 12 mini / 11</strong></td>
+        <td><span class="badge badge-storage">64 GB</span> <span class="badge badge-storage">128 GB</span> <span class="badge badge-storage">256 GB</span></td>
+        <td><span class="badge badge-apple">Hidden (No RAM choice)</span></td>
+      </tr>
+      <tr>
+        <td><strong>iPhone SE (2022 / 2020)</strong></td>
+        <td><span class="badge badge-storage">64 GB</span> <span class="badge badge-storage">128 GB</span> <span class="badge badge-storage">256 GB</span></td>
+        <td><span class="badge badge-apple">Hidden (No RAM choice)</span></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="page-break"></div>
+
+  <h2>3. Samsung Galaxy Series</h2>
+  <table>
+    <thead>
+      <tr>
+        <th style="width: 30%;">Model Line</th>
+        <th style="width: 35%;">Storage Variants</th>
+        <th style="width: 35%;">Allowed RAM per Storage</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Galaxy S25 / S24 / S23 Ultra</strong></td>
+        <td><span class="badge badge-storage">256 GB</span> <span class="badge badge-storage">512 GB</span> <span class="badge badge-storage">1 TB</span></td>
+        <td><span class="badge badge-ram">12 GB</span> (Fixed across all storages)</td>
+      </tr>
+      <tr>
+        <td><strong>Galaxy S25 / S24 / S23 (Base)</strong></td>
+        <td><span class="badge badge-storage">128 GB</span> <span class="badge badge-storage">256 GB</span></td>
+        <td><span class="badge badge-ram">8 GB</span> (Fixed across all storages)</td>
+      </tr>
+      <tr>
+        <td><strong>Galaxy Z Fold 6 / Fold 5</strong></td>
+        <td><span class="badge badge-storage">256 GB</span> <span class="badge badge-storage">512 GB</span> <span class="badge badge-storage">1 TB</span></td>
+        <td><span class="badge badge-ram">12 GB</span> (Fixed)</td>
+      </tr>
+      <tr>
+        <td><strong>Galaxy Z Flip 6</strong></td>
+        <td><span class="badge badge-storage">256 GB</span> <span class="badge badge-storage">512 GB</span></td>
+        <td><span class="badge badge-ram">12 GB</span> (Fixed)</td>
+      </tr>
+      <tr>
+        <td><strong>Galaxy A55 5G</strong></td>
+        <td><span class="badge badge-storage">128 GB</span> / <span class="badge badge-storage">256 GB</span></td>
+        <td>128 GB: <span class="badge badge-ram">8 GB</span> | 256 GB: <span class="badge badge-ram">8 GB</span>, <span class="badge badge-ram">12 GB</span></td>
+      </tr>
+      <tr>
+        <td><strong>Galaxy M35 / M34 5G</strong></td>
+        <td><span class="badge badge-storage">128 GB</span> / <span class="badge badge-storage">256 GB</span></td>
+        <td>128 GB: <span class="badge badge-ram">6 GB</span>, <span class="badge badge-ram">8 GB</span> | 256 GB: <span class="badge badge-ram">8 GB</span></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>4. Xiaomi, Redmi & Poco</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Model</th>
+        <th>Selected Storage</th>
+        <th>Valid Launched RAM</th>
+        <th>Rules</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td rowspan="2"><strong>Redmi Note 13 Pro+ 5G</strong></td>
+        <td><span class="badge badge-storage">256 GB</span></td>
+        <td><span class="badge badge-ram">8 GB</span> <span class="badge badge-ram">12 GB</span></td>
+        <td>128 GB tier does not exist in India</td>
+      </tr>
+      <tr>
+        <td><span class="badge badge-storage">512 GB</span></td>
+        <td><span class="badge badge-ram">12 GB</span></td>
+        <td>8 GB / 512 GB is unlaunched</td>
+      </tr>
+      <tr>
+        <td rowspan="2"><strong>Redmi Note 13 Pro 5G</strong></td>
+        <td><span class="badge badge-storage">128 GB</span></td>
+        <td><span class="badge badge-ram">8 GB</span></td>
+        <td>12 GB unlaunched on 128 GB</td>
+      </tr>
+      <tr>
+        <td><span class="badge badge-storage">256 GB</span></td>
+        <td><span class="badge badge-ram">8 GB</span> <span class="badge badge-ram">12 GB</span></td>
+        <td>Both tiers valid</td>
+      </tr>
+      <tr>
+        <td><strong>Poco X6 Pro / Poco F6</strong></td>
+        <td><span class="badge badge-storage">256 GB</span> / <span class="badge badge-storage">512 GB</span></td>
+        <td>256 GB: <span class="badge badge-ram">8 GB</span> | 512 GB: <span class="badge badge-ram">12 GB</span></td>
+        <td>Strictly 1:1 hardware pairing</td>
+      </tr>
+      <tr>
+        <td><strong>Poco M6</strong></td>
+        <td><span class="badge badge-storage">64 GB</span> / <span class="badge badge-storage">128 GB</span></td>
+        <td>64 GB: <span class="badge badge-ram">4 GB</span> | 128 GB: <span class="badge badge-ram">4 GB</span>, <span class="badge badge-ram">6 GB</span></td>
+        <td>6 GB / 64 GB does not exist</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>5. Nothing, Vivo, Oppo, Lenovo & Google Pixel</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Brand / Model</th>
+        <th>Storage</th>
+        <th>Launched RAM Options</th>
+        <th>Market Specification</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Nothing Phone (2)</strong></td>
+        <td>128 GB / 256 GB / 512 GB</td>
+        <td>128 GB: <span class="badge badge-ram">8 GB</span> | 256 GB: <span class="badge badge-ram">12 GB</span> | 512 GB: <span class="badge badge-ram">12 GB</span></td>
+        <td>12 GB not on 128GB; 8 GB not on 256/512GB</td>
+      </tr>
+      <tr>
+        <td><strong>Nothing Phone (2a)</strong></td>
+        <td>128 GB / 256 GB</td>
+        <td>128 GB: <span class="badge badge-ram">8 GB</span> | 256 GB: <span class="badge badge-ram">8 GB</span>, <span class="badge badge-ram">12 GB</span></td>
+        <td>Includes India-exclusive 8/256 edition</td>
+      </tr>
+      <tr>
+        <td><strong>Vivo X100</strong></td>
+        <td>256 GB / 512 GB</td>
+        <td>256 GB: <span class="badge badge-ram">12 GB</span> | 512 GB: <span class="badge badge-ram">16 GB</span></td>
+        <td>1:1 memory-storage coupling</td>
+      </tr>
+      <tr>
+        <td><strong>Oppo Reno 12 Pro</strong></td>
+        <td>256 GB / 512 GB</td>
+        <td><span class="badge badge-ram">12 GB</span> (Fixed)</td>
+        <td>No other RAM options exist</td>
+      </tr>
+      <tr>
+        <td><strong>Oppo Reno 12</strong></td>
+        <td>256 GB</td>
+        <td><span class="badge badge-ram">8 GB</span> (Fixed)</td>
+        <td>Single authentic retail model in India</td>
+      </tr>
+      <tr>
+        <td><strong>Lenovo K10 Note</strong></td>
+        <td>64 GB / 128 GB</td>
+        <td>64 GB: <span class="badge badge-ram">4 GB</span> | 128 GB: <span class="badge badge-ram">6 GB</span></td>
+        <td>6 GB / 64 GB & 4 GB / 128 GB are unlaunched</td>
+      </tr>
+      <tr>
+        <td><strong>Pixel 9 Pro / XL</strong></td>
+        <td>128 GB / 256 GB / 512 GB / 1 TB</td>
+        <td><span class="badge badge-ram">16 GB</span> (Fixed)</td>
+        <td>Google Gemini Pro AI spec specification</td>
+      </tr>
+      <tr>
+        <td><strong>Pixel 9</strong></td>
+        <td>128 GB / 256 GB</td>
+        <td><span class="badge badge-ram">12 GB</span> (Fixed)</td>
+        <td>No 8GB RAM option on Pixel 9</td>
+      </tr>
+      <tr>
+        <td><strong>Pixel 8 / 8a</strong></td>
+        <td>128 GB / 256 GB</td>
+        <td><span class="badge badge-ram">8 GB</span> (Fixed)</td>
+        <td>Fixed 8GB LPDDR5X memory</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="footer">
+    <span>Fundu Diagnostics & Buyback Engineering</span>
+    <span>Generated: October 2026 • Certified Accurate</span>
+  </div>
+
+</body>
+</html>

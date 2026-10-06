@@ -911,7 +911,7 @@ export const BRAND_SERIES_DEFINITIONS: Record<string, BrandSeriesDefinition[]> =
       brand: 'Oppo',
       image: 'https://fdn2.gsmarena.com/vv/bigpic/oppo-a79.jpg',
       description: 'Oppo A79 5G, A78 5G, A59, A38, K12x 5G, K10',
-      pattern: /\b[ak]\d+/i,
+      pattern: /\b([ak]\s*\d+|a\s*&\s*k|[ak]\s*series)\b/i,
       defaultModels: [
         { brand: 'Oppo', series: 'Oppo A & K Series', model: 'Oppo A79 5G', storage: '128 GB', price: 11000, image: 'https://fdn2.gsmarena.com/vv/bigpic/oppo-a79.jpg' },
         { brand: 'Oppo', series: 'Oppo A & K Series', model: 'Oppo A78 5G', storage: '128 GB', price: 9500, image: 'https://fdn2.gsmarena.com/vv/bigpic/oppo-a78-5g.jpg' },
@@ -1334,6 +1334,68 @@ export const BRAND_SERIES_DEFINITIONS: Record<string, BrandSeriesDefinition[]> =
       ],
     },
   ],
+  lenovo: [
+    {
+      id: 'lenovo-k-note',
+      slug: 'lenovo-k-note-series',
+      name: 'K Note Series',
+      brand: 'Lenovo',
+      image: 'https://fdn2.gsmarena.com/vv/bigpic/lenovo-k10-note.jpg',
+      description: 'Lenovo K10 Note, K10 Plus, K9 Note, K8 Note, K8 Plus',
+      pattern: /\bk\d+|k\s*note/i,
+      defaultModels: [
+        { brand: 'Lenovo', series: 'K Note Series', model: 'Lenovo K10 Note', storage: '64 GB', price: 1490, image: 'https://fdn2.gsmarena.com/vv/bigpic/lenovo-k10-note.jpg' },
+        { brand: 'Lenovo', series: 'K Note Series', model: 'Lenovo K10 Note', storage: '128 GB', price: 1565, image: 'https://fdn2.gsmarena.com/vv/bigpic/lenovo-k10-note.jpg' },
+        { brand: 'Lenovo', series: 'K Note Series', model: 'Lenovo K10 Plus', storage: '64 GB', price: 3100, image: 'https://fdn2.gsmarena.com/vv/bigpic/lenovo-k10-plus.jpg' },
+        { brand: 'Lenovo', series: 'K Note Series', model: 'Lenovo K9 Note', storage: '64 GB', price: 2700, image: 'https://fdn2.gsmarena.com/vv/bigpic/lenovo-k9-note.jpg' },
+        { brand: 'Lenovo', series: 'K Note Series', model: 'Lenovo K8 Note', storage: '64 GB', price: 2400, image: 'https://fdn2.gsmarena.com/vv/bigpic/lenovo-k8-note.jpg' },
+        { brand: 'Lenovo', series: 'K Note Series', model: 'Lenovo K8 Plus', storage: '32 GB', price: 2100, image: 'https://fdn2.gsmarena.com/vv/bigpic/lenovo-k8-plus.jpg' },
+      ],
+    },
+    {
+      id: 'lenovo-legion',
+      slug: 'lenovo-legion-series',
+      name: 'Legion Gaming Series',
+      brand: 'Lenovo',
+      image: 'https://fdn2.gsmarena.com/vv/bigpic/lenovo-legion-duel-2.jpg',
+      description: 'Lenovo Legion Duel 2, Legion Pro, Legion Y90',
+      pattern: /\blegion\b/i,
+      defaultModels: [
+        { brand: 'Lenovo', series: 'Legion Gaming Series', model: 'Lenovo Legion Duel 2', storage: '256 GB', price: 18500, image: 'https://fdn2.gsmarena.com/vv/bigpic/lenovo-legion-duel-2.jpg' },
+        { brand: 'Lenovo', series: 'Legion Gaming Series', model: 'Lenovo Legion Pro', storage: '128 GB', price: 14000, image: 'https://fdn2.gsmarena.com/vv/bigpic/lenovo-legion-pro.jpg' },
+        { brand: 'Lenovo', series: 'Legion Gaming Series', model: 'Lenovo Legion Y90', storage: '256 GB', price: 22000, image: 'https://fdn2.gsmarena.com/vv/bigpic/lenovo-legion-y90.jpg' },
+      ],
+    },
+    {
+      id: 'lenovo-z-series',
+      slug: 'lenovo-z-series',
+      name: 'Z Series Flagships',
+      brand: 'Lenovo',
+      image: 'https://fdn2.gsmarena.com/vv/bigpic/lenovo-z6-pro.jpg',
+      description: 'Lenovo Z6 Pro, Z6 Lite, Z5 Pro GT, Z5s',
+      pattern: /\bz\d+/i,
+      defaultModels: [
+        { brand: 'Lenovo', series: 'Z Series Flagships', model: 'Lenovo Z6 Pro', storage: '128 GB', price: 8500, image: 'https://fdn2.gsmarena.com/vv/bigpic/lenovo-z6-pro.jpg' },
+        { brand: 'Lenovo', series: 'Z Series Flagships', model: 'Lenovo Z6 Lite', storage: '64 GB', price: 4200, image: 'https://fdn2.gsmarena.com/vv/bigpic/lenovo-z6-lite.jpg' },
+        { brand: 'Lenovo', series: 'Z Series Flagships', model: 'Lenovo Z5 Pro GT', storage: '128 GB', price: 6800, image: 'https://fdn2.gsmarena.com/vv/bigpic/lenovo-z5-pro-gt.jpg' },
+        { brand: 'Lenovo', series: 'Z Series Flagships', model: 'Lenovo Z5s', storage: '64 GB', price: 3800, image: 'https://fdn2.gsmarena.com/vv/bigpic/lenovo-z5s.jpg' },
+      ],
+    },
+    {
+      id: 'lenovo-a-vibe',
+      slug: 'lenovo-a-vibe-series',
+      name: 'A & Vibe Series',
+      brand: 'Lenovo',
+      image: 'https://fdn2.gsmarena.com/vv/bigpic/lenovo-a6-note.jpg',
+      description: 'Lenovo A6 Note, Vibe K5, Vibe P1m',
+      pattern: /\b(a\d+|vibe)\b/i,
+      defaultModels: [
+        { brand: 'Lenovo', series: 'A & Vibe Series', model: 'Lenovo A6 Note', storage: '32 GB', price: 2200, image: 'https://fdn2.gsmarena.com/vv/bigpic/lenovo-a6-note.jpg' },
+        { brand: 'Lenovo', series: 'A & Vibe Series', model: 'Lenovo Vibe K5 Note', storage: '32 GB', price: 1800, image: 'https://fdn2.gsmarena.com/vv/bigpic/lenovo-vibe-k5-note.jpg' },
+        { brand: 'Lenovo', series: 'A & Vibe Series', model: 'Lenovo Vibe P1m', storage: '16 GB', price: 1500, image: 'https://fdn2.gsmarena.com/vv/bigpic/lenovo-vibe-p1m.jpg' },
+      ],
+    },
+  ],
 };
 
 export function groupModelsBySeries(brand: string, allModels: CatalogModelItem[]): SeriesGroup[] {
@@ -1367,7 +1429,14 @@ export function groupModelsBySeries(brand: string, allModels: CatalogModelItem[]
   for (const def of defs) {
     const matched = allModels.filter((m) => {
       const text = `${m.model} ${m.series || ''}`;
-      return def.pattern.test(text);
+      return (
+        def.pattern.test(text) ||
+        (m.series && (
+          m.series.toLowerCase() === def.name.toLowerCase() ||
+          m.series.toLowerCase().includes(def.name.toLowerCase()) ||
+          def.name.toLowerCase().includes(m.series.toLowerCase())
+        ))
+      );
     });
 
     matched.forEach((m) => assignedModels.add(m.model.toLowerCase()));

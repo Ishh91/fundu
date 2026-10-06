@@ -24,10 +24,20 @@ export const BRAND_OFFICIAL_LOGOS: Record<string, string> = {
   infinix: '/infinix-logo.svg',
   tecno: '/tecno-logo.svg',
   itel: '/itel-logo.svg',
+  lenovo: 'https://cdn.simpleicons.org/lenovo/e2231a',
 };
 
 // Model-Specific Official Studio Renders
 export const MODEL_EXACT_RENDERS: Array<{ keyword: string; url: string }> = [
+  // Lenovo
+  { keyword: 'lenovo k10 note', url: 'https://fdn2.gsmarena.com/vv/bigpic/lenovo-k10-note.jpg' },
+  { keyword: 'lenovo k10 plus', url: 'https://fdn2.gsmarena.com/vv/bigpic/lenovo-k10-plus.jpg' },
+  { keyword: 'lenovo k9 note', url: 'https://fdn2.gsmarena.com/vv/bigpic/lenovo-k9-note.jpg' },
+  { keyword: 'lenovo k8 note', url: 'https://fdn2.gsmarena.com/vv/bigpic/lenovo-k8-note.jpg' },
+  { keyword: 'lenovo legion duel 2', url: 'https://fdn2.gsmarena.com/vv/bigpic/lenovo-legion-duel-2.jpg' },
+  { keyword: 'lenovo z6 pro', url: 'https://fdn2.gsmarena.com/vv/bigpic/lenovo-z6-pro.jpg' },
+  { keyword: 'lenovo a6 note', url: 'https://fdn2.gsmarena.com/vv/bigpic/lenovo-a6-note.jpg' },
+
   // Apple iPhone
   { keyword: 'iphone 17 pro max', url: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-16-pro-max.jpg' },
   { keyword: 'iphone 17 pro', url: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-16-pro.jpg' },
@@ -226,6 +236,7 @@ export const BRAND_FRONT_FALLBACKS: Record<string, string> = {
   tecno: 'https://fdn2.gsmarena.com/vv/bigpic/tecno-camon-30-pro.jpg',
   itel: 'https://fdn2.gsmarena.com/vv/bigpic/itel-s24.jpg',
   honor: 'https://fdn2.gsmarena.com/vv/bigpic/honor-200.jpg',
+  lenovo: 'https://fdn2.gsmarena.com/vv/bigpic/lenovo-k10-note.jpg',
 };
 
 /**

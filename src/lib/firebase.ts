@@ -7,14 +7,18 @@ import {
   ConfirmationResult,
 } from 'firebase/auth';
 
+const env: Record<string, string | undefined> = (typeof import.meta !== 'undefined' && import.meta?.env)
+  ? (import.meta.env as any)
+  : (typeof process !== 'undefined' ? (process.env as any) : {});
+
 const firebaseConfig = {
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY || 'AIzaSyBBlO3OuntuKlCg7MK0460ax7kXXTUVVTI',
-  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || 'thefundu-3700a.firebaseapp.com',
-  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || 'thefundu-3700a',
-  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || 'thefundu-3700a.firebasestorage.app',
-  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || '723412623861',
-  appId: import.meta.env.VITE_FIREBASE_APP_ID || '1:723412623861:web:8e1bef52dd90ea462740bc',
-  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID || 'G-7YMXPYPBTR',
+  apiKey: env.VITE_FIREBASE_API_KEY || 'AIzaSyBBlO3OuntuKlCg7MK0460ax7kXXTUVVTI',
+  authDomain: env.VITE_FIREBASE_AUTH_DOMAIN || 'thefundu-3700a.firebaseapp.com',
+  projectId: env.VITE_FIREBASE_PROJECT_ID || 'thefundu-3700a',
+  storageBucket: env.VITE_FIREBASE_STORAGE_BUCKET || 'thefundu-3700a.firebasestorage.app',
+  messagingSenderId: env.VITE_FIREBASE_MESSAGING_SENDER_ID || '723412623861',
+  appId: env.VITE_FIREBASE_APP_ID || '1:723412623861:web:8e1bef52dd90ea462740bc',
+  measurementId: env.VITE_FIREBASE_MEASUREMENT_ID || 'G-7YMXPYPBTR',
 };
 
 // Initialize or reuse Firebase app
