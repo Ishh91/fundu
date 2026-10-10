@@ -197,6 +197,15 @@ export default function SellBrandPage() {
   const [debouncedQuery, setDebouncedQuery] = useState('');
   const [isSearching, setIsSearching] = useState(false);
   const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(0);
+  const [selectedSeriesFilter, setSelectedSeriesFilter] = useState<string>(effectiveSeriesSlug || 'All');
+
+  useEffect(() => {
+    if (effectiveSeriesSlug) {
+      setSelectedSeriesFilter(effectiveSeriesSlug);
+    } else {
+      setSelectedSeriesFilter('All');
+    }
+  }, [effectiveSeriesSlug]);
 
   useEffect(() => {
     setIsSearching(true);
@@ -273,10 +282,11 @@ export default function SellBrandPage() {
     return groupModelsBySeries(brandCanonicalKey, allBrandModels);
   }, [brandCanonicalKey, allBrandModels]);
 
-  // Active Series Group if on series page
+  // Active Series Group if on series page or selected series filter
   const currentSeriesGroup = useMemo(() => {
-    if (!effectiveSeriesSlug) return undefined;
-    const clean = effectiveSeriesSlug.toLowerCase().replace(/^sell-/, '');
+    const slugToMatch = selectedSeriesFilter !== 'All' ? selectedSeriesFilter : effectiveSeriesSlug;
+    if (!slugToMatch || slugToMatch === 'All') return undefined;
+    const clean = slugToMatch.toLowerCase().replace(/^sell-/, '');
 
     // 1. Direct slug or id match
     const direct = seriesGroups.find((g) => g.slug === clean || g.id === clean);
@@ -294,10 +304,9 @@ export default function SellBrandPage() {
     });
     if (partialMatch && partialMatch.models.length > 0) return partialMatch;
 
-    // 3. If direct was found, use it even if models count is being loaded
     if (direct) return direct;
 
-    // 4. Dynamic series creation from allBrandModels pattern match
+    // Dynamic series creation from allBrandModels pattern match
     const pattern = new RegExp(clean.replace(/-/g, '\\s*').replace(/series/g, ''), 'i');
     const matchedModels = allBrandModels.filter((m) => pattern.test(`${m.model} ${m.series}`));
     if (matchedModels.length > 0) {
@@ -313,39 +322,69 @@ export default function SellBrandPage() {
     }
 
     return undefined;
-  }, [effectiveSeriesSlug, seriesGroups, allBrandModels, brandDisplayName]);
+  }, [selectedSeriesFilter, effectiveSeriesSlug, seriesGroups, allBrandModels, brandDisplayName]);
 
-  // Sub-models for current series
-  const subModels = useMemo(() => {
-    if (!currentSeriesGroup) return [];
-    let list = currentSeriesGroup.models;
+  // All Brand Models organized sequentially in Series Order (e.g., iPhone 17 -> iPhone 16 -> iPhone 15...)
+  const allModelsInSeriesOrder = useMemo(() => {
+    const models: Array<CatalogModelItem & { seriesName?: string; seriesSlug?: string }> = [];
+    const seen = new Set<string>();
 
-    // Fallback: if group models array is unexpectedly empty, search allBrandModels
-    if (!list || list.length === 0) {
-      const cleanSlug = (effectiveSeriesSlug || '').toLowerCase().replace(/series/g, '').replace(/[-_]/g, ' ').trim();
-      const terms = cleanSlug.split(/\s+/).filter(Boolean);
-      list = allBrandModels.filter((m) => {
-        const text = `${m.model} ${m.series || ''}`.toLowerCase();
-        return terms.some((t) => {
-          if (t === 'oppo' || t === 'brand' || t === '&' || t === 'and') return false;
-          return text.includes(t);
-        });
+    seriesGroups.forEach((group) => {
+      (group.models || []).forEach((m) => {
+        const key = m.model.toLowerCase().replace(/\+/g, 'plus').replace(/[^a-z0-9]/g, '');
+        if (!seen.has(key)) {
+          seen.add(key);
+          models.push({
+            ...m,
+            seriesName: group.name,
+            seriesSlug: group.slug,
+          });
+        }
       });
-    }
+    });
 
+    // Add any leftover models from allBrandModels not captured in predefined series groups
+    allBrandModels.forEach((m) => {
+      const key = m.model.toLowerCase().replace(/\+/g, 'plus').replace(/[^a-z0-9]/g, '');
+      if (!seen.has(key)) {
+        seen.add(key);
+        models.push({
+          ...m,
+          seriesName: m.series || `${brandDisplayName} Series`,
+          seriesSlug: 'other',
+        });
+      }
+    });
+
+    return models;
+  }, [seriesGroups, allBrandModels, brandDisplayName]);
+
+  // Models to display based on series filter and search query
+  const displayedModels = useMemo(() => {
+    let list = allModelsInSeriesOrder;
+
+    // 1. Search filter
     if (debouncedQuery) {
       const q = debouncedQuery.toLowerCase();
-      list = list.filter((m) => m.model.toLowerCase().includes(q));
+      return list.filter((m) => m.model.toLowerCase().includes(q));
     }
-    return list;
-  }, [currentSeriesGroup, effectiveSeriesSlug, allBrandModels, debouncedQuery]);
 
-  // Global search matches across brand
-  const globalSearchMatches = useMemo(() => {
-    if (!debouncedQuery) return [];
-    const q = debouncedQuery.toLowerCase();
-    return allBrandModels.filter((m) => m.model.toLowerCase().includes(q));
-  }, [allBrandModels, debouncedQuery]);
+    // 2. Series tab filter
+    if (selectedSeriesFilter !== 'All') {
+      const cleanFilter = selectedSeriesFilter.toLowerCase().replace(/^sell-/, '');
+      const filtered = list.filter(
+        (m) =>
+          m.seriesSlug === cleanFilter ||
+          (m.seriesName && m.seriesName.toLowerCase().replace(/\s+/g, '-').includes(cleanFilter.replace(/-series$/, '')))
+      );
+      if (filtered.length > 0) return filtered;
+      if (currentSeriesGroup?.models && currentSeriesGroup.models.length > 0) {
+        return currentSeriesGroup.models;
+      }
+    }
+
+    return list;
+  }, [allModelsInSeriesOrder, debouncedQuery, selectedSeriesFilter, currentSeriesGroup]);
 
   // Helper to resolve guaranteed non-zero estimated valuation for any phone model
   const getModelEstimatedPrice = (m: CatalogModelItem): number => {
@@ -389,7 +428,7 @@ export default function SellBrandPage() {
   };
 
   const handleSelectSeries = (series: SeriesGroup) => {
-    navigate(`/sell-old-mobile-phone/sell-${brandCleanKey}/series/${series.slug}`);
+    setSelectedSeriesFilter(series.slug);
   };
 
   // Highlight matching search query text
@@ -437,33 +476,25 @@ export default function SellBrandPage() {
       {/* Clean Brand Header & Right-Corner Search Bar */}
       <section className="py-6 px-4">
         <div className="max-w-7xl mx-auto">
-          {effectiveSeriesSlug && (
+          {selectedSeriesFilter !== 'All' && (
             <button
               type="button"
-              onClick={() => {
-                if (window.history.length > 1) {
-                  navigate(-1);
-                } else {
-                  navigate(`/sell-old-mobile-phone/sell-${brandCleanKey}`);
-                }
-              }}
+              onClick={() => setSelectedSeriesFilter('All')}
               className="inline-flex items-center gap-1.5 text-xs font-bold text-[#47576E] hover:text-[#344257] transition cursor-pointer mb-3"
             >
-              <ArrowLeft className="h-4 w-4 text-[#6A859F]" /> Back to all {brandDisplayName} Series
+              <ArrowLeft className="h-4 w-4 text-[#6A859F]" /> Show All {brandDisplayName} Models
             </button>
           )}
 
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
             <div>
               <h1 className="font-display text-2xl md:text-3xl font-black text-[#344257]">
-                {effectiveSeriesSlug
-                  ? `Sell Old ${currentSeriesGroup?.name || brandDisplayName} Online`
+                {selectedSeriesFilter !== 'All' && currentSeriesGroup
+                  ? `Sell Old ${currentSeriesGroup.name} Online`
                   : `Sell Old ${brandDisplayName} Mobile Phone Online At Best Price`}
               </h1>
               <p className="text-xs text-[#47576E] mt-1">
-                {effectiveSeriesSlug
-                  ? `Select your exact ${currentSeriesGroup?.name || brandDisplayName} model below for instant spot valuation & doorstep pickup at your doorstep`
-                  : `Select your ${brandDisplayName} model series below for instant spot cash & doorstep pickup at your doorstep`}
+                Select your exact {brandDisplayName} model below for instant spot valuation & doorstep pickup
               </p>
             </div>
 
@@ -521,220 +552,167 @@ export default function SellBrandPage() {
               <h2 className="font-display text-xl sm:text-2xl font-black text-gray-900">
                 {debouncedQuery
                   ? `Search Results for "${debouncedQuery}"`
-                  : effectiveSeriesSlug
-                  ? `Select ${currentSeriesGroup?.name || 'Model'}`
-                  : `Select ${brandDisplayName} Series / Model`}
+                  : selectedSeriesFilter !== 'All' && currentSeriesGroup
+                  ? `${currentSeriesGroup.name} Models`
+                  : `All ${brandDisplayName} Models (Series Order)`}
               </h2>
+              <p className="text-xs text-gray-500 mt-0.5">
+                {selectedSeriesFilter !== 'All' && currentSeriesGroup
+                  ? `Showing models for ${currentSeriesGroup.name}. Click "All Models" to view full catalog.`
+                  : `Browse models chronologically by series. Select your model for an instant spot quote.`}
+              </p>
             </div>
-            <span className="text-xs font-bold text-gray-500 bg-gray-100 px-3.5 py-1.5 rounded-xl border border-gray-200">
-              {debouncedQuery
-                ? `Showing ${globalSearchMatches.length} Matching Models`
-                : effectiveSeriesSlug
-                ? `Showing ${subModels.length} Models`
-                : `Showing ${seriesGroups.length} Series Available`}
-            </span>
+            <div className="flex items-center gap-2">
+              {selectedSeriesFilter !== 'All' && (
+                <button
+                  type="button"
+                  onClick={() => setSelectedSeriesFilter('All')}
+                  className="btn-outline text-xs px-3 py-1.5 font-bold"
+                >
+                  ← Show All Models
+                </button>
+              )}
+              <span className="text-xs font-bold text-gray-600 bg-gray-100 px-3.5 py-1.5 rounded-xl border border-gray-200">
+                {debouncedQuery
+                  ? `Showing ${displayedModels.length} Matching Models`
+                  : `Showing ${displayedModels.length} of ${allModelsInSeriesOrder.length} Models`}
+              </span>
+            </div>
           </div>
 
-          {/* CATALOG CONTENT SWITCHER */}
+          {/* Quick Series Filter Pills Bar (All Models + Specific Series Tabs) */}
+          {seriesGroups.length > 0 && !debouncedQuery && (
+            <div className="flex items-center gap-2 overflow-x-auto scrollbar-hide py-1 border-b border-gray-100 pb-3">
+              <button
+                type="button"
+                onClick={() => setSelectedSeriesFilter('All')}
+                className={`px-4 py-2 rounded-xl text-xs font-black transition shrink-0 flex items-center gap-2 ${
+                  selectedSeriesFilter === 'All'
+                    ? 'bg-[#344257] text-white shadow-md'
+                    : 'bg-[#F0F0F5] text-[#47576E] hover:bg-[#E4E7F0] border border-[#C0C8D8]'
+                }`}
+              >
+                <span>All Models</span>
+                <span
+                  className={`text-[10px] px-2 py-0.5 rounded-full font-bold ${
+                    selectedSeriesFilter === 'All' ? 'bg-white/20 text-white' : 'bg-white text-gray-700 border border-gray-200'
+                  }`}
+                >
+                  {allModelsInSeriesOrder.length}
+                </span>
+              </button>
+
+              {seriesGroups.map((ser) => {
+                const count = ser.modelsCount || ser.models?.length || 0;
+                const isSelected = selectedSeriesFilter === ser.slug;
+                return (
+                  <button
+                    key={ser.slug}
+                    type="button"
+                    onClick={() => setSelectedSeriesFilter(ser.slug)}
+                    className={`px-3.5 py-2 rounded-xl text-xs font-bold transition shrink-0 flex items-center gap-2 ${
+                      isSelected
+                        ? 'bg-[#344257] text-white shadow-md'
+                        : 'bg-[#F0F0F5] text-[#47576E] hover:bg-[#E4E7F0] border border-[#C0C8D8]'
+                    }`}
+                  >
+                    <span>{ser.name}</span>
+                    <span
+                      className={`text-[10px] px-1.5 py-0.5 rounded-full font-bold ${
+                        isSelected ? 'bg-white/20 text-white' : 'bg-white text-gray-700 border border-gray-200'
+                      }`}
+                    >
+                      {count}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+          )}
+
+          {/* CATALOG CONTENT: ALL MODELS IN SERIES SEQUENCE */}
           {isLoadingApi ? (
             <div className="py-16 text-center space-y-3">
               <RefreshCw className="h-8 w-8 text-[#6A859F] animate-spin mx-auto" />
               <p className="text-xs font-bold text-gray-500">Fetching live {brandDisplayName} models...</p>
             </div>
-          ) : debouncedQuery ? (
-            /* ============================================================ */
-            /* VIEW 1: GLOBAL SEARCH RESULTS ACROSS BRAND                   */
-            /* ============================================================ */
-            globalSearchMatches.length > 0 ? (
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 sm:gap-4 md:gap-5">
-                {globalSearchMatches.map((m) => {
-                  const displayName = m.model.toLowerCase().startsWith((m.brand || brandDisplayName).toLowerCase())
-                    ? m.model
-                    : `${brandDisplayName} ${m.model}`;
+          ) : displayedModels.length > 0 ? (
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 sm:gap-4 md:gap-5">
+              {displayedModels.map((m) => {
+                const displayName = m.model.toLowerCase().startsWith((m.brand || brandDisplayName).toLowerCase())
+                  ? m.model
+                  : `${brandDisplayName} ${m.model}`;
 
-                  return (
-                    <div
-                      key={m.model}
-                      onClick={() => handleSelectModel(m.model, m.storage || '128 GB')}
-                      className="p-3.5 sm:p-5 rounded-2xl border border-gray-100 bg-white hover:border-[#6A859F] hover:shadow-lg transition-all duration-200 group cursor-pointer flex flex-col items-center justify-between text-center min-h-[175px] sm:min-h-[210px]"
-                    >
-                      <div className="h-28 sm:h-36 w-full flex items-center justify-center p-1 relative overflow-hidden">
-                        <img
-                          src={getCleanPhoneImage(m.brand || brandDisplayName, m.model, m.image)}
-                          alt={displayName}
-                          className="h-full max-h-28 sm:max-h-36 w-auto object-contain group-hover:scale-105 transition-transform duration-300 drop-shadow-xs"
-                          loading="lazy"
-                          referrerPolicy="no-referrer"
-                          onError={(e) => {
-                            const target = e.currentTarget;
-                            const fallback = BRAND_FRONT_FALLBACKS[brandCleanKey] || BRAND_FRONT_FALLBACKS[brandCanonicalKey] || getCleanPhoneImage(brandDisplayName);
-                            if (target.src !== fallback) {
-                              target.src = fallback;
-                            }
-                          }}
-                        />
-                      </div>
-                      <div className="w-full mt-2 space-y-1">
-                        <p className="text-xs sm:text-sm font-semibold text-gray-800 group-hover:text-[#344257] transition-colors line-clamp-2 leading-snug">
-                          {highlightMatch(displayName, debouncedQuery)}
-                        </p>
-                        {(() => {
-                          const funduPrice = getModelEstimatedPrice(m);
-                          const comp = calculateMarketPriceComparison(funduPrice);
-                          return (
-                            <div className="flex flex-col items-center gap-1 mt-1">
-                              <span className="badge bg-[#F0F0F5] text-[#344257] border border-[#C0C8D8] font-black text-[11px]">
-                                Up to {formatINR(funduPrice)}
-                              </span>
-                              <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-1.5 py-0.5 rounded-full">
-                                Best Price Guarantee
-                              </span>
-                            </div>
-                          );
-                        })()}
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            ) : (
-              <div className="p-12 text-center space-y-3">
-                <AlertCircle className="h-8 w-8 text-rose-500 mx-auto" />
-                <h3 className="font-bold text-lg text-gray-900">No {brandDisplayName} models found for "{rawSearchQuery}"</h3>
-                <p className="text-xs text-gray-500">
-                  Try clearing your search filter or calling our helpline at <span className="font-bold text-gray-900">+91-9839122345</span>.
-                </p>
-                <button
-                  type="button"
-                  onClick={() => setRawSearchQuery('')}
-                  className="btn-outline text-xs px-4 py-2 cursor-pointer"
-                >
-                  Clear Search
-                </button>
-              </div>
-            )
-          ) : effectiveSeriesSlug ? (
-            /* ============================================================ */
-            /* VIEW 2: SUB-MODELS OF SELECTED SERIES (e.g. iPhone 16)       */
-            /* ============================================================ */
-            subModels.length > 0 ? (
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 sm:gap-4 md:gap-5">
-                {subModels.map((m) => {
-                  const displayName = m.model.toLowerCase().startsWith((m.brand || brandDisplayName).toLowerCase())
-                    ? m.model
-                    : `${brandDisplayName} ${m.model}`;
+                const funduPrice = getModelEstimatedPrice(m);
 
-                  return (
-                    <div
-                      key={m.model}
-                      onClick={() => handleSelectModel(m.model, m.storage || '128 GB')}
-                      className="p-3.5 sm:p-5 rounded-2xl border border-gray-100 bg-white hover:border-[#6A859F] hover:shadow-lg transition-all duration-200 group cursor-pointer flex flex-col items-center justify-between text-center min-h-[175px] sm:min-h-[210px]"
-                    >
-                      <div className="h-28 sm:h-36 w-full flex items-center justify-center p-1 relative overflow-hidden">
-                        <img
-                          src={getCleanPhoneImage(m.brand || brandDisplayName, m.model, m.image)}
-                          alt={displayName}
-                          className="h-full max-h-28 sm:max-h-36 w-auto object-contain group-hover:scale-105 transition-transform duration-300 drop-shadow-xs"
-                          loading="lazy"
-                          referrerPolicy="no-referrer"
-                          onError={(e) => {
-                            const target = e.currentTarget;
-                            const fallback = BRAND_FRONT_FALLBACKS[brandCleanKey] || BRAND_FRONT_FALLBACKS[brandCanonicalKey] || getCleanPhoneImage(brandDisplayName);
-                            if (target.src !== fallback) {
-                              target.src = fallback;
-                            }
-                          }}
-                        />
-                      </div>
-                      <div className="w-full mt-2 space-y-1">
-                        <p className="text-xs sm:text-sm font-semibold text-gray-800 group-hover:text-[#344257] transition-colors line-clamp-2 leading-snug">
-                          {displayName}
-                        </p>
-                        {(() => {
-                          const funduPrice = getModelEstimatedPrice(m);
-                          const comp = calculateMarketPriceComparison(funduPrice);
-                          return (
-                            <div className="flex flex-col items-center gap-1 mt-1">
-                              <span className="badge bg-[#F0F0F5] text-[#344257] border border-[#C0C8D8] font-black text-[11px]">
-                                Up to {formatINR(funduPrice)}
-                              </span>
-                              <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-1.5 py-0.5 rounded-full">
-                                Best Price Guarantee
-                              </span>
-                            </div>
-                          );
-                        })()}
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            ) : (
-              <div className="p-12 text-center space-y-3">
-                <AlertCircle className="h-8 w-8 text-rose-500 mx-auto" />
-                <h3 className="font-bold text-lg text-gray-900">No sub-models found in {currentSeriesGroup?.name || effectiveSeriesSlug}</h3>
-                <button
-                  type="button"
-                  onClick={() => navigate(`/sell/${brandCleanKey}`)}
-                  className="btn-outline text-xs px-4 py-2 cursor-pointer"
-                >
-                  View All {brandDisplayName} Series
-                </button>
-              </div>
-            )
-          ) : (
-            /* ============================================================ */
-            /* VIEW 3: SERIES SELECTION (iPhone 16 down to iPhone 1)        */
-            /* ============================================================ */
-            seriesGroups.length > 0 ? (
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 sm:gap-4 md:gap-5">
-                {seriesGroups.map((ser) => (
+                return (
                   <div
-                    key={ser.slug}
-                    onClick={() => handleSelectSeries(ser)}
-                    className="p-3.5 sm:p-5 rounded-2xl border border-gray-100 bg-white hover:border-[#6A859F] hover:shadow-lg transition-all duration-200 group cursor-pointer flex flex-col items-center justify-between text-center min-h-[175px] sm:min-h-[210px]"
+                    key={`${m.model}-${m.storage || ''}`}
+                    onClick={() => handleSelectModel(m.model, m.storage || '128 GB')}
+                    className="p-3.5 sm:p-5 rounded-2xl border border-gray-100 bg-white hover:border-[#6A859F] hover:shadow-lg transition-all duration-200 group cursor-pointer flex flex-col items-center justify-between text-center min-h-[185px] sm:min-h-[220px]"
                   >
                     <div className="h-28 sm:h-36 w-full flex items-center justify-center p-1 relative overflow-hidden">
                       <img
-                        src={ser.image || getCleanPhoneImage(brandDisplayName, ser.name)}
-                        alt={ser.name}
+                        src={getCleanPhoneImage(m.brand || brandDisplayName, m.model, m.image)}
+                        alt={displayName}
                         className="h-full max-h-28 sm:max-h-36 w-auto object-contain group-hover:scale-105 transition-transform duration-300 drop-shadow-xs"
                         loading="lazy"
                         referrerPolicy="no-referrer"
                         onError={(e) => {
                           const target = e.currentTarget;
-                          const fallback = BRAND_FRONT_FALLBACKS[brandCleanKey] || BRAND_FRONT_FALLBACKS[brandCanonicalKey] || getCleanPhoneImage(brandDisplayName);
+                          const fallback =
+                            BRAND_FRONT_FALLBACKS[brandCleanKey] ||
+                            BRAND_FRONT_FALLBACKS[brandCanonicalKey] ||
+                            getCleanPhoneImage(brandDisplayName);
                           if (target.src !== fallback) {
                             target.src = fallback;
                           }
                         }}
                       />
                     </div>
-                    <div className="mt-2 w-full">
-                      <p className="text-xs sm:text-sm font-bold text-[#344257] group-hover:text-[#47576E] transition-colors line-clamp-2 leading-snug">
-                        {ser.name}
+                    <div className="w-full mt-2 space-y-1">
+                      {m.seriesName && (
+                        <span className="text-[10px] font-bold text-[#6A859F] uppercase tracking-wider block truncate">
+                          {m.seriesName}
+                        </span>
+                      )}
+                      <p className="text-xs sm:text-sm font-semibold text-gray-800 group-hover:text-[#344257] transition-colors line-clamp-2 leading-snug">
+                        {debouncedQuery ? highlightMatch(displayName, debouncedQuery) : displayName}
                       </p>
                       <div className="flex flex-col items-center gap-1 mt-1">
-                        <span className="text-[10px] font-extrabold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full">
-                          Up to {formatINR(getSeriesEstimatedPrice(ser))} (Top Market Price)
+                        <span className="badge bg-[#F0F0F5] text-[#344257] border border-[#C0C8D8] font-black text-[11px]">
+                          Up to {formatINR(funduPrice)}
                         </span>
-                        <span className="text-[10px] font-medium text-gray-400">
-                          {ser.modelsCount} Models
+                        <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-1.5 py-0.5 rounded-full">
+                          Best Price Guarantee
                         </span>
                       </div>
                     </div>
                   </div>
-                ))}
-              </div>
-            ) : (
-              <div className="p-12 text-center space-y-3">
-                <AlertCircle className="h-8 w-8 text-rose-500 mx-auto" />
-                <h3 className="font-bold text-lg text-gray-900">No {brandDisplayName} series available at this time</h3>
-                <p className="text-xs text-gray-500">
-                  Please call our customer helpline at <span className="font-bold text-gray-900">+91-9839122345</span>.
-                </p>
-              </div>
-            )
+                );
+              })}
+            </div>
+          ) : (
+            <div className="p-12 text-center space-y-3">
+              <AlertCircle className="h-8 w-8 text-rose-500 mx-auto" />
+              <h3 className="font-bold text-lg text-gray-900">
+                No {brandDisplayName} models found {debouncedQuery ? `for "${debouncedQuery}"` : ''}
+              </h3>
+              <p className="text-xs text-gray-500">
+                Try resetting your filters or calling our helpline at{' '}
+                <span className="font-bold text-gray-900">+91-9839122345</span>.
+              </p>
+              <button
+                type="button"
+                onClick={() => {
+                  setRawSearchQuery('');
+                  setSelectedSeriesFilter('All');
+                }}
+                className="btn-outline text-xs px-4 py-2 cursor-pointer font-bold"
+              >
+                Show All {brandDisplayName} Models
+              </button>
+            </div>
           )}
         </div>
 
