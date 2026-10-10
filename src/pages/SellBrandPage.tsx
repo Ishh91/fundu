@@ -20,7 +20,7 @@ import {
 } from 'lucide-react';
 import { formatINR } from '../lib/db';
 import { getCleanPhoneImage, getCleanBrandLogo, BRAND_FRONT_FALLBACKS } from '../lib/phoneImages';
-import { usePriceSync, applyPriceOverrides } from '../lib/priceSync';
+import { usePriceSync, applyPriceOverrides, isModelDeleted } from '../lib/priceSync';
 import { MASTER_MODEL_CATALOG } from './SellPhone';
 import { fetchBrandCatalogFromApi, getDynamicFallbackConfig, calculateMarketPriceComparison, type CatalogModelItem } from '../lib/mobileApi';
 import { ALL_INDIAN_PHONES_CATALOG } from '../data/indianPhonesCatalog';
@@ -264,8 +264,9 @@ export default function SellBrandPage() {
     });
 
     const list = Array.from(combinedMap.values());
-    return applyPriceOverrides(list);
-  }, [apiModels, brandCleanKey, brandCanonicalKey, version]);
+    const activeList = list.filter((m) => !isModelDeleted(m.brand || brandDisplayName, m.model));
+    return applyPriceOverrides(activeList);
+  }, [apiModels, brandCleanKey, brandCanonicalKey, version, brandDisplayName]);
 
   // Series Groups (iPhone 16 Series down to iPhone 1 / Classic)
   const seriesGroups = useMemo(() => {
@@ -439,7 +440,13 @@ export default function SellBrandPage() {
           {effectiveSeriesSlug && (
             <button
               type="button"
-              onClick={() => navigate(`/sell/${brandCleanKey}`)}
+              onClick={() => {
+                if (window.history.length > 1) {
+                  navigate(-1);
+                } else {
+                  navigate(`/sell-old-mobile-phone/sell-${brandCleanKey}`);
+                }
+              }}
               className="inline-flex items-center gap-1.5 text-xs font-bold text-[#47576E] hover:text-[#344257] transition cursor-pointer mb-3"
             >
               <ArrowLeft className="h-4 w-4 text-[#6A859F]" /> Back to all {brandDisplayName} Series

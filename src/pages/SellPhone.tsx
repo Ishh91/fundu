@@ -34,7 +34,7 @@ import { db, formatINR } from '../lib/db';
 import { useAuth } from '../context/AuthContext';
 import { ALL_INDIAN_PHONES_CATALOG } from '../data/indianPhonesCatalog';
 import { getCleanPhoneImage, getCleanBrandLogo, BRAND_FRONT_FALLBACKS } from '../lib/phoneImages';
-import { usePriceSync, applyPriceOverrides } from '../lib/priceSync';
+import { usePriceSync, applyPriceOverrides, isModelDeleted } from '../lib/priceSync';
 import { getModelHardwareSpecs, calculateHardwareVariantMultiplier } from '../lib/deviceSpecs';
 import {
   getPanIndiaLocation,
@@ -1374,7 +1374,42 @@ export default function SellPhone() {
   const [searchParams] = useSearchParams();
   const { version } = usePriceSync();
 
-  const [step, setStep] = useState(1);
+  const stepParam = parseInt(searchParams.get('step') || '', 10);
+  const initialStep = !isNaN(stepParam) && stepParam >= 1 && stepParam <= 4 ? stepParam : (modelSlug ? 2 : 1);
+  const [step, setStep] = useState(initialStep);
+
+  // Sync step with URL search params (e.g. browser back/forward buttons)
+  useEffect(() => {
+    const urlStep = parseInt(searchParams.get('step') || '', 10);
+    if (!isNaN(urlStep) && urlStep >= 1 && urlStep <= 4) {
+      if (urlStep !== step) {
+        setStep(urlStep);
+      }
+    } else if (modelSlug) {
+      if (step === 1) setStep(2);
+    } else {
+      if (step !== 1 && !searchParams.get('step')) setStep(1);
+    }
+  }, [searchParams, modelSlug]);
+
+  const goToStep = (nextStep: number, replace = false) => {
+    setStep(nextStep);
+    const newParams = new URLSearchParams(searchParams);
+    newParams.set('step', String(nextStep));
+    if (form.brand) newParams.set('brand', form.brand);
+    if (form.model) newParams.set('model', form.model);
+    if (form.storage) newParams.set('storage', form.storage);
+    navigate({ pathname: window.location.pathname, search: newParams.toString() }, { replace });
+  };
+
+  const handleStep2Back = () => {
+    if (brandSlug || form.brand) {
+      const cleanBrandKey = (brandSlug || form.brand).replace(/^sell-/, '').toLowerCase();
+      navigate(`/sell-old-mobile-phone/sell-${cleanBrandKey}`);
+    } else {
+      goToStep(1);
+    }
+  };
 
   // Real Approved Database Reviews State
   const [dbReviews, setDbReviews] = useState<Array<{ id: string; reviewer_name: string; location: string; rating: number; comment: string }>>([]);
@@ -1911,12 +1946,14 @@ export default function SellPhone() {
     const modelMap = new Map<string, any>();
 
     MASTER_MODEL_CATALOG.forEach((m) => {
+      if (isModelDeleted(m.brand, m.model)) return;
       const key = `${m.brand.toLowerCase()}-${m.model.toLowerCase()}`;
       modelMap.set(key, m);
     });
 
     if (Array.isArray(ALL_INDIAN_PHONES_CATALOG)) {
       ALL_INDIAN_PHONES_CATALOG.forEach((p) => {
+        if (isModelDeleted(p.brand, p.model)) return;
         const key = `${p.brand.toLowerCase()}-${p.model.toLowerCase()}`;
         if (!modelMap.has(key)) {
           modelMap.set(key, {
@@ -1943,18 +1980,18 @@ export default function SellPhone() {
     }
 
     // Fallback to MobileAPI search results if local database has 0 matches
-    return applyPriceOverrides(apiSearchResults);
+    return applyPriceOverrides(apiSearchResults.filter((d) => !isModelDeleted(d.brand, d.model)));
   }, [debouncedQuery, apiSearchResults, version]);
 
   // Available Series List for Selected Brand
   const brandSeriesList = useMemo(() => {
     if (!form.brand) return [];
     const seriesSet = new Set<string>();
-    MASTER_MODEL_CATALOG.filter((m) => m.brand === form.brand).forEach((m) => {
+    MASTER_MODEL_CATALOG.filter((m) => m.brand === form.brand && !isModelDeleted(m.brand, m.model)).forEach((m) => {
       if (m.series) seriesSet.add(m.series);
     });
     return ['All', ...Array.from(seriesSet)];
-  }, [form.brand]);
+  }, [form.brand, version]);
 
   // Keyboard Navigation for Search Dropdown
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -2000,7 +2037,7 @@ export default function SellPhone() {
       storage: targetStorage,
     }));
     setStep(2);
-    navigate(`/sell/${brandSlugClean}/${modelSlugClean}`);
+    navigate(`/sell/${brandSlugClean}/${modelSlugClean}?step=2`);
   };
 
   const toggleDefect = (d: string) => {
@@ -2477,7 +2514,7 @@ export default function SellPhone() {
                 {/* Brand Models Image Cards Grid */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                   {MASTER_MODEL_CATALOG.filter(
-                    (m) => m.brand === form.brand && (selectedSeries === 'All' || m.series === selectedSeries)
+                    (m) => m.brand === form.brand && !isModelDeleted(m.brand, m.model) && (selectedSeries === 'All' || m.series === selectedSeries)
                   ).map((m) => (
                     <div
                       key={`${m.brand}-${m.model}`}
@@ -2557,7 +2594,7 @@ export default function SellPhone() {
               </div>
 
               <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
-                {MASTER_MODEL_CATALOG.slice(0, 6).map((item) => (
+                {MASTER_MODEL_CATALOG.filter((item) => !isModelDeleted(item.brand, item.model)).slice(0, 6).map((item) => (
                   <button
                     key={`${item.brand}-${item.model}`}
                     type="button"
@@ -2871,7 +2908,7 @@ export default function SellPhone() {
                 <div className="shrink-0 flex flex-col items-center sm:items-end gap-1.5">
                   <button
                     type="button"
-                    onClick={() => setStep(1)}
+                    onClick={handleStep2Back}
                     className="btn-outline text-xs px-3 py-1.5 rounded-xl border-[#C0C8D8] text-[#344257] hover:border-[#6A859F] hover:text-[#344257] font-bold transition"
                   >
                     Change Model
@@ -3255,12 +3292,12 @@ export default function SellPhone() {
               </div>
 
               <div className="flex justify-between gap-3 pt-4 border-t border-gray-100">
-                <button type="button" onClick={() => setStep(1)} className="btn-outline text-sm">
+                <button type="button" onClick={handleStep2Back} className="btn-outline text-sm">
                   Back
                 </button>
                 <button
                   type="button"
-                  onClick={() => setStep(3)}
+                  onClick={() => goToStep(3)}
                   className="btn-primary flex items-center gap-2"
                 >
                   {funduQuote?.status === 'requires_manual_review'
@@ -3350,7 +3387,7 @@ export default function SellPhone() {
                 </div>
 
                 <div className="flex flex-col sm:flex-row justify-between gap-3 pt-2">
-                  <button type="button" onClick={() => setStep(2)} className="btn-outline text-sm">
+                  <button type="button" onClick={() => goToStep(2)} className="btn-outline text-sm">
                     Back to Edit Answers
                   </button>
                   <div className="flex gap-2">
@@ -3362,7 +3399,7 @@ export default function SellPhone() {
                     </a>
                     <button
                       type="button"
-                      onClick={() => setStep(4)}
+                      onClick={() => goToStep(4)}
                       className="btn-primary flex items-center justify-center gap-2"
                     >
                       Book Free Doorstep Inspection <ArrowRight className="h-4 w-4" />
@@ -3522,12 +3559,12 @@ export default function SellPhone() {
                 </div>
 
                 <div className="flex justify-between gap-3 pt-4 border-t border-gray-100">
-                  <button type="button" onClick={() => setStep(2)} className="btn-outline text-sm">
+                  <button type="button" onClick={() => goToStep(2)} className="btn-outline text-sm">
                     Back to Edit Answers
                   </button>
                   <button
                     type="button"
-                    onClick={() => setStep(4)}
+                    onClick={() => goToStep(4)}
                     className="btn-primary flex items-center gap-2"
                   >
                     Accept & Schedule Pickup <ArrowRight className="h-4 w-4" />
@@ -3715,7 +3752,7 @@ export default function SellPhone() {
               </div>
 
               <div className="flex justify-between gap-3 pt-4 border-t border-gray-100">
-                <button type="button" onClick={() => setStep(3)} className="btn-outline text-sm">
+                <button type="button" onClick={() => goToStep(3)} className="btn-outline text-sm">
                   Back
                 </button>
                 <button

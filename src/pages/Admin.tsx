@@ -67,6 +67,11 @@ import {
   SEED_REPAIR_MODELS,
   saveLocalRepairConfigs,
 } from '../lib/repairPriceSync';
+import {
+  markModelAsDeleted,
+  markProductAsDeleted,
+  restoreModel,
+} from '../lib/catalogSync';
 import type { RepairPriceConfig } from '../types';
 
 export default function Admin() {
@@ -716,13 +721,18 @@ export default function Admin() {
   };
 
   const deletePricingRule = async (id: string) => {
-    if (!confirm('Are you sure you want to delete this pricing rule?')) return;
+    const configToDelete = sellPriceConfigs.find((c) => c.id === id);
+    if (!confirm(`Are you sure you want to delete this pricing rule${configToDelete ? ` for ${configToDelete.brand} ${configToDelete.model}` : ''}?`)) return;
     const { error } = await db.from('sell_price_configs').delete().eq('id', id);
     if (error) {
       alert(error.message);
       return;
     }
+    if (configToDelete) {
+      markModelAsDeleted(configToDelete.brand, configToDelete.model);
+    }
     setSellPriceConfigs((prev) => prev.filter((c) => c.id !== id));
+    if (selectedPricingId === id) setSelectedPricingId(null);
   };
 
   // Repair Price Catalog Handlers
@@ -776,10 +786,15 @@ export default function Admin() {
   };
 
   const handleDeleteRepairConfig = async (id: string) => {
+    const configToDelete = repairPriceConfigs.find((c) => c.id === id);
+    if (!confirm(`Are you sure you want to delete repair pricing${configToDelete ? ` for ${configToDelete.brand} ${configToDelete.model}` : ''}?`)) return;
     const { error } = await db.from('repair_price_configs').delete().eq('id', id);
     if (error) {
       alert(error.message);
       return;
+    }
+    if (configToDelete) {
+      markModelAsDeleted(configToDelete.brand, configToDelete.model);
     }
     setRepairPriceConfigs((prev) => {
       const next = prev.filter((c) => c.id !== id);
@@ -824,13 +839,27 @@ export default function Admin() {
   };
 
   const deleteProduct = async (id: string) => {
+    const prod = products.find((p) => p.id === id);
     if (!confirm('Are you sure you want to delete this product?')) return;
     const { error } = await db.from('products').delete().eq('id', id);
     if (error) {
       alert(error.message);
       return;
     }
+    if (prod) {
+      markProductAsDeleted(id, prod.title);
+    }
     setProducts((prev) => prev.filter((p) => p.id !== id));
+    if (selectedProductId === id) setSelectedProductId(null);
+  };
+
+  const handleDeleteMasterPhone = async (phone: MasterPhone) => {
+    if (!confirm(`Are you sure you want to delete "${phone.brand} ${phone.model}" from catalog?`)) return;
+    await db.from('master_phones').delete().eq('id', phone.id);
+    markModelAsDeleted(phone.brand, phone.model);
+    setMasterPhones((prev) => prev.filter((p) => p.id !== phone.id));
+    if (selectedPhoneId === phone.id) setSelectedPhoneId(null);
+    alert(`✅ "${phone.brand} ${phone.model}" deleted successfully from catalog.`);
   };
 
   const openAddProductModal = (initialData?: Partial<typeof productForm>) => {
@@ -1475,6 +1504,7 @@ export default function Admin() {
                 ]);
                 setSelectedPhoneId(imported.id);
               }}
+              onDeletePhone={handleDeleteMasterPhone}
             />
           )}
 
@@ -1514,7 +1544,15 @@ export default function Admin() {
                 setPricingModal({ config });
               }}
               onToggleActive={async (id, current) => {
+                const cfg = sellPriceConfigs.find((c) => c.id === id);
                 await db.from('sell_price_configs').update({ is_active: !current }).eq('id', id);
+                if (cfg) {
+                  if (current) {
+                    markModelAsDeleted(cfg.brand, cfg.model);
+                  } else {
+                    restoreModel(cfg.brand, cfg.model);
+                  }
+                }
                 setSellPriceConfigs((prev) => prev.map((c) => (c.id === id ? { ...c, is_active: !current } : c)));
               }}
               onDeleteConfig={deletePricingRule}

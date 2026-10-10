@@ -10,6 +10,7 @@ import {
   Zap,
   Sparkles,
   CheckCircle2,
+  Trash2,
 } from 'lucide-react';
 import type { MasterPhone, Product } from './adminTypes';
 import { formatINR } from '../../lib/db';
@@ -25,6 +26,7 @@ type AdminCatalogProps = {
   onSyncAllToDb: () => void;
   syncingCatalog: boolean;
   onPhoneImported?: (phone: MasterPhone) => void;
+  onDeletePhone?: (phone: MasterPhone) => void;
 };
 
 export default function AdminCatalog({
@@ -37,6 +39,7 @@ export default function AdminCatalog({
   onSyncAllToDb,
   syncingCatalog,
   onPhoneImported,
+  onDeletePhone,
 }: AdminCatalogProps) {
   const [search, setSearch] = useState('');
   const [brandFilter, setBrandFilter] = useState('All');
@@ -282,12 +285,23 @@ export default function AdminCatalog({
                   </h2>
                 </div>
 
-                <button
-                  onClick={() => onOpenListPhoneModal(selectedPhone)}
-                  className="btn-primary text-xs px-4 py-2 flex items-center gap-1.5 bg-brand-600 hover:bg-brand-700 font-bold shadow-md shadow-brand-500/20"
-                >
-                  <Tag className="h-4 w-4" /> List to Buy Store
-                </button>
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => onOpenListPhoneModal(selectedPhone)}
+                    className="btn-primary text-xs px-4 py-2 flex items-center gap-1.5 bg-brand-600 hover:bg-brand-700 font-bold shadow-md shadow-brand-500/20"
+                  >
+                    <Tag className="h-4 w-4" /> List to Buy Store
+                  </button>
+                  {onDeletePhone && (
+                    <button
+                      onClick={() => onDeletePhone(selectedPhone)}
+                      className="btn-outline text-xs px-3 py-2 flex items-center gap-1.5 text-rose-600 hover:bg-rose-50 hover:border-rose-300 font-bold transition rounded-xl"
+                      title="Delete Model from Catalog"
+                    >
+                      <Trash2 className="h-4 w-4" /> Delete Model
+                    </button>
+                  )}
+                </div>
               </div>
 
               {/* Price Grid */}

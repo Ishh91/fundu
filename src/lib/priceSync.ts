@@ -89,8 +89,17 @@ export function applyPriceOverrides<T extends { brand: string; model: string; pr
   });
 }
 
+export {
+  isModelDeleted,
+  markModelAsDeleted,
+  restoreModel,
+  isProductDeleted,
+  markProductAsDeleted,
+  useCatalogSync,
+} from './catalogSync';
+
 /**
- * Custom React Hook to listen to real-time price changes across Admin & Website
+ * Custom React Hook to listen to real-time price changes and model deletions across Admin & Website
  */
 export function usePriceSync() {
   const [version, setVersion] = useState(0);
@@ -101,6 +110,8 @@ export function usePriceSync() {
     };
 
     window.addEventListener('fundu_price_updated', handleUpdate);
+    window.addEventListener('fundu_model_deleted', handleUpdate);
+    window.addEventListener('fundu_model_restored', handleUpdate);
     window.addEventListener('storage', handleUpdate);
 
     // Initial fetch of sell_price_configs from database to populate overrides
@@ -131,9 +142,12 @@ export function usePriceSync() {
 
     return () => {
       window.removeEventListener('fundu_price_updated', handleUpdate);
+      window.removeEventListener('fundu_model_deleted', handleUpdate);
+      window.removeEventListener('fundu_model_restored', handleUpdate);
       window.removeEventListener('storage', handleUpdate);
     };
   }, []);
 
   return { version, getEffectivePrice, applyPriceOverrides };
 }
+

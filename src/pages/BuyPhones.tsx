@@ -30,6 +30,7 @@ import { db, formatINR } from '../lib/db';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
 import { getCleanPhoneImage, getCleanBrandLogo } from '../lib/phoneImages';
+import { isProductDeleted, useCatalogSync } from '../lib/catalogSync';
 import type { Product } from '../types';
 
 // Circular brand filters with brand logos
@@ -608,6 +609,7 @@ export default function BuyPhones() {
   const { setCartItem } = useCart();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
+  const { syncVersion } = useCatalogSync();
 
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
@@ -675,6 +677,9 @@ export default function BuyPhones() {
   const filteredProducts = useMemo(() => {
     const preset = PRICE_PRESETS[pricePreset];
     let list = products.filter((p) => {
+      // 0. Exclude products marked deleted by admin
+      if (isProductDeleted(p.id, p.title)) return false;
+
       // 1. Search text input match
       const matchSearch =
         !search ||
@@ -712,7 +717,7 @@ export default function BuyPhones() {
     if (sortBy === 'discount') list = [...list].sort((a, b) => (b.discount_percent || 0) - (a.discount_percent || 0));
 
     return list;
-  }, [products, search, selectedBrand, gradeFilter, selectedStorage, pricePreset, maxPrice, sortBy]);
+  }, [products, search, selectedBrand, gradeFilter, selectedStorage, pricePreset, maxPrice, sortBy, syncVersion]);
 
   const handleAddToCart = (product: Product) => {
     if (profile && profile.role !== 'customer') {

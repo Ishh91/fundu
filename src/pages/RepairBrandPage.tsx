@@ -29,6 +29,7 @@ import { MASTER_MODEL_CATALOG } from './SellPhone';
 import { getCleanPhoneImage, getCleanBrandLogo, BRAND_FRONT_FALLBACKS } from '../lib/phoneImages';
 import { ALL_INDIAN_PHONES_CATALOG } from '../data/indianPhonesCatalog';
 import { useRepairPriceSync, getModelRepairPricing } from '../lib/repairPriceSync';
+import { isModelDeleted } from '../lib/catalogSync';
 
 const BRAND_REPAIR_DETAILS: Record<
   string,
@@ -179,7 +180,9 @@ export default function RepairBrandPage() {
       price: 599,
     }));
 
-    let list = [...indianList, ...masterList];
+    let list = [...indianList, ...masterList].filter(
+      (m) => !isModelDeleted(m.brand || brandDisplayName, m.model)
+    );
 
     if (selectedSeries !== 'All') {
       list = list.filter((m) => m.series?.toLowerCase() === selectedSeries.toLowerCase());
@@ -198,7 +201,9 @@ export default function RepairBrandPage() {
       return brandInfo.series;
     }
     const seriesSet = new Set<string>();
-    ALL_INDIAN_PHONES_CATALOG.filter((p) => p.brand.toLowerCase() === brandCleanKey).forEach((p) => {
+    ALL_INDIAN_PHONES_CATALOG.filter(
+      (p) => p.brand.toLowerCase() === brandCleanKey && !isModelDeleted(p.brand, p.model)
+    ).forEach((p) => {
       if (p.series) seriesSet.add(p.series);
     });
     return ['All', ...Array.from(seriesSet)];
@@ -206,11 +211,7 @@ export default function RepairBrandPage() {
 
   const handleBookRepair = (modelName: string, issueId: string = 'screen') => {
     const modelSlugClean = modelName.toLowerCase().replace(/\s+/g, '-');
-    const targetUrl = `/repair/${brandCleanKey}/${modelSlugClean}?issue=${encodeURIComponent(issueId)}`;
-    if (!user) {
-      navigate(`/login?redirect=${encodeURIComponent(targetUrl)}`);
-      return;
-    }
+    const targetUrl = `/repair/${brandCleanKey}/${modelSlugClean}?step=2&issue=${encodeURIComponent(issueId)}`;
     navigate(targetUrl);
   };
 

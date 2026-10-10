@@ -11,7 +11,7 @@ const masterMatch = sellPhoneContent.match(/export const MASTER_MODEL_CATALOG = 
 const masterCatalog = eval('[' + masterMatch[1] + ']');
 
 console.log(`Loaded ${masterCatalog.length} models from MASTER_MODEL_CATALOG.`);
-console.log(`Loaded ${cashifyData.length} variants from Cashify database.`);
+console.log(`Loaded ${cashifyData.length} variants from dataset.`);
 
 function formatINR(val) {
   return '₹' + Number(val || 0).toLocaleString('en-IN');
@@ -44,7 +44,7 @@ masterCatalog.forEach(item => {
   const brand = item.brand || 'Other';
   if (!modelsByBrand[brand]) modelsByBrand[brand] = [];
   
-  // Find variants from cashifyData for this model
+  // Find variants for this model
   const mClean = (item.model || '').toLowerCase().replace(new RegExp(`^${brand.toLowerCase()}\\s*`), '').trim();
   const variants = cashifyData.filter(c => {
     const cBrand = c.brand.toLowerCase();
@@ -57,17 +57,16 @@ masterCatalog.forEach(item => {
     series: item.series || `${brand} Series`,
     baseStorage: item.storage || '128 GB',
     funduPrice: item.price,
-    cashifyBenchmark: item.price > 1000 ? item.price - 1000 : item.price,
     variants: variants.length > 0 ? variants : null,
   });
 });
 
-// HTML Template
+// HTML Template with ONLY Website Price (No Cashify, No Strikethrough, No Badges)
 let html = `<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Fundu - Complete Smartphone Models & Pricing Catalog</title>
+  <title>Fundu - Official Smartphone Models & Website Buyback Price Catalog</title>
   <style>
     @page {
       size: A4;
@@ -182,7 +181,7 @@ let html = `<!DOCTYPE html>
       background: #f1f5f9;
       color: #334155;
       text-align: left;
-      padding: 6px 8px;
+      padding: 7px 10px;
       font-weight: 700;
       font-size: 7.5pt;
       text-transform: uppercase;
@@ -196,8 +195,8 @@ let html = `<!DOCTYPE html>
       background: #f8fafc;
     }
     tbody td {
-      padding: 5px 8px;
-      vertical-align: top;
+      padding: 6px 10px;
+      vertical-align: middle;
     }
     .model-name {
       font-weight: 700;
@@ -226,24 +225,10 @@ let html = `<!DOCTYPE html>
       color: #7e22ce;
       border: 1px solid #e9d5ff;
     }
-    .price-cashify {
-      color: #64748b;
-      font-size: 7.5pt;
-      text-decoration: line-through;
-    }
     .price-fundu {
       color: #15803d;
       font-weight: 800;
-      font-size: 9pt;
-    }
-    .price-bonus {
-      background: #dcfce7;
-      color: #166534;
-      font-size: 6.5pt;
-      font-weight: 700;
-      padding: 1px 4px;
-      border-radius: 3px;
-      margin-left: 3px;
+      font-size: 9.5pt;
     }
     .page-break {
       page-break-after: always;
@@ -263,10 +248,10 @@ let html = `<!DOCTYPE html>
   <div class="header">
     <div>
       <h1>Fundu Smartphone Master Catalog</h1>
-      <p class="subtitle">Complete List of All Available Phone Models • Live Cashify + ₹1,000 Price Guarantee</p>
+      <p class="subtitle">Official Directory of All Available Models & Website Buyback Values</p>
     </div>
     <div class="header-badge">
-      Live Synced • Pan-India
+      Official Website Pricing • Pan-India
     </div>
   </div>
 
@@ -277,11 +262,11 @@ let html = `<!DOCTYPE html>
     </div>
     <div class="kpi-card">
       <div class="kpi-value">${cashifyData.length}</div>
-      <div class="kpi-label">Verified Variants</div>
+      <div class="kpi-label">Verified Configurations</div>
     </div>
     <div class="kpi-card">
-      <div class="kpi-value">+₹1,000</div>
-      <div class="kpi-label">Price Advantage</div>
+      <div class="kpi-value">Instant UPI</div>
+      <div class="kpi-label">Doorstep Payment</div>
     </div>
     <div class="kpi-card">
       <div class="kpi-value">16 Brands</div>
@@ -290,12 +275,10 @@ let html = `<!DOCTYPE html>
   </div>
 `;
 
-// Render each brand's models
-let bIndex = 0;
+// Render each brand's models with ONLY Website Price
 for (const brand of brandOrder) {
   const models = modelsByBrand[brand] || [];
   if (models.length === 0) continue;
-  bIndex++;
 
   html += `
   <div class="brand-section">
@@ -306,10 +289,9 @@ for (const brand of brandOrder) {
     <table>
       <thead>
         <tr>
-          <th style="width: 32%;">Model & Series</th>
-          <th style="width: 36%;">Storage & Authentic Configurations</th>
-          <th style="width: 16%;">Cashify Base</th>
-          <th style="width: 16%; text-align: right;">Fundu Sell Price</th>
+          <th style="width: 38%;">Model & Series</th>
+          <th style="width: 38%;">Storage & Authentic Configurations</th>
+          <th style="width: 24%; text-align: right;">Website Buyback Price</th>
         </tr>
       </thead>
       <tbody>
@@ -318,7 +300,6 @@ for (const brand of brandOrder) {
   for (const m of models) {
     let variantsHtml = '';
     if (m.variants && m.variants.length > 0) {
-      // Show up to 3 variants
       variantsHtml = m.variants.slice(0, 3).map(v => {
         const rBadge = v.ram ? `<span class="badge badge-ram">${v.ram}</span>` : '';
         const sBadge = v.storage ? `<span class="badge badge-storage">${v.storage}</span>` : '';
@@ -338,11 +319,8 @@ for (const brand of brandOrder) {
           <div class="series-name">${m.series}</div>
         </td>
         <td>${variantsHtml}</td>
-        <td>
-          <div class="price-cashify">${formatINR(m.cashifyBenchmark)}</div>
-        </td>
         <td style="text-align: right;">
-          <div class="price-fundu">${formatINR(m.funduPrice)} <span class="price-bonus">+1K</span></div>
+          <div class="price-fundu">${formatINR(m.funduPrice)}</div>
         </td>
       </tr>
     `;
@@ -362,7 +340,7 @@ for (const brand of brandOrder) {
 
 html += `
   <div class="footer">
-    <span>Fundu Official Certified Device Inventory • Price Guarantee: Cashify Benchmark + ₹1,000 Across All Models</span>
+    <span>Fundu Official Certified Device Inventory • Guaranteed Website Buyback Values Across All Models</span>
     <br>
     <span>Doorstep Cash Payouts • Instant Bank Transfer / UPI • Lucknow & Pan-India</span>
   </div>
@@ -371,9 +349,9 @@ html += `
 `;
 
 const htmlPath = path.resolve('scripts/all_models_report.html');
-const pdfPathRoot = path.resolve('Fundu_All_Available_Models_Price_Catalog.pdf');
+const pdfPathRoot = path.resolve('Fundu_Website_Models_Price_Catalog.pdf');
 const artifactDir = 'C:\\Users\\user\\.gemini\\antigravity-ide\\brain\\fd7ac9a6-dd48-47e2-bc75-73d5c16bd058';
-const pdfPathArtifact = path.resolve(artifactDir, 'Fundu_All_Available_Models_Price_Catalog.pdf');
+const pdfPathArtifact = path.resolve(artifactDir, 'Fundu_Website_Models_Price_Catalog.pdf');
 
 fs.writeFileSync(htmlPath, html, 'utf8');
 console.log('HTML report generated at:', htmlPath);

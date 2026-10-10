@@ -37,6 +37,7 @@ import { DOORSTEP_AREAS } from '../types';
 import { db, formatINR } from '../lib/db';
 import { fetchPhoneModels, searchMobileApiDev } from '../lib/mobileApi';
 import { useRepairPriceSync, getModelRepairPricing } from '../lib/repairPriceSync';
+import { isModelDeleted } from '../lib/catalogSync';
 
 const BRAND_CARDS = [
   { name: 'Apple', logo: getCleanBrandLogo('Apple') },
@@ -277,24 +278,20 @@ export default function Repair() {
 
     const bSlug = (targetBrand || brandSlug || '').toLowerCase().replace(/\s+/g, '-');
     const mSlug = (targetModel || modelSlug || '').toLowerCase().replace(/\s+/g, '-');
-    const targetUrl = bSlug && mSlug
-      ? `/repair/${bSlug}/${mSlug}?${newParams.toString()}`
-      : bSlug
-      ? `/repair/${bSlug}?${newParams.toString()}`
-      : `/repair?${newParams.toString()}`;
+    const targetUrl = nextStep === 1
+      ? (bSlug ? `/repair/${bSlug}` : '/repair')
+      : (bSlug && mSlug
+        ? `/repair/${bSlug}/${mSlug}?${newParams.toString()}`
+        : bSlug
+        ? `/repair/${bSlug}?${newParams.toString()}`
+        : `/repair?${newParams.toString()}`);
 
     if (nextStep >= 4 && !user) {
       navigate(`/login?redirect=${encodeURIComponent(targetUrl)}`);
       return;
     }
 
-    if (bSlug && mSlug) {
-      navigate(targetUrl);
-    } else if (bSlug) {
-      navigate(targetUrl);
-    } else {
-      navigate(targetUrl);
-    }
+    navigate(targetUrl);
   };
 
   const [searchQuery, setSearchQuery] = useState('');
@@ -313,10 +310,11 @@ export default function Repair() {
   const selectedIssue = selectedIssues[0];
 
   const filteredModelsList = useMemo(() => {
-    if (!modelFilter.trim()) return modelsList;
+    let list = modelsList.filter((m) => !isModelDeleted(form.brand, m.name));
+    if (!modelFilter.trim()) return list;
     const q = modelFilter.toLowerCase().trim();
-    return modelsList.filter((m) => m.name.toLowerCase().includes(q));
-  }, [modelsList, modelFilter]);
+    return list.filter((m) => m.name.toLowerCase().includes(q));
+  }, [modelsList, modelFilter, form.brand]);
 
   // Sync params from URL subpage routing
   useEffect(() => {
@@ -896,7 +894,7 @@ export default function Repair() {
                   </div>
 
                   <div className="mt-6 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3.5">
-                    {POPULAR_REPAIR_MODELS.map((item) => {
+                    {POPULAR_REPAIR_MODELS.filter((item) => !isModelDeleted(item.brand, item.model)).map((item) => {
                       const popularPricing = getModelRepairPricing(item.brand, item.model, 'smartphone', repairConfigs);
                       const displayPrice = popularPricing.basePrice || item.price;
                       return (
