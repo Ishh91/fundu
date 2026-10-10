@@ -1,4 +1,13 @@
 export const MOBILE_API_THUMBS: Record<string, string> = {
+  "samsung galaxy j2 (2018)": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-j2-2018-sm-j250-.jpg",
+  "samsung samsung galaxy j2 (2018)": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-j2-2018-sm-j250-.jpg",
+  "samsung galaxy j4+": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-j4-plus-sm-j415f.jpg",
+  "samsung samsung galaxy j4+": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-j4-plus-sm-j415f.jpg",
+  "samsung galaxy j4 plus": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-j4-plus-sm-j415f.jpg",
+  "samsung samsung galaxy j4 plus": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-j4-plus-sm-j415f.jpg",
+  "samsung galaxy j6+": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-j6-plus-sm-j610f.jpg",
+  "samsung samsung galaxy j6+": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-j6-plus-sm-j610f.jpg",
+
   "1100": "https://api.mobileapi.dev/devices/14338/thumb.png",
   "1105": "https://api.mobileapi.dev/devices/14337/thumb.png",
   "1107": "https://api.mobileapi.dev/devices/14336/thumb.png",
