@@ -227,6 +227,45 @@ export function getCleanBrandLogo(brandName?: string): string {
   return BRAND_OFFICIAL_LOGOS.apple;
 }
 
+import { broadcastSync } from './realtimeSync';
+
+export const CUSTOM_MODEL_IMAGES_KEY = 'fundu_custom_model_images_v1';
+
+export function getCustomModelImages(): Record<string, string> {
+  if (typeof window === 'undefined') return {};
+  try {
+    const raw = localStorage.getItem(CUSTOM_MODEL_IMAGES_KEY);
+    return raw ? JSON.parse(raw) : {};
+  } catch {
+    return {};
+  }
+}
+
+export function saveCustomModelImage(brand: string, model: string, imageUrl: string) {
+  if (typeof window === 'undefined') return;
+  const current = getCustomModelImages();
+  const b = (brand || '').toLowerCase().trim();
+  const m = (model || '').toLowerCase().trim();
+  const key1 = `${b}:${m}`;
+  const key2 = m;
+
+  if (imageUrl && imageUrl.trim()) {
+    current[key1] = imageUrl.trim();
+    current[key2] = imageUrl.trim();
+  } else {
+    delete current[key1];
+    delete current[key2];
+  }
+
+  localStorage.setItem(CUSTOM_MODEL_IMAGES_KEY, JSON.stringify(current));
+  broadcastSync('MODEL_IMAGE_UPDATE', 'master_phones', 'update', { brand, model, imageUrl });
+  window.dispatchEvent(new CustomEvent('fundu_model_image_updated', { detail: { brand, model, imageUrl } }));
+}
+
+export function resetCustomModelImage(brand: string, model: string) {
+  saveCustomModelImage(brand, model, '');
+}
+
 /**
  * Returns clean official studio upright device renders on white background.
  * Resolves the EXACT model image rather than generic brand fallbacks.
@@ -244,6 +283,16 @@ export function getCleanPhoneImage(brand?: string, model?: string, fallbackUrl?:
   const modelNorm = m.toLowerCase().replace(/[^a-z0-9]/g, ' ').replace(/\s+/g, ' ').trim();
   const rawUrl = cleanUrl((fallbackUrl || '').trim());
 
+  // 0. Priority 0: Admin custom image override for this specific brand & model
+  const customImages = getCustomModelImages();
+  const customKey = `${b}:${m}`;
+  if (customImages[customKey]) {
+    return customImages[customKey];
+  }
+  if (customImages[modelNorm]) {
+    return customImages[modelNorm];
+  }
+
   // 1. If explicit user-uploaded image (data URL or custom backend CDN), use it
   if (
     rawUrl &&
@@ -252,7 +301,8 @@ export function getCleanPhoneImage(brand?: string, model?: string, fallbackUrl?:
     (rawUrl.startsWith('data:image/') ||
       rawUrl.includes('supabase') ||
       rawUrl.includes('cloudinary') ||
-      rawUrl.includes('firebase'))
+      rawUrl.includes('firebase') ||
+      rawUrl.includes('blob:'))
   ) {
     return rawUrl;
   }

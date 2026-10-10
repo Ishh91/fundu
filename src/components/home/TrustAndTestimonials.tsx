@@ -11,6 +11,7 @@ import {
   CheckCircle2,
 } from 'lucide-react';
 import { db } from '../../lib/db';
+import { subscribeToRealtimeSync } from '../../lib/realtimeSync';
 import type { Review } from '../../types';
 import ReviewModal from '../ReviewModal';
 
@@ -94,15 +95,48 @@ export default function TrustAndTestimonials() {
   const [reviewModalOpen, setReviewModalOpen] = useState(false);
 
   useEffect(() => {
-    db.from('reviews')
-      .select('*')
-      .eq('is_approved', true)
-      .order('created_at', { ascending: false })
-      .then((res) => {
-        if (res.data && Array.isArray(res.data)) {
-          setDbReviews(res.data as Review[]);
-        }
-      });
+    const loadReviews = () => {
+      db.from('reviews')
+        .select('*')
+        .eq('is_approved', true)
+        .order('created_at', { ascending: false })
+        .then((res) => {
+          if (res.data && Array.isArray(res.data)) {
+            setDbReviews(res.data as Review[]);
+          }
+        })
+        .catch(() => null);
+    };
+
+    loadReviews();
+
+    const unsubscribeRealtime = subscribeToRealtimeSync((payload) => {
+      if (payload.action === 'REVIEW_UPDATE' || payload.table === 'reviews') {
+        loadReviews();
+      }
+    });
+
+    const handleReviewEvent = () => loadReviews();
+    window.addEventListener('fundu_reviews_updated', handleReviewEvent);
+
+    // Auto-polling every 12 seconds
+    const interval = setInterval(() => {
+      if (document.visibilityState === 'visible') {
+        loadReviews();
+      }
+    }, 12000);
+
+    const handleFocus = () => loadReviews();
+    window.addEventListener('focus', handleFocus);
+    document.addEventListener('visibilitychange', handleFocus);
+
+    return () => {
+      unsubscribeRealtime();
+      clearInterval(interval);
+      window.removeEventListener('fundu_reviews_updated', handleReviewEvent);
+      window.removeEventListener('focus', handleFocus);
+      document.removeEventListener('visibilitychange', handleFocus);
+    };
   }, []);
 
   const allTestimonials = [

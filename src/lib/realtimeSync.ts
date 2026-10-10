@@ -9,6 +9,7 @@ export type RealtimeSyncAction =
   | 'PRODUCT_UPDATE'
   | 'MODEL_DELETE'
   | 'MODEL_RESTORE'
+  | 'MODEL_IMAGE_UPDATE'
   | 'REPAIR_UPDATE'
   | 'HERO_UPDATE'
   | 'REVIEW_UPDATE'
@@ -75,6 +76,9 @@ export function broadcastSync(action: RealtimeSyncAction, table?: string, operat
   }
   if (table === 'reviews' || action === 'REVIEW_UPDATE') {
     window.dispatchEvent(new CustomEvent('fundu_reviews_updated', { detail: payload }));
+  }
+  if (action === 'MODEL_IMAGE_UPDATE') {
+    window.dispatchEvent(new CustomEvent('fundu_model_image_updated', { detail: payload }));
   }
 }
 

@@ -1372,7 +1372,7 @@ export default function SellPhone() {
   const navigate = useNavigate();
   const { brandSlug, modelSlug } = useParams<{ brandSlug?: string; modelSlug?: string }>();
   const [searchParams] = useSearchParams();
-  const { version } = usePriceSync();
+  const { version, getEffectivePrice } = usePriceSync();
 
   const stepParam = parseInt(searchParams.get('step') || '', 10);
   const initialStep = !isNaN(stepParam) && stepParam >= 1 && stepParam <= 4 ? stepParam : (modelSlug ? 2 : 1);
@@ -1768,7 +1768,7 @@ export default function SellPhone() {
     return () => {
       active = false;
     };
-  }, [form.brand, form.model, form.storage]);
+  }, [form.brand, form.model, form.storage, version]);
 
   useEffect(() => {
     let active = true;
@@ -1825,6 +1825,7 @@ export default function SellPhone() {
     form.defects,
     form.accessories,
     form.underWarranty,
+    version,
   ]);
 
   // Compute base resale value for any model using local master catalog, Indian phones catalog, or dynamic formula
@@ -1860,9 +1861,12 @@ export default function SellPhone() {
         catalogStorage = indian.storage_options?.[0] || '128 GB';
       } else {
         const fallback = getDynamicFallbackConfig(form.brand, form.model, form.storage, form.ram);
-        return fallback.base_price || 15000;
+        rawBase = fallback.base_price || 15000;
       }
     }
+
+    // Apply dynamic admin overrides in real-time
+    rawBase = getEffectivePrice(form.brand, form.model, rawBase, form.storage);
 
     // Dynamic variant multiplier based on exact RAM + Storage combination:
     const catalogMult = calculateHardwareVariantMultiplier(catalogStorage, '', form.brand);
@@ -1870,7 +1874,7 @@ export default function SellPhone() {
     const variantRatio = selectedMult / (catalogMult || 1.0);
 
     return Math.max(1000, Math.round((rawBase * variantRatio) / 50) * 50);
-  }, [form.brand, form.model, form.storage, form.ram]);
+  }, [form.brand, form.model, form.storage, form.ram, version, getEffectivePrice]);
 
   // Guaranteed non-zero smartphone valuation estimate
   const estimate = useMemo(() => {

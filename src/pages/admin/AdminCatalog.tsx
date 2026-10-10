@@ -11,10 +11,21 @@ import {
   Sparkles,
   CheckCircle2,
   Trash2,
+  Camera,
+  Upload,
+  Link2,
+  RotateCcw,
+  Check,
 } from 'lucide-react';
 import type { MasterPhone, Product } from './adminTypes';
-import { formatINR } from '../../lib/db';
+import { db, formatINR } from '../../lib/db';
 import { searchMobileApiDev, importPhoneFromMobileApi } from '../../lib/mobileApi';
+import {
+  getCleanPhoneImage,
+  saveCustomModelImage,
+  resetCustomModelImage,
+  getCustomModelImages,
+} from '../../lib/phoneImages';
 
 type AdminCatalogProps = {
   masterPhones: MasterPhone[];
@@ -27,6 +38,7 @@ type AdminCatalogProps = {
   syncingCatalog: boolean;
   onPhoneImported?: (phone: MasterPhone) => void;
   onDeletePhone?: (phone: MasterPhone) => void;
+  onUpdatePhoneImage?: (phone: MasterPhone, newImageUrl: string) => Promise<void> | void;
 };
 
 export default function AdminCatalog({
@@ -40,6 +52,7 @@ export default function AdminCatalog({
   syncingCatalog,
   onPhoneImported,
   onDeletePhone,
+  onUpdatePhoneImage,
 }: AdminCatalogProps) {
   const [search, setSearch] = useState('');
   const [brandFilter, setBrandFilter] = useState('All');
@@ -51,6 +64,73 @@ export default function AdminCatalog({
   const [mobileApiResults, setMobileApiResults] = useState<MasterPhone[]>([]);
   const [mobileApiLoading, setMobileApiLoading] = useState(false);
   const [importingPhoneId, setImportingPhoneId] = useState<string | null>(null);
+
+  // Model Image Changer Modal State
+  const [imageModalOpen, setImageModalOpen] = useState(false);
+  const [editingPhone, setEditingPhone] = useState<MasterPhone | null>(null);
+  const [newImageUrl, setNewImageUrl] = useState('');
+  const [imageTab, setImageTab] = useState<'upload' | 'url'>('upload');
+  const [imageSaving, setImageSaving] = useState(false);
+  const [, setCustomImagesVer] = useState(0);
+
+  const handleOpenImageModal = (phone: MasterPhone) => {
+    setEditingPhone(phone);
+    const existing = phone.image_url || getCleanPhoneImage(phone.brand, phone.model);
+    setNewImageUrl(existing);
+    setImageTab('upload');
+    setImageModalOpen(true);
+  };
+
+  const handleSaveImage = async () => {
+    if (!editingPhone) return;
+    setImageSaving(true);
+    try {
+      const urlToSave = newImageUrl.trim();
+      saveCustomModelImage(editingPhone.brand, editingPhone.model, urlToSave);
+
+      // Update in database master_phones
+      if (editingPhone.id) {
+        await db.from('master_phones').update({ image_url: urlToSave }).eq('id', editingPhone.id);
+      }
+
+      // Also call parent prop if present
+      if (onUpdatePhoneImage) {
+        await onUpdatePhoneImage(editingPhone, urlToSave);
+      }
+
+      editingPhone.image_url = urlToSave;
+      setCustomImagesVer((v) => v + 1);
+      setImageModalOpen(false);
+      alert(`🎉 Model image updated for ${editingPhone.brand} ${editingPhone.model}! Live across sell catalog.`);
+    } catch (err: any) {
+      alert(err?.message || 'Failed to update image');
+    } finally {
+      setImageSaving(false);
+    }
+  };
+
+  const handleResetImage = async () => {
+    if (!editingPhone) return;
+    if (!confirm(`Reset image for ${editingPhone.brand} ${editingPhone.model} back to default official studio render?`)) return;
+    setImageSaving(true);
+    try {
+      resetCustomModelImage(editingPhone.brand, editingPhone.model);
+      if (editingPhone.id) {
+        await db.from('master_phones').update({ image_url: null }).eq('id', editingPhone.id);
+      }
+      editingPhone.image_url = '';
+      if (onUpdatePhoneImage) {
+        await onUpdatePhoneImage(editingPhone, '');
+      }
+      setCustomImagesVer((v) => v + 1);
+      setImageModalOpen(false);
+      alert(`✅ Reset to default official render for ${editingPhone.brand} ${editingPhone.model}!`);
+    } catch (err: any) {
+      alert(err?.message || 'Failed to reset image');
+    } finally {
+      setImageSaving(false);
+    }
+  };
 
   const filteredCatalog = masterPhones.filter((mp) => {
     const matchesBrand = brandFilter === 'All' || mp.brand.toLowerCase() === brandFilter.toLowerCase();
@@ -232,24 +312,34 @@ export default function AdminCatalog({
                         : 'bg-white hover:border-brand-300 hover:shadow-xs'
                     }`}
                   >
-                    <div className="flex items-center justify-between gap-2">
-                      <div>
-                        <p className="font-bold text-sm text-ink-900">
-                          {mp.brand} {mp.model}
-                        </p>
+                    <div className="flex items-center gap-3">
+                      <div className="h-11 w-11 shrink-0 rounded-xl bg-white border border-slate-200/90 p-1 grid place-items-center overflow-hidden shadow-xs">
+                        <img
+                          src={getCleanPhoneImage(mp.brand, mp.model, mp.image_url)}
+                          alt=""
+                          className="h-full w-full object-contain"
+                          loading="lazy"
+                        />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center justify-between gap-1">
+                          <p className="font-bold text-sm text-ink-900 truncate">
+                            {mp.brand} {mp.model}
+                          </p>
+                          {isAlreadyListed ? (
+                            <span className="badge bg-nature-50 text-nature-700 text-[10px] font-bold shrink-0">
+                              ✓ In Store
+                            </span>
+                          ) : (
+                            <span className="badge bg-brand-50 text-brand-700 text-[10px] font-bold shrink-0">
+                              Ready to List
+                            </span>
+                          )}
+                        </div>
                         <p className="text-xs text-ink-500">
                           {mp.release_year} · {mp.storage_options?.join(', ') || '128GB'}
                         </p>
                       </div>
-                      {isAlreadyListed ? (
-                        <span className="badge bg-nature-50 text-nature-700 text-[10px] font-bold">
-                          ✓ In Store
-                        </span>
-                      ) : (
-                        <span className="badge bg-brand-50 text-brand-700 text-[10px] font-bold">
-                          Ready to List
-                        </span>
-                      )}
                     </div>
 
                     <div className="mt-2 flex items-center justify-between text-xs pt-2 border-t border-ink-100/60">

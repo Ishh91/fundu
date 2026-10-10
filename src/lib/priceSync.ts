@@ -116,6 +116,7 @@ export function usePriceSync() {
         payload.action === 'PRICE_UPDATE' ||
         payload.action === 'MODEL_DELETE' ||
         payload.action === 'MODEL_RESTORE' ||
+        payload.action === 'MODEL_IMAGE_UPDATE' ||
         payload.table === 'sell_price_configs' ||
         payload.table === 'master_phones'
       ) {
@@ -126,6 +127,7 @@ export function usePriceSync() {
     window.addEventListener('fundu_price_updated', handleUpdate);
     window.addEventListener('fundu_model_deleted', handleUpdate);
     window.addEventListener('fundu_model_restored', handleUpdate);
+    window.addEventListener('fundu_model_image_updated', handleUpdate);
     window.addEventListener('storage', handleUpdate);
 
     // Function to pull latest sell_price_configs from database
@@ -179,6 +181,7 @@ export function usePriceSync() {
       window.removeEventListener('fundu_price_updated', handleUpdate);
       window.removeEventListener('fundu_model_deleted', handleUpdate);
       window.removeEventListener('fundu_model_restored', handleUpdate);
+      window.removeEventListener('fundu_model_image_updated', handleUpdate);
       window.removeEventListener('storage', handleUpdate);
       window.removeEventListener('focus', handleFocus);
       document.removeEventListener('visibilitychange', handleFocus);
