@@ -100,8 +100,10 @@ export default function AdminSidebar({
         },
         {
           id: 'pricing' as AdminTab,
-          label: 'Sell Pricing Engine',
+          label: 'Sell Mobile (Price & Images)',
           icon: TrendingUp,
+          badge: 'Rates & Photos',
+          badgeColor: 'bg-emerald-600 text-white',
           path: '/admin/pricing',
         },
         {

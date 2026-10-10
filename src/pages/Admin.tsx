@@ -52,7 +52,7 @@ import AdminOverview from './admin/AdminOverview';
 import AdminSellRequests from './admin/AdminSellRequests';
 import AdminRepairs from './admin/AdminRepairs';
 import AdminCatalog from './admin/AdminCatalog';
-import AdminPricingRules from './admin/AdminPricingRules';
+import AdminSellPricing from './admin/AdminSellPricing';
 import AdminRepairPricing from './admin/AdminRepairPricing';
 import AdminOrders from './admin/AdminOrders';
 import AdminProducts from './admin/AdminProducts';
@@ -1299,7 +1299,7 @@ export default function Admin() {
                 {tab === 'sells' && 'Sell Requests & Pickups'}
                 {tab === 'repairs' && 'Repair Diagnostics'}
                 {tab === 'catalog' && 'Master Smartphone Catalog'}
-                {tab === 'pricing' && 'Pricing Valuation Rules'}
+                {tab === 'pricing' && 'Sell Mobile — Price & Image Manager'}
                 {tab === 'orders' && 'Store Customer Orders'}
                 {tab === 'products' && 'Refurbished Store Inventory'}
                 {tab === 'wholesalers' && 'B2B Wholesalers & Vendor Khata'}
@@ -1521,39 +1521,36 @@ export default function Admin() {
           )}
 
           {tab === 'pricing' && (
-            <AdminPricingRules
+            <AdminSellPricing
               configs={sellPriceConfigs}
+              masterPhones={masterPhones}
               selectedPricingId={selectedPricingId}
               onSelectPricing={(id) => setSelectedPricingId(id)}
-              onOpenPricingModal={(config) => {
-                if (config) {
-                  setPricingForm({
-                    brand: config.brand,
-                    model: config.model,
-                    storage: config.storage || '128GB',
-                    base_price: String(config.base_price),
-                    excellent_multiplier: String(config.excellent_multiplier),
-                    good_multiplier: String(config.good_multiplier),
-                    fair_multiplier: String(config.fair_multiplier),
-                    box_bonus: String(config.box_bonus),
-                    charger_bonus: String(config.charger_bonus),
-                    is_active: config.is_active,
-                  });
+              onSavePriceConfig={async (configData) => {
+                const payload = { ...configData };
+                if (payload.id) {
+                  const { data, error } = await db
+                    .from('sell_price_configs')
+                    .update(payload)
+                    .eq('id', payload.id)
+                    .select('*')
+                    .single();
+                  if (error) throw error;
+                  setSellPriceConfigs((prev) =>
+                    prev.map((c) => (c.id === payload.id ? (data as SellPriceConfig) : c))
+                  );
                 } else {
-                  setPricingForm({
-                    brand: 'Apple',
-                    model: '',
-                    storage: '128GB',
-                    base_price: '20000',
-                    excellent_multiplier: '0.75',
-                    good_multiplier: '0.60',
-                    fair_multiplier: '0.45',
-                    box_bonus: '600',
-                    charger_bonus: '400',
-                    is_active: true,
-                  });
+                  const { data, error } = await db
+                    .from('sell_price_configs')
+                    .insert(payload)
+                    .select('*')
+                    .single();
+                  if (error) throw error;
+                  setSellPriceConfigs((prev) => [data as SellPriceConfig, ...prev]);
                 }
-                setPricingModal({ config });
+              }}
+              onUpdateImage={async (phone, newImageUrl) => {
+                await handleUpdateMasterPhoneImage(phone as MasterPhone, newImageUrl);
               }}
               onToggleActive={async (id, current) => {
                 const cfg = sellPriceConfigs.find((c) => c.id === id);
@@ -1570,6 +1567,26 @@ export default function Admin() {
               onDeleteConfig={deletePricingRule}
               onAutoGenerateRules={handleAutoGenerateIndianPricingRules}
               generatingRules={generatingPricingRules}
+              onAddNewModel={async (data) => {
+                const { data: insertedPhone } = await db
+                  .from('master_phones')
+                  .insert({
+                    brand: data.brand,
+                    model: data.model,
+                    default_mrp: data.default_mrp || Math.round(data.base_price * 1.5),
+                    base_resale_value: data.base_price,
+                    image_url: data.image_url || null,
+                    storage_options: [data.storage || '128GB'],
+                    ram_options: ['8GB'],
+                    is_active: true,
+                  })
+                  .select('*')
+                  .single();
+
+                if (insertedPhone) {
+                  setMasterPhones((prev) => [insertedPhone as MasterPhone, ...prev]);
+                }
+              }}
             />
           )}
 
