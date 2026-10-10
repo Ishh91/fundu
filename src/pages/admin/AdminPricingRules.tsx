@@ -11,6 +11,7 @@ import {
 } from 'lucide-react';
 import type { SellPriceConfig } from './adminTypes';
 import { formatINR } from '../../lib/db';
+import { getCleanPhoneImage } from '../../lib/phoneImages';
 
 type AdminPricingRulesProps = {
   configs: SellPriceConfig[];
@@ -111,20 +112,30 @@ export default function AdminPricingRules({
                         : 'bg-white hover:border-brand-300 hover:shadow-xs'
                     }`}
                   >
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="font-bold text-sm text-ink-900">
-                          {c.brand} {c.model}
-                        </p>
+                    <div className="flex items-center gap-3">
+                      <div className="h-10 w-10 shrink-0 rounded-xl bg-white border border-slate-200/90 p-1 grid place-items-center overflow-hidden shadow-xs">
+                        <img
+                          src={getCleanPhoneImage(c.brand, c.model)}
+                          alt=""
+                          className="h-full w-full object-contain"
+                          loading="lazy"
+                        />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center justify-between">
+                          <p className="font-bold text-sm text-ink-900 truncate">
+                            {c.brand} {c.model}
+                          </p>
+                          <span
+                            className={`badge text-[10px] font-bold ${
+                              c.is_active ? 'bg-emerald-50 text-emerald-700' : 'bg-ink-100 text-ink-600'
+                            }`}
+                          >
+                            {c.is_active ? 'Active' : 'Disabled'}
+                          </span>
+                        </div>
                         <p className="text-xs text-ink-500">{c.storage || 'All Storages'}</p>
                       </div>
-                      <span
-                        className={`badge text-[10px] font-bold ${
-                          c.is_active ? 'bg-emerald-50 text-emerald-700' : 'bg-ink-100 text-ink-600'
-                        }`}
-                      >
-                        {c.is_active ? 'Active' : 'Disabled'}
-                      </span>
                     </div>
 
                     <div className="mt-2 flex items-center justify-between text-xs pt-2 border-t border-ink-100/60">
@@ -145,11 +156,20 @@ export default function AdminPricingRules({
           {selectedConfig ? (
             <div className="card p-6 md:p-8 rounded-[28px] space-y-6 shadow-sm border border-[#dce5e8] bg-white">
               <div className="flex items-center justify-between pb-4 border-b border-ink-100">
-                <div>
-                  <span className="badge bg-brand-50 text-brand-700">{selectedConfig.brand}</span>
-                  <h2 className="font-display text-2xl font-black text-ink-900 mt-1">
-                    {selectedConfig.brand} {selectedConfig.model}
-                  </h2>
+                <div className="flex items-center gap-3">
+                  <div className="h-14 w-14 shrink-0 rounded-2xl bg-white border border-ink-200 p-1.5 grid place-items-center shadow-xs">
+                    <img
+                      src={getCleanPhoneImage(selectedConfig.brand, selectedConfig.model)}
+                      alt=""
+                      className="h-full w-full object-contain"
+                    />
+                  </div>
+                  <div>
+                    <span className="badge bg-brand-50 text-brand-700">{selectedConfig.brand}</span>
+                    <h2 className="font-display text-2xl font-black text-ink-900 mt-1">
+                      {selectedConfig.brand} {selectedConfig.model}
+                    </h2>
+                  </div>
                 </div>
 
                 <div className="flex items-center gap-2">

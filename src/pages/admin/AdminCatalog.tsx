@@ -25,6 +25,7 @@ import {
   saveCustomModelImage,
   resetCustomModelImage,
   getCustomModelImages,
+  hasCustomModelImage,
 } from '../../lib/phoneImages';
 
 type AdminCatalogProps = {
@@ -453,11 +454,74 @@ export default function AdminCatalog({
                 </div>
               </div>
 
-              {selectedPhone.image_url && (
-                <div className="rounded-2xl overflow-hidden border border-ink-200">
-                  <img src={selectedPhone.image_url} alt="" className="h-52 w-full object-cover" />
+              {/* STOREFRONT SELL IMAGE & LIVE OVERRIDE CARD */}
+              <div className="card p-5 bg-white rounded-2xl border border-ink-200 space-y-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h4 className="font-display font-bold text-sm text-ink-900 flex items-center gap-2">
+                      <Camera className="h-4 w-4 text-nature-600" />
+                      Sell Model Storefront Image
+                    </h4>
+                    <p className="text-[11px] text-ink-500 mt-0.5">
+                      This photo is displayed on /sell, brand hubs, and the instant quote engine.
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    {hasCustomModelImage(selectedPhone.brand, selectedPhone.model) ? (
+                      <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold bg-amber-100 text-amber-800">
+                        <Sparkles className="h-3 w-3" /> Custom Override
+                      </span>
+                    ) : (
+                      <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold bg-nature-100 text-nature-800">
+                        <Check className="h-3 w-3" /> Official Render
+                      </span>
+                    )}
+                  </div>
                 </div>
-              )}
+
+                <div className="flex flex-col sm:flex-row items-center gap-5 p-4 rounded-xl bg-ink-50 border border-ink-100">
+                  <div className="h-36 w-36 shrink-0 rounded-xl bg-white border border-ink-200 p-2 grid place-items-center shadow-xs">
+                    <img
+                      src={getCleanPhoneImage(selectedPhone.brand, selectedPhone.model, selectedPhone.image_url)}
+                      alt={`${selectedPhone.brand} ${selectedPhone.model}`}
+                      className="h-full w-full object-contain"
+                    />
+                  </div>
+                  <div className="flex-1 space-y-3 w-full">
+                    <div>
+                      <p className="text-xs font-bold text-ink-800">Active Live Image Preview</p>
+                      <p className="text-[11px] text-ink-400 break-all line-clamp-2 mt-0.5 font-mono">
+                        {getCleanPhoneImage(selectedPhone.brand, selectedPhone.model, selectedPhone.image_url)}
+                      </p>
+                    </div>
+
+                    <div className="flex flex-wrap items-center gap-2 pt-1">
+                      <button
+                        type="button"
+                        onClick={() => handleOpenImageModal(selectedPhone)}
+                        className="btn-primary text-xs py-2 px-3.5 flex items-center gap-1.5 shadow-sm bg-nature-600 hover:bg-nature-700"
+                      >
+                        <Camera className="h-3.5 w-3.5" />
+                        Change Model Image
+                      </button>
+
+                      {hasCustomModelImage(selectedPhone.brand, selectedPhone.model) && (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setEditingPhone(selectedPhone);
+                            handleResetImage();
+                          }}
+                          className="btn-outline text-xs py-2 px-3 flex items-center gap-1 text-ink-600 hover:text-ink-900"
+                        >
+                          <RotateCcw className="h-3.5 w-3.5" />
+                          Reset to Studio Render
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           ) : (
             <div className="card p-12 text-center bg-white rounded-[28px] border border-[#dce5e8]">
@@ -599,6 +663,197 @@ export default function AdminCatalog({
               <button onClick={() => setMobileApiModalOpen(false)} className="btn-outline text-xs">
                 Close
               </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ========================================================================= */}
+      {/* MODAL: CHANGE MODEL IMAGE (FILE UPLOAD OR CUSTOM URL)                      */}
+      {/* ========================================================================= */}
+      {imageModalOpen && editingPhone && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-ink-900/60 backdrop-blur-xs p-4 overflow-y-auto animate-in fade-in">
+          <div className="card w-full max-w-lg p-6 my-4 space-y-5 bg-white shadow-2xl rounded-3xl border border-ink-100">
+            <div className="flex items-center justify-between pb-3 border-b border-ink-100">
+              <div className="flex items-center gap-2.5">
+                <div className="grid h-9 w-9 place-items-center rounded-xl bg-nature-100 text-nature-700">
+                  <Camera className="h-5 w-5" />
+                </div>
+                <div>
+                  <h3 className="font-display font-bold text-base text-ink-900">
+                    Change Model Image
+                  </h3>
+                  <p className="text-xs text-ink-500">
+                    {editingPhone.brand} {editingPhone.model}
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setImageModalOpen(false)}
+                className="p-1 rounded-lg hover:bg-ink-100 text-ink-400 hover:text-ink-700"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+
+            {/* Mode Switcher: Upload File vs Image URL */}
+            <div className="flex gap-2 p-1 bg-ink-100 rounded-xl">
+              <button
+                type="button"
+                onClick={() => setImageTab('upload')}
+                className={`flex-1 py-2 text-xs font-bold rounded-lg flex items-center justify-center gap-1.5 transition ${
+                  imageTab === 'upload'
+                    ? 'bg-white text-ink-900 shadow-xs'
+                    : 'text-ink-600 hover:text-ink-900'
+                }`}
+              >
+                <Upload className="h-3.5 w-3.5" />
+                Upload from Device
+              </button>
+              <button
+                type="button"
+                onClick={() => setImageTab('url')}
+                className={`flex-1 py-2 text-xs font-bold rounded-lg flex items-center justify-center gap-1.5 transition ${
+                  imageTab === 'url'
+                    ? 'bg-white text-ink-900 shadow-xs'
+                    : 'text-ink-600 hover:text-ink-900'
+                }`}
+              >
+                <Link2 className="h-3.5 w-3.5" />
+                Image URL Link
+              </button>
+            </div>
+
+            {/* Tab 1: Upload File */}
+            {imageTab === 'upload' && (
+              <div className="space-y-3">
+                <label className="block text-xs font-bold text-ink-700">
+                  Select Phone Photo (PNG, JPG, WebP)
+                </label>
+                <div className="border-2 border-dashed border-ink-200 hover:border-nature-500 rounded-2xl p-6 text-center cursor-pointer transition bg-ink-50/50 hover:bg-nature-50/20 relative group">
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (!file) return;
+                      if (file.size > 8 * 1024 * 1024) {
+                        alert('Image file size too large. Please select an image under 8MB.');
+                        return;
+                      }
+                      const reader = new FileReader();
+                      reader.onload = () => {
+                        if (typeof reader.result === 'string') {
+                          setNewImageUrl(reader.result);
+                        }
+                      };
+                      reader.readAsDataURL(file);
+                    }}
+                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                  />
+                  <Upload className="h-8 w-8 text-ink-400 group-hover:text-nature-600 mx-auto transition" />
+                  <p className="text-xs font-bold text-ink-800 mt-2">
+                    Click to browse or drop image file here
+                  </p>
+                  <p className="text-[11px] text-ink-400 mt-0.5">
+                    Crisp upright render on white or transparent background recommended
+                  </p>
+                </div>
+              </div>
+            )}
+
+            {/* Tab 2: URL input */}
+            {imageTab === 'url' && (
+              <div className="space-y-2">
+                <label className="block text-xs font-bold text-ink-700">
+                  Direct Image URL (CDN / Web Link)
+                </label>
+                <div className="relative">
+                  <input
+                    type="url"
+                    value={newImageUrl}
+                    onChange={(e) => setNewImageUrl(e.target.value)}
+                    placeholder="https://images.example.com/phone.png"
+                    className="input-text text-xs pl-8 pr-3 py-2.5 font-mono w-full"
+                  />
+                  <Link2 className="absolute left-2.5 top-3 h-3.5 w-3.5 text-ink-400" />
+                </div>
+                <p className="text-[11px] text-ink-400">
+                  Tip: Paste direct link to official render or CDN image.
+                </p>
+              </div>
+            )}
+
+            {/* Live Customer Storefront Preview */}
+            <div className="p-4 rounded-2xl bg-gradient-to-b from-ink-50/80 to-ink-100/50 border border-ink-200/80 space-y-2">
+              <div className="flex items-center justify-between text-xs font-bold text-ink-700">
+                <span>Customer Storefront Preview</span>
+                {newImageUrl ? (
+                  <span className="text-[10px] text-nature-700 font-bold bg-nature-100 px-2 py-0.5 rounded-full">
+                    Ready to Save
+                  </span>
+                ) : null}
+              </div>
+
+              <div className="flex items-center justify-center p-3 bg-white rounded-xl border border-ink-100 min-h-[160px]">
+                {newImageUrl ? (
+                  <img
+                    src={newImageUrl}
+                    alt="Preview"
+                    className="max-h-36 max-w-full object-contain drop-shadow-sm transition-all"
+                    onError={(e) => {
+                      (e.currentTarget as HTMLImageElement).src =
+                        'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-15.jpg';
+                    }}
+                  />
+                ) : (
+                  <div className="text-center text-ink-400 py-6">
+                    <Camera className="h-8 w-8 mx-auto stroke-1" />
+                    <p className="text-xs mt-1">No image provided</p>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Action Buttons */}
+            <div className="flex items-center justify-between pt-2 border-t border-ink-100">
+              <button
+                type="button"
+                onClick={handleResetImage}
+                disabled={imageSaving}
+                className="text-xs font-bold text-rose-600 hover:text-rose-800 flex items-center gap-1 transition px-2 py-1.5"
+              >
+                <RotateCcw className="h-3.5 w-3.5" />
+                Reset to Default Render
+              </button>
+
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => setImageModalOpen(false)}
+                  disabled={imageSaving}
+                  className="btn-outline text-xs px-3 py-2"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  onClick={handleSaveImage}
+                  disabled={imageSaving || !newImageUrl.trim()}
+                  className="btn-primary text-xs px-4 py-2 font-bold bg-nature-600 hover:bg-nature-700 flex items-center gap-1.5 shadow-sm"
+                >
+                  {imageSaving ? (
+                    <>
+                      <RefreshCw className="h-3.5 w-3.5 animate-spin" /> Saving...
+                    </>
+                  ) : (
+                    <>
+                      <Check className="h-3.5 w-3.5" /> Save & Apply Live
+                    </>
+                  )}
+                </button>
+              </div>
             </div>
           </div>
         </div>

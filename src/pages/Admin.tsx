@@ -44,6 +44,7 @@ import {
 } from '../lib/mobileApi';
 import { soundNotifier } from '../lib/soundAlert';
 import AdminLiveNotifier, { LiveNotification } from '../components/admin/AdminLiveNotifier';
+import { saveCustomModelImage } from '../lib/phoneImages';
 
 // Sub-page modular components
 import AdminSidebar from './admin/AdminSidebar';
@@ -862,6 +863,16 @@ export default function Admin() {
     alert(`✅ "${phone.brand} ${phone.model}" deleted successfully from catalog.`);
   };
 
+  const handleUpdateMasterPhoneImage = async (phone: MasterPhone, newImageUrl: string) => {
+    saveCustomModelImage(phone.brand, phone.model, newImageUrl);
+    if (phone.id) {
+      await db.from('master_phones').update({ image_url: newImageUrl || null }).eq('id', phone.id);
+    }
+    setMasterPhones((prev) =>
+      prev.map((p) => (p.id === phone.id ? { ...p, image_url: newImageUrl } : p))
+    );
+  };
+
   const openAddProductModal = (initialData?: Partial<typeof productForm>) => {
     setTab('products');
     setProductForm({
@@ -1505,6 +1516,7 @@ export default function Admin() {
                 setSelectedPhoneId(imported.id);
               }}
               onDeletePhone={handleDeleteMasterPhone}
+              onUpdatePhoneImage={handleUpdateMasterPhoneImage}
             />
           )}
 

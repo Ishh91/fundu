@@ -266,6 +266,14 @@ export function resetCustomModelImage(brand: string, model: string) {
   saveCustomModelImage(brand, model, '');
 }
 
+export function hasCustomModelImage(brand?: string, model?: string): boolean {
+  if (!brand && !model) return false;
+  const current = getCustomModelImages();
+  const b = (brand || '').toLowerCase().trim();
+  const m = (model || '').toLowerCase().trim();
+  return Boolean(current[`${b}:${m}`] || current[m]);
+}
+
 /**
  * Returns clean official studio upright device renders on white background.
  * Resolves the EXACT model image rather than generic brand fallbacks.
