@@ -3,7 +3,7 @@
  * Provides official front-facing upright device renders and authentic brand logos.
  */
 
-import { MOBILE_API_THUMBS } from '../data/deviceImageDictionary';
+import { MOBILE_API_THUMBS } from '../data/deviceImageDictionary.ts';
 
 // Official Brand Vector Logos
 export const BRAND_OFFICIAL_LOGOS: Record<string, string> = {
@@ -232,12 +232,17 @@ export function getCleanBrandLogo(brandName?: string): string {
  * Resolves the EXACT model image rather than generic brand fallbacks.
  * Explicitly rejects fake repetitive URLs (e.g. apple-apple, samsung-samsung) and unsplash placeholders.
  */
+function cleanUrl(url: string): string {
+  if (!url) return '';
+  return url.replace(/\/vv\/bigpic\/([a-z0-9]+)-\1-/gi, '/vv/bigpic/$1-');
+}
+
 export function getCleanPhoneImage(brand?: string, model?: string, fallbackUrl?: string): string {
   const b = (brand || '').toLowerCase().trim();
   const m = (model || '').toLowerCase().trim();
   const fullText = `${b} ${m}`.toLowerCase().replace(/[^a-z0-9]/g, ' ').replace(/\s+/g, ' ').trim();
   const modelNorm = m.toLowerCase().replace(/[^a-z0-9]/g, ' ').replace(/\s+/g, ' ').trim();
-  const rawUrl = (fallbackUrl || '').trim();
+  const rawUrl = cleanUrl((fallbackUrl || '').trim());
 
   // 1. If explicit user-uploaded image (data URL or custom backend CDN), use it
   if (
@@ -252,49 +257,48 @@ export function getCleanPhoneImage(brand?: string, model?: string, fallbackUrl?:
     return rawUrl;
   }
 
-  // 2. Reject fake repetitive brand slug patterns in fallbackUrl (e.g. apple-apple, samsung-samsung, etc.)
-  const isFakeRepetitiveUrl =
-    /([a-z0-9]+)-\1-/i.test(rawUrl) ||
+  // 2. Reject fake placeholder patterns in fallbackUrl
+  const isInvalidUrl =
     rawUrl.includes('unsplash.com') ||
     rawUrl.includes('777/thumb');
 
   // 3. Try high-resolution flagship renders (sorted longest keyword first)
   for (const item of MODEL_EXACT_RENDERS) {
     if (fullText.includes(item.keyword) || modelNorm.includes(item.keyword)) {
-      return item.url;
+      return cleanUrl(item.url);
     }
   }
 
   // 4. Exact dictionary lookup from verified 4,000+ device catalog
   if (MOBILE_API_THUMBS[fullText]) {
-    return MOBILE_API_THUMBS[fullText];
+    return cleanUrl(MOBILE_API_THUMBS[fullText]);
   }
   if (MOBILE_API_THUMBS[modelNorm]) {
-    return MOBILE_API_THUMBS[modelNorm];
+    return cleanUrl(MOBILE_API_THUMBS[modelNorm]);
   }
 
   // 5. Intelligent substring match in deviceImageDictionary
   for (const k of SORTED_THUMB_KEYS) {
     if (k.length >= 5 && (fullText.includes(k) || modelNorm.includes(k))) {
-      return MOBILE_API_THUMBS[k];
+      return cleanUrl(MOBILE_API_THUMBS[k]);
     }
   }
 
   // 6. If fallbackUrl was a valid non-fake URL, return it
-  if (rawUrl && !isFakeRepetitiveUrl && rawUrl.startsWith('http')) {
-    return rawUrl;
+  if (rawUrl && !isInvalidUrl && rawUrl.startsWith('http')) {
+    return cleanUrl(rawUrl);
   }
 
   // 7. Fallback to brand clean render
   for (const [key, url] of Object.entries(BRAND_FRONT_FALLBACKS)) {
     if (b.includes(key) || m.includes(key)) {
-      return url;
+      return cleanUrl(url);
     }
   }
 
   if (BRAND_FRONT_FALLBACKS[b]) {
-    return BRAND_FRONT_FALLBACKS[b];
+    return cleanUrl(BRAND_FRONT_FALLBACKS[b]);
   }
 
-  return BRAND_FRONT_FALLBACKS.apple;
+  return cleanUrl(BRAND_FRONT_FALLBACKS.apple);
 }
