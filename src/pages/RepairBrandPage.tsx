@@ -160,8 +160,21 @@ export default function RepairBrandPage() {
   }, [brandSlug, selectedSeries]);
 
   const brandModels = useMemo(() => {
+    // 1. Models explicitly configured in Admin repairConfigs
+    const adminModels = (repairConfigs || [])
+      .filter((c) => (c.brand || '').toLowerCase().trim() === brandCleanKey && c.is_active !== false)
+      .map((c) => ({
+        brand: c.brand,
+        model: c.model,
+        series: c.device_series || brandDisplayName,
+        image: c.image_url || '',
+        price: c.base_repair_price || 599,
+      }));
+
+    const adminNames = new Set(adminModels.map((m) => m.model.toLowerCase().replace(/[\s-]+/g, '')));
+
     const indianList = ALL_INDIAN_PHONES_CATALOG.filter(
-      (p) => p.brand.toLowerCase() === brandCleanKey
+      (p) => p.brand.toLowerCase() === brandCleanKey && !adminNames.has(p.model.toLowerCase().replace(/[\s-]+/g, ''))
     ).map((p) => ({
       brand: p.brand,
       model: p.model,
@@ -171,7 +184,10 @@ export default function RepairBrandPage() {
     }));
 
     const masterList = MASTER_MODEL_CATALOG.filter(
-      (m) => m.brand.toLowerCase() === brandCleanKey && !indianList.some((ip) => ip.model.toLowerCase() === m.model.toLowerCase())
+      (m) =>
+        m.brand.toLowerCase() === brandCleanKey &&
+        !adminNames.has(m.model.toLowerCase().replace(/[\s-]+/g, '')) &&
+        !indianList.some((ip) => ip.model.toLowerCase() === m.model.toLowerCase())
     ).map((m) => ({
       brand: m.brand,
       model: m.model,
@@ -180,7 +196,7 @@ export default function RepairBrandPage() {
       price: 599,
     }));
 
-    let list = [...indianList, ...masterList].filter(
+    let list = [...adminModels, ...indianList, ...masterList].filter(
       (m) => !isModelDeleted(m.brand || brandDisplayName, m.model)
     );
 
@@ -194,20 +210,31 @@ export default function RepairBrandPage() {
     }
 
     return list;
-  }, [brandCleanKey, brandDisplayName, selectedSeries, debouncedQuery]);
+  }, [brandCleanKey, brandDisplayName, selectedSeries, debouncedQuery, repairConfigs]);
 
   const seriesTabs = useMemo(() => {
-    if (brandInfo.series && brandInfo.series.length > 1) {
-      return brandInfo.series;
-    }
     const seriesSet = new Set<string>();
+
+    if (brandInfo.series) {
+      brandInfo.series.forEach((s) => {
+        if (s !== 'All') seriesSet.add(s);
+      });
+    }
+
+    (repairConfigs || [])
+      .filter((c) => (c.brand || '').toLowerCase().trim() === brandCleanKey && c.is_active !== false)
+      .forEach((c) => {
+        if (c.device_series) seriesSet.add(c.device_series);
+      });
+
     ALL_INDIAN_PHONES_CATALOG.filter(
       (p) => p.brand.toLowerCase() === brandCleanKey && !isModelDeleted(p.brand, p.model)
     ).forEach((p) => {
       if (p.series) seriesSet.add(p.series);
     });
+
     return ['All', ...Array.from(seriesSet)];
-  }, [brandCleanKey, brandInfo.series]);
+  }, [brandCleanKey, brandInfo.series, repairConfigs]);
 
   const handleBookRepair = (modelName: string, issueId: string = 'screen') => {
     const modelSlugClean = modelName.toLowerCase().replace(/\s+/g, '-');
@@ -221,7 +248,7 @@ export default function RepairBrandPage() {
         (c) => (c.brand || '').toLowerCase() === brandCleanKey && c.is_active !== false
       );
       const prices = brandConfigs
-        .map((c) => c.services?.find((s) => s.service_id === srv.id)?.price)
+        .map((c) => c.services?.find((s) => s.service_id === srv.id && s.is_available !== false)?.price)
         .filter((p): p is number => typeof p === 'number' && p > 0);
 
       const lowestPrice = prices.length > 0 ? Math.min(...prices) : srv.cost;

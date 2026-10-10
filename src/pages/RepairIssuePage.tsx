@@ -29,6 +29,9 @@ import {
 import { formatINR } from '../lib/db';
 import { getCleanPhoneImage } from '../lib/phoneImages';
 import { MASTER_MODEL_CATALOG } from './SellPhone';
+import { ALL_INDIAN_PHONES_CATALOG } from '../data/indianPhonesCatalog';
+import { useRepairPriceSync, getModelRepairPricing } from '../lib/repairPriceSync';
+import { isModelDeleted } from '../lib/catalogSync';
 
 const ISSUE_DETAILS: Record<
   string,
@@ -142,9 +145,68 @@ export default function RepairIssuePage() {
   const issueData = ISSUE_DETAILS[issueCleanKey] || ISSUE_DETAILS.screen;
   const IssueIcon = issueData.icon;
 
-  const [selectedBrand, setSelectedBrand] = useState('Apple');
-  const [selectedModel, setSelectedModel] = useState('iPhone 13');
-  const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(0);
+  const { configs: repairConfigs } = useRepairPriceSync();
+
+  const brandOptions = [
+    'Apple',
+    'Samsung',
+    'OnePlus',
+    'Xiaomi',
+    'Vivo',
+    'Realme',
+    'Oppo',
+    'Google',
+    'Motorola',
+    'Nothing',
+  ];
+
+  const availableModelsForBrand = useMemo(() => {
+    const bLower = selectedBrand.toLowerCase().trim();
+
+    // 1. Admin models from repairConfigs
+    const adminModels = (repairConfigs || [])
+      .filter((c) => (c.brand || '').toLowerCase().trim() === bLower && c.is_active !== false)
+      .map((c) => c.model);
+
+    const adminSet = new Set(adminModels.map((m) => m.toLowerCase().replace(/[\s-]+/g, '')));
+
+    // 2. Catalog models
+    const catalogModels = ALL_INDIAN_PHONES_CATALOG
+      .filter((p) => p.brand.toLowerCase().trim() === bLower && !adminSet.has(p.model.toLowerCase().replace(/[\s-]+/g, '')))
+      .map((p) => p.model);
+
+    const catSet = new Set([...adminSet, ...catalogModels.map((m) => m.toLowerCase().replace(/[\s-]+/g, ''))]);
+
+    // 3. Master models
+    const masterModels = MASTER_MODEL_CATALOG
+      .filter((m) => m.brand.toLowerCase().trim() === bLower && !catSet.has(m.model.toLowerCase().replace(/[\s-]+/g, '')))
+      .map((m) => m.model);
+
+    const combined = [...adminModels, ...catalogModels, ...masterModels].filter(
+      (m) => !isModelDeleted(selectedBrand, m)
+    );
+
+    return combined.length > 0 ? combined : ['Generic Phone'];
+  }, [selectedBrand, repairConfigs]);
+
+  useEffect(() => {
+    if (!availableModelsForBrand.includes(selectedModel)) {
+      setSelectedModel(availableModelsForBrand[0] || 'iPhone 15');
+    }
+  }, [availableModelsForBrand, selectedModel]);
+
+  // Dynamic pricing for selected device and issue
+  const selectedModelPricing = useMemo(() => {
+    return getModelRepairPricing(selectedBrand, selectedModel, 'smartphone', repairConfigs);
+  }, [selectedBrand, selectedModel, repairConfigs]);
+
+  const matchedService = useMemo(() => {
+    return selectedModelPricing.services.find((s) => s.service_id === issueCleanKey);
+  }, [selectedModelPricing, issueCleanKey]);
+
+  const currentPrice = matchedService?.price ?? issueData.cost;
+  const currentWarranty = matchedService?.warranty ?? issueData.warranty;
+  const currentTime = matchedService?.turnaround_time ?? issueData.time;
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -177,7 +239,7 @@ export default function RepairIssuePage() {
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
           <div className="space-y-3 max-w-2xl">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-500/20 text-purple-300 border border-purple-400/30 text-xs font-bold">
-              <IssueIcon className="h-4 w-4 text-purple-400" /> {issueData.time} Guarantee
+              <IssueIcon className="h-4 w-4 text-purple-400" /> {currentTime} Guarantee
             </div>
             <h1 className="font-display text-2xl md:text-4xl font-black text-white">
               {issueData.title} at your doorstep
@@ -188,10 +250,10 @@ export default function RepairIssuePage() {
 
             <div className="flex flex-wrap items-center gap-3 pt-2">
               <span className="badge bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-xs font-bold px-3 py-1">
-                From {formatINR(issueData.cost)}
+                From {formatINR(currentPrice)}
               </span>
               <span className="badge bg-purple-500/20 text-purple-300 border border-purple-500/30 text-xs font-bold px-3 py-1">
-                🛡️ {issueData.warranty}
+                🛡️ {currentWarranty}
               </span>
               <span className="badge bg-blue-500/20 text-blue-300 border border-blue-500/30 text-xs font-bold px-3 py-1">
                 📍 Free Doorstep Visit
@@ -210,20 +272,12 @@ export default function RepairIssuePage() {
                 <label className="block text-xs font-bold text-gray-700 mb-1">Select Brand</label>
                 <select
                   value={selectedBrand}
-                  onChange={(e) => {
-                    setSelectedBrand(e.target.value);
-                    if (e.target.value === 'Apple') setSelectedModel('iPhone 13');
-                    else if (e.target.value === 'Samsung') setSelectedModel('Galaxy S22');
-                    else setSelectedModel('OnePlus 11R');
-                  }}
+                  onChange={(e) => setSelectedBrand(e.target.value)}
                   className="input text-xs w-full py-2.5 bg-gray-50 border-gray-300 font-bold"
                 >
-                  <option value="Apple">Apple iPhone</option>
-                  <option value="Samsung">Samsung Galaxy</option>
-                  <option value="OnePlus">OnePlus</option>
-                  <option value="Xiaomi">Xiaomi / Redmi</option>
-                  <option value="Vivo">Vivo</option>
-                  <option value="Realme">Realme</option>
+                  {brandOptions.map((brand) => (
+                    <option key={brand} value={brand}>{brand}</option>
+                  ))}
                 </select>
               </div>
 
@@ -234,30 +288,16 @@ export default function RepairIssuePage() {
                   onChange={(e) => setSelectedModel(e.target.value)}
                   className="input text-xs w-full py-2.5 bg-gray-50 border-gray-300 font-bold"
                 >
-                  {selectedBrand === 'Apple' && (
-                    <>
-                      <option value="iPhone 15 Pro Max">iPhone 15 Pro Max</option>
-                      <option value="iPhone 14">iPhone 14</option>
-                      <option value="iPhone 13">iPhone 13</option>
-                      <option value="iPhone 12">iPhone 12</option>
-                      <option value="iPhone 11">iPhone 11</option>
-                    </>
-                  )}
-                  {selectedBrand === 'Samsung' && (
-                    <>
-                      <option value="Galaxy S23 Ultra">Galaxy S23 Ultra</option>
-                      <option value="Galaxy S22">Galaxy S22</option>
-                      <option value="Galaxy A54 5G">Galaxy A54 5G</option>
-                    </>
-                  )}
-                  {selectedBrand === 'OnePlus' && (
-                    <>
-                      <option value="OnePlus 11R 5G">OnePlus 11R 5G</option>
-                      <option value="OnePlus Nord CE 3">OnePlus Nord CE 3</option>
-                      <option value="OnePlus 10 Pro">OnePlus 10 Pro</option>
-                    </>
-                  )}
+                  {availableModelsForBrand.map((model) => (
+                    <option key={model} value={model}>{model}</option>
+                  ))}
                 </select>
+              </div>
+
+              {/* Price Display */}
+              <div className="flex justify-between items-center bg-purple-50 p-3 rounded-2xl border border-purple-100">
+                <span className="text-xs font-bold text-gray-700">Estimated Price:</span>
+                <span className="text-base font-black text-purple-700">{formatINR(currentPrice)}</span>
               </div>
 
               {/* Selected Phone Live Thumbnail */}

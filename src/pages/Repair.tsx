@@ -205,10 +205,23 @@ export default function Repair() {
 
   const [selectedIssueIds, setSelectedIssueIds] = useState<string[]>(['screen']);
 
+  // Dynamically detect product_type if configured in admin repairConfigs
+  const detectedProductType = useMemo(() => {
+    if (!form.brand || !form.model) return 'smartphone';
+    const bLower = form.brand.toLowerCase().trim();
+    const mClean = form.model.toLowerCase().replace(/[\s-]+/g, '');
+    const found = (repairConfigs || []).find((c) => {
+      const cb = (c.brand || '').toLowerCase().trim();
+      const cm = (c.model || '').toLowerCase().replace(/[\s-]+/g, '');
+      return cb === bLower && (cm === mClean || cm.includes(mClean) || mClean.includes(cm));
+    });
+    return (found?.product_type as any) || 'smartphone';
+  }, [form.brand, form.model, repairConfigs]);
+
   // Dynamic model-wise repair pricing computation
   const modelPricing = useMemo(() => {
-    return getModelRepairPricing(form.brand, form.model, 'smartphone', repairConfigs);
-  }, [form.brand, form.model, repairConfigs]);
+    return getModelRepairPricing(form.brand, form.model, detectedProductType, repairConfigs);
+  }, [form.brand, form.model, detectedProductType, repairConfigs]);
 
   const modelServicePriceMap = useMemo(() => {
     const map: Record<string, { price: number; warranty?: string; turnaround_time?: string }> = {};
@@ -223,6 +236,24 @@ export default function Repair() {
   }, [modelPricing]);
 
   const effectiveRepairIssues = useMemo(() => {
+    // If admin explicitly configured services for this model, prioritize them
+    if (modelPricing.config?.services && modelPricing.config.services.length > 0) {
+      return modelPricing.config.services
+        .filter((s) => s.is_available !== false)
+        .map((s) => {
+          const matchedStatic = REPAIR_ISSUES.find((i) => i.id === s.service_id);
+          return {
+            id: s.service_id,
+            label: s.name || matchedStatic?.label || s.service_id,
+            icon: matchedStatic?.icon || Wrench,
+            desc: matchedStatic?.desc || `${s.name} at your doorstep with certified technicians`,
+            cost: Number(s.price) || 499,
+            warranty: s.warranty || '6 Months Warranty',
+            time: s.turnaround_time || '30 Mins Doorstep',
+          };
+        });
+    }
+
     return REPAIR_ISSUES.map((issue) => {
       const custom = modelServicePriceMap[issue.id];
       return {
@@ -232,7 +263,7 @@ export default function Repair() {
         time: custom?.turnaround_time || issue.time,
       };
     });
-  }, [modelServicePriceMap]);
+  }, [modelPricing, modelServicePriceMap]);
 
   const selectedIssues = useMemo(() => {
     const list = effectiveRepairIssues.filter((i) => selectedIssueIds.includes(i.id));
@@ -309,12 +340,36 @@ export default function Repair() {
 
   const selectedIssue = selectedIssues[0];
 
+  // Combine API/Catalog models with Admin repair configurations
+  const combinedModelsList = useMemo(() => {
+    if (!form.brand) return [];
+    const bLower = form.brand.toLowerCase().trim();
+
+    // 1. Models configured by Admin in repairConfigs
+    const adminModels = (repairConfigs || [])
+      .filter((c) => (c.brand || '').toLowerCase().trim() === bLower && c.is_active !== false)
+      .map((c) => ({
+        name: c.model,
+        storages: ['64GB', '128GB', '256GB'],
+      }));
+
+    const adminNames = new Set(adminModels.map((m) => m.name.toLowerCase().replace(/[\s-]+/g, '')));
+
+    // 2. Models from fetchPhoneModels
+    const otherModels = modelsList.filter((m) => {
+      const clean = m.name.toLowerCase().replace(/[\s-]+/g, '');
+      return !adminNames.has(clean);
+    });
+
+    return [...adminModels, ...otherModels];
+  }, [form.brand, repairConfigs, modelsList]);
+
   const filteredModelsList = useMemo(() => {
-    let list = modelsList.filter((m) => !isModelDeleted(form.brand, m.name));
+    let list = combinedModelsList.filter((m) => !isModelDeleted(form.brand, m.name));
     if (!modelFilter.trim()) return list;
     const q = modelFilter.toLowerCase().trim();
     return list.filter((m) => m.name.toLowerCase().includes(q));
-  }, [modelsList, modelFilter, form.brand]);
+  }, [combinedModelsList, modelFilter, form.brand]);
 
   // Sync params from URL subpage routing
   useEffect(() => {

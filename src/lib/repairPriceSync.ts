@@ -563,9 +563,11 @@ export function useRepairPriceSync() {
     setLoading(true);
     try {
       const { data } = await db.from<RepairPriceConfig>('repair_price_configs').select('*').limit(500);
-      if (Array.isArray(data) && data.length > 0) {
+      if (Array.isArray(data)) {
         setConfigs(data);
-        saveLocalRepairConfigs(data);
+        if (typeof window !== 'undefined') {
+          localStorage.setItem(REPAIR_OVERRIDES_STORAGE_KEY, JSON.stringify(data));
+        }
       }
     } catch (e) {
       console.warn('Notice loading repair price configs from database:', e);
@@ -577,8 +579,13 @@ export function useRepairPriceSync() {
   useEffect(() => {
     fetchConfigs();
 
-    const handleUpdate = () => {
-      setConfigs(getLocalRepairConfigs());
+    const handleUpdate = (e?: Event) => {
+      const customEvent = e as CustomEvent<{ configs?: RepairPriceConfig[] }>;
+      if (customEvent?.detail?.configs && Array.isArray(customEvent.detail.configs)) {
+        setConfigs(customEvent.detail.configs);
+      } else {
+        setConfigs(getLocalRepairConfigs());
+      }
     };
 
     const unsubscribeRealtime = subscribeToRealtimeSync((payload) => {
@@ -588,6 +595,12 @@ export function useRepairPriceSync() {
         payload.action === 'MODEL_DELETE' ||
         payload.action === 'MODEL_RESTORE'
       ) {
+        if (payload.data?.configs && Array.isArray(payload.data.configs)) {
+          setConfigs(payload.data.configs);
+          if (typeof window !== 'undefined') {
+            localStorage.setItem(REPAIR_OVERRIDES_STORAGE_KEY, JSON.stringify(payload.data.configs));
+          }
+        }
         fetchConfigs();
       }
     });
@@ -601,7 +614,7 @@ export function useRepairPriceSync() {
     window.addEventListener('fundu_repair_price_updated', handleUpdate);
     window.addEventListener('storage', handleStorage);
 
-    // Auto-polling every 10 seconds
+    // Auto-polling every 10 seconds when tab is active
     const interval = setInterval(() => {
       if (document.visibilityState === 'visible') {
         fetchConfigs();
