@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import type { HeroPoster } from '../types';
 import { db } from './db';
+import { broadcastSync, subscribeToRealtimeSync } from './realtimeSync';
 
 const STORAGE_KEY = 'fundu_hero_posters_v1';
 const EVENT_NAME = 'fundu_hero_posters_updated';
@@ -100,7 +101,8 @@ export const saveStoredHeroPosters = async (posters: HeroPoster[]): Promise<bool
       console.warn('localStorage full (skipping local cache, posters saved in DB):', storageErr);
     }
 
-    // 3. Dispatch live update event to all listening components
+    // 3. Dispatch live update event to all listening components and tabs
+    broadcastSync('HERO_UPDATE', 'site_content', 'upsert', posters);
     window.dispatchEvent(new CustomEvent(EVENT_NAME, { detail: posters }));
 
     return true;
@@ -119,7 +121,7 @@ export const useHeroPosters = () => {
   const [posters, setPosters] = useState<HeroPoster[]>(() => getStoredHeroPosters());
   const [loading, setLoading] = useState<boolean>(true);
 
-  // Sync from DB once on mount if available
+  // Sync from DB with auto-polling
   useEffect(() => {
     let isMounted = true;
 
@@ -149,6 +151,16 @@ export const useHeroPosters = () => {
 
     loadFromDb();
 
+    const unsubscribeRealtime = subscribeToRealtimeSync((payload) => {
+      if (
+        payload.action === 'HERO_UPDATE' ||
+        payload.table === 'site_content' ||
+        payload.table === 'hero_posters'
+      ) {
+        loadFromDb();
+      }
+    });
+
     const handleUpdate = (e: Event) => {
       const customEvent = e as CustomEvent<HeroPoster[]>;
       if (customEvent.detail && Array.isArray(customEvent.detail)) {
@@ -167,10 +179,25 @@ export const useHeroPosters = () => {
     window.addEventListener(EVENT_NAME, handleUpdate);
     window.addEventListener('storage', handleStorage);
 
+    // Auto-polling every 12 seconds
+    const interval = setInterval(() => {
+      if (document.visibilityState === 'visible') {
+        loadFromDb();
+      }
+    }, 12000);
+
+    const handleFocus = () => loadFromDb();
+    window.addEventListener('focus', handleFocus);
+    document.addEventListener('visibilitychange', handleFocus);
+
     return () => {
       isMounted = false;
+      unsubscribeRealtime();
+      clearInterval(interval);
       window.removeEventListener(EVENT_NAME, handleUpdate);
       window.removeEventListener('storage', handleStorage);
+      window.removeEventListener('focus', handleFocus);
+      document.removeEventListener('visibilitychange', handleFocus);
     };
   }, []);
 

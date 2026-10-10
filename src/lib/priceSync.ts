@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { db } from './db';
+import { broadcastSync, subscribeToRealtimeSync } from './realtimeSync';
 
 const OVERRIDES_STORAGE_KEY = 'fundu_price_overrides_v1';
 
@@ -40,7 +41,8 @@ export function savePriceOverride(brand: string, model: string, newPrice: number
 
   localStorage.setItem(OVERRIDES_STORAGE_KEY, JSON.stringify(current));
 
-  // Dispatch custom window event for real-time live UI updates across components
+  // Dispatch real-time broadcast across all tabs and open components
+  broadcastSync('PRICE_UPDATE', 'sell_price_configs', 'update', { brand, model, storage, newPrice });
   window.dispatchEvent(new CustomEvent('fundu_price_updated', {
     detail: { brand, model, storage, newPrice }
   }));
@@ -109,42 +111,77 @@ export function usePriceSync() {
       setVersion((v) => v + 1);
     };
 
+    const unsubscribeRealtime = subscribeToRealtimeSync((payload) => {
+      if (
+        payload.action === 'PRICE_UPDATE' ||
+        payload.action === 'MODEL_DELETE' ||
+        payload.action === 'MODEL_RESTORE' ||
+        payload.table === 'sell_price_configs' ||
+        payload.table === 'master_phones'
+      ) {
+        handleUpdate();
+      }
+    });
+
     window.addEventListener('fundu_price_updated', handleUpdate);
     window.addEventListener('fundu_model_deleted', handleUpdate);
     window.addEventListener('fundu_model_restored', handleUpdate);
     window.addEventListener('storage', handleUpdate);
 
-    // Initial fetch of sell_price_configs from database to populate overrides
-    db.from('sell_price_configs')
-      .select('*')
-      .then(({ data }) => {
-        if (Array.isArray(data) && data.length > 0) {
-          const current = getLocalPriceOverrides();
-          let changed = false;
+    // Function to pull latest sell_price_configs from database
+    const pullPriceRules = () => {
+      db.from('sell_price_configs')
+        .select('*')
+        .then(({ data }) => {
+          if (Array.isArray(data) && data.length > 0) {
+            const current = getLocalPriceOverrides();
+            let changed = false;
 
-          data.forEach((rule: any) => {
-            if (rule.brand && rule.model && rule.base_price) {
-              const k = `${rule.brand.trim().toLowerCase()}:${rule.model.trim().toLowerCase()}`;
-              if (current[k] !== rule.base_price) {
-                current[k] = rule.base_price;
-                changed = true;
+            data.forEach((rule: any) => {
+              if (rule.brand && rule.model && rule.base_price) {
+                const k = `${rule.brand.trim().toLowerCase()}:${rule.model.trim().toLowerCase()}`;
+                if (current[k] !== rule.base_price) {
+                  current[k] = rule.base_price;
+                  changed = true;
+                }
               }
-            }
-          });
+            });
 
-          if (changed) {
-            localStorage.setItem(OVERRIDES_STORAGE_KEY, JSON.stringify(current));
-            setVersion((v) => v + 1);
+            if (changed) {
+              localStorage.setItem(OVERRIDES_STORAGE_KEY, JSON.stringify(current));
+              setVersion((v) => v + 1);
+            }
           }
-        }
-      })
-      .catch(() => null);
+        })
+        .catch(() => null);
+    };
+
+    pullPriceRules();
+
+    // Background auto-polling every 8 seconds
+    const interval = setInterval(() => {
+      if (document.visibilityState === 'visible') {
+        pullPriceRules();
+      }
+    }, 8000);
+
+    const handleFocus = () => {
+      pullPriceRules();
+      handleUpdate();
+    };
+
+    window.addEventListener('focus', handleFocus);
+    document.addEventListener('visibilitychange', handleFocus);
 
     return () => {
+      unsubscribeRealtime();
+      clearInterval(interval);
       window.removeEventListener('fundu_price_updated', handleUpdate);
       window.removeEventListener('fundu_model_deleted', handleUpdate);
       window.removeEventListener('fundu_model_restored', handleUpdate);
       window.removeEventListener('storage', handleUpdate);
+      window.removeEventListener('focus', handleFocus);
+      document.removeEventListener('visibilitychange', handleFocus);
     };
   }, []);
 

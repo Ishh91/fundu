@@ -29,6 +29,7 @@ type Filter = {
 };
 
 import { API_BASE } from '../config/apiConfig';
+import { broadcastSync } from './realtimeSync';
 
 const SESSION_KEY = 'fundu_mongo_session';
 
@@ -197,8 +198,9 @@ class QueryBuilder<T = unknown> implements PromiseLike<QueryResponse<T>> {
       return apiRequest<T>(`/db/${this.table}?${params.toString()}`, { method: 'GET' }, true);
     }
 
+    let res: QueryResponse<T>;
     if (this.action === 'insert' || this.action === 'upsert') {
-      return apiRequest<T>(`/db/${this.table}`, {
+      res = await apiRequest<T>(`/db/${this.table}`, {
         method: 'POST',
         body: JSON.stringify({
           action: this.action,
@@ -207,10 +209,8 @@ class QueryBuilder<T = unknown> implements PromiseLike<QueryResponse<T>> {
           select: this.selectColumns,
         }),
       }, true);
-    }
-
-    if (this.action === 'update') {
-      return apiRequest<T>(`/db/${this.table}`, {
+    } else if (this.action === 'update') {
+      res = await apiRequest<T>(`/db/${this.table}`, {
         method: 'PATCH',
         body: JSON.stringify({
           filters: this.filters,
@@ -219,14 +219,20 @@ class QueryBuilder<T = unknown> implements PromiseLike<QueryResponse<T>> {
           select: this.selectColumns,
         }),
       }, true);
+    } else {
+      res = await apiRequest<T>(`/db/${this.table}`, {
+        method: 'DELETE',
+        body: JSON.stringify({
+          filters: this.filters,
+        }),
+      }, true);
     }
 
-    return apiRequest<T>(`/db/${this.table}`, {
-      method: 'DELETE',
-      body: JSON.stringify({
-        filters: this.filters,
-      }),
-    }, true);
+    if (!res.error) {
+      broadcastSync('DB_MUTATION', this.table, this.action, this.payload);
+    }
+
+    return res;
   }
 
   then<TResult1 = QueryResponse<T>, TResult2 = never>(

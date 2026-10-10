@@ -3,6 +3,8 @@ import type { RepairPriceConfig, RepairProductType, RepairServiceItem } from '..
 import { db } from './db';
 import { ALL_INDIAN_PHONES_CATALOG } from '../data/indianPhonesCatalog';
 
+import { broadcastSync, subscribeToRealtimeSync } from './realtimeSync';
+
 const REPAIR_OVERRIDES_STORAGE_KEY = 'fundu_repair_price_configs_v2';
 
 /**
@@ -87,6 +89,7 @@ export function getLocalRepairConfigs(): RepairPriceConfig[] {
 export function saveLocalRepairConfigs(configs: RepairPriceConfig[]) {
   if (typeof window === 'undefined') return;
   localStorage.setItem(REPAIR_OVERRIDES_STORAGE_KEY, JSON.stringify(configs));
+  broadcastSync('REPAIR_UPDATE', 'repair_price_configs', 'update', { configs });
   window.dispatchEvent(new CustomEvent('fundu_repair_price_updated', { detail: { configs } }));
 }
 
@@ -578,6 +581,17 @@ export function useRepairPriceSync() {
       setConfigs(getLocalRepairConfigs());
     };
 
+    const unsubscribeRealtime = subscribeToRealtimeSync((payload) => {
+      if (
+        payload.action === 'REPAIR_UPDATE' ||
+        payload.table === 'repair_price_configs' ||
+        payload.action === 'MODEL_DELETE' ||
+        payload.action === 'MODEL_RESTORE'
+      ) {
+        fetchConfigs();
+      }
+    });
+
     const handleStorage = (e: StorageEvent) => {
       if (e.key === REPAIR_OVERRIDES_STORAGE_KEY) {
         setConfigs(getLocalRepairConfigs());
@@ -586,9 +600,28 @@ export function useRepairPriceSync() {
 
     window.addEventListener('fundu_repair_price_updated', handleUpdate);
     window.addEventListener('storage', handleStorage);
+
+    // Auto-polling every 10 seconds
+    const interval = setInterval(() => {
+      if (document.visibilityState === 'visible') {
+        fetchConfigs();
+      }
+    }, 10000);
+
+    const handleFocus = () => {
+      fetchConfigs();
+    };
+
+    window.addEventListener('focus', handleFocus);
+    document.addEventListener('visibilitychange', handleFocus);
+
     return () => {
+      unsubscribeRealtime();
+      clearInterval(interval);
       window.removeEventListener('fundu_repair_price_updated', handleUpdate);
       window.removeEventListener('storage', handleStorage);
+      window.removeEventListener('focus', handleFocus);
+      document.removeEventListener('visibilitychange', handleFocus);
     };
   }, []);
 

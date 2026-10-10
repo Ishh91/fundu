@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Sparkles, CheckCircle2, Mail, X } from 'lucide-react';
 import { db } from '../lib/db';
+import { subscribeToRealtimeSync } from '../lib/realtimeSync';
 import type { Product } from '../types';
 import {
   HeroSection,
@@ -34,15 +35,50 @@ export default function Home() {
   }, [showWelcome]);
 
   useEffect(() => {
-    db.from<Product[]>('products')
-      .select('*')
-      .eq('is_approved', true)
-      .order('is_featured', { ascending: false })
-      .limit(8)
-      .then(({ data }) => {
-        setProducts(data ?? []);
-        setLoading(false);
-      });
+    const loadHomeProducts = () => {
+      db.from<Product[]>('products')
+        .select('*')
+        .eq('is_approved', true)
+        .order('is_featured', { ascending: false })
+        .limit(8)
+        .then(({ data }) => {
+          setProducts(data ?? []);
+          setLoading(false);
+        })
+        .catch(() => setLoading(false));
+    };
+
+    loadHomeProducts();
+
+    const unsubscribeRealtime = subscribeToRealtimeSync((payload) => {
+      if (payload.action === 'PRODUCT_UPDATE' || payload.table === 'products') {
+        loadHomeProducts();
+      }
+    });
+
+    const handleProductChange = () => loadHomeProducts();
+    window.addEventListener('fundu_product_updated', handleProductChange);
+    window.addEventListener('fundu_product_deleted', handleProductChange);
+
+    // Auto-polling every 8 seconds
+    const interval = setInterval(() => {
+      if (document.visibilityState === 'visible') {
+        loadHomeProducts();
+      }
+    }, 8000);
+
+    const handleFocus = () => loadHomeProducts();
+    window.addEventListener('focus', handleFocus);
+    document.addEventListener('visibilitychange', handleFocus);
+
+    return () => {
+      unsubscribeRealtime();
+      clearInterval(interval);
+      window.removeEventListener('fundu_product_updated', handleProductChange);
+      window.removeEventListener('fundu_product_deleted', handleProductChange);
+      window.removeEventListener('focus', handleFocus);
+      document.removeEventListener('visibilitychange', handleFocus);
+    };
   }, []);
 
   return (

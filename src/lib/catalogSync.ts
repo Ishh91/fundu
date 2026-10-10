@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { db } from './db';
+import { broadcastSync, subscribeToRealtimeSync } from './realtimeSync';
 
 const DELETED_MODELS_STORAGE_KEY = 'fundu_deleted_models_v2';
 const DELETED_PRODUCTS_STORAGE_KEY = 'fundu_deleted_products_v2';
@@ -69,7 +70,8 @@ export function markModelAsDeleted(brand: string, model: string) {
     }
   } catch {}
 
-  // Broadcast real-time window events across all tabs and open components
+  // Broadcast real-time events across all tabs and open components
+  broadcastSync('MODEL_DELETE', 'master_phones', 'delete', { brand, model, fullKey });
   window.dispatchEvent(
     new CustomEvent('fundu_model_deleted', {
       detail: { brand, model, fullKey },
@@ -96,6 +98,7 @@ export function restoreModel(brand: string, model: string) {
 
   localStorage.setItem(DELETED_MODELS_STORAGE_KEY, JSON.stringify(Array.from(current)));
 
+  broadcastSync('MODEL_RESTORE', 'master_phones', 'restore', { brand, model, fullKey });
   window.dispatchEvent(
     new CustomEvent('fundu_model_restored', {
       detail: { brand, model, fullKey },
@@ -131,6 +134,7 @@ export function markProductAsDeleted(productId: string, title?: string) {
 
   localStorage.setItem(DELETED_PRODUCTS_STORAGE_KEY, JSON.stringify(Array.from(current)));
 
+  broadcastSync('PRODUCT_UPDATE', 'products', 'delete', { productId, title });
   window.dispatchEvent(
     new CustomEvent('fundu_product_deleted', {
       detail: { productId, title },
@@ -160,42 +164,77 @@ export function useCatalogSync() {
       setSyncVersion((v) => v + 1);
     };
 
+    const unsubscribeRealtime = subscribeToRealtimeSync((payload) => {
+      if (
+        payload.action === 'MODEL_DELETE' ||
+        payload.action === 'MODEL_RESTORE' ||
+        payload.action === 'PRODUCT_UPDATE' ||
+        payload.table === 'master_phones' ||
+        payload.table === 'sell_price_configs' ||
+        payload.table === 'products'
+      ) {
+        handleSync();
+      }
+    });
+
     window.addEventListener('fundu_model_deleted', handleSync);
     window.addEventListener('fundu_model_restored', handleSync);
     window.addEventListener('fundu_product_deleted', handleSync);
     window.addEventListener('storage', handleSync);
 
-    // Initial database pull: check inactive pricing rules and master_phones in DB
-    db.from('sell_price_configs')
-      .select('brand, model, is_active')
-      .eq('is_active', false)
-      .then(({ data }) => {
-        if (Array.isArray(data) && data.length > 0) {
-          const current = getDeletedModelKeys();
-          let changed = false;
-          data.forEach((r: any) => {
-            if (r.brand && r.model) {
-              const k = normalizeModelKey(r.brand, r.model);
-              if (!current.has(k)) {
-                current.add(k);
-                current.add(normalizeName(r.model));
-                changed = true;
+    const pullDeletedFromDb = () => {
+      db.from('sell_price_configs')
+        .select('brand, model, is_active')
+        .eq('is_active', false)
+        .then(({ data }) => {
+          if (Array.isArray(data) && data.length > 0) {
+            const current = getDeletedModelKeys();
+            let changed = false;
+            data.forEach((r: any) => {
+              if (r.brand && r.model) {
+                const k = normalizeModelKey(r.brand, r.model);
+                if (!current.has(k)) {
+                  current.add(k);
+                  current.add(normalizeName(r.model));
+                  changed = true;
+                }
               }
+            });
+            if (changed) {
+              localStorage.setItem(DELETED_MODELS_STORAGE_KEY, JSON.stringify(Array.from(current)));
+              setSyncVersion((v) => v + 1);
             }
-          });
-          if (changed) {
-            localStorage.setItem(DELETED_MODELS_STORAGE_KEY, JSON.stringify(Array.from(current)));
-            setSyncVersion((v) => v + 1);
           }
-        }
-      })
-      .catch(() => null);
+        })
+        .catch(() => null);
+    };
+
+    pullDeletedFromDb();
+
+    // Auto-fetch polling every 10 seconds + on window focus
+    const interval = setInterval(() => {
+      if (document.visibilityState === 'visible') {
+        pullDeletedFromDb();
+      }
+    }, 10000);
+
+    const handleFocus = () => {
+      pullDeletedFromDb();
+      handleSync();
+    };
+
+    window.addEventListener('focus', handleFocus);
+    document.addEventListener('visibilitychange', handleFocus);
 
     return () => {
+      unsubscribeRealtime();
+      clearInterval(interval);
       window.removeEventListener('fundu_model_deleted', handleSync);
       window.removeEventListener('fundu_model_restored', handleSync);
       window.removeEventListener('fundu_product_deleted', handleSync);
       window.removeEventListener('storage', handleSync);
+      window.removeEventListener('focus', handleFocus);
+      document.removeEventListener('visibilitychange', handleFocus);
     };
   }, []);
 

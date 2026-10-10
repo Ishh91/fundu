@@ -31,6 +31,7 @@ import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
 import { getCleanPhoneImage, getCleanBrandLogo } from '../lib/phoneImages';
 import { isProductDeleted, useCatalogSync } from '../lib/catalogSync';
+import { subscribeToRealtimeSync } from '../lib/realtimeSync';
 import type { Product } from '../types';
 
 // Circular brand filters with brand logos
@@ -636,26 +637,61 @@ export default function BuyPhones() {
   };
 
   useEffect(() => {
-    db
-      .from('products')
-      .select('*')
-      .eq('is_approved', true)
-      .order('is_featured', { ascending: false })
-      .then(({ data }) => {
-        const fetched = (data as Product[]) ?? [];
-        if (fetched.length > 0) {
-          const combined = [...fetched];
-          SAMPLE_BEST_SELLING_PHONES.forEach((sp) => {
-            if (!combined.some((p) => p.title.toLowerCase() === sp.title.toLowerCase())) {
-              combined.push(sp);
-            }
-          });
-          setProducts(combined);
-        } else {
-          setProducts(SAMPLE_BEST_SELLING_PHONES);
-        }
-        setLoading(false);
-      });
+    const loadProducts = () => {
+      db
+        .from('products')
+        .select('*')
+        .eq('is_approved', true)
+        .order('is_featured', { ascending: false })
+        .then(({ data }) => {
+          const fetched = (data as Product[]) ?? [];
+          if (fetched.length > 0) {
+            const combined = [...fetched];
+            SAMPLE_BEST_SELLING_PHONES.forEach((sp) => {
+              if (!combined.some((p) => p.title.toLowerCase() === sp.title.toLowerCase())) {
+                combined.push(sp);
+              }
+            });
+            setProducts(combined);
+          } else {
+            setProducts(SAMPLE_BEST_SELLING_PHONES);
+          }
+          setLoading(false);
+        })
+        .catch(() => setLoading(false));
+    };
+
+    loadProducts();
+
+    const unsubscribeRealtime = subscribeToRealtimeSync((payload) => {
+      if (payload.action === 'PRODUCT_UPDATE' || payload.table === 'products') {
+        loadProducts();
+      }
+    });
+
+    const handleProductEvent = () => loadProducts();
+    window.addEventListener('fundu_product_updated', handleProductEvent);
+    window.addEventListener('fundu_product_deleted', handleProductEvent);
+
+    // Auto-polling every 8 seconds
+    const interval = setInterval(() => {
+      if (document.visibilityState === 'visible') {
+        loadProducts();
+      }
+    }, 8000);
+
+    const handleFocus = () => loadProducts();
+    window.addEventListener('focus', handleFocus);
+    document.addEventListener('visibilitychange', handleFocus);
+
+    return () => {
+      unsubscribeRealtime();
+      clearInterval(interval);
+      window.removeEventListener('fundu_product_updated', handleProductEvent);
+      window.removeEventListener('fundu_product_deleted', handleProductEvent);
+      window.removeEventListener('focus', handleFocus);
+      document.removeEventListener('visibilitychange', handleFocus);
+    };
   }, []);
 
   useEffect(() => {
