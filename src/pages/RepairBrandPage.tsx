@@ -26,7 +26,7 @@ import {
 } from 'lucide-react';
 import { formatINR } from '../lib/db';
 import { MASTER_MODEL_CATALOG } from './SellPhone';
-import { getCleanPhoneImage, getCleanBrandLogo, BRAND_FRONT_FALLBACKS } from '../lib/phoneImages';
+import { getCleanPhoneImage, getCleanBrandLogo, BRAND_FRONT_FALLBACKS, getGenericDevicePlaceholder } from '../lib/phoneImages';
 import { ALL_INDIAN_PHONES_CATALOG } from '../data/indianPhonesCatalog';
 import { useRepairPriceSync, getModelRepairPricing } from '../lib/repairPriceSync';
 import { isModelDeleted } from '../lib/catalogSync';
@@ -382,10 +382,17 @@ export default function RepairBrandPage() {
                         referrerPolicy="no-referrer"
                         onError={(e) => {
                           const target = e.currentTarget;
-                          const fallback = BRAND_FRONT_FALLBACKS[brandCleanKey] || getCleanPhoneImage(brandDisplayName);
-                          if (target.src !== fallback) {
-                            target.src = fallback;
+                          if (!target.dataset.triedCanonical && (m.brand || brandDisplayName) && m.model) {
+                            target.dataset.triedCanonical = 'true';
+                            const bSlug = (m.brand || brandDisplayName).toLowerCase().replace(/[^a-z0-9]/g, '');
+                            const mSlug = m.model.toLowerCase().replace(new RegExp(`^${bSlug}\\s*`, 'i'), '').replace(/\+/g, '-plus').replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+                            const canonical = `https://fdn2.gsmarena.com/vv/bigpic/${bSlug}-${mSlug}.jpg`;
+                            if (target.src !== canonical) {
+                              target.src = canonical;
+                              return;
+                            }
                           }
+                          target.src = getGenericDevicePlaceholder(m.brand || brandDisplayName, m.model);
                         }}
                       />
                     </div>

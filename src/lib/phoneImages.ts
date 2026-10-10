@@ -104,12 +104,84 @@ export const RAW_MODEL_EXACT_RENDERS: Array<{ keyword: string; url: string }> = 
   { keyword: 'note 20', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-note20-5g-r.jpg' },
   { keyword: 'note 10+', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-note10-plus-.jpg' },
   { keyword: 'note 10', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-note10-.jpg' },
+
+  // Samsung Galaxy C-Series, J-Series, On-Series, F-Series, M-Series, A-Series
+  { keyword: 'galaxy c5 pro', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-c5-pro-sm-c5010.jpg' },
+  { keyword: 'galaxy c7 pro', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-c7-pro.jpg' },
+  { keyword: 'galaxy c9 pro', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-c9-pro-.jpg' },
+  { keyword: 'galaxy on max', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-j7-max.jpg' },
+  { keyword: 'galaxy on6', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-on6.jpg' },
+  { keyword: 'galaxy on8', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-j8-j800.jpg' },
+  { keyword: 'galaxy on7 prime', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-j7-prime.jpg' },
+  { keyword: 'galaxy on7 pro', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-j7-prime.jpg' },
+  { keyword: 'galaxy on5 pro', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-j5-2016.jpg' },
+  { keyword: 'galaxy on nxt', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-j7-prime.jpg' },
+  { keyword: 'galaxy j8', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-j8-j800.jpg' },
+  { keyword: 'galaxy j7 prime', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-j7-prime.jpg' },
+  { keyword: 'galaxy j7 pro', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-j7-pro.jpg' },
+  { keyword: 'galaxy j7 max', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-j7-max.jpg' },
+  { keyword: 'galaxy j7 nxt', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-j7-nxt.jpg' },
+  { keyword: 'galaxy j7 duo', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-j7-duo.jpg' },
+  { keyword: 'galaxy j7 2016', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-j7-2016.jpg' },
+  { keyword: 'galaxy j7', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-j7-2016.jpg' },
+  { keyword: 'galaxy j6+', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-j6-plus-sm-j610f.jpg' },
+  { keyword: 'galaxy j6 plus', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-j6-plus-sm-j610f.jpg' },
+  { keyword: 'galaxy j6', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-j6.jpg' },
+  { keyword: 'galaxy j4+', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-j4-plus-sm-j415f.jpg' },
+  { keyword: 'galaxy j4 plus', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-j4-plus-sm-j415f.jpg' },
+  { keyword: 'galaxy j4', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-j4.jpg' },
+  { keyword: 'galaxy j2 2018', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-j2-2018-sm-j250-.jpg' },
+  { keyword: 'galaxy j2 pro', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-j2-2018-sm-j250-.jpg' },
+  { keyword: 'galaxy j2', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-j2-2018-sm-j250-.jpg' },
+  { keyword: 'galaxy f02s', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-f02s.jpg' },
+  { keyword: 'galaxy f12', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-f12.jpg' },
+  { keyword: 'galaxy f13', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-f13.jpg' },
+  { keyword: 'galaxy f14', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-f14-5g.jpg' },
+  { keyword: 'galaxy f15', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-f15-5g.jpg' },
+  { keyword: 'galaxy f22', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-f22.jpg' },
+  { keyword: 'galaxy f23', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-f23-5g.jpg' },
+  { keyword: 'galaxy f34', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-f34-5g.jpg' },
+  { keyword: 'galaxy f41', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-f41.jpg' },
+  { keyword: 'galaxy f42', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-f42-5g.jpg' },
+  { keyword: 'galaxy f54', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-f54.jpg' },
+  { keyword: 'galaxy f55', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-f55.jpg' },
+  { keyword: 'galaxy f62', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-f62.jpg' },
+  { keyword: 'galaxy m01', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-m01.jpg' },
+  { keyword: 'galaxy m02', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-m02.jpg' },
+  { keyword: 'galaxy m04', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-m04.jpg' },
+  { keyword: 'galaxy m11', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-m11.jpg' },
+  { keyword: 'galaxy m12', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-m12.jpg' },
+  { keyword: 'galaxy m13', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-m13-4g.jpg' },
+  { keyword: 'galaxy m14', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-m14-5g.jpg' },
+  { keyword: 'galaxy m21', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-m21.jpg' },
+  { keyword: 'galaxy m31', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-m31.jpg' },
+  { keyword: 'galaxy m32', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-m32.jpg' },
+  { keyword: 'galaxy m34', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-m34-5g.jpg' },
+  { keyword: 'galaxy m51', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-m51.jpg' },
+  { keyword: 'galaxy m52', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-m52-5g.jpg' },
+  { keyword: 'galaxy m53', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-m53-5g.jpg' },
+  { keyword: 'galaxy a80', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-a80.jpg' },
+  { keyword: 'galaxy a73', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-a73-5g.jpg' },
+  { keyword: 'galaxy a72', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-a72-4g.jpg' },
+  { keyword: 'galaxy a71', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-a71.jpg' },
+  { keyword: 'galaxy a70', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-a70.jpg' },
   { keyword: 'galaxy a55', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-a55.jpg' },
   { keyword: 'galaxy a54', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-a54.jpg' },
+  { keyword: 'galaxy a53', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-a53-5g.jpg' },
+  { keyword: 'galaxy a52', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-a52-4g.jpg' },
+  { keyword: 'galaxy a51', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-a51.jpg' },
+  { keyword: 'galaxy a50', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-a50.jpg' },
   { keyword: 'galaxy a35', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-a35.jpg' },
   { keyword: 'galaxy a34', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-a34.jpg' },
+  { keyword: 'galaxy a33', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-a33-5g.jpg' },
+  { keyword: 'galaxy a32', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-a32-4g.jpg' },
+  { keyword: 'galaxy a31', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-a31.jpg' },
+  { keyword: 'galaxy a30', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-a30.jpg' },
   { keyword: 'galaxy a15', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-a15-5g.jpg' },
   { keyword: 'galaxy a14', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-a14-5g.jpg' },
+  { keyword: 'galaxy a13', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-a13.jpg' },
+  { keyword: 'galaxy a12', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-a12.jpg' },
+  { keyword: 'galaxy a10', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-a10.jpg' },
 
   // OnePlus
   { keyword: 'oneplus 12r', url: 'https://fdn2.gsmarena.com/vv/bigpic/oneplus-12r.jpg' },
@@ -279,9 +351,47 @@ export function hasCustomModelImage(brand?: string, model?: string): boolean {
  * Resolves the EXACT model image rather than generic brand fallbacks.
  * Explicitly rejects fake repetitive URLs (e.g. apple-apple, samsung-samsung) and unsplash placeholders.
  */
-function cleanUrl(url: string): string {
+function cleanUrl(url: string, brandHint?: string): string {
   if (!url) return '';
-  return url.replace(/\/vv\/bigpic\/([a-z0-9]+)-\1-/gi, '/vv/bigpic/$1-');
+  let cleaned = url.trim();
+  cleaned = cleaned.replace(/\/vv\/bigpic\/([a-z0-9]+)-\1-/gi, '/vv/bigpic/$1-');
+  cleaned = cleaned.replace(/\/vv\/bigpic\/samsung-samsung-/gi, '/vv/bigpic/samsung-');
+  cleaned = cleaned.replace(/\/vv\/bigpic\/apple-apple-/gi, '/vv/bigpic/apple-');
+  cleaned = cleaned.replace(/\/vv\/bigpic\/xiaomi-xiaomi-/gi, '/vv/bigpic/xiaomi-');
+  cleaned = cleaned.replace(/\/vv\/bigpic\/oneplus-oneplus-/gi, '/vv/bigpic/oneplus-');
+  cleaned = cleaned.replace(/\/vv\/bigpic\/vivo-vivo-/gi, '/vv/bigpic/vivo-');
+  cleaned = cleaned.replace(/\/vv\/bigpic\/oppo-oppo-/gi, '/vv/bigpic/oppo-');
+  cleaned = cleaned.replace(/\/vv\/bigpic\/realme-realme-/gi, '/vv/bigpic/realme-');
+
+  // Fix broken leading dash /vv/bigpic/-
+  if (cleaned.includes('/vv/bigpic/-')) {
+    const b = (brandHint || '').toLowerCase().trim();
+    if (b) {
+      cleaned = cleaned.replace(/\/vv\/bigpic\/-/gi, `/vv/bigpic/${b}-`);
+    } else {
+      cleaned = cleaned.replace(/\/vv\/bigpic\/-/gi, '/vv/bigpic/');
+    }
+  }
+  return cleaned;
+}
+
+/**
+ * Clean device SVG placeholder generator for when no remote photo is reachable
+ */
+export function getGenericDevicePlaceholder(brand?: string, model?: string): string {
+  const b = (brand || 'Device').trim();
+  const m = (model || '').trim();
+  const name = m ? (m.toLowerCase().startsWith(b.toLowerCase()) ? m : `${b} ${m}`) : b;
+  const safeName = name.replace(/[<>&"']/g, '');
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 360" width="200" height="360">
+    <rect x="18" y="12" width="164" height="336" rx="28" fill="#F8FAFC" stroke="#CBD5E1" stroke-width="4"/>
+    <rect x="26" y="24" width="148" height="312" rx="20" fill="#F1F5F9"/>
+    <rect x="76" y="16" width="48" height="5" rx="2.5" fill="#94A3B8"/>
+    <circle cx="100" cy="38" r="4.5" fill="#64748B"/>
+    <text x="100" y="165" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="12" font-weight="700" fill="#334155" text-anchor="middle">${safeName.length > 22 ? safeName.slice(0, 20) + '…' : safeName}</text>
+    <text x="100" y="185" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="10" font-weight="600" fill="#64748B" text-anchor="middle">Official Studio Render</text>
+  </svg>`;
+  return `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`;
 }
 
 export function getCleanPhoneImage(brand?: string, model?: string, fallbackUrl?: string): string {
@@ -289,7 +399,7 @@ export function getCleanPhoneImage(brand?: string, model?: string, fallbackUrl?:
   const m = (model || '').toLowerCase().trim();
   const fullText = `${b} ${m}`.toLowerCase().replace(/[^a-z0-9]/g, ' ').replace(/\s+/g, ' ').trim();
   const modelNorm = m.toLowerCase().replace(/[^a-z0-9]/g, ' ').replace(/\s+/g, ' ').trim();
-  const rawUrl = cleanUrl((fallbackUrl || '').trim());
+  const rawUrl = cleanUrl((fallbackUrl || '').trim(), b);
 
   // 0. Priority 0: Admin custom image override for this specific brand & model
   const customImages = getCustomModelImages();
@@ -320,43 +430,61 @@ export function getCleanPhoneImage(brand?: string, model?: string, fallbackUrl?:
     rawUrl.includes('unsplash.com') ||
     rawUrl.includes('777/thumb');
 
-  // 3. Try high-resolution flagship renders (sorted longest keyword first)
+  // 3. Try high-resolution flagship & classic renders (sorted longest keyword first)
   for (const item of MODEL_EXACT_RENDERS) {
     if (fullText.includes(item.keyword) || modelNorm.includes(item.keyword)) {
-      return cleanUrl(item.url);
+      return cleanUrl(item.url, b);
     }
   }
 
   // 4. Exact dictionary lookup from verified 4,000+ device catalog
   if (MOBILE_API_THUMBS[fullText]) {
-    return cleanUrl(MOBILE_API_THUMBS[fullText]);
+    return cleanUrl(MOBILE_API_THUMBS[fullText], b);
   }
   if (MOBILE_API_THUMBS[modelNorm]) {
-    return cleanUrl(MOBILE_API_THUMBS[modelNorm]);
+    return cleanUrl(MOBILE_API_THUMBS[modelNorm], b);
   }
 
   // 5. Intelligent substring match in deviceImageDictionary
   for (const k of SORTED_THUMB_KEYS) {
     if (k.length >= 5 && (fullText.includes(k) || modelNorm.includes(k))) {
-      return cleanUrl(MOBILE_API_THUMBS[k]);
+      return cleanUrl(MOBILE_API_THUMBS[k], b);
     }
   }
 
   // 6. If fallbackUrl was a valid non-fake URL, return it
   if (rawUrl && !isInvalidUrl && rawUrl.startsWith('http')) {
-    return cleanUrl(rawUrl);
+    return cleanUrl(rawUrl, b);
   }
 
-  // 7. Fallback to brand clean render
+  // 7. Canonical model slug constructor (avoids collapsing all devices into one flagship image)
+  if (b && m) {
+    const cleanBrandSlug = b.toLowerCase().replace(/[^a-z0-9]/g, '');
+    let cleanModelSlug = m
+      .toLowerCase()
+      .replace(new RegExp(`^${cleanBrandSlug}\\s*`, 'i'), '')
+      .replace(/\+/g, '-plus')
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-+|-+$/g, '');
+    if (cleanModelSlug) {
+      return `https://fdn2.gsmarena.com/vv/bigpic/${cleanBrandSlug}-${cleanModelSlug}.jpg`;
+    }
+  }
+
+  // 8. Fallback to generic device placeholder if model exists, or brand clean render
+  if (m) {
+    return getGenericDevicePlaceholder(brand, model);
+  }
+
   for (const [key, url] of Object.entries(BRAND_FRONT_FALLBACKS)) {
     if (b.includes(key) || m.includes(key)) {
-      return cleanUrl(url);
+      return cleanUrl(url, b);
     }
   }
 
   if (BRAND_FRONT_FALLBACKS[b]) {
-    return cleanUrl(BRAND_FRONT_FALLBACKS[b]);
+    return cleanUrl(BRAND_FRONT_FALLBACKS[b], b);
   }
 
-  return cleanUrl(BRAND_FRONT_FALLBACKS.apple);
+  return cleanUrl(BRAND_FRONT_FALLBACKS.apple, b);
 }
