@@ -26,7 +26,7 @@ import {
   ChevronUp,
   ArrowRight,
 } from 'lucide-react';
-import { formatINR } from '../lib/db';
+import { formatINR, formatDisplayPrice } from '../lib/db';
 import { getCleanPhoneImage } from '../lib/phoneImages';
 import { MASTER_MODEL_CATALOG } from './SellPhone';
 import { ALL_INDIAN_PHONES_CATALOG } from '../data/indianPhonesCatalog';
@@ -250,7 +250,7 @@ export default function RepairIssuePage() {
 
             <div className="flex flex-wrap items-center gap-3 pt-2">
               <span className="badge bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-xs font-bold px-3 py-1">
-                From {formatINR(currentPrice)}
+                From {formatDisplayPrice(currentPrice, !!user)}
               </span>
               <span className="badge bg-purple-500/20 text-purple-300 border border-purple-500/30 text-xs font-bold px-3 py-1">
                 🛡️ {currentWarranty}
@@ -295,9 +295,23 @@ export default function RepairIssuePage() {
               </div>
 
               {/* Price Display */}
-              <div className="flex justify-between items-center bg-purple-50 p-3 rounded-2xl border border-purple-100">
-                <span className="text-xs font-bold text-gray-700">Estimated Price:</span>
-                <span className="text-base font-black text-purple-700">{formatINR(currentPrice)}</span>
+              <div className="bg-purple-50 p-3 rounded-2xl border border-purple-100 space-y-1">
+                <div className="flex justify-between items-center">
+                  <span className="text-xs font-bold text-gray-700">Estimated Price:</span>
+                  <span className="text-base font-black text-purple-700">{formatDisplayPrice(currentPrice, !!user)}</span>
+                </div>
+                {!user && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const targetUrl = `/repair?step=4&brand=${encodeURIComponent(selectedBrand)}&model=${encodeURIComponent(selectedModel)}&issue=${encodeURIComponent(issueCleanKey)}`;
+                      navigate(`/login?redirect=${encodeURIComponent(targetUrl)}`);
+                    }}
+                    className="text-[11px] font-bold text-purple-700 hover:text-purple-900 underline flex items-center justify-end gap-1 cursor-pointer transition w-full"
+                  >
+                    <Lock className="h-3 w-3" /> Know exact price? Login to view
+                  </button>
+                )}
               </div>
 
               {/* Selected Phone Live Thumbnail */}

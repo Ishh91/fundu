@@ -24,7 +24,7 @@ import {
   Smartphone,
   CheckCircle2,
 } from 'lucide-react';
-import { formatINR } from '../lib/db';
+import { formatINR, formatDisplayPrice } from '../lib/db';
 import { MASTER_MODEL_CATALOG } from './SellPhone';
 import { getCleanPhoneImage, getCleanBrandLogo, BRAND_FRONT_FALLBACKS, getGenericDevicePlaceholder } from '../lib/phoneImages';
 import { ALL_INDIAN_PHONES_CATALOG } from '../data/indianPhonesCatalog';
@@ -404,7 +404,7 @@ export default function RepairBrandPage() {
                     <div className="mt-2.5 w-full flex items-center justify-between gap-1 pt-2 border-t border-gray-100 text-[11px]">
                       <span className="text-gray-400 font-bold">From</span>
                       <span className="font-extrabold text-[#344257] text-xs">
-                        {formatINR(basePrice)}
+                        {formatDisplayPrice(basePrice, !!user)}
                       </span>
                     </div>
                   </div>
@@ -454,7 +454,7 @@ export default function RepairBrandPage() {
                     <IconComp className="h-5 w-5" />
                   </div>
                   <p className="font-bold text-xs text-[#344257] line-clamp-1">{srv.label}</p>
-                  <p className="text-[11px] font-black text-[#47576E]">From {formatINR(srv.cost)}</p>
+                  <p className="text-[11px] font-black text-[#47576E]">From {formatDisplayPrice(srv.cost, !!user)}</p>
                   <span className="inline-block text-[10px] text-gray-500 bg-white px-2 py-0.5 rounded-full border border-gray-200">
                     ⏱️ {srv.time}
                   </span>

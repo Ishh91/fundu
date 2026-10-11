@@ -15,12 +15,14 @@ import {
   Sparkles,
   AlertCircle,
 } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
 import { ALL_INDIAN_PHONES_CATALOG } from '../data/indianPhonesCatalog';
 import { getCleanPhoneImage } from '../lib/phoneImages';
-import { db, formatINR } from '../lib/db';
+import { db, formatINR, formatDisplayPrice } from '../lib/db';
 import type { Product } from '../types';
 
 export default function SearchActionPage() {
+  const { user } = useAuth();
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const query = searchParams.get('q') || searchParams.get('search') || searchParams.get('model') || '';
@@ -315,7 +317,7 @@ export default function SearchActionPage() {
                       <div className="pt-1">
                         <p className="text-[11px] text-gray-400 font-bold uppercase tracking-wider">Estimated Valuation:</p>
                         <p className="text-lg font-black text-[#344257]">
-                          Up to {formatINR(phone.price)}
+                          {formatDisplayPrice(phone.price, !!user)}
                         </p>
                       </div>
                     </div>

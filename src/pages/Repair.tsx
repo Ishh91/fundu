@@ -34,7 +34,7 @@ import {
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { DOORSTEP_AREAS } from '../types';
-import { db, formatINR } from '../lib/db';
+import { db, formatINR, formatMaskedPrice, formatDisplayPrice } from '../lib/db';
 import { fetchPhoneModels, searchMobileApiDev } from '../lib/mobileApi';
 import { useRepairPriceSync, getModelRepairPricing } from '../lib/repairPriceSync';
 import { isModelDeleted } from '../lib/catalogSync';
@@ -204,6 +204,54 @@ export default function Repair() {
   });
 
   const [selectedIssueIds, setSelectedIssueIds] = useState<string[]>(['screen']);
+
+  // Restore repair answers from sessionStorage if customer logged in and redirected back
+  useEffect(() => {
+    try {
+      const savedForm = sessionStorage.getItem('fundu_repair_form');
+      if (savedForm) {
+        const parsed = JSON.parse(savedForm);
+        if (parsed && typeof parsed === 'object') {
+          setForm((prev) => ({
+            ...prev,
+            ...parsed,
+            brand: prev.brand || parsed.brand || '',
+            model: prev.model || parsed.model || '',
+          }));
+        }
+      }
+      const savedIssues = sessionStorage.getItem('fundu_repair_issues');
+      if (savedIssues) {
+        const parsedIssues = JSON.parse(savedIssues);
+        if (Array.isArray(parsedIssues) && parsedIssues.length > 0) {
+          setSelectedIssueIds(parsedIssues);
+        }
+      }
+    } catch {}
+  }, []);
+
+  // Sync repair answers to sessionStorage
+  useEffect(() => {
+    if (form.brand || form.model) {
+      try {
+        sessionStorage.setItem('fundu_repair_form', JSON.stringify(form));
+        sessionStorage.setItem('fundu_repair_issues', JSON.stringify(selectedIssueIds));
+      } catch {}
+    }
+  }, [form, selectedIssueIds]);
+
+  const handleGoToLoginForRepairExactPrice = () => {
+    try {
+      sessionStorage.setItem('fundu_repair_form', JSON.stringify(form));
+      sessionStorage.setItem('fundu_repair_issues', JSON.stringify(selectedIssueIds));
+    } catch {}
+    const bSlug = (form.brand || brandSlug || '').toLowerCase().replace(/\s+/g, '-');
+    const mSlug = (form.model || modelSlug || '').toLowerCase().replace(/\s+/g, '-');
+    const targetPath = bSlug && mSlug ? `/repair/${bSlug}/${mSlug}` : bSlug ? `/repair/${bSlug}` : '/repair';
+    const targetUrl = `${targetPath}?step=3&brand=${encodeURIComponent(form.brand)}&model=${encodeURIComponent(form.model)}&issue=${encodeURIComponent(selectedIssueIds.join(','))}`;
+    navigate(`/login?redirect=${encodeURIComponent(targetUrl)}`);
+  };
+
 
   // Dynamically detect product_type if configured in admin repairConfigs
   const detectedProductType = useMemo(() => {
@@ -969,7 +1017,7 @@ export default function Repair() {
                           </div>
                           <p className="mt-2 text-xs font-black text-ink-900 group-hover:text-[#344257] truncate w-full transition-colors">{item.model}</p>
                           <span className="mt-2 badge bg-emerald-50 text-emerald-800 font-black text-[10px]">
-                            From {formatINR(displayPrice)}
+                            From {formatDisplayPrice(displayPrice, !!user)}
                           </span>
                         </button>
                       );
@@ -1020,8 +1068,17 @@ export default function Repair() {
                   <div className="text-left sm:text-right">
                     <p className="text-[10px] uppercase font-bold text-[#C0C8D8] tracking-wider">Estimated Repair Cost</p>
                     <p className="text-2xl font-black text-white">
-                      {formatINR(totalRepairCost)}
+                      {formatDisplayPrice(totalRepairCost, !!user)}
                     </p>
+                    {!user && (
+                      <button
+                        type="button"
+                        onClick={handleGoToLoginForRepairExactPrice}
+                        className="text-[10px] font-bold text-emerald-300 hover:text-white underline flex items-center gap-1 cursor-pointer transition"
+                      >
+                        <Lock className="h-3 w-3" /> Know exact price? Login to view
+                      </button>
+                    )}
                   </div>
                   <Link
                     to={brandSlug ? `/repair/${brandSlug}` : form.brand ? `/repair/${form.brand.toLowerCase()}` : '/repair'}
@@ -1075,7 +1132,7 @@ export default function Repair() {
                       <div className="flex-1">
                         <div className="flex items-center justify-between gap-2">
                           <p className="font-bold text-sm text-ink-900">{issue.label}</p>
-                          <span className="font-display font-black text-[#344257] text-base">{formatINR(issue.cost)}</span>
+                          <span className="font-display font-black text-[#344257] text-base">{formatDisplayPrice(issue.cost, !!user)}</span>
                         </div>
                         <p className="mt-1 text-xs text-ink-500 leading-relaxed">{issue.desc}</p>
                         <div className="mt-3 flex items-center justify-between text-[10px] font-bold">
@@ -1113,7 +1170,7 @@ export default function Repair() {
 
                 <div className="text-right shrink-0">
                   <p className="text-[10px] uppercase font-bold text-slate-400 tracking-wider">Total Combined Quote</p>
-                  <p className="font-display font-black text-2xl text-emerald-400">{formatINR(totalRepairCost)}</p>
+                  <p className="font-display font-black text-2xl text-emerald-400">{formatDisplayPrice(totalRepairCost, !!user)}</p>
                 </div>
               </div>
 
@@ -1132,8 +1189,21 @@ export default function Repair() {
                 <button type="button" onClick={() => goToStep(1)} className="btn-outline text-sm">
                   Back
                 </button>
-                <button type="button" onClick={() => goToStep(3)} className="btn-primary flex items-center gap-2">
-                  View Total Upfront Quote ({formatINR(totalRepairCost)}) <ArrowRight className="h-4 w-4" />
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (!user) {
+                      handleGoToLoginForRepairExactPrice();
+                    } else {
+                      goToStep(3);
+                    }
+                  }}
+                  className="btn-primary flex items-center gap-2"
+                >
+                  {!user
+                    ? 'Want to Know Exact Price? Login to View'
+                    : `View Total Upfront Quote (${formatINR(totalRepairCost)})`}{' '}
+                  <ArrowRight className="h-4 w-4" />
                 </button>
               </div>
             </div>
@@ -1165,9 +1235,21 @@ export default function Repair() {
                 <div>
                   <p className="text-xs font-bold uppercase tracking-widest text-emerald-400">Total Upfront Repair Price (Incl. Parts & Labor)</p>
                   <div className="mt-2 font-display text-4xl sm:text-5xl font-black text-white">
-                    {formatINR(totalRepairCost)}
+                    {user ? formatINR(totalRepairCost) : formatMaskedPrice(totalRepairCost)}
                   </div>
-                  <p className="mt-2 text-xs text-white/70">No hidden fees · Pay only after testing your phone</p>
+                  {!user ? (
+                    <div className="mt-3">
+                      <button
+                        type="button"
+                        onClick={handleGoToLoginForRepairExactPrice}
+                        className="btn bg-white text-[#344257] hover:bg-gray-100 font-black text-xs px-4 py-2 rounded-xl inline-flex items-center gap-1.5 shadow-md cursor-pointer transition"
+                      >
+                        <Lock className="h-3.5 w-3.5 text-[#344257]" /> Want exact price? Login to view
+                      </button>
+                    </div>
+                  ) : (
+                    <p className="mt-2 text-xs text-white/70">No hidden fees · Pay only after testing your phone</p>
+                  )}
                 </div>
 
                 {/* Selected Issues List */}
@@ -1176,7 +1258,7 @@ export default function Repair() {
                   {selectedIssues.map((item) => (
                     <div key={item.id} className="flex items-center justify-between text-slate-200 font-semibold border-b border-white/10 pb-1.5 pt-0.5">
                       <span>• {item.label}</span>
-                      <span className="font-bold text-white">{formatINR(item.cost)}</span>
+                      <span className="font-bold text-white">{formatDisplayPrice(item.cost, !!user)}</span>
                     </div>
                   ))}
                 </div>
@@ -1199,8 +1281,19 @@ export default function Repair() {
                 <button type="button" onClick={() => goToStep(2)} className="btn-outline text-sm">
                   Change Issue(s)
                 </button>
-                <button type="button" onClick={() => goToStep(4)} className="btn-primary flex items-center gap-2">
-                  Schedule Doorstep Booking <ArrowRight className="h-4 w-4" />
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (!user) {
+                      handleGoToLoginForRepairExactPrice();
+                    } else {
+                      goToStep(4);
+                    }
+                  }}
+                  className="btn-primary flex items-center gap-2"
+                >
+                  {!user ? 'Login to View Final Price & Schedule' : 'Schedule Doorstep Booking'}{' '}
+                  <ArrowRight className="h-4 w-4" />
                 </button>
               </div>
             </div>

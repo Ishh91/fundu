@@ -1,5 +1,6 @@
 import { useState, useMemo, useEffect } from 'react';
 import { useNavigate, useParams, Link } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 import {
   Search,
   Sparkles,
@@ -18,7 +19,7 @@ import {
   FileText,
   Layers,
 } from 'lucide-react';
-import { formatINR } from '../lib/db';
+import { formatINR, formatDisplayPrice } from '../lib/db';
 import { getCleanPhoneImage, getCleanBrandLogo, BRAND_FRONT_FALLBACKS, getGenericDevicePlaceholder } from '../lib/phoneImages';
 import { usePriceSync, applyPriceOverrides, isModelDeleted } from '../lib/priceSync';
 import { MASTER_MODEL_CATALOG } from './SellPhone';
@@ -158,6 +159,7 @@ export default function SellBrandPage() {
     modelSlug?: string;
   }>();
   const navigate = useNavigate();
+  const { user } = useAuth();
 
   const brandCleanKey = useMemo(() => {
     if (!brandSlug) return 'apple';
@@ -690,7 +692,7 @@ export default function SellBrandPage() {
                       </p>
                       <div className="flex flex-col items-center gap-1 mt-1">
                         <span className="badge bg-[#F0F0F5] text-[#344257] border border-[#C0C8D8] font-black text-[11px]">
-                          Up to {formatINR(funduPrice)}
+                          {formatDisplayPrice(funduPrice, !!user)}
                         </span>
                         <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-1.5 py-0.5 rounded-full">
                           Best Price Guarantee

@@ -30,7 +30,7 @@ import {
 } from 'lucide-react';
 import { computeDetailedResaleValuation, fetchSellPriceConfig, fetchPhoneModels, searchMobileApiDev, calculateMarketPriceComparison, type SellPriceConfig } from '../lib/mobileApi';
 import { getFunduPhoneQuote, type FunduQuoteResponse } from '../lib/quoteEngine';
-import { db, formatINR } from '../lib/db';
+import { db, formatINR, formatMaskedPrice, formatDisplayPrice } from '../lib/db';
 import { useAuth } from '../context/AuthContext';
 import { ALL_INDIAN_PHONES_CATALOG } from '../data/indianPhonesCatalog';
 import { getCleanPhoneImage, getCleanBrandLogo, BRAND_FRONT_FALLBACKS, getGenericDevicePlaceholder } from '../lib/phoneImages';
@@ -1411,6 +1411,20 @@ export default function SellPhone() {
     }
   };
 
+  const handleGoToLoginForExactPrice = () => {
+    try {
+      sessionStorage.setItem('fundu_sell_form', JSON.stringify(form));
+    } catch {}
+    const cleanBrand = (brandSlug || form.brand || '').replace(/^sell-/, '').toLowerCase();
+    const cleanModel = (modelSlug || form.model || '').toLowerCase().replace(/\s+/g, '-');
+    const targetPath = cleanBrand && cleanModel
+      ? `/sell-old-mobile-phone/sell-${cleanBrand}/sell-${cleanModel}`
+      : window.location.pathname;
+    const targetUrl = `${targetPath}?step=3&brand=${encodeURIComponent(form.brand)}&model=${encodeURIComponent(form.model)}&storage=${encodeURIComponent(form.storage)}`;
+    navigate(`/login?redirect=${encodeURIComponent(targetUrl)}`);
+  };
+
+
   // Real Approved Database Reviews State
   const [dbReviews, setDbReviews] = useState<Array<{ id: string; reviewer_name: string; location: string; rating: number; comment: string }>>([]);
   useEffect(() => {
@@ -1479,8 +1493,36 @@ export default function SellPhone() {
     pickupArea: getPanIndiaLocation().displayLabel || 'New Delhi (110001)',
     pickupDate: new Date().toISOString().split('T')[0],
     pickupSlot: '10 AM - 12 PM',
-    notes: '',
   });
+
+  // Restore condition questionnaire answers from sessionStorage if customer logged in and redirected back
+  useEffect(() => {
+    try {
+      const saved = sessionStorage.getItem('fundu_sell_form');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (parsed && typeof parsed === 'object') {
+          setForm((prev) => ({
+            ...prev,
+            ...parsed,
+            brand: prev.brand || parsed.brand || '',
+            model: prev.model || parsed.model || '',
+            storage: prev.storage || parsed.storage || '',
+          }));
+        }
+      }
+    } catch {}
+  }, []);
+
+  // Sync condition questionnaire answers to sessionStorage
+  useEffect(() => {
+    if (form.brand || form.model) {
+      try {
+        sessionStorage.setItem('fundu_sell_form', JSON.stringify(form));
+      } catch {}
+    }
+  }, [form]);
+
 
   const [pickupSearchQuery, setPickupSearchQuery] = useState('');
   const [pickupSearchResults, setPickupSearchResults] = useState<PanIndiaLocation[]>([]);
@@ -2328,7 +2370,7 @@ export default function SellPhone() {
                           </div>
                           <div className="flex flex-col items-end gap-0.5 shrink-0">
                             <span className="badge bg-[#F0F0F5] text-[#344257] border border-[#C0C8D8] font-extrabold text-xs">
-                              Up to {formatINR(item.price)}
+                              {formatDisplayPrice(item.price, !!user)}
                             </span>
                             <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200">
                               Best Resale Price
@@ -2551,7 +2593,7 @@ export default function SellPhone() {
                           <p className="font-extrabold text-sm text-gray-900 group-hover:text-[#344257] transition-colors">{m.model}</p>
                           <div className="flex items-center gap-1.5 mt-1 flex-wrap">
                             <span className="badge bg-[#F0F0F5] text-[#344257] border border-[#C0C8D8] font-extrabold text-[11px]">
-                              Up to {formatINR(m.price)}
+                              {formatDisplayPrice(m.price, !!user)}
                             </span>
                             <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200">
                               Best Resale Price
@@ -2638,7 +2680,7 @@ export default function SellPhone() {
                     </div>
                     <p className="mt-2 text-xs font-extrabold text-gray-900 group-hover:text-[#344257] transition-colors truncate w-full">{item.model}</p>
                     <span className="mt-1 badge bg-[#F0F0F5] text-[#344257] border border-[#C0C8D8] font-extrabold text-[10px]">
-                      Up to {formatINR(item.price)}
+                      {formatDisplayPrice(item.price, !!user)}
                     </span>
                   </button>
                 ))}
@@ -2925,12 +2967,22 @@ export default function SellPhone() {
                         <div className="flex items-center gap-1.5">
                           <span className="text-xs text-gray-500 font-medium">Fundu Quote:</span>
                           <span className="font-black text-sm sm:text-base text-[#344257]">
-                            Up to {formatINR(estimate)}
+                            {formatDisplayPrice(estimate, !!user)}
                           </span>
                         </div>
-                        <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full inline-block">
-                          Best Price Guaranteed • Top Market Payout
-                        </span>
+                        {!user ? (
+                          <button
+                            type="button"
+                            onClick={handleGoToLoginForExactPrice}
+                            className="text-[10px] font-bold text-blue-700 bg-blue-50 border border-blue-200 px-2.5 py-0.5 rounded-full inline-flex items-center gap-1 hover:bg-blue-100 cursor-pointer transition shadow-2xs"
+                          >
+                            <Lock className="h-3 w-3" /> Know exact price? Login to view
+                          </button>
+                        ) : (
+                          <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full inline-block">
+                            Real Final Price • Guaranteed
+                          </span>
+                        )}
                       </div>
                     );
                   })()}
@@ -3328,12 +3380,20 @@ export default function SellPhone() {
                 </button>
                 <button
                   type="button"
-                  onClick={() => goToStep(3)}
+                  onClick={() => {
+                    if (!user) {
+                      handleGoToLoginForExactPrice();
+                    } else {
+                      goToStep(3);
+                    }
+                  }}
                   className="btn-primary flex items-center gap-2"
                 >
-                  {funduQuote?.status === 'requires_manual_review'
+                  {!user
+                    ? 'Want to Know Exact Price? Login to View'
+                    : funduQuote?.status === 'requires_manual_review'
                     ? 'View Inspection Details'
-                    : 'View Conditional Estimate'}{' '}
+                    : 'View Final Price'}{' '}
                   <ArrowRight className="h-4 w-4" />
                 </button>
               </div>
@@ -3366,11 +3426,21 @@ export default function SellPhone() {
                     Estimated Buyback Value
                   </p>
                   <div className="font-display text-4xl sm:text-5xl font-black text-white">
-                    {formatINR(funduQuote.offerAmount || estimate)}
+                    {user ? formatINR(funduQuote.offerAmount || estimate) : formatMaskedPrice(funduQuote.offerAmount || estimate)}
                   </div>
-                  <p className="text-xs text-amber-200 font-semibold">
-                    Estimated valuation · Final spot payment verified upon doorstep inspection
-                  </p>
+                  {!user ? (
+                    <button
+                      type="button"
+                      onClick={handleGoToLoginForExactPrice}
+                      className="mt-2 text-xs font-bold text-amber-200 hover:text-white underline inline-flex items-center gap-1 cursor-pointer"
+                    >
+                      <Lock className="h-3.5 w-3.5" /> Login to reveal exact price
+                    </button>
+                  ) : (
+                    <p className="text-xs text-amber-200 font-semibold">
+                      Estimated valuation · Final spot payment verified upon doorstep inspection
+                    </p>
+                  )}
                 </div>
 
                 {/* Clear explanation banner */}
@@ -3459,11 +3529,23 @@ export default function SellPhone() {
                     Estimated Buyback Offer
                   </p>
                   <div className="font-display text-4xl sm:text-5xl font-black text-white">
-                    {formatINR(funduQuote?.offerAmount ?? estimate)}
+                    {user ? formatINR(funduQuote?.offerAmount ?? estimate) : formatMaskedPrice(funduQuote?.offerAmount ?? estimate)}
                   </div>
-                  <p className="text-xs text-gray-300">
-                    Conditional estimate subject to physical inspection · Valid for 7 days
-                  </p>
+                  {!user ? (
+                    <div className="pt-1">
+                      <button
+                        type="button"
+                        onClick={handleGoToLoginForExactPrice}
+                        className="btn bg-white text-[#344257] hover:bg-gray-100 font-black text-xs px-4 py-2 rounded-xl inline-flex items-center gap-1.5 shadow-md cursor-pointer transition"
+                      >
+                        <Lock className="h-3.5 w-3.5 text-[#344257]" /> Want exact price? Login to view
+                      </button>
+                    </div>
+                  ) : (
+                    <p className="text-xs text-gray-300">
+                      Real guaranteed quote · Subject to physical inspection · Valid for 7 days
+                    </p>
+                  )}
 
                   <div className="flex flex-wrap justify-center gap-2 text-xs font-semibold pt-2">
                     <span className="inline-flex items-center gap-1 rounded-full bg-white/15 px-3 py-1 text-white border border-white/20">
@@ -3595,10 +3677,17 @@ export default function SellPhone() {
                   </button>
                   <button
                     type="button"
-                    onClick={() => goToStep(4)}
+                    onClick={() => {
+                      if (!user) {
+                        handleGoToLoginForExactPrice();
+                      } else {
+                        goToStep(4);
+                      }
+                    }}
                     className="btn-primary flex items-center gap-2"
                   >
-                    Accept & Schedule Pickup <ArrowRight className="h-4 w-4" />
+                    {!user ? 'Login to View Final Price & Schedule' : 'Accept & Schedule Pickup'}{' '}
+                    <ArrowRight className="h-4 w-4" />
                   </button>
                 </div>
               </div>

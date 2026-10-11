@@ -439,3 +439,25 @@ export const formatINR = (amount: number) =>
     currency: 'INR',
     maximumFractionDigits: 0,
   }).format(amount);
+
+/**
+ * Masks price when customer is not logged in:
+ * "if first number is 1 then add xxx to the price" (e.g. ₹1xxx, ₹2xxx)
+ */
+export const formatMaskedPrice = (amount: number): string => {
+  if (!amount || isNaN(amount) || amount <= 0) return '₹1xxx';
+  const str = String(Math.round(amount));
+  const firstDigit = str[0] || '1';
+  return `₹${firstDigit}xxx`;
+};
+
+/**
+ * Returns real price if logged in, otherwise masked price.
+ */
+export const formatDisplayPrice = (amount: number, isLoggedIn: boolean): string => {
+  if (isLoggedIn) {
+    return formatINR(amount);
+  }
+  return formatMaskedPrice(amount);
+};
+
