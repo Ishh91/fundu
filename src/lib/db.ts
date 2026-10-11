@@ -442,13 +442,15 @@ export const formatINR = (amount: number) =>
 
 /**
  * Masks price when customer is not logged in:
- * "if first number is 1 then add xxx to the price" (e.g. ₹1xxx, ₹2xxx)
+ * Shows the first digit and replaces every remaining digit with 'x'.
+ * e.g. 13000 -> ₹1xxxx, 1200 -> ₹1xxx
  */
 export const formatMaskedPrice = (amount: number): string => {
-  if (!amount || isNaN(amount) || amount <= 0) return '₹1xxx';
+  if (!amount || isNaN(amount) || amount <= 0) return '₹1xxxx';
   const str = String(Math.round(amount));
   const firstDigit = str[0] || '1';
-  return `₹${firstDigit}xxx`;
+  const xCount = Math.max(1, str.length - 1);
+  return `₹${firstDigit}${'x'.repeat(xCount)}`;
 };
 
 /**
