@@ -2369,11 +2369,11 @@ export default function SellPhone() {
                             </div>
                           </div>
                           <div className="flex flex-col items-end gap-0.5 shrink-0">
-                            <span className="badge bg-[#F0F0F5] text-[#344257] border border-[#C0C8D8] font-extrabold text-xs">
-                              {formatDisplayPrice(item.price, !!user)}
+                            <span className="badge bg-[#344257] text-white font-extrabold text-xs px-2.5 py-1 rounded-lg">
+                              Evaluate Device →
                             </span>
                             <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200">
-                              Best Resale Price
+                              Instant Cash Quote
                             </span>
                           </div>
                         </button>
@@ -2593,7 +2593,7 @@ export default function SellPhone() {
                           <p className="font-extrabold text-sm text-gray-900 group-hover:text-[#344257] transition-colors">{m.model}</p>
                           <div className="flex items-center gap-1.5 mt-1 flex-wrap">
                             <span className="badge bg-[#F0F0F5] text-[#344257] border border-[#C0C8D8] font-extrabold text-[11px]">
-                              {formatDisplayPrice(m.price, !!user)}
+                              Select Condition for Quote
                             </span>
                             <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200">
                               Best Resale Price
@@ -2680,7 +2680,7 @@ export default function SellPhone() {
                     </div>
                     <p className="mt-2 text-xs font-extrabold text-gray-900 group-hover:text-[#344257] transition-colors truncate w-full">{item.model}</p>
                     <span className="mt-1 badge bg-[#F0F0F5] text-[#344257] border border-[#C0C8D8] font-extrabold text-[10px]">
-                      {formatDisplayPrice(item.price, !!user)}
+                      Evaluate Condition →
                     </span>
                   </button>
                 ))}
@@ -2959,33 +2959,14 @@ export default function SellPhone() {
                     </div>
                   )}
 
-                  {/* Maximum Resale Cash Value Callout with Market +5-7% Comparison */}
-                  {(() => {
-                    const comp = calculateMarketPriceComparison(estimate);
-                    return (
-                      <div className="flex flex-col sm:flex-row sm:items-center justify-center sm:justify-start gap-1 sm:gap-2.5 pt-0.5">
-                        <div className="flex items-center gap-1.5">
-                          <span className="text-xs text-gray-500 font-medium">Fundu Quote:</span>
-                          <span className="font-black text-sm sm:text-base text-[#344257]">
-                            {formatDisplayPrice(estimate, !!user)}
-                          </span>
-                        </div>
-                        {!user ? (
-                          <button
-                            type="button"
-                            onClick={handleGoToLoginForExactPrice}
-                            className="text-[10px] font-bold text-blue-700 bg-blue-50 border border-blue-200 px-2.5 py-0.5 rounded-full inline-flex items-center gap-1 hover:bg-blue-100 cursor-pointer transition shadow-2xs"
-                          >
-                            <Lock className="h-3 w-3" /> Know exact price? Login to view
-                          </button>
-                        ) : (
-                          <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full inline-block">
-                            Real Final Price • Guaranteed
-                          </span>
-                        )}
-                      </div>
-                    );
-                  })()}
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-center sm:justify-start gap-1 sm:gap-2.5 pt-0.5">
+                    <span className="inline-flex items-center gap-1.5 text-xs font-bold text-[#344257] bg-[#F0F0F5] border border-[#C0C8D8] px-3 py-1 rounded-xl">
+                      <Sparkles className="h-3.5 w-3.5 text-[#6A859F]" /> Answer condition questions below to calculate exact price
+                    </span>
+                    <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full inline-block">
+                      Condition-Based Valuation
+                    </span>
+                  </div>
                 </div>
 
                 <div className="shrink-0 flex flex-col items-center sm:items-end gap-1.5">
