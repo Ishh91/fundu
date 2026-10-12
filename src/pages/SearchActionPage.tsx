@@ -18,7 +18,7 @@ import {
 import { useAuth } from '../context/AuthContext';
 import { ALL_INDIAN_PHONES_CATALOG } from '../data/indianPhonesCatalog';
 import { getCleanPhoneImage } from '../lib/phoneImages';
-import { db, formatINR, formatDisplayPrice } from '../lib/db';
+import { db, formatINR } from '../lib/db';
 import type { Product } from '../types';
 
 export default function SearchActionPage() {
@@ -315,10 +315,10 @@ export default function SearchActionPage() {
                       </p>
 
                       <div className="pt-1">
-                        <p className="text-[11px] text-gray-400 font-bold uppercase tracking-wider">Estimated Valuation:</p>
-                        <p className="text-lg font-black text-[#344257]">
-                          {formatDisplayPrice(phone.price, !!user)}
-                        </p>
+                        <p className="text-[11px] text-gray-400 font-bold uppercase tracking-wider">Instant Valuation:</p>
+                        <span className="badge bg-[#F0F0F5] text-[#344257] border border-[#C0C8D8] font-black text-xs px-2.5 py-1">
+                          Evaluated by Condition →
+                        </span>
                       </div>
                     </div>
 

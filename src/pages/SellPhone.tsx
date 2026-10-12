@@ -3361,20 +3361,12 @@ export default function SellPhone() {
                 </button>
                 <button
                   type="button"
-                  onClick={() => {
-                    if (!user) {
-                      handleGoToLoginForExactPrice();
-                    } else {
-                      goToStep(3);
-                    }
-                  }}
+                  onClick={() => goToStep(3)}
                   className="btn-primary flex items-center gap-2"
                 >
-                  {!user
-                    ? 'Want to Know Exact Price? Login to View'
-                    : funduQuote?.status === 'requires_manual_review'
+                  {funduQuote?.status === 'requires_manual_review'
                     ? 'View Inspection Details'
-                    : 'View Final Price'}{' '}
+                    : 'Calculate & View Final Quote'}{' '}
                   <ArrowRight className="h-4 w-4" />
                 </button>
               </div>
@@ -3563,14 +3555,14 @@ export default function SellPhone() {
                         <div className="bg-white p-3.5 rounded-xl border border-gray-200/90 shadow-2xs">
                           <p className="text-[11px] font-bold text-gray-500">Standard Market Value</p>
                           <p className="text-base sm:text-lg font-black text-gray-600 line-through decoration-rose-500 decoration-2 mt-0.5">
-                            {formatINR(comparison.standardMarketPrice)}
+                            {user ? formatINR(comparison.standardMarketPrice) : formatMaskedPrice(comparison.standardMarketPrice)}
                           </p>
                           <span className="text-[10px] text-gray-400 font-medium">Other Buyback Sites</span>
                         </div>
                         <div className="bg-gradient-to-r from-emerald-600 to-teal-600 text-white p-3.5 rounded-xl shadow-md">
                           <p className="text-[11px] font-bold text-emerald-100">Fundu Spot Cash Offer</p>
                           <p className="text-base sm:text-lg font-black text-white mt-0.5">
-                            {formatINR(comparison.funduPrice)}
+                            {user ? formatINR(comparison.funduPrice) : formatMaskedPrice(comparison.funduPrice)}
                           </p>
                           <span className="text-[10px] text-emerald-100 font-extrabold">+5% Extra Cash Bonus</span>
                         </div>
@@ -3578,7 +3570,7 @@ export default function SellPhone() {
 
                       <div className="p-2.5 rounded-xl bg-emerald-100/70 border border-emerald-200 text-center">
                         <p className="text-xs text-emerald-950 font-bold">
-                          🎉 You receive <span className="font-black text-emerald-900 underline">+{formatINR(comparison.extraBonus)} Extra Cash</span> over standard market rates with 100% free doorstep pickup & instant payment!
+                          🎉 You receive <span className="font-black text-emerald-900 underline">{user ? `+${formatINR(comparison.extraBonus)} Extra Cash` : 'Extra Cash Bonus'}</span> over standard market rates with 100% free doorstep pickup & instant payment!
                         </p>
                       </div>
                     </div>
