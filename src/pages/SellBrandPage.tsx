@@ -19,7 +19,7 @@ import {
   FileText,
   Layers,
 } from 'lucide-react';
-import { formatINR, formatDisplayPrice } from '../lib/db';
+import { formatINR } from '../lib/db';
 import { getCleanPhoneImage, getCleanBrandLogo, BRAND_FRONT_FALLBACKS, getGenericDevicePlaceholder } from '../lib/phoneImages';
 import { usePriceSync, applyPriceOverrides, isModelDeleted } from '../lib/priceSync';
 import { MASTER_MODEL_CATALOG } from './SellPhone';
@@ -691,8 +691,8 @@ export default function SellBrandPage() {
                         {debouncedQuery ? highlightMatch(displayName, debouncedQuery) : displayName}
                       </p>
                       <div className="flex flex-col items-center gap-1 mt-1">
-                        <span className="badge bg-[#F0F0F5] text-[#344257] border border-[#C0C8D8] font-black text-[11px]">
-                          {formatDisplayPrice(funduPrice, !!user)}
+                        <span className="badge bg-[#F0F0F5] text-[#344257] border border-[#C0C8D8] font-black text-[11px] group-hover:bg-[#344257] group-hover:text-white transition-colors">
+                          Check Value →
                         </span>
                         <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-1.5 py-0.5 rounded-full">
                           Best Price Guarantee
