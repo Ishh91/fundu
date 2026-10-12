@@ -1,5 +1,5 @@
 import { useState, useMemo, useEffect, useRef } from 'react';
-import { Link, useNavigate, useSearchParams, useParams } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams, useParams, useLocation } from 'react-router-dom';
 import {
   BadgeIndianRupee,
   Truck,
@@ -1370,6 +1370,7 @@ const FAQS_LIST = [
 export default function SellPhone() {
   const { user, profile } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   const { brandSlug, modelSlug } = useParams<{ brandSlug?: string; modelSlug?: string }>();
   const [searchParams] = useSearchParams();
   const { version, getEffectivePrice } = usePriceSync();
@@ -1377,6 +1378,21 @@ export default function SellPhone() {
   const stepParam = parseInt(searchParams.get('step') || '', 10);
   const initialStep = !isNaN(stepParam) && stepParam >= 1 && stepParam <= 4 ? stepParam : (modelSlug ? 2 : 1);
   const [step, setStep] = useState(initialStep);
+
+  // When visiting /sell or /sell-old-mobile-phone with no brand/model params, ensure All Brands is shown
+  useEffect(() => {
+    const isRootSell = location.pathname === '/sell' || location.pathname === '/sell-old-mobile-phone';
+    if (isRootSell && !searchParams.get('brand') && !searchParams.get('model') && !brandSlug && !modelSlug) {
+      setForm((cur) => ({
+        ...cur,
+        brand: '',
+        model: '',
+        storage: '',
+      }));
+      setSelectedSeries('All');
+      setStep(1);
+    }
+  }, [location.pathname, location.key, searchParams, brandSlug, modelSlug]);
 
   // Sync step with URL search params (e.g. browser back/forward buttons)
   useEffect(() => {
@@ -1497,6 +1513,14 @@ export default function SellPhone() {
 
   // Restore condition questionnaire answers from sessionStorage if customer logged in and redirected back
   useEffect(() => {
+    const isRootSell = location.pathname === '/sell' || location.pathname === '/sell-old-mobile-phone';
+    const hasExplicitTarget = Boolean(brandSlug || modelSlug || searchParams.get('brand') || searchParams.get('model'));
+
+    // Do NOT restore cached brand/model on bare /sell route so All Brands grid displays
+    if (isRootSell && !hasExplicitTarget) {
+      return;
+    }
+
     try {
       const saved = sessionStorage.getItem('fundu_sell_form');
       if (saved) {
@@ -1512,7 +1536,7 @@ export default function SellPhone() {
         }
       }
     } catch {}
-  }, []);
+  }, [brandSlug, modelSlug, searchParams, location.pathname]);
 
   // Sync condition questionnaire answers to sessionStorage
   useEffect(() => {
@@ -1731,6 +1755,15 @@ export default function SellPhone() {
           model: m ?? cur.model,
           storage: s ?? cur.storage,
         }));
+      } else {
+        setForm((cur) => ({
+          ...cur,
+          brand: '',
+          model: '',
+          storage: '',
+        }));
+        setSelectedSeries('All');
+        setStep(1);
       }
     }
   }, [brandSlug, modelSlug, searchParams]);
@@ -2649,41 +2682,58 @@ export default function SellPhone() {
               </div>
 
               <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
-                {MASTER_MODEL_CATALOG.filter((item) => !isModelDeleted(item.brand, item.model)).slice(0, 6).map((item) => (
-                  <button
-                    key={`${item.brand}-${item.model}`}
-                    type="button"
-                    onClick={() => handleQuickModelSelect(item)}
-                    className="p-3.5 rounded-2xl border border-gray-200 bg-white hover:border-[#6A859F] hover:shadow-lg transition-all duration-300 flex flex-col items-center text-center cursor-pointer group"
-                  >
-                    <div className="h-20 w-full overflow-hidden rounded-xl p-1 bg-white flex items-center justify-center">
-                      <img
-                        src={getCleanPhoneImage(item.brand, item.model, item.image)}
-                        alt={item.model}
-                        className="h-full w-full object-contain group-hover:scale-105 transition-transform"
-                        referrerPolicy="no-referrer"
-                        onError={(e) => {
-                          const target = e.currentTarget;
-                          if (!target.dataset.triedCanonical && item.brand && item.model) {
-                            target.dataset.triedCanonical = 'true';
-                            const bSlug = item.brand.toLowerCase().replace(/[^a-z0-9]/g, '');
-                            const mSlug = item.model.toLowerCase().replace(new RegExp(`^${bSlug}\\s*`, 'i'), '').replace(/\+/g, '-plus').replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
-                            const canonical = `https://fdn2.gsmarena.com/vv/bigpic/${bSlug}-${mSlug}.jpg`;
-                            if (target.src !== canonical) {
-                              target.src = canonical;
-                              return;
-                            }
-                          }
-                          target.src = getGenericDevicePlaceholder(item.brand, item.model);
-                        }}
-                      />
-                    </div>
-                    <p className="mt-2 text-xs font-extrabold text-gray-900 group-hover:text-[#344257] transition-colors truncate w-full">{item.model}</p>
-                    <span className="mt-1 badge bg-[#F0F0F5] text-[#344257] border border-[#C0C8D8] font-extrabold text-[10px]">
-                      Evaluate Condition →
-                    </span>
-                  </button>
-                ))}
+                {(() => {
+                  const targetBrands = ['Apple', 'Samsung', 'OnePlus', 'Xiaomi', 'Realme', 'Vivo'];
+                  const picked: typeof MASTER_MODEL_CATALOG[0][] = [];
+                  for (const b of targetBrands) {
+                    const item = MASTER_MODEL_CATALOG.find(
+                      (m) =>
+                        m.brand.toLowerCase() === b.toLowerCase() &&
+                        !isModelDeleted(m.brand, m.model) &&
+                        !m.model.includes('2007') &&
+                        !m.model.includes('3G')
+                    );
+                    if (item) picked.push(item);
+                  }
+                  const displayList = picked.length >= 4 ? picked : MASTER_MODEL_CATALOG.slice(0, 6);
+                  return displayList.map((item) => {
+                    return (
+                      <button
+                        key={`${item.brand}-${item.model}`}
+                        type="button"
+                        onClick={() => handleQuickModelSelect(item)}
+                        className="p-3.5 rounded-2xl border border-gray-200 bg-white hover:border-[#6A859F] hover:shadow-lg transition-all duration-300 flex flex-col items-center text-center cursor-pointer group"
+                      >
+                        <div className="h-20 w-full overflow-hidden rounded-xl p-1 bg-white flex items-center justify-center">
+                          <img
+                            src={getCleanPhoneImage(item.brand, item.model, item.image)}
+                            alt={item.model}
+                            className="h-full w-full object-contain group-hover:scale-105 transition-transform"
+                            referrerPolicy="no-referrer"
+                            onError={(e) => {
+                              const target = e.currentTarget;
+                              if (!target.dataset.triedCanonical && item.brand && item.model) {
+                                target.dataset.triedCanonical = 'true';
+                                const bSlug = item.brand.toLowerCase().replace(/[^a-z0-9]/g, '');
+                                const mSlug = item.model.toLowerCase().replace(new RegExp(`^${bSlug}\\s*`, 'i'), '').replace(/\+/g, '-plus').replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+                                const canonical = `https://fdn2.gsmarena.com/vv/bigpic/${bSlug}-${mSlug}.jpg`;
+                                if (target.src !== canonical) {
+                                  target.src = canonical;
+                                  return;
+                                }
+                              }
+                              target.src = getGenericDevicePlaceholder(item.brand, item.model);
+                            }}
+                          />
+                        </div>
+                        <p className="mt-2 text-xs font-extrabold text-gray-900 group-hover:text-[#344257] transition-colors truncate w-full">{item.model}</p>
+                        <span className="mt-1 badge bg-[#F0F0F5] text-[#344257] border border-[#C0C8D8] font-extrabold text-[10px]">
+                          Evaluate Condition →
+                        </span>
+                      </button>
+                    );
+                  });
+                })()}
               </div>
             </div>
 

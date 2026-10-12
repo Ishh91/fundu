@@ -1067,6 +1067,12 @@ export default function Navbar() {
               <div className="relative flex items-center gap-1 py-2">
                 <Link
                   to="/sell"
+                  onClick={() => {
+                    setActiveDropdown(null);
+                    try {
+                      sessionStorage.removeItem('fundu_sell_form');
+                    } catch {}
+                  }}
                   className={`transition-colors font-bold ${
                     activeDropdown === 'sell-phone' || location.pathname === '/sell'
                       ? 'text-[#344257]'
@@ -1092,7 +1098,16 @@ export default function Navbar() {
                   <div className="absolute left-0 top-full mt-1 w-[460px] rounded-2xl border border-gray-200 bg-white p-4 shadow-2xl z-50 animate-fade-in text-[#344257]">
                     <div className="flex items-center justify-between pb-2 border-b border-gray-100 mb-3">
                       <span className="text-xs font-bold text-gray-900">Select Brand to Sell</span>
-                      <Link to="/sell" className="text-xs font-bold text-[#47576E] hover:text-[#344257] hover:underline">
+                      <Link
+                        to="/sell"
+                        onClick={() => {
+                          setActiveDropdown(null);
+                          try {
+                            sessionStorage.removeItem('fundu_sell_form');
+                          } catch {}
+                        }}
+                        className="text-xs font-bold text-[#47576E] hover:text-[#344257] hover:underline"
+                      >
                         View All Brands →
                       </Link>
                     </div>
@@ -1319,6 +1334,12 @@ export default function Navbar() {
               <div className="grid gap-1 border-b border-gray-100 pb-3">
                 <Link
                   to="/sell"
+                  onClick={() => {
+                    setIsMobileMenuOpen(false);
+                    try {
+                      sessionStorage.removeItem('fundu_sell_form');
+                    } catch {}
+                  }}
                   className="flex items-center justify-between rounded-xl px-3 py-2.5 text-sm font-bold text-gray-800 hover:bg-gray-50"
                 >
                   <span className="flex items-center gap-2.5">
