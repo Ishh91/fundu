@@ -380,6 +380,7 @@ export default function Repair() {
 
   const [modelsList, setModelsList] = useState<Array<{ name: string; storages: string[] }>>([]);
   const [modelFilter, setModelFilter] = useState('');
+  const [selectedSeries, setSelectedSeries] = useState<string>('All');
   const [loadingModels, setLoadingModels] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -388,7 +389,7 @@ export default function Repair() {
 
   const selectedIssue = selectedIssues[0];
 
-  // Combine API/Catalog models with Admin repair configurations
+  // Combine API/Catalog models with Admin repair configurations and associate each with Series
   const combinedModelsList = useMemo(() => {
     if (!form.brand) return [];
     const bLower = form.brand.toLowerCase().trim();
@@ -398,26 +399,89 @@ export default function Repair() {
       .filter((c) => (c.brand || '').toLowerCase().trim() === bLower && c.is_active !== false)
       .map((c) => ({
         name: c.model,
+        series: c.device_series || `${form.brand} Series`,
         storages: ['64GB', '128GB', '256GB'],
       }));
 
-    const adminNames = new Set(adminModels.map((m) => m.name.toLowerCase().replace(/[\s-]+/g, '')));
+    const seenNames = new Set(adminModels.map((m) => m.name.toLowerCase().replace(/[\s-]+/g, '')));
 
-    // 2. Models from fetchPhoneModels
-    const otherModels = modelsList.filter((m) => {
-      const clean = m.name.toLowerCase().replace(/[\s-]+/g, '');
-      return !adminNames.has(clean);
-    });
+    // 2. Master Model Catalog models with explicit series
+    const masterModels = MASTER_MODEL_CATALOG
+      .filter((m) => m.brand.toLowerCase() === bLower)
+      .filter((m) => {
+        const clean = m.model.toLowerCase().replace(/[\s-]+/g, '');
+        if (seenNames.has(clean)) return false;
+        seenNames.add(clean);
+        return true;
+      })
+      .map((m) => ({
+        name: m.model,
+        series: m.series || `${form.brand} Series`,
+        storages: ['64GB', '128GB', '256GB'],
+      }));
 
-    return [...adminModels, ...otherModels];
+    // 3. Indian Phones Catalog models with series
+    const indianModels = ALL_INDIAN_PHONES_CATALOG
+      .filter((p) => p.brand.toLowerCase() === bLower)
+      .filter((p) => {
+        const clean = p.model.toLowerCase().replace(/[\s-]+/g, '');
+        if (seenNames.has(clean)) return false;
+        seenNames.add(clean);
+        return true;
+      })
+      .map((p) => ({
+        name: p.model,
+        series: p.series || `${form.brand} Series`,
+        storages: ['64GB', '128GB', '256GB'],
+      }));
+
+    // 4. API models from fetchPhoneModels
+    const otherModels = modelsList
+      .filter((m) => {
+        const clean = m.name.toLowerCase().replace(/[\s-]+/g, '');
+        if (seenNames.has(clean)) return false;
+        seenNames.add(clean);
+        return true;
+      })
+      .map((m) => {
+        const mClean = m.name.toLowerCase().replace(/[\s-]+/g, '');
+        const matchedMaster = MASTER_MODEL_CATALOG.find(
+          (x) => x.brand.toLowerCase() === bLower && x.model.toLowerCase().replace(/[\s-]+/g, '') === mClean
+        );
+        const matchedIndian = ALL_INDIAN_PHONES_CATALOG.find(
+          (x) => x.brand.toLowerCase() === bLower && x.model.toLowerCase().replace(/[\s-]+/g, '') === mClean
+        );
+        return {
+          name: m.name,
+          series: matchedMaster?.series || matchedIndian?.series || `${form.brand} Series`,
+          storages: m.storages || ['64GB', '128GB', '256GB'],
+        };
+      });
+
+    return [...adminModels, ...masterModels, ...indianModels, ...otherModels];
   }, [form.brand, repairConfigs, modelsList]);
+
+  // Available Series for Selected Brand
+  const brandSeriesList = useMemo(() => {
+    if (!form.brand) return [];
+    const seriesSet = new Set<string>();
+    combinedModelsList.forEach((m) => {
+      if (m.series && m.series.trim()) {
+        seriesSet.add(m.series.trim());
+      }
+    });
+    return ['All', ...Array.from(seriesSet)];
+  }, [form.brand, combinedModelsList]);
 
   const filteredModelsList = useMemo(() => {
     let list = combinedModelsList.filter((m) => !isModelDeleted(form.brand, m.name));
+    if (selectedSeries !== 'All') {
+      list = list.filter((m) => (m.series || '').toLowerCase() === selectedSeries.toLowerCase());
+    }
     if (!modelFilter.trim()) return list;
     const q = modelFilter.toLowerCase().trim();
     return list.filter((m) => m.name.toLowerCase().includes(q));
-  }, [combinedModelsList, modelFilter, form.brand]);
+  }, [combinedModelsList, selectedSeries, modelFilter, form.brand]);
 
   // Sync params from URL subpage routing
   useEffect(() => {
@@ -890,6 +954,27 @@ export default function Repair() {
                   </div>
                 </div>
 
+                {/* Series Selection Filter Tabs */}
+                {brandSeriesList.length > 1 && (
+                  <div className="flex items-center gap-2 overflow-x-auto scrollbar-hide py-1">
+                    <span className="text-xs font-bold text-gray-500 uppercase tracking-wider shrink-0 mr-1">Series:</span>
+                    {brandSeriesList.map((ser) => (
+                      <button
+                        key={ser}
+                        type="button"
+                        onClick={() => setSelectedSeries(ser)}
+                        className={`px-3.5 py-1.5 rounded-full text-xs font-bold transition shrink-0 cursor-pointer ${
+                          selectedSeries === ser
+                            ? 'bg-[#344257] text-white shadow-xs'
+                            : 'bg-[#F0F0F5] text-[#47576E] hover:bg-[#E4E7F0]'
+                        }`}
+                      >
+                        {ser}
+                      </button>
+                    ))}
+                  </div>
+                )}
+
                 {/* Direct Models Grid View */}
                 {loadingModels ? (
                   <div className="card p-16 text-center rounded-[28px] border border-gray-200 bg-[#F0F0F5]/50">
@@ -904,7 +989,7 @@ export default function Repair() {
                     <p className="text-xs text-gray-500 mt-1">Try clearing your search or typing a different model name</p>
                     <button
                       type="button"
-                      onClick={() => setModelFilter('')}
+                      onClick={() => { setModelFilter(''); setSelectedSeries('All'); }}
                       className="mt-4 btn-outline text-xs py-2 px-4 inline-flex items-center gap-1.5"
                     >
                       Clear Search Filter
@@ -919,9 +1004,9 @@ export default function Repair() {
                         onClick={() => handleSelectPhoneForRepair(form.brand, m.name)}
                         className="group relative flex flex-col items-center justify-between p-4 sm:p-5 rounded-2xl border border-gray-200/90 bg-white hover:border-[#47576E] hover:shadow-xl hover:-translate-y-1 transition-all duration-300 text-center cursor-pointer"
                       >
-                        {/* Top Subtle Pill */}
-                        <span className="text-[10px] font-extrabold text-[#344257] bg-[#F0F0F5] border border-[#C0C8D8] group-hover:bg-[#344257] group-hover:text-white transition-colors px-2 py-0.5 rounded-full mb-2">
-                          Express Service
+                        {/* Top Series Badge Pill */}
+                        <span className="text-[10px] font-extrabold text-[#344257] bg-[#F0F0F5] border border-[#C0C8D8] group-hover:bg-[#344257] group-hover:text-white transition-colors px-2.5 py-0.5 rounded-full mb-2 truncate max-w-full">
+                          {m.series || 'Express Repair'}
                         </span>
 
                         {/* Centered Clean Device Image */}
@@ -939,7 +1024,7 @@ export default function Repair() {
                         </p>
 
                         <div className="mt-4 w-full py-2 px-3 rounded-xl bg-slate-900 text-white font-extrabold text-xs group-hover:bg-[#344257] transition-all flex items-center justify-center gap-1 shadow-sm">
-                          Select Issue <ArrowRight className="h-3.5 w-3.5 group-hover:translate-x-1 transition-transform" />
+                          Select Issues <ArrowRight className="h-3.5 w-3.5 group-hover:translate-x-1 transition-transform" />
                         </div>
                       </button>
                     ))}

@@ -372,6 +372,11 @@ export default function RepairBrandPage() {
                     onClick={() => handleBookRepair(m.model, 'screen')}
                     className="p-3.5 sm:p-5 rounded-2xl border border-gray-100 bg-white hover:border-[#6A859F] hover:shadow-lg transition-all duration-200 group cursor-pointer flex flex-col items-center justify-between text-center min-h-[195px] sm:min-h-[230px]"
                   >
+                    {/* Top Series Badge Pill */}
+                    <span className="text-[10px] font-extrabold text-[#344257] bg-[#F0F0F5] border border-[#C0C8D8] group-hover:bg-[#344257] group-hover:text-white transition-colors px-2.5 py-0.5 rounded-full mb-1 truncate max-w-full">
+                      {m.series || `${brandDisplayName} Series`}
+                    </span>
+
                     {/* Centered Clean Device Image Container */}
                     <div className="h-32 sm:h-40 w-full flex items-center justify-center p-2.5 relative">
                       <img
@@ -402,7 +407,7 @@ export default function RepairBrandPage() {
                     </p>
 
                     <div className="mt-2.5 w-full flex items-center justify-between gap-1 pt-2 border-t border-gray-100 text-[11px]">
-                      <span className="text-gray-400 font-bold">From</span>
+                      <span className="text-gray-400 font-bold">{user ? 'From' : 'Quote'}</span>
                       <span className="font-extrabold text-[#344257] text-xs">
                         {formatDisplayPrice(basePrice, !!user)}
                       </span>

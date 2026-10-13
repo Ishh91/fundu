@@ -1735,6 +1735,7 @@ export default function SellPhone() {
           cleanModelKey.split(' ').map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
 
         const storageParam = searchParams.get('storage');
+        const urlStep = parseInt(searchParams.get('step') || '', 10);
 
         setForm((cur) => ({
           ...cur,
@@ -1742,7 +1743,11 @@ export default function SellPhone() {
           model: foundModel,
           storage: storageParam || cur.storage || '128 GB',
         }));
-        setStep(2);
+        if (!isNaN(urlStep) && urlStep >= 1 && urlStep <= 4) {
+          setStep(urlStep);
+        } else {
+          setStep(2);
+        }
       }
     } else {
       const b = searchParams.get('brand');
