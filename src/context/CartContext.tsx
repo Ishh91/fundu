@@ -2,7 +2,7 @@ import { createContext, useContext, useState, useEffect, ReactNode } from 'react
 import type { Product, SparePart } from '../types';
 
 export type CartItem = {
-  id: string; // Unique key: e.g. "prod123_128GB_Excellent" or "part456"
+  id: string; // Unique key: e.g. "sample-apple-15pro_128_gb_excellent"
   type: 'product' | 'spare_part';
   item: Product | SparePart;
   quantity: number;
@@ -27,37 +27,53 @@ type CartContextValue = {
   deliveryDetails: DeliveryDetails | null;
   setDeliveryDetails: (details: DeliveryDetails | null) => void;
   clearCart: () => void;
+  isCartOpen: boolean;
+  setIsCartOpen: (open: boolean) => void;
+  openCart: () => void;
+  closeCart: () => void;
 };
 
 const CartContext = createContext<CartContextValue | undefined>(undefined);
 
-const getItemKey = (item: Product | SparePart): string => {
+export const getItemKey = (item: Product | SparePart): string => {
+  if (!item) return `item_${Date.now()}_${Math.random()}`;
   const isProduct = 'storage' in item || 'condition' in item || 'brand' in item;
   if (isProduct) {
     const p = item as any;
-    const baseId = p.id || p.model || p.title || 'prod';
+    const baseId = p.id || `${p.brand || ''}_${p.model || ''}_${p.title || ''}`;
     const storage = p.storage || '';
     const condition = p.condition || '';
-    return `${baseId}_${storage}_${condition}`;
+    const color = p.color || '';
+    return `${baseId}_${storage}_${condition}_${color}`.replace(/[^a-z0-9_-]/gi, '_').toLowerCase();
   }
-  return String(item.id || item.title || 'part');
+  return String((item as any).id || (item as any).title || `part_${Date.now()}`);
 };
 
 export function CartProvider({ children }: { children: ReactNode }) {
+  // Cart open/drawer state
+  const [isCartOpen, setIsCartOpen] = useState(false);
+
   // Persisted cart items
   const [cartItems, setCartItems] = useState<CartItem[]>(() => {
     try {
       const saved = localStorage.getItem('fundu_cart_items');
       if (saved) {
         const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed)) return parsed;
-        if (parsed && typeof parsed === 'object') {
+        if (Array.isArray(parsed)) {
+          return parsed.map((ci) => ({
+            id: ci.id || (ci.item ? getItemKey(ci.item) : `item_${Math.random()}`),
+            type: ci.type || 'product',
+            item: ci.item,
+            quantity: Math.max(1, Number(ci.quantity) || 1),
+          }));
+        }
+        if (parsed && typeof parsed === 'object' && parsed.item) {
           return [
             {
               id: parsed.id || getItemKey(parsed.item),
               type: parsed.type || 'product',
               item: parsed.item,
-              quantity: parsed.quantity || 1,
+              quantity: Math.max(1, Number(parsed.quantity) || 1),
             },
           ];
         }
@@ -93,19 +109,24 @@ export function CartProvider({ children }: { children: ReactNode }) {
     } catch {}
   }, [deliveryDetails]);
 
+  const openCart = () => setIsCartOpen(true);
+  const closeCart = () => setIsCartOpen(false);
+
   /**
    * Add item to cart. If already present, increments quantity.
+   * Supports unlimited items and auto-opens the cart drawer.
    */
   const addToCart = (item: Product | SparePart, quantity = 1) => {
+    if (!item) return;
     const key = getItemKey(item);
     const isProduct = 'storage' in item || 'condition' in item || 'brand' in item;
-    const addQty = Math.max(1, quantity);
+    const addQty = Math.max(1, Number(quantity) || 1);
 
     setCartItems((prev) => {
       const existingIdx = prev.findIndex((ci) => ci.id === key);
       if (existingIdx >= 0) {
         const updated = [...prev];
-        const currentQty = updated[existingIdx].quantity || 1;
+        const currentQty = Math.max(1, Number(updated[existingIdx].quantity) || 1);
         updated[existingIdx] = {
           ...updated[existingIdx],
           item, // update with latest item info if changed
@@ -123,17 +144,20 @@ export function CartProvider({ children }: { children: ReactNode }) {
         },
       ];
     });
+
+    setIsCartOpen(true);
   };
 
   /**
    * Set or update specific item quantity. Removes if <= 0.
    */
   const updateQuantity = (id: string, quantity: number) => {
+    const q = Number(quantity);
     setCartItems((prev) => {
-      if (quantity <= 0) {
+      if (q <= 0) {
         return prev.filter((ci) => ci.id !== id);
       }
-      return prev.map((ci) => (ci.id === id ? { ...ci, quantity } : ci));
+      return prev.map((ci) => (ci.id === id ? { ...ci, quantity: q } : ci));
     });
   };
 
@@ -168,9 +192,9 @@ export function CartProvider({ children }: { children: ReactNode }) {
   };
 
   // Computed metrics
-  const totalItems = cartItems.reduce((acc, ci) => acc + (ci.quantity || 1), 0);
+  const totalItems = cartItems.reduce((acc, ci) => acc + (Math.max(1, Number(ci.quantity) || 1)), 0);
   const totalAmount = cartItems.reduce(
-    (acc, ci) => acc + ((ci.item?.price || 0) * (ci.quantity || 1)),
+    (acc, ci) => acc + ((ci.item?.price || 0) * Math.max(1, Number(ci.quantity) || 1)),
     0
   );
   const cartItem = cartItems[0] || null;
@@ -189,6 +213,10 @@ export function CartProvider({ children }: { children: ReactNode }) {
         deliveryDetails,
         setDeliveryDetails,
         clearCart,
+        isCartOpen,
+        setIsCartOpen,
+        openCart,
+        closeCart,
       }}
     >
       {children}

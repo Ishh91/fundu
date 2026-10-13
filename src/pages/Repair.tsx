@@ -3,6 +3,7 @@ import { useNavigate, useSearchParams, useParams, Link } from 'react-router-dom'
 import { getCleanPhoneImage, getCleanBrandLogo } from '../lib/phoneImages';
 import { ALL_INDIAN_PHONES_CATALOG } from '../data/indianPhonesCatalog';
 import { MASTER_MODEL_CATALOG } from './SellPhone';
+import { getModelDedupeKey } from '../data/brandSeriesCatalog';
 import {
   Wrench,
   Truck,
@@ -403,13 +404,13 @@ export default function Repair() {
         storages: ['64GB', '128GB', '256GB'],
       }));
 
-    const seenNames = new Set(adminModels.map((m) => m.name.toLowerCase().replace(/[\s-]+/g, '')));
+    const seenNames = new Set(adminModels.map((m) => getModelDedupeKey(form.brand, m.name)));
 
     // 2. Master Model Catalog models with explicit series
     const masterModels = MASTER_MODEL_CATALOG
       .filter((m) => m.brand.toLowerCase() === bLower)
       .filter((m) => {
-        const clean = m.model.toLowerCase().replace(/[\s-]+/g, '');
+        const clean = getModelDedupeKey(m.brand, m.model);
         if (seenNames.has(clean)) return false;
         seenNames.add(clean);
         return true;
@@ -424,7 +425,7 @@ export default function Repair() {
     const indianModels = ALL_INDIAN_PHONES_CATALOG
       .filter((p) => p.brand.toLowerCase() === bLower)
       .filter((p) => {
-        const clean = p.model.toLowerCase().replace(/[\s-]+/g, '');
+        const clean = getModelDedupeKey(p.brand, p.model);
         if (seenNames.has(clean)) return false;
         seenNames.add(clean);
         return true;
@@ -438,7 +439,7 @@ export default function Repair() {
     // 4. API models from fetchPhoneModels
     const otherModels = modelsList
       .filter((m) => {
-        const clean = m.name.toLowerCase().replace(/[\s-]+/g, '');
+        const clean = getModelDedupeKey(form.brand, m.name);
         if (seenNames.has(clean)) return false;
         seenNames.add(clean);
         return true;

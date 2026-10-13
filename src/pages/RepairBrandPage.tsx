@@ -30,6 +30,7 @@ import { getCleanPhoneImage, getCleanBrandLogo, BRAND_FRONT_FALLBACKS, getGeneri
 import { ALL_INDIAN_PHONES_CATALOG } from '../data/indianPhonesCatalog';
 import { useRepairPriceSync, getModelRepairPricing } from '../lib/repairPriceSync';
 import { isModelDeleted } from '../lib/catalogSync';
+import { getModelDedupeKey } from '../data/brandSeriesCatalog';
 
 const BRAND_REPAIR_DETAILS: Record<
   string,
@@ -187,7 +188,7 @@ export default function RepairBrandPage() {
       (m) =>
         m.brand.toLowerCase() === brandCleanKey &&
         !adminNames.has(m.model.toLowerCase().replace(/[\s-]+/g, '')) &&
-        !indianList.some((ip) => ip.model.toLowerCase() === m.model.toLowerCase())
+        !indianList.some((ip) => getModelDedupeKey(ip.brand, ip.model) === getModelDedupeKey(m.brand, m.model))
     ).map((m) => ({
       brand: m.brand,
       model: m.model,
@@ -196,9 +197,20 @@ export default function RepairBrandPage() {
       price: 599,
     }));
 
-    let list = [...adminModels, ...indianList, ...masterList].filter(
+    const rawList = [...adminModels, ...indianList, ...masterList].filter(
       (m) => !isModelDeleted(m.brand || brandDisplayName, m.model)
     );
+
+    // Deduplicate entire list
+    const seenRepair = new Set<string>();
+    let list: typeof rawList = [];
+    rawList.forEach((m) => {
+      const dKey = getModelDedupeKey(m.brand || brandDisplayName, m.model);
+      if (!seenRepair.has(dKey)) {
+        seenRepair.add(dKey);
+        list.push(m);
+      }
+    });
 
     if (selectedSeries !== 'All') {
       list = list.filter((m) => m.series?.toLowerCase() === selectedSeries.toLowerCase());

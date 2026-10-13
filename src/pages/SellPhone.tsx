@@ -42,6 +42,7 @@ import {
   PAN_INDIA_POPULAR_CITIES,
   type PanIndiaLocation,
 } from '../lib/locationService';
+import { getModelDedupeKey } from '../data/brandSeriesCatalog';
 
 // Master Service Localities (Pan-India Doorstep Coverage)
 const DOORSTEP_LOCALITIES = PAN_INDIA_POPULAR_CITIES.map((c) => c.displayLabel);
@@ -2026,19 +2027,21 @@ export default function SellPhone() {
     const q = debouncedQuery.toLowerCase().trim();
     const queryWords = q.split(/\s+/).filter(Boolean);
 
-    // Combine MASTER_MODEL_CATALOG and ALL_INDIAN_PHONES_CATALOG
+    // Combine MASTER_MODEL_CATALOG and ALL_INDIAN_PHONES_CATALOG (strictly deduplicated)
     const modelMap = new Map<string, any>();
 
     MASTER_MODEL_CATALOG.forEach((m) => {
       if (isModelDeleted(m.brand, m.model)) return;
-      const key = `${m.brand.toLowerCase()}-${m.model.toLowerCase()}`;
-      modelMap.set(key, m);
+      const key = `${m.brand.toLowerCase()}-${getModelDedupeKey(m.brand, m.model)}`;
+      if (!modelMap.has(key)) {
+        modelMap.set(key, m);
+      }
     });
 
     if (Array.isArray(ALL_INDIAN_PHONES_CATALOG)) {
       ALL_INDIAN_PHONES_CATALOG.forEach((p) => {
         if (isModelDeleted(p.brand, p.model)) return;
-        const key = `${p.brand.toLowerCase()}-${p.model.toLowerCase()}`;
+        const key = `${p.brand.toLowerCase()}-${getModelDedupeKey(p.brand, p.model)}`;
         if (!modelMap.has(key)) {
           modelMap.set(key, {
             brand: p.brand,
@@ -2597,9 +2600,17 @@ export default function SellPhone() {
 
                 {/* Brand Models Image Cards Grid */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {MASTER_MODEL_CATALOG.filter(
-                    (m) => m.brand === form.brand && !isModelDeleted(m.brand, m.model) && (selectedSeries === 'All' || m.series === selectedSeries)
-                  ).map((m) => (
+                  {(() => {
+                    const seen = new Set<string>();
+                    return MASTER_MODEL_CATALOG.filter(
+                      (m) => m.brand === form.brand && !isModelDeleted(m.brand, m.model) && (selectedSeries === 'All' || m.series === selectedSeries)
+                    ).filter((m) => {
+                      const dKey = getModelDedupeKey(m.brand, m.model);
+                      if (seen.has(dKey)) return false;
+                      seen.add(dKey);
+                      return true;
+                    });
+                  })().map((m) => (
                     <div
                       key={`${m.brand}-${m.model}`}
                       className="p-4 rounded-2xl border border-gray-200 bg-white hover:border-[#6A859F] hover:shadow-lg transition-all duration-300 space-y-3 cursor-pointer group"

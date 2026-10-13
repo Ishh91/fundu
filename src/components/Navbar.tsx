@@ -226,14 +226,13 @@ const BUY_REFURBISHED_HIGHLIGHTS = [
 
 export default function Navbar() {
   const { user, profile, signOut } = useAuth();
-  const { cartItems, totalItems, totalAmount, updateQuantity, removeFromCart, clearCart } = useCart();
+  const { cartItems, totalItems, totalAmount, updateQuantity, removeFromCart, clearCart, isCartOpen: cartOpen, setIsCartOpen: setCartOpen } = useCart();
   const navigate = useNavigate();
   const location = useLocation();
 
   // Navigation states
   const [mobileOpen, setMobileOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
-  const [cartOpen, setCartOpen] = useState(false);
   const [locationModalOpen, setLocationModalOpen] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
 
@@ -791,7 +790,7 @@ export default function Navbar() {
                 >
                   <ShoppingCart className="h-5 w-5 text-white" />
                   {totalItems > 0 ? (
-                    <span className="absolute 0 top-0.5 right-0.5 flex h-4.5 w-4.5 items-center justify-center rounded-full bg-[#344257] text-[10px] font-extrabold text-white shadow border border-white/40">
+                    <span className="absolute -top-1 -right-1 flex h-4.5 w-4.5 items-center justify-center rounded-full bg-amber-400 text-[10px] font-black text-slate-950 shadow border border-white">
                       {totalItems}
                     </span>
                   ) : null}
@@ -895,13 +894,22 @@ export default function Navbar() {
                           </span>
                         </div>
 
-                        <Link
-                          to="/checkout"
-                          onClick={() => setCartOpen(false)}
-                          className="w-full py-2.5 rounded-xl text-sm font-bold flex items-center justify-center gap-2 bg-gradient-to-r from-[#344257] to-[#5D6A82] hover:brightness-110 text-white shadow transition"
-                        >
-                          Proceed to Checkout ({totalItems}) <ArrowRight className="h-4 w-4" />
-                        </Link>
+                        <div className="grid grid-cols-2 gap-2 pt-1">
+                          <Link
+                            to="/buy"
+                            onClick={() => setCartOpen(false)}
+                            className="py-2.5 rounded-xl text-xs font-bold flex items-center justify-center gap-1 border border-gray-300 text-gray-700 hover:bg-gray-50 transition"
+                          >
+                            + Add More
+                          </Link>
+                          <Link
+                            to="/checkout"
+                            onClick={() => setCartOpen(false)}
+                            className="py-2.5 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 bg-gradient-to-r from-[#344257] to-[#5D6A82] hover:brightness-110 text-white shadow transition"
+                          >
+                            Checkout ({totalItems}) <ArrowRight className="h-3.5 w-3.5" />
+                          </Link>
+                        </div>
                       </div>
                     ) : (
                       <div className="py-8 text-center">
@@ -1385,7 +1393,7 @@ export default function Navbar() {
                 <Link
                   to="/sell"
                   onClick={() => {
-                    setIsMobileMenuOpen(false);
+                    setMobileOpen(false);
                     try {
                       sessionStorage.removeItem('fundu_sell_form');
                     } catch {}

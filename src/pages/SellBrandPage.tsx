@@ -29,6 +29,7 @@ import {
   groupModelsBySeries,
   getSeriesBySlug,
   isSeriesSlug,
+  getModelDedupeKey,
   type SeriesGroup,
 } from '../data/brandSeriesCatalog';
 
@@ -260,15 +261,17 @@ export default function SellBrandPage() {
     });
     const combinedMap = new Map<string, CatalogModelItem>();
 
-    // Add all master catalog items first
+    // Add all master catalog items first (deduplicated)
     masterList.forEach((m) => {
-      const key = m.model.toLowerCase().replace(/\+/g, 'plus').replace(/[^a-z0-9]/g, '');
-      combinedMap.set(key, m);
+      const key = getModelDedupeKey(m.brand || brandDisplayName, m.model);
+      if (!combinedMap.has(key)) {
+        combinedMap.set(key, m);
+      }
     });
 
-    // Merge any live API models
+    // Merge any live API models (deduplicated)
     apiModels.forEach((m) => {
-      const key = m.model.toLowerCase().replace(/\+/g, 'plus').replace(/[^a-z0-9]/g, '');
+      const key = getModelDedupeKey(m.brand || brandDisplayName, m.model);
       if (!combinedMap.has(key)) {
         combinedMap.set(key, m);
       }
@@ -333,7 +336,7 @@ export default function SellBrandPage() {
 
     seriesGroups.forEach((group) => {
       (group.models || []).forEach((m) => {
-        const key = m.model.toLowerCase().replace(/\+/g, 'plus').replace(/[^a-z0-9]/g, '');
+        const key = getModelDedupeKey(m.brand || brandDisplayName, m.model);
         if (!seen.has(key)) {
           seen.add(key);
           models.push({
@@ -347,7 +350,7 @@ export default function SellBrandPage() {
 
     // Add any leftover models from allBrandModels not captured in predefined series groups
     allBrandModels.forEach((m) => {
-      const key = m.model.toLowerCase().replace(/\+/g, 'plus').replace(/[^a-z0-9]/g, '');
+      const key = getModelDedupeKey(m.brand || brandDisplayName, m.model);
       if (!seen.has(key)) {
         seen.add(key);
         models.push({

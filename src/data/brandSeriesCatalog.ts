@@ -5,6 +5,17 @@ export function getApiThumb(brand: string, query: string, fallback?: string): st
   return getCleanPhoneImage(brand, query, fallback);
 }
 
+export function getModelDedupeKey(brand: string, model: string): string {
+  let clean = (model || '').toLowerCase().trim();
+  const bClean = (brand || '').toLowerCase().trim();
+  if (bClean && clean.startsWith(bClean)) {
+    clean = clean.slice(bClean.length).trim();
+  }
+  return clean
+    .replace(/\+/g, 'plus')
+    .replace(/[^a-z0-9]/g, '');
+}
+
 export type BrandSeriesDefinition = {
   id: string;
   slug: string;
@@ -1439,20 +1450,30 @@ export function groupModelsBySeries(brand: string, allModels: CatalogModelItem[]
       );
     });
 
-    matched.forEach((m) => assignedModels.add(m.model.toLowerCase()));
+    // Deduplicate matched models
+    const dedupeMatched: CatalogModelItem[] = [];
+    const seenInGroup = new Set<string>();
 
-    // Combine matched models with defaultModels so all expected models are present
-    const combinedModels: CatalogModelItem[] = [...matched];
-    const seenNames = new Set(matched.map((m) => m.model.toLowerCase().replace(/\+/g, 'plus').replace(/[^a-z0-9]/g, '')));
+    matched.forEach((m) => {
+      const dKey = getModelDedupeKey(m.brand || brand, m.model);
+      if (!seenInGroup.has(dKey)) {
+        seenInGroup.add(dKey);
+        dedupeMatched.push(m);
+        assignedModels.add(dKey);
+      }
+    });
+
+    // Combine matched models with defaultModels, deduplicating against seen models
+    const combinedModels: CatalogModelItem[] = [...dedupeMatched];
 
     if (def.defaultModels) {
       for (const defModel of def.defaultModels) {
-        const norm = defModel.model.toLowerCase().replace(/\+/g, 'plus').replace(/[^a-z0-9]/g, '');
-        if (!seenNames.has(norm)) {
+        const dKey = getModelDedupeKey(defModel.brand || brand, defModel.model);
+        if (!seenInGroup.has(dKey)) {
+          seenInGroup.add(dKey);
           combinedModels.push(defModel);
-          seenNames.add(norm);
+          assignedModels.add(dKey);
         }
-        assignedModels.add(defModel.model.toLowerCase());
       }
     }
 
@@ -1469,17 +1490,31 @@ export function groupModelsBySeries(brand: string, allModels: CatalogModelItem[]
     });
   }
 
-  // Any remaining models go into "Other Models"
-  const remaining = allModels.filter((m) => !assignedModels.has(m.model.toLowerCase()));
-  if (remaining.length > 0) {
+  // Any remaining models go into "Other Models", strictly deduplicated
+  const remaining = allModels.filter((m) => {
+    const dKey = getModelDedupeKey(m.brand || brand, m.model);
+    return !assignedModels.has(dKey);
+  });
+
+  const dedupeRemaining: CatalogModelItem[] = [];
+  const seenRemaining = new Set<string>();
+  remaining.forEach((m) => {
+    const dKey = getModelDedupeKey(m.brand || brand, m.model);
+    if (!seenRemaining.has(dKey)) {
+      seenRemaining.add(dKey);
+      dedupeRemaining.push(m);
+    }
+  });
+
+  if (dedupeRemaining.length > 0) {
     grouped.push({
       id: 'other-models',
       slug: 'other-models',
       name: `${brand} Other Models`,
       brand,
-      image: remaining[0]?.image || getCleanPhoneImage(brand, 'Other'),
-      modelsCount: remaining.length,
-      models: remaining,
+      image: dedupeRemaining[0]?.image || getCleanPhoneImage(brand, 'Other'),
+      modelsCount: dedupeRemaining.length,
+      models: dedupeRemaining,
     });
   }
 

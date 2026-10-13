@@ -170,6 +170,14 @@ function MainLayout() {
               </ProtectedRoute>
             }
           />
+          <Route
+            path="/cart"
+            element={
+              <ProtectedRoute redirectLogin="/login">
+                <Checkout />
+              </ProtectedRoute>
+            }
+          />
 
           {/* Admin Dedicated Protected Routes */}
           <Route

@@ -96,9 +96,18 @@ export default function Checkout() {
               <span className="flex items-center gap-2">
                 <ShoppingCart className="h-5 w-5 text-[#344257]" /> Order Summary
               </span>
-              <span className="text-xs font-bold text-[#6A859F] bg-[#F0F0F5] px-2.5 py-1 rounded-full">
-                {totalItems} item{totalItems > 1 ? 's' : ''}
-              </span>
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => navigate('/buy')}
+                  className="text-xs font-bold text-[#344257] hover:underline cursor-pointer"
+                >
+                  + Add More
+                </button>
+                <span className="text-xs font-bold text-[#6A859F] bg-[#F0F0F5] px-2.5 py-1 rounded-full">
+                  {totalItems} item{totalItems > 1 ? 's' : ''}
+                </span>
+              </div>
             </h2>
 
             <div className="border-b border-ink-200 pb-4 mb-4 space-y-3 max-h-80 overflow-y-auto pr-1 divide-y divide-gray-100">
@@ -162,6 +171,16 @@ export default function Checkout() {
                   </div>
                 );
               })}
+            </div>
+
+            <div className="mb-4">
+              <button
+                type="button"
+                onClick={() => navigate('/buy')}
+                className="w-full py-2 rounded-xl text-xs font-bold text-[#344257] bg-[#F0F0F5] hover:bg-[#E4E7F0] border border-[#C0C8D8] flex items-center justify-center gap-1.5 transition cursor-pointer"
+              >
+                + Add More Phones to Cart
+              </button>
             </div>
 
             <div className="space-y-2 text-sm">
