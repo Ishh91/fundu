@@ -1102,7 +1102,7 @@ export default function Repair() {
                           </div>
                           <p className="mt-2 text-xs font-black text-ink-900 group-hover:text-[#344257] truncate w-full transition-colors">{item.model}</p>
                           <span className="mt-2 badge bg-emerald-50 text-emerald-800 font-black text-[10px]">
-                            From {formatDisplayPrice(displayPrice, !!user)}
+                            {user ? `From ${formatINR(displayPrice)}` : 'Select Issues & Book'}
                           </span>
                         </button>
                       );
