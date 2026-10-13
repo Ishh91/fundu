@@ -30,7 +30,7 @@ import { getCleanPhoneImage, getCleanBrandLogo, BRAND_FRONT_FALLBACKS, getGeneri
 import { ALL_INDIAN_PHONES_CATALOG } from '../data/indianPhonesCatalog';
 import { useRepairPriceSync, getModelRepairPricing } from '../lib/repairPriceSync';
 import { isModelDeleted } from '../lib/catalogSync';
-import { getModelDedupeKey } from '../data/brandSeriesCatalog';
+import { getModelDedupeKey, groupModelsBySeries, isSeriesSlug } from '../data/brandSeriesCatalog';
 
 const BRAND_REPAIR_DETAILS: Record<
   string,
@@ -118,7 +118,11 @@ const COMMON_REPAIR_SERVICES = [
 ];
 
 export default function RepairBrandPage() {
-  const { brandSlug } = useParams<{ brandSlug: string }>();
+  const { brandSlug, seriesSlug, modelSlug } = useParams<{
+    brandSlug?: string;
+    seriesSlug?: string;
+    modelSlug?: string;
+  }>();
   const navigate = useNavigate();
   const { user } = useAuth();
   const { configs: repairConfigs } = useRepairPriceSync();
@@ -141,6 +145,12 @@ export default function RepairBrandPage() {
     series: ['All'],
   };
 
+  const effectiveSeriesSlug = useMemo(() => {
+    if (seriesSlug) return seriesSlug;
+    if (modelSlug && isSeriesSlug(modelSlug)) return modelSlug;
+    return undefined;
+  }, [seriesSlug, modelSlug]);
+
   const [selectedSeries, setSelectedSeries] = useState<string>('All');
   const [rawSearchQuery, setRawSearchQuery] = useState('');
   const [debouncedQuery, setDebouncedQuery] = useState('');
@@ -160,14 +170,14 @@ export default function RepairBrandPage() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }, [brandSlug, selectedSeries]);
 
-  const brandModels = useMemo(() => {
-    // 1. Models explicitly configured in Admin repairConfigs
+  // 1. Raw models list from Admin configs, Indian catalog, and Master catalog
+  const rawBrandModels = useMemo(() => {
     const adminModels = (repairConfigs || [])
       .filter((c) => (c.brand || '').toLowerCase().trim() === brandCleanKey && c.is_active !== false)
       .map((c) => ({
         brand: c.brand,
         model: c.model,
-        series: c.device_series || brandDisplayName,
+        series: c.device_series || '',
         image: c.image_url || '',
         price: c.base_repair_price || 599,
       }));
@@ -179,7 +189,7 @@ export default function RepairBrandPage() {
     ).map((p) => ({
       brand: p.brand,
       model: p.model,
-      series: p.series || brandDisplayName,
+      series: p.series || '',
       image: p.image_url,
       price: 599,
     }));
@@ -192,7 +202,7 @@ export default function RepairBrandPage() {
     ).map((m) => ({
       brand: m.brand,
       model: m.model,
-      series: m.series || brandDisplayName,
+      series: m.series || '',
       image: m.image,
       price: 599,
     }));
@@ -203,17 +213,106 @@ export default function RepairBrandPage() {
 
     // Deduplicate entire list
     const seenRepair = new Set<string>();
-    let list: typeof rawList = [];
+    const dedupeList: typeof rawList = [];
     rawList.forEach((m) => {
       const dKey = getModelDedupeKey(m.brand || brandDisplayName, m.model);
       if (!seenRepair.has(dKey)) {
         seenRepair.add(dKey);
-        list.push(m);
+        dedupeList.push(m);
       }
     });
 
+    return dedupeList;
+  }, [brandCleanKey, brandDisplayName, repairConfigs]);
+
+  // 2. Group into Series Groups (e.g. Galaxy S25 Series, S24 Series, Z Series, Note Series, A Series, etc.)
+  const seriesGroups = useMemo(() => {
+    return groupModelsBySeries(brandCleanKey, rawBrandModels);
+  }, [brandCleanKey, rawBrandModels]);
+
+  // 3. Series tabs derived dynamically from seriesGroups
+  const seriesTabs = useMemo(() => {
+    const list = seriesGroups.filter((g) => g.models.length > 0).map((g) => g.name);
+    return ['All', ...list];
+  }, [seriesGroups]);
+
+  // 4. Sync effective series slug to selectedSeries
+  useEffect(() => {
+    if (effectiveSeriesSlug) {
+      const clean = effectiveSeriesSlug.toLowerCase().replace(/^(repair-|sell-)/, '');
+      const match = seriesGroups.find(
+        (g) =>
+          g.slug.toLowerCase() === clean ||
+          g.id.toLowerCase() === clean ||
+          g.name.toLowerCase().includes(clean)
+      );
+      if (match) {
+        setSelectedSeries(match.name);
+      } else {
+        setSelectedSeries(effectiveSeriesSlug);
+      }
+    } else {
+      setSelectedSeries('All');
+    }
+  }, [effectiveSeriesSlug, seriesGroups]);
+
+  // 5. Flatten models in sequential series order, each stamped with its exact series
+  const allModelsInSeriesOrder = useMemo(() => {
+    const models: Array<{
+      brand: string;
+      model: string;
+      series: string;
+      seriesSlug: string;
+      image?: string;
+      price: number;
+    }> = [];
+    const seen = new Set<string>();
+
+    seriesGroups.forEach((group) => {
+      (group.models || []).forEach((m) => {
+        const key = getModelDedupeKey(m.brand || brandDisplayName, m.model);
+        if (!seen.has(key)) {
+          seen.add(key);
+          models.push({
+            brand: m.brand || brandDisplayName,
+            model: m.model,
+            series: group.name,
+            seriesSlug: group.slug,
+            image: m.image,
+            price: m.price || 599,
+          });
+        }
+      });
+    });
+
+    // Any leftovers
+    rawBrandModels.forEach((m) => {
+      const key = getModelDedupeKey(m.brand || brandDisplayName, m.model);
+      if (!seen.has(key)) {
+        seen.add(key);
+        models.push({
+          ...m,
+          series: m.series || `${brandDisplayName} Series`,
+          seriesSlug: 'other',
+        });
+      }
+    });
+
+    return models;
+  }, [seriesGroups, rawBrandModels, brandDisplayName]);
+
+  // 6. Final filtered models
+  const brandModels = useMemo(() => {
+    let list = allModelsInSeriesOrder;
+
     if (selectedSeries !== 'All') {
-      list = list.filter((m) => m.series?.toLowerCase() === selectedSeries.toLowerCase());
+      const cleanSel = selectedSeries.toLowerCase().replace(/^(repair-|sell-)/, '');
+      list = list.filter(
+        (m) =>
+          m.series.toLowerCase() === selectedSeries.toLowerCase() ||
+          m.seriesSlug.toLowerCase() === cleanSel ||
+          m.series.toLowerCase().includes(cleanSel)
+      );
     }
 
     if (debouncedQuery) {
@@ -222,31 +321,7 @@ export default function RepairBrandPage() {
     }
 
     return list;
-  }, [brandCleanKey, brandDisplayName, selectedSeries, debouncedQuery, repairConfigs]);
-
-  const seriesTabs = useMemo(() => {
-    const seriesSet = new Set<string>();
-
-    if (brandInfo.series) {
-      brandInfo.series.forEach((s) => {
-        if (s !== 'All') seriesSet.add(s);
-      });
-    }
-
-    (repairConfigs || [])
-      .filter((c) => (c.brand || '').toLowerCase().trim() === brandCleanKey && c.is_active !== false)
-      .forEach((c) => {
-        if (c.device_series) seriesSet.add(c.device_series);
-      });
-
-    ALL_INDIAN_PHONES_CATALOG.filter(
-      (p) => p.brand.toLowerCase() === brandCleanKey && !isModelDeleted(p.brand, p.model)
-    ).forEach((p) => {
-      if (p.series) seriesSet.add(p.series);
-    });
-
-    return ['All', ...Array.from(seriesSet)];
-  }, [brandCleanKey, brandInfo.series, repairConfigs]);
+  }, [allModelsInSeriesOrder, selectedSeries, debouncedQuery]);
 
   const handleBookRepair = (modelName: string, issueId: string = 'screen') => {
     const modelSlugClean = modelName.toLowerCase().replace(/\s+/g, '-');

@@ -87,6 +87,18 @@ function SellModelOrSeriesRoute() {
   return <SellPhone />;
 }
 
+// Route dispatcher for multi-page repair brand series -> models
+function RepairModelOrSeriesRoute() {
+  const { modelSlug, seriesSlug } = useParams<{ modelSlug?: string; seriesSlug?: string }>();
+  const slug = seriesSlug || modelSlug || '';
+  const cleanSlug = slug.replace(/^repair-/, '').toLowerCase();
+
+  if (isSeriesSlug(cleanSlug)) {
+    return <RepairBrandPage />;
+  }
+  return <Repair />;
+}
+
 function MainLayout() {
   const location = useLocation();
   const isAdminPath = location.pathname.startsWith('/admin') || location.pathname.startsWith('/admin-login');
@@ -133,10 +145,13 @@ function MainLayout() {
           {/* Repair Ecosystem & Dynamic Sub-Pages */}
           <Route path="/repair" element={<Repair />} />
           <Route path="/repair/:brandSlug" element={<RepairBrandPage />} />
-          <Route path="/repair/:brandSlug/:modelSlug" element={<Repair />} />
+          <Route path="/repair/:brandSlug/series/:seriesSlug" element={<RepairBrandPage />} />
+          <Route path="/repair/:brandSlug/:modelSlug" element={<RepairModelOrSeriesRoute />} />
           <Route path="/repair/issue/:issueSlug" element={<RepairIssuePage />} />
           <Route path="/mobile-repair" element={<Repair />} />
           <Route path="/mobile-repair/:brandSlug" element={<RepairBrandPage />} />
+          <Route path="/mobile-repair/:brandSlug/series/:seriesSlug" element={<RepairBrandPage />} />
+          <Route path="/mobile-repair/:brandSlug/:modelSlug" element={<RepairModelOrSeriesRoute />} />
           <Route path="/doorstep-mobile-repair" element={<Repair />} />
           <Route path="/doorstep-mobile-repair/:issueSlug" element={<RepairIssuePage />} />
           <Route path="/spare-parts" element={<SpareParts />} />

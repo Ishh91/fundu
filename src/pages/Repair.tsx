@@ -3,7 +3,7 @@ import { useNavigate, useSearchParams, useParams, Link } from 'react-router-dom'
 import { getCleanPhoneImage, getCleanBrandLogo } from '../lib/phoneImages';
 import { ALL_INDIAN_PHONES_CATALOG } from '../data/indianPhonesCatalog';
 import { MASTER_MODEL_CATALOG } from './SellPhone';
-import { getModelDedupeKey } from '../data/brandSeriesCatalog';
+import { getModelDedupeKey, groupModelsBySeries } from '../data/brandSeriesCatalog';
 import {
   Wrench,
   Truck,
@@ -209,16 +209,26 @@ export default function Repair() {
   // Restore repair answers from sessionStorage if customer logged in and redirected back
   useEffect(() => {
     try {
+      const hasUrlBrand = Boolean(brandSlug || searchParams.get('brand'));
       const savedForm = sessionStorage.getItem('fundu_repair_form');
       if (savedForm) {
         const parsed = JSON.parse(savedForm);
         if (parsed && typeof parsed === 'object') {
-          setForm((prev) => ({
-            ...prev,
-            ...parsed,
-            brand: prev.brand || parsed.brand || '',
-            model: prev.model || parsed.model || '',
-          }));
+          if (!hasUrlBrand && step === 1) {
+            setForm((prev) => ({
+              ...prev,
+              ...parsed,
+              brand: '',
+              model: '',
+            }));
+          } else {
+            setForm((prev) => ({
+              ...prev,
+              ...parsed,
+              brand: prev.brand || parsed.brand || '',
+              model: prev.model || parsed.model || '',
+            }));
+          }
         }
       }
       const savedIssues = sessionStorage.getItem('fundu_repair_issues');
@@ -400,7 +410,8 @@ export default function Repair() {
       .filter((c) => (c.brand || '').toLowerCase().trim() === bLower && c.is_active !== false)
       .map((c) => ({
         name: c.model,
-        series: c.device_series || `${form.brand} Series`,
+        brand: c.brand,
+        series: c.device_series || '',
         storages: ['64GB', '128GB', '256GB'],
       }));
 
@@ -417,7 +428,8 @@ export default function Repair() {
       })
       .map((m) => ({
         name: m.model,
-        series: m.series || `${form.brand} Series`,
+        brand: m.brand,
+        series: m.series || '',
         storages: ['64GB', '128GB', '256GB'],
       }));
 
@@ -432,7 +444,8 @@ export default function Repair() {
       })
       .map((p) => ({
         name: p.model,
-        series: p.series || `${form.brand} Series`,
+        brand: p.brand,
+        series: p.series || '',
         storages: ['64GB', '128GB', '256GB'],
       }));
 
@@ -454,12 +467,52 @@ export default function Repair() {
         );
         return {
           name: m.name,
-          series: matchedMaster?.series || matchedIndian?.series || `${form.brand} Series`,
+          brand: form.brand,
+          series: matchedMaster?.series || matchedIndian?.series || '',
           storages: m.storages || ['64GB', '128GB', '256GB'],
         };
       });
 
-    return [...adminModels, ...masterModels, ...indianModels, ...otherModels];
+    const rawAll = [...adminModels, ...masterModels, ...indianModels, ...otherModels];
+
+    const catalogItems = rawAll.map((item) => ({
+      brand: item.brand || form.brand,
+      model: item.name,
+      series: item.series,
+    }));
+
+    const seriesGroups = groupModelsBySeries(form.brand, catalogItems);
+
+    const result: Array<{ name: string; series: string; storages: string[] }> = [];
+    const seenFinal = new Set<string>();
+
+    seriesGroups.forEach((group) => {
+      (group.models || []).forEach((gm) => {
+        const key = getModelDedupeKey(form.brand, gm.model);
+        if (!seenFinal.has(key)) {
+          seenFinal.add(key);
+          result.push({
+            name: gm.model,
+            series: group.name,
+            storages: ['64GB', '128GB', '256GB'],
+          });
+        }
+      });
+    });
+
+    rawAll.forEach((item) => {
+      const key = getModelDedupeKey(form.brand, item.name);
+      if (!seenFinal.has(key)) {
+        seenFinal.add(key);
+        result.push({
+          name: item.name,
+          series: item.series || `${form.brand} Series`,
+          storages: item.storages,
+        });
+      }
+    });
+
+    return result;
   }, [form.brand, repairConfigs, modelsList]);
 
   // Available Series for Selected Brand
@@ -528,6 +581,13 @@ export default function Repair() {
           ...cur,
           brand: b ?? cur.brand,
           model: m ?? cur.model,
+        }));
+      } else {
+        // Pure /repair: clear brand and model so brand selection grid always displays
+        setForm((cur) => ({
+          ...cur,
+          brand: '',
+          model: '',
         }));
       }
     }
@@ -913,6 +973,10 @@ export default function Repair() {
                       type="button"
                       onClick={() => {
                         setForm((f) => ({ ...f, brand: '', model: '' }));
+                        try {
+                          sessionStorage.removeItem('fundu_repair_form');
+                          sessionStorage.removeItem('fundu_repair_issues');
+                        } catch {}
                         navigate('/repair?step=1');
                       }}
                       className="inline-flex items-center justify-center gap-2 text-xs sm:text-sm font-extrabold text-white bg-white/10 hover:bg-white/20 border border-white/20 backdrop-blur-md px-5 py-3 rounded-2xl transition-all shadow-md shrink-0 self-start md:self-auto"

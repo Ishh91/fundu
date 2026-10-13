@@ -1097,7 +1097,16 @@ export default function Navbar() {
                       </h4>
                       <ul className="space-y-2 text-xs">
                         <li>
-                          <Link to="/repair" className="font-semibold text-gray-800 hover:text-[#344257] block">
+                          <Link
+                            to="/repair"
+                            onClick={() => {
+                              try {
+                                sessionStorage.removeItem('fundu_repair_form');
+                                sessionStorage.removeItem('fundu_repair_issues');
+                              } catch {}
+                            }}
+                            className="font-semibold text-gray-800 hover:text-[#344257] block"
+                          >
                             30-Min Doorstep Phone Repair
                           </Link>
                         </li>
@@ -1244,6 +1253,12 @@ export default function Navbar() {
               {/* Phone Repair */}
               <Link
                 to="/repair"
+                onClick={() => {
+                  try {
+                    sessionStorage.removeItem('fundu_repair_form');
+                    sessionStorage.removeItem('fundu_repair_issues');
+                  } catch {}
+                }}
                 className="py-2 text-[#344257] hover:text-[#47576E] transition-colors"
               >
                 Phone Repair
@@ -1422,6 +1437,13 @@ export default function Navbar() {
 
                 <Link
                   to="/repair"
+                  onClick={() => {
+                    setMobileOpen(false);
+                    try {
+                      sessionStorage.removeItem('fundu_repair_form');
+                      sessionStorage.removeItem('fundu_repair_issues');
+                    } catch {}
+                  }}
                   className="flex items-center justify-between rounded-xl px-3 py-2.5 text-sm font-bold text-gray-800 hover:bg-gray-50"
                 >
                   <span className="flex items-center gap-2.5">
