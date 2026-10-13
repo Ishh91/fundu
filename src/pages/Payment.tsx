@@ -35,7 +35,7 @@ declare global {
 }
 
 export default function Payment() {
-  const { cartItem, deliveryDetails, clearCart } = useCart();
+  const { cartItems, totalAmount, totalItems, deliveryDetails, clearCart } = useCart();
   const { user, profile } = useAuth();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
@@ -45,12 +45,12 @@ export default function Payment() {
     if (!user) {
       navigate('/login?redirect=/payment');
     }
-    if (!cartItem || !deliveryDetails) {
+    if (cartItems.length === 0 || !deliveryDetails) {
       navigate('/checkout');
     }
-  }, [user, cartItem, deliveryDetails, navigate]);
+  }, [user, cartItems.length, deliveryDetails, navigate]);
 
-  if (!cartItem || !deliveryDetails) return null;
+  if (cartItems.length === 0 || !deliveryDetails) return null;
 
   if (profile && profile.role !== 'customer') {
     return (
@@ -76,32 +76,35 @@ export default function Payment() {
   const createOrder = async (paymentMethod: 'cod' | 'razorpay', paymentStatus: string = 'pending') => {
     setLoading(true);
     try {
-      const orderItem = {
-        id: cartItem.item.id,
-        product_id: cartItem.type === 'product' ? cartItem.item.id : null,
-        spare_part_id: cartItem.type === 'spare_part' ? cartItem.item.id : null,
-        title: cartItem.item.title || `${(cartItem.item as any).brand || ''} ${(cartItem.item as any).model || ''}`.trim() || 'Certified Refurbished Device',
-        brand: (cartItem.item as any).brand || '',
-        model: (cartItem.item as any).model || '',
-        storage: (cartItem.item as any).storage || '',
-        ram: (cartItem.item as any).ram || '',
-        color: (cartItem.item as any).color || '',
-        condition: (cartItem.item as any).condition || 'Grade A (Excellent)',
-        price: cartItem.item.price,
-        quantity: cartItem.quantity || 1,
-        image: cartItem.item.image || (cartItem.item as any).images?.[0] || '',
-        image_url: cartItem.item.image || (cartItem.item as any).images?.[0] || '',
-      };
+      const orderItems = cartItems.map((ci) => ({
+        id: ci.item.id,
+        product_id: ci.type === 'product' ? ci.item.id : null,
+        spare_part_id: ci.type === 'spare_part' ? ci.item.id : null,
+        title: ci.item.title || `${(ci.item as any).brand || ''} ${(ci.item as any).model || ''}`.trim() || 'Certified Refurbished Device',
+        brand: (ci.item as any).brand || '',
+        model: (ci.item as any).model || '',
+        storage: (ci.item as any).storage || '',
+        ram: (ci.item as any).ram || '',
+        color: (ci.item as any).color || '',
+        condition: (ci.item as any).condition || 'Grade A (Excellent)',
+        price: ci.item.price,
+        quantity: ci.quantity || 1,
+        image: ci.item.images?.[0] || (ci.item as any).image || '',
+        image_url: ci.item.images?.[0] || (ci.item as any).image || '',
+      }));
+
+      const primaryProduct = cartItems.find((ci) => ci.type === 'product');
+      const primaryPart = cartItems.find((ci) => ci.type === 'spare_part');
 
       const orderData = {
         user_id: user?.id,
         customer_name: deliveryDetails.name || profile?.full_name || null,
         customer_phone: deliveryDetails.phone || profile?.phone || null,
         customer_email: user?.email || null,
-        product_id: cartItem.type === 'product' ? cartItem.item.id : null,
-        spare_part_id: cartItem.type === 'spare_part' ? cartItem.item.id : null,
-        quantity: cartItem.quantity || 1,
-        total_amount: cartItem.item.price * (cartItem.quantity || 1),
+        product_id: primaryProduct ? primaryProduct.item.id : null,
+        spare_part_id: primaryPart ? primaryPart.item.id : null,
+        quantity: totalItems,
+        total_amount: totalAmount,
         status: 'pending',
         payment_method: paymentMethod,
         payment_status: paymentStatus,
@@ -109,7 +112,7 @@ export default function Payment() {
         delivery_area: deliveryDetails.area,
         delivery_name: deliveryDetails.name,
         delivery_phone: deliveryDetails.phone,
-        items: [orderItem],
+        items: orderItems,
       };
 
       const { error } = await db
@@ -146,10 +149,10 @@ export default function Payment() {
       script.onload = () => {
         const options = {
           key: import.meta.env.VITE_RAZORPAY_KEY_ID || 'rzp_test_1DP5mmOlF5G5ag', // Replace with your key
-          amount: cartItem.item.price * 100, // Amount in paise
+          amount: Math.round(totalAmount * 100), // Amount in paise across all items
           currency: 'INR',
           name: 'Fundu',
-          description: `Purchase of ${cartItem.item.title}`,
+          description: `Purchase of ${totalItems} item${totalItems > 1 ? 's' : ''}`,
           handler: function (response: RazorpayResponse) {
             console.log('Payment success:', response);
             createOrder('razorpay', 'paid');
@@ -186,7 +189,7 @@ export default function Payment() {
 
       <div className="card p-6">
         <h1 className="font-display font-bold text-2xl text-ink-900 mb-2">Select Payment Method</h1>
-        <p className="text-ink-500 mb-6">Total Amount: <span className="font-bold text-brand-600">{formatINR(cartItem.item.price)}</span></p>
+        <p className="text-ink-500 mb-6">Total Amount ({totalItems} item{totalItems > 1 ? 's' : ''}): <span className="font-bold text-brand-600">{formatINR(totalAmount)}</span></p>
 
         <div className="space-y-4">
           {/* COD Option */}

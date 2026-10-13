@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import {
   ArrowRight,
   Mail,
@@ -10,11 +10,15 @@ import {
   BadgeIndianRupee,
   Store,
   CheckCircle2,
+  Building2,
 } from 'lucide-react';
 import BrandLogo from './BrandLogo';
 import { PAN_INDIA_POPULAR_CITIES } from '../lib/locationService';
 
 export default function Footer() {
+  const location = useLocation();
+  const isPartnerPage = location.pathname === '/partner';
+
   return (
     <footer className="mt-12 border-t border-[#C0C8D8]/70 bg-white/95 backdrop-blur-2xl">
       {/* Top Action Banner with the Official Palette Gradient */}
@@ -24,36 +28,76 @@ export default function Footer() {
           background: 'linear-gradient(135deg, #344257 0%, #47576E 50%, #5D6A82 100%)',
         }}
       >
-        <div className="container-page flex flex-col md:flex-row items-center justify-between gap-6 relative z-10">
-          <div>
-            <span className="rounded-full bg-white/15 border border-white/20 text-white px-3.5 py-1 text-[11px] font-extrabold uppercase tracking-wider shadow-sm">
-              📍 Exclusive Hub
-            </span>
-            <h3 className="mt-2.5 font-display text-2xl sm:text-3xl lg:text-4xl font-black text-white">
-              Sell Old Phone, Buy Refurbished or Repair at Doorstep.
-            </h3>
-            <p className="mt-1.5 text-xs sm:text-sm text-[#C0C8D8] font-semibold">
-              Free doorstep pickup, spot cash/UPI payment & 6 months warranty at your doorstep.
-            </p>
-          </div>
+        {isPartnerPage ? (
+          <div className="container-page flex flex-col md:flex-row items-center justify-between gap-6 relative z-10">
+            <div>
+              <span className="rounded-full bg-white/15 border border-white/20 text-white px-3.5 py-1 text-[11px] font-extrabold uppercase tracking-wider shadow-sm">
+                🤝 Verified B2B Partner Network
+              </span>
+              <h3 className="mt-2.5 font-display text-2xl sm:text-3xl lg:text-4xl font-black text-white">
+                Expand Your Mobile Business with Fundu Network.
+              </h3>
+              <p className="mt-1.5 text-xs sm:text-sm text-[#C0C8D8] font-semibold">
+                Zero onboarding fees, verified customer leads & high retail margins for store owners and repair experts.
+              </p>
+            </div>
 
-          <div className="flex flex-wrap items-center gap-3 shrink-0">
-            <Link
-              to="/sell"
-              className="inline-flex items-center justify-center px-7 py-3 rounded-full bg-white text-[#344257] font-black text-sm shadow-md hover:shadow-xl hover:bg-gray-100 active:scale-95 transition-all duration-200"
-            >
-              <span>Sell Phone Now</span>
-              <ArrowRight className="h-4 w-4 ml-1.5" />
-            </Link>
-            <Link
-              to="/repair"
-              className="inline-flex items-center gap-2 rounded-full bg-white/15 hover:bg-white/25 border border-white/25 px-6 py-3 text-xs sm:text-sm font-bold text-white shadow-md hover:scale-105 active:scale-95 transition-all duration-200"
-            >
-              <Wrench className="h-4 w-4 text-[#C0C8D8]" />
-              <span>Book Doorstep Repair</span>
-            </Link>
+            <div className="flex flex-wrap items-center gap-3 shrink-0">
+              <a
+                href="#partner-form"
+                onClick={(e) => {
+                  const el = document.getElementById('partner-form');
+                  if (el) {
+                    e.preventDefault();
+                    el.scrollIntoView({ behavior: 'smooth' });
+                  }
+                }}
+                className="inline-flex items-center justify-center px-7 py-3 rounded-full bg-white text-[#344257] font-black text-sm shadow-md hover:shadow-xl hover:bg-gray-100 active:scale-95 transition-all duration-200"
+              >
+                <span>Apply for Partnership</span>
+                <ArrowRight className="h-4 w-4 ml-1.5" />
+              </a>
+              <Link
+                to="/vendor-login"
+                className="inline-flex items-center gap-2 rounded-full bg-white/15 hover:bg-white/25 border border-white/25 px-6 py-3 text-xs sm:text-sm font-bold text-white shadow-md hover:scale-105 active:scale-95 transition-all duration-200"
+              >
+                <Building2 className="h-4 w-4 text-[#C0C8D8]" />
+                <span>Vendor Portal Login</span>
+              </Link>
+            </div>
           </div>
-        </div>
+        ) : (
+          <div className="container-page flex flex-col md:flex-row items-center justify-between gap-6 relative z-10">
+            <div>
+              <span className="rounded-full bg-white/15 border border-white/20 text-white px-3.5 py-1 text-[11px] font-extrabold uppercase tracking-wider shadow-sm">
+                📍 Exclusive Hub
+              </span>
+              <h3 className="mt-2.5 font-display text-2xl sm:text-3xl lg:text-4xl font-black text-white">
+                Sell Old Phone, Buy Refurbished or Repair at Doorstep.
+              </h3>
+              <p className="mt-1.5 text-xs sm:text-sm text-[#C0C8D8] font-semibold">
+                Free doorstep pickup, spot cash/UPI payment & 6 months warranty at your doorstep.
+              </p>
+            </div>
+
+            <div className="flex flex-wrap items-center gap-3 shrink-0">
+              <Link
+                to="/sell"
+                className="inline-flex items-center justify-center px-7 py-3 rounded-full bg-white text-[#344257] font-black text-sm shadow-md hover:shadow-xl hover:bg-gray-100 active:scale-95 transition-all duration-200"
+              >
+                <span>Sell Phone Now</span>
+                <ArrowRight className="h-4 w-4 ml-1.5" />
+              </Link>
+              <Link
+                to="/repair"
+                className="inline-flex items-center gap-2 rounded-full bg-white/15 hover:bg-white/25 border border-white/25 px-6 py-3 text-xs sm:text-sm font-bold text-white shadow-md hover:scale-105 active:scale-95 transition-all duration-200"
+              >
+                <Wrench className="h-4 w-4 text-[#C0C8D8]" />
+                <span>Book Doorstep Repair</span>
+              </Link>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Main Footer Links */}
@@ -157,6 +201,12 @@ export default function Footer() {
               <li className="pt-1">
                 <Link
                   to="/partner"
+                  onClick={() => {
+                    setTimeout(() => {
+                      const el = document.getElementById('partner-form');
+                      if (el) el.scrollIntoView({ behavior: 'smooth' });
+                    }, 50);
+                  }}
                   className="inline-flex items-center gap-1.5 rounded-full bg-gradient-to-r from-[#344257] to-[#5D6A82] text-white px-4 py-2 text-xs font-bold hover:brightness-110 transition shadow-sm"
                 >
                   Partner With Us at your doorstep →

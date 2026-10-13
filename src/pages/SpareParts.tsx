@@ -10,7 +10,7 @@ const categories = ['All', 'Screens', 'Battery', 'Charging Ports', 'Back Glass',
 
 export default function SpareParts() {
   const { user, profile } = useAuth();
-  const { setCartItem } = useCart();
+  const { addToCart } = useCart();
   const navigate = useNavigate();
   const [parts, setParts] = useState<SparePart[]>([]);
   const [loading, setLoading] = useState(true);
@@ -106,11 +106,7 @@ export default function SpareParts() {
                       return;
                     }
                     if (user) {
-                      setCartItem({
-                        type: 'spare_part',
-                        item: p,
-                        quantity: 1
-                      });
+                      addToCart(p, 1);
                       navigate('/checkout');
                     } else {
                       navigate('/login?redirect=/spare-parts');

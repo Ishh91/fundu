@@ -169,10 +169,12 @@ export default function ProductDetail() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { user, profile } = useAuth();
-  const { setCartItem } = useCart();
+  const { addToCart } = useCart();
 
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
+  const [quantity, setQuantity] = useState(1);
+  const [addedToast, setAddedToast] = useState(false);
 
   // Variant States
   const [selectedImage, setSelectedImage] = useState<string>('');
@@ -371,7 +373,9 @@ export default function ProductDetail() {
       return;
     }
     const updatedProduct = { ...product, price: currentPrice, storage: selectedStorage, condition: selectedGrade };
-    setCartItem({ type: 'product', item: updatedProduct, quantity: 1 });
+    addToCart(updatedProduct, quantity);
+    setAddedToast(true);
+    setTimeout(() => setAddedToast(false), 2500);
   };
 
   const handleBuyNow = () => {
@@ -380,7 +384,7 @@ export default function ProductDetail() {
       return;
     }
     const updatedProduct = { ...product, price: currentPrice, storage: selectedStorage, condition: selectedGrade };
-    setCartItem({ type: 'product', item: updatedProduct, quantity: 1 });
+    addToCart(updatedProduct, quantity);
     if (user) {
       navigate('/checkout');
     } else {
@@ -721,8 +725,41 @@ export default function ProductDetail() {
                 </div>
               </div>
 
+              {/* Quantity Selector */}
+              <div className="flex items-center justify-between bg-[#F0F0F5] border border-[#C0C8D8] p-3 rounded-2xl">
+                <span className="text-xs font-bold text-gray-700">Quantity</span>
+                <div className="flex items-center gap-3">
+                  <button
+                    type="button"
+                    onClick={() => setQuantity((q) => Math.max(1, q - 1))}
+                    className="w-7 h-7 rounded-lg bg-white border border-[#C0C8D8] text-sm font-black text-[#344257] hover:bg-gray-100 grid place-items-center cursor-pointer transition shadow-2xs"
+                    disabled={quantity <= 1}
+                  >
+                    -
+                  </button>
+                  <span className="text-sm font-black text-[#344257] min-w-4 text-center">
+                    {quantity}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => setQuantity((q) => Math.min(10, q + 1))}
+                    className="w-7 h-7 rounded-lg bg-white border border-[#C0C8D8] text-sm font-black text-[#344257] hover:bg-gray-100 grid place-items-center cursor-pointer transition shadow-2xs"
+                  >
+                    +
+                  </button>
+                </div>
+              </div>
+
+              {addedToast && (
+                <div className="p-2.5 rounded-xl bg-emerald-50 border border-emerald-200 text-center animate-fade-in">
+                  <p className="text-xs font-bold text-emerald-800">
+                    ✓ Added {quantity} item(s) to your cart!
+                  </p>
+                </div>
+              )}
+
               {/* MAIN ACTION CTA BUTTONS */}
-              <div className="grid grid-cols-2 gap-4 pt-2">
+              <div className="grid grid-cols-2 gap-4 pt-1">
                 <button
                   type="button"
                   onClick={handleAddToCart}

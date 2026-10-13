@@ -607,7 +607,7 @@ const BUYER_FAQS = [
 
 export default function BuyPhones() {
   const { user, profile } = useAuth();
-  const { setCartItem } = useCart();
+  const { addToCart } = useCart();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const { syncVersion } = useCatalogSync();
@@ -760,7 +760,7 @@ export default function BuyPhones() {
       alert(`Access Restricted: You are logged in as ${profile.role.toUpperCase()}. Vendor, Delivery, and Admin accounts cannot place orders.`);
       return;
     }
-    setCartItem({ type: 'product', item: product, quantity: 1 });
+    addToCart(product, 1);
   };
 
   const handleBuyNow = (product: Product) => {
@@ -768,7 +768,7 @@ export default function BuyPhones() {
       alert(`Access Restricted: You are logged in as ${profile.role.toUpperCase()}. Vendor, Delivery, and Admin accounts cannot place orders.`);
       return;
     }
-    setCartItem({ type: 'product', item: product, quantity: 1 });
+    addToCart(product, 1);
     if (user) {
       navigate('/checkout');
     } else {

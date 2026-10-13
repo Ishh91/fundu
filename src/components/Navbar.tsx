@@ -226,7 +226,7 @@ const BUY_REFURBISHED_HIGHLIGHTS = [
 
 export default function Navbar() {
   const { user, profile, signOut } = useAuth();
-  const { cartItem, clearCart } = useCart();
+  const { cartItems, totalItems, totalAmount, updateQuantity, removeFromCart, clearCart } = useCart();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -790,62 +790,108 @@ export default function Navbar() {
                   aria-label="Shopping Cart"
                 >
                   <ShoppingCart className="h-5 w-5 text-white" />
-                  {cartItem ? (
+                  {totalItems > 0 ? (
                     <span className="absolute 0 top-0.5 right-0.5 flex h-4.5 w-4.5 items-center justify-center rounded-full bg-[#344257] text-[10px] font-extrabold text-white shadow border border-white/40">
-                      {cartItem.quantity || 1}
+                      {totalItems}
                     </span>
                   ) : null}
                 </button>
 
                 {/* Cart Modal Dropdown */}
                 {cartOpen && (
-                  <div className="absolute right-0 top-full mt-3 w-80 sm:w-92 rounded-2xl border border-gray-200 bg-white p-4 shadow-2xl z-50 animate-fade-in text-[#344257]">
+                  <div className="absolute right-0 top-full mt-3 w-80 sm:w-96 rounded-2xl border border-gray-200 bg-white p-4 shadow-2xl z-50 animate-fade-in text-[#344257]">
                     <div className="flex items-center justify-between border-b border-gray-100 pb-3 mb-3">
                       <h3 className="font-bold text-sm sm:text-base text-gray-900 flex items-center gap-2">
-                        <ShoppingCart className="h-4 w-4 text-[#47576E]" /> Shopping Cart
+                        <ShoppingCart className="h-4 w-4 text-[#47576E]" /> Shopping Cart ({totalItems})
                       </h3>
-                      {cartItem && (
+                      {cartItems.length > 0 && (
                         <button
                           type="button"
                           onClick={() => clearCart()}
-                          className="text-xs text-red-600 hover:text-red-700 font-semibold flex items-center gap-1"
+                          className="text-xs text-red-600 hover:text-red-700 font-semibold flex items-center gap-1 cursor-pointer"
                         >
-                          <Trash2 className="h-3 w-3" /> Clear
+                          <Trash2 className="h-3 w-3" /> Clear All
                         </button>
                       )}
                     </div>
 
-                    {cartItem ? (
+                    {cartItems.length > 0 ? (
                       <div className="space-y-3">
-                        <div className="flex gap-3 items-center bg-gray-50 p-3 rounded-xl border border-gray-100">
-                          {cartItem.item.images?.[0] ? (
-                            <img
-                              src={getCleanPhoneImage(cartItem.item.brand, cartItem.item.title, cartItem.item.images?.[0])}
-                              alt={cartItem.item.title}
-                              className="h-14 w-14 object-contain rounded-lg border border-gray-200 shrink-0 bg-white p-0.5"
-                            />
-                          ) : (
-                            <div className="h-14 w-14 rounded-lg border border-gray-200 bg-white grid place-items-center shrink-0">
-                              <ShoppingBag className="h-6 w-6 text-gray-400" />
-                            </div>
-                          )}
-                          <div className="min-w-0 flex-1">
-                            <h4 className="text-sm font-bold text-gray-900 truncate">
-                              {cartItem.item.title}
-                            </h4>
-                            <p className="text-xs text-gray-500 font-medium capitalize">
-                              {cartItem.type.replace('_', ' ')} • Free Doorstep Delivery
-                            </p>
-                            <p className="text-sm font-extrabold text-[#344257] mt-0.5">
-                              {formatINR(cartItem.item.price)}
-                            </p>
-                          </div>
+                        <div className="max-h-72 overflow-y-auto space-y-2.5 pr-1 divide-y divide-gray-100">
+                          {cartItems.map((ci) => {
+                            const itemImg = ci.item.images?.[0] || (ci.item as any).image;
+                            const brandTitle = (ci.item as any).brand || '';
+                            const variantDesc = [(ci.item as any).storage, (ci.item as any).condition].filter(Boolean).join(' • ');
+
+                            return (
+                              <div key={ci.id} className="pt-2.5 first:pt-0 flex gap-2.5 items-center">
+                                {itemImg ? (
+                                  <img
+                                    src={getCleanPhoneImage(brandTitle, ci.item.title, itemImg)}
+                                    alt={ci.item.title}
+                                    className="h-12 w-12 object-contain rounded-lg border border-gray-200 shrink-0 bg-white p-0.5"
+                                  />
+                                ) : (
+                                  <div className="h-12 w-12 rounded-lg border border-gray-200 bg-white grid place-items-center shrink-0">
+                                    <ShoppingBag className="h-5 w-5 text-gray-400" />
+                                  </div>
+                                )}
+                                <div className="min-w-0 flex-1">
+                                  <div className="flex items-start justify-between gap-1">
+                                    <h4 className="text-xs font-bold text-gray-900 truncate">
+                                      {ci.item.title}
+                                    </h4>
+                                    <button
+                                      type="button"
+                                      onClick={() => removeFromCart(ci.id)}
+                                      className="text-gray-400 hover:text-rose-600 p-0.5 cursor-pointer transition shrink-0"
+                                      title="Remove item"
+                                    >
+                                      <Trash2 className="h-3.5 w-3.5" />
+                                    </button>
+                                  </div>
+                                  {variantDesc && (
+                                    <p className="text-[10px] text-gray-500 font-medium truncate">
+                                      {variantDesc}
+                                    </p>
+                                  )}
+                                  <div className="flex items-center justify-between mt-1">
+                                    <span className="text-xs font-black text-[#344257]">
+                                      {formatINR(ci.item.price)}
+                                    </span>
+                                    {/* Quantity Stepper */}
+                                    <div className="flex items-center gap-1.5 bg-[#F0F0F5] border border-[#C0C8D8] rounded-lg px-1.5 py-0.5">
+                                      <button
+                                        type="button"
+                                        onClick={() => updateQuantity(ci.id, ci.quantity - 1)}
+                                        className="text-xs font-extrabold text-[#344257] hover:text-black w-4 h-4 grid place-items-center cursor-pointer"
+                                        title="Decrease quantity"
+                                      >
+                                        -
+                                      </button>
+                                      <span className="text-xs font-black text-[#344257] min-w-3 text-center">
+                                        {ci.quantity}
+                                      </span>
+                                      <button
+                                        type="button"
+                                        onClick={() => updateQuantity(ci.id, ci.quantity + 1)}
+                                        className="text-xs font-extrabold text-[#344257] hover:text-black w-4 h-4 grid place-items-center cursor-pointer"
+                                        title="Increase quantity"
+                                      >
+                                        +
+                                      </button>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            );
+                          })}
                         </div>
 
                         <div className="pt-2 border-t border-gray-100 flex items-center justify-between">
-                          <span className="text-xs font-semibold text-gray-600">Total Payable:</span>
+                          <span className="text-xs font-semibold text-gray-600">Total Payable ({totalItems} items):</span>
                           <span className="text-base font-extrabold text-gray-900">
-                            {formatINR(cartItem.item.price * (cartItem.quantity || 1))}
+                            {formatINR(totalAmount)}
                           </span>
                         </div>
 
@@ -854,7 +900,7 @@ export default function Navbar() {
                           onClick={() => setCartOpen(false)}
                           className="w-full py-2.5 rounded-xl text-sm font-bold flex items-center justify-center gap-2 bg-gradient-to-r from-[#344257] to-[#5D6A82] hover:brightness-110 text-white shadow transition"
                         >
-                          Proceed to Checkout <ArrowRight className="h-4 w-4" />
+                          Proceed to Checkout ({totalItems}) <ArrowRight className="h-4 w-4" />
                         </Link>
                       </div>
                     ) : (
@@ -1215,7 +1261,11 @@ export default function Navbar() {
               {/* Become Partner */}
               <Link
                 to="/partner"
-                className="py-2 text-[#344257] hover:text-[#47576E] transition-colors"
+                className={`py-2 transition-colors ${
+                  location.pathname === '/partner'
+                    ? 'text-[#344257] font-bold border-b-2 border-[#344257]'
+                    : 'text-[#344257] hover:text-[#47576E]'
+                }`}
               >
                 Become Partner
               </Link>
@@ -1395,10 +1445,15 @@ export default function Navbar() {
 
                 <Link
                   to="/partner"
-                  className="flex items-center justify-between rounded-xl px-3 py-2.5 text-sm font-bold text-gray-800 hover:bg-gray-50"
+                  onClick={() => setMobileOpen(false)}
+                  className={`flex items-center justify-between rounded-xl px-3 py-2.5 text-sm font-bold ${
+                    location.pathname === '/partner'
+                      ? 'bg-[#344257] text-white'
+                      : 'text-gray-800 hover:bg-gray-50'
+                  }`}
                 >
                   <span className="flex items-center gap-2.5">
-                    <Building2 className="h-4 w-4 text-[#47576E]" /> Become Partner
+                    <Building2 className={`h-4 w-4 ${location.pathname === '/partner' ? 'text-white' : 'text-[#47576E]'}`} /> Become Partner
                   </span>
                 </Link>
 

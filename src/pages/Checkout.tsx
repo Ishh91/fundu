@@ -8,7 +8,7 @@ import { formatINR } from '../lib/db';
 import { getCleanPhoneImage } from '../lib/phoneImages';
 
 export default function Checkout() {
-  const { cartItem, setDeliveryDetails } = useCart();
+  const { cartItems, totalAmount, totalItems, updateQuantity, removeFromCart, setDeliveryDetails } = useCart();
   const { user, profile, loading } = useAuth();
   const navigate = useNavigate();
   const [form, setForm] = useState({
@@ -22,7 +22,7 @@ export default function Checkout() {
     if (!loading && !user) {
       navigate('/login?redirect=/checkout');
     }
-    if (!cartItem) {
+    if (cartItems.length === 0) {
       navigate('/buy');
     }
     if (profile) {
@@ -32,9 +32,9 @@ export default function Checkout() {
         phone: profile.phone || ''
       }));
     }
-  }, [user, loading, cartItem, navigate, profile]);
+  }, [user, loading, cartItems.length, navigate, profile]);
 
-  if (!cartItem) return null;
+  if (cartItems.length === 0) return null;
 
   if (profile && profile.role !== 'customer') {
     return (
@@ -92,41 +92,90 @@ export default function Checkout() {
         {/* Order Summary */}
         <div className="lg:col-span-1">
           <div className="card p-6 sticky top-20">
-            <h2 className="font-display font-bold text-xl text-ink-900 mb-4 flex items-center gap-2">
-              <ShoppingCart className="h-5 w-5" /> Order Summary
+            <h2 className="font-display font-bold text-xl text-ink-900 mb-4 flex items-center justify-between">
+              <span className="flex items-center gap-2">
+                <ShoppingCart className="h-5 w-5 text-[#344257]" /> Order Summary
+              </span>
+              <span className="text-xs font-bold text-[#6A859F] bg-[#F0F0F5] px-2.5 py-1 rounded-full">
+                {totalItems} item{totalItems > 1 ? 's' : ''}
+              </span>
             </h2>
-            <div className="border-b border-ink-200 pb-4 mb-4">
-              <div className="flex gap-4">
-                {cartItem.item.images?.[0] ? (
-                  <img
-                    src={getCleanPhoneImage(cartItem.item.brand, cartItem.item.title, cartItem.item.images?.[0])}
-                    alt={cartItem.item.title}
-                    className="w-20 h-20 object-contain rounded-lg bg-gray-50 p-1"
-                  />
-                ) : (
-                  <div className="w-20 h-20 bg-ink-100 rounded-lg grid place-items-center">
-                    <ShoppingCart className="h-8 w-8 text-ink-400" />
+
+            <div className="border-b border-ink-200 pb-4 mb-4 space-y-3 max-h-80 overflow-y-auto pr-1 divide-y divide-gray-100">
+              {cartItems.map((ci) => {
+                const itemImg = ci.item.images?.[0] || (ci.item as any).image;
+                const brand = (ci.item as any).brand || '';
+                const variant = [(ci.item as any).storage, (ci.item as any).condition].filter(Boolean).join(' • ');
+
+                return (
+                  <div key={ci.id} className="pt-3 first:pt-0 flex gap-3 items-center">
+                    {itemImg ? (
+                      <img
+                        src={getCleanPhoneImage(brand, ci.item.title, itemImg)}
+                        alt={ci.item.title}
+                        className="w-16 h-16 object-contain rounded-lg bg-gray-50 p-1 border border-gray-200 shrink-0"
+                      />
+                    ) : (
+                      <div className="w-16 h-16 bg-ink-100 rounded-lg grid place-items-center shrink-0">
+                        <ShoppingCart className="h-6 w-6 text-ink-400" />
+                      </div>
+                    )}
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-start justify-between gap-1">
+                        <h3 className="font-semibold text-xs text-ink-900 truncate">{ci.item.title}</h3>
+                        <button
+                          type="button"
+                          onClick={() => removeFromCart(ci.id)}
+                          className="text-gray-400 hover:text-rose-600 text-[11px] cursor-pointer ml-1"
+                          title="Remove item"
+                        >
+                          ✕
+                        </button>
+                      </div>
+                      {variant && <p className="text-[10px] text-ink-500 truncate">{variant}</p>}
+                      <div className="flex items-center justify-between mt-1">
+                        <span className="font-bold text-xs text-ink-900">
+                          {formatINR(ci.item.price)}
+                        </span>
+                        {/* Quantity Counter */}
+                        <div className="flex items-center gap-1.5 bg-[#F0F0F5] border border-[#C0C8D8] rounded-md px-1.5 py-0.5">
+                          <button
+                            type="button"
+                            onClick={() => updateQuantity(ci.id, ci.quantity - 1)}
+                            className="text-xs font-bold text-[#344257] hover:text-black w-3.5 h-3.5 grid place-items-center cursor-pointer"
+                          >
+                            -
+                          </button>
+                          <span className="text-xs font-extrabold text-[#344257] min-w-3 text-center">
+                            {ci.quantity}
+                          </span>
+                          <button
+                            type="button"
+                            onClick={() => updateQuantity(ci.id, ci.quantity + 1)}
+                            className="text-xs font-bold text-[#344257] hover:text-black w-3.5 h-3.5 grid place-items-center cursor-pointer"
+                          >
+                            +
+                          </button>
+                        </div>
+                      </div>
+                    </div>
                   </div>
-                )}
-                <div className="flex-1">
-                  <h3 className="font-semibold text-ink-900">{cartItem.item.title}</h3>
-                  {('brand' in cartItem.item) && <p className="text-sm text-ink-500">{cartItem.item.brand}</p>}
-                  <p className="font-display font-bold text-ink-900 mt-1">{formatINR(cartItem.item.price)}</p>
-                </div>
-              </div>
+                );
+              })}
             </div>
+
             <div className="space-y-2 text-sm">
               <div className="flex justify-between">
                 <span className="text-ink-600">Subtotal</span>
-                <span className="font-semibold text-ink-900">{formatINR(cartItem.item.price)}</span>
+                <span className="font-semibold text-ink-900">{formatINR(totalAmount)}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-ink-600">Delivery</span>
-                <span className="font-semibold text-nature-600">Free</span>
+                <span className="text-ink-600">Doorstep Delivery</span>
+                <span className="font-semibold text-emerald-600">Free</span>
               </div>
               <div className="border-t border-ink-200 pt-2 flex justify-between font-bold text-lg">
-                <span className="text-ink-900">Total</span>
-                <span className="text-brand-600">{formatINR(cartItem.item.price)}</span>
+                <span className="text-ink-900">Total Payable</span>
+                <span className="text-brand-600">{formatINR(totalAmount)}</span>
               </div>
             </div>
           </div>
