@@ -493,11 +493,8 @@ export default function RepairBrandPage() {
                       {displayName}
                     </p>
 
-                    <div className="mt-2.5 w-full flex items-center justify-between gap-1 pt-2 border-t border-gray-100 text-[11px]">
-                      <span className="text-gray-400 font-bold">{user ? 'From' : 'Quote'}</span>
-                      <span className="font-extrabold text-[#344257] text-xs">
-                        {formatDisplayPrice(basePrice, !!user)}
-                      </span>
+                    <div className="mt-2.5 w-full py-1.5 px-2 rounded-xl bg-[#F0F0F5] group-hover:bg-[#344257] group-hover:text-white text-[#344257] text-[11px] font-extrabold text-center transition-colors">
+                      Select Issues
                     </div>
                   </div>
                 );

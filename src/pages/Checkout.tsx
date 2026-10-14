@@ -14,9 +14,12 @@ export default function Checkout() {
   const [form, setForm] = useState({
     name: '',
     phone: '',
+    pincode: '',
+    locality: '',
     address: '',
     area: ''
   });
+  const [formError, setFormError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!loading && !user) {
@@ -28,8 +31,10 @@ export default function Checkout() {
     if (profile) {
       setForm(prev => ({
         ...prev,
-        name: profile.full_name || '',
-        phone: profile.phone || ''
+        name: prev.name || profile.full_name || '',
+        phone: prev.phone || profile.phone || '',
+        address: prev.address || profile.address || '',
+        area: prev.area || profile.city || '',
       }));
     }
   }, [user, loading, cartItems.length, navigate, profile]);
@@ -75,7 +80,35 @@ export default function Checkout() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    setDeliveryDetails(form);
+    setFormError(null);
+
+    const cleanPhone = form.phone.replace(/\D/g, '');
+    if (cleanPhone.length !== 10) {
+      setFormError('⚠️ Please enter a valid 10-digit Indian phone number.');
+      return;
+    }
+
+    const cleanPincode = form.pincode.replace(/\D/g, '');
+    if (cleanPincode.length !== 6) {
+      setFormError('⚠️ Please enter a valid 6-digit Indian PIN code.');
+      return;
+    }
+
+    if (!form.locality.trim()) {
+      setFormError('⚠️ Please provide your locality / colony / sector.');
+      return;
+    }
+
+    if (!form.address.trim()) {
+      setFormError('⚠️ Please provide complete house/street address.');
+      return;
+    }
+
+    setDeliveryDetails({
+      ...form,
+      phone: cleanPhone,
+      pincode: cleanPincode,
+    });
     navigate('/payment');
   };
 
@@ -203,61 +236,108 @@ export default function Checkout() {
         {/* Delivery Details Form */}
         <div className="lg:col-span-2">
           <div className="card p-6">
-            <h2 className="font-display font-bold text-xl text-ink-900 mb-6">Delivery Details</h2>
+            <h2 className="font-display font-bold text-xl text-ink-900 mb-1">Delivery Details</h2>
+            <p className="text-xs text-ink-500 mb-6">Enter your contact and doorstep address for safe delivery & verification</p>
+
+            {formError && (
+              <div className="mb-4 rounded-xl bg-rose-50 border border-rose-200 p-3 text-xs text-rose-700 flex items-center gap-2">
+                <span>{formError}</span>
+              </div>
+            )}
+
             <form onSubmit={handleSubmit} className="space-y-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="label flex items-center gap-2 text-xs font-bold text-gray-700">
+                    <User className="h-4 w-4 text-[#344257]" /> Full Name *
+                  </label>
+                  <input
+                    required
+                    type="text"
+                    value={form.name}
+                    onChange={(e) => setForm(prev => ({ ...prev, name: e.target.value }))}
+                    className="input text-sm"
+                    placeholder="e.g. Rahul Sharma"
+                  />
+                </div>
+                <div>
+                  <label className="label flex items-center gap-2 text-xs font-bold text-gray-700">
+                    <Phone className="h-4 w-4 text-[#344257]" /> Phone Number *
+                  </label>
+                  <input
+                    required
+                    type="tel"
+                    maxLength={10}
+                    value={form.phone}
+                    onChange={(e) => setForm(prev => ({ ...prev, phone: e.target.value.replace(/\D/g, '').slice(0, 10) }))}
+                    className="input text-sm"
+                    placeholder="10-digit mobile number"
+                  />
+                  <span className="text-[10px] text-gray-400 mt-0.5 block">Delivery updates will be sent via SMS / WhatsApp</span>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="label flex items-center gap-2 text-xs font-bold text-gray-700">
+                    <MapPin className="h-4 w-4 text-[#344257]" /> Pincode (PIN Code) *
+                  </label>
+                  <input
+                    required
+                    type="text"
+                    maxLength={6}
+                    value={form.pincode}
+                    onChange={(e) => setForm(prev => ({ ...prev, pincode: e.target.value.replace(/\D/g, '').slice(0, 6) }))}
+                    className="input text-sm font-semibold"
+                    placeholder="6-digit Pincode (e.g. 226001)"
+                  />
+                  {form.pincode && form.pincode.length === 6 && (
+                    <span className="text-[10px] text-emerald-600 font-bold mt-0.5 block">✓ Valid 6-digit Pincode</span>
+                  )}
+                </div>
+                <div>
+                  <label className="label flex items-center gap-2 text-xs font-bold text-gray-700">
+                    <MapPin className="h-4 w-4 text-[#344257]" /> Locality / Sector / Landmark *
+                  </label>
+                  <input
+                    required
+                    type="text"
+                    value={form.locality}
+                    onChange={(e) => setForm(prev => ({ ...prev, locality: e.target.value }))}
+                    className="input text-sm"
+                    placeholder="e.g. Gomti Nagar, Sector 4, Near Mall"
+                  />
+                </div>
+              </div>
+
               <div>
-                <label className="label flex items-center gap-2">
-                  <User className="h-4 w-4" /> Full Name
+                <label className="label flex items-center gap-2 text-xs font-bold text-gray-700">
+                  <MapPin className="h-4 w-4 text-[#344257]" /> Complete Street Address *
                 </label>
-                <input
+                <textarea
                   required
-                  type="text"
-                  value={form.name}
-                  onChange={(e) => setForm(prev => ({ ...prev, name: e.target.value }))}
-                  className="input"
-                  placeholder="Enter your full name"
+                  rows={3}
+                  value={form.address}
+                  onChange={(e) => setForm(prev => ({ ...prev, address: e.target.value }))}
+                  className="input min-h-[85px] text-sm"
+                  placeholder="Flat / House No., Apartment / Building Name, Street / Road"
                 />
               </div>
+
               <div>
-                <label className="label flex items-center gap-2">
-                  <Phone className="h-4 w-4" /> Phone Number
-                </label>
-                <input
-                  required
-                  type="tel"
-                  value={form.phone}
-                  onChange={(e) => setForm(prev => ({ ...prev, phone: e.target.value }))}
-                  className="input"
-                  placeholder="Enter your phone number"
-                />
-              </div>
-              <div>
-                <label className="label flex items-center gap-2">
-                  <MapPin className="h-4 w-4" /> Area
+                <label className="label flex items-center gap-2 text-xs font-bold text-gray-700">
+                  <MapPin className="h-4 w-4 text-[#344257]" /> City / Service Hub Area
                 </label>
                 <select
-                  required
                   value={form.area}
                   onChange={(e) => setForm(prev => ({ ...prev, area: e.target.value }))}
-                  className="input"
+                  className="input text-sm"
                 >
-                  <option value="">Select your area at your doorstep</option>
+                  <option value="">Select city or hub (Optional)</option>
                   {DOORSTEP_AREAS.map(area => (
                     <option key={area} value={area}>{area}</option>
                   ))}
                 </select>
-              </div>
-              <div>
-                <label className="label flex items-center gap-2">
-                  <MapPin className="h-4 w-4" /> Complete Address
-                </label>
-                <textarea
-                  required
-                  value={form.address}
-                  onChange={(e) => setForm(prev => ({ ...prev, address: e.target.value }))}
-                  className="input min-h-[100px]"
-                  placeholder="House no, street, landmark, etc."
-                />
               </div>
               <button
                 type="submit"

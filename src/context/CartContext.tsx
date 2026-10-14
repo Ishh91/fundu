@@ -13,6 +13,8 @@ export type DeliveryDetails = {
   phone: string;
   address: string;
   area: string;
+  locality?: string;
+  pincode?: string;
 };
 
 type CartContextValue = {

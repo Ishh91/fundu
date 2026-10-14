@@ -27,6 +27,8 @@ import {
   RefreshCw,
   FileText,
   Award,
+  User,
+  Phone,
 } from 'lucide-react';
 import { computeDetailedResaleValuation, fetchSellPriceConfig, fetchPhoneModels, searchMobileApiDev, calculateMarketPriceComparison, type SellPriceConfig } from '../lib/mobileApi';
 import { getFunduPhoneQuote, type FunduQuoteResponse } from '../lib/quoteEngine';
@@ -1428,7 +1430,7 @@ export default function SellPhone() {
     }
   };
 
-  const handleGoToLoginForExactPrice = () => {
+  const handleGoToLoginForExactPrice = (targetStep: number = 4) => {
     try {
       sessionStorage.setItem('fundu_sell_form', JSON.stringify(form));
     } catch {}
@@ -1437,7 +1439,7 @@ export default function SellPhone() {
     const targetPath = cleanBrand && cleanModel
       ? `/sell-old-mobile-phone/sell-${cleanBrand}/sell-${cleanModel}`
       : window.location.pathname;
-    const targetUrl = `${targetPath}?step=3&brand=${encodeURIComponent(form.brand)}&model=${encodeURIComponent(form.model)}&storage=${encodeURIComponent(form.storage)}`;
+    const targetUrl = `${targetPath}?step=${targetStep}&brand=${encodeURIComponent(form.brand)}&model=${encodeURIComponent(form.model)}&storage=${encodeURIComponent(form.storage)}`;
     navigate(`/login?redirect=${encodeURIComponent(targetUrl)}`);
   };
 
@@ -1506,11 +1508,27 @@ export default function SellPhone() {
     accessories: ['Original Box', 'Original Charger'] as string[],
     payoutMethod: 'UPI' as 'UPI' | 'Cash' | 'Bank',
     payoutDetails: '',
+    customerName: '',
+    customerPhone: '',
+    pincode: '',
+    locality: '',
     pickupAddress: '',
     pickupArea: getPanIndiaLocation().displayLabel || 'New Delhi (110001)',
     pickupDate: new Date().toISOString().split('T')[0],
     pickupSlot: '10 AM - 12 PM',
   });
+
+  // Prefill customer contact details from profile when logged in
+  useEffect(() => {
+    if (profile) {
+      setForm((prev) => ({
+        ...prev,
+        customerName: prev.customerName || profile.full_name || '',
+        customerPhone: prev.customerPhone || profile.phone || '',
+        pickupAddress: prev.pickupAddress || profile.address || '',
+      }));
+    }
+  }, [profile]);
 
   // Restore condition questionnaire answers from sessionStorage if customer logged in and redirected back
   useEffect(() => {
@@ -2147,8 +2165,31 @@ export default function SellPhone() {
       return;
     }
 
+    const customerFullName = form.customerName.trim() || profile?.full_name || '';
+    if (!customerFullName) {
+      setError('⚠️ Please enter your Full Name.');
+      return;
+    }
+
+    const cleanPhone = (form.customerPhone || profile?.phone || '').replace(/\D/g, '').slice(-10);
+    if (cleanPhone.length !== 10) {
+      setError('⚠️ Please enter a valid 10-digit mobile number.');
+      return;
+    }
+
+    const cleanPincode = (form.pincode || '').replace(/\D/g, '').slice(0, 6);
+    if (cleanPincode.length !== 6) {
+      setError('⚠️ Please enter a valid 6-digit Indian PIN code.');
+      return;
+    }
+
+    if (!form.locality.trim()) {
+      setError('⚠️ Please enter your locality / sector / landmark.');
+      return;
+    }
+
     if (!form.pickupAddress.trim()) {
-      setError('Please provide full doorstep pickup address at your doorstep.');
+      setError('⚠️ Please provide full doorstep pickup address.');
       return;
     }
 
@@ -2158,8 +2199,8 @@ export default function SellPhone() {
     try {
       const payload = {
         user_id: user?.id || null,
-        customer_name: (user as any)?.user_metadata?.full_name || profile?.full_name || 'Valued Customer',
-        customer_phone: (user as any)?.phone || profile?.phone || '+91-9839122345',
+        customer_name: customerFullName,
+        customer_phone: cleanPhone,
         customer_email: user?.email || '',
         brand: form.brand,
         model: form.model,
@@ -2194,8 +2235,12 @@ export default function SellPhone() {
         valuation_breakdown: valuationBreakdown,
         payout_method: form.payoutMethod,
         payout_details: form.payoutDetails,
-        pickup_address: form.pickupAddress,
-        pickup_area: form.pickupArea,
+        pickup_address: [
+          form.pickupAddress,
+          form.locality,
+          `PIN: ${cleanPincode}`
+        ].filter(Boolean).join(', '),
+        pickup_area: form.pickupArea || form.locality || '',
         pickup_date: form.pickupDate,
         pickup_slot: form.pickupSlot,
         notes: form.notes || (funduQuote?.status === 'requires_manual_review' ? `Manual Inspection: ${funduQuote.reviewReason || 'Manual review required'}` : ''),
@@ -3539,10 +3584,16 @@ export default function SellPhone() {
                     </a>
                     <button
                       type="button"
-                      onClick={() => goToStep(4)}
+                      onClick={() => {
+                        if (!user) {
+                          handleGoToLoginForExactPrice(4);
+                        } else {
+                          goToStep(4);
+                        }
+                      }}
                       className="btn-primary flex items-center justify-center gap-2"
                     >
-                      Book Free Doorstep Inspection <ArrowRight className="h-4 w-4" />
+                      {!user ? 'Login to Book Inspection' : 'Book Free Doorstep Inspection'} <ArrowRight className="h-4 w-4" />
                     </button>
                   </div>
                 </div>
@@ -3757,6 +3808,72 @@ export default function SellPhone() {
               )}
 
               <div className="space-y-4 text-left">
+                {/* Customer Contact Details */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                  <div>
+                    <label className="label text-xs font-bold text-gray-900 flex items-center gap-1.5">
+                      <User className="h-4 w-4 text-[#344257]" /> Full Name *
+                    </label>
+                    <input
+                      required
+                      type="text"
+                      value={form.customerName}
+                      onChange={(e) => setForm({ ...form, customerName: e.target.value })}
+                      placeholder="Enter your full name"
+                      className="input mt-1 text-xs sm:text-sm focus:border-[#6A859F] focus:ring-4 focus:ring-[#6A859F]/15"
+                    />
+                  </div>
+                  <div>
+                    <label className="label text-xs font-bold text-gray-900 flex items-center gap-1.5">
+                      <Phone className="h-4 w-4 text-[#344257]" /> Mobile Number *
+                    </label>
+                    <input
+                      required
+                      type="tel"
+                      maxLength={10}
+                      value={form.customerPhone}
+                      onChange={(e) => setForm({ ...form, customerPhone: e.target.value.replace(/\D/g, '').slice(0, 10) })}
+                      placeholder="10-digit mobile number"
+                      className="input mt-1 text-xs sm:text-sm focus:border-[#6A859F] focus:ring-4 focus:ring-[#6A859F]/15"
+                    />
+                    <span className="text-[10px] text-gray-400 mt-0.5 block">Technician calls on this number before doorstep arrival</span>
+                  </div>
+                </div>
+
+                {/* Proper Pincode & Locality */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                  <div>
+                    <label className="label text-xs font-bold text-gray-900 flex items-center gap-1.5">
+                      <MapPin className="h-4 w-4 text-[#344257]" /> Pincode (PIN Code) *
+                    </label>
+                    <input
+                      required
+                      type="text"
+                      maxLength={6}
+                      value={form.pincode}
+                      onChange={(e) => setForm({ ...form, pincode: e.target.value.replace(/\D/g, '').slice(0, 6) })}
+                      placeholder="6-digit Pincode (e.g. 226001)"
+                      className="input mt-1 text-xs sm:text-sm font-semibold focus:border-[#6A859F] focus:ring-4 focus:ring-[#6A859F]/15"
+                    />
+                    {form.pincode && form.pincode.length === 6 && (
+                      <span className="text-[10px] text-emerald-600 font-bold mt-0.5 block">✓ Valid 6-digit Pincode</span>
+                    )}
+                  </div>
+                  <div>
+                    <label className="label text-xs font-bold text-gray-900 flex items-center gap-1.5">
+                      <MapPin className="h-4 w-4 text-[#344257]" /> Locality / Sector / Landmark *
+                    </label>
+                    <input
+                      required
+                      type="text"
+                      value={form.locality}
+                      onChange={(e) => setForm({ ...form, locality: e.target.value })}
+                      placeholder="e.g. Gomti Nagar, Sector 4, Near Clock Tower"
+                      className="input mt-1 text-xs sm:text-sm focus:border-[#6A859F] focus:ring-4 focus:ring-[#6A859F]/15"
+                    />
+                  </div>
+                </div>
+
                 {/* Pan-India Pincode / City Location Selector */}
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
@@ -3917,7 +4034,13 @@ export default function SellPhone() {
                 <button
                   type="button"
                   onClick={handleSubmit}
-                  disabled={submitting || !form.pickupAddress.trim()}
+                  disabled={
+                    submitting ||
+                    !form.pickupAddress.trim() ||
+                    !form.locality.trim() ||
+                    form.pincode.replace(/\D/g, '').length !== 6 ||
+                    !(form.customerPhone || profile?.phone)
+                  }
                   className="btn-primary text-sm flex items-center gap-2"
                 >
                   {submitting ? 'Auto-Assigning Agent...' : 'Confirm Pickup Booking'} <CheckCircle2 className="h-4 w-4" />

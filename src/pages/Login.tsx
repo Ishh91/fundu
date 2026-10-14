@@ -24,7 +24,9 @@ export default function Login() {
   const { signIn, sendOtp, verifyOtp, user, profile, loading: authLoading } = useAuth();
   const navigate = useNavigate();
   const [params] = useSearchParams();
-  const redirect = params.get('redirect') || '/';
+  const rawRedirect = params.get('redirect');
+  const redirect = rawRedirect || '/';
+  const hasSpecificRedirect = Boolean(rawRedirect && rawRedirect !== '/' && rawRedirect !== '/profile');
 
 
   /* ── Mobile OTP States ── */
@@ -127,10 +129,16 @@ export default function Login() {
     }
 
     setSuccessMsg('✅ Mobile number verified successfully! Redirecting...');
+    if (hasSpecificRedirect) {
+      navigate(rawRedirect!);
+      return;
+    }
     if (res.isNewUser) {
       navigate('/profile?setup=true');
       return;
     }
+    navigate('/profile');
+    return;
   };
 
   const handleOtpDigitChange = (index: number, val: string) => {
@@ -170,17 +178,34 @@ export default function Login() {
 
   useEffect(() => {
     if (!authLoading && user) {
+      const activeRole = profile?.role || user?.role || 'customer';
+      if (activeRole === 'admin') {
+        navigate('/admin');
+        return;
+      }
+      if (activeRole === 'vendor' || activeRole === 'wholesaler') {
+        navigate('/vendor');
+        return;
+      }
+      if (activeRole === 'delivery' || activeRole === 'rider') {
+        navigate('/delivery');
+        return;
+      }
+
+      // If user came with a specific destination (e.g. from Sell flow or Cart checkout), take them straight there
+      if (hasSpecificRedirect) {
+        navigate(rawRedirect!);
+        return;
+      }
+
+      // If directly registering on website without redirect, go to profile
       if (!profile?.full_name) {
         navigate('/profile?setup=true');
         return;
       }
-      const activeRole = profile?.role || user?.role || 'customer';
-      if (activeRole === 'admin') navigate('/admin');
-      else if (activeRole === 'vendor' || activeRole === 'wholesaler') navigate('/vendor');
-      else if (activeRole === 'delivery' || activeRole === 'rider') navigate('/delivery');
-      else navigate(redirect);
+      navigate('/profile');
     }
-  }, [user, profile, authLoading, navigate, redirect]);
+  }, [user, profile, authLoading, navigate, hasSpecificRedirect, rawRedirect]);
 
   /* ── Direct Login Submit Handler ── */
   const handleLoginSubmit = async (e: React.FormEvent) => {
@@ -222,7 +247,11 @@ export default function Login() {
     } else if (role === 'delivery' || role === 'rider') {
       navigate('/delivery');
     } else {
-      navigate(redirect);
+      if (hasSpecificRedirect) {
+        navigate(rawRedirect!);
+      } else {
+        navigate('/profile');
+      }
     }
   };
 

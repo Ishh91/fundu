@@ -108,8 +108,13 @@ export default function Payment() {
         status: 'pending',
         payment_method: paymentMethod,
         payment_status: paymentStatus,
-        delivery_address: `${deliveryDetails.address}, ${deliveryDetails.area}`,
-        delivery_area: deliveryDetails.area,
+        delivery_address: [
+          deliveryDetails.address,
+          deliveryDetails.locality,
+          deliveryDetails.area,
+          deliveryDetails.pincode ? `PIN: ${deliveryDetails.pincode}` : ''
+        ].filter(Boolean).join(', '),
+        delivery_area: deliveryDetails.area || deliveryDetails.locality || '',
         delivery_name: deliveryDetails.name,
         delivery_phone: deliveryDetails.phone,
         items: orderItems,
