@@ -30,7 +30,7 @@ import {
   User,
   Phone,
 } from 'lucide-react';
-import { computeDetailedResaleValuation, fetchSellPriceConfig, fetchPhoneModels, searchMobileApiDev, calculateMarketPriceComparison, type SellPriceConfig } from '../lib/mobileApi';
+import { computeDetailedResaleValuation, fetchSellPriceConfig, fetchPhoneModels, searchMobileApiDev, calculateMarketPriceComparison, getDynamicFallbackConfig, type SellPriceConfig } from '../lib/mobileApi';
 import { getFunduPhoneQuote, type FunduQuoteResponse } from '../lib/quoteEngine';
 import { db, formatINR, formatMaskedPrice, formatDisplayPrice } from '../lib/db';
 import { useAuth } from '../context/AuthContext';
