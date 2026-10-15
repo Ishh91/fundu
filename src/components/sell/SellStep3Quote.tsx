@@ -70,15 +70,20 @@ export default function SellStep3Quote({
             {!user ? (
               <button
                 type="button"
-                onClick={() => handleGoToLoginForExactPrice(4)}
+                onClick={() => handleGoToLoginForExactPrice(3)}
                 className="mt-2 text-xs font-bold text-amber-200 hover:text-white underline inline-flex items-center gap-1 cursor-pointer"
               >
                 <Lock className="h-3.5 w-3.5" /> Login to reveal exact price
               </button>
             ) : (
-              <p className="text-xs text-amber-200 font-semibold">
-                Estimated valuation · Final spot payment verified upon doorstep inspection
-              </p>
+              <div className="mt-1 space-y-1">
+                <span className="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-300 bg-emerald-950/40 border border-emerald-400/30 px-2.5 py-0.5 rounded-full">
+                  <CheckCircle2 className="h-3 w-3 text-emerald-400" /> Price Unlocked
+                </span>
+                <p className="text-xs text-amber-200 font-semibold">
+                  Estimated valuation · Final spot payment verified upon doorstep inspection
+                </p>
+              </div>
             )}
           </div>
 
@@ -141,14 +146,14 @@ export default function SellStep3Quote({
                 type="button"
                 onClick={() => {
                   if (!user) {
-                    handleGoToLoginForExactPrice(4);
+                    handleGoToLoginForExactPrice(3);
                   } else {
                     goToStep(4);
                   }
                 }}
                 className="btn-primary flex items-center justify-center gap-2"
               >
-                {!user ? 'Login to Book Inspection' : 'Book Free Doorstep Inspection'} <ArrowRight className="h-4 w-4" />
+                {!user ? 'Login to View Price & Book' : 'Book Free Doorstep Inspection'} <ArrowRight className="h-4 w-4" />
               </button>
             </div>
           </div>
@@ -180,16 +185,21 @@ export default function SellStep3Quote({
               <div className="pt-1">
                 <button
                   type="button"
-                  onClick={() => handleGoToLoginForExactPrice(4)}
+                  onClick={() => handleGoToLoginForExactPrice(3)}
                   className="btn bg-white text-[#344257] hover:bg-gray-100 font-black text-xs px-4 py-2 rounded-xl inline-flex items-center gap-1.5 shadow-md cursor-pointer transition"
                 >
                   <Lock className="h-3.5 w-3.5 text-[#344257]" /> Want exact price? Login to view
                 </button>
               </div>
             ) : (
-              <p className="text-xs text-gray-300">
-                Real guaranteed quote · Subject to physical inspection · Valid for 7 days
-              </p>
+              <div className="pt-1 space-y-1">
+                <span className="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-300 bg-emerald-950/40 border border-emerald-400/30 px-2.5 py-0.5 rounded-full">
+                  <CheckCircle2 className="h-3 w-3 text-emerald-400" /> Guaranteed Price Unlocked
+                </span>
+                <p className="text-xs text-gray-300">
+                  Real guaranteed quote · Subject to physical inspection · Valid for 7 days
+                </p>
+              </div>
             )}
 
             <div className="flex flex-wrap justify-center gap-2 text-xs font-semibold pt-2">
@@ -323,14 +333,14 @@ export default function SellStep3Quote({
               type="button"
               onClick={() => {
                 if (!user) {
-                  handleGoToLoginForExactPrice(4);
+                  handleGoToLoginForExactPrice(3);
                 } else {
                   goToStep(4);
                 }
               }}
               className="btn-primary flex items-center gap-2"
             >
-              {!user ? 'Login to View Final Price & Schedule' : 'Accept & Schedule Pickup'}{' '}
+              {!user ? 'Login to View Final Price' : 'Accept Quote & Proceed to Schedule Pickup'}{' '}
               <ArrowRight className="h-4 w-4" />
             </button>
           </div>

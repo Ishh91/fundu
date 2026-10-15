@@ -132,7 +132,7 @@ export default function SellPhone() {
     }
   };
 
-  const handleGoToLoginForExactPrice = (targetStep: number = 4) => {
+  const handleGoToLoginForExactPrice = (targetStep: number = 3) => {
     try {
       sessionStorage.setItem('fundu_sell_form', JSON.stringify(form));
     } catch {}
