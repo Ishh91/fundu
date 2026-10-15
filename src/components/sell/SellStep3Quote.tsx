@@ -291,11 +291,10 @@ export default function SellStep3Quote({
                   key={p.id}
                   type="button"
                   onClick={() => setForm((prev: any) => ({ ...prev, payoutMethod: p.id as any }))}
-                  className={`p-3 rounded-xl border text-center transition cursor-pointer ${
-                    form.payoutMethod === p.id
+                  className={`p-3 rounded-xl border text-center transition cursor-pointer ${form.payoutMethod === p.id
                       ? 'border-[#344257] bg-[#F0F0F5] font-extrabold text-[#344257] ring-2 ring-[#344257]/20'
                       : 'border-gray-200 bg-white text-gray-700 hover:border-gray-300'
-                  }`}
+                    }`}
                 >
                   <p className="text-xs font-bold">{p.label}</p>
                 </button>

@@ -83,9 +83,12 @@ export type CatalogModelItem = {
   brand: string;
   series: string;
   model: string;
-  storage: string;
+  storage?: string;
   price: number;
-  image: string;
+  image?: string | null;
+  base_resale_value?: number;
+  seriesName?: string;
+  seriesSlug?: string;
 };
 
 async function fetchApi<T>(path: string): Promise<T> {

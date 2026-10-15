@@ -147,6 +147,10 @@ export default function RepairIssuePage() {
 
   const { configs: repairConfigs } = useRepairPriceSync();
 
+  const [selectedBrand, setSelectedBrand] = useState<string>('Apple');
+  const [selectedModel, setSelectedModel] = useState<string>('iPhone 15');
+  const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(0);
+
   const brandOptions = [
     'Apple',
     'Samsung',

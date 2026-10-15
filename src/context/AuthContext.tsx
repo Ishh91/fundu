@@ -6,8 +6,11 @@ export type Profile = {
   id: string;
   full_name: string | null;
   phone: string | null;
-  role: 'customer' | 'wholesaler' | 'admin' | 'delivery' | 'rider';
+  email?: string | null;
+  address?: string | null;
+  role: 'customer' | 'wholesaler' | 'admin' | 'delivery' | 'rider' | 'vendor';
   business_name: string | null;
+  vendor_location?: string | null;
   gst_number?: string | null;
   credit_limit?: number;
   outstanding_balance?: number;

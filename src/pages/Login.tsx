@@ -388,8 +388,7 @@ export default function Login() {
                   <button
                     type="button"
                     onClick={() => {
-                      setMode('otp');
-                      setError(null);
+                      handleSendOtp();
                     }}
                     className="inline-flex items-center gap-1 font-extrabold text-brand-700 underline hover:text-brand-900 text-xs"
                   >
@@ -660,8 +659,7 @@ export default function Login() {
                       type="button"
                       onClick={() => {
                         setResetModalOpen(false);
-                        setMode('otp');
-                        setError(null);
+                        handleSendOtp();
                       }}
                       className="inline-flex items-center gap-1 font-extrabold text-brand-700 underline hover:text-brand-900 text-xs"
                     >

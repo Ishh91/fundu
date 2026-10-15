@@ -79,8 +79,8 @@ export default function CustomerDetailsModal({ isOpen, onClose, customer }: Cust
         .then(({ data }) => {
           if (data) {
             setFetchedProfile({
-              full_name: data.full_name,
-              phone: data.phone,
+              full_name: (data as any).full_name,
+              phone: (data as any).phone,
               email: (data as any).email || null,
             });
           }

@@ -218,6 +218,7 @@ export default function SellPhone() {
     pickupArea: getPanIndiaLocation().displayLabel || 'New Delhi (110001)',
     pickupDate: new Date().toISOString().split('T')[0],
     pickupSlot: '10 AM - 12 PM',
+    notes: '',
   });
 
   // Prefill customer contact details from profile when logged in
@@ -945,7 +946,7 @@ export default function SellPhone() {
         pickup_area: form.pickupArea || form.locality || '',
         pickup_date: form.pickupDate,
         pickup_slot: form.pickupSlot,
-        notes: form.notes || (funduQuote?.status === 'requires_manual_review' ? `Manual Inspection: ${funduQuote.reviewReason || 'Manual review required'}` : ''),
+        notes: form.notes || (funduQuote?.status === 'requires_manual_review' ? `Manual Inspection: ${funduQuote.reviewReason || funduQuote.reason || 'Manual review required'}` : ''),
         status: funduQuote?.status === 'requires_manual_review' ? 'manual_review' : 'pending',
       };
 
@@ -954,7 +955,7 @@ export default function SellPhone() {
       if (insertErr) throw insertErr;
 
       setSuccessData({
-        id: data?.id || `FND-LKO-${Math.floor(100000 + Math.random() * 900000)}`,
+        id: (data as any)?.id || `FND-LKO-${Math.floor(100000 + Math.random() * 900000)}`,
         pickup_person_name: 'Rajesh Kumar (Fundu Rider)',
         pickup_person_phone: '+91-9839122345',
         estimated_arrival_time: `${form.pickupDate} (${form.pickupSlot})`,
@@ -1004,25 +1005,46 @@ export default function SellPhone() {
           setForm({
             brand: '',
             model: '',
+            ram: '',
             storage: '',
-            cosmeticCondition: 'Good',
-            screenCondition: 'Flawless',
-            bodyCondition: 'Flawless',
-            functionalDefects: [],
-            customDefects: [],
-            accessories: [],
+            powersOn: true,
+            activationLockCleared: true,
+            ownershipVerified: true,
+            liquidDamage: false,
+            cosmeticCondition: 'good',
+            screenCondition: 'flawless',
+            bodyCondition: 'flawless',
+            batteryHealth: 'healthy',
+            canMakeCalls: true,
             underWarranty: false,
-            ageBracket: 'below_11_months',
+            defects: [],
+            imei: '',
+            imeiPhoto: '',
+            devicePhotos: {
+              front: '',
+              back: '',
+              edges: '',
+              bill_box: '',
+            },
+            diagnostics: {
+              screen_touch: true,
+              cameras: true,
+              battery_health: '85%+',
+              biometrics: true,
+              speaker_mic: true,
+              charging_port: true,
+            },
+            accessories: ['Original Box', 'Original Charger'],
             payoutMethod: 'UPI',
             payoutDetails: '',
-            pickupAddress: '',
-            pickupArea: 'Indira Nagar',
-            locality: '',
-            pincode: '',
-            pickupDate: new Date(Date.now() + 86400000).toISOString().split('T')[0],
-            pickupSlot: '12 PM - 2 PM',
             customerName: '',
             customerPhone: '',
+            pincode: '',
+            locality: '',
+            pickupAddress: '',
+            pickupArea: getPanIndiaLocation().displayLabel || 'New Delhi (110001)',
+            pickupDate: new Date().toISOString().split('T')[0],
+            pickupSlot: '10 AM - 12 PM',
             notes: '',
           });
           navigate('/sell');
@@ -1252,14 +1274,10 @@ export default function SellPhone() {
             brandSlug={brandSlug}
             modelSlug={modelSlug}
             handleBrandSelect={handleBrandSelect}
-            handleSelectPhone={handleSelectPhone}
-            filteredModelsList={filteredModelsList}
-            loadingModels={loadingModels}
+            handleQuickModelSelect={handleQuickModelSelect}
             selectedSeries={selectedSeries}
             setSelectedSeries={setSelectedSeries}
             brandSeriesList={brandSeriesList}
-            modelFilter={modelFilter}
-            setModelFilter={setModelFilter}
             user={user}
             dbReviews={dbReviews}
           />
@@ -1278,9 +1296,6 @@ export default function SellPhone() {
             handleGoToLoginForExactPrice={handleGoToLoginForExactPrice}
             toggleDefect={toggleDefect}
             toggleAccessory={toggleAccessory}
-            customDefectInput={customDefectInput}
-            setCustomDefectInput={setCustomDefectInput}
-            handleAddCustomDefect={handleAddCustomDefect}
             funduQuote={funduQuote}
             handleStep2Back={handleStep2Back}
             goToStep={goToStep}

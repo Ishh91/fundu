@@ -658,7 +658,7 @@ export default function SellBrandPage() {
                   >
                     <div className="h-28 sm:h-36 w-full flex items-center justify-center p-1 relative overflow-hidden">
                       <img
-                        src={getCleanPhoneImage(m.brand || brandDisplayName, m.model, m.image)}
+                        src={getCleanPhoneImage(m.brand || brandDisplayName, m.model, m.image || undefined)}
                         alt={displayName}
                         className="h-full max-h-28 sm:max-h-36 w-auto object-contain group-hover:scale-105 transition-transform duration-300 drop-shadow-xs"
                         loading="lazy"

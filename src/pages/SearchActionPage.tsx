@@ -94,7 +94,7 @@ export default function SearchActionPage() {
           brand: p.brand,
           model: p.model,
           price: p.base_resale_value || Math.round(p.default_mrp * 0.55),
-          image: p.image_url,
+          image: p.image_url || undefined,
         });
       }
     });
@@ -112,7 +112,7 @@ export default function SearchActionPage() {
           brand: prod.brand,
           model: prod.model,
           price: prod.price,
-          image: prod.image,
+          image: prod.images?.[0] || undefined,
         });
       }
     });

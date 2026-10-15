@@ -263,7 +263,7 @@ export default function RepairBrandPage() {
       model: string;
       series: string;
       seriesSlug: string;
-      image?: string;
+      image?: string | null;
       price: number;
     }> = [];
     const seen = new Set<string>();

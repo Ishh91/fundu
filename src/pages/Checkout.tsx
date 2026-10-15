@@ -34,7 +34,7 @@ export default function Checkout() {
         name: prev.name || profile.full_name || '',
         phone: prev.phone || profile.phone || '',
         address: prev.address || profile.address || '',
-        area: prev.area || profile.city || '',
+        area: prev.area || (profile as any).city || profile.vendor_location || '',
       }));
     }
   }, [user, loading, cartItems.length, navigate, profile]);

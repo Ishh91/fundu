@@ -43,6 +43,8 @@ export interface FunduQuoteResponse {
   createdAt?: string;
   nextSteps?: string[];
   reason?: string;
+  reviewReason?: string;
+  reviewMessage?: string;
   missingConfig?: string[];
   message?: string;
   reviewAction?: string;

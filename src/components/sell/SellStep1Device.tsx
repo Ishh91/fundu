@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import {
   Smartphone,
   Search,
@@ -13,11 +13,20 @@ import {
   BadgeIndianRupee,
   Clock,
   PhoneCall,
+  Lock,
+  FileText,
+  Star,
+  MapPin,
+  HelpCircle,
+  ChevronUp,
+  ChevronDown,
 } from 'lucide-react';
 import { getCleanBrandLogo, getCleanPhoneImage, getGenericDevicePlaceholder } from '../../lib/phoneImages';
 import { formatDisplayPrice } from '../../lib/db';
-import { BRAND_TILES, MASTER_MODEL_CATALOG } from '../../data/masterModelCatalog';
+import { BRAND_TILES, MASTER_MODEL_CATALOG, FAQS_LIST } from '../../data/masterModelCatalog';
 import { getModelHardwareSpecs } from '../../lib/deviceSpecs';
+import { isModelDeleted } from '../../lib/priceSync';
+import { getModelDedupeKey } from '../../data/brandSeriesCatalog';
 
 interface SellStep1DeviceProps {
   form: any;
@@ -25,15 +34,12 @@ interface SellStep1DeviceProps {
   brandSlug?: string;
   modelSlug?: string;
   handleBrandSelect: (brand: string) => void;
-  handleSelectPhone: (brand: string, model: string, storage?: string) => void;
-  filteredModelsList: any[];
-  loadingModels: boolean;
+  handleQuickModelSelect: (item?: { brand?: string; model?: string; storage?: string }) => void;
   selectedSeries: string;
   setSelectedSeries: (series: string) => void;
   brandSeriesList: string[];
-  modelFilter: string;
-  setModelFilter: (filter: string) => void;
-  user: any;
+  user?: any;
+  dbReviews?: Array<{ id: string; reviewer_name: string; location: string; rating: number; comment: string }>;
 }
 
 export default function SellStep1Device({
@@ -42,16 +48,15 @@ export default function SellStep1Device({
   brandSlug,
   modelSlug,
   handleBrandSelect,
-  handleSelectPhone,
-  filteredModelsList,
-  loadingModels,
+  handleQuickModelSelect,
   selectedSeries,
   setSelectedSeries,
   brandSeriesList,
-  modelFilter,
-  setModelFilter,
   user,
+  dbReviews = [],
 }: SellStep1DeviceProps) {
+  const navigate = useNavigate();
+  const [openFaqIndex, setOpenFaqIndex] = React.useState<number | null>(0);
   return (
           <div className="space-y-8 animate-fade-in">
             {/* BRAND SELECTION GRID */}
@@ -104,7 +109,7 @@ export default function SellStep1Device({
                   </div>
                   <button
                     type="button"
-                    onClick={() => { setForm((f) => ({ ...f, brand: '', model: '' })); navigate('/sell'); }}
+                    onClick={() => { setForm((f: any) => ({ ...f, brand: '', model: '' })); navigate('/sell'); }}
                     className="text-xs text-[#344257] hover:underline font-bold bg-[#F0F0F5] px-3 py-1.5 rounded-xl border border-[#C0C8D8]"
                   >
                     ← All Brands

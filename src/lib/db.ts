@@ -5,7 +5,8 @@ type QueryError = {
 export type User = {
   id: string;
   email: string;
-  role: 'customer' | 'wholesaler' | 'admin';
+  phone?: string;
+  role: 'customer' | 'wholesaler' | 'admin' | 'delivery' | 'rider' | 'vendor';
 };
 
 export type Session = {

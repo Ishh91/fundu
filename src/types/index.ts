@@ -281,7 +281,9 @@ export type Profile = {
   id: string;
   full_name: string | null;
   phone: string | null;
-  role: 'customer' | 'vendor' | 'wholesaler' | 'admin';
+  email?: string | null;
+  address?: string | null;
+  role: 'customer' | 'vendor' | 'wholesaler' | 'admin' | 'delivery' | 'rider';
   business_name: string | null;
   vendor_location?: string | null;
   gst_number?: string | null;

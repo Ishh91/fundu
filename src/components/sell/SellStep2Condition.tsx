@@ -16,7 +16,7 @@ import type { FunduQuoteResponse } from '../../lib/quoteEngine';
 
 interface SellStep2ConditionProps {
   form: any;
-  setForm: React.Dispatch<React.SetStateAction<any>>;
+  setForm: any;
   currentDeviceSpecs: {
     storages: string[];
     rams: string[];
@@ -29,9 +29,6 @@ interface SellStep2ConditionProps {
   handleGoToLoginForExactPrice: (targetStep?: number) => void;
   toggleDefect: (id: string) => void;
   toggleAccessory: (id: string) => void;
-  customDefectInput?: string;
-  setCustomDefectInput?: (val: string) => void;
-  handleAddCustomDefect?: () => void;
   funduQuote: FunduQuoteResponse | null;
   handleStep2Back: () => void;
   goToStep: (step: number) => void;
@@ -51,6 +48,10 @@ export default function SellStep2Condition({
   handleStep2Back,
   goToStep,
 }: SellStep2ConditionProps) {
+  const availableRams = currentDeviceSpecs?.getRamsForStorage
+    ? currentDeviceSpecs.getRamsForStorage(form.storage)
+    : (currentDeviceSpecs?.rams || []);
+
   return (
           <div className="max-w-3xl mx-auto space-y-6 animate-fade-in">
             <div className="card p-6 md:p-8 rounded-[28px] bg-white border border-gray-200 shadow-xl space-y-6">
