@@ -520,3 +520,13 @@ export const DOORSTEP_AREAS = [
   'Aminabad', 'Rajajipuram', 'Alambagh', 'Vikas Nagar', 'Janakipuram',
   'Faizabad Road', 'Sitapur Road', 'Telibagh', 'Jankipuram', 'Gomti Nagar Extension',
 ];
+
+export type Review = {
+  id: string;
+  reviewer_name: string;
+  location: string;
+  rating: number;
+  comment: string;
+  is_approved?: boolean;
+  created_at?: string;
+};

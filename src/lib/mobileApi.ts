@@ -84,7 +84,7 @@ export type CatalogModelItem = {
   series: string;
   model: string;
   storage?: string;
-  price: number;
+  price?: number;
   image?: string | null;
   base_resale_value?: number;
   seriesName?: string;
@@ -801,7 +801,7 @@ export async function fetchBrandCatalogFromApi(brand: string): Promise<CatalogMo
       model: p.model,
       storage: p.storage_options?.[0] || '128 GB',
       price: p.base_resale_value || Math.round((p.default_mrp || 30000) * 0.55),
-      image: getCleanPhoneImage(p.brand, p.model, p.image_url),
+      image: getCleanPhoneImage(p.brand, p.model, p.image_url || undefined),
     }));
     catalogCache.set(cleanBrand, mapped);
     return mapped;

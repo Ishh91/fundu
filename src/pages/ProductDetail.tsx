@@ -27,7 +27,7 @@ import { db, formatINR } from '../lib/db';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
 import { getCleanPhoneImage } from '../lib/phoneImages';
-import type { Product } from '../types';
+import type { Product, Review } from '../types';
 
 // Doorstep PIN code to Area mapping dictionary
 const DOORSTEP_PINCODE_MAP: Record<string, string> = {
@@ -372,7 +372,7 @@ export default function ProductDetail() {
       alert(`Access Restricted: You are logged in as ${profile.role.toUpperCase()}. Vendor, Delivery, and Admin accounts cannot place orders.`);
       return;
     }
-    const updatedProduct = { ...product, price: currentPrice, storage: selectedStorage, condition: selectedGrade };
+    const updatedProduct = { ...product, price: currentPrice, storage: selectedStorage, condition: selectedGrade as any };
     addToCart(updatedProduct, quantity);
     setAddedToast(true);
     setTimeout(() => setAddedToast(false), 2500);
@@ -383,7 +383,7 @@ export default function ProductDetail() {
       alert(`Access Restricted: You are logged in as ${profile.role.toUpperCase()}. Vendor, Delivery, and Admin accounts cannot place orders.`);
       return;
     }
-    const updatedProduct = { ...product, price: currentPrice, storage: selectedStorage, condition: selectedGrade };
+    const updatedProduct = { ...product, price: currentPrice, storage: selectedStorage, condition: selectedGrade as any };
     addToCart(updatedProduct, quantity);
     if (user) {
       navigate('/checkout');

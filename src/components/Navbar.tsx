@@ -784,7 +784,7 @@ export default function Navbar() {
               <div className="relative">
                 <button
                   type="button"
-                  onClick={() => setCartOpen((prev) => !prev)}
+                  onClick={() => setCartOpen(!cartOpen)}
                   className="relative flex h-10 w-10 items-center justify-center rounded-full text-white/90 hover:text-white hover:bg-white/15 transition-colors cursor-pointer"
                   aria-label="Shopping Cart"
                 >
