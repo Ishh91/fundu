@@ -2,13 +2,31 @@ import { useState, useMemo, useEffect, useRef } from 'react';
 import { Link, useNavigate, useSearchParams, useParams, useLocation } from 'react-router-dom';
 import {
   BadgeIndianRupee,
+  Truck,
+  CheckCircle2,
+  ArrowRight,
   Check,
+  ShieldCheck,
   Lock,
   Zap,
   Search,
   Smartphone,
+  Sparkles,
+  Camera,
+  Upload,
   AlertCircle,
+  HelpCircle,
+  PhoneCall,
+  UserCheck,
+  Clock,
+  MapPin,
+  Battery,
+  ChevronDown,
+  ChevronUp,
+  Star,
   RefreshCw,
+  FileText,
+  Award,
   User,
   Phone,
 } from 'lucide-react';
@@ -209,7 +227,7 @@ export default function SellPhone() {
         ...prev,
         customerName: prev.customerName || profile.full_name || '',
         customerPhone: prev.customerPhone || profile.phone || '',
-        pickupAddress: prev.pickupAddress || (profile as any).address || '',
+        pickupAddress: prev.pickupAddress || profile.address || '',
       }));
     }
   }, [profile]);
@@ -927,7 +945,7 @@ export default function SellPhone() {
         pickup_area: form.pickupArea || form.locality || '',
         pickup_date: form.pickupDate,
         pickup_slot: form.pickupSlot,
-        notes: (form as any).notes || (funduQuote?.status === 'requires_manual_review' ? `Manual Inspection: ${(funduQuote as any)?.reviewReason || 'Manual review required'}` : ''),
+        notes: form.notes || (funduQuote?.status === 'requires_manual_review' ? `Manual Inspection: ${funduQuote.reviewReason || 'Manual review required'}` : ''),
         status: funduQuote?.status === 'requires_manual_review' ? 'manual_review' : 'pending',
       };
 
@@ -936,7 +954,7 @@ export default function SellPhone() {
       if (insertErr) throw insertErr;
 
       setSuccessData({
-        id: (data as any)?.id || `FND-LKO-${Math.floor(100000 + Math.random() * 900000)}`,
+        id: data?.id || `FND-LKO-${Math.floor(100000 + Math.random() * 900000)}`,
         pickup_person_name: 'Rajesh Kumar (Fundu Rider)',
         pickup_person_phone: '+91-9839122345',
         estimated_arrival_time: `${form.pickupDate} (${form.pickupSlot})`,
@@ -987,9 +1005,9 @@ export default function SellPhone() {
             brand: '',
             model: '',
             storage: '',
-            cosmeticCondition: 'good',
-            screenCondition: 'flawless',
-            bodyCondition: 'flawless',
+            cosmeticCondition: 'Good',
+            screenCondition: 'Flawless',
+            bodyCondition: 'Flawless',
             functionalDefects: [],
             customDefects: [],
             accessories: [],
@@ -1234,11 +1252,14 @@ export default function SellPhone() {
             brandSlug={brandSlug}
             modelSlug={modelSlug}
             handleBrandSelect={handleBrandSelect}
-            handleQuickModelSelect={handleQuickModelSelect}
+            handleSelectPhone={handleSelectPhone}
+            filteredModelsList={filteredModelsList}
             loadingModels={loadingModels}
             selectedSeries={selectedSeries}
             setSelectedSeries={setSelectedSeries}
             brandSeriesList={brandSeriesList}
+            modelFilter={modelFilter}
+            setModelFilter={setModelFilter}
             user={user}
             dbReviews={dbReviews}
           />
@@ -1257,6 +1278,9 @@ export default function SellPhone() {
             handleGoToLoginForExactPrice={handleGoToLoginForExactPrice}
             toggleDefect={toggleDefect}
             toggleAccessory={toggleAccessory}
+            customDefectInput={customDefectInput}
+            setCustomDefectInput={setCustomDefectInput}
+            handleAddCustomDefect={handleAddCustomDefect}
             funduQuote={funduQuote}
             handleStep2Back={handleStep2Back}
             goToStep={goToStep}

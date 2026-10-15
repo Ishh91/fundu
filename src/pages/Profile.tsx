@@ -10,7 +10,7 @@ export default function ProfilePage() {
   const [searchParams] = useSearchParams();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const isSetup = searchParams.get('setup') === 'true';
+  const isSetup = searchParams.get('setup') === 'true' || (!loading && user && !profile?.full_name);
 
   const [isEditing, setIsEditing] = useState(isSetup);
   const [saving, setSaving] = useState(false);
