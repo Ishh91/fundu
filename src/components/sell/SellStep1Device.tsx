@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import {
   Smartphone,
   Search,
@@ -23,6 +23,8 @@ import { getCleanBrandLogo, getCleanPhoneImage, getGenericDevicePlaceholder } fr
 import { formatDisplayPrice } from '../../lib/db';
 import { BRAND_TILES, MASTER_MODEL_CATALOG, FAQS_LIST } from '../../data/masterModelCatalog';
 import { getModelHardwareSpecs } from '../../lib/deviceSpecs';
+import { getModelDedupeKey } from '../../data/brandSeriesCatalog';
+import { isModelDeleted } from '../../lib/priceSync';
 
 interface SellStep1DeviceProps {
   form: any;
@@ -30,14 +32,14 @@ interface SellStep1DeviceProps {
   brandSlug?: string;
   modelSlug?: string;
   handleBrandSelect: (brand: string) => void;
-  handleSelectPhone: (brand: string, model: string, storage?: string) => void;
-  filteredModelsList: any[];
-  loadingModels: boolean;
+  handleQuickModelSelect: (item?: { brand?: string; model?: string; storage?: string }) => void;
+  filteredModelsList?: any[];
+  loadingModels?: boolean;
   selectedSeries: string;
   setSelectedSeries: (series: string) => void;
   brandSeriesList: string[];
-  modelFilter: string;
-  setModelFilter: (filter: string) => void;
+  modelFilter?: string;
+  setModelFilter?: (filter: string) => void;
   user: any;
   dbReviews?: Array<{ id: string; reviewer_name: string; location: string; rating: number; comment: string }>;
 }
@@ -48,17 +50,14 @@ export default function SellStep1Device({
   brandSlug,
   modelSlug,
   handleBrandSelect,
-  handleSelectPhone,
-  filteredModelsList,
-  loadingModels,
+  handleQuickModelSelect,
   selectedSeries,
   setSelectedSeries,
   brandSeriesList,
-  modelFilter,
-  setModelFilter,
   user,
   dbReviews = [],
 }: SellStep1DeviceProps) {
+  const navigate = useNavigate();
   const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(null);
   return (
           <div className="space-y-8 animate-fade-in">

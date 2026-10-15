@@ -19,7 +19,7 @@ interface SellStep2ConditionProps {
   currentDeviceSpecs: {
     storages: string[];
     rams: string[];
-    colors: string[];
+    colors?: string[];
     getRamsForStorage: (stg: string) => string[];
   };
   brandSlug?: string;
@@ -28,9 +28,9 @@ interface SellStep2ConditionProps {
   handleGoToLoginForExactPrice: (targetStep?: number) => void;
   toggleDefect: (id: string) => void;
   toggleAccessory: (id: string) => void;
-  customDefectInput: string;
-  setCustomDefectInput: (val: string) => void;
-  handleAddCustomDefect: () => void;
+  customDefectInput?: string;
+  setCustomDefectInput?: (val: string) => void;
+  handleAddCustomDefect?: () => void;
   funduQuote: FunduQuoteResponse | null;
   handleStep2Back: () => void;
   goToStep: (step: number) => void;
@@ -46,9 +46,6 @@ export default function SellStep2Condition({
   handleGoToLoginForExactPrice,
   toggleDefect,
   toggleAccessory,
-  customDefectInput,
-  setCustomDefectInput,
-  handleAddCustomDefect,
   funduQuote,
   handleStep2Back,
   goToStep,
