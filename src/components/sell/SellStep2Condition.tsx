@@ -3,6 +3,7 @@ import {
   Lock,
   ArrowRight,
   ShieldCheck,
+  Check,
   CheckCircle2,
   AlertCircle,
   Truck,

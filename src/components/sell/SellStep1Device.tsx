@@ -18,6 +18,8 @@ import {
   ChevronUp,
   ChevronDown,
   Star,
+  Lock,
+  FileText,
 } from 'lucide-react';
 import { getCleanBrandLogo, getCleanPhoneImage, getGenericDevicePlaceholder } from '../../lib/phoneImages';
 import { formatDisplayPrice } from '../../lib/db';
