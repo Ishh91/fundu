@@ -30,7 +30,7 @@ import { getCleanPhoneImage, getCleanBrandLogo, BRAND_FRONT_FALLBACKS, getGeneri
 import { ALL_INDIAN_PHONES_CATALOG } from '../data/indianPhonesCatalog';
 import { useRepairPriceSync, getModelRepairPricing } from '../lib/repairPriceSync';
 import { isModelDeleted } from '../lib/catalogSync';
-import { getModelDedupeKey, groupModelsBySeries, isSeriesSlug } from '../data/brandSeriesCatalog';
+import { getModelDedupeKey, groupModelsBySeries, inferModelSeries, isSeriesSlug } from '../data/brandSeriesCatalog';
 
 const BRAND_REPAIR_DETAILS: Record<
   string,
@@ -285,15 +285,16 @@ export default function RepairBrandPage() {
       });
     });
 
-    // Any leftovers
+    // Any leftovers - accurately mapped to series via inferModelSeries
     rawBrandModels.forEach((m) => {
       const key = getModelDedupeKey(m.brand || brandDisplayName, m.model);
       if (!seen.has(key)) {
         seen.add(key);
+        const inferred = inferModelSeries(m.brand || brandDisplayName, m.model, m.series);
         models.push({
           ...m,
-          series: m.series || `${brandDisplayName} Series`,
-          seriesSlug: 'other',
+          series: inferred.seriesName,
+          seriesSlug: inferred.seriesSlug,
         });
       }
     });
@@ -322,6 +323,17 @@ export default function RepairBrandPage() {
 
     return list;
   }, [allModelsInSeriesOrder, selectedSeries, debouncedQuery]);
+
+  // Grouped models by Series for organized chronological section layout
+  const seriesGroupedSections = useMemo(() => {
+    const map = new Map<string, typeof brandModels>();
+    brandModels.forEach((m) => {
+      const s = m.series || `${brandDisplayName} Series`;
+      if (!map.has(s)) map.set(s, []);
+      map.get(s)!.push(m);
+    });
+    return Array.from(map.entries()).map(([name, models]) => ({ name, models }));
+  }, [brandModels, brandDisplayName]);
 
   const handleBookRepair = (modelName: string, issueId: string = 'screen') => {
     const modelSlugClean = modelName.toLowerCase().replace(/\s+/g, '-');
@@ -443,63 +455,137 @@ export default function RepairBrandPage() {
             </div>
           )}
 
-          {/* 6-COLUMN RESPONSIVE MODEL PRODUCT TILE GRID */}
+          {/* 6-COLUMN RESPONSIVE MODEL PRODUCT TILE GRID REARRANGED BY SERIES */}
           {brandModels.length > 0 ? (
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 sm:gap-4 md:gap-5">
-              {brandModels.map((m) => {
-                const displayName = m.model.toLowerCase().startsWith((m.brand || brandDisplayName).toLowerCase())
-                  ? m.model
-                  : `${brandDisplayName} ${m.model}`;
-
-                const { basePrice } = getModelRepairPricing(m.brand || brandDisplayName, m.model, 'smartphone', repairConfigs);
-
-                return (
-                  <div
-                    key={m.model}
-                    onClick={() => handleBookRepair(m.model, 'screen')}
-                    className="p-3.5 sm:p-5 rounded-2xl border border-gray-100 bg-white hover:border-[#6A859F] hover:shadow-lg transition-all duration-200 group cursor-pointer flex flex-col items-center justify-between text-center min-h-[195px] sm:min-h-[230px]"
-                  >
-                    {/* Top Series Badge Pill */}
-                    <span className="text-[10px] font-extrabold text-[#344257] bg-[#F0F0F5] border border-[#C0C8D8] group-hover:bg-[#344257] group-hover:text-white transition-colors px-2.5 py-0.5 rounded-full mb-1 truncate max-w-full">
-                      {m.series || `${brandDisplayName} Series`}
-                    </span>
-
-                    {/* Centered Clean Device Image Container */}
-                    <div className="h-32 sm:h-40 w-full flex items-center justify-center p-2.5 relative">
-                      <img
-                        src={getCleanPhoneImage(m.brand || brandDisplayName, m.model, m.image || undefined)}
-                        alt={displayName}
-                        className="max-h-full max-w-full w-auto h-auto object-contain group-hover:scale-105 transition-transform duration-300 filter drop-shadow-sm mix-blend-multiply"
-                        loading="lazy"
-                        referrerPolicy="no-referrer"
-                        onError={(e) => {
-                          const target = e.currentTarget;
-                          if (!target.dataset.triedCanonical && (m.brand || brandDisplayName) && m.model) {
-                            target.dataset.triedCanonical = 'true';
-                            const bSlug = (m.brand || brandDisplayName).toLowerCase().replace(/[^a-z0-9]/g, '');
-                            const mSlug = m.model.toLowerCase().replace(new RegExp(`^${bSlug}\\s*`, 'i'), '').replace(/\+/g, '-plus').replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
-                            const canonical = `https://fdn2.gsmarena.com/vv/bigpic/${bSlug}-${mSlug}.jpg`;
-                            if (target.src !== canonical) {
-                              target.src = canonical;
-                              return;
-                            }
-                          }
-                          target.src = getGenericDevicePlaceholder(m.brand || brandDisplayName, m.model);
-                        }}
-                      />
+            selectedSeries === 'All' && !debouncedQuery ? (
+              <div className="space-y-8">
+                {seriesGroupedSections.map((group) => (
+                  <div key={group.name} className="space-y-4">
+                    <div className="flex items-center justify-between border-b border-gray-100 pb-2.5">
+                      <div className="flex items-center gap-2.5">
+                        <span className="h-2.5 w-2.5 rounded-full bg-[#344257]" />
+                        <h3 className="font-display font-black text-base sm:text-lg text-[#344257]">
+                          {group.name}
+                        </h3>
+                        <span className="text-[11px] font-extrabold text-[#47576E] bg-[#F0F0F5] border border-[#C0C8D8] px-2.5 py-0.5 rounded-full">
+                          {group.models.length} Models
+                        </span>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => setSelectedSeries(group.name)}
+                        className="text-xs font-extrabold text-[#47576E] hover:text-[#344257] hover:underline cursor-pointer"
+                      >
+                        Filter {group.name} Only →
+                      </button>
                     </div>
+                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 sm:gap-4 md:gap-5">
+                      {group.models.map((m) => {
+                        const displayName = m.model.toLowerCase().startsWith((m.brand || brandDisplayName).toLowerCase())
+                          ? m.model
+                          : `${brandDisplayName} ${m.model}`;
 
-                    <p className="mt-2 text-xs sm:text-sm font-semibold text-gray-800 group-hover:text-[#344257] transition-colors line-clamp-2 leading-snug">
-                      {displayName}
-                    </p>
+                        return (
+                          <div
+                            key={m.model}
+                            onClick={() => handleBookRepair(m.model, 'screen')}
+                            className="p-3.5 sm:p-5 rounded-2xl border border-gray-100 bg-white hover:border-[#6A859F] hover:shadow-lg transition-all duration-200 group cursor-pointer flex flex-col items-center justify-between text-center min-h-[195px] sm:min-h-[230px]"
+                          >
+                            <span className="text-[10px] font-extrabold text-[#344257] bg-[#F0F0F5] border border-[#C0C8D8] group-hover:bg-[#344257] group-hover:text-white transition-colors px-2.5 py-0.5 rounded-full mb-1 truncate max-w-full">
+                              {m.series || `${brandDisplayName} Series`}
+                            </span>
 
-                    <div className="mt-2.5 w-full py-1.5 px-2 rounded-xl bg-[#F0F0F5] group-hover:bg-[#344257] group-hover:text-white text-[#344257] text-[11px] font-extrabold text-center transition-colors">
-                      Select Issues
+                            <div className="h-32 sm:h-40 w-full flex items-center justify-center p-2.5 relative">
+                              <img
+                                src={getCleanPhoneImage(m.brand || brandDisplayName, m.model, m.image || undefined)}
+                                alt={displayName}
+                                className="max-h-full max-w-full w-auto h-auto object-contain group-hover:scale-105 transition-transform duration-300 filter drop-shadow-sm mix-blend-multiply"
+                                loading="lazy"
+                                referrerPolicy="no-referrer"
+                                onError={(e) => {
+                                  const target = e.currentTarget;
+                                  if (!target.dataset.triedCanonical && (m.brand || brandDisplayName) && m.model) {
+                                    target.dataset.triedCanonical = 'true';
+                                    const bSlug = (m.brand || brandDisplayName).toLowerCase().replace(/[^a-z0-9]/g, '');
+                                    const mSlug = m.model.toLowerCase().replace(new RegExp(`^${bSlug}\\s*`, 'i'), '').replace(/\+/g, '-plus').replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+                                    const canonical = `https://fdn2.gsmarena.com/vv/bigpic/${bSlug}-${mSlug}.jpg`;
+                                    if (target.src !== canonical) {
+                                      target.src = canonical;
+                                      return;
+                                    }
+                                  }
+                                  target.src = getGenericDevicePlaceholder(m.brand || brandDisplayName, m.model);
+                                }}
+                              />
+                            </div>
+
+                            <p className="mt-2 text-xs sm:text-sm font-semibold text-gray-800 group-hover:text-[#344257] transition-colors line-clamp-2 leading-snug">
+                              {displayName}
+                            </p>
+
+                            <div className="mt-2.5 w-full py-1.5 px-2 rounded-xl bg-[#F0F0F5] group-hover:bg-[#344257] group-hover:text-white text-[#344257] text-[11px] font-extrabold text-center transition-colors">
+                              Select Issues
+                            </div>
+                          </div>
+                        );
+                      })}
                     </div>
                   </div>
-                );
-              })}
-            </div>
+                ))}
+              </div>
+            ) : (
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 sm:gap-4 md:gap-5">
+                {brandModels.map((m) => {
+                  const displayName = m.model.toLowerCase().startsWith((m.brand || brandDisplayName).toLowerCase())
+                    ? m.model
+                    : `${brandDisplayName} ${m.model}`;
+
+                  return (
+                    <div
+                      key={m.model}
+                      onClick={() => handleBookRepair(m.model, 'screen')}
+                      className="p-3.5 sm:p-5 rounded-2xl border border-gray-100 bg-white hover:border-[#6A859F] hover:shadow-lg transition-all duration-200 group cursor-pointer flex flex-col items-center justify-between text-center min-h-[195px] sm:min-h-[230px]"
+                    >
+                      <span className="text-[10px] font-extrabold text-[#344257] bg-[#F0F0F5] border border-[#C0C8D8] group-hover:bg-[#344257] group-hover:text-white transition-colors px-2.5 py-0.5 rounded-full mb-1 truncate max-w-full">
+                        {m.series || `${brandDisplayName} Series`}
+                      </span>
+
+                      <div className="h-32 sm:h-40 w-full flex items-center justify-center p-2.5 relative">
+                        <img
+                          src={getCleanPhoneImage(m.brand || brandDisplayName, m.model, m.image || undefined)}
+                          alt={displayName}
+                          className="max-h-full max-w-full w-auto h-auto object-contain group-hover:scale-105 transition-transform duration-300 filter drop-shadow-sm mix-blend-multiply"
+                          loading="lazy"
+                          referrerPolicy="no-referrer"
+                          onError={(e) => {
+                            const target = e.currentTarget;
+                            if (!target.dataset.triedCanonical && (m.brand || brandDisplayName) && m.model) {
+                              target.dataset.triedCanonical = 'true';
+                              const bSlug = (m.brand || brandDisplayName).toLowerCase().replace(/[^a-z0-9]/g, '');
+                              const mSlug = m.model.toLowerCase().replace(new RegExp(`^${bSlug}\\s*`, 'i'), '').replace(/\+/g, '-plus').replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+                              const canonical = `https://fdn2.gsmarena.com/vv/bigpic/${bSlug}-${mSlug}.jpg`;
+                              if (target.src !== canonical) {
+                                target.src = canonical;
+                                return;
+                              }
+                            }
+                            target.src = getGenericDevicePlaceholder(m.brand || brandDisplayName, m.model);
+                          }}
+                        />
+                      </div>
+
+                      <p className="mt-2 text-xs sm:text-sm font-semibold text-gray-800 group-hover:text-[#344257] transition-colors line-clamp-2 leading-snug">
+                        {displayName}
+                      </p>
+
+                      <div className="mt-2.5 w-full py-1.5 px-2 rounded-xl bg-[#F0F0F5] group-hover:bg-[#344257] group-hover:text-white text-[#344257] text-[11px] font-extrabold text-center transition-colors">
+                        Select Issues
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )
           ) : (
             <div className="p-12 text-center space-y-3">
               <AlertCircle className="h-8 w-8 text-rose-500 mx-auto" />

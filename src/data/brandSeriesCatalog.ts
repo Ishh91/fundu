@@ -14,6 +14,149 @@ export function getModelDedupeKey(brand: string, model: string): string {
   return clean
     .replace(/\+/g, 'plus')
     .replace(/[^a-z0-9]/g, '');
+export function inferModelSeries(
+  brand: string,
+  modelName: string,
+  existingSeries?: string
+): { seriesName: string; seriesSlug: string } {
+  const bLower = (brand || '').toLowerCase().trim();
+  const mLower = (modelName || '').toLowerCase().trim();
+  const sLower = (existingSeries || '').toLowerCase().trim();
+
+  // If existingSeries is already specific and valid (not generic)
+  if (
+    existingSeries &&
+    !sLower.endsWith(' other models') &&
+    !sLower.endsWith(`${bLower} series`) &&
+    sLower !== 'all models' &&
+    sLower !== 'express repair' &&
+    sLower !== 'official'
+  ) {
+    const defs = BRAND_SERIES_DEFINITIONS[bLower] || [];
+    const directDef = defs.find(
+      (d) =>
+        d.name.toLowerCase() === sLower ||
+        d.slug.toLowerCase() === sLower ||
+        sLower.includes(d.name.toLowerCase())
+    );
+    if (directDef) {
+      return { seriesName: directDef.name, seriesSlug: directDef.slug };
+    }
+  }
+
+  // 1. Apple
+  if (bLower === 'apple' || bLower === 'iphone') {
+    if (/\b17\b/i.test(mLower)) return { seriesName: 'iPhone 17 Series', seriesSlug: 'iphone-17-series' };
+    if (/\b16\b/i.test(mLower)) return { seriesName: 'iPhone 16 Series', seriesSlug: 'iphone-16-series' };
+    if (/\b15\b/i.test(mLower)) return { seriesName: 'iPhone 15 Series', seriesSlug: 'iphone-15-series' };
+    if (/\b14\b/i.test(mLower)) return { seriesName: 'iPhone 14 Series', seriesSlug: 'iphone-14-series' };
+    if (/\b13\b/i.test(mLower)) return { seriesName: 'iPhone 13 Series', seriesSlug: 'iphone-13-series' };
+    if (/\b12\b/i.test(mLower)) return { seriesName: 'iPhone 12 Series', seriesSlug: 'iphone-12-series' };
+    if (/\b11\b/i.test(mLower)) return { seriesName: 'iPhone 11 Series', seriesSlug: 'iphone-11-series' };
+    if (/\b(xs|xr|x\b)/i.test(mLower)) return { seriesName: 'iPhone X Series', seriesSlug: 'iphone-x-series' };
+    if (/\b8\b/i.test(mLower)) return { seriesName: 'iPhone 8 Series', seriesSlug: 'iphone-8-series' };
+    if (/\b7\b/i.test(mLower)) return { seriesName: 'iPhone 7 Series', seriesSlug: 'iphone-7-series' };
+    if (/\b6s?\b/i.test(mLower)) return { seriesName: 'iPhone 6 & 6S Series', seriesSlug: 'iphone-6-series' };
+    if (/\bse\b/i.test(mLower)) return { seriesName: 'iPhone SE Series', seriesSlug: 'iphone-se-series' };
+    if (/\b(5|4|3|2|1|original)\b/i.test(mLower)) return { seriesName: 'iPhone 5 & Older Classic Series', seriesSlug: 'iphone-classic-series' };
+    return { seriesName: 'iPhone 16 Series', seriesSlug: 'iphone-16-series' };
+  }
+
+  // 2. Samsung
+  if (bLower === 'samsung') {
+    if (/\bs25\b/i.test(mLower)) return { seriesName: 'Galaxy S25 Series', seriesSlug: 'galaxy-s25-series' };
+    if (/\bs24\b/i.test(mLower)) return { seriesName: 'Galaxy S24 Series', seriesSlug: 'galaxy-s24-series' };
+    if (/\bs23\b/i.test(mLower)) return { seriesName: 'Galaxy S23 Series', seriesSlug: 'galaxy-s23-series' };
+    if (/\bs22\b/i.test(mLower)) return { seriesName: 'Galaxy S22 Series', seriesSlug: 'galaxy-s22-series' };
+    if (/\bs21\b/i.test(mLower)) return { seriesName: 'Galaxy S21 Series', seriesSlug: 'galaxy-s21-series' };
+    if (/\bs20\b/i.test(mLower)) return { seriesName: 'Galaxy S20 Series', seriesSlug: 'galaxy-s20-series' };
+    if (/\bs10\b/i.test(mLower)) return { seriesName: 'Galaxy S10 Series', seriesSlug: 'galaxy-s10-series' };
+    if (/\bs[6789]\b/i.test(mLower)) return { seriesName: 'Galaxy S Legacy Series', seriesSlug: 'galaxy-s-legacy-series' };
+    if (/\b(fold|flip)\b/i.test(mLower)) return { seriesName: 'Galaxy Z Series (Fold & Flip)', seriesSlug: 'galaxy-z-series' };
+    if (/\bnote\b/i.test(mLower)) return { seriesName: 'Galaxy Note Series', seriesSlug: 'galaxy-note-series' };
+    if (/\ba\d+/i.test(mLower)) return { seriesName: 'Galaxy A Series', seriesSlug: 'galaxy-a-series' };
+    if (/\b(m|f)\d+/i.test(mLower)) return { seriesName: 'Galaxy M & F Series', seriesSlug: 'galaxy-m-series' };
+    if (/\bj\d+/i.test(mLower)) return { seriesName: 'Galaxy J Series (Classic)', seriesSlug: 'galaxy-j-series' };
+    return { seriesName: 'Galaxy A Series', seriesSlug: 'galaxy-a-series' };
+  }
+
+  // 3. OnePlus
+  if (bLower === 'oneplus') {
+    if (/\b13\b/i.test(mLower)) return { seriesName: 'OnePlus 13 Series', seriesSlug: 'oneplus-13-series' };
+    if (/\b12\b/i.test(mLower)) return { seriesName: 'OnePlus 12 Series', seriesSlug: 'oneplus-12-series' };
+    if (/\b11\b/i.test(mLower)) return { seriesName: 'OnePlus 11 Series', seriesSlug: 'oneplus-11-series' };
+    if (/\b10\b/i.test(mLower)) return { seriesName: 'OnePlus 10 Series', seriesSlug: 'oneplus-10-series' };
+    if (/\b9\b/i.test(mLower)) return { seriesName: 'OnePlus 9 Series', seriesSlug: 'oneplus-9-series' };
+    if (/\b8\b/i.test(mLower)) return { seriesName: 'OnePlus 8 Series', seriesSlug: 'oneplus-8-series' };
+    if (/\b(7|6|5|3|2|1|x)\b/i.test(mLower)) return { seriesName: 'OnePlus 7 & Classic Series', seriesSlug: 'oneplus-classic-series' };
+    if (/\bnord\b/i.test(mLower)) return { seriesName: 'OnePlus Nord Series', seriesSlug: 'oneplus-nord-series' };
+    if (/\bopen\b/i.test(mLower)) return { seriesName: 'OnePlus Open Series', seriesSlug: 'oneplus-open-series' };
+    return { seriesName: 'OnePlus Number Series', seriesSlug: 'oneplus-number-series' };
+  }
+
+  // 4. Xiaomi / Redmi / Poco
+  if (bLower === 'xiaomi' || bLower === 'redmi' || bLower === 'poco') {
+    if (/\bpoco\b/i.test(mLower)) return { seriesName: 'POCO Series', seriesSlug: 'poco-series' };
+    if (/\bnote\b/i.test(mLower)) return { seriesName: 'Redmi Note Series', seriesSlug: 'redmi-note-series' };
+    if (/\b(15|14|13|12|11|10|mi)\b/i.test(mLower) && !/\bredmi\b/i.test(mLower)) return { seriesName: 'Xiaomi Flagship & Mi Series', seriesSlug: 'xiaomi-mi-series' };
+    return { seriesName: 'Redmi Number Series', seriesSlug: 'redmi-number-series' };
+  }
+
+  // 5. Vivo / iQOO
+  if (bLower === 'vivo' || bLower === 'iqoo') {
+    if (/\biqoo\b/i.test(mLower)) return { seriesName: 'iQOO Series', seriesSlug: 'iqoo-series' };
+    if (/\bx\d+/i.test(mLower)) return { seriesName: 'Vivo X Series', seriesSlug: 'vivo-x-series' };
+    if (/\bv\d+/i.test(mLower)) return { seriesName: 'Vivo V Series', seriesSlug: 'vivo-v-series' };
+    if (/\bt\d+/i.test(mLower)) return { seriesName: 'Vivo T Series', seriesSlug: 'vivo-t-series' };
+    if (/\by\d+/i.test(mLower)) return { seriesName: 'Vivo Y Series', seriesSlug: 'vivo-y-series' };
+    return { seriesName: 'Vivo Y Series', seriesSlug: 'vivo-y-series' };
+  }
+
+  // 6. Realme
+  if (bLower === 'realme') {
+    if (/\bgt\b/i.test(mLower)) return { seriesName: 'Realme GT Series', seriesSlug: 'realme-gt-series' };
+    if (/\bnarzo\b/i.test(mLower)) return { seriesName: 'Realme Narzo Series', seriesSlug: 'realme-narzo-series' };
+    if (/\bc\d+/i.test(mLower)) return { seriesName: 'Realme C Series', seriesSlug: 'realme-c-series' };
+    if (/\bp\d+/i.test(mLower)) return { seriesName: 'Realme P Series', seriesSlug: 'realme-p-series' };
+    return { seriesName: 'Realme Number Series', seriesSlug: 'realme-number-series' };
+  }
+
+  // 7. Oppo
+  if (bLower === 'oppo') {
+    if (/\bfind\b/i.test(mLower)) return { seriesName: 'Oppo Find Series', seriesSlug: 'oppo-find-series' };
+    if (/\breno\b/i.test(mLower)) return { seriesName: 'Oppo Reno Series', seriesSlug: 'oppo-reno-series' };
+    if (/\bf\d+/i.test(mLower)) return { seriesName: 'Oppo F Series', seriesSlug: 'oppo-f-series' };
+    if (/\ba\d+/i.test(mLower)) return { seriesName: 'Oppo A Series', seriesSlug: 'oppo-a-series' };
+    if (/\bk\d+/i.test(mLower)) return { seriesName: 'Oppo K Series', seriesSlug: 'oppo-k-series' };
+    return { seriesName: 'Oppo A Series', seriesSlug: 'oppo-a-series' };
+  }
+
+  // 8. Google
+  if (bLower === 'google' || bLower === 'pixel') {
+    if (/\b9\b/i.test(mLower)) return { seriesName: 'Pixel 9 Series', seriesSlug: 'pixel-9-series' };
+    if (/\b8\b/i.test(mLower)) return { seriesName: 'Pixel 8 Series', seriesSlug: 'pixel-8-series' };
+    if (/\b7\b/i.test(mLower)) return { seriesName: 'Pixel 7 Series', seriesSlug: 'pixel-7-series' };
+    if (/\b6\b/i.test(mLower)) return { seriesName: 'Pixel 6 Series', seriesSlug: 'pixel-6-series' };
+    return { seriesName: 'Pixel Legacy Series', seriesSlug: 'pixel-legacy-series' };
+  }
+
+  // 9. Motorola
+  if (bLower === 'motorola' || bLower === 'moto') {
+    if (/\b(razr)\b/i.test(mLower)) return { seriesName: 'Motorola Razr Series', seriesSlug: 'motorola-razr-series' };
+    if (/\b(edge)\b/i.test(mLower)) return { seriesName: 'Motorola Edge Series', seriesSlug: 'motorola-edge-series' };
+    if (/\b(g\d+|g\s*\d+|moto\s*g)\b/i.test(mLower)) return { seriesName: 'Motorola Moto G Series', seriesSlug: 'motorola-moto-g-series' };
+    if (/\b(e\d+|e\s*\d+|moto\s*e)\b/i.test(mLower)) return { seriesName: 'Motorola Moto E Series', seriesSlug: 'motorola-moto-e-series' };
+    return { seriesName: 'Motorola Moto G Series', seriesSlug: 'motorola-moto-g-series' };
+  }
+
+  // 10. Nothing
+  if (bLower === 'nothing') {
+    if (/\bcmf\b/i.test(mLower)) return { seriesName: 'CMF Series', seriesSlug: 'cmf-series' };
+    return { seriesName: 'Nothing Phone Series', seriesSlug: 'nothing-phone-series' };
+  }
+
+  const brandCap = brand ? brand.charAt(0).toUpperCase() + brand.slice(1) : 'Official';
+  return { seriesName: `${brandCap} Series`, seriesSlug: `${bLower}-series` };
 }
 
 export type BrandSeriesDefinition = {
@@ -1440,8 +1583,11 @@ export function groupModelsBySeries(brand: string, allModels: CatalogModelItem[]
   for (const def of defs) {
     const matched = allModels.filter((m) => {
       const text = `${m.model} ${m.series || ''}`;
+      const inferred = inferModelSeries(brand, m.model, m.series);
       return (
         def.pattern.test(text) ||
+        inferred.seriesSlug === def.slug ||
+        inferred.seriesName.toLowerCase() === def.name.toLowerCase() ||
         (m.series && (
           m.series.toLowerCase() === def.name.toLowerCase() ||
           m.series.toLowerCase().includes(def.name.toLowerCase()) ||
@@ -1450,7 +1596,7 @@ export function groupModelsBySeries(brand: string, allModels: CatalogModelItem[]
       );
     });
 
-    // Deduplicate matched models
+    // Deduplicate matched models and stamp with exact series
     const dedupeMatched: CatalogModelItem[] = [];
     const seenInGroup = new Set<string>();
 
@@ -1458,7 +1604,7 @@ export function groupModelsBySeries(brand: string, allModels: CatalogModelItem[]
       const dKey = getModelDedupeKey(m.brand || brand, m.model);
       if (!seenInGroup.has(dKey)) {
         seenInGroup.add(dKey);
-        dedupeMatched.push(m);
+        dedupeMatched.push({ ...m, series: def.name });
         assignedModels.add(dKey);
       }
     });
@@ -1471,7 +1617,7 @@ export function groupModelsBySeries(brand: string, allModels: CatalogModelItem[]
         const dKey = getModelDedupeKey(defModel.brand || brand, defModel.model);
         if (!seenInGroup.has(dKey)) {
           seenInGroup.add(dKey);
-          combinedModels.push(defModel);
+          combinedModels.push({ ...defModel, series: def.name });
           assignedModels.add(dKey);
         }
       }
@@ -1479,18 +1625,20 @@ export function groupModelsBySeries(brand: string, allModels: CatalogModelItem[]
 
     const effectiveModels = combinedModels.length > 0 ? combinedModels : (def.defaultModels || []);
 
-    grouped.push({
-      id: def.id,
-      slug: def.slug,
-      name: def.name,
-      brand: def.brand,
-      image: def.image || effectiveModels[0]?.image || getCleanPhoneImage(brand, def.name),
-      modelsCount: effectiveModels.length,
-      models: effectiveModels,
-    });
+    if (effectiveModels.length > 0) {
+      grouped.push({
+        id: def.id,
+        slug: def.slug,
+        name: def.name,
+        brand: def.brand,
+        image: def.image || effectiveModels[0]?.image || getCleanPhoneImage(brand, def.name),
+        modelsCount: effectiveModels.length,
+        models: effectiveModels,
+      });
+    }
   }
 
-  // Any remaining models go into "Other Models", strictly deduplicated
+  // Any remaining models - check if inferModelSeries can map them to an existing group
   const remaining = allModels.filter((m) => {
     const dKey = getModelDedupeKey(m.brand || brand, m.model);
     return !assignedModels.has(dKey);
@@ -1502,19 +1650,37 @@ export function groupModelsBySeries(brand: string, allModels: CatalogModelItem[]
     const dKey = getModelDedupeKey(m.brand || brand, m.model);
     if (!seenRemaining.has(dKey)) {
       seenRemaining.add(dKey);
-      dedupeRemaining.push(m);
+      const inferred = inferModelSeries(brand, m.model, m.series);
+      const targetGroup = grouped.find(
+        (g) => g.slug === inferred.seriesSlug || g.name.toLowerCase() === inferred.seriesName.toLowerCase()
+      );
+      if (targetGroup) {
+        targetGroup.models.push({ ...m, series: targetGroup.name });
+        targetGroup.modelsCount = targetGroup.models.length;
+      } else {
+        dedupeRemaining.push({ ...m, series: inferred.seriesName });
+      }
     }
   });
 
   if (dedupeRemaining.length > 0) {
-    grouped.push({
-      id: 'other-models',
-      slug: 'other-models',
-      name: `${brand} Other Models`,
-      brand,
-      image: dedupeRemaining[0]?.image || getCleanPhoneImage(brand, 'Other'),
-      modelsCount: dedupeRemaining.length,
-      models: dedupeRemaining,
+    const subGroups = new Map<string, CatalogModelItem[]>();
+    dedupeRemaining.forEach((m) => {
+      const s = m.series || `${brand} Series`;
+      if (!subGroups.has(s)) subGroups.set(s, []);
+      subGroups.get(s)!.push(m);
+    });
+
+    subGroups.forEach((models, sName) => {
+      grouped.push({
+        id: sName.toLowerCase().replace(/[\s&/]+/g, '-'),
+        slug: sName.toLowerCase().replace(/[\s&/]+/g, '-'),
+        name: sName,
+        brand,
+        image: models[0]?.image || getCleanPhoneImage(brand, sName),
+        modelsCount: models.length,
+        models,
+      });
     });
   }
 

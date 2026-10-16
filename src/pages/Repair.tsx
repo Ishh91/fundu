@@ -3,7 +3,7 @@ import { useNavigate, useSearchParams, useParams, Link } from 'react-router-dom'
 import { getCleanPhoneImage, getCleanBrandLogo } from '../lib/phoneImages';
 import { ALL_INDIAN_PHONES_CATALOG } from '../data/indianPhonesCatalog';
 import { MASTER_MODEL_CATALOG } from './SellPhone';
-import { getModelDedupeKey, groupModelsBySeries } from '../data/brandSeriesCatalog';
+import { getModelDedupeKey, groupModelsBySeries, inferModelSeries } from '../data/brandSeriesCatalog';
 import {
   Wrench,
   Truck,
@@ -504,9 +504,10 @@ export default function Repair() {
       const key = getModelDedupeKey(form.brand, item.name);
       if (!seenFinal.has(key)) {
         seenFinal.add(key);
+        const inferred = inferModelSeries(form.brand, item.name, item.series);
         result.push({
           name: item.name,
-          series: item.series || `${form.brand} Series`,
+          series: inferred.seriesName,
           storages: item.storages,
         });
       }
@@ -515,16 +516,18 @@ export default function Repair() {
     return result;
   }, [form.brand, repairConfigs, modelsList]);
 
-  // Available Series for Selected Brand
+  // Available Series for Selected Brand (in exact defined chronological order)
   const brandSeriesList = useMemo(() => {
     if (!form.brand) return [];
-    const seriesSet = new Set<string>();
+    const list: string[] = ['All'];
+    const seen = new Set<string>();
     combinedModelsList.forEach((m) => {
-      if (m.series && m.series.trim()) {
-        seriesSet.add(m.series.trim());
+      if (m.series && m.series.trim() && !seen.has(m.series.trim())) {
+        seen.add(m.series.trim());
+        list.push(m.series.trim());
       }
     });
-    return ['All', ...Array.from(seriesSet)];
+    return list;
   }, [form.brand, combinedModelsList]);
 
   const filteredModelsList = useMemo(() => {
@@ -536,6 +539,18 @@ export default function Repair() {
     const q = modelFilter.toLowerCase().trim();
     return list.filter((m) => m.name.toLowerCase().includes(q));
   }, [combinedModelsList, selectedSeries, modelFilter, form.brand]);
+
+  // Models cleanly rearranged into their respective series groups
+  const seriesGroupedSections = useMemo(() => {
+    if (!form.brand) return [];
+    const map = new Map<string, typeof filteredModelsList>();
+    filteredModelsList.forEach((m) => {
+      const s = m.series || `${form.brand} Series`;
+      if (!map.has(s)) map.set(s, []);
+      map.get(s)!.push(m);
+    });
+    return Array.from(map.entries()).map(([name, models]) => ({ name, models }));
+  }, [form.brand, filteredModelsList]);
 
   // Sync params from URL subpage routing
   useEffect(() => {
@@ -1060,6 +1075,64 @@ export default function Repair() {
                       Clear Search Filter
                     </button>
                   </div>
+                ) : selectedSeries === 'All' && !modelFilter ? (
+                  <div className="space-y-6 max-h-[620px] overflow-y-auto pr-1">
+                    {seriesGroupedSections.map((sec) => (
+                      <div key={sec.name} className="space-y-3">
+                        <div className="flex items-center justify-between border-b border-gray-200/80 pb-2">
+                          <div className="flex items-center gap-2">
+                            <span className="h-2.5 w-2.5 rounded-full bg-[#344257]" />
+                            <h3 className="font-extrabold text-sm sm:text-base text-[#344257]">
+                              {sec.name}
+                            </h3>
+                            <span className="text-[11px] font-bold text-gray-500 bg-[#F0F0F5] border border-[#C0C8D8] px-2 py-0.5 rounded-full">
+                              {sec.models.length} {sec.models.length === 1 ? 'model' : 'models'}
+                            </span>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => setSelectedSeries(sec.name)}
+                            className="text-xs font-bold text-[#47576E] hover:text-[#344257] hover:underline cursor-pointer"
+                          >
+                            Filter this series →
+                          </button>
+                        </div>
+                        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3.5 sm:gap-4">
+                          {sec.models.map((m) => (
+                            <button
+                              key={m.name}
+                              type="button"
+                              onClick={() => handleSelectPhoneForRepair(form.brand, m.name)}
+                              className="group relative flex flex-col items-center justify-between p-4 sm:p-5 rounded-2xl border border-gray-200/90 bg-white hover:border-[#47576E] hover:shadow-xl hover:-translate-y-1 transition-all duration-300 text-center cursor-pointer"
+                            >
+                              {/* Top Series Badge Pill */}
+                              <span className="text-[10px] font-extrabold text-[#344257] bg-[#F0F0F5] border border-[#C0C8D8] group-hover:bg-[#344257] group-hover:text-white transition-colors px-2.5 py-0.5 rounded-full mb-2 truncate max-w-full">
+                                {m.series || `${form.brand} Series`}
+                              </span>
+
+                              {/* Centered Clean Device Image */}
+                              <div className="h-28 sm:h-36 w-full flex items-center justify-center p-2 mb-2 relative">
+                                <img
+                                  src={getCleanPhoneImage(form.brand, m.name)}
+                                  alt={m.name}
+                                  className="max-h-full max-w-full w-auto h-auto object-contain drop-shadow-sm mix-blend-multiply group-hover:scale-105 transition-transform duration-300"
+                                  loading="lazy"
+                                />
+                              </div>
+
+                              <p className="mt-2 text-xs sm:text-sm font-black text-gray-900 group-hover:text-[#344257] line-clamp-2 transition-colors">
+                                {m.name}
+                              </p>
+
+                              <div className="mt-4 w-full py-2 px-3 rounded-xl bg-slate-900 text-white font-extrabold text-xs group-hover:bg-[#344257] transition-all flex items-center justify-center gap-1 shadow-sm">
+                                Select Issues <ArrowRight className="h-3.5 w-3.5 group-hover:translate-x-1 transition-transform" />
+                              </div>
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
                 ) : (
                   <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3.5 sm:gap-4 max-h-[580px] overflow-y-auto pr-1">
                     {filteredModelsList.map((m) => (
@@ -1071,7 +1144,7 @@ export default function Repair() {
                       >
                         {/* Top Series Badge Pill */}
                         <span className="text-[10px] font-extrabold text-[#344257] bg-[#F0F0F5] border border-[#C0C8D8] group-hover:bg-[#344257] group-hover:text-white transition-colors px-2.5 py-0.5 rounded-full mb-2 truncate max-w-full">
-                          {m.series || 'Express Repair'}
+                          {m.series || `${form.brand} Series`}
                         </span>
 
                         {/* Centered Clean Device Image */}

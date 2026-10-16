@@ -12,17 +12,18 @@ export default function HeroSection() {
   const navigate = useNavigate();
   const { activePosters } = useHeroPosters();
   const [activeSlide, setActiveSlide] = useState(0);
+  const [isPaused, setIsPaused] = useState(false);
 
   const slidesCount = activePosters.length || 1;
 
   useEffect(() => {
-    if (slidesCount <= 1) return;
+    if (slidesCount <= 1 || isPaused) return;
     const timer = window.setInterval(() => {
       setActiveSlide((current) => (current + 1) % slidesCount);
-    }, 6500);
+    }, 9500); // Slower, comfortable slide duration (9.5s)
 
     return () => window.clearInterval(timer);
-  }, [slidesCount]);
+  }, [slidesCount, isPaused, activeSlide]);
 
   const currentIndex = activeSlide >= slidesCount ? 0 : activeSlide;
   const currentSlide = activePosters[currentIndex] || activePosters[0];
@@ -51,13 +52,17 @@ export default function HeroSection() {
           style={{
             background: 'linear-gradient(135deg, #6A859F 0%, #F0F0F5 50%, #C0C8D8 100%)',
           }}
+          onMouseEnter={() => setIsPaused(true)}
+          onMouseLeave={() => setIsPaused(false)}
+          onTouchStart={() => setIsPaused(true)}
+          onTouchEnd={() => setIsPaused(false)}
         >
           <div className="relative overflow-hidden rounded-[14px] sm:rounded-[22px] bg-white border border-white/60">
             {/* Main Slide Poster */}
             <Link
               key={currentIndex}
               to={currentSlide.primaryHref || '/sell'}
-              className="block relative w-full overflow-hidden animate-fade-in group cursor-pointer bg-white"
+              className="block relative w-full overflow-hidden group cursor-pointer bg-white transition-opacity duration-700 ease-in-out animate-fade-in"
             >
               <picture className="w-full h-auto block">
                 {currentSlide.image_mobile && (
