@@ -28,7 +28,7 @@ import {
 } from 'lucide-react';
 import { formatINR, formatDisplayPrice } from '../lib/db';
 import { getCleanPhoneImage } from '../lib/phoneImages';
-import { MASTER_MODEL_CATALOG } from './SellPhone';
+import { MASTER_MODEL_CATALOG } from '../data/masterModelCatalog';
 import { ALL_INDIAN_PHONES_CATALOG } from '../data/indianPhonesCatalog';
 import { useRepairPriceSync, getModelRepairPricing } from '../lib/repairPriceSync';
 import { isModelDeleted } from '../lib/catalogSync';

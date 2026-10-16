@@ -33,7 +33,7 @@ import { useCart } from '../context/CartContext';
 import { formatINR } from '../lib/db';
 import BrandLogo from './BrandLogo';
 import { PHONE_LOOKUP_CATALOG } from '../data/phoneLookup';
-import { MASTER_MODEL_CATALOG } from '../pages/SellPhone';
+import { MASTER_MODEL_CATALOG } from '../data/masterModelCatalog';
 import { fetchBrandCatalogFromApi, fetchDeviceAutocomplete } from '../lib/mobileApi';
 import {
   getPanIndiaLocation,

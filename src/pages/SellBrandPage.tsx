@@ -22,7 +22,7 @@ import {
 import { formatINR } from '../lib/db';
 import { getCleanPhoneImage, getCleanBrandLogo, BRAND_FRONT_FALLBACKS, getGenericDevicePlaceholder } from '../lib/phoneImages';
 import { usePriceSync, applyPriceOverrides, isModelDeleted } from '../lib/priceSync';
-import { MASTER_MODEL_CATALOG } from './SellPhone';
+import { MASTER_MODEL_CATALOG } from '../data/masterModelCatalog';
 import { fetchBrandCatalogFromApi, getDynamicFallbackConfig, calculateMarketPriceComparison, type CatalogModelItem } from '../lib/mobileApi';
 import { ALL_INDIAN_PHONES_CATALOG } from '../data/indianPhonesCatalog';
 import {

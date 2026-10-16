@@ -2,6 +2,7 @@ import { useState, useEffect, useRef, useMemo } from 'react';
 import { useNavigate, useSearchParams, useParams, Link } from 'react-router-dom';
 import { getCleanPhoneImage, getCleanBrandLogo } from '../lib/phoneImages';
 import { ALL_INDIAN_PHONES_CATALOG } from '../data/indianPhonesCatalog';
+import { MASTER_MODEL_CATALOG } from '../data/masterModelCatalog';
 import { getModelDedupeKey, groupModelsBySeries, inferModelSeries, sortDeviceModelsLatestFirst } from '../data/brandSeriesCatalog';
 import {
   Wrench,

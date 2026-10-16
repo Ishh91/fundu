@@ -25,7 +25,7 @@ import {
   CheckCircle2,
 } from 'lucide-react';
 import { formatINR, formatDisplayPrice } from '../lib/db';
-import { MASTER_MODEL_CATALOG } from './SellPhone';
+import { MASTER_MODEL_CATALOG } from '../data/masterModelCatalog';
 import { getCleanPhoneImage, getCleanBrandLogo, BRAND_FRONT_FALLBACKS, getGenericDevicePlaceholder } from '../lib/phoneImages';
 import { ALL_INDIAN_PHONES_CATALOG } from '../data/indianPhonesCatalog';
 import { useRepairPriceSync, getModelRepairPricing } from '../lib/repairPriceSync';

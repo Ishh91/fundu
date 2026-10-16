@@ -26,6 +26,7 @@ import { formatDisplayPrice } from '../../lib/db';
 import { BRAND_TILES, MASTER_MODEL_CATALOG, FAQS_LIST } from '../../data/masterModelCatalog';
 import { isModelDeleted } from '../../lib/priceSync';
 import { getModelDedupeKey, sortDeviceModelsLatestFirst } from '../../data/brandSeriesCatalog';
+import { getModelHardwareSpecs } from '../../lib/deviceSpecs';
 
 interface SellStep1DeviceProps {
   form: any;
