@@ -80,72 +80,50 @@ export function buildWhatsAppUrl(phone: string, text: string): string {
   return `https://api.whatsapp.com/send?phone=${norm}&text=${encodeURIComponent(text)}`;
 }
 
+import { API_BASE } from '../config/apiConfig';
+
 /**
- * Dispatches WhatsApp notification:
- * Opens WhatsApp link for primary admin and logs dispatch for all registered admins
+ * Dispatches automated WhatsApp notification:
+ * Calls server-side WhatsApp API (/api/whatsapp/send) for direct automated delivery
+ * without opening WhatsApp manually.
  */
-export async function dispatchWhatsAppAlert(text: string, autoOpenPrimary: boolean = true) {
+export async function dispatchWhatsAppAlert(text: string, autoOpenInBrowser: boolean = false) {
   const adminPhones = await getAdminNotificationNumbers();
   const urls: string[] = [];
 
-  adminPhones.forEach((phone, idx) => {
+  adminPhones.forEach((phone) => {
     const url = buildWhatsAppUrl(phone, text);
     urls.push(url);
-    console.log(`📲 [WhatsApp Notification Prepared] To: +${phone} -> ${url}`);
+  });
 
-    // Auto-open admin WhatsApp windows if requested
-    if (autoOpenPrimary) {
+  // 1. DIRECT AUTOMATED SERVER-SIDE WHATSAPP API DISPATCH
+  try {
+    const apiBase = API_BASE.replace(/\/$/, '');
+    await fetch(`${apiBase}/whatsapp/send`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        numbers: adminPhones,
+        message: text,
+      }),
+    });
+    console.log(`🤖 [Automated WhatsApp API Dispatched] to admins:`, adminPhones);
+  } catch (apiErr) {
+    console.warn('⚠️ [WhatsApp Backend API Error]:', apiErr);
+  }
+
+  // 2. Optional Manual Browser Open (Only if explicitly requested)
+  if (autoOpenInBrowser) {
+    adminPhones.forEach((phone, idx) => {
+      const url = buildWhatsAppUrl(phone, text);
       if (idx === 0) {
         try {
           const win = window.open(url, '_blank');
           if (win) win.focus();
-        } catch (e) {
-          console.warn('⚠️ Popup blocked for auto WhatsApp dispatch. Link:', url);
-        }
-      } else {
-        // Stagger second admin window to minimize browser popup blocking
-        setTimeout(() => {
-          try {
-            window.open(url, '_blank');
-          } catch (e) {
-            console.warn('⚠️ Popup blocked for secondary WhatsApp dispatch. Link:', url);
-          }
-        }, 400 * idx);
+        } catch {}
       }
-    }
-  });
-
-  // Background server email alert for 100% guarantee (does not block user UI)
-  try {
-    const apiBase = (typeof window !== 'undefined' && (window as any).__API_BASE__) || 'https://fundu.onrender.com/api';
-    fetch(`${apiBase}/email/send`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        to: 'trustiqueassist0003@gmail.com',
-        subject: `🚨 [FUNDU INSTANT ALERT] New Activity Triggered`,
-        html: `
-          <div style="font-family: Arial, sans-serif; padding: 20px; color: #1e293b; max-width: 600px; margin: 0 auto; border: 1px solid #e2e8f0; border-radius: 16px;">
-            <div style="background-color: #0f172a; padding: 16px; border-radius: 12px; text-align: center; color: white;">
-              <h2 style="margin: 0; color: #14b8a6;">FUNDU AUTOMATED ALERT</h2>
-              <p style="margin: 4px 0 0; font-size: 13px; color: #94a3b8;">Instant Multi-Admin Notification</p>
-            </div>
-            <div style="padding: 20px 0; font-size: 14px; white-space: pre-wrap; line-height: 1.6;">
-${text}
-            </div>
-            <div style="text-align: center; margin-top: 16px; display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
-              <a href="${urls[0] || '#'}" style="background-color: #25d366; color: white; padding: 10px 18px; text-decoration: none; font-weight: bold; border-radius: 8px; display: inline-block; margin: 4px;">
-                💬 Open WhatsApp (Admin 9105783553)
-              </a>
-              <a href="${urls[1] || '#'}" style="background-color: #075e54; color: white; padding: 10px 18px; text-decoration: none; font-weight: bold; border-radius: 8px; display: inline-block; margin: 4px;">
-                💬 Open WhatsApp (Helpline 9839122345)
-              </a>
-            </div>
-          </div>
-        `,
-      }),
-    }).catch(() => {});
-  } catch {}
+    });
+  }
 
   return { success: true, adminPhones, urls };
 }
@@ -165,7 +143,7 @@ export interface BuyOrderNotificationData {
   deliveryAddress: string;
 }
 
-export async function notifyNewBuyOrder(data: BuyOrderNotificationData, autoOpen: boolean = true) {
+export async function notifyNewBuyOrder(data: BuyOrderNotificationData, autoOpen: boolean = false) {
   const msg =
     `🛒 *NEW BUY PHONE ORDER RECEIVED!*\n` +
     `━━━━━━━━━━━━━━━━━━━━━\n` +
@@ -200,7 +178,7 @@ export interface SellRequestNotificationData {
   pickupSlot: string;
 }
 
-export async function notifyNewSellRequest(data: SellRequestNotificationData, autoOpen: boolean = true) {
+export async function notifyNewSellRequest(data: SellRequestNotificationData, autoOpen: boolean = false) {
   const msg =
     `📱 *NEW SELL PHONE PICKUP BOOKED!*\n` +
     `━━━━━━━━━━━━━━━━━━━━━\n` +
@@ -234,7 +212,7 @@ export interface RepairBookingNotificationData {
   pickupSlot?: string | null;
 }
 
-export async function notifyNewRepairBooking(data: RepairBookingNotificationData, autoOpen: boolean = true) {
+export async function notifyNewRepairBooking(data: RepairBookingNotificationData, autoOpen: boolean = false) {
   const msg =
     `🔧 *NEW 30-MIN DOORSTEP REPAIR BOOKING!*\n` +
     `━━━━━━━━━━━━━━━━━━━━━\n` +
@@ -263,7 +241,7 @@ export interface ContactMessageNotificationData {
   message: string;
 }
 
-export async function notifyNewContactMessage(data: ContactMessageNotificationData, autoOpen: boolean = true) {
+export async function notifyNewContactMessage(data: ContactMessageNotificationData, autoOpen: boolean = false) {
   const msg =
     `📩 *NEW CONTACT FORM ENQUIRY!*\n` +
     `━━━━━━━━━━━━━━━━━━━━━\n` +
