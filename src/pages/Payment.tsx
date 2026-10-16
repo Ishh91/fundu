@@ -4,6 +4,7 @@ import { ArrowLeft, CreditCard, Wallet, Loader2 } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
 import { db, formatINR } from '../lib/db';
+import { notifyNewBuyOrder } from '../lib/whatsappNotifyService';
 
 type RazorpayResponse = {
   razorpay_payment_id: string;
@@ -120,13 +121,31 @@ export default function Payment() {
         items: orderItems,
       };
 
-      const { error } = await db
+      const { data, error } = await db
         .from('orders')
         .insert(orderData)
         .select()
         .single();
 
       if (error) throw error;
+
+      // Dispatch WhatsApp Notification to Admins (9105783553 & 9839122345)
+      try {
+        const itemsSummary = cartItems.map((c) => `${c.item.title || (c.item as any).model || 'Device'} (x${c.quantity || 1})`).join(', ');
+        notifyNewBuyOrder({
+          orderId: (data as any)?.id || `ORD-${Date.now().toString().slice(-6)}`,
+          customerName: deliveryDetails.name || profile?.full_name || 'Customer',
+          customerPhone: deliveryDetails.phone || profile?.phone || '',
+          customerEmail: user?.email,
+          itemsSummary,
+          totalAmount,
+          paymentMethod,
+          paymentStatus,
+          deliveryAddress: orderData.delivery_address,
+        });
+      } catch (notifyErr) {
+        console.warn('⚠️ [Payment] WhatsApp notification error:', notifyErr);
+      }
 
       clearCart();
       navigate('/order-success');

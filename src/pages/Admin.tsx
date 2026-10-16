@@ -1001,7 +1001,23 @@ export default function Admin() {
       alert(error.message);
       return;
     }
-    setProfiles((prev) => prev.map((p) => (p.id === userId ? { ...p, role } : p)));
+    setProfiles((prev) => {
+      const updated = prev.map((p) => (p.id === userId ? { ...p, role } : p));
+      if (role === 'admin') {
+        const target = updated.find((p) => p.id === userId);
+        if (target?.phone) {
+          try {
+            const cached: string[] = JSON.parse(localStorage.getItem('fundu_cached_admin_phones') || '[]');
+            const clean = target.phone.replace(/\D/g, '');
+            if (clean && !cached.includes(clean)) {
+              cached.push(clean);
+              localStorage.setItem('fundu_cached_admin_phones', JSON.stringify(cached));
+            }
+          } catch {}
+        }
+      }
+      return updated;
+    });
   };
 
   const toggleUserVerification = async (userId: string, current: boolean) => {

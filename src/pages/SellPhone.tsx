@@ -45,6 +45,7 @@ import {
   type PanIndiaLocation,
 } from '../lib/locationService';
 import { getModelDedupeKey, groupModelsBySeries } from '../data/brandSeriesCatalog';
+import { notifyNewSellRequest } from '../lib/whatsappNotifyService';
 
 export {
   DOORSTEP_LOCALITIES,
@@ -953,8 +954,29 @@ export default function SellPhone() {
 
       if (insertErr) throw insertErr;
 
+      const bookingId = (data as any)?.id || `FND-LKO-${Math.floor(100000 + Math.random() * 900000)}`;
+
+      // Dispatch WhatsApp Notification to Admins (9105783553 & 9839122345)
+      try {
+        notifyNewSellRequest({
+          requestId: bookingId,
+          customerName: form.name || 'Customer',
+          customerPhone: form.phone || '',
+          brand: form.brand,
+          model: form.model,
+          storage: form.storage,
+          condition: form.condition,
+          offeredPrice: funduQuote?.offerAmount || form.price || 15000,
+          pickupAddress: [form.address, form.pickupArea || form.locality, form.city].filter(Boolean).join(', '),
+          pickupDate: form.pickupDate,
+          pickupSlot: form.pickupSlot,
+        });
+      } catch (notifyErr) {
+        console.warn('⚠️ [SellPhone] WhatsApp notification error:', notifyErr);
+      }
+
       setSuccessData({
-        id: (data as any)?.id || `FND-LKO-${Math.floor(100000 + Math.random() * 900000)}`,
+        id: bookingId,
         pickup_person_name: 'Rajesh Kumar (Fundu Rider)',
         pickup_person_phone: '+91-9839122345',
         estimated_arrival_time: `${form.pickupDate} (${form.pickupSlot})`,

@@ -3,6 +3,7 @@ import { Mail, Phone, MapPin, Clock, Send, CheckCircle2, AlertCircle } from 'luc
 import { db } from '../lib/db';
 
 import { sendEmailJSContact } from '../lib/emailjsService';
+import { notifyNewContactMessage } from '../lib/whatsappNotifyService';
 
 export default function Contact() {
   const [form, setForm] = useState({ name: '', email: '', phone: '', subject: '', message: '' });
@@ -42,6 +43,15 @@ export default function Contact() {
       name: form.name.trim(),
       email: form.email.trim(),
       phone: form.phone.trim(),
+      subject: form.subject.trim(),
+      message: form.message.trim(),
+    });
+
+    // 3. Dispatch WhatsApp Notification to Admin WhatsApp Numbers (9105783553 & 9839122345)
+    notifyNewContactMessage({
+      name: form.name.trim(),
+      email: form.email.trim(),
+      phone: form.phone.trim() || null,
       subject: form.subject.trim(),
       message: form.message.trim(),
     });

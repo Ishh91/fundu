@@ -4,6 +4,7 @@ import { getCleanPhoneImage, getCleanBrandLogo } from '../lib/phoneImages';
 import { ALL_INDIAN_PHONES_CATALOG } from '../data/indianPhonesCatalog';
 import { MASTER_MODEL_CATALOG } from '../data/masterModelCatalog';
 import { getModelDedupeKey, groupModelsBySeries, inferModelSeries, sortDeviceModelsLatestFirst } from '../data/brandSeriesCatalog';
+import { notifyNewRepairBooking } from '../lib/whatsappNotifyService';
 import {
   Wrench,
   Truck,
@@ -743,8 +744,28 @@ export default function Repair() {
       setError(reqErr.message);
       return;
     }
-    setTrackingId(data?.tracking_id ?? '');
-    goToStep(5, { trackingId: data?.tracking_id ?? '' }); // Confirmation Step
+    const trackingIdVal = data?.tracking_id ?? `REP-${Date.now().toString().slice(-6)}`;
+    setTrackingId(trackingIdVal);
+
+    // Dispatch WhatsApp Notification to Admins (9105783553 & 9839122345)
+    try {
+      notifyNewRepairBooking({
+        bookingId: trackingIdVal,
+        customerName: profile?.full_name || form.name || 'Customer',
+        customerPhone: profile?.phone || form.phone || '',
+        brand: form.brand,
+        model: form.model,
+        problem: combinedProblemLabel || 'General Repair',
+        estimatedCost: totalRepairCost || 1499,
+        pickupAddress: [form.pickupAddress, form.pickupArea].filter(Boolean).join(', '),
+        pickupDate: form.pickupDate,
+        pickupSlot: form.pickupSlot,
+      });
+    } catch (notifyErr) {
+      console.warn('⚠️ [Repair] WhatsApp notification error:', notifyErr);
+    }
+
+    goToStep(5, { trackingId: trackingIdVal }); // Confirmation Step
   };
 
   if (step === 5) {
