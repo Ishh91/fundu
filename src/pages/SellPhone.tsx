@@ -44,7 +44,7 @@ import {
   PAN_INDIA_POPULAR_CITIES,
   type PanIndiaLocation,
 } from '../lib/locationService';
-import { getModelDedupeKey } from '../data/brandSeriesCatalog';
+import { getModelDedupeKey, groupModelsBySeries } from '../data/brandSeriesCatalog';
 
 export {
   DOORSTEP_LOCALITIES,
@@ -791,14 +791,13 @@ export default function SellPhone() {
     return applyPriceOverrides(apiSearchResults.filter((d) => !isModelDeleted(d.brand, d.model)));
   }, [debouncedQuery, apiSearchResults, version]);
 
-  // Available Series List for Selected Brand
+  // Available Series List for Selected Brand (in exact defined chronological order)
   const brandSeriesList = useMemo(() => {
     if (!form.brand) return [];
-    const seriesSet = new Set<string>();
-    MASTER_MODEL_CATALOG.filter((m) => m.brand === form.brand && !isModelDeleted(m.brand, m.model)).forEach((m) => {
-      if (m.series) seriesSet.add(m.series);
-    });
-    return ['All', ...Array.from(seriesSet)];
+    const models = MASTER_MODEL_CATALOG.filter((m) => m.brand === form.brand && !isModelDeleted(m.brand, m.model));
+    const groups = groupModelsBySeries(form.brand, models);
+    const names = groups.filter((g) => g.models.length > 0).map((g) => g.name);
+    return ['All', ...names];
   }, [form.brand, version]);
 
   // Keyboard Navigation for Search Dropdown

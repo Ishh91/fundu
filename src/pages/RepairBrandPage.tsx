@@ -29,8 +29,7 @@ import { MASTER_MODEL_CATALOG } from './SellPhone';
 import { getCleanPhoneImage, getCleanBrandLogo, BRAND_FRONT_FALLBACKS, getGenericDevicePlaceholder } from '../lib/phoneImages';
 import { ALL_INDIAN_PHONES_CATALOG } from '../data/indianPhonesCatalog';
 import { useRepairPriceSync, getModelRepairPricing } from '../lib/repairPriceSync';
-import { isModelDeleted } from '../lib/catalogSync';
-import { getModelDedupeKey, groupModelsBySeries, inferModelSeries, isSeriesSlug } from '../data/brandSeriesCatalog';
+import { getModelDedupeKey, groupModelsBySeries, inferModelSeries, isSeriesSlug, sortDeviceModelsLatestFirst } from '../data/brandSeriesCatalog';
 
 const BRAND_REPAIR_DETAILS: Record<
   string,
@@ -269,7 +268,8 @@ export default function RepairBrandPage() {
     const seen = new Set<string>();
 
     seriesGroups.forEach((group) => {
-      (group.models || []).forEach((m) => {
+      const sortedGroupModels = sortDeviceModelsLatestFirst(brandCleanKey, group.models || []);
+      sortedGroupModels.forEach((m) => {
         const key = getModelDedupeKey(m.brand || brandDisplayName, m.model);
         if (!seen.has(key)) {
           seen.add(key);
@@ -286,12 +286,20 @@ export default function RepairBrandPage() {
     });
 
     // Any leftovers - accurately mapped to series via inferModelSeries
+    const leftovers: Array<{
+      brand: string;
+      model: string;
+      series: string;
+      seriesSlug: string;
+      image?: string | null;
+      price: number;
+    }> = [];
     rawBrandModels.forEach((m) => {
       const key = getModelDedupeKey(m.brand || brandDisplayName, m.model);
       if (!seen.has(key)) {
         seen.add(key);
         const inferred = inferModelSeries(m.brand || brandDisplayName, m.model, m.series);
-        models.push({
+        leftovers.push({
           ...m,
           series: inferred.seriesName,
           seriesSlug: inferred.seriesSlug,
@@ -299,8 +307,12 @@ export default function RepairBrandPage() {
       }
     });
 
+    if (leftovers.length > 0) {
+      models.push(...sortDeviceModelsLatestFirst(brandCleanKey, leftovers));
+    }
+
     return models;
-  }, [seriesGroups, rawBrandModels, brandDisplayName]);
+  }, [seriesGroups, rawBrandModels, brandDisplayName, brandCleanKey]);
 
   // 6. Final filtered models
   const brandModels = useMemo(() => {
@@ -308,21 +320,23 @@ export default function RepairBrandPage() {
 
     if (selectedSeries !== 'All') {
       const cleanSel = selectedSeries.toLowerCase().replace(/^(repair-|sell-)/, '');
-      list = list.filter(
+      const filtered = list.filter(
         (m) =>
           m.series.toLowerCase() === selectedSeries.toLowerCase() ||
           m.seriesSlug.toLowerCase() === cleanSel ||
           m.series.toLowerCase().includes(cleanSel)
       );
+      list = sortDeviceModelsLatestFirst(brandCleanKey, filtered);
     }
 
     if (debouncedQuery) {
       const q = debouncedQuery.toLowerCase();
-      list = list.filter((m) => m.model.toLowerCase().includes(q));
+      const searched = list.filter((m) => m.model.toLowerCase().includes(q));
+      list = sortDeviceModelsLatestFirst(brandCleanKey, searched);
     }
 
     return list;
-  }, [allModelsInSeriesOrder, selectedSeries, debouncedQuery]);
+  }, [allModelsInSeriesOrder, selectedSeries, debouncedQuery, brandCleanKey]);
 
   // Grouped models by Series for organized chronological section layout
   const seriesGroupedSections = useMemo(() => {
@@ -332,8 +346,11 @@ export default function RepairBrandPage() {
       if (!map.has(s)) map.set(s, []);
       map.get(s)!.push(m);
     });
-    return Array.from(map.entries()).map(([name, models]) => ({ name, models }));
-  }, [brandModels, brandDisplayName]);
+    return Array.from(map.entries()).map(([name, models]) => ({
+      name,
+      models: sortDeviceModelsLatestFirst(brandCleanKey, models),
+    }));
+  }, [brandModels, brandDisplayName, brandCleanKey]);
 
   const handleBookRepair = (modelName: string, issueId: string = 'screen') => {
     const modelSlugClean = modelName.toLowerCase().replace(/\s+/g, '-');

@@ -14,6 +14,231 @@ export function getModelDedupeKey(brand: string, model: string): string {
   return clean
     .replace(/\+/g, 'plus')
     .replace(/[^a-z0-9]/g, '');
+}
+
+/**
+ * Calculates a deterministic chronological recency score for any phone or device model.
+ * Higher score = Newer model (e.g. iPhone 18 Pro Max > iPhone 17 Pro > iPhone 16 > iPhone 5s > iPhone 4).
+ */
+export function getDeviceRecencyScore(
+  brand: string,
+  modelName: string,
+  releaseYear?: number,
+  price?: number
+): number {
+  const bLower = (brand || '').toLowerCase().trim();
+  const mLower = (modelName || '').toLowerCase().trim();
+
+  // 1. Tablet / iPad penalty so tablets sort below phones
+  const isTablet = /\b(ipad|tablet|tab\s*[a-z0-9]|pad)\b/i.test(mLower);
+
+  // 2. Apple / iPhone
+  if (bLower === 'apple' || bLower === 'iphone') {
+    if (isTablet) {
+      let tabletScore = 400000;
+      if (/\b(m4|2024)\b/i.test(mLower)) tabletScore += 50000;
+      else if (/\b(m2|2023|2022)\b/i.test(mLower)) tabletScore += 40000;
+      else if (/\b(2021|2020)\b/i.test(mLower)) tabletScore += 30000;
+      else if (/\b(2019|2018)\b/i.test(mLower)) tabletScore += 20000;
+      if (/\bpro\b/i.test(mLower)) tabletScore += 5000;
+      if (/\bair\b/i.test(mLower)) tabletScore += 3000;
+      return tabletScore + (price ? Math.min(2000, price / 50) : 0);
+    }
+
+    let score = 1000000;
+    // Check generation
+    if (/\b18\b/i.test(mLower)) score += 180000;
+    else if (/\b(17|17e|air)\b/i.test(mLower)) score += 170000;
+    else if (/\b(16|16e)\b/i.test(mLower)) score += 160000;
+    else if (/\b15\b/i.test(mLower)) score += 150000;
+    else if (/\b14\b/i.test(mLower)) score += 140000;
+    else if (/\b13\b/i.test(mLower)) score += 130000;
+    else if (/\b12\b/i.test(mLower)) score += 120000;
+    else if (/\b11\b/i.test(mLower)) score += 110000;
+    else if (/\b(xs|xr|x\b)/i.test(mLower)) score += 100000;
+    else if (/\b8\b/i.test(mLower)) score += 80000;
+    else if (/\b7\b/i.test(mLower)) score += 70000;
+    else if (/\b6s\b/i.test(mLower)) score += 65000;
+    else if (/\b6\b/i.test(mLower)) score += 60000;
+    else if (/\bse\b/i.test(mLower)) {
+      if (/3rd|2022/i.test(mLower)) score += 135000;
+      else if (/2nd|2020/i.test(mLower)) score += 115000;
+      else score += 65000;
+    } else if (/\b5s\b/i.test(mLower)) score += 55000;
+    else if (/\b5c\b/i.test(mLower)) score += 52000;
+    else if (/\b5\b/i.test(mLower)) score += 50000;
+    else if (/\b4s\b/i.test(mLower)) score += 45000;
+    else if (/\b4\b/i.test(mLower)) score += 40000;
+    else if (/\b3gs\b/i.test(mLower)) score += 35000;
+    else if (/\b3g\b/i.test(mLower)) score += 30000;
+    else if (/\b(original|iphone\s*1\b|\biphone\b$)/i.test(mLower)) score += 10000;
+    else score += 160000;
+
+    // Sub-tier ordering
+    if (/pro\s*max/i.test(mLower)) score += 900;
+    else if (/\bpro\b/i.test(mLower)) score += 800;
+    else if (/\bplus\b/i.test(mLower)) score += 700;
+    else if (/\bair\b/i.test(mLower)) score += 650;
+    else if (/\bmini\b/i.test(mLower)) score += 450;
+    else if (/\b(16e|17e|e\b)/i.test(mLower)) score += 350;
+    else score += 500;
+
+    return score + (price ? Math.min(100, price / 1000) : 0);
+  }
+
+  // 3. Samsung
+  if (bLower === 'samsung') {
+    let score = 1000000;
+    if (/\bs25\b/i.test(mLower)) score += 250000;
+    else if (/\bs24\b/i.test(mLower)) score += 240000;
+    else if (/\bs23\b/i.test(mLower)) score += 230000;
+    else if (/\bs22\b/i.test(mLower)) score += 220000;
+    else if (/\bs21\b/i.test(mLower)) score += 210000;
+    else if (/\bs20\b/i.test(mLower)) score += 200000;
+    else if (/\bs10\b/i.test(mLower)) score += 100000;
+    else if (/\bs[6789]\b/i.test(mLower)) {
+      const match = mLower.match(/\bs([6789])\b/i);
+      score += (parseInt(match?.[1] || '6', 10)) * 10000;
+    } else if (/\bfold\s*6|flip\s*6/i.test(mLower)) score += 245000;
+    else if (/\bfold\s*5|flip\s*5/i.test(mLower)) score += 235000;
+    else if (/\bfold\s*4|flip\s*4/i.test(mLower)) score += 225000;
+    else if (/\bfold\s*3|flip\s*3/i.test(mLower)) score += 215000;
+    else if (/\bfold\s*2|flip\s*2/i.test(mLower)) score += 205000;
+    else if (/\b(fold|flip)\b/i.test(mLower)) score += 200000;
+    else if (/\bnote\s*20\b/i.test(mLower)) score += 200000;
+    else if (/\bnote\s*10\b/i.test(mLower)) score += 100000;
+    else if (/\bnote\s*9\b/i.test(mLower)) score += 90000;
+    else if (/\bnote\s*8\b/i.test(mLower)) score += 80000;
+    else if (/\ba\d+/i.test(mLower)) {
+      const aNum = parseInt(mLower.match(/a(\d+)/i)?.[1] || '0', 10);
+      const gen = aNum % 10;
+      const tier = Math.floor(aNum / 10);
+      score += 150000 + gen * 10000 + tier * 1000;
+    } else if (/\b(m|f)\d+/i.test(mLower)) {
+      const mfNum = parseInt(mLower.match(/[mf](\d+)/i)?.[1] || '0', 10);
+      const gen = mfNum % 10;
+      const tier = Math.floor(mfNum / 10);
+      score += 140000 + gen * 10000 + tier * 1000;
+    } else if (/\bj\d+/i.test(mLower)) {
+      const jNum = parseInt(mLower.match(/j(\d+)/i)?.[1] || '0', 10);
+      score += 50000 + jNum * 5000;
+    } else {
+      score += 100000;
+    }
+
+    if (/ultra/i.test(mLower)) score += 900;
+    else if (/plus|\+/i.test(mLower)) score += 750;
+    else if (/pro/i.test(mLower)) score += 700;
+    else if (/fe/i.test(mLower)) score += 500;
+    else if (/5g/i.test(mLower)) score += 450;
+    else score += 400;
+
+    return score + (price ? Math.min(100, price / 1000) : 0);
+  }
+
+  // 4. Google Pixel
+  if (bLower === 'google' || bLower === 'pixel') {
+    let score = 1000000;
+    if (/\b10\b/i.test(mLower)) score += 100000;
+    else if (/\b9\b/i.test(mLower)) score += 90000;
+    else if (/\b8\b/i.test(mLower)) score += 80000;
+    else if (/\b7\b/i.test(mLower)) score += 70000;
+    else if (/\b6\b/i.test(mLower)) score += 60000;
+    else if (/\b5\b/i.test(mLower)) score += 50000;
+    else if (/\b4\b/i.test(mLower)) score += 40000;
+    else if (/\b3\b/i.test(mLower)) score += 30000;
+    else score += 20000;
+
+    if (/pro\s*fold/i.test(mLower)) score += 950;
+    else if (/fold/i.test(mLower)) score += 900;
+    else if (/pro\s*xl/i.test(mLower)) score += 850;
+    else if (/pro/i.test(mLower)) score += 800;
+    else if (/\ba\b/i.test(mLower)) score += 200;
+    else score += 400;
+
+    return score + (price ? Math.min(100, price / 1000) : 0);
+  }
+
+  // 5. OnePlus
+  if (bLower === 'oneplus') {
+    let score = 1000000;
+    if (/\b13\b/i.test(mLower)) score += 130000;
+    else if (/\b12\b/i.test(mLower)) score += 120000;
+    else if (/\b11\b/i.test(mLower)) score += 110000;
+    else if (/\b10\b/i.test(mLower)) score += 100000;
+    else if (/\b9\b/i.test(mLower)) score += 90000;
+    else if (/\b8\b/i.test(mLower)) score += 80000;
+    else if (/\b7\b/i.test(mLower)) score += 70000;
+    else if (/\b6\b/i.test(mLower)) score += 60000;
+    else if (/\b5\b/i.test(mLower)) score += 50000;
+    else if (/open/i.test(mLower)) score += 125000;
+    else if (/nord\s*4|ce\s*4/i.test(mLower)) score += 110000;
+    else if (/nord\s*3|ce\s*3/i.test(mLower)) score += 90000;
+    else if (/nord\s*2|ce\s*2/i.test(mLower)) score += 70000;
+    else if (/nord/i.test(mLower)) score += 60000;
+    else score += 50000;
+
+    if (/pro/i.test(mLower)) score += 800;
+    else if (/r\b/i.test(mLower)) score += 650;
+    else if (/t\b/i.test(mLower)) score += 500;
+    else score += 400;
+
+    return score + (price ? Math.min(100, price / 1000) : 0);
+  }
+
+  // Universal Fallback for Xiaomi, Vivo, Realme, Motorola, etc.
+  let genScore = 1000000;
+  if (releaseYear && releaseYear >= 2000) {
+    genScore += (releaseYear - 2000) * 10000;
+  } else {
+    // Extract numbers in model name
+    const matches = mLower.match(/\b(\d{1,3})\b/g);
+    if (matches && matches.length > 0) {
+      const topNum = Math.max(...matches.map((n) => parseInt(n, 10)).filter((n) => n < 300));
+      if (topNum > 0) {
+        genScore += Math.min(250000, topNum * 1000);
+      }
+    }
+  }
+
+  if (/ultra/i.test(mLower)) genScore += 900;
+  else if (/pro\s*max/i.test(mLower)) genScore += 900;
+  else if (/pro\s*\+/i.test(mLower)) genScore += 850;
+  else if (/pro/i.test(mLower)) genScore += 800;
+  else if (/plus|\+/i.test(mLower)) genScore += 700;
+  else if (/gt|turbo/i.test(mLower)) genScore += 600;
+  else if (/5g/i.test(mLower)) genScore += 450;
+  else if (/lite|play|core|go/i.test(mLower)) genScore += 100;
+  else genScore += 350;
+
+  return genScore + (price ? Math.min(100, price / 1000) : 0);
+}
+
+/**
+ * Sorts any list of phone models chronologically from latest (top) to oldest (bottom).
+ */
+export function sortDeviceModelsLatestFirst<
+  T extends { model?: string; name?: string; price?: number; release_year?: number; brand?: string; storage?: string }
+>(brand: string, models: T[]): T[] {
+  return [...models].sort((a, b) => {
+    const nameA = a.model || a.name || '';
+    const nameB = b.model || b.name || '';
+    const brandA = a.brand || brand;
+    const brandB = b.brand || brand;
+    const scoreA = getDeviceRecencyScore(brandA, nameA, a.release_year, a.price);
+    const scoreB = getDeviceRecencyScore(brandB, nameB, b.release_year, b.price);
+    if (scoreB !== scoreA) {
+      return scoreB - scoreA;
+    }
+    const priceA = a.price || 0;
+    const priceB = b.price || 0;
+    if (priceB !== priceA) {
+      return priceB - priceA;
+    }
+    return nameA.localeCompare(nameB);
+  });
+}
+
 export function inferModelSeries(
   brand: string,
   modelName: string,
@@ -46,8 +271,10 @@ export function inferModelSeries(
 
   // 1. Apple
   if (bLower === 'apple' || bLower === 'iphone') {
-    if (/\b17\b/i.test(mLower)) return { seriesName: 'iPhone 17 Series', seriesSlug: 'iphone-17-series' };
-    if (/\b16\b/i.test(mLower)) return { seriesName: 'iPhone 16 Series', seriesSlug: 'iphone-16-series' };
+    if (/\bipad\b/i.test(mLower)) return { seriesName: 'Apple iPad & Tablet Series', seriesSlug: 'apple-ipad-series' };
+    if (/\b18\b/i.test(mLower)) return { seriesName: 'iPhone 18 Series', seriesSlug: 'iphone-18-series' };
+    if (/\b(17|17e|air)\b/i.test(mLower)) return { seriesName: 'iPhone 17 Series', seriesSlug: 'iphone-17-series' };
+    if (/\b(16|16e)\b/i.test(mLower)) return { seriesName: 'iPhone 16 Series', seriesSlug: 'iphone-16-series' };
     if (/\b15\b/i.test(mLower)) return { seriesName: 'iPhone 15 Series', seriesSlug: 'iphone-15-series' };
     if (/\b14\b/i.test(mLower)) return { seriesName: 'iPhone 14 Series', seriesSlug: 'iphone-14-series' };
     if (/\b13\b/i.test(mLower)) return { seriesName: 'iPhone 13 Series', seriesSlug: 'iphone-13-series' };
@@ -59,7 +286,7 @@ export function inferModelSeries(
     if (/\b6s?\b/i.test(mLower)) return { seriesName: 'iPhone 6 & 6S Series', seriesSlug: 'iphone-6-series' };
     if (/\bse\b/i.test(mLower)) return { seriesName: 'iPhone SE Series', seriesSlug: 'iphone-se-series' };
     if (/\b(5|4|3|2|1|original)\b/i.test(mLower)) return { seriesName: 'iPhone 5 & Older Classic Series', seriesSlug: 'iphone-classic-series' };
-    return { seriesName: 'iPhone 16 Series', seriesSlug: 'iphone-16-series' };
+    return { seriesName: 'iPhone 18 Series', seriesSlug: 'iphone-18-series' };
   }
 
   // 2. Samsung
@@ -133,10 +360,11 @@ export function inferModelSeries(
 
   // 8. Google
   if (bLower === 'google' || bLower === 'pixel') {
-    if (/\b9\b/i.test(mLower)) return { seriesName: 'Pixel 9 Series', seriesSlug: 'pixel-9-series' };
-    if (/\b8\b/i.test(mLower)) return { seriesName: 'Pixel 8 Series', seriesSlug: 'pixel-8-series' };
-    if (/\b7\b/i.test(mLower)) return { seriesName: 'Pixel 7 Series', seriesSlug: 'pixel-7-series' };
-    if (/\b6\b/i.test(mLower)) return { seriesName: 'Pixel 6 Series', seriesSlug: 'pixel-6-series' };
+    if (/\b10\b/i.test(mLower)) return { seriesName: 'Google Pixel 10 Series', seriesSlug: 'google-pixel-10-series' };
+    if (/\b9\b/i.test(mLower)) return { seriesName: 'Google Pixel 9 Series', seriesSlug: 'google-pixel-9-series' };
+    if (/\b8\b/i.test(mLower)) return { seriesName: 'Google Pixel 8 Series', seriesSlug: 'google-pixel-8-series' };
+    if (/\b7\b/i.test(mLower)) return { seriesName: 'Google Pixel 7 Series', seriesSlug: 'google-pixel-7-series' };
+    if (/\b6\b/i.test(mLower)) return { seriesName: 'Google Pixel 6 Series', seriesSlug: 'google-pixel-6-series' };
     return { seriesName: 'Pixel Legacy Series', seriesSlug: 'pixel-legacy-series' };
   }
 
@@ -183,18 +411,32 @@ export type SeriesGroup = {
 export const BRAND_SERIES_DEFINITIONS: Record<string, BrandSeriesDefinition[]> = {
   apple: [
     {
+      id: 'iphone-18',
+      slug: 'iphone-18-series',
+      name: 'iPhone 18 Series',
+      brand: 'Apple',
+      image: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-18-pro-max.jpg',
+      description: '18 Pro Max, 18 Pro',
+      pattern: /\biphone\s*18\b/i,
+      defaultModels: [
+        { brand: 'Apple', series: 'iPhone 18 Series', model: 'Apple iPhone 18 Pro Max', storage: '256 GB', price: 131000, image: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-18-pro-max.jpg' },
+        { brand: 'Apple', series: 'iPhone 18 Series', model: 'Apple iPhone 18 Pro', storage: '256 GB', price: 121000, image: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-18-pro.jpg' },
+      ],
+    },
+    {
       id: 'iphone-17',
       slug: 'iphone-17-series',
       name: 'iPhone 17 Series',
       brand: 'Apple',
       image: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-16-pro-max.jpg',
-      description: '17 Pro Max, 17 Pro, 17 Air / Slim, 17',
-      pattern: /\biphone\s*17\b/i,
+      description: '17 Pro Max, 17 Pro, 17 Air / Slim, 17, 17e',
+      pattern: /\biphone\s*17([a-z0-9]|\b)|\biphone\s*air\b/i,
       defaultModels: [
         { brand: 'Apple', series: 'iPhone 17 Series', model: 'Apple iPhone 17 Pro Max', storage: '256 GB', price: 118000, image: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-16-pro-max.jpg' },
         { brand: 'Apple', series: 'iPhone 17 Series', model: 'Apple iPhone 17 Pro', storage: '256 GB', price: 104000, image: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-16-pro.jpg' },
         { brand: 'Apple', series: 'iPhone 17 Series', model: 'Apple iPhone 17 Air', storage: '128 GB', price: 82000, image: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-16.jpg' },
         { brand: 'Apple', series: 'iPhone 17 Series', model: 'Apple iPhone 17', storage: '128 GB', price: 72000, image: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-16.jpg' },
+        { brand: 'Apple', series: 'iPhone 17 Series', model: 'Apple iPhone 17e', storage: '256 GB', price: 47000, image: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-17e.jpg' },
       ],
     },
     {
@@ -203,13 +445,14 @@ export const BRAND_SERIES_DEFINITIONS: Record<string, BrandSeriesDefinition[]> =
       name: 'iPhone 16 Series',
       brand: 'Apple',
       image: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-16-pro-max.jpg',
-      description: '16 Pro Max, 16 Pro, 16 Plus, 16',
-      pattern: /\biphone\s*16\b/i,
+      description: '16 Pro Max, 16 Pro, 16 Plus, 16, 16e',
+      pattern: /\biphone\s*16([a-z0-9]|\b)/i,
       defaultModels: [
         { brand: 'Apple', series: 'iPhone 16 Series', model: 'Apple iPhone 16 Pro Max', storage: '256 GB', price: 98000, image: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-16-pro-max.jpg' },
         { brand: 'Apple', series: 'iPhone 16 Series', model: 'Apple iPhone 16 Pro', storage: '128 GB', price: 88000, image: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-16-pro.jpg' },
         { brand: 'Apple', series: 'iPhone 16 Series', model: 'Apple iPhone 16 Plus', storage: '128 GB', price: 68000, image: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-16.jpg' },
         { brand: 'Apple', series: 'iPhone 16 Series', model: 'Apple iPhone 16', storage: '128 GB', price: 58000, image: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-16.jpg' },
+        { brand: 'Apple', series: 'iPhone 16 Series', model: 'Apple iPhone 16e', storage: '128 GB', price: 38830, image: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-16e.jpg' },
       ],
     },
     {
@@ -363,7 +606,7 @@ export const BRAND_SERIES_DEFINITIONS: Record<string, BrandSeriesDefinition[]> =
       brand: 'Apple',
       image: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-5s.jpg',
       description: 'iPhone 5S, 5C, 5, 4S, 4, 3GS, 3G, 1',
-      pattern: /\biphone\s*(5|4|3|2|1)\b/i,
+      pattern: /\biphone\s*(5|4|3|2|1)\b|\bapple\s*iphone\b$|\biphone\s*original\b/i,
       defaultModels: [
         { brand: 'Apple', series: 'Classic Series', model: 'Apple iPhone 5s', storage: '16 GB', price: 2200, image: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-5s.jpg' },
         { brand: 'Apple', series: 'Classic Series', model: 'Apple iPhone 5c', storage: '16 GB', price: 1800, image: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-5c.jpg' },
@@ -373,6 +616,20 @@ export const BRAND_SERIES_DEFINITIONS: Record<string, BrandSeriesDefinition[]> =
         { brand: 'Apple', series: 'Classic Series', model: 'Apple iPhone 3GS', storage: '8 GB', price: 800, image: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-3gs.jpg' },
         { brand: 'Apple', series: 'Classic Series', model: 'Apple iPhone 3G', storage: '8 GB', price: 700, image: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-3gs.jpg' },
         { brand: 'Apple', series: 'Classic Series', model: 'Apple iPhone 1 (Original 2007)', storage: '4 GB', price: 600, image: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-3gs.jpg' },
+      ],
+    },
+    {
+      id: 'apple-ipad',
+      slug: 'apple-ipad-series',
+      name: 'Apple iPad & Tablet Series',
+      brand: 'Apple',
+      image: 'https://fdn2.gsmarena.com/vv/bigpic/apple-ipad-pro-13-2024.jpg',
+      description: 'iPad Pro, iPad Air, iPad Mini, iPad 10th Gen',
+      pattern: /\bipad\b/i,
+      defaultModels: [
+        { brand: 'Apple', series: 'Apple iPad & Tablet Series', model: 'Apple iPad Pro 13 (2024)', storage: '256 GB', price: 92000, image: 'https://fdn2.gsmarena.com/vv/bigpic/apple-ipad-pro-13-2024.jpg' },
+        { brand: 'Apple', series: 'Apple iPad & Tablet Series', model: 'Apple iPad Air 13 (2024)', storage: '128 GB', price: 58000, image: 'https://fdn2.gsmarena.com/vv/bigpic/apple-ipad-air-13-2024.jpg' },
+        { brand: 'Apple', series: 'Apple iPad & Tablet Series', model: 'Apple iPad 10.9 (2022)', storage: '64 GB', price: 28000, image: 'https://fdn2.gsmarena.com/vv/bigpic/apple-ipad-109-2022.jpg' },
       ],
     },
   ],
@@ -1185,6 +1442,21 @@ export const BRAND_SERIES_DEFINITIONS: Record<string, BrandSeriesDefinition[]> =
 
   google: [
     {
+      id: 'pixel-10',
+      slug: 'google-pixel-10-series',
+      name: 'Google Pixel 10 Series',
+      brand: 'Google',
+      image: 'https://fdn2.gsmarena.com/vv/bigpic/google-google-pixel-10-pro-xl.jpg',
+      description: 'Pixel 10 Pro Fold, 10 Pro XL, 10 Pro, 10',
+      pattern: /pixel\s*10/i,
+      defaultModels: [
+        { brand: 'Google', series: 'Google Pixel 10 Series', model: 'Google Pixel 10 Pro Fold', storage: '256 GB', price: 93750, image: 'https://fdn2.gsmarena.com/vv/bigpic/google-google-pixel-10-pro-fold.jpg' },
+        { brand: 'Google', series: 'Google Pixel 10 Series', model: 'Google Pixel 10 Pro XL', storage: '256 GB', price: 70650, image: 'https://fdn2.gsmarena.com/vv/bigpic/google-google-pixel-10-pro-xl.jpg' },
+        { brand: 'Google', series: 'Google Pixel 10 Series', model: 'Google Pixel 10 Pro', storage: '256 GB', price: 65750, image: 'https://fdn2.gsmarena.com/vv/bigpic/google-google-pixel-10-pro.jpg' },
+        { brand: 'Google', series: 'Google Pixel 10 Series', model: 'Google Pixel 10', storage: '256 GB', price: 46850, image: 'https://fdn2.gsmarena.com/vv/bigpic/google-google-pixel-10.jpg' },
+      ],
+    },
+    {
       id: 'pixel-9',
       slug: 'google-pixel-9-series',
       name: 'Google Pixel 9 Series',
@@ -1565,15 +1837,24 @@ export function groupModelsBySeries(brand: string, allModels: CatalogModelItem[]
       seriesMap.get(s)!.push(m);
     });
 
-    return Array.from(seriesMap.entries()).map(([sName, models], idx) => ({
-      id: `series-${idx}`,
-      slug: sName.toLowerCase().replace(/[\s&/]+/g, '-'),
-      name: sName,
-      brand,
-      image: models[0]?.image || getCleanPhoneImage(brand, sName),
-      modelsCount: models.length,
-      models,
-    }));
+    const dynamicGroups = Array.from(seriesMap.entries()).map(([sName, models], idx) => {
+      const sortedModels = sortDeviceModelsLatestFirst(brand, models);
+      return {
+        id: `series-${idx}`,
+        slug: sName.toLowerCase().replace(/[\s&/]+/g, '-'),
+        name: sName,
+        brand,
+        image: sortedModels[0]?.image || getCleanPhoneImage(brand, sName),
+        modelsCount: sortedModels.length,
+        models: sortedModels,
+      };
+    });
+
+    return dynamicGroups.sort((a, b) => {
+      const scoreA = Math.max(...a.models.map((m) => getDeviceRecencyScore(brand, m.model, undefined, m.price)));
+      const scoreB = Math.max(...b.models.map((m) => getDeviceRecencyScore(brand, m.model, undefined, m.price)));
+      return scoreB - scoreA;
+    });
   }
 
   // Map each definition to matching models
@@ -1626,14 +1907,15 @@ export function groupModelsBySeries(brand: string, allModels: CatalogModelItem[]
     const effectiveModels = combinedModels.length > 0 ? combinedModels : (def.defaultModels || []);
 
     if (effectiveModels.length > 0) {
+      const sortedModels = sortDeviceModelsLatestFirst(brand, effectiveModels);
       grouped.push({
         id: def.id,
         slug: def.slug,
         name: def.name,
         brand: def.brand,
-        image: def.image || effectiveModels[0]?.image || getCleanPhoneImage(brand, def.name),
-        modelsCount: effectiveModels.length,
-        models: effectiveModels,
+        image: def.image || sortedModels[0]?.image || getCleanPhoneImage(brand, def.name),
+        modelsCount: sortedModels.length,
+        models: sortedModels,
       });
     }
   }
@@ -1656,6 +1938,7 @@ export function groupModelsBySeries(brand: string, allModels: CatalogModelItem[]
       );
       if (targetGroup) {
         targetGroup.models.push({ ...m, series: targetGroup.name });
+        targetGroup.models = sortDeviceModelsLatestFirst(brand, targetGroup.models);
         targetGroup.modelsCount = targetGroup.models.length;
       } else {
         dedupeRemaining.push({ ...m, series: inferred.seriesName });
@@ -1671,16 +1954,43 @@ export function groupModelsBySeries(brand: string, allModels: CatalogModelItem[]
       subGroups.get(s)!.push(m);
     });
 
+    const newGroups: SeriesGroup[] = [];
     subGroups.forEach((models, sName) => {
-      grouped.push({
+      const sortedModels = sortDeviceModelsLatestFirst(brand, models);
+      newGroups.push({
         id: sName.toLowerCase().replace(/[\s&/]+/g, '-'),
         slug: sName.toLowerCase().replace(/[\s&/]+/g, '-'),
         name: sName,
         brand,
-        image: models[0]?.image || getCleanPhoneImage(brand, sName),
-        modelsCount: models.length,
-        models,
+        image: sortedModels[0]?.image || getCleanPhoneImage(brand, sName),
+        modelsCount: sortedModels.length,
+        models: sortedModels,
       });
+    });
+
+    newGroups.forEach((ng) => {
+      const score = Math.max(...ng.models.map((m) => getDeviceRecencyScore(brand, m.model, undefined, m.price)));
+      const isTabletGroup = /tablet|ipad|pad\b/i.test(ng.name);
+      if (isTabletGroup) {
+        grouped.push(ng);
+      } else if (score >= 1100000) {
+        const insertIdx = grouped.findIndex((g) => {
+          const gScore = Math.max(...g.models.map((m) => getDeviceRecencyScore(brand, m.model, undefined, m.price)));
+          return gScore < score;
+        });
+        if (insertIdx !== -1) {
+          grouped.splice(insertIdx, 0, ng);
+        } else {
+          grouped.unshift(ng);
+        }
+      } else {
+        const tabletIdx = grouped.findIndex((g) => /tablet|ipad|pad\b/i.test(g.name));
+        if (tabletIdx !== -1) {
+          grouped.splice(tabletIdx, 0, ng);
+        } else {
+          grouped.push(ng);
+        }
+      }
     });
   }
 

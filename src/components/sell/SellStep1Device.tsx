@@ -24,9 +24,8 @@ import {
 import { getCleanBrandLogo, getCleanPhoneImage, getGenericDevicePlaceholder } from '../../lib/phoneImages';
 import { formatDisplayPrice } from '../../lib/db';
 import { BRAND_TILES, MASTER_MODEL_CATALOG, FAQS_LIST } from '../../data/masterModelCatalog';
-import { getModelHardwareSpecs } from '../../lib/deviceSpecs';
 import { isModelDeleted } from '../../lib/priceSync';
-import { getModelDedupeKey } from '../../data/brandSeriesCatalog';
+import { getModelDedupeKey, sortDeviceModelsLatestFirst } from '../../data/brandSeriesCatalog';
 
 interface SellStep1DeviceProps {
   form: any;
@@ -141,7 +140,7 @@ export default function SellStep1Device({
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                   {(() => {
                     const seen = new Set<string>();
-                    return MASTER_MODEL_CATALOG.filter(
+                    const rawList = MASTER_MODEL_CATALOG.filter(
                       (m) => m.brand === form.brand && !isModelDeleted(m.brand, m.model) && (selectedSeries === 'All' || m.series === selectedSeries)
                     ).filter((m) => {
                       const dKey = getModelDedupeKey(m.brand, m.model);
@@ -149,6 +148,7 @@ export default function SellStep1Device({
                       seen.add(dKey);
                       return true;
                     });
+                    return sortDeviceModelsLatestFirst(form.brand, rawList);
                   })().map((m) => (
                     <div
                       key={`${m.brand}-${m.model}`}

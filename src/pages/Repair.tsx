@@ -2,8 +2,7 @@ import { useState, useEffect, useRef, useMemo } from 'react';
 import { useNavigate, useSearchParams, useParams, Link } from 'react-router-dom';
 import { getCleanPhoneImage, getCleanBrandLogo } from '../lib/phoneImages';
 import { ALL_INDIAN_PHONES_CATALOG } from '../data/indianPhonesCatalog';
-import { MASTER_MODEL_CATALOG } from './SellPhone';
-import { getModelDedupeKey, groupModelsBySeries, inferModelSeries } from '../data/brandSeriesCatalog';
+import { getModelDedupeKey, groupModelsBySeries, inferModelSeries, sortDeviceModelsLatestFirst } from '../data/brandSeriesCatalog';
 import {
   Wrench,
   Truck,
@@ -487,7 +486,8 @@ export default function Repair() {
     const seenFinal = new Set<string>();
 
     seriesGroups.forEach((group) => {
-      (group.models || []).forEach((gm) => {
+      const sortedGroup = sortDeviceModelsLatestFirst(form.brand, group.models || []);
+      sortedGroup.forEach((gm) => {
         const key = getModelDedupeKey(form.brand, gm.model);
         if (!seenFinal.has(key)) {
           seenFinal.add(key);
@@ -500,18 +500,23 @@ export default function Repair() {
       });
     });
 
+    const leftovers: Array<{ name: string; series: string; storages: string[] }> = [];
     rawAll.forEach((item) => {
       const key = getModelDedupeKey(form.brand, item.name);
       if (!seenFinal.has(key)) {
         seenFinal.add(key);
         const inferred = inferModelSeries(form.brand, item.name, item.series);
-        result.push({
+        leftovers.push({
           name: item.name,
           series: inferred.seriesName,
           storages: item.storages,
         });
       }
     });
+
+    if (leftovers.length > 0) {
+      result.push(...sortDeviceModelsLatestFirst(form.brand, leftovers));
+    }
 
     return result;
   }, [form.brand, repairConfigs, modelsList]);
@@ -535,9 +540,11 @@ export default function Repair() {
     if (selectedSeries !== 'All') {
       list = list.filter((m) => (m.series || '').toLowerCase() === selectedSeries.toLowerCase());
     }
-    if (!modelFilter.trim()) return list;
-    const q = modelFilter.toLowerCase().trim();
-    return list.filter((m) => m.name.toLowerCase().includes(q));
+    if (modelFilter.trim()) {
+      const q = modelFilter.toLowerCase().trim();
+      list = list.filter((m) => m.name.toLowerCase().includes(q));
+    }
+    return sortDeviceModelsLatestFirst(form.brand, list);
   }, [combinedModelsList, selectedSeries, modelFilter, form.brand]);
 
   // Models cleanly rearranged into their respective series groups
@@ -549,7 +556,10 @@ export default function Repair() {
       if (!map.has(s)) map.set(s, []);
       map.get(s)!.push(m);
     });
-    return Array.from(map.entries()).map(([name, models]) => ({ name, models }));
+    return Array.from(map.entries()).map(([name, models]) => ({
+      name,
+      models: sortDeviceModelsLatestFirst(form.brand, models),
+    }));
   }, [form.brand, filteredModelsList]);
 
   // Sync params from URL subpage routing

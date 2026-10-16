@@ -708,15 +708,22 @@ export function detectSeries(brand: string, modelName: string): string {
   const m = modelName.toLowerCase();
 
   if (b === 'apple' || b === 'iphone') {
-    if (/iphone 17/i.test(modelName)) return 'iPhone 17 Series';
-    if (/iphone 16/i.test(modelName)) return 'iPhone 16 Series';
+    if (/ipad/i.test(modelName)) return 'Apple iPad & Tablet Series';
+    if (/iphone 18/i.test(modelName)) return 'iPhone 18 Series';
+    if (/iphone 17|17e|air/i.test(modelName)) return 'iPhone 17 Series';
+    if (/iphone 16|16e/i.test(modelName)) return 'iPhone 16 Series';
     if (/iphone 15/i.test(modelName)) return 'iPhone 15 Series';
     if (/iphone 14/i.test(modelName)) return 'iPhone 14 Series';
     if (/iphone 13/i.test(modelName)) return 'iPhone 13 Series';
     if (/iphone 12/i.test(modelName)) return 'iPhone 12 Series';
     if (/iphone 11/i.test(modelName)) return 'iPhone 11 Series';
+    if (/iphone (x|xs|xr)/i.test(modelName)) return 'iPhone X Series';
+    if (/iphone 8/i.test(modelName)) return 'iPhone 8 Series';
+    if (/iphone 7/i.test(modelName)) return 'iPhone 7 Series';
+    if (/iphone 6/i.test(modelName)) return 'iPhone 6 & 6S Series';
     if (/se/i.test(modelName)) return 'iPhone SE Series';
-    return 'iPhone Series';
+    if (/iphone (5|4|3|2|1|original)/i.test(modelName)) return 'iPhone 5 & Older Classic Series';
+    return 'iPhone 18 Series';
   }
   if (b === 'samsung') {
     if (/galaxy s|s\d/i.test(modelName)) return 'Galaxy S Series';

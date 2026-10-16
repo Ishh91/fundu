@@ -30,6 +30,8 @@ import {
   getSeriesBySlug,
   isSeriesSlug,
   getModelDedupeKey,
+  inferModelSeries,
+  sortDeviceModelsLatestFirst,
   type SeriesGroup,
 } from '../data/brandSeriesCatalog';
 
@@ -329,13 +331,15 @@ export default function SellBrandPage() {
     return undefined;
   }, [selectedSeriesFilter, effectiveSeriesSlug, seriesGroups, allBrandModels, brandDisplayName]);
 
-  // All Brand Models organized sequentially in Series Order (e.g., iPhone 17 -> iPhone 16 -> iPhone 15...)
+  // All Brand Models organized sequentially in Series Order (e.g., iPhone 18 -> iPhone 17 -> iPhone 16...)
   const allModelsInSeriesOrder = useMemo(() => {
     const models: Array<CatalogModelItem & { seriesName?: string; seriesSlug?: string }> = [];
     const seen = new Set<string>();
 
     seriesGroups.forEach((group) => {
-      (group.models || []).forEach((m) => {
+      // Group models are already sorted chronologically (latest first)
+      const sortedGroupModels = sortDeviceModelsLatestFirst(brandCanonicalKey, group.models || []);
+      sortedGroupModels.forEach((m) => {
         const key = getModelDedupeKey(m.brand || brandDisplayName, m.model);
         if (!seen.has(key)) {
           seen.add(key);
@@ -348,33 +352,41 @@ export default function SellBrandPage() {
       });
     });
 
-    // Add any leftover models from allBrandModels not captured in predefined series groups
+    // Add any leftover models from allBrandModels mapped to their accurate inferred series
+    const leftovers: Array<CatalogModelItem & { seriesName?: string; seriesSlug?: string }> = [];
     allBrandModels.forEach((m) => {
       const key = getModelDedupeKey(m.brand || brandDisplayName, m.model);
       if (!seen.has(key)) {
         seen.add(key);
-        models.push({
+        const inferred = inferModelSeries(m.brand || brandDisplayName, m.model, m.series);
+        leftovers.push({
           ...m,
-          seriesName: m.series || `${brandDisplayName} Series`,
-          seriesSlug: 'other',
+          seriesName: inferred.seriesName,
+          seriesSlug: inferred.seriesSlug,
         });
       }
     });
 
+    if (leftovers.length > 0) {
+      const sortedLeftovers = sortDeviceModelsLatestFirst(brandCanonicalKey, leftovers);
+      models.push(...sortedLeftovers);
+    }
+
     return models;
-  }, [seriesGroups, allBrandModels, brandDisplayName]);
+  }, [seriesGroups, allBrandModels, brandDisplayName, brandCanonicalKey]);
 
   // Models to display based on series filter and search query
   const displayedModels = useMemo(() => {
     let list = allModelsInSeriesOrder;
 
-    // 1. Search filter
+    // 1. Search filter (sorted latest first)
     if (debouncedQuery) {
       const q = debouncedQuery.toLowerCase();
-      return list.filter((m) => m.model.toLowerCase().includes(q));
+      const filtered = list.filter((m) => m.model.toLowerCase().includes(q));
+      return sortDeviceModelsLatestFirst(brandCanonicalKey, filtered);
     }
 
-    // 2. Series tab filter
+    // 2. Series tab filter (sorted latest first)
     if (selectedSeriesFilter !== 'All') {
       const cleanFilter = selectedSeriesFilter.toLowerCase().replace(/^sell-/, '');
       const filtered = list.filter(
@@ -382,14 +394,14 @@ export default function SellBrandPage() {
           m.seriesSlug === cleanFilter ||
           (m.seriesName && m.seriesName.toLowerCase().replace(/\s+/g, '-').includes(cleanFilter.replace(/-series$/, '')))
       );
-      if (filtered.length > 0) return filtered;
+      if (filtered.length > 0) return sortDeviceModelsLatestFirst(brandCanonicalKey, filtered);
       if (currentSeriesGroup?.models && currentSeriesGroup.models.length > 0) {
-        return currentSeriesGroup.models;
+        return sortDeviceModelsLatestFirst(brandCanonicalKey, currentSeriesGroup.models);
       }
     }
 
     return list;
-  }, [allModelsInSeriesOrder, debouncedQuery, selectedSeriesFilter, currentSeriesGroup]);
+  }, [allModelsInSeriesOrder, debouncedQuery, selectedSeriesFilter, currentSeriesGroup, brandCanonicalKey]);
 
   // Helper to resolve guaranteed non-zero estimated valuation for any phone model
   const getModelEstimatedPrice = (m: CatalogModelItem): number => {
