@@ -722,8 +722,8 @@ export function detectSeries(brand: string, modelName: string): string {
     if (/iphone 7/i.test(modelName)) return 'iPhone 7 Series';
     if (/iphone 6/i.test(modelName)) return 'iPhone 6 & 6S Series';
     if (/se/i.test(modelName)) return 'iPhone SE Series';
-    if (/iphone (5|4|3|2|1|original)/i.test(modelName)) return 'iPhone 5 & Older Classic Series';
-    return 'iPhone 18 Series';
+    if (/iphone (5s|5c|5|4s|4|3gs|3g|2g|1|original)/i.test(modelName) || /classic/i.test(modelName) || /apple iphone$/i.test(modelName)) return 'iPhone 5 & Older Classic Series';
+    return 'iPhone 5 & Older Classic Series';
   }
   if (b === 'samsung') {
     if (/galaxy s|s\d/i.test(modelName)) return 'Galaxy S Series';

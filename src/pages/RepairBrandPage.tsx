@@ -29,6 +29,7 @@ import { MASTER_MODEL_CATALOG } from './SellPhone';
 import { getCleanPhoneImage, getCleanBrandLogo, BRAND_FRONT_FALLBACKS, getGenericDevicePlaceholder } from '../lib/phoneImages';
 import { ALL_INDIAN_PHONES_CATALOG } from '../data/indianPhonesCatalog';
 import { useRepairPriceSync, getModelRepairPricing } from '../lib/repairPriceSync';
+import { isModelDeleted } from '../lib/catalogSync';
 import { getModelDedupeKey, groupModelsBySeries, inferModelSeries, isSeriesSlug, sortDeviceModelsLatestFirst } from '../data/brandSeriesCatalog';
 
 const BRAND_REPAIR_DETAILS: Record<

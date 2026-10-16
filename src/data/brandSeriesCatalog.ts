@@ -262,7 +262,8 @@ export function inferModelSeries(
       (d) =>
         d.name.toLowerCase() === sLower ||
         d.slug.toLowerCase() === sLower ||
-        sLower.includes(d.name.toLowerCase())
+        sLower.includes(d.name.toLowerCase()) ||
+        (sLower.includes('classic') && d.slug.includes('classic'))
     );
     if (directDef) {
       return { seriesName: directDef.name, seriesSlug: directDef.slug };
@@ -285,8 +286,14 @@ export function inferModelSeries(
     if (/\b7\b/i.test(mLower)) return { seriesName: 'iPhone 7 Series', seriesSlug: 'iphone-7-series' };
     if (/\b6s?\b/i.test(mLower)) return { seriesName: 'iPhone 6 & 6S Series', seriesSlug: 'iphone-6-series' };
     if (/\bse\b/i.test(mLower)) return { seriesName: 'iPhone SE Series', seriesSlug: 'iphone-se-series' };
-    if (/\b(5|4|3|2|1|original)\b/i.test(mLower)) return { seriesName: 'iPhone 5 & Older Classic Series', seriesSlug: 'iphone-classic-series' };
-    return { seriesName: 'iPhone 18 Series', seriesSlug: 'iphone-18-series' };
+    if (
+      /\b(5s|5c|5|4s|4|3gs|3g|2g|1|original)\b/i.test(mLower) ||
+      /\bclassic\b/i.test(sLower) ||
+      /\bapple\s*iphone\b$/i.test(mLower)
+    ) {
+      return { seriesName: 'iPhone 5 & Older Classic Series', seriesSlug: 'iphone-classic-series' };
+    }
+    return { seriesName: 'iPhone 5 & Older Classic Series', seriesSlug: 'iphone-classic-series' };
   }
 
   // 2. Samsung
@@ -577,7 +584,7 @@ export const BRAND_SERIES_DEFINITIONS: Record<string, BrandSeriesDefinition[]> =
       brand: 'Apple',
       image: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-6s.jpg',
       description: '6S Plus, 6S, 6 Plus, 6',
-      pattern: /\biphone\s*6\b/i,
+      pattern: /\biphone\s*6[s]?\b|\b6s\s*plus\b/i,
       defaultModels: [
         { brand: 'Apple', series: 'iPhone 6 Series', model: 'Apple iPhone 6s Plus', storage: '32 GB', price: 4800, image: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-6s-plus.jpg' },
         { brand: 'Apple', series: 'iPhone 6 Series', model: 'Apple iPhone 6s', storage: '32 GB', price: 3800, image: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-6s.jpg' },
@@ -606,7 +613,7 @@ export const BRAND_SERIES_DEFINITIONS: Record<string, BrandSeriesDefinition[]> =
       brand: 'Apple',
       image: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-5s.jpg',
       description: 'iPhone 5S, 5C, 5, 4S, 4, 3GS, 3G, 1',
-      pattern: /\biphone\s*(5|4|3|2|1)\b|\bapple\s*iphone\b$|\biphone\s*original\b/i,
+      pattern: /\biphone\s*(5s|5c|5|4s|4|3gs|3g|2g|1)\b|\bapple\s*iphone\b$|\biphone\s*original\b|\bclassic\b/i,
       defaultModels: [
         { brand: 'Apple', series: 'Classic Series', model: 'Apple iPhone 5s', storage: '16 GB', price: 2200, image: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-5s.jpg' },
         { brand: 'Apple', series: 'Classic Series', model: 'Apple iPhone 5c', storage: '16 GB', price: 1800, image: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-5c.jpg' },
@@ -1863,6 +1870,8 @@ export function groupModelsBySeries(brand: string, allModels: CatalogModelItem[]
 
   for (const def of defs) {
     const matched = allModels.filter((m) => {
+      const dKey = getModelDedupeKey(m.brand || brand, m.model);
+      if (assignedModels.has(dKey)) return false;
       const text = `${m.model} ${m.series || ''}`;
       const inferred = inferModelSeries(brand, m.model, m.series);
       return (
