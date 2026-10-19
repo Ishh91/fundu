@@ -33,7 +33,7 @@ export async function sendEmailJSOTP(email: string, otp: string, userName: strin
       otp_code: otp,
       otp: otp,
       app_name: 'Fundu',
-      reply_to: 'support@fundu.com',
+      reply_to: 'info@thefundu.com',
     };
 
     const response = await emailjs.send(serviceId, templateIdOtp, templateParams, publicKey);
