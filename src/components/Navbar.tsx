@@ -34,6 +34,7 @@ import { formatINR } from '../lib/db';
 import BrandLogo from './BrandLogo';
 import { PHONE_LOOKUP_CATALOG } from '../data/phoneLookup';
 import { MASTER_MODEL_CATALOG } from '../data/masterModelCatalog';
+import { getModelDedupeKey, sortDeviceModelsLatestFirst } from '../data/brandSeriesCatalog';
 import { fetchBrandCatalogFromApi, fetchDeviceAutocomplete } from '../lib/mobileApi';
 import {
   getPanIndiaLocation,
@@ -363,7 +364,11 @@ export default function Navbar() {
 
         if (Array.isArray(brandCatalogRes)) {
           brandCatalogRes.forEach((item) => {
-            const key = `${item.brand || ''}-${item.model || ''}`.toLowerCase();
+            const b = item.brand || detectedBrand || '';
+            const m = item.model || '';
+            const dKey = getModelDedupeKey(b, m);
+            if (!dKey) return;
+            const key = `${b.toLowerCase().trim()}-${dKey}`;
             if (!seen.has(key)) {
               seen.add(key);
               combined.push({
@@ -379,7 +384,10 @@ export default function Navbar() {
         if (Array.isArray(autocompleteRes)) {
           autocompleteRes.forEach((item) => {
             const brandName = item.brand || detectedBrand || 'Smartphone';
-            const key = `${brandName}-${item.name || ''}`.toLowerCase();
+            const m = item.name || '';
+            const dKey = getModelDedupeKey(brandName, m);
+            if (!dKey) return;
+            const key = `${brandName.toLowerCase().trim()}-${dKey}`;
             if (!seen.has(key)) {
               seen.add(key);
               combined.push({
@@ -428,65 +436,158 @@ export default function Navbar() {
 
   // Autocomplete matching models (combining MobileAPI + MASTER_MODEL_CATALOG + PHONE_LOOKUP_CATALOG)
   const matchingModels = useMemo(() => {
-    const query = search.trim().toLowerCase();
-    if (!query) return [];
+    const rawQuery = search.trim();
+    if (!rawQuery) return [];
 
+    const query = rawQuery.toLowerCase();
     const detectedBrand = resolveBrand(query);
-    const results: Array<{ model: string; brand: string; image?: string; price?: number }> = [];
-    const seen = new Set<string>();
 
-    const add = (item: { model: string; brand: string; image?: string; price?: number }) => {
-      const key = `${item.brand}-${item.model}`.toLowerCase().replace(/[^a-z0-9]/g, '');
-      if (!seen.has(key) && results.length < 35) {
-        seen.add(key);
-        results.push(item);
+    // 1. Ingest all sources into a deduplicated master catalog map
+    const catalogMap = new Map<string, { model: string; brand: string; image?: string; price?: number }>();
+
+    const record = (item: { model: string; brand: string; image?: string; price?: number }) => {
+      const bClean = (item.brand || '').trim();
+      const dKey = getModelDedupeKey(bClean, item.model);
+      if (!dKey) return;
+      const key = `${bClean.toLowerCase()}-${dKey}`;
+
+      if (catalogMap.has(key)) {
+        const existing = catalogMap.get(key)!;
+        if (!existing.price && item.price) existing.price = item.price;
+        if (!existing.image && item.image) existing.image = item.image;
+      } else {
+        catalogMap.set(key, { ...item });
       }
     };
 
-    // 1. First priority: apiModels returned from MobileAPI
-    apiModels.forEach(add);
-
-    // 2. Second priority: If brand detected, populate all models for that brand from MASTER_MODEL_CATALOG
-    if (detectedBrand) {
-      const brandLower = detectedBrand.toLowerCase();
-      MASTER_MODEL_CATALOG.filter((p) => p.brand.toLowerCase() === brandLower).forEach((p) => {
-        add({
-          model: p.model,
-          brand: p.brand,
-          image: p.image || getCleanPhoneImage(p.brand, p.model),
-          price: p.price,
-        });
-      });
-    }
-
-    // 3. Third priority: Search in MASTER_MODEL_CATALOG by model or brand substring
-    MASTER_MODEL_CATALOG.filter(
-      (p) =>
-        p.model.toLowerCase().includes(query) ||
-        p.brand.toLowerCase().includes(query)
-    ).forEach((p) => {
-      add({
+    // Ingest apiModels, MASTER_MODEL_CATALOG, and PHONE_LOOKUP_CATALOG
+    apiModels.forEach(record);
+    MASTER_MODEL_CATALOG.forEach((p) => {
+      record({
         model: p.model,
         brand: p.brand,
         image: p.image || getCleanPhoneImage(p.brand, p.model),
         price: p.price,
       });
     });
-
-    // 4. Fourth priority: PHONE_LOOKUP_CATALOG
-    PHONE_LOOKUP_CATALOG.filter(
-      (p) =>
-        p.model.toLowerCase().includes(query) ||
-        p.brand.toLowerCase().includes(query)
-    ).forEach((p) => {
-      add({
+    PHONE_LOOKUP_CATALOG.forEach((p) => {
+      record({
         model: p.model,
         brand: p.brand,
         image: getCleanPhoneImage(p.brand, p.model),
       });
     });
 
-    return results;
+    const allItems = Array.from(catalogMap.values());
+
+    // 2. Pure Brand Query: User typed just the brand name (e.g. "iphone", "apple", "samsung", "oneplus", etc.)
+    const isPureBrand = Boolean(
+      BRAND_ALIASES[query] ||
+      (detectedBrand && (
+        query === detectedBrand.toLowerCase() ||
+        query === 'iphone' ||
+        query === 'apple' ||
+        query === 'apple iphone' ||
+        query === 'samsung' ||
+        query === 'galaxy' ||
+        query === 'samsung galaxy' ||
+        query === 'oneplus' ||
+        query === '1+' ||
+        query === 'google' ||
+        query === 'pixel' ||
+        query === 'google pixel' ||
+        query === 'xiaomi' ||
+        query === 'redmi' ||
+        query === 'realme' ||
+        query === 'vivo' ||
+        query === 'oppo' ||
+        query === 'nothing' ||
+        query === 'motorola' ||
+        query === 'moto' ||
+        query === 'iqoo' ||
+        query === 'poco'
+      ))
+    );
+
+    if (isPureBrand && detectedBrand) {
+      const brandLower = detectedBrand.toLowerCase();
+      const brandModels = allItems.filter(
+        (m) => (m.brand || '').toLowerCase().trim() === brandLower
+      );
+      // Sort chronologically from newest/flagship to oldest (e.g. iPhone 18/17/16 down to iPhone 1)
+      return sortDeviceModelsLatestFirst(detectedBrand, brandModels).slice(0, 120);
+    }
+
+    // 3. Specific Model / Variant query (e.g. "iphone 17", "17", "s24", "galaxy s24", "oneplus 12", "pixel 9")
+    let modelSearchQuery = query;
+    if (detectedBrand) {
+      const brandAliasesForDetected = Object.keys(BRAND_ALIASES).filter(
+        (k) => BRAND_ALIASES[k].toLowerCase() === detectedBrand.toLowerCase()
+      );
+      for (const alias of [detectedBrand.toLowerCase(), ...brandAliasesForDetected]) {
+        if (modelSearchQuery.startsWith(alias)) {
+          modelSearchQuery = modelSearchQuery.slice(alias.length).trim();
+          break;
+        }
+      }
+    }
+
+    // Numerical or generation token, e.g. "17", "16", "s24", "12", "9"
+    const numTokenMatch = (modelSearchQuery || query).match(/\b([a-z]?\d+[a-z]?)\b/i);
+    const seriesToken = numTokenMatch ? numTokenMatch[1].toLowerCase() : null;
+
+    // Series boundary regex (e.g. "17" matches "17", "17 Pro", "17 Pro Max", "17 Air", "17e" but not "7")
+    const seriesRegex = seriesToken
+      ? new RegExp(`\\b${seriesToken.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&')}(?:[a-z]|\\s|$)`, 'i')
+      : null;
+
+    const tier1ExactVariants: typeof allItems = [];
+    const tier2BrandMatches: typeof allItems = [];
+    const tier3BroadMatches: typeof allItems = [];
+    const seenFinal = new Set<string>();
+
+    allItems.forEach((item) => {
+      const bLower = (item.brand || '').toLowerCase().trim();
+      const mLower = (item.model || '').toLowerCase().trim();
+      const cleanM = mLower.replace(new RegExp('^' + bLower + '\\s+', 'i'), '').trim();
+      const itemKey = `${bLower}-${getModelDedupeKey(item.brand, item.model)}`;
+      if (seenFinal.has(itemKey)) return;
+
+      const matchesBrand = detectedBrand ? bLower === detectedBrand.toLowerCase() : true;
+
+      // Tier 1: Target series/number variant match (e.g. for "iphone 17" or "17" -> 17, 17 Pro, 17 Pro Max, 17 Air, 17e)
+      if (seriesRegex && (seriesRegex.test(cleanM) || seriesRegex.test(mLower)) && matchesBrand) {
+        seenFinal.add(itemKey);
+        tier1ExactVariants.push(item);
+        return;
+      }
+
+      // If no numerical series token, check if clean model matches modelSearchQuery
+      if (modelSearchQuery && (cleanM.includes(modelSearchQuery) || mLower.includes(modelSearchQuery)) && matchesBrand) {
+        seenFinal.add(itemKey);
+        tier1ExactVariants.push(item);
+        return;
+      }
+
+      // Tier 2: Substring matches within the same brand
+      if (matchesBrand && (cleanM.includes(query) || mLower.includes(query) || (modelSearchQuery && cleanM.includes(modelSearchQuery)))) {
+        seenFinal.add(itemKey);
+        tier2BrandMatches.push(item);
+        return;
+      }
+
+      // Tier 3: Cross-brand or general substring matches
+      if (cleanM.includes(query) || mLower.includes(query)) {
+        seenFinal.add(itemKey);
+        tier3BroadMatches.push(item);
+      }
+    });
+
+    const sortedTier1 = sortDeviceModelsLatestFirst(detectedBrand || '', tier1ExactVariants);
+    const sortedTier2 = sortDeviceModelsLatestFirst(detectedBrand || '', tier2BrandMatches);
+    const sortedTier3 = sortDeviceModelsLatestFirst(detectedBrand || '', tier3BroadMatches);
+
+    return [...sortedTier1, ...sortedTier2, ...sortedTier3].slice(0, 100);
   }, [search, apiModels]);
 
   const toggleDropdown = (name: string) => {
@@ -544,7 +645,7 @@ export default function Navbar() {
   const renderSearchDropdown = (isMobile: boolean) => (
     <div
       className={`absolute left-0 right-0 top-full mt-2 rounded-2xl border border-gray-200 bg-white p-3 sm:p-3.5 shadow-2xl z-50 animate-fade-in ${
-        isMobile ? 'mx-0 max-h-[65vh]' : 'max-h-[58vh]'
+        isMobile ? 'mx-0 max-h-[75vh]' : 'max-h-[68vh]'
       } overflow-hidden flex flex-col`}
     >
       {search.trim() ? (
