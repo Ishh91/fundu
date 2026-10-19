@@ -5301,7 +5301,7 @@ export const ALL_INDIAN_PHONES_CATALOG: MasterPhone[] = [
     storage_options: ['128GB', '256GB'],
     default_mrp: 28050,
     base_resale_value: 9500,
-    image_url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-z-flip.jpg',
+    image_url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-z-flip-01.jpg',
     popular_tag: 'Samsung Verified Phone',
     processor: 'High Performance Octa-Core Processor',
     camera_spec: '50MP Ultra-Clear Camera',

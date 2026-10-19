@@ -11,6 +11,10 @@ export function getModelDedupeKey(brand: string, model: string): string {
   if (bClean && clean.startsWith(bClean)) {
     clean = clean.slice(bClean.length).trim();
   }
+  // Normalize Fold / Flip 5G redundancy (Fold 4/5/6 and Flip 4/5/6 only exist as 5G)
+  clean = clean.replace(/\b(fold|flip)\s*([2-8])\s*5g\b/gi, '$1 $2');
+  clean = clean.replace(/\b(fold|flip)([2-8])5g\b/gi, '$1 $2');
+
   return clean
     .replace(/\+/g, 'plus')
     .replace(/[^a-z0-9]/g, '');
@@ -89,22 +93,25 @@ export function getDeviceRecencyScore(
   // 3. Samsung
   if (bLower === 'samsung') {
     let score = 1000000;
-    if (/\bs25\b/i.test(mLower)) score += 250000;
+    if (/\bs26\b/i.test(mLower)) score += 260000;
+    else if (/\bfold\s*7|flip\s*7/i.test(mLower)) score += 255000;
+    else if (/\bs25\b/i.test(mLower)) score += 250000;
+    else if (/\bfold\s*6|flip\s*6/i.test(mLower)) score += 245000;
     else if (/\bs24\b/i.test(mLower)) score += 240000;
+    else if (/\bfold\s*5|flip\s*5/i.test(mLower)) score += 235000;
     else if (/\bs23\b/i.test(mLower)) score += 230000;
+    else if (/\bfold\s*4|flip\s*4/i.test(mLower)) score += 225000;
     else if (/\bs22\b/i.test(mLower)) score += 220000;
+    else if (/\bfold\s*3|flip\s*3/i.test(mLower)) score += 215000;
     else if (/\bs21\b/i.test(mLower)) score += 210000;
+    else if (/\bfold\s*2|flip\s*2/i.test(mLower)) score += 205000;
     else if (/\bs20\b/i.test(mLower)) score += 200000;
+    else if (/(?:galaxy\s*)?z\s*(?:fold|flip)|\b(fold|flip)/i.test(mLower)) score += 200000;
     else if (/\bs10\b/i.test(mLower)) score += 100000;
     else if (/\bs[6789]\b/i.test(mLower)) {
       const match = mLower.match(/\bs([6789])\b/i);
       score += (parseInt(match?.[1] || '6', 10)) * 10000;
-    } else if (/\bfold\s*6|flip\s*6/i.test(mLower)) score += 245000;
-    else if (/\bfold\s*5|flip\s*5/i.test(mLower)) score += 235000;
-    else if (/\bfold\s*4|flip\s*4/i.test(mLower)) score += 225000;
-    else if (/\bfold\s*3|flip\s*3/i.test(mLower)) score += 215000;
-    else if (/\bfold\s*2|flip\s*2/i.test(mLower)) score += 205000;
-    else if (/\b(fold|flip)\b/i.test(mLower)) score += 200000;
+    }
     else if (/\bnote\s*20\b/i.test(mLower)) score += 200000;
     else if (/\bnote\s*10\b/i.test(mLower)) score += 100000;
     else if (/\bnote\s*9\b/i.test(mLower)) score += 90000;
@@ -298,6 +305,10 @@ export function inferModelSeries(
 
   // 2. Samsung
   if (bLower === 'samsung') {
+    if (/(?:galaxy\s*)?z\s*(?:fold|flip)|\b(fold|flip)/i.test(mLower)) {
+      return { seriesName: 'Galaxy Z Series (Fold & Flip)', seriesSlug: 'galaxy-z-series' };
+    }
+    if (/\bs26\b/i.test(mLower)) return { seriesName: 'Galaxy S26 Series', seriesSlug: 'galaxy-s26-series' };
     if (/\bs25\b/i.test(mLower)) return { seriesName: 'Galaxy S25 Series', seriesSlug: 'galaxy-s25-series' };
     if (/\bs24\b/i.test(mLower)) return { seriesName: 'Galaxy S24 Series', seriesSlug: 'galaxy-s24-series' };
     if (/\bs23\b/i.test(mLower)) return { seriesName: 'Galaxy S23 Series', seriesSlug: 'galaxy-s23-series' };
@@ -305,13 +316,14 @@ export function inferModelSeries(
     if (/\bs21\b/i.test(mLower)) return { seriesName: 'Galaxy S21 Series', seriesSlug: 'galaxy-s21-series' };
     if (/\bs20\b/i.test(mLower)) return { seriesName: 'Galaxy S20 Series', seriesSlug: 'galaxy-s20-series' };
     if (/\bs10\b/i.test(mLower)) return { seriesName: 'Galaxy S10 Series', seriesSlug: 'galaxy-s10-series' };
-    if (/\bs[6789]\b/i.test(mLower)) return { seriesName: 'Galaxy S Legacy Series', seriesSlug: 'galaxy-s-legacy-series' };
-    if (/\b(fold|flip)\b/i.test(mLower)) return { seriesName: 'Galaxy Z Series (Fold & Flip)', seriesSlug: 'galaxy-z-series' };
+    if (/\bs([1-9]|legacy)\b/i.test(mLower) || /\bgalaxy\s*s\b/i.test(mLower)) return { seriesName: 'Galaxy S Legacy Series', seriesSlug: 'galaxy-s-legacy-series' };
     if (/\bnote\b/i.test(mLower)) return { seriesName: 'Galaxy Note Series', seriesSlug: 'galaxy-note-series' };
-    if (/\ba\d+/i.test(mLower)) return { seriesName: 'Galaxy A Series', seriesSlug: 'galaxy-a-series' };
+    if (/\bgalaxy\s*a|\ba\d+/i.test(mLower)) return { seriesName: 'Galaxy A Series', seriesSlug: 'galaxy-a-series' };
     if (/\b(m|f)\d+/i.test(mLower)) return { seriesName: 'Galaxy M & F Series', seriesSlug: 'galaxy-m-series' };
     if (/\bj\d+/i.test(mLower)) return { seriesName: 'Galaxy J Series (Classic)', seriesSlug: 'galaxy-j-series' };
-    return { seriesName: 'Galaxy A Series', seriesSlug: 'galaxy-a-series' };
+    if (/\bc\d+/i.test(mLower)) return { seriesName: 'Galaxy C Series (Classic)', seriesSlug: 'galaxy-c-series' };
+    if (/\bon\d+/i.test(mLower)) return { seriesName: 'Galaxy On Series (Classic)', seriesSlug: 'galaxy-on-series' };
+    return { seriesName: 'Other Samsung Models', seriesSlug: 'other-samsung-models' };
   }
 
   // 3. OnePlus
@@ -643,6 +655,21 @@ export const BRAND_SERIES_DEFINITIONS: Record<string, BrandSeriesDefinition[]> =
 
   samsung: [
     {
+      id: 'galaxy-s26',
+      slug: 'galaxy-s26-series',
+      name: 'Galaxy S26 Series',
+      brand: 'Samsung',
+      image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s25-ultra-sm-s938.jpg',
+      description: 'S26 Ultra, S26+, S26 5G, S26 FE',
+      pattern: /\bs26\b/i,
+      defaultModels: [
+        { brand: 'Samsung', series: 'Galaxy S26 Series', model: 'Samsung Galaxy S26 Ultra', storage: '256 GB', price: 82920, image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s25-ultra-sm-s938.jpg' },
+        { brand: 'Samsung', series: 'Galaxy S26 Series', model: 'Samsung Galaxy S26 Plus', storage: '256 GB', price: 62750, image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s24-plus-5g-sm-s926.jpg' },
+        { brand: 'Samsung', series: 'Galaxy S26 Series', model: 'Samsung Galaxy S26', storage: '256 GB', price: 52250, image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s24-5g-sm-s921.jpg' },
+        { brand: 'Samsung', series: 'Galaxy S26 Series', model: 'Samsung Galaxy S26 FE 5G', storage: '256 GB', price: 52500, image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s24-fe.jpg' },
+      ],
+    },
+    {
       id: 'galaxy-s25',
       slug: 'galaxy-s25-series',
       name: 'Galaxy S25 Series',
@@ -728,7 +755,7 @@ export const BRAND_SERIES_DEFINITIONS: Record<string, BrandSeriesDefinition[]> =
         { brand: 'Samsung', series: 'Galaxy S20 Series', model: 'Samsung Galaxy S20+', storage: '128 GB', price: 18000, image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s20-plus-r.jpg' },
         { brand: 'Samsung', series: 'Galaxy S20 Series', model: 'Samsung Galaxy S20', storage: '128 GB', price: 15000, image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s20-r.jpg' },
         { brand: 'Samsung', series: 'Galaxy S20 Series', model: 'Samsung Galaxy S20 FE 5G', storage: '128 GB', price: 14000, image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s20-fe-5g.jpg' },
-        { brand: 'Samsung', series: 'Galaxy S20 Series', model: 'Samsung Galaxy S20 FE', storage: '128 GB', price: 12000, image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s20-fe-5g.jpg' },
+        { brand: 'Samsung', series: 'Galaxy S20 Series', model: 'Samsung Galaxy S20 FE', storage: '128 GB', price: 12000, image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s20-fe-4g.jpg' },
       ],
     },
     {
@@ -747,13 +774,28 @@ export const BRAND_SERIES_DEFINITIONS: Record<string, BrandSeriesDefinition[]> =
       ],
     },
     {
+      id: 'galaxy-s-legacy',
+      slug: 'galaxy-s-legacy-series',
+      name: 'Galaxy S Legacy Series',
+      brand: 'Samsung',
+      image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s9-plus.jpg',
+      description: 'S9+, S9, S8+, S8, S7, S6...',
+      pattern: /\bs([1-9]|legacy)\b|\bgalaxy\s*s([1-9]|plus)\b/i,
+      defaultModels: [
+        { brand: 'Samsung', series: 'Galaxy S Legacy Series', model: 'Samsung Galaxy S9 Plus', storage: '64 GB', price: 5400, image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s9-plus.jpg' },
+        { brand: 'Samsung', series: 'Galaxy S Legacy Series', model: 'Samsung Galaxy S9', storage: '64 GB', price: 5220, image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s9.jpg' },
+        { brand: 'Samsung', series: 'Galaxy S Legacy Series', model: 'Samsung Galaxy S8 Plus', storage: '64 GB', price: 4730, image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s8-plus.jpg' },
+        { brand: 'Samsung', series: 'Galaxy S Legacy Series', model: 'Samsung Galaxy S8', storage: '64 GB', price: 4390, image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s8.jpg' },
+      ],
+    },
+    {
       id: 'galaxy-z',
       slug: 'galaxy-z-series',
       name: 'Galaxy Z Series (Fold & Flip)',
       brand: 'Samsung',
-      image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-z-fold5.jpg',
+      image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-z-fold6.jpg',
       description: 'Fold 6, Flip 6, Fold 5, Flip 5, Fold 4, Flip 4',
-      pattern: /\b(fold|flip)\b/i,
+      pattern: /(?:galaxy\s*)?z\s*(?:fold|flip)|\b(fold|flip)/i,
       defaultModels: [
         { brand: 'Samsung', series: 'Galaxy Z Series (Fold & Flip)', model: 'Samsung Galaxy Z Fold 6', storage: '256 GB', price: 88000, image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-z-fold6.jpg' },
         { brand: 'Samsung', series: 'Galaxy Z Series (Fold & Flip)', model: 'Samsung Galaxy Z Flip 6', storage: '256 GB', price: 58000, image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-z-flip6.jpg' },
@@ -764,7 +806,7 @@ export const BRAND_SERIES_DEFINITIONS: Record<string, BrandSeriesDefinition[]> =
         { brand: 'Samsung', series: 'Galaxy Z Series (Fold & Flip)', model: 'Samsung Galaxy Z Fold 3 5G', storage: '256 GB', price: 38000, image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-z-fold3-5g.jpg' },
         { brand: 'Samsung', series: 'Galaxy Z Series (Fold & Flip)', model: 'Samsung Galaxy Z Flip 3 5G', storage: '128 GB', price: 22000, image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-z-flip3-5g.jpg' },
         { brand: 'Samsung', series: 'Galaxy Z Series (Fold & Flip)', model: 'Samsung Galaxy Z Fold 2 5G', storage: '256 GB', price: 26000, image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-z-fold2-5g.jpg' },
-        { brand: 'Samsung', series: 'Galaxy Z Series (Fold & Flip)', model: 'Samsung Galaxy Z Flip', storage: '128 GB', price: 17000, image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-z-flip.jpg' },
+        { brand: 'Samsung', series: 'Galaxy Z Series (Fold & Flip)', model: 'Samsung Galaxy Z Flip', storage: '128 GB', price: 17000, image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-z-flip-01.jpg' },
       ],
     },
     {
@@ -877,6 +919,21 @@ export const BRAND_SERIES_DEFINITIONS: Record<string, BrandSeriesDefinition[]> =
         { brand: 'Samsung', series: 'Galaxy J Series (Classic)', model: 'Samsung Galaxy J4', storage: '16 GB', price: 2600, image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-j4.jpg' },
         { brand: 'Samsung', series: 'Galaxy J Series (Classic)', model: 'Samsung Galaxy J2 Pro', storage: '16 GB', price: 2200, image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-j2-pro-2018.jpg' },
         { brand: 'Samsung', series: 'Galaxy J Series (Classic)', model: 'Samsung Galaxy J2 (2018)', storage: '16 GB', price: 1800, image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-j2-2018.jpg' },
+      ],
+    },
+    {
+      id: 'galaxy-c-other',
+      slug: 'galaxy-c-series',
+      name: 'Galaxy C & Legacy Series',
+      brand: 'Samsung',
+      image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-c9-pro-.jpg',
+      description: 'C9 Pro, C7 Pro, C5, On8, On7, 360 H1...',
+      pattern: /\b(c\d+|on\d+|360\s*h1|guru|rex|star|metro|duos)\b/i,
+      defaultModels: [
+        { brand: 'Samsung', series: 'Galaxy C & Legacy Series', model: 'Samsung Galaxy C9 Pro', storage: '64 GB', price: 4200, image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-c9-pro-.jpg' },
+        { brand: 'Samsung', series: 'Galaxy C & Legacy Series', model: 'Samsung Galaxy C7 Pro', storage: '64 GB', price: 3800, image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-c7-pro.jpg' },
+        { brand: 'Samsung', series: 'Galaxy C & Legacy Series', model: 'Samsung Galaxy C5 Pro', storage: '64 GB', price: 3200, image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-c5-pro-sm-c5010.jpg' },
+        { brand: 'Samsung', series: 'Galaxy C & Legacy Series', model: 'Samsung 360 H1', storage: '16 GB', price: 1200, image: 'https://api.mobileapi.dev/devices/1365/thumb.png' },
       ],
     },
   ],

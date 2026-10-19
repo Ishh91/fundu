@@ -87,19 +87,55 @@ export const RAW_MODEL_EXACT_RENDERS: Array<{ keyword: string; url: string }> = 
   { keyword: 's22+', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s22-plus-5g.jpg' },
   { keyword: 's22', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s22-5g.jpg' },
   { keyword: 's21 ultra', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s21-ultra-5g-.jpg' },
+  { keyword: 's26 ultra', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s25-ultra-sm-s938.jpg' },
+  { keyword: 's26 plus', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s24-plus-5g-sm-s926.jpg' },
+  { keyword: 's26+', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s24-plus-5g-sm-s926.jpg' },
+  { keyword: 's26 fe', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s24-fe.jpg' },
+  { keyword: 's26', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s24-5g-sm-s921.jpg' },
   { keyword: 's21 fe', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s21-fe-5g.jpg' },
   { keyword: 's21', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s21-5g-r.jpg' },
   { keyword: 's20 ultra', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s20-ultra-5g-r.jpg' },
-  { keyword: 's20 fe', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s20-fe-5g.jpg' },
+  { keyword: 's20 fe 5g', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s20-fe-5g.jpg' },
+  { keyword: 's20 fe', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s20-fe-4g.jpg' },
   { keyword: 's10 plus', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s10-plus-new.jpg' },
   { keyword: 's10+', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s10-plus-new.jpg' },
   { keyword: 's10', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s10-1.jpg' },
-  { keyword: 'fold 6', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-z-fold6.jpg' },
+  { keyword: 'z flip 7', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-z-flip6.jpg' },
+  { keyword: 'z flip7', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-z-flip6.jpg' },
+  { keyword: 'z flip 6', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-z-flip6.jpg' },
+  { keyword: 'z flip6', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-z-flip6.jpg' },
   { keyword: 'flip 6', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-z-flip6.jpg' },
-  { keyword: 'fold 5', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-z-fold5.jpg' },
+  { keyword: 'flip6', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-z-flip6.jpg' },
+  { keyword: 'z flip 5', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-z-flip5.jpg' },
+  { keyword: 'z flip5', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-z-flip5.jpg' },
   { keyword: 'flip 5', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-z-flip5.jpg' },
-  { keyword: 'fold 4', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-z-fold4.jpg' },
+  { keyword: 'flip5', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-z-flip5.jpg' },
+  { keyword: 'z flip 4', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-z-flip4.jpg' },
+  { keyword: 'z flip4', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-z-flip4.jpg' },
   { keyword: 'flip 4', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-z-flip4.jpg' },
+  { keyword: 'flip4', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-z-flip4.jpg' },
+  { keyword: 'z flip 3', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-z-flip3-5g.jpg' },
+  { keyword: 'z flip3', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-z-flip3-5g.jpg' },
+  { keyword: 'flip 3', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-z-flip3-5g.jpg' },
+  { keyword: 'flip3', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-z-flip3-5g.jpg' },
+  { keyword: 'z flip', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-z-flip-01.jpg' },
+  { keyword: 'galaxy flip', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-z-flip-01.jpg' },
+  { keyword: 'z fold 6', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-z-fold6.jpg' },
+  { keyword: 'z fold6', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-z-fold6.jpg' },
+  { keyword: 'fold 6', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-z-fold6.jpg' },
+  { keyword: 'fold6', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-z-fold6.jpg' },
+  { keyword: 'z fold 5', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-z-fold5.jpg' },
+  { keyword: 'z fold5', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-z-fold5.jpg' },
+  { keyword: 'fold 5', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-z-fold5.jpg' },
+  { keyword: 'fold5', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-z-fold5.jpg' },
+  { keyword: 'z fold 4', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-z-fold4.jpg' },
+  { keyword: 'z fold4', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-z-fold4.jpg' },
+  { keyword: 'fold 4', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-z-fold4.jpg' },
+  { keyword: 'fold4', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-z-fold4.jpg' },
+  { keyword: 'z fold 3', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-z-fold3-5g.jpg' },
+  { keyword: 'z fold 2', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-z-fold2-5g.jpg' },
+  { keyword: 'galaxy fold', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-fold.jpg' },
+  { keyword: '360 h1', url: 'https://api.mobileapi.dev/devices/1365/thumb.png' },
   { keyword: 'note 20 ultra', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-note20-ultra-5g-.jpg' },
   { keyword: 'note 20', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-note20-5g-r.jpg' },
   { keyword: 'note 10+', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-note10-plus-.jpg' },
@@ -363,15 +399,12 @@ function cleanUrl(url: string, brandHint?: string): string {
   cleaned = cleaned.replace(/\/vv\/bigpic\/oppo-oppo-/gi, '/vv/bigpic/oppo-');
   cleaned = cleaned.replace(/\/vv\/bigpic\/realme-realme-/gi, '/vv/bigpic/realme-');
 
-  // Fix broken leading dash /vv/bigpic/-
-  if (cleaned.includes('/vv/bigpic/-')) {
-    const b = (brandHint || '').toLowerCase().trim();
-    if (b) {
-      cleaned = cleaned.replace(/\/vv\/bigpic\/-/gi, `/vv/bigpic/${b}-`);
-    } else {
-      cleaned = cleaned.replace(/\/vv\/bigpic\/-/gi, '/vv/bigpic/');
-    }
-  }
+  // Sanitize known broken or missing GSMarena suffixes
+  cleaned = cleaned.replace(/samsung-galaxy-z-flip6-5g\.jpg/i, 'samsung-galaxy-z-flip6.jpg');
+  cleaned = cleaned.replace(/samsung-galaxy-z-fold6-5g\.jpg/i, 'samsung-galaxy-z-fold6.jpg');
+  cleaned = cleaned.replace(/samsung-galaxy-z-flip\.jpg$/i, 'samsung-galaxy-z-flip-01.jpg');
+  cleaned = cleaned.replace(/samsung-galaxy-c9-pro\.jpg$/i, 'samsung-galaxy-c9-pro-.jpg');
+
   return cleaned;
 }
 
