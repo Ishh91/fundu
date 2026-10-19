@@ -25,6 +25,11 @@ import {
   ChevronDown,
   ChevronUp,
   ArrowRight,
+  Mic,
+  PhoneCall,
+  Fingerprint,
+  Droplets,
+  AlertCircle,
 } from 'lucide-react';
 import { formatINR, formatDisplayPrice } from '../lib/db';
 import { getCleanPhoneImage } from '../lib/phoneImages';
@@ -43,14 +48,15 @@ const ISSUE_DETAILS: Record<
     time: string;
     warranty: string;
     icon: any;
+    note?: string;
     features: string[];
     faqs: Array<{ q: string; a: string }>;
   }
 > = {
   screen: {
-    title: 'Doorstep Screen & Display Replacement',
+    title: 'Screen & Display Replacement',
     tagline: 'Get Broken Screen Replaced at Your Home in 30 Minutes',
-    desc: 'Cracked glass, blank display, OLED lines, screen flickering, or touch unresponsive? Get original quality screen panel replaced at your doorstep at your doorstep with 6 months warranty.',
+    desc: 'Cracked glass, blank display, OLED lines, screen flickering, or touch unresponsive? Get original quality screen panel replaced at your doorstep with 6 months warranty.',
     cost: 2999,
     time: '30 Mins Doorstep',
     warranty: '6 Months Warranty',
@@ -68,7 +74,7 @@ const ISSUE_DETAILS: Record<
     ],
   },
   battery: {
-    title: 'Doorstep Mobile Battery Replacement',
+    title: 'Battery Replacement',
     tagline: 'Restore 100% Battery Life & Fix Fast Draining Issues',
     desc: 'Phone draining fast, battery swelling, phone overheating, or battery health below 75%? Get high-capacity OEM battery installed at your doorstep in 20 minutes.',
     cost: 1499,
@@ -87,9 +93,9 @@ const ISSUE_DETAILS: Record<
     ],
   },
   charging: {
-    title: 'Charging Port & Sub-board IC Repair',
+    title: 'Charging Port',
     tagline: 'Fix Slow Charging & Loose Charger Connection',
-    desc: 'Charger cable loose, phone not charging, slow charging error, or liquid in charging port? Quick sub-board repair at your home.',
+    desc: 'Charger cable loose, phone not charging, slow charging error, or liquid in charging port? Quick port and sub-board repair at your doorstep.',
     cost: 699,
     time: '25 Mins Doorstep',
     warranty: '3 Months Warranty',
@@ -97,10 +103,54 @@ const ISSUE_DETAILS: Record<
     features: ['Original Type-C / Lightning Port', 'Fast Charging Supported', 'Mic & Sub-board IC Tested', '3 Months Warranty'],
     faqs: [{ q: 'Will fast charging work after port repair?', a: 'Yes, fast charging (PD / Warp / Dart / VOOC) is 100% supported.' }],
   },
-  camera: {
-    title: 'Front & Rear Camera Module Replacement',
-    tagline: 'Fix Blurry Lens, Black Screen & Focus Failure',
-    desc: 'Cracked camera glass lens, blurry focus, camera app black screen, or shaky optical stabilization? Get original camera module installed at your doorstep.',
+  mic: {
+    title: 'Mic Repair & Replacement',
+    tagline: 'Fix Muted Audio & Call Voice Issues',
+    desc: 'Callers cannot hear you, voice notes have no sound, or mic sounds muffled? Quick microphone repair at your doorstep in 20 minutes.',
+    cost: 499,
+    time: '20 Mins Doorstep',
+    warranty: '3 Months Warranty',
+    icon: Mic,
+    features: ['HD Voice Pickup Unit', 'Noise Cancellation Tested', 'Clean Audio Recording', '3 Months Warranty'],
+    faqs: [{ q: 'Will mic audio be clear during voice calls and recording?', a: 'Yes, crystal clear HD audio recording and phone calls are fully restored.' }],
+  },
+  speaker: {
+    title: 'Speaker Repair & Replacement',
+    tagline: 'Fix Crackling Loudspeaker & Low Media Sound',
+    desc: 'No sound on videos or music, crackling loudspeaker, or distorted ringtone audio? Fast doorstep speaker replacement.',
+    cost: 599,
+    time: '20 Mins Doorstep',
+    warranty: '3 Months Warranty',
+    icon: Volume2,
+    features: ['Loud & Clear HD Voice Output', 'Original Loudspeaker Unit', 'Dust Mesh Cleaning Included', '3 Months Warranty'],
+    faqs: [{ q: 'Will media sound be loud and clear after repair?', a: 'Yes, loud stereo bass and volume clarity are fully restored.' }],
+  },
+  receiver: {
+    title: 'Receiver / Earpiece Repair',
+    tagline: 'Fix Low Caller Voice & Distorted Ear Speaker',
+    desc: 'Cannot hear caller during phone calls, buzzing earpiece sound, or low in-call volume? Quick earpiece receiver fix at home.',
+    cost: 499,
+    time: '20 Mins Doorstep',
+    warranty: '3 Months Warranty',
+    icon: PhoneCall,
+    features: ['Original Earpiece Receiver', 'In-Call Voice Clarity', 'Proximity Sensor Alignment', '3 Months Warranty'],
+    faqs: [{ q: 'Will I be able to hear phone calls clearly?', a: 'Yes, in-call ear speaker clarity is 100% restored.' }],
+  },
+  front_camera: {
+    title: 'Front Camera Repair',
+    tagline: 'Fix Blurry Selfie Camera & Black Screen',
+    desc: 'Scratched selfie lens, blurry front camera, or black screen when opening front camera? Fast doorstep front camera replacement.',
+    cost: 999,
+    time: '30 Mins Doorstep',
+    warranty: '6 Months Warranty',
+    icon: Camera,
+    features: ['Original OEM Selfie Sensor', 'Face Unlock Alignment', 'Crisp Portrait Photos', '6 Months Warranty'],
+    faqs: [{ q: 'Will Face Unlock still work after front camera replacement?', a: 'Yes, our certified technicians carefully align all biometric sensors.' }],
+  },
+  back_camera: {
+    title: 'Back Camera Repair',
+    tagline: 'Fix Cracked Rear Lens & Camera Focus Failure',
+    desc: 'Cracked rear camera glass lens, blurry focus, camera app black screen, or shaky optical stabilization? Get original camera module installed at your doorstep.',
     cost: 1299,
     time: '30 Mins Doorstep',
     warranty: '6 Months Warranty',
@@ -108,27 +158,62 @@ const ISSUE_DETAILS: Record<
     features: ['Original Sensor & Optical Stabilization', 'Crystal Clear 4K Video Focus', 'Scratch-resistant Glass Lens', '6 Months Warranty'],
     faqs: [{ q: 'Is the camera module original OEM?', a: 'Yes, we use genuine OEM camera modules with full mega-pixel & 4K video clarity.' }],
   },
-  speaker: {
-    title: 'Mic, Earpiece & Speaker Repair',
-    tagline: 'Fix Low Call Volume & Crackling Sound',
-    desc: 'Cannot hear caller voice, crackling speaker sound, or muted microphone on calls? Fast doorstep speaker replacement.',
-    cost: 599,
-    time: '20 Mins Doorstep',
-    warranty: '3 Months Warranty',
-    icon: Volume2,
-    features: ['Loud & Clear HD Voice Output', 'Original Receiver & Mic Unit', 'Dust Mesh Cleaning Included', '3 Months Warranty'],
-    faqs: [{ q: 'Will call audio be clear after repair?', a: 'Yes, HD voice call clarity is fully restored.' }],
+  camera: {
+    title: 'Front & Rear Camera Repair',
+    tagline: 'Fix Camera Lens & Focus Issues',
+    desc: 'Cracked camera glass lens, blurry focus, camera app black screen, or shaky stabilization? Get original camera module installed at your doorstep.',
+    cost: 1299,
+    time: '30 Mins Doorstep',
+    warranty: '6 Months Warranty',
+    icon: Camera,
+    features: ['Original Sensor & Optical Stabilization', 'Crystal Clear 4K Video Focus', 'Scratch-resistant Glass Lens', '6 Months Warranty'],
+    faqs: [{ q: 'Is the camera module original OEM?', a: 'Yes, we use genuine OEM camera modules with full mega-pixel & 4K video clarity.' }],
   },
   motherboard: {
-    title: 'Water Damage & Motherboard IC Repair',
-    tagline: 'Expert Lab Diagnosis for Dead & Water Damaged Phones',
-    desc: 'Mobile dropped in water, dead phone short circuit, or power IC failure? Advanced ultrasonic cleaning & chip-level motherboard diagnosis.',
-    cost: 499,
+    title: 'Motherboard IC Repair',
+    tagline: 'Expert Chip-Level Diagnostics at TheFundu Lab',
+    desc: 'Power IC short circuit, restart loop, dead board, or chip-level failure? Professional micro-soldering and diagnostic lab inspection.',
+    cost: 299,
     time: '24 Hr Lab Repair',
-    warranty: 'Lab Diagnostics',
+    warranty: 'Inspection Diagnostic',
     icon: Cpu,
-    features: ['Micro-soldering & Power IC Fix', 'Ultrasonic PCB Liquid De-oxidation', 'Data Extraction Priority', 'Lab Tested'],
-    faqs: [{ q: 'Can water-damaged dead phones be repaired?', a: 'Yes! Over 85% of water-damaged phones are successfully revived by our lab engineers.' }],
+    note: 'The ₹299 charge is for inspection only. Any repair costs will be confirmed after checking the device at TheFundu.',
+    features: ['Micro-soldering & Power IC Fix', 'Ultrasonic PCB De-oxidation', 'Data Extraction Priority', 'Lab Tested Equipment'],
+    faqs: [{ q: 'What is the ₹299 inspection charge?', a: 'The ₹299 charge is for inspection only. Any repair costs will be confirmed after checking the device at TheFundu.' }],
+  },
+  fingerprint: {
+    title: 'Fingerprint Sensor Repair',
+    tagline: 'Restore Fast Biometric Fingerprint Recognition',
+    desc: 'In-display or physical fingerprint scanner unresponsive, Touch ID failure, or enrollment error? Quick sensor replacement at your doorstep.',
+    cost: 699,
+    time: '25 Mins Doorstep',
+    warranty: '3 Months Warranty',
+    icon: Fingerprint,
+    features: ['High Sensitivity Biometric Sensor', 'Instant Unlock Calibration', 'OEM Matching Flex Cable', '3 Months Warranty'],
+    faqs: [{ q: 'Will fingerprint unlock work smoothly after replacement?', a: 'Yes, we test and calibrate biometric enrollment immediately on spot.' }],
+  },
+  faceid: {
+    title: 'Faceid Sensor Repair',
+    tagline: 'Restore TrueDepth & Face ID Recognition',
+    desc: 'Face ID disabled error, TrueDepth camera alignment, dot projector or proximity sensor issues? Expert laser calibration.',
+    cost: 1499,
+    time: '45 Mins Doorstep',
+    warranty: '6 Months Warranty',
+    icon: ScanFace,
+    features: ['Dot Projector & Flood Illuminator Fix', 'Infrared Camera Calibration', 'True Tone Alignment', '6 Months Warranty'],
+    faqs: [{ q: 'Can disabled Face ID be fixed?', a: 'Yes! Our technicians calibrate the TrueDepth infrared sensor module to restore Face ID unlock.' }],
+  },
+  water_damage: {
+    title: 'Water Damaged / Dead Phone Diagnosis',
+    tagline: 'Emergency De-oxidation & Revival for Liquid Damaged Phones',
+    desc: 'Phone dropped in water, liquid detected, or phone completely dead? Advanced ultrasonic cleaning and power IC testing.',
+    cost: 199,
+    time: '24 Hr Lab Repair',
+    warranty: 'Inspection Diagnostic',
+    icon: Droplets,
+    note: 'The ₹199 charge is for inspection only. Any repair costs will be confirmed after checking the device at TheFundu.',
+    features: ['Ultrasonic Chemical Bath', 'Liquid De-oxidation Treatment', 'Short Circuit Power Tracing', 'Safe Data Recovery Protocol'],
+    faqs: [{ q: 'What is the ₹199 inspection charge?', a: 'The ₹199 charge is for inspection only. Any repair costs will be confirmed after checking the device at TheFundu.' }],
   },
 };
 
@@ -317,6 +402,13 @@ export default function RepairIssuePage() {
                   </button>
                 )}
               </div>
+
+              {issueData.note && (
+                <div className="bg-amber-50 p-2.5 rounded-xl border border-amber-200 text-xs text-amber-900 flex items-start gap-1.5 leading-snug">
+                  <AlertCircle className="h-4 w-4 text-amber-600 shrink-0 mt-0.5" />
+                  <span><strong>Note:</strong> {issueData.note}</span>
+                </div>
+              )}
 
               {/* Selected Phone Live Thumbnail */}
               <div className="flex items-center gap-3 p-2.5 bg-gray-50 rounded-2xl border border-gray-200/80">

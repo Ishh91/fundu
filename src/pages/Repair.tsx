@@ -33,6 +33,12 @@ import {
   X,
   Lock,
   FileCode,
+  Mic,
+  PhoneCall,
+  Fingerprint,
+  Droplets,
+  AlertCircle,
+  Info,
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { DOORSTEP_AREAS } from '../types';
@@ -54,7 +60,18 @@ const BRAND_CARDS = [
   { name: 'Motorola', logo: getCleanBrandLogo('Motorola') },
 ];
 
-const REPAIR_ISSUES = [
+export interface RepairIssueItem {
+  id: string;
+  label: string;
+  icon: any;
+  desc: string;
+  cost: number;
+  warranty: string;
+  time: string;
+  note?: string;
+}
+
+const REPAIR_ISSUES: RepairIssueItem[] = [
   {
     id: 'screen',
     label: 'Screen & Display Replacement',
@@ -66,7 +83,7 @@ const REPAIR_ISSUES = [
   },
   {
     id: 'battery',
-    label: 'Battery Replacement & Health Check',
+    label: 'Battery Replacement',
     icon: BatteryCharging,
     desc: 'Fast draining, battery swelling, phone heating, health < 75%',
     cost: 1499,
@@ -75,7 +92,7 @@ const REPAIR_ISSUES = [
   },
   {
     id: 'charging',
-    label: 'Charging Port & Sub-board IC',
+    label: 'Charging Port',
     icon: Zap,
     desc: 'Loose charger connection, slow charging, port liquid detected',
     cost: 699,
@@ -83,85 +100,87 @@ const REPAIR_ISSUES = [
     time: '25 Mins Doorstep',
   },
   {
+    id: 'mic',
+    label: 'Mic',
+    icon: Mic,
+    desc: 'Muted microphone, callers cannot hear your voice, audio recording issue',
+    cost: 499,
+    warranty: '3 Months Warranty',
+    time: '20 Mins Doorstep',
+  },
+  {
     id: 'speaker',
-    label: 'Mic, Receiver & Speaker Repair',
+    label: 'Speaker',
     icon: Volume2,
-    desc: 'No sound on calls, muted microphone, crackling speaker audio',
+    desc: 'Crackling sound, low media volume, or no sound from loudspeaker',
     cost: 599,
     warranty: '3 Months Warranty',
     time: '20 Mins Doorstep',
   },
   {
-    id: 'camera',
-    label: 'Front & Rear Camera Repair',
+    id: 'receiver',
+    label: 'Receiver',
+    icon: PhoneCall,
+    desc: 'Cannot hear caller during phone calls, distorted or muffled earpiece audio',
+    cost: 499,
+    warranty: '3 Months Warranty',
+    time: '20 Mins Doorstep',
+  },
+  {
+    id: 'front_camera',
+    label: 'Front camera',
     icon: Camera,
-    desc: 'Blurry camera focus, cracked glass lens, camera app black screen',
+    desc: 'Blurry selfie camera, front lens scratched, camera app black screen',
+    cost: 999,
+    warranty: '6 Months Warranty',
+    time: '30 Mins Doorstep',
+  },
+  {
+    id: 'back_camera',
+    label: 'Back camera',
+    icon: Camera,
+    desc: 'Cracked rear camera glass, autofocus failure, shaky sensor or black screen',
     cost: 1299,
     warranty: '6 Months Warranty',
     time: '30 Mins Doorstep',
   },
   {
-    id: 'backglass',
-    label: 'Back Glass & Body Chassis Replacement',
-    icon: Smartphone,
-    desc: 'Shattered rear glass panel, bended metal frame, loose back cover',
-    cost: 1199,
-    warranty: '3 Months Warranty',
-    time: '40 Mins Doorstep',
-  },
-  {
     id: 'motherboard',
-    label: 'Water Damage & Motherboard IC Repair',
+    label: 'Motherboard IC',
     icon: Cpu,
-    desc: 'Dead phone, liquid/water damage, power IC short circuit diagnostics',
-    cost: 499,
-    warranty: 'Lab Diagnostics',
+    desc: 'Power IC short circuit, restart loop, or chip-level motherboard failure',
+    cost: 299,
+    warranty: 'Inspection Diagnostic',
     time: '24 Hr Lab Repair',
+    note: 'The ₹299 charge is for inspection only. Any repair costs will be confirmed after checking the device at TheFundu.',
   },
   {
-    id: 'software',
-    label: 'Software Recovery & OS Flashing',
-    icon: FileCode,
-    desc: 'Stuck on Apple/Android logo, boot loop error, pattern/PIN unlock',
-    cost: 399,
-    warranty: 'Data Safe Protocol',
-    time: '20 Mins Doorstep',
-  },
-  {
-    id: 'buttons',
-    label: 'Power, Volume & Fingerprint Sensor',
-    icon: SlidersHorizontal,
-    desc: 'Stuck power button, volume keys not working, Touch ID sensor',
-    cost: 499,
+    id: 'fingerprint',
+    label: 'Fingerprint Sensor',
+    icon: Fingerprint,
+    desc: 'In-display or physical fingerprint scanner unresponsive, Touch ID failure',
+    cost: 699,
     warranty: '3 Months Warranty',
     time: '25 Mins Doorstep',
   },
   {
     id: 'faceid',
-    label: 'Face ID & TrueDepth Sensor Repair',
+    label: 'Faceid sensor',
     icon: ScanFace,
-    desc: 'Face ID disabled error, TrueDepth camera alignment, proximity sensor',
+    desc: 'Face ID disabled error, TrueDepth camera alignment, infrared sensor fault',
     cost: 1499,
     warranty: '6 Months Warranty',
     time: '45 Mins Doorstep',
   },
   {
-    id: 'network',
-    label: 'Network, SIM & Wi-Fi IC Repair',
-    icon: Wifi,
-    desc: 'No SIM signal / searching, grayed out Wi-Fi / Bluetooth toggle',
-    cost: 1199,
-    warranty: '3 Months Warranty',
-    time: '45 Mins Doorstep',
-  },
-  {
-    id: 'haptics',
-    label: 'Vibration Motor & Taptic Engine',
-    icon: Vibrate,
-    desc: 'No vibration alerts during calls, haptic feedback engine failure',
-    cost: 399,
-    warranty: '3 Months Warranty',
-    time: '20 Mins Doorstep',
+    id: 'water_damage',
+    label: 'Water damaged/dead phone',
+    icon: Droplets,
+    desc: 'Liquid exposure, phone completely dead, won’t power on or charge',
+    cost: 199,
+    warranty: 'Inspection Diagnostic',
+    time: '24 Hr Lab Repair',
+    note: 'The ₹199 charge is for inspection only. Any repair costs will be confirmed after checking the device at TheFundu.',
   },
 ];
 
@@ -307,9 +326,10 @@ export default function Repair() {
             label: s.name || matchedStatic?.label || s.service_id,
             icon: matchedStatic?.icon || Wrench,
             desc: matchedStatic?.desc || `${s.name} at your doorstep with certified technicians`,
-            cost: Number(s.price) || 499,
-            warranty: s.warranty || '6 Months Warranty',
-            time: s.turnaround_time || '30 Mins Doorstep',
+            cost: Number(s.price) || (s.service_id === 'motherboard' ? 299 : s.service_id === 'water_damage' ? 199 : 499),
+            warranty: s.warranty || matchedStatic?.warranty || '6 Months Warranty',
+            time: s.turnaround_time || matchedStatic?.time || '30 Mins Doorstep',
+            note: matchedStatic?.note || (s as any).note,
           };
         });
     }
@@ -718,6 +738,13 @@ export default function Repair() {
     setSubmitting(true);
     setError(null);
 
+    const inspectionNotes = selectedIssues
+      .filter((i) => i.note)
+      .map((i) => `${i.label}: ${i.note}`)
+      .join(' | ');
+
+    const combinedDetail = [form.problemDetail, inspectionNotes].filter(Boolean).join(' | ');
+
     const { data, error: reqErr } = await db
       .from<{ tracking_id: string }>('repair_bookings')
       .insert({
@@ -728,7 +755,7 @@ export default function Repair() {
         brand: form.brand,
         model: form.model,
         problem: combinedProblemLabel || 'General Repair',
-        problem_detail: form.problemDetail || null,
+        problem_detail: combinedDetail || null,
         estimated_cost: totalRepairCost || 1499,
         pickup_address: form.pickupAddress,
         pickup_area: form.pickupArea,
@@ -751,8 +778,8 @@ export default function Repair() {
     try {
       notifyNewRepairBooking({
         bookingId: trackingIdVal,
-        customerName: profile?.full_name || form.name || 'Customer',
-        customerPhone: profile?.phone || form.phone || '',
+        customerName: profile?.full_name || 'Customer',
+        customerPhone: profile?.phone || '',
         brand: form.brand,
         model: form.model,
         problem: combinedProblemLabel || 'General Repair',
@@ -1390,6 +1417,12 @@ export default function Repair() {
                           <span className="font-display font-black text-[#344257] text-base">{formatDisplayPrice(issue.cost, !!user)}</span>
                         </div>
                         <p className="mt-1 text-xs text-ink-500 leading-relaxed">{issue.desc}</p>
+                        {issue.note && (
+                          <div className="mt-2.5 flex items-start gap-1.5 rounded-xl bg-amber-50 border border-amber-200/80 p-2 text-[11px] font-semibold text-amber-900 leading-snug">
+                            <AlertCircle className="h-3.5 w-3.5 text-amber-600 shrink-0 mt-0.5" />
+                            <span><strong>Note:</strong> {issue.note.replace(/^\(?Note:\s*/i, '').replace(/\s*\)?$/, '')}</span>
+                          </div>
+                        )}
                         <div className="mt-3 flex items-center justify-between text-[10px] font-bold">
                           <div className="flex items-center gap-2">
                             <span className="badge bg-emerald-50 text-[#344257]">{issue.warranty}</span>
@@ -1511,9 +1544,17 @@ export default function Repair() {
                 <div className="text-left bg-white/10 p-4 rounded-2xl border border-white/10 space-y-2 text-xs">
                   <p className="text-[10px] font-bold text-emerald-300 uppercase tracking-wider">Included Repairs ({selectedIssues.length}):</p>
                   {selectedIssues.map((item) => (
-                    <div key={item.id} className="flex items-center justify-between text-slate-200 font-semibold border-b border-white/10 pb-1.5 pt-0.5">
-                      <span>• {item.label}</span>
-                      <span className="font-bold text-white">{formatDisplayPrice(item.cost, !!user)}</span>
+                    <div key={item.id} className="border-b border-white/10 pb-2 pt-1 space-y-1">
+                      <div className="flex items-center justify-between text-slate-200 font-semibold">
+                        <span>• {item.label}</span>
+                        <span className="font-bold text-white">{formatDisplayPrice(item.cost, !!user)}</span>
+                      </div>
+                      {item.note && (
+                        <p className="text-[10px] text-amber-300 font-medium pl-3 flex items-start gap-1 leading-snug">
+                          <span>⚠️</span>
+                          <span>{item.note}</span>
+                        </p>
+                      )}
                     </div>
                   ))}
                 </div>
@@ -1573,11 +1614,26 @@ export default function Repair() {
                       Schedule Doorstep Repair
                     </h2>
                     <p className="text-xs text-ink-500">
-                      Device: <span className="font-bold text-ink-900">{form.brand} {form.model}</span> ({selectedIssue?.label})
+                      Device: <span className="font-bold text-ink-900">{form.brand} {form.model}</span> ({combinedProblemLabel})
                     </p>
                   </div>
                 </div>
               </div>
+
+              {/* Inspection Note Banner in Step 4 */}
+              {selectedIssues.some((i) => i.note) && (
+                <div className="mt-4 rounded-2xl bg-amber-50 border border-amber-200 p-3.5 text-xs text-amber-900 space-y-1.5">
+                  {selectedIssues.filter((i) => i.note).map((i) => (
+                    <div key={i.id} className="flex items-start gap-2">
+                      <AlertCircle className="h-4 w-4 text-amber-600 shrink-0 mt-0.5" />
+                      <div>
+                        <span className="font-bold text-amber-950">{i.label}: </span>
+                        <span>{i.note}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
 
               {error && (
                 <div className="mt-4 rounded-xl bg-accent-50 border border-accent-200 p-3 text-xs text-accent-700">

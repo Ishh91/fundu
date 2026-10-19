@@ -23,6 +23,11 @@ import {
   Cpu,
   Smartphone,
   CheckCircle2,
+  Mic,
+  PhoneCall,
+  Fingerprint,
+  Droplets,
+  ScanFace,
 } from 'lucide-react';
 import { formatINR, formatDisplayPrice } from '../lib/db';
 import { MASTER_MODEL_CATALOG } from '../data/masterModelCatalog';
@@ -110,11 +115,17 @@ const BRAND_REPAIR_DETAILS: Record<
 
 const COMMON_REPAIR_SERVICES = [
   { id: 'screen', label: 'Screen & Display Replacement', cost: 2999, time: '30 Mins', warranty: '6 Months', icon: Monitor },
-  { id: 'battery', label: 'Battery Replacement & Health Check', cost: 1499, time: '20 Mins', warranty: '6 Months', icon: BatteryCharging },
-  { id: 'charging', label: 'Charging Port & Sub-board IC', cost: 699, time: '25 Mins', warranty: '3 Months', icon: Zap },
-  { id: 'camera', label: 'Front & Rear Camera Repair', cost: 1299, time: '30 Mins', warranty: '6 Months', icon: Camera },
-  { id: 'speaker', label: 'Mic, Receiver & Speaker Repair', cost: 599, time: '20 Mins', warranty: '3 Months', icon: Volume2 },
-  { id: 'motherboard', label: 'Water Damage & IC Repair', cost: 499, time: '24 Hr Lab', warranty: 'Lab Tested', icon: Cpu },
+  { id: 'battery', label: 'Battery Replacement', cost: 1499, time: '20 Mins', warranty: '6 Months', icon: BatteryCharging },
+  { id: 'charging', label: 'Charging Port', cost: 699, time: '25 Mins', warranty: '3 Months', icon: Zap },
+  { id: 'mic', label: 'Mic', cost: 499, time: '20 Mins', warranty: '3 Months', icon: Mic },
+  { id: 'speaker', label: 'Speaker', cost: 599, time: '20 Mins', warranty: '3 Months', icon: Volume2 },
+  { id: 'receiver', label: 'Receiver', cost: 499, time: '20 Mins', warranty: '3 Months', icon: PhoneCall },
+  { id: 'front_camera', label: 'Front camera', cost: 999, time: '30 Mins', warranty: '6 Months', icon: Camera },
+  { id: 'back_camera', label: 'Back camera', cost: 1299, time: '30 Mins', warranty: '6 Months', icon: Camera },
+  { id: 'motherboard', label: 'Motherboard IC', cost: 299, time: '24 Hr Lab', warranty: 'Inspection Only', icon: Cpu, note: 'The ₹299 charge is for inspection only. Any repair costs will be confirmed after checking the device at TheFundu.' },
+  { id: 'fingerprint', label: 'Fingerprint Sensor', cost: 699, time: '25 Mins', warranty: '3 Months', icon: Fingerprint },
+  { id: 'faceid', label: 'Faceid sensor', cost: 1499, time: '45 Mins', warranty: '6 Months', icon: ScanFace },
+  { id: 'water_damage', label: 'Water damaged/dead phone', cost: 199, time: '24 Hr Lab', warranty: 'Inspection Only', icon: Droplets, note: 'The ₹199 charge is for inspection only. Any repair costs will be confirmed after checking the device at TheFundu.' },
 ];
 
 export default function RepairBrandPage() {
@@ -648,9 +659,15 @@ export default function RepairBrandPage() {
                   </div>
                   <p className="font-bold text-xs text-[#344257] line-clamp-1">{srv.label}</p>
                   <p className="text-[11px] font-black text-[#47576E]">From {formatDisplayPrice(srv.cost, !!user)}</p>
-                  <span className="inline-block text-[10px] text-gray-500 bg-white px-2 py-0.5 rounded-full border border-gray-200">
-                    ⏱️ {srv.time}
-                  </span>
+                  {(srv as any).note ? (
+                    <span className="inline-block text-[9px] font-bold text-amber-800 bg-amber-50 px-2 py-0.5 rounded-full border border-amber-200">
+                      ⚠️ Inspection Only
+                    </span>
+                  ) : (
+                    <span className="inline-block text-[10px] text-gray-500 bg-white px-2 py-0.5 rounded-full border border-gray-200">
+                      ⏱️ {srv.time}
+                    </span>
+                  )}
                 </div>
               );
             })}

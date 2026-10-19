@@ -10,19 +10,25 @@ const REPAIR_OVERRIDES_STORAGE_KEY = 'fundu_repair_price_configs_v2';
 /**
  * Standard Issue templates per product category
  */
-export const SMARTPHONE_SERVICE_TEMPLATES: Array<{ id: string; name: string; defaultWarranty: string; defaultTime: string }> = [
+export const SMARTPHONE_SERVICE_TEMPLATES: Array<{
+  id: string;
+  name: string;
+  defaultWarranty: string;
+  defaultTime: string;
+  note?: string;
+}> = [
   { id: 'screen', name: 'Screen & Display Replacement', defaultWarranty: '6 Months Warranty', defaultTime: '30 Mins Doorstep' },
-  { id: 'battery', name: 'Battery Replacement & Health Check', defaultWarranty: '6 Months Warranty', defaultTime: '20 Mins Doorstep' },
-  { id: 'charging', name: 'Charging Port & Sub-board IC', defaultWarranty: '3 Months Warranty', defaultTime: '25 Mins Doorstep' },
-  { id: 'speaker', name: 'Mic, Receiver & Speaker Repair', defaultWarranty: '3 Months Warranty', defaultTime: '20 Mins Doorstep' },
-  { id: 'camera', name: 'Front & Rear Camera Repair', defaultWarranty: '6 Months Warranty', defaultTime: '30 Mins Doorstep' },
-  { id: 'backglass', name: 'Back Glass & Body Chassis Replacement', defaultWarranty: '3 Months Warranty', defaultTime: '40 Mins Doorstep' },
-  { id: 'motherboard', name: 'Water Damage & Motherboard IC Repair', defaultWarranty: 'Lab Diagnostics', defaultTime: '24 Hr Lab Repair' },
-  { id: 'software', name: 'Software Recovery & OS Flashing', defaultWarranty: 'Data Safe Protocol', defaultTime: '20 Mins Doorstep' },
-  { id: 'buttons', name: 'Power, Volume & Fingerprint Sensor', defaultWarranty: '3 Months Warranty', defaultTime: '25 Mins Doorstep' },
-  { id: 'faceid', name: 'Face ID & TrueDepth Sensor Repair', defaultWarranty: '6 Months Warranty', defaultTime: '45 Mins Doorstep' },
-  { id: 'network', name: 'Network, SIM & Wi-Fi IC Repair', defaultWarranty: '3 Months Warranty', defaultTime: '45 Mins Doorstep' },
-  { id: 'haptics', name: 'Vibration Motor & Taptic Engine', defaultWarranty: '3 Months Warranty', defaultTime: '20 Mins Doorstep' },
+  { id: 'battery', name: 'Battery Replacement', defaultWarranty: '6 Months Warranty', defaultTime: '20 Mins Doorstep' },
+  { id: 'charging', name: 'Charging Port', defaultWarranty: '3 Months Warranty', defaultTime: '25 Mins Doorstep' },
+  { id: 'mic', name: 'Mic', defaultWarranty: '3 Months Warranty', defaultTime: '20 Mins Doorstep' },
+  { id: 'speaker', name: 'Speaker', defaultWarranty: '3 Months Warranty', defaultTime: '20 Mins Doorstep' },
+  { id: 'receiver', name: 'Receiver', defaultWarranty: '3 Months Warranty', defaultTime: '20 Mins Doorstep' },
+  { id: 'front_camera', name: 'Front camera', defaultWarranty: '6 Months Warranty', defaultTime: '30 Mins Doorstep' },
+  { id: 'back_camera', name: 'Back camera', defaultWarranty: '6 Months Warranty', defaultTime: '30 Mins Doorstep' },
+  { id: 'motherboard', name: 'Motherboard IC', defaultWarranty: 'Inspection Diagnostic', defaultTime: '24 Hr Lab Repair', note: 'The ₹299 charge is for inspection only. Any repair costs will be confirmed after checking the device at TheFundu.' },
+  { id: 'fingerprint', name: 'Fingerprint Sensor', defaultWarranty: '3 Months Warranty', defaultTime: '25 Mins Doorstep' },
+  { id: 'faceid', name: 'Faceid sensor', defaultWarranty: '6 Months Warranty', defaultTime: '45 Mins Doorstep' },
+  { id: 'water_damage', name: 'Water damaged/dead phone', defaultWarranty: 'Inspection Diagnostic', defaultTime: '24 Hr Lab Repair', note: 'The ₹199 charge is for inspection only. Any repair costs will be confirmed after checking the device at TheFundu.' },
 ];
 
 export const LAPTOP_SERVICE_TEMPLATES: Array<{ id: string; name: string; defaultWarranty: string; defaultTime: string }> = [
@@ -305,19 +311,19 @@ export function calculateSmartDefaultRepairServices(
   }
 
   return SMARTPHONE_SERVICE_TEMPLATES.map((tmpl) => {
-    let price = 699;
+    let price = 599;
     if (tmpl.id === 'screen') price = screenPrice;
     else if (tmpl.id === 'battery') price = batteryPrice;
     else if (tmpl.id === 'charging') price = chargingPrice;
+    else if (tmpl.id === 'mic') price = isSuperFlagship ? 699 : 499;
     else if (tmpl.id === 'speaker') price = speakerPrice;
-    else if (tmpl.id === 'camera') price = cameraPrice;
-    else if (tmpl.id === 'backglass') price = backglassPrice;
-    else if (tmpl.id === 'motherboard') price = isSuperFlagship ? 999 : 499;
-    else if (tmpl.id === 'software') price = 399;
-    else if (tmpl.id === 'buttons') price = isSuperFlagship ? 999 : 499;
+    else if (tmpl.id === 'receiver') price = isSuperFlagship ? 699 : 499;
+    else if (tmpl.id === 'front_camera') price = isSuperFlagship ? 1999 : isFlagship ? 1499 : 899;
+    else if (tmpl.id === 'back_camera' || tmpl.id === 'camera') price = cameraPrice;
+    else if (tmpl.id === 'motherboard') price = 299; // Fixed ₹299 inspection charge
+    else if (tmpl.id === 'fingerprint') price = isSuperFlagship ? 999 : 699;
     else if (tmpl.id === 'faceid') price = faceIdPrice;
-    else if (tmpl.id === 'network') price = isSuperFlagship ? 1999 : 999;
-    else if (tmpl.id === 'haptics') price = isSuperFlagship ? 799 : 399;
+    else if (tmpl.id === 'water_damage') price = 199; // Fixed ₹199 inspection charge
 
     return {
       service_id: tmpl.id,
@@ -327,6 +333,7 @@ export function calculateSmartDefaultRepairServices(
       warranty: tmpl.defaultWarranty,
       turnaround_time: tmpl.defaultTime,
       is_available: true,
+      note: tmpl.note,
     };
   });
 }
@@ -518,10 +525,16 @@ export function buildConfigFromSeedItem(seed: typeof SEED_REPAIR_MODELS[0]): Omi
     if (tmpl.id === 'screen') price = seed.screenPrice;
     else if (tmpl.id === 'battery') price = seed.batteryPrice;
     else if (tmpl.id === 'charging') price = seed.chargingPrice;
-    else if (tmpl.id === 'camera') price = seed.cameraPrice;
-    else if (tmpl.id === 'backglass') price = seed.backglassPrice;
-    else if (tmpl.id === 'motherboard') price = seed.motherboardPrice;
+    else if (tmpl.id === 'back_camera' || tmpl.id === 'camera') price = seed.cameraPrice;
+    else if (tmpl.id === 'front_camera') price = Math.round(seed.cameraPrice * 0.65);
+    else if (tmpl.id === 'motherboard') price = 299;
+    else if (tmpl.id === 'water_damage') price = 199;
     else if (tmpl.id === 'speaker') price = Math.round(seed.chargingPrice * 0.85);
+    else if (tmpl.id === 'mic') price = Math.round(seed.chargingPrice * 0.75);
+    else if (tmpl.id === 'receiver') price = Math.round(seed.chargingPrice * 0.75);
+    else if (tmpl.id === 'fingerprint') price = Math.round(seed.chargingPrice * 0.95);
+    else if (tmpl.id === 'faceid') price = Math.round(seed.cameraPrice * 0.85);
+    else if (tmpl.id === 'backglass') price = seed.backglassPrice;
     else if (tmpl.id === 'keyboard') price = Math.round(seed.batteryPrice * 0.9);
     else if (tmpl.id === 'trackpad') price = Math.round(seed.batteryPrice * 0.8);
     else if (tmpl.id === 'software') price = 399;
@@ -535,6 +548,7 @@ export function buildConfigFromSeedItem(seed: typeof SEED_REPAIR_MODELS[0]): Omi
       warranty: tmpl.defaultWarranty,
       turnaround_time: tmpl.defaultTime,
       is_available: true,
+      note: (tmpl as any).note,
     };
   });
 
