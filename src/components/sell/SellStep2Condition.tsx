@@ -134,12 +134,21 @@ export default function SellStep2Condition({
                     </div>
                   )}
 
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-center sm:justify-start gap-1 sm:gap-2.5 pt-0.5">
-                    <span className="inline-flex items-center gap-1.5 text-xs font-bold text-[#344257] bg-[#F0F0F5] border border-[#C0C8D8] px-3 py-1 rounded-xl">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-center sm:justify-start gap-2 pt-1 flex-wrap">
+                    <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-900 shadow-xs">
+                      <span className="text-[10px] font-extrabold uppercase tracking-wider text-emerald-700 bg-white border border-emerald-200 px-1.5 py-0.5 rounded-md">
+                        Approx Value
+                      </span>
+                      <span className="text-sm sm:text-base font-black text-emerald-800 tracking-tight">
+                        {estimate > 0 ? formatINR(estimate) : '₹---'}
+                      </span>
+                      <span className="text-[10px] font-bold text-emerald-600">
+                        (Get up to)
+                      </span>
+                    </div>
+
+                    <span className="inline-flex items-center gap-1.5 text-xs font-bold text-[#344257] bg-[#F0F0F5] border border-[#C0C8D8] px-3 py-1.5 rounded-xl">
                       <Sparkles className="h-3.5 w-3.5 text-[#6A859F]" /> Answer condition questions below to calculate exact price
-                    </span>
-                    <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full inline-block">
-                      Condition-Based Valuation
                     </span>
                   </div>
                 </div>
