@@ -11,9 +11,17 @@ export function getModelDedupeKey(brand: string, model: string): string {
   if (bClean && clean.startsWith(bClean)) {
     clean = clean.slice(bClean.length).trim();
   }
-  // Normalize Fold / Flip 5G redundancy (Fold 4/5/6 and Flip 4/5/6 only exist as 5G)
-  clean = clean.replace(/\b(fold|flip)\s*([2-8])\s*5g\b/gi, '$1 $2');
-  clean = clean.replace(/\b(fold|flip)([2-8])5g\b/gi, '$1 $2');
+  // Normalize Fold / Flip 5G redundancy
+  clean = clean.replace(/\b(fold|flip)\s*([0-9]+)\s*5g\b/gi, '$1 $2');
+  clean = clean.replace(/\b(fold|flip)([0-9]+)5g\b/gi, '$1 $2');
+
+  // Normalize 5G flagship naming redundancy (S20-S26, Note 20, OnePlus flagships, Pixels, etc.)
+  clean = clean.replace(/\b(s2[0-9]|note\s*20|fold\s*[0-9]+|flip\s*[0-9]+|z\s*fold\s*[0-9]*|z\s*flip\s*[0-9]*)\s*(ultra|plus|\+|fe)?\s*5g\b/gi, '$1 $2');
+  clean = clean.replace(/\b(oneplus\s*(?:8|9|10|11|12|13|14|15|open))\s*(pro|r|t)?\s*5g\b/gi, '$1 $2');
+  clean = clean.replace(/\b(pixel\s*(?:[5-9]|1[0-9]))\s*(pro|a|xl)?\s*5g\b/gi, '$1 $2');
+
+  // Strip generic trailing 5g/4g suffix for deduplication so identical models match
+  clean = clean.replace(/\s+(?:5g|4g)$/i, '');
 
   return clean
     .replace(/\+/g, 'plus')
@@ -278,7 +286,8 @@ export function inferModelSeries(
   }
 
   // 1. Apple
-  if (bLower === 'apple' || bLower === 'iphone') {
+  const isForeignToApple = /\b(oneplus|samsung|galaxy|xiaomi|redmi|poco|vivo|iqoo|oppo|realme|motorola|moto|pixel|google|nothing)\b/i.test(mLower);
+  if ((bLower === 'apple' || bLower === 'iphone') && !isForeignToApple) {
     if (/\bipad\b/i.test(mLower)) return { seriesName: 'Apple iPad & Tablet Series', seriesSlug: 'apple-ipad-series' };
     if (/\b18\b/i.test(mLower)) return { seriesName: 'iPhone 18 Series', seriesSlug: 'iphone-18-series' };
     if (/\b(17|17e|air)\b/i.test(mLower)) return { seriesName: 'iPhone 17 Series', seriesSlug: 'iphone-17-series' };
@@ -304,7 +313,8 @@ export function inferModelSeries(
   }
 
   // 2. Samsung
-  if (bLower === 'samsung') {
+  const isForeignToSamsung = /\b(iphone|apple|oneplus|xiaomi|redmi|poco|vivo|iqoo|oppo|realme|motorola|pixel)\b/i.test(mLower);
+  if (bLower === 'samsung' && !isForeignToSamsung) {
     if (/(?:galaxy\s*)?z\s*(?:fold|flip)|\b(fold|flip)/i.test(mLower)) {
       return { seriesName: 'Galaxy Z Series (Fold & Flip)', seriesSlug: 'galaxy-z-series' };
     }
@@ -327,7 +337,8 @@ export function inferModelSeries(
   }
 
   // 3. OnePlus
-  if (bLower === 'oneplus') {
+  const isForeignToOnePlus = /\b(iphone|apple|samsung|galaxy|xiaomi|redmi|poco|vivo|iqoo|oppo|realme|motorola|pixel)\b/i.test(mLower);
+  if (bLower === 'oneplus' && !isForeignToOnePlus) {
     if (/\b13\b/i.test(mLower)) return { seriesName: 'OnePlus 13 Series', seriesSlug: 'oneplus-13-series' };
     if (/\b12\b/i.test(mLower)) return { seriesName: 'OnePlus 12 Series', seriesSlug: 'oneplus-12-series' };
     if (/\b11\b/i.test(mLower)) return { seriesName: 'OnePlus 11 Series', seriesSlug: 'oneplus-11-series' };
@@ -1929,6 +1940,23 @@ export function groupModelsBySeries(brand: string, allModels: CatalogModelItem[]
     const matched = allModels.filter((m) => {
       const dKey = getModelDedupeKey(m.brand || brand, m.model);
       if (assignedModels.has(dKey)) return false;
+
+      // Reject foreign brand models from being captured in this brand group
+      const mBrandLower = (m.brand || brand).toLowerCase().trim();
+      const defBrandLower = (def.brand || brand).toLowerCase().trim();
+      if (mBrandLower && defBrandLower && mBrandLower !== defBrandLower) return false;
+
+      const mModelLower = (m.model || '').toLowerCase().trim();
+      if (defBrandLower === 'apple' && /\b(oneplus|samsung|galaxy|xiaomi|redmi|poco|vivo|iqoo|oppo|realme|motorola|pixel)\b/i.test(mModelLower)) {
+        return false;
+      }
+      if (defBrandLower === 'samsung' && /\b(iphone|apple|oneplus|xiaomi|redmi|poco|vivo|iqoo|oppo|realme|motorola|pixel)\b/i.test(mModelLower)) {
+        return false;
+      }
+      if (defBrandLower === 'oneplus' && /\b(iphone|apple|samsung|galaxy|xiaomi|redmi|poco|vivo|iqoo|oppo|realme|motorola|pixel)\b/i.test(mModelLower)) {
+        return false;
+      }
+
       const text = `${m.model} ${m.series || ''}`;
       const inferred = inferModelSeries(brand, m.model, m.series);
       return (

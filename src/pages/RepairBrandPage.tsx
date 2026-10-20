@@ -183,8 +183,22 @@ export default function RepairBrandPage() {
 
   // 1. Raw models list from Admin configs, Indian catalog, and Master catalog
   const rawBrandModels = useMemo(() => {
+    const isForeignBrandModel = (brandKey: string, modelName: string) => {
+      const mLower = (modelName || '').toLowerCase().trim();
+      if (brandKey === 'apple' && /\b(oneplus|samsung|galaxy|xiaomi|redmi|poco|vivo|iqoo|oppo|realme|motorola|moto|pixel|google|nothing)\b/i.test(mLower)) {
+        return true;
+      }
+      if (brandKey === 'samsung' && /\b(iphone|apple|oneplus|xiaomi|redmi|poco|vivo|iqoo|oppo|realme|motorola|pixel)\b/i.test(mLower)) {
+        return true;
+      }
+      if (brandKey === 'oneplus' && /\b(iphone|apple|samsung|galaxy|xiaomi|redmi|poco|vivo|iqoo|oppo|realme|motorola|pixel)\b/i.test(mLower)) {
+        return true;
+      }
+      return false;
+    };
+
     const adminModels = (repairConfigs || [])
-      .filter((c) => (c.brand || '').toLowerCase().trim() === brandCleanKey && c.is_active !== false)
+      .filter((c) => (c.brand || '').toLowerCase().trim() === brandCleanKey && c.is_active !== false && !isForeignBrandModel(brandCleanKey, c.model))
       .map((c) => ({
         brand: c.brand,
         model: c.model,
@@ -196,7 +210,7 @@ export default function RepairBrandPage() {
     const adminNames = new Set(adminModels.map((m) => m.model.toLowerCase().replace(/[\s-]+/g, '')));
 
     const indianList = ALL_INDIAN_PHONES_CATALOG.filter(
-      (p) => p.brand.toLowerCase() === brandCleanKey && !adminNames.has(p.model.toLowerCase().replace(/[\s-]+/g, ''))
+      (p) => p.brand.toLowerCase() === brandCleanKey && !adminNames.has(p.model.toLowerCase().replace(/[\s-]+/g, '')) && !isForeignBrandModel(brandCleanKey, p.model)
     ).map((p) => ({
       brand: p.brand,
       model: p.model,
@@ -209,6 +223,7 @@ export default function RepairBrandPage() {
       (m) =>
         m.brand.toLowerCase() === brandCleanKey &&
         !adminNames.has(m.model.toLowerCase().replace(/[\s-]+/g, '')) &&
+        !isForeignBrandModel(brandCleanKey, m.model) &&
         !indianList.some((ip) => getModelDedupeKey(ip.brand, ip.model) === getModelDedupeKey(m.brand, m.model))
     ).map((m) => ({
       brand: m.brand,
@@ -219,7 +234,7 @@ export default function RepairBrandPage() {
     }));
 
     const rawList = [...adminModels, ...indianList, ...masterList].filter(
-      (m) => !isModelDeleted(m.brand || brandDisplayName, m.model)
+      (m) => !isForeignBrandModel(brandCleanKey, m.model) && !isModelDeleted(m.brand || brandDisplayName, m.model)
     );
 
     // Deduplicate entire list

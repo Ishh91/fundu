@@ -2707,7 +2707,7 @@ export function quotePhone(input = {}, options = {}) {
   }
 
   // Clean rounding to nearest ₹50 for professional consumer pricing
-  const finalOfferAmount = Math.max(FUNDU_POLICY.minOfferFloor, Math.round(rawOffer / 50) * 50);
+  const finalOfferAmount = Math.min(180000, Math.max(FUNDU_POLICY.minOfferFloor, Math.round(rawOffer / 50) * 50));
 
   const quoteId = `FND-Q-${Date.now().toString(36).toUpperCase()}-${Math.floor(1000 + Math.random() * 9000)}`;
 

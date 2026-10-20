@@ -569,7 +569,7 @@ export type CashifyPriceComparison = MarketPriceComparison;
  * Guaranteed: Fundu pays 5% to 7% higher spot cash than standard market rates on every smartphone.
  */
 export function calculateMarketPriceComparison(funduPrice: number): MarketPriceComparison {
-  const safeFundu = Math.max(500, Math.round(funduPrice || 500));
+  const safeFundu = Math.min(180000, Math.max(500, Math.round(funduPrice || 500)));
   const standardMarketPrice = Math.max(450, Math.round(safeFundu / 1.06));
   const extraBonus = Math.max(50, safeFundu - standardMarketPrice);
 

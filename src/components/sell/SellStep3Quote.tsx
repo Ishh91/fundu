@@ -41,6 +41,12 @@ export default function SellStep3Quote({
   handleGoToLoginForExactPrice,
   goToStep,
 }: SellStep3QuoteProps) {
+  const phoneDisplayName = form.model.toLowerCase().startsWith(form.brand.toLowerCase())
+    ? form.model
+    : `${form.brand} ${form.model}`;
+  const rawInspectionOffer = funduQuote?.offerAmount || estimate;
+  const safeInspectionOffer = Math.min(180000, Math.max(500, rawInspectionOffer));
+
   return (
     <div className="max-w-2xl mx-auto space-y-6 animate-fade-in">
       {funduQuote?.status === 'requires_manual_review' ? (
@@ -52,7 +58,7 @@ export default function SellStep3Quote({
 
           <div>
             <h2 className="font-display text-2xl font-black text-[#344257]">
-              {form.brand} {form.model} ({form.storage || '128 GB'})
+              {phoneDisplayName} ({form.storage || '128 GB'})
             </h2>
             <p className="text-xs text-gray-500 mt-1">
               Transparent On-Site Evaluation · No Fabricated Online Pricing
@@ -65,7 +71,7 @@ export default function SellStep3Quote({
               Estimated Buyback Value
             </p>
             <div className="font-display text-4xl sm:text-5xl font-black text-white">
-              {user ? formatINR(funduQuote.offerAmount || estimate) : formatMaskedPrice(funduQuote.offerAmount || estimate)}
+              {user ? formatINR(safeInspectionOffer) : formatMaskedPrice(safeInspectionOffer)}
             </div>
             {!user ? (
               <button
@@ -166,7 +172,7 @@ export default function SellStep3Quote({
               Conditional Estimate · Subject to Doorstep Inspection
             </span>
             <h2 className="font-display text-2xl font-black text-[#344257] mt-2">
-              {form.brand} {form.model} ({form.storage || '128 GB'})
+              {phoneDisplayName} ({form.storage || '128 GB'})
             </h2>
             <p className="text-xs text-gray-500 mt-1">
               Cosmetic Grade: <span className="capitalize font-bold text-gray-700">{form.cosmeticCondition}</span> · Policy Version: {funduQuote?.policyVersion || 'v2026.1'}
@@ -178,9 +184,15 @@ export default function SellStep3Quote({
             <p className="text-xs font-bold uppercase tracking-widest text-[#9ac0dd]">
               Estimated Buyback Offer
             </p>
-            <div className="font-display text-4xl sm:text-5xl font-black text-white">
-              {user ? formatINR(funduQuote?.offerAmount ?? estimate) : formatMaskedPrice(funduQuote?.offerAmount ?? estimate)}
-            </div>
+            {(() => {
+              const rawAmt = funduQuote?.offerAmount ?? estimate;
+              const safeAmt = Math.min(180000, Math.max(500, rawAmt));
+              return (
+                <div className="font-display text-4xl sm:text-5xl font-black text-white">
+                  {user ? formatINR(safeAmt) : formatMaskedPrice(safeAmt)}
+                </div>
+              );
+            })()}
             {!user ? (
               <div className="pt-1">
                 <button
@@ -217,7 +229,8 @@ export default function SellStep3Quote({
 
           {/* Dedicated Fundu Price Match (+5% Extra Cash Guaranteed) Widget */}
           {(() => {
-            const finalAmt = funduQuote?.offerAmount ?? estimate;
+            const rawAmt = funduQuote?.offerAmount ?? estimate;
+            const finalAmt = Math.min(180000, Math.max(500, rawAmt));
             const comparison = calculateMarketPriceComparison(finalAmt);
             return (
               <div className="rounded-2xl border-2 border-emerald-500/40 bg-gradient-to-br from-emerald-50/80 via-white to-teal-50/60 p-5 text-left space-y-3.5 shadow-sm">

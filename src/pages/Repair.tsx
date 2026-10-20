@@ -426,9 +426,23 @@ export default function Repair() {
     if (!form.brand) return [];
     const bLower = form.brand.toLowerCase().trim();
 
+    const isForeignBrandModel = (brandKey: string, modelName: string) => {
+      const mLower = (modelName || '').toLowerCase().trim();
+      if (brandKey === 'apple' && /\b(oneplus|samsung|galaxy|xiaomi|redmi|poco|vivo|iqoo|oppo|realme|motorola|moto|pixel|google|nothing)\b/i.test(mLower)) {
+        return true;
+      }
+      if (brandKey === 'samsung' && /\b(iphone|apple|oneplus|xiaomi|redmi|poco|vivo|iqoo|oppo|realme|motorola|pixel)\b/i.test(mLower)) {
+        return true;
+      }
+      if (brandKey === 'oneplus' && /\b(iphone|apple|samsung|galaxy|xiaomi|redmi|poco|vivo|iqoo|oppo|realme|motorola|pixel)\b/i.test(mLower)) {
+        return true;
+      }
+      return false;
+    };
+
     // 1. Models configured by Admin in repairConfigs
     const adminModels = (repairConfigs || [])
-      .filter((c) => (c.brand || '').toLowerCase().trim() === bLower && c.is_active !== false)
+      .filter((c) => (c.brand || '').toLowerCase().trim() === bLower && c.is_active !== false && !isForeignBrandModel(bLower, c.model))
       .map((c) => ({
         name: c.model,
         brand: c.brand,
@@ -440,7 +454,7 @@ export default function Repair() {
 
     // 2. Master Model Catalog models with explicit series
     const masterModels = MASTER_MODEL_CATALOG
-      .filter((m) => m.brand.toLowerCase() === bLower)
+      .filter((m) => m.brand.toLowerCase() === bLower && !isForeignBrandModel(bLower, m.model))
       .filter((m) => {
         const clean = getModelDedupeKey(m.brand, m.model);
         if (seenNames.has(clean)) return false;
@@ -456,7 +470,7 @@ export default function Repair() {
 
     // 3. Indian Phones Catalog models with series
     const indianModels = ALL_INDIAN_PHONES_CATALOG
-      .filter((p) => p.brand.toLowerCase() === bLower)
+      .filter((p) => p.brand.toLowerCase() === bLower && !isForeignBrandModel(bLower, p.model))
       .filter((p) => {
         const clean = getModelDedupeKey(p.brand, p.model);
         if (seenNames.has(clean)) return false;
@@ -472,6 +486,7 @@ export default function Repair() {
 
     // 4. API models from fetchPhoneModels
     const otherModels = modelsList
+      .filter((m) => !isForeignBrandModel(bLower, m.name))
       .filter((m) => {
         const clean = getModelDedupeKey(form.brand, m.name);
         if (seenNames.has(clean)) return false;

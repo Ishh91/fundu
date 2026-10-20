@@ -55,18 +55,24 @@ export function getEffectivePrice(brand: string, model: string, defaultPrice: nu
   const overrides = getLocalPriceOverrides();
   const key = `${brand.trim().toLowerCase()}:${model.trim().toLowerCase()}`;
   
+  let price = defaultPrice;
   if (storage) {
     const keyWithStorage = `${key}:${storage.trim().toLowerCase()}`;
     if (overrides[keyWithStorage] !== undefined) {
-      return overrides[keyWithStorage];
+      price = overrides[keyWithStorage];
     }
   }
 
-  if (overrides[key] !== undefined) {
-    return overrides[key];
+  if (price === defaultPrice && overrides[key] !== undefined) {
+    price = overrides[key];
   }
 
-  return defaultPrice;
+  // Reject unrealistic price overrides (e.g. corrupt values exceeding ₹2,00,000)
+  if (typeof price === 'number' && price > 200000) {
+    return defaultPrice > 0 && defaultPrice <= 200000 ? defaultPrice : 50000;
+  }
+
+  return price;
 }
 
 /**
