@@ -29,7 +29,7 @@ export default function Home() {
     if (showWelcome) {
       setWelcomeBannerVisible(true);
       // Auto-dismiss welcome banner after 10 seconds
-      const timer = setTimeout(() => setWelcomeBannerVisible(false), 10000);
+      const timer = setTimeout(() => setWelcomeBannerVisible(false), 5000);
       return () => clearTimeout(timer);
     }
   }, [showWelcome]);
