@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useMemo } from 'react';
 import { useNavigate, useSearchParams, useParams, Link } from 'react-router-dom';
-import { getCleanPhoneImage, getCleanBrandLogo } from '../lib/phoneImages';
+import { getCleanPhoneImage, getCleanBrandLogo, BRAND_FRONT_FALLBACKS } from '../lib/phoneImages';
 import { ALL_INDIAN_PHONES_CATALOG } from '../data/indianPhonesCatalog';
 import { MASTER_MODEL_CATALOG } from '../data/masterModelCatalog';
 import { getModelDedupeKey, groupModelsBySeries, inferModelSeries, sortDeviceModelsLatestFirst } from '../data/brandSeriesCatalog';
@@ -833,6 +833,12 @@ export default function Repair() {
                 <img
                   src={getCleanPhoneImage(form.brand, form.model)}
                   alt={form.model}
+                  referrerPolicy="no-referrer"
+                  onError={(e) => {
+                    const el = e.currentTarget;
+                    const fb = BRAND_FRONT_FALLBACKS[(form.brand || '').toLowerCase()] || BRAND_FRONT_FALLBACKS.apple;
+                    if (el.src !== fb) el.src = fb;
+                  }}
                   className="max-h-full max-w-full w-auto h-auto object-contain mix-blend-multiply"
                 />
               </div>
@@ -952,6 +958,12 @@ export default function Repair() {
                               <img
                                 src={getCleanPhoneImage(phone.brand, phone.model)}
                                 alt={phone.model}
+                                referrerPolicy="no-referrer"
+                                onError={(e) => {
+                                  const el = e.currentTarget;
+                                  const fb = BRAND_FRONT_FALLBACKS[(phone.brand || '').toLowerCase()] || BRAND_FRONT_FALLBACKS.apple;
+                                  if (el.src !== fb) el.src = fb;
+                                }}
                                 className="max-h-full max-w-full w-auto h-auto object-contain mix-blend-multiply"
                               />
                             </div>
@@ -1189,6 +1201,12 @@ export default function Repair() {
                                 <img
                                   src={getCleanPhoneImage(form.brand, m.name)}
                                   alt={m.name}
+                                  referrerPolicy="no-referrer"
+                                  onError={(e) => {
+                                    const el = e.currentTarget;
+                                    const fb = BRAND_FRONT_FALLBACKS[(form.brand || '').toLowerCase()] || BRAND_FRONT_FALLBACKS.apple;
+                                    if (el.src !== fb) el.src = fb;
+                                  }}
                                   className="max-h-full max-w-full w-auto h-auto object-contain drop-shadow-sm mix-blend-multiply group-hover:scale-105 transition-transform duration-300"
                                   loading="lazy"
                                 />
@@ -1226,6 +1244,12 @@ export default function Repair() {
                           <img
                             src={getCleanPhoneImage(form.brand, m.name)}
                             alt={m.name}
+                            referrerPolicy="no-referrer"
+                            onError={(e) => {
+                              const el = e.currentTarget;
+                              const fb = BRAND_FRONT_FALLBACKS[(form.brand || '').toLowerCase()] || BRAND_FRONT_FALLBACKS.apple;
+                              if (el.src !== fb) el.src = fb;
+                            }}
                             className="max-h-full max-w-full w-auto h-auto object-contain drop-shadow-sm mix-blend-multiply group-hover:scale-105 transition-transform duration-300"
                             loading="lazy"
                           />
@@ -1308,6 +1332,12 @@ export default function Repair() {
                             <img
                               src={getCleanPhoneImage(item.brand, item.model, item.image)}
                               alt={item.model}
+                              referrerPolicy="no-referrer"
+                              onError={(e) => {
+                                const el = e.currentTarget;
+                                const fb = BRAND_FRONT_FALLBACKS[(item.brand || '').toLowerCase()] || BRAND_FRONT_FALLBACKS.apple;
+                                if (el.src !== fb) el.src = fb;
+                              }}
                               className="max-h-full max-w-full w-auto h-auto object-contain drop-shadow-sm mix-blend-multiply group-hover:scale-105 transition-transform duration-300"
                               loading="lazy"
                             />
@@ -1336,6 +1366,12 @@ export default function Repair() {
                     <img
                       src={getCleanPhoneImage(form.brand, form.model)}
                       alt={form.model}
+                      referrerPolicy="no-referrer"
+                      onError={(e) => {
+                        const el = e.currentTarget;
+                        const fb = BRAND_FRONT_FALLBACKS[(form.brand || '').toLowerCase()] || BRAND_FRONT_FALLBACKS.apple;
+                        if (el.src !== fb) el.src = fb;
+                      }}
                       className="max-h-full max-w-full w-auto h-auto object-contain drop-shadow-md mix-blend-multiply"
                     />
                   </div>
@@ -1525,6 +1561,12 @@ export default function Repair() {
                 <img
                   src={getCleanPhoneImage(form.brand, form.model)}
                   alt={form.model}
+                  referrerPolicy="no-referrer"
+                  onError={(e) => {
+                    const el = e.currentTarget;
+                    const fb = BRAND_FRONT_FALLBACKS[(form.brand || '').toLowerCase()] || BRAND_FRONT_FALLBACKS.apple;
+                    if (el.src !== fb) el.src = fb;
+                  }}
                   className="max-h-full max-w-full w-auto h-auto object-contain mix-blend-multiply drop-shadow-sm"
                 />
               </div>
@@ -1620,6 +1662,12 @@ export default function Repair() {
                     <img
                       src={getCleanPhoneImage(form.brand, form.model)}
                       alt={form.model}
+                      referrerPolicy="no-referrer"
+                      onError={(e) => {
+                        const el = e.currentTarget;
+                        const fb = BRAND_FRONT_FALLBACKS[(form.brand || '').toLowerCase()] || BRAND_FRONT_FALLBACKS.apple;
+                        if (el.src !== fb) el.src = fb;
+                      }}
                       className="max-h-full max-w-full w-auto h-auto object-contain mix-blend-multiply"
                     />
                   </div>
