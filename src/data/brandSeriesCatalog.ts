@@ -295,8 +295,6 @@ export function inferModelSeries(
   const isForeignToApple = /\b(oneplus|samsung|galaxy|xiaomi|redmi|poco|vivo|iqoo|oppo|realme|motorola|moto|pixel|google|nothing)\b/i.test(mLower);
   if ((bLower === 'apple' || bLower === 'iphone') && !isForeignToApple) {
     if (/\bipad\b/i.test(mLower)) return { seriesName: 'Apple iPad & Tablet Series', seriesSlug: 'apple-ipad-series' };
-    if (/\b18\b/i.test(mLower)) return { seriesName: 'iPhone 18 Series', seriesSlug: 'iphone-18-series' };
-    if (/\b(17|17e|air)\b/i.test(mLower)) return { seriesName: 'iPhone 17 Series', seriesSlug: 'iphone-17-series' };
     if (/\b(16|16e)\b/i.test(mLower)) return { seriesName: 'iPhone 16 Series', seriesSlug: 'iphone-16-series' };
     if (/\b15\b/i.test(mLower)) return { seriesName: 'iPhone 15 Series', seriesSlug: 'iphone-15-series' };
     if (/\b14\b/i.test(mLower)) return { seriesName: 'iPhone 14 Series', seriesSlug: 'iphone-14-series' };
@@ -324,7 +322,6 @@ export function inferModelSeries(
     if (/(?:galaxy\s*)?z\s*(?:fold|flip)|\b(fold|flip)/i.test(mLower)) {
       return { seriesName: 'Galaxy Z Series (Fold & Flip)', seriesSlug: 'galaxy-z-series' };
     }
-    if (/\bs26\b/i.test(mLower)) return { seriesName: 'Galaxy S26 Series', seriesSlug: 'galaxy-s26-series' };
     if (/\bs25\b/i.test(mLower)) return { seriesName: 'Galaxy S25 Series', seriesSlug: 'galaxy-s25-series' };
     if (/\bs24\b/i.test(mLower)) return { seriesName: 'Galaxy S24 Series', seriesSlug: 'galaxy-s24-series' };
     if (/\bs23\b/i.test(mLower)) return { seriesName: 'Galaxy S23 Series', seriesSlug: 'galaxy-s23-series' };
@@ -445,35 +442,6 @@ export type SeriesGroup = {
 
 export const BRAND_SERIES_DEFINITIONS: Record<string, BrandSeriesDefinition[]> = {
   apple: [
-    {
-      id: 'iphone-18',
-      slug: 'iphone-18-series',
-      name: 'iPhone 18 Series',
-      brand: 'Apple',
-      image: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-18-pro-max.jpg',
-      description: '18 Pro Max, 18 Pro',
-      pattern: /\biphone\s*18\b/i,
-      defaultModels: [
-        { brand: 'Apple', series: 'iPhone 18 Series', model: 'Apple iPhone 18 Pro Max', storage: '256 GB', price: 131000, image: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-18-pro-max.jpg' },
-        { brand: 'Apple', series: 'iPhone 18 Series', model: 'Apple iPhone 18 Pro', storage: '256 GB', price: 121000, image: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-18-pro.jpg' },
-      ],
-    },
-    {
-      id: 'iphone-17',
-      slug: 'iphone-17-series',
-      name: 'iPhone 17 Series',
-      brand: 'Apple',
-      image: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-16-pro-max.jpg',
-      description: '17 Pro Max, 17 Pro, 17 Air / Slim, 17, 17e',
-      pattern: /\biphone\s*17([a-z0-9]|\b)|\biphone\s*air\b/i,
-      defaultModels: [
-        { brand: 'Apple', series: 'iPhone 17 Series', model: 'Apple iPhone 17 Pro Max', storage: '256 GB', price: 118000, image: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-16-pro-max.jpg' },
-        { brand: 'Apple', series: 'iPhone 17 Series', model: 'Apple iPhone 17 Pro', storage: '256 GB', price: 104000, image: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-16-pro.jpg' },
-        { brand: 'Apple', series: 'iPhone 17 Series', model: 'Apple iPhone 17 Air', storage: '128 GB', price: 82000, image: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-16.jpg' },
-        { brand: 'Apple', series: 'iPhone 17 Series', model: 'Apple iPhone 17', storage: '128 GB', price: 72000, image: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-16.jpg' },
-        { brand: 'Apple', series: 'iPhone 17 Series', model: 'Apple iPhone 17e', storage: '256 GB', price: 47000, image: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-17e.jpg' },
-      ],
-    },
     {
       id: 'iphone-16',
       slug: 'iphone-16-series',
@@ -670,21 +638,6 @@ export const BRAND_SERIES_DEFINITIONS: Record<string, BrandSeriesDefinition[]> =
   ],
 
   samsung: [
-    {
-      id: 'galaxy-s26',
-      slug: 'galaxy-s26-series',
-      name: 'Galaxy S26 Series',
-      brand: 'Samsung',
-      image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s25-ultra-sm-s938.jpg',
-      description: 'S26 Ultra, S26+, S26 5G, S26 FE',
-      pattern: /\bs26\b/i,
-      defaultModels: [
-        { brand: 'Samsung', series: 'Galaxy S26 Series', model: 'Samsung Galaxy S26 Ultra', storage: '256 GB', price: 82920, image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s25-ultra-sm-s938.jpg' },
-        { brand: 'Samsung', series: 'Galaxy S26 Series', model: 'Samsung Galaxy S26 Plus', storage: '256 GB', price: 62750, image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s24-plus-5g-sm-s926.jpg' },
-        { brand: 'Samsung', series: 'Galaxy S26 Series', model: 'Samsung Galaxy S26', storage: '256 GB', price: 52250, image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s24-5g-sm-s921.jpg' },
-        { brand: 'Samsung', series: 'Galaxy S26 Series', model: 'Samsung Galaxy S26 FE 5G', storage: '256 GB', price: 52500, image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s24-fe.jpg' },
-      ],
-    },
     {
       id: 'galaxy-s25',
       slug: 'galaxy-s25-series',
@@ -2043,6 +1996,7 @@ export function groupModelsBySeries(brand: string, allModels: CatalogModelItem[]
           targetGroup.models.push({ ...m, series: targetGroup.name });
           targetGroup.models = sortDeviceModelsLatestFirst(brand, targetGroup.models);
           targetGroup.modelsCount = targetGroup.models.length;
+          assignedModels.add(dKey);
         }
       } else {
         dedupeRemaining.push({ ...m, series: inferred.seriesName });

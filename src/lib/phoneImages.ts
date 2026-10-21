@@ -32,15 +32,6 @@ export const BRAND_OFFICIAL_LOGOS: Record<string, string> = {
 // Model-Specific Official Studio Renders (sorted longest keyword first)
 export const RAW_MODEL_EXACT_RENDERS: Array<{ keyword: string; url: string }> = [
   // Apple iPhone Pro Max / Pro / Plus / Mini / SE / iPad
-  { keyword: 'iphone 18 pro max', url: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-16-pro-max.jpg' },
-  { keyword: 'iphone 18 pro', url: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-16-pro.jpg' },
-  { keyword: 'iphone 18', url: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-16.jpg' },
-  { keyword: 'iphone 17 pro max', url: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-16-pro-max.jpg' },
-  { keyword: 'iphone 17 pro', url: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-16-pro.jpg' },
-  { keyword: 'iphone 17 air', url: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-16.jpg' },
-  { keyword: 'iphone 17 slim', url: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-16.jpg' },
-  { keyword: 'iphone 17e', url: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-16e.jpg' },
-  { keyword: 'iphone 17', url: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-16.jpg' },
   { keyword: 'iphone 16 pro max', url: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-16-pro-max.jpg' },
   { keyword: 'iphone 16 pro', url: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-16-pro.jpg' },
   { keyword: 'iphone 16 plus', url: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-16-plus.jpg' },
@@ -97,13 +88,6 @@ export const RAW_MODEL_EXACT_RENDERS: Array<{ keyword: string; url: string }> = 
   { keyword: 's21 ultra', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s21-ultra-5g-.jpg' },
   { keyword: 's21 plus', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s21-plus-5g-.jpg' },
   { keyword: 's21+', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s21-plus-5g-.jpg' },
-  { keyword: 's26 ultra', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s25-ultra-sm-s938.jpg' },
-  { keyword: 's26 plus', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s24-plus-5g-sm-s926.jpg' },
-  { keyword: 's26+', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s24-plus-5g-sm-s926.jpg' },
-  { keyword: 's26 fe', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s24-fe.jpg' },
-  { keyword: 's26', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s24-5g-sm-s921.jpg' },
-  { keyword: 's25 fe', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s24-fe.jpg' },
-  { keyword: 's25 edge', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s24-5g-sm-s921.jpg' },
   { keyword: 's21 fe', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s21-fe-5g.jpg' },
   { keyword: 's21', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s21-5g-r.jpg' },
   { keyword: 's20 ultra', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s20-ultra-.jpg' },
@@ -120,10 +104,6 @@ export const RAW_MODEL_EXACT_RENDERS: Array<{ keyword: string; url: string }> = 
   { keyword: 's8 plus', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s8-plus-.jpg' },
   { keyword: 's8+', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s8-plus-.jpg' },
   { keyword: 's8', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s8-.jpg' },
-  { keyword: 'z flip 8', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-z-flip6.jpg' },
-  { keyword: 'z flip 7', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-z-flip6.jpg' },
-  { keyword: 'z flip7 fe', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-z-flip6.jpg' },
-  { keyword: 'z flip7', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-z-flip6.jpg' },
   { keyword: 'z flip 6', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-z-flip6.jpg' },
   { keyword: 'z flip6', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-z-flip6.jpg' },
   { keyword: 'flip 6', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-z-flip6.jpg' },
@@ -142,9 +122,6 @@ export const RAW_MODEL_EXACT_RENDERS: Array<{ keyword: string; url: string }> = 
   { keyword: 'flip3', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-z-flip3-5g.jpg' },
   { keyword: 'z flip', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-z-flip-01.jpg' },
   { keyword: 'galaxy flip', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-z-flip-01.jpg' },
-  { keyword: 'z fold 8 ultra', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-z-fold6.jpg' },
-  { keyword: 'z fold 8', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-z-fold6.jpg' },
-  { keyword: 'z fold 7', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-z-fold6.jpg' },
   { keyword: 'z fold 6', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-z-fold6.jpg' },
   { keyword: 'z fold6', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-z-fold6.jpg' },
   { keyword: 'fold 6', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-z-fold6.jpg' },
@@ -324,12 +301,22 @@ export const RAW_MODEL_EXACT_RENDERS: Array<{ keyword: string; url: string }> = 
   { keyword: 'pixel 9 pro xl', url: 'https://fdn2.gsmarena.com/vv/bigpic/google-pixel-9-pro-xl.jpg' },
   { keyword: 'pixel 9 pro', url: 'https://fdn2.gsmarena.com/vv/bigpic/google-pixel-9-pro-.jpg' },
   { keyword: 'pixel 9', url: 'https://fdn2.gsmarena.com/vv/bigpic/google-pixel-9.jpg' },
+  { keyword: 'pixel fold', url: 'https://fdn2.gsmarena.com/vv/bigpic/google-pixel-fold.jpg' },
   { keyword: 'pixel 8a', url: 'https://fdn2.gsmarena.com/vv/bigpic/google-pixel-8a.jpg' },
   { keyword: 'pixel 8 pro', url: 'https://fdn2.gsmarena.com/vv/bigpic/google-pixel-8-pro.jpg' },
   { keyword: 'pixel 8', url: 'https://fdn2.gsmarena.com/vv/bigpic/google-pixel-8.jpg' },
   { keyword: 'pixel 7a', url: 'https://fdn2.gsmarena.com/vv/bigpic/google-pixel-7a.jpg' },
-  { keyword: 'pixel 7 pro', url: 'https://fdn2.gsmarena.com/vv/bigpic/google-pixel-7-pro.jpg' },
-  { keyword: 'pixel 7', url: 'https://fdn2.gsmarena.com/vv/bigpic/google-pixel-7.jpg' },
+  { keyword: 'pixel 7 pro', url: 'https://fdn2.gsmarena.com/vv/bigpic/google-pixel-7-pro-.jpg' },
+  { keyword: 'pixel 7', url: 'https://fdn2.gsmarena.com/vv/bigpic/google-pixel-7-.jpg' },
+  { keyword: 'pixel 6 pro', url: 'https://fdn2.gsmarena.com/vv/bigpic/google-pixel-6-pro.jpg' },
+  { keyword: 'pixel 6a', url: 'https://fdn2.gsmarena.com/vv/bigpic/google-pixel-6a.jpg' },
+  { keyword: 'pixel 6', url: 'https://fdn2.gsmarena.com/vv/bigpic/google-pixel-6.jpg' },
+  { keyword: 'pixel 5', url: 'https://fdn2.gsmarena.com/vv/bigpic/google-pixel-5-5g.jpg' },
+  { keyword: 'pixel 4 xl', url: 'https://fdn2.gsmarena.com/vv/bigpic/google-pixel-4-xl.jpg' },
+  { keyword: 'pixel 4a', url: 'https://fdn2.gsmarena.com/vv/bigpic/google-pixel-4a.jpg' },
+  { keyword: 'pixel 3a xl', url: 'https://fdn2.gsmarena.com/vv/bigpic/google-pixel-3a-xl.jpg' },
+  { keyword: 'pixel 3a', url: 'https://fdn2.gsmarena.com/vv/bigpic/google-pixel-3a.jpg' },
+  { keyword: 'pixel 3 xl', url: 'https://fdn2.gsmarena.com/vv/bigpic/google-pixel-3-xl.jpg' },
 
   // Nothing
   { keyword: 'nothing phone 2a', url: 'https://fdn2.gsmarena.com/vv/bigpic/nothing-phone-2a.jpg' },
@@ -444,20 +431,46 @@ export function hasCustomModelImage(brand?: string, model?: string): boolean {
 function cleanUrl(url: string, brandHint?: string): string {
   if (!url) return '';
   let cleaned = url.trim();
+
+  // Reject fake placeholder patterns immediately
+  if (cleaned.includes('777/thumb') || cleaned.includes('unsplash.com')) {
+    return '';
+  }
+
+  // Remove doubled brand prefixes in GSMArena URLs
   cleaned = cleaned.replace(/\/vv\/bigpic\/([a-z0-9]+)-\1-/gi, '/vv/bigpic/$1-');
   cleaned = cleaned.replace(/\/vv\/bigpic\/samsung-samsung-/gi, '/vv/bigpic/samsung-');
   cleaned = cleaned.replace(/\/vv\/bigpic\/apple-apple-/gi, '/vv/bigpic/apple-');
+  cleaned = cleaned.replace(/\/vv\/bigpic\/google-google-/gi, '/vv/bigpic/google-');
   cleaned = cleaned.replace(/\/vv\/bigpic\/xiaomi-xiaomi-/gi, '/vv/bigpic/xiaomi-');
   cleaned = cleaned.replace(/\/vv\/bigpic\/oneplus-oneplus-/gi, '/vv/bigpic/oneplus-');
   cleaned = cleaned.replace(/\/vv\/bigpic\/vivo-vivo-/gi, '/vv/bigpic/vivo-');
   cleaned = cleaned.replace(/\/vv\/bigpic\/oppo-oppo-/gi, '/vv/bigpic/oppo-');
   cleaned = cleaned.replace(/\/vv\/bigpic\/realme-realme-/gi, '/vv/bigpic/realme-');
+  cleaned = cleaned.replace(/\/vv\/bigpic\/iqoo-iqoo-/gi, '/vv/bigpic/vivo-iqoo-');
+  cleaned = cleaned.replace(/\/vv\/bigpic\/iqoo-/gi, '/vv/bigpic/vivo-iqoo-');
 
-  // Sanitize known broken or missing GSMarena suffixes
+  // Sanitize known broken or missing GSMarena suffixes for Samsung
   cleaned = cleaned.replace(/samsung-galaxy-z-flip6-5g\.jpg/i, 'samsung-galaxy-z-flip6.jpg');
   cleaned = cleaned.replace(/samsung-galaxy-z-fold6-5g\.jpg/i, 'samsung-galaxy-z-fold6.jpg');
   cleaned = cleaned.replace(/samsung-galaxy-z-flip\.jpg$/i, 'samsung-galaxy-z-flip-01.jpg');
   cleaned = cleaned.replace(/samsung-galaxy-c9-pro\.jpg$/i, 'samsung-galaxy-c9-pro-.jpg');
+  cleaned = cleaned.replace(/samsung-galaxy-s21-ultra-5g\.jpg$/i, 'samsung-galaxy-s21-ultra-5g-.jpg');
+  cleaned = cleaned.replace(/samsung-galaxy-s21-plus-5g\.jpg$/i, 'samsung-galaxy-s21-plus-5g-.jpg');
+  cleaned = cleaned.replace(/samsung-galaxy-s20-ultra\.jpg$/i, 'samsung-galaxy-s20-ultra-.jpg');
+  cleaned = cleaned.replace(/samsung-galaxy-s20\.jpg$/i, 'samsung-galaxy-s20-.jpg');
+  cleaned = cleaned.replace(/samsung-galaxy-s9-plus\.jpg$/i, 'samsung-galaxy-s9-plus-.jpg');
+  cleaned = cleaned.replace(/samsung-galaxy-s9\.jpg$/i, 'samsung-galaxy-s9-.jpg');
+  cleaned = cleaned.replace(/samsung-galaxy-s8-plus\.jpg$/i, 'samsung-galaxy-s8-plus-.jpg');
+  cleaned = cleaned.replace(/samsung-galaxy-s8\.jpg$/i, 'samsung-galaxy-s8-.jpg');
+  cleaned = cleaned.replace(/samsung-galaxy-note20-ultra\.jpg$/i, 'samsung-galaxy-note20-ultra-.jpg');
+  cleaned = cleaned.replace(/samsung-galaxy-note10-plus\.jpg$/i, 'samsung-galaxy-note10-plus-.jpg');
+  cleaned = cleaned.replace(/samsung-galaxy-note10\.jpg$/i, 'samsung-galaxy-note10-.jpg');
+
+  // Google Pixel URL fixes
+  cleaned = cleaned.replace(/google-pixel-9-pro\.jpg$/i, 'google-pixel-9-pro-.jpg');
+  cleaned = cleaned.replace(/google-pixel-7\.jpg$/i, 'google-pixel-7-.jpg');
+  cleaned = cleaned.replace(/google-pixel-7-pro\.jpg$/i, 'google-pixel-7-pro-.jpg');
 
   // OnePlus URL fixes (GSMArena requires trailing dash for some models)
   cleaned = cleaned.replace(/oneplus-6\.jpg$/i, 'oneplus-6-.jpg');
