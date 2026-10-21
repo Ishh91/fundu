@@ -247,40 +247,45 @@ export const RAW_MODEL_EXACT_RENDERS: Array<{ keyword: string; url: string }> = 
   { keyword: 'galaxy a10', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-a10.jpg' },
 
   // OnePlus
-  { keyword: 'oneplus 13s', url: 'https://fdn2.gsmarena.com/vv/bigpic/oneplus-12.jpg' },
+  { keyword: 'oneplus open', url: 'https://fdn2.gsmarena.com/vv/bigpic/oneplus-open.jpg' },
   { keyword: 'oneplus 12r', url: 'https://fdn2.gsmarena.com/vv/bigpic/oneplus-12r.jpg' },
   { keyword: 'oneplus 12', url: 'https://fdn2.gsmarena.com/vv/bigpic/oneplus-12.jpg' },
-  { keyword: 'oneplus open', url: 'https://fdn2.gsmarena.com/vv/bigpic/oneplus-12.jpg' },
   { keyword: 'oneplus 11r', url: 'https://fdn2.gsmarena.com/vv/bigpic/oneplus-ace2.jpg' },
   { keyword: 'oneplus 11', url: 'https://fdn2.gsmarena.com/vv/bigpic/oneplus-11.jpg' },
   { keyword: 'oneplus 10 pro', url: 'https://fdn2.gsmarena.com/vv/bigpic/oneplus-10-pro.jpg' },
   { keyword: 'oneplus 10r 5g', url: 'https://fdn2.gsmarena.com/vv/bigpic/oneplus-10r.jpg' },
   { keyword: 'oneplus 10r', url: 'https://fdn2.gsmarena.com/vv/bigpic/oneplus-10r.jpg' },
   { keyword: 'oneplus 10t', url: 'https://fdn2.gsmarena.com/vv/bigpic/oneplus-10t-5g.jpg' },
-  { keyword: 'oneplus 9 pro', url: 'https://fdn2.gsmarena.com/vv/bigpic/oneplus-12.jpg' },
-  { keyword: 'oneplus 9rt', url: 'https://fdn2.gsmarena.com/vv/bigpic/oneplus-12.jpg' },
-  { keyword: 'oneplus 9', url: 'https://fdn2.gsmarena.com/vv/bigpic/oneplus-12.jpg' },
-  { keyword: 'oneplus 8 5g uw', url: 'https://fdn2.gsmarena.com/vv/bigpic/oneplus-12.jpg' },
-  { keyword: 'oneplus 8', url: 'https://fdn2.gsmarena.com/vv/bigpic/oneplus-12.jpg' },
-  { keyword: 'oneplus 7t pro mclaren', url: 'https://fdn2.gsmarena.com/vv/bigpic/oneplus-12.jpg' },
-  { keyword: 'oneplus 7t', url: 'https://fdn2.gsmarena.com/vv/bigpic/oneplus-12.jpg' },
-  { keyword: 'oneplus 7 pro', url: 'https://fdn2.gsmarena.com/vv/bigpic/oneplus-12.jpg' },
-  { keyword: 'oneplus 7', url: 'https://fdn2.gsmarena.com/vv/bigpic/oneplus-12.jpg' },
-  { keyword: 'oneplus 6t mclaren', url: 'https://fdn2.gsmarena.com/vv/bigpic/oneplus-12.jpg' },
-  { keyword: 'oneplus 6t', url: 'https://fdn2.gsmarena.com/vv/bigpic/oneplus-12.jpg' },
-  { keyword: 'oneplus 6', url: 'https://fdn2.gsmarena.com/vv/bigpic/oneplus-12.jpg' },
-  { keyword: 'oneplus 3t', url: 'https://fdn2.gsmarena.com/vv/bigpic/oneplus-12.jpg' },
-  { keyword: 'oneplus nord ce4 lite', url: 'https://fdn2.gsmarena.com/vv/bigpic/oneplus-nord-ce3-5g.jpg' },
-  { keyword: 'oneplus nord ce4', url: 'https://fdn2.gsmarena.com/vv/bigpic/oneplus-nord-ce3-5g.jpg' },
-  { keyword: 'oneplus nord ce3 lite', url: 'https://fdn2.gsmarena.com/vv/bigpic/oneplus-nord-ce3-5g.jpg' },
+  { keyword: 'oneplus 9 pro', url: 'https://fdn2.gsmarena.com/vv/bigpic/oneplus-9-pro-.jpg' },
+  { keyword: 'oneplus 9rt', url: 'https://fdn2.gsmarena.com/vv/bigpic/oneplus-9rt-5g.jpg' },
+  { keyword: 'oneplus 9r', url: 'https://fdn2.gsmarena.com/vv/bigpic/oneplus-9r.jpg' },
+  { keyword: 'oneplus 9', url: 'https://fdn2.gsmarena.com/vv/bigpic/oneplus-9-.jpg' },
+  { keyword: 'oneplus 8t', url: 'https://fdn2.gsmarena.com/vv/bigpic/oneplus-8t-5g.jpg' },
+  { keyword: 'oneplus 8 pro', url: 'https://fdn2.gsmarena.com/vv/bigpic/oneplus-8-pro.jpg' },
+  { keyword: 'oneplus 8 5g uw', url: 'https://fdn2.gsmarena.com/vv/bigpic/oneplus-8.jpg' },
+  { keyword: 'oneplus 8', url: 'https://fdn2.gsmarena.com/vv/bigpic/oneplus-8.jpg' },
+  { keyword: 'oneplus 7t pro', url: 'https://api.mobileapi.dev/devices/16320/thumb.png' },
+  { keyword: 'oneplus 7t', url: 'https://fdn2.gsmarena.com/vv/bigpic/oneplus-7t-.jpg' },
+  { keyword: 'oneplus 7 pro', url: 'https://fdn2.gsmarena.com/vv/bigpic/oneplus-7-pro-r.jpg' },
+  { keyword: 'oneplus 7', url: 'https://fdn2.gsmarena.com/vv/bigpic/oneplus-7-.jpg' },
+  { keyword: 'oneplus 6t', url: 'https://api.mobileapi.dev/devices/809/thumb.png' },
+  { keyword: 'oneplus 6', url: 'https://fdn2.gsmarena.com/vv/bigpic/oneplus-6-.jpg' },
+  { keyword: 'oneplus 5t', url: 'https://fdn2.gsmarena.com/vv/bigpic/oneplus-5t.jpg' },
+  { keyword: 'oneplus 5', url: 'https://api.mobileapi.dev/devices/369/thumb.png' },
+  { keyword: 'oneplus 3t', url: 'https://fdn2.gsmarena.com/vv/bigpic/oneplus-3t-.jpg' },
+  { keyword: 'oneplus 3', url: 'https://api.mobileapi.dev/devices/815/thumb.png' },
+  { keyword: 'oneplus nord 4', url: 'https://fdn2.gsmarena.com/vv/bigpic/oneplus-nord-4-5g.jpg' },
+  { keyword: 'oneplus nord 3', url: 'https://fdn2.gsmarena.com/vv/bigpic/oneplus-nord-3.jpg' },
+  { keyword: 'oneplus nord 2t', url: 'https://fdn2.gsmarena.com/vv/bigpic/oneplus-nord-2t.jpg' },
+  { keyword: 'oneplus nord 2', url: 'https://fdn2.gsmarena.com/vv/bigpic/oneplus-nord-2-5g.jpg' },
+  { keyword: 'oneplus nord ce4 lite', url: 'https://fdn2.gsmarena.com/vv/bigpic/oneplus-nord-ce4-lite.jpg' },
+  { keyword: 'oneplus nord ce4', url: 'https://fdn2.gsmarena.com/vv/bigpic/oneplus-nord-ce4.jpg' },
+  { keyword: 'oneplus nord ce3 lite', url: 'https://fdn2.gsmarena.com/vv/bigpic/oneplus-nord-ce3-lite.jpg' },
   { keyword: 'oneplus nord ce3', url: 'https://fdn2.gsmarena.com/vv/bigpic/oneplus-nord-ce3-5g.jpg' },
-  { keyword: 'oneplus nord ce2 lite', url: 'https://fdn2.gsmarena.com/vv/bigpic/oneplus-nord-ce3-5g.jpg' },
-  { keyword: 'oneplus nord ce5', url: 'https://fdn2.gsmarena.com/vv/bigpic/oneplus-nord-ce3-5g.jpg' },
-  { keyword: 'oneplus nord 6', url: 'https://fdn2.gsmarena.com/vv/bigpic/oneplus-nord-ce3-5g.jpg' },
-  { keyword: 'oneplus nord 5', url: 'https://fdn2.gsmarena.com/vv/bigpic/oneplus-nord-ce3-5g.jpg' },
-  { keyword: 'oneplus nord 4', url: 'https://fdn2.gsmarena.com/vv/bigpic/oneplus-nord-ce3-5g.jpg' },
-  { keyword: 'oneplus nord 3', url: 'https://fdn2.gsmarena.com/vv/bigpic/oneplus-nord-ce3-5g.jpg' },
-  { keyword: 'oneplus nord', url: 'https://fdn2.gsmarena.com/vv/bigpic/oneplus-nord-ce3-5g.jpg' },
+  { keyword: 'oneplus nord ce2 lite', url: 'https://fdn2.gsmarena.com/vv/bigpic/oneplus-nord-ce-2-lite-5g.jpg' },
+  { keyword: 'oneplus nord ce2', url: 'https://fdn2.gsmarena.com/vv/bigpic/oneplus-nord-ce-2-5g.jpg' },
+  { keyword: 'oneplus nord ce', url: 'https://fdn2.gsmarena.com/vv/bigpic/oneplus-nord-ce-5g.jpg' },
+  { keyword: 'oneplus nord', url: 'https://fdn2.gsmarena.com/vv/bigpic/oneplus-nord-.jpg' },
 
   // Realme
   { keyword: 'realme 13 pro+', url: 'https://fdn2.gsmarena.com/vv/bigpic/realme-13-pro-plus.jpg' },
@@ -454,7 +459,28 @@ function cleanUrl(url: string, brandHint?: string): string {
   cleaned = cleaned.replace(/samsung-galaxy-z-flip\.jpg$/i, 'samsung-galaxy-z-flip-01.jpg');
   cleaned = cleaned.replace(/samsung-galaxy-c9-pro\.jpg$/i, 'samsung-galaxy-c9-pro-.jpg');
 
+  // OnePlus URL fixes (GSMArena requires trailing dash for some models)
+  cleaned = cleaned.replace(/oneplus-6\.jpg$/i, 'oneplus-6-.jpg');
+  cleaned = cleaned.replace(/oneplus-7\.jpg$/i, 'oneplus-7-.jpg');
+  cleaned = cleaned.replace(/oneplus-7t\.jpg$/i, 'oneplus-7t-.jpg');
+  cleaned = cleaned.replace(/oneplus-9\.jpg$/i, 'oneplus-9-.jpg');
+  cleaned = cleaned.replace(/oneplus-9-pro\.jpg$/i, 'oneplus-9-pro-.jpg');
+  cleaned = cleaned.replace(/oneplus-3t\.jpg$/i, 'oneplus-3t-.jpg');
+  cleaned = cleaned.replace(/oneplus-11r-5g\.jpg$/i, 'oneplus-ace2.jpg');
+  cleaned = cleaned.replace(/oneplus-11r\.jpg$/i, 'oneplus-ace2.jpg');
+
   return cleaned;
+}
+
+/**
+ * Returns an authentic official brand flagship photo to fall back on when a specific model image 404s
+ */
+export function getBrandFrontFallback(brand?: string): string {
+  const b = (brand || '').toLowerCase().trim();
+  for (const [key, url] of Object.entries(BRAND_FRONT_FALLBACKS)) {
+    if (b.includes(key)) return url;
+  }
+  return BRAND_FRONT_FALLBACKS.apple;
 }
 
 /**

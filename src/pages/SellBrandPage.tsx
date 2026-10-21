@@ -677,18 +677,12 @@ export default function SellBrandPage() {
                         referrerPolicy="no-referrer"
                         onError={(e) => {
                           const target = e.currentTarget;
-                          if (!target.dataset.triedCanonical) {
-                            target.dataset.triedCanonical = 'true';
-                            const bSlug = (m.brand || brandDisplayName).toLowerCase().replace(/[^a-z0-9]/g, '');
-                            const mSlug = m.model
-                              .toLowerCase()
-                              .replace(new RegExp(`^${bSlug}\\s*`, 'i'), '')
-                              .replace(/\+/g, '-plus')
-                              .replace(/[^a-z0-9]+/g, '-')
-                              .replace(/^-+|-+$/g, '');
-                            const canonical = `https://fdn2.gsmarena.com/vv/bigpic/${bSlug}-${mSlug}.jpg`;
-                            if (target.src !== canonical) {
-                              target.src = canonical;
+                          const bSlug = (m.brand || brandDisplayName).toLowerCase().replace(/[^a-z0-9]/g, '');
+                          if (!target.dataset.triedBrandFallback) {
+                            target.dataset.triedBrandFallback = 'true';
+                            const fallback = BRAND_FRONT_FALLBACKS[bSlug] || BRAND_FRONT_FALLBACKS.apple;
+                            if (target.src !== fallback) {
+                              target.src = fallback;
                               return;
                             }
                           }

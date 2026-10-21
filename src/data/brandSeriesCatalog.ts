@@ -11,6 +11,9 @@ export function getModelDedupeKey(brand: string, model: string): string {
   if (bClean && clean.startsWith(bClean)) {
     clean = clean.slice(bClean.length).trim();
   }
+  // Normalize special editions & redundant suffixes
+  clean = clean.replace(/\b(marble\s*edition|mclaren\s*edition|mclaren|150w|edition)\b/gi, '');
+
   // Normalize Fold / Flip 5G redundancy
   clean = clean.replace(/\b(fold|flip)\s*([0-9]+)\s*5g\b/gi, '$1 $2');
   clean = clean.replace(/\b(fold|flip)([0-9]+)5g\b/gi, '$1 $2');
@@ -22,6 +25,9 @@ export function getModelDedupeKey(brand: string, model: string): string {
 
   // Strip generic trailing 5g/4g suffix for deduplication so identical models match
   clean = clean.replace(/\s+(?:5g|4g)$/i, '');
+
+  // Normalize Nord CE spacing
+  clean = clean.replace(/nord\s*ce\s*/gi, 'nordce');
 
   return clean
     .replace(/\+/g, 'plus')
@@ -339,16 +345,15 @@ export function inferModelSeries(
   // 3. OnePlus
   const isForeignToOnePlus = /\b(iphone|apple|samsung|galaxy|xiaomi|redmi|poco|vivo|iqoo|oppo|realme|motorola|pixel)\b/i.test(mLower);
   if (bLower === 'oneplus' && !isForeignToOnePlus) {
-    if (/\b13\b/i.test(mLower)) return { seriesName: 'OnePlus 13 Series', seriesSlug: 'oneplus-13-series' };
-    if (/\b12\b/i.test(mLower)) return { seriesName: 'OnePlus 12 Series', seriesSlug: 'oneplus-12-series' };
+    if (/\b(13|12)\b/i.test(mLower)) return { seriesName: 'OnePlus 13 & 12 Series', seriesSlug: 'oneplus-13-12-series' };
     if (/\b11\b/i.test(mLower)) return { seriesName: 'OnePlus 11 Series', seriesSlug: 'oneplus-11-series' };
     if (/\b10\b/i.test(mLower)) return { seriesName: 'OnePlus 10 Series', seriesSlug: 'oneplus-10-series' };
     if (/\b9\b/i.test(mLower)) return { seriesName: 'OnePlus 9 Series', seriesSlug: 'oneplus-9-series' };
-    if (/\b8\b/i.test(mLower)) return { seriesName: 'OnePlus 8 Series', seriesSlug: 'oneplus-8-series' };
-    if (/\b(7|6|5|3|2|1|x)\b/i.test(mLower)) return { seriesName: 'OnePlus 7 & Classic Series', seriesSlug: 'oneplus-classic-series' };
+    if (/\b(8|7)\b/i.test(mLower)) return { seriesName: 'OnePlus 8 & 7 Series', seriesSlug: 'oneplus-8-7-series' };
     if (/\bnord\b/i.test(mLower)) return { seriesName: 'OnePlus Nord Series', seriesSlug: 'oneplus-nord-series' };
-    if (/\bopen\b/i.test(mLower)) return { seriesName: 'OnePlus Open Series', seriesSlug: 'oneplus-open-series' };
-    return { seriesName: 'OnePlus Number Series', seriesSlug: 'oneplus-number-series' };
+    if (/\bopen\b/i.test(mLower)) return { seriesName: 'OnePlus Open & Foldable Series', seriesSlug: 'oneplus-open-series' };
+    if (/\b(6|5|3|2|1|x)\b/i.test(mLower)) return { seriesName: 'OnePlus 6 & Classic Series', seriesSlug: 'oneplus-classic-series' };
+    return { seriesName: 'OnePlus Nord Series', seriesSlug: 'oneplus-nord-series' };
   }
 
   // 4. Xiaomi / Redmi / Poco
@@ -959,10 +964,10 @@ export const BRAND_SERIES_DEFINITIONS: Record<string, BrandSeriesDefinition[]> =
       description: 'OnePlus 13, 13R, 12, 12R',
       pattern: /\b(13|13r|12|12r)\b/i,
       defaultModels: [
-        { brand: 'OnePlus', series: 'OnePlus 13 & 12 Series', model: 'OnePlus 13', storage: '256 GB', price: 58000, image: 'https://fdn2.gsmarena.com/vv/bigpic/oneplus-13.jpg' },
-        { brand: 'OnePlus', series: 'OnePlus 13 & 12 Series', model: 'OnePlus 13R', storage: '128 GB', price: 38000, image: 'https://api.mobileapi.dev/devices/366/thumb.png' },
-        { brand: 'OnePlus', series: 'OnePlus 13 & 12 Series', model: 'OnePlus 12', storage: '256 GB', price: 42000, image: 'https://fdn2.gsmarena.com/vv/bigpic/oneplus-12.jpg' },
-        { brand: 'OnePlus', series: 'OnePlus 13 & 12 Series', model: 'OnePlus 12R', storage: '128 GB', price: 28000, image: 'https://api.mobileapi.dev/devices/364/thumb.png' },
+        { brand: 'OnePlus', series: 'OnePlus 13 & 12 Series', model: 'OnePlus 13', storage: '256 GB', price: 42550, image: 'https://fdn2.gsmarena.com/vv/bigpic/oneplus-13.jpg' },
+        { brand: 'OnePlus', series: 'OnePlus 13 & 12 Series', model: 'OnePlus 13R', storage: '128 GB', price: 32050, image: 'https://api.mobileapi.dev/devices/366/thumb.png' },
+        { brand: 'OnePlus', series: 'OnePlus 13 & 12 Series', model: 'OnePlus 12', storage: '256 GB', price: 34150, image: 'https://fdn2.gsmarena.com/vv/bigpic/oneplus-12.jpg' },
+        { brand: 'OnePlus', series: 'OnePlus 13 & 12 Series', model: 'OnePlus 12R', storage: '128 GB', price: 26340, image: 'https://api.mobileapi.dev/devices/364/thumb.png' },
       ],
     },
     {
@@ -974,8 +979,8 @@ export const BRAND_SERIES_DEFINITIONS: Record<string, BrandSeriesDefinition[]> =
       description: 'OnePlus 11 5G, 11R',
       pattern: /\b(11|11r)\b/i,
       defaultModels: [
-        { brand: 'OnePlus', series: 'OnePlus 11 Series', model: 'OnePlus 11', storage: '128 GB', price: 32000, image: 'https://fdn2.gsmarena.com/vv/bigpic/oneplus-11.jpg' },
-        { brand: 'OnePlus', series: 'OnePlus 11 Series', model: 'OnePlus 11R', storage: '128 GB', price: 24000, image: 'https://api.mobileapi.dev/devices/362/thumb.png' },
+        { brand: 'OnePlus', series: 'OnePlus 11 Series', model: 'OnePlus 11', storage: '128 GB', price: 23960, image: 'https://fdn2.gsmarena.com/vv/bigpic/oneplus-11.jpg' },
+        { brand: 'OnePlus', series: 'OnePlus 11 Series', model: 'OnePlus 11R', storage: '128 GB', price: 21990, image: 'https://api.mobileapi.dev/devices/362/thumb.png' },
       ],
     },
     {
@@ -985,12 +990,11 @@ export const BRAND_SERIES_DEFINITIONS: Record<string, BrandSeriesDefinition[]> =
       brand: 'OnePlus',
       image: 'https://fdn2.gsmarena.com/vv/bigpic/oneplus-10-pro.jpg',
       description: 'OnePlus 10 Pro, 10T, 10R',
-      pattern: /\b(10\s*pro|10t|10r)\b/i,
+      pattern: /\b(10\s*pro|10t|10r|10)\b/i,
       defaultModels: [
-        { brand: 'OnePlus', series: 'OnePlus 10 Series', model: 'OnePlus 10 Pro', storage: '128 GB', price: 26000, image: 'https://fdn2.gsmarena.com/vv/bigpic/oneplus-10-pro.jpg' },
-        { brand: 'OnePlus', series: 'OnePlus 10 Series', model: 'OnePlus 10T', storage: '128 GB', price: 22000, image: 'https://api.mobileapi.dev/devices/16342/thumb.png' },
-        { brand: 'OnePlus', series: 'OnePlus 10 Series', model: 'OnePlus 10R 150W', storage: '128 GB', price: 19000, image: 'https://api.mobileapi.dev/devices/370/thumb.png' },
-        { brand: 'OnePlus', series: 'OnePlus 10 Series', model: 'OnePlus 10R', storage: '128 GB', price: 18000, image: 'https://api.mobileapi.dev/devices/16344/thumb.png' },
+        { brand: 'OnePlus', series: 'OnePlus 10 Series', model: 'OnePlus 10 Pro', storage: '128 GB', price: 13860, image: 'https://fdn2.gsmarena.com/vv/bigpic/oneplus-10-pro.jpg' },
+        { brand: 'OnePlus', series: 'OnePlus 10 Series', model: 'OnePlus 10T', storage: '128 GB', price: 14350, image: 'https://api.mobileapi.dev/devices/16342/thumb.png' },
+        { brand: 'OnePlus', series: 'OnePlus 10 Series', model: 'OnePlus 10R', storage: '128 GB', price: 11250, image: 'https://api.mobileapi.dev/devices/16344/thumb.png' },
       ],
     },
     {
@@ -1002,10 +1006,10 @@ export const BRAND_SERIES_DEFINITIONS: Record<string, BrandSeriesDefinition[]> =
       description: 'OnePlus 9 Pro, 9RT, 9, 9R',
       pattern: /\b(9\s*pro|9rt|9r|9)\b/i,
       defaultModels: [
-        { brand: 'OnePlus', series: 'OnePlus 9 Series', model: 'OnePlus 9 Pro', storage: '128 GB', price: 20000, image: 'https://fdn2.gsmarena.com/vv/bigpic/oneplus-9-pro-.jpg' },
-        { brand: 'OnePlus', series: 'OnePlus 9 Series', model: 'OnePlus 9RT', storage: '128 GB', price: 17500, image: 'https://fdn2.gsmarena.com/vv/bigpic/oneplus-9rt-5g.jpg' },
-        { brand: 'OnePlus', series: 'OnePlus 9 Series', model: 'OnePlus 9', storage: '128 GB', price: 16000, image: 'https://fdn2.gsmarena.com/vv/bigpic/oneplus-9-.jpg' },
-        { brand: 'OnePlus', series: 'OnePlus 9 Series', model: 'OnePlus 9R', storage: '128 GB', price: 15000, image: 'https://fdn2.gsmarena.com/vv/bigpic/oneplus-9r.jpg' },
+        { brand: 'OnePlus', series: 'OnePlus 9 Series', model: 'OnePlus 9 Pro', storage: '128 GB', price: 12890, image: 'https://fdn2.gsmarena.com/vv/bigpic/oneplus-9-pro-.jpg' },
+        { brand: 'OnePlus', series: 'OnePlus 9 Series', model: 'OnePlus 9RT', storage: '128 GB', price: 11090, image: 'https://api.mobileapi.dev/devices/369/thumb.png' },
+        { brand: 'OnePlus', series: 'OnePlus 9 Series', model: 'OnePlus 9', storage: '128 GB', price: 10710, image: 'https://fdn2.gsmarena.com/vv/bigpic/oneplus-9-.jpg' },
+        { brand: 'OnePlus', series: 'OnePlus 9 Series', model: 'OnePlus 9R', storage: '128 GB', price: 10600, image: 'https://fdn2.gsmarena.com/vv/bigpic/oneplus-9r.jpg' },
       ],
     },
     {
@@ -1017,13 +1021,13 @@ export const BRAND_SERIES_DEFINITIONS: Record<string, BrandSeriesDefinition[]> =
       description: 'OnePlus 8 Pro, 8T, 8, 7T Pro, 7T, 7 Pro, 7',
       pattern: /\b(8\s*pro|8t|8|7t\s*pro|7t|7\s*pro|7)\b/i,
       defaultModels: [
-        { brand: 'OnePlus', series: 'OnePlus 8 & 7 Series', model: 'OnePlus 8 Pro', storage: '128 GB', price: 14000, image: 'https://fdn2.gsmarena.com/vv/bigpic/oneplus-8-pro.jpg' },
-        { brand: 'OnePlus', series: 'OnePlus 8 & 7 Series', model: 'OnePlus 8T', storage: '128 GB', price: 13000, image: 'https://fdn2.gsmarena.com/vv/bigpic/oneplus-8t.jpg' },
-        { brand: 'OnePlus', series: 'OnePlus 8 & 7 Series', model: 'OnePlus 8', storage: '128 GB', price: 12000, image: 'https://api.mobileapi.dev/devices/16348/thumb.png' },
-        { brand: 'OnePlus', series: 'OnePlus 8 & 7 Series', model: 'OnePlus 7T Pro', storage: '256 GB', price: 11500, image: 'https://fdn2.gsmarena.com/vv/bigpic/oneplus-7t-pro.jpg' },
-        { brand: 'OnePlus', series: 'OnePlus 8 & 7 Series', model: 'OnePlus 7T', storage: '128 GB', price: 10000, image: 'https://fdn2.gsmarena.com/vv/bigpic/oneplus-7t.jpg' },
-        { brand: 'OnePlus', series: 'OnePlus 8 & 7 Series', model: 'OnePlus 7 Pro', storage: '128 GB', price: 9500, image: 'https://fdn2.gsmarena.com/vv/bigpic/oneplus-7-pro.jpg' },
-        { brand: 'OnePlus', series: 'OnePlus 8 & 7 Series', model: 'OnePlus 7', storage: '128 GB', price: 8000, image: 'https://fdn2.gsmarena.com/vv/bigpic/oneplus-7.jpg' },
+        { brand: 'OnePlus', series: 'OnePlus 8 & 7 Series', model: 'OnePlus 8 Pro', storage: '128 GB', price: 12520, image: 'https://fdn2.gsmarena.com/vv/bigpic/oneplus-8-pro.jpg' },
+        { brand: 'OnePlus', series: 'OnePlus 8 & 7 Series', model: 'OnePlus 8T', storage: '128 GB', price: 10780, image: 'https://fdn2.gsmarena.com/vv/bigpic/oneplus-8t.jpg' },
+        { brand: 'OnePlus', series: 'OnePlus 8 & 7 Series', model: 'OnePlus 8', storage: '128 GB', price: 10600, image: 'https://api.mobileapi.dev/devices/16348/thumb.png' },
+        { brand: 'OnePlus', series: 'OnePlus 8 & 7 Series', model: 'OnePlus 7T Pro', storage: '256 GB', price: 9130, image: 'https://fdn2.gsmarena.com/vv/bigpic/oneplus-7t-pro.jpg' },
+        { brand: 'OnePlus', series: 'OnePlus 8 & 7 Series', model: 'OnePlus 7T', storage: '128 GB', price: 7550, image: 'https://fdn2.gsmarena.com/vv/bigpic/oneplus-7t-.jpg' },
+        { brand: 'OnePlus', series: 'OnePlus 8 & 7 Series', model: 'OnePlus 7 Pro', storage: '128 GB', price: 8380, image: 'https://api.mobileapi.dev/devices/16351/thumb.png' },
+        { brand: 'OnePlus', series: 'OnePlus 8 & 7 Series', model: 'OnePlus 7', storage: '128 GB', price: 6760, image: 'https://fdn2.gsmarena.com/vv/bigpic/oneplus-7-.jpg' },
       ],
     },
     {
@@ -1031,21 +1035,22 @@ export const BRAND_SERIES_DEFINITIONS: Record<string, BrandSeriesDefinition[]> =
       slug: 'oneplus-nord-series',
       name: 'OnePlus Nord Series',
       brand: 'OnePlus',
-      image: 'https://fdn2.gsmarena.com/vv/bigpic/oneplus-nord-4.jpg',
+      image: 'https://api.mobileapi.dev/devices/809/thumb.png',
       description: 'OnePlus Nord 4, 3, 2T, CE4, CE3, CE 2',
       pattern: /\bnord\b/i,
       defaultModels: [
-        { brand: 'OnePlus', series: 'OnePlus Nord Series', model: 'OnePlus Nord 4', storage: '128 GB', price: 23000, image: 'https://api.mobileapi.dev/devices/809/thumb.png' },
-        { brand: 'OnePlus', series: 'OnePlus Nord Series', model: 'OnePlus Nord 3', storage: '128 GB', price: 18000, image: 'https://api.mobileapi.dev/devices/373/thumb.png' },
-        { brand: 'OnePlus', series: 'OnePlus Nord Series', model: 'OnePlus Nord 2T', storage: '128 GB', price: 14000, image: 'https://api.mobileapi.dev/devices/811/thumb.png' },
-        { brand: 'OnePlus', series: 'OnePlus Nord Series', model: 'OnePlus Nord 2', storage: '128 GB', price: 12000, image: 'https://api.mobileapi.dev/devices/377/thumb.png' },
-        { brand: 'OnePlus', series: 'OnePlus Nord Series', model: 'OnePlus Nord CE4', storage: '128 GB', price: 16500, image: 'https://api.mobileapi.dev/devices/385/thumb.png' },
-        { brand: 'OnePlus', series: 'OnePlus Nord Series', model: 'OnePlus Nord CE4 Lite', storage: '128 GB', price: 13500, image: 'https://api.mobileapi.dev/devices/16320/thumb.png' },
-        { brand: 'OnePlus', series: 'OnePlus Nord Series', model: 'OnePlus Nord CE3', storage: '128 GB', price: 13000, image: 'https://api.mobileapi.dev/devices/374/thumb.png' },
-        { brand: 'OnePlus', series: 'OnePlus Nord Series', model: 'OnePlus Nord CE3 Lite', storage: '128 GB', price: 11000, image: 'https://fdn2.gsmarena.com/vv/bigpic/oneplus-nord-ce-3-lite.jpg' },
-        { brand: 'OnePlus', series: 'OnePlus Nord Series', model: 'OnePlus Nord CE 2', storage: '128 GB', price: 9500, image: 'https://fdn2.gsmarena.com/vv/bigpic/oneplus-nord-ce-2-5g.jpg' },
-        { brand: 'OnePlus', series: 'OnePlus Nord Series', model: 'OnePlus Nord CE', storage: '128 GB', price: 8500, image: 'https://api.mobileapi.dev/devices/810/thumb.png' },
-        { brand: 'OnePlus', series: 'OnePlus Nord Series', model: 'OnePlus Nord', storage: '128 GB', price: 7500, image: 'https://api.mobileapi.dev/devices/811/thumb.png' },
+        { brand: 'OnePlus', series: 'OnePlus Nord Series', model: 'OnePlus Nord 4', storage: '128 GB', price: 18810, image: 'https://api.mobileapi.dev/devices/809/thumb.png' },
+        { brand: 'OnePlus', series: 'OnePlus Nord Series', model: 'OnePlus Nord 3', storage: '128 GB', price: 15730, image: 'https://api.mobileapi.dev/devices/373/thumb.png' },
+        { brand: 'OnePlus', series: 'OnePlus Nord Series', model: 'OnePlus Nord 2T', storage: '128 GB', price: 10370, image: 'https://api.mobileapi.dev/devices/811/thumb.png' },
+        { brand: 'OnePlus', series: 'OnePlus Nord Series', model: 'OnePlus Nord 2', storage: '128 GB', price: 9720, image: 'https://api.mobileapi.dev/devices/377/thumb.png' },
+        { brand: 'OnePlus', series: 'OnePlus Nord Series', model: 'OnePlus Nord CE4', storage: '128 GB', price: 15830, image: 'https://api.mobileapi.dev/devices/385/thumb.png' },
+        { brand: 'OnePlus', series: 'OnePlus Nord Series', model: 'OnePlus Nord CE4 Lite', storage: '128 GB', price: 14450, image: 'https://api.mobileapi.dev/devices/16320/thumb.png' },
+        { brand: 'OnePlus', series: 'OnePlus Nord Series', model: 'OnePlus Nord CE 3', storage: '128 GB', price: 13000, image: 'https://api.mobileapi.dev/devices/374/thumb.png' },
+        { brand: 'OnePlus', series: 'OnePlus Nord Series', model: 'OnePlus Nord CE 3 Lite', storage: '128 GB', price: 11000, image: 'https://api.mobileapi.dev/devices/16320/thumb.png' },
+        { brand: 'OnePlus', series: 'OnePlus Nord Series', model: 'OnePlus Nord CE 2', storage: '128 GB', price: 9800, image: 'https://fdn2.gsmarena.com/vv/bigpic/oneplus-nord-ce-2-5g.jpg' },
+        { brand: 'OnePlus', series: 'OnePlus Nord Series', model: 'OnePlus Nord CE 2 Lite', storage: '128 GB', price: 9040, image: 'https://api.mobileapi.dev/devices/815/thumb.png' },
+        { brand: 'OnePlus', series: 'OnePlus Nord Series', model: 'OnePlus Nord CE', storage: '128 GB', price: 8570, image: 'https://api.mobileapi.dev/devices/810/thumb.png' },
+        { brand: 'OnePlus', series: 'OnePlus Nord Series', model: 'OnePlus Nord', storage: '128 GB', price: 7870, image: 'https://api.mobileapi.dev/devices/811/thumb.png' },
         { brand: 'OnePlus', series: 'OnePlus Nord Series', model: 'OnePlus Nord N30 5G', storage: '128 GB', price: 10000, image: 'https://api.mobileapi.dev/devices/387/thumb.png' },
       ],
     },
@@ -1054,11 +1059,11 @@ export const BRAND_SERIES_DEFINITIONS: Record<string, BrandSeriesDefinition[]> =
       slug: 'oneplus-open-series',
       name: 'OnePlus Open & Foldable Series',
       brand: 'OnePlus',
-      image: 'https://fdn2.gsmarena.com/vv/bigpic/oneplus-open.jpg',
+      image: 'https://api.mobileapi.dev/devices/391/thumb.png',
       description: 'OnePlus Open Flagship Foldable',
       pattern: /\bopen\b/i,
       defaultModels: [
-        { brand: 'OnePlus', series: 'OnePlus Open & Foldable Series', model: 'OnePlus Open', storage: '512 GB', price: 78000, image: 'https://api.mobileapi.dev/devices/391/thumb.png' },
+        { brand: 'OnePlus', series: 'OnePlus Open & Foldable Series', model: 'OnePlus Open', storage: '512 GB', price: 52650, image: 'https://api.mobileapi.dev/devices/391/thumb.png' },
       ],
     },
     {
@@ -1066,14 +1071,16 @@ export const BRAND_SERIES_DEFINITIONS: Record<string, BrandSeriesDefinition[]> =
       slug: 'oneplus-classic-series',
       name: 'OnePlus 6 & Classic Series',
       brand: 'OnePlus',
-      image: 'https://fdn2.gsmarena.com/vv/bigpic/oneplus-6t.jpg',
-      description: 'OnePlus 6T, 6, 5T, 5',
+      image: 'https://api.mobileapi.dev/devices/16352/thumb.png',
+      description: 'OnePlus 6T, 6, 5T, 5, 3T, 3',
       pattern: /\b(6t|6|5t|5|3t|3|one|x)\b/i,
       defaultModels: [
-        { brand: 'OnePlus', series: 'OnePlus 6 & Classic Series', model: 'OnePlus 6T', storage: '128 GB', price: 6500, image: 'https://fdn2.gsmarena.com/vv/bigpic/oneplus-6t.jpg' },
-        { brand: 'OnePlus', series: 'OnePlus 6 & Classic Series', model: 'OnePlus 6', storage: '64 GB', price: 5500, image: 'https://fdn2.gsmarena.com/vv/bigpic/oneplus-6.jpg' },
-        { brand: 'OnePlus', series: 'OnePlus 6 & Classic Series', model: 'OnePlus 5T', storage: '64 GB', price: 4500, image: 'https://fdn2.gsmarena.com/vv/bigpic/oneplus-5t.jpg' },
-        { brand: 'OnePlus', series: 'OnePlus 6 & Classic Series', model: 'OnePlus 5', storage: '64 GB', price: 4000, image: 'https://fdn2.gsmarena.com/vv/bigpic/oneplus-5.jpg' },
+        { brand: 'OnePlus', series: 'OnePlus 6 & Classic Series', model: 'OnePlus 6T', storage: '128 GB', price: 5930, image: 'https://api.mobileapi.dev/devices/16352/thumb.png' },
+        { brand: 'OnePlus', series: 'OnePlus 6 & Classic Series', model: 'OnePlus 6', storage: '64 GB', price: 5010, image: 'https://fdn2.gsmarena.com/vv/bigpic/oneplus-6-.jpg' },
+        { brand: 'OnePlus', series: 'OnePlus 6 & Classic Series', model: 'OnePlus 5T', storage: '64 GB', price: 3560, image: 'https://fdn2.gsmarena.com/vv/bigpic/oneplus-5t.jpg' },
+        { brand: 'OnePlus', series: 'OnePlus 6 & Classic Series', model: 'OnePlus 5', storage: '64 GB', price: 3330, image: 'https://fdn2.gsmarena.com/vv/bigpic/oneplus-5.jpg' },
+        { brand: 'OnePlus', series: 'OnePlus 6 & Classic Series', model: 'OnePlus 3T', storage: '64 GB', price: 2770, image: 'https://fdn2.gsmarena.com/vv/bigpic/oneplus-3t-.jpg' },
+        { brand: 'OnePlus', series: 'OnePlus 6 & Classic Series', model: 'OnePlus 3', storage: '64 GB', price: 2620, image: 'https://fdn2.gsmarena.com/vv/bigpic/oneplus-3.jpg' },
       ],
     },
   ],
@@ -2031,9 +2038,12 @@ export function groupModelsBySeries(brand: string, allModels: CatalogModelItem[]
         (g) => g.slug === inferred.seriesSlug || g.name.toLowerCase() === inferred.seriesName.toLowerCase()
       );
       if (targetGroup) {
-        targetGroup.models.push({ ...m, series: targetGroup.name });
-        targetGroup.models = sortDeviceModelsLatestFirst(brand, targetGroup.models);
-        targetGroup.modelsCount = targetGroup.models.length;
+        const alreadyExists = targetGroup.models.some((existing) => getModelDedupeKey(brand, existing.model) === dKey);
+        if (!alreadyExists) {
+          targetGroup.models.push({ ...m, series: targetGroup.name });
+          targetGroup.models = sortDeviceModelsLatestFirst(brand, targetGroup.models);
+          targetGroup.modelsCount = targetGroup.models.length;
+        }
       } else {
         dedupeRemaining.push({ ...m, series: inferred.seriesName });
       }

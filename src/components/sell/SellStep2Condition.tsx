@@ -9,7 +9,7 @@ import {
   Truck,
   Sparkles,
 } from 'lucide-react';
-import { getCleanPhoneImage, getGenericDevicePlaceholder } from '../../lib/phoneImages';
+import { getCleanPhoneImage, BRAND_FRONT_FALLBACKS, getGenericDevicePlaceholder } from '../../lib/phoneImages';
 import { formatINR, formatMaskedPrice } from '../../lib/db';
 import { HARDWARE_DEFECTS, ACCESSORIES_LIST } from '../../data/masterModelCatalog';
 import type { FunduQuoteResponse } from '../../lib/quoteEngine';
@@ -65,13 +65,12 @@ export default function SellStep2Condition({
               referrerPolicy="no-referrer"
               onError={(e) => {
                 const target = e.currentTarget;
-                if (!target.dataset.triedCanonical && form.brand && form.model) {
-                  target.dataset.triedCanonical = 'true';
-                  const bSlug = form.brand.toLowerCase().replace(/[^a-z0-9]/g, '');
-                  const mSlug = form.model.toLowerCase().replace(new RegExp(`^${bSlug}\\s*`, 'i'), '').replace(/\+/g, '-plus').replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
-                  const canonical = `https://fdn2.gsmarena.com/vv/bigpic/${bSlug}-${mSlug}.jpg`;
-                  if (target.src !== canonical) {
-                    target.src = canonical;
+                const bSlug = (form.brand || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+                if (!target.dataset.triedBrandFallback) {
+                  target.dataset.triedBrandFallback = 'true';
+                  const fallback = BRAND_FRONT_FALLBACKS[bSlug] || BRAND_FRONT_FALLBACKS.apple;
+                  if (target.src !== fallback) {
+                    target.src = fallback;
                     return;
                   }
                 }

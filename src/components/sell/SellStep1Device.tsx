@@ -21,7 +21,7 @@ import {
   ChevronUp,
   ChevronDown,
 } from 'lucide-react';
-import { getCleanBrandLogo, getCleanPhoneImage, getGenericDevicePlaceholder } from '../../lib/phoneImages';
+import { getCleanBrandLogo, getCleanPhoneImage, BRAND_FRONT_FALLBACKS, getGenericDevicePlaceholder } from '../../lib/phoneImages';
 import { formatDisplayPrice } from '../../lib/db';
 import { BRAND_TILES, MASTER_MODEL_CATALOG, FAQS_LIST } from '../../data/masterModelCatalog';
 import { isModelDeleted } from '../../lib/priceSync';
@@ -164,17 +164,16 @@ export default function SellStep1Device({
                             referrerPolicy="no-referrer"
                             onError={(e) => {
                               const target = e.currentTarget;
-                              if (!target.dataset.triedCanonical && m.brand && m.model) {
-                                target.dataset.triedCanonical = 'true';
-                                const bSlug = m.brand.toLowerCase().replace(/[^a-z0-9]/g, '');
-                                const mSlug = m.model.toLowerCase().replace(new RegExp(`^${bSlug}\\s*`, 'i'), '').replace(/\+/g, '-plus').replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
-                                const canonical = `https://fdn2.gsmarena.com/vv/bigpic/${bSlug}-${mSlug}.jpg`;
-                                if (target.src !== canonical) {
-                                  target.src = canonical;
+                              const bSlug = (m.brand || form.brand || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+                              if (!target.dataset.triedBrandFallback) {
+                                target.dataset.triedBrandFallback = 'true';
+                                const fallback = BRAND_FRONT_FALLBACKS[bSlug] || BRAND_FRONT_FALLBACKS.apple;
+                                if (target.src !== fallback) {
+                                  target.src = fallback;
                                   return;
                                 }
                               }
-                              target.src = getGenericDevicePlaceholder(m.brand, m.model);
+                              target.src = getGenericDevicePlaceholder(m.brand || form.brand, m.model);
                             }}
                           />
                         </div>
@@ -268,13 +267,12 @@ export default function SellStep1Device({
                             referrerPolicy="no-referrer"
                             onError={(e) => {
                               const target = e.currentTarget;
-                              if (!target.dataset.triedCanonical && item.brand && item.model) {
-                                target.dataset.triedCanonical = 'true';
-                                const bSlug = item.brand.toLowerCase().replace(/[^a-z0-9]/g, '');
-                                const mSlug = item.model.toLowerCase().replace(new RegExp(`^${bSlug}\\s*`, 'i'), '').replace(/\+/g, '-plus').replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
-                                const canonical = `https://fdn2.gsmarena.com/vv/bigpic/${bSlug}-${mSlug}.jpg`;
-                                if (target.src !== canonical) {
-                                  target.src = canonical;
+                              const bSlug = (item.brand || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+                              if (!target.dataset.triedBrandFallback) {
+                                target.dataset.triedBrandFallback = 'true';
+                                const fallback = BRAND_FRONT_FALLBACKS[bSlug] || BRAND_FRONT_FALLBACKS.apple;
+                                if (target.src !== fallback) {
+                                  target.src = fallback;
                                   return;
                                 }
                               }
