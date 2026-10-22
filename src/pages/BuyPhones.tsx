@@ -1218,7 +1218,11 @@ export default function BuyPhones() {
                               className="h-44 w-auto max-h-44 object-contain transition-transform duration-300 group-hover:scale-105 drop-shadow-sm"
                               loading="lazy"
                               onError={(e) => {
-                                (e.target as HTMLImageElement).src = getCleanPhoneImage(product.brand, product.title, '');
+                                const target = e.target as HTMLImageElement;
+                                if (!target.dataset.triedFallback) {
+                                  target.dataset.triedFallback = '1';
+                                  target.src = getCleanPhoneImage(product.brand, product.title, '');
+                                }
                               }}
                             />
                           </Link>

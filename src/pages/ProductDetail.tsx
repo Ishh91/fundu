@@ -435,7 +435,11 @@ export default function ProductDetail() {
                 alt={product.title}
                 className="h-80 w-auto object-contain transition-transform duration-300 group-hover:scale-105 drop-shadow-md"
                 onError={(e) => {
-                  (e.target as HTMLImageElement).src = getCleanPhoneImage(product.brand, product.title, '');
+                  const target = e.target as HTMLImageElement;
+                  if (!target.dataset.triedFallback) {
+                    target.dataset.triedFallback = '1';
+                    target.src = getCleanPhoneImage(product.brand, product.title, '');
+                  }
                 }}
               />
 

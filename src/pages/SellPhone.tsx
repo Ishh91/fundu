@@ -47,16 +47,6 @@ import {
 import { getModelDedupeKey, groupModelsBySeries } from '../data/brandSeriesCatalog';
 import { notifyNewSellRequest } from '../lib/whatsappNotifyService';
 
-export {
-  DOORSTEP_LOCALITIES,
-  BRAND_TILES,
-  MASTER_MODEL_CATALOG,
-  STORAGE_OPTIONS,
-  ACCESSORIES_LIST,
-  HARDWARE_DEFECTS,
-  FAQS_LIST,
-} from '../data/masterModelCatalog';
-
 import {
   DOORSTEP_LOCALITIES,
   BRAND_TILES,
@@ -66,6 +56,16 @@ import {
   HARDWARE_DEFECTS,
   FAQS_LIST,
 } from '../data/masterModelCatalog';
+
+export {
+  DOORSTEP_LOCALITIES,
+  BRAND_TILES,
+  MASTER_MODEL_CATALOG,
+  STORAGE_OPTIONS,
+  ACCESSORIES_LIST,
+  HARDWARE_DEFECTS,
+  FAQS_LIST,
+};
 
 import SellSuccessModal from '../components/sell/SellSuccessModal';
 import SellStep1Device from '../components/sell/SellStep1Device';
