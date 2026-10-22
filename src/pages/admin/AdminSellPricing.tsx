@@ -41,6 +41,7 @@ import {
   restoreModel,
 } from '../../lib/priceSync';
 import { ALL_INDIAN_PHONES_CATALOG } from '../../data/indianPhonesCatalog';
+import { MASTER_MODEL_CATALOG } from '../../data/masterModelCatalog';
 
 export type UnifiedSellModel = {
   id: string;
@@ -82,12 +83,19 @@ const POPULAR_BRANDS = [
   'Samsung',
   'OnePlus',
   'Xiaomi',
+  'Poco',
   'Realme',
   'Vivo',
+  'iQOO',
   'Oppo',
   'Google',
   'Nothing',
   'Motorola',
+  'Infinix',
+  'Tecno',
+  'Itel',
+  'Honor',
+  'Lenovo',
 ];
 
 export default function AdminSellPricing({
@@ -151,7 +159,15 @@ export default function AdminSellPricing({
   // Track version updates for custom images & price overrides
   const [refreshVer, setRefreshVer] = useState(0);
 
-  // Unified list of all sell models
+  // Track display pagination limit for high performance
+  const [displayLimit, setDisplayLimit] = useState(60);
+
+  // Reset displayLimit on search or filter change
+  React.useEffect(() => {
+    setDisplayLimit(60);
+  }, [search, selectedBrand, filterType, sortBy]);
+
+  // Unified list of all sell models (DB Master Phones + 1,162 Master Catalog Models + Indian Catalog + Overrides)
   const unifiedModels = useMemo<UnifiedSellModel[]>(() => {
     const localOverrides = getLocalPriceOverrides();
     const customImages = getCustomModelImages();
@@ -159,73 +175,150 @@ export default function AdminSellPricing({
     // Key lookup by brand:model
     const modelMap = new Map<string, UnifiedSellModel>();
 
+    // Helper to get normalized deduplication key
+    const makeKey = (brand: string, model: string) => {
+      const bNorm = (brand || '').trim().toLowerCase();
+      let mNorm = (model || '').trim().toLowerCase();
+      if (bNorm && mNorm.startsWith(bNorm)) {
+        mNorm = mNorm.slice(bNorm.length).trim();
+      }
+      return `${bNorm}:${mNorm}`;
+    };
+
+    // Helper to get clean display model (avoids "Apple Apple iPhone 13")
+    const getCleanModelName = (brand: string, rawModel: string) => {
+      const bNorm = (brand || '').trim().toLowerCase();
+      const trimmed = (rawModel || '').trim();
+      if (bNorm && trimmed.toLowerCase().startsWith(bNorm)) {
+        const sliced = trimmed.slice(bNorm.length).trim();
+        if (sliced) return sliced;
+      }
+      return trimmed;
+    };
+
+    // Helper to find custom override price
+    const getOverridePrice = (brand: string, rawModel: string, cleanModel: string) => {
+      const bNorm = brand.trim().toLowerCase();
+      const mNorm = rawModel.trim().toLowerCase();
+      const cNorm = cleanModel.trim().toLowerCase();
+      return (
+        localOverrides[`${bNorm}:${mNorm}`] ??
+        localOverrides[`${bNorm}:${cNorm}`] ??
+        localOverrides[mNorm] ??
+        localOverrides[cNorm]
+      );
+    };
+
+    // Helper to find custom image
+    const getOverrideImage = (brand: string, rawModel: string, cleanModel: string) => {
+      const bNorm = brand.trim().toLowerCase();
+      const mNorm = rawModel.trim().toLowerCase();
+      const cNorm = cleanModel.trim().toLowerCase();
+      return (
+        customImages[`${bNorm}:${mNorm}`] ||
+        customImages[`${bNorm}:${cNorm}`] ||
+        customImages[mNorm] ||
+        customImages[cNorm] ||
+        ''
+      );
+    };
+
     // 1. Process Master Phones (from DB)
     masterPhones.forEach((p) => {
-      const bNorm = p.brand.trim().toLowerCase();
-      const mNorm = p.model.trim().toLowerCase();
-      const key = `${bNorm}:${mNorm}`;
+      const cleanM = getCleanModelName(p.brand, p.model);
+      const key = makeKey(p.brand, p.model);
 
-      const customImg = customImages[key] || customImages[mNorm] || p.image_url || '';
-      const customPr = localOverrides[key];
+      const customImg = getOverrideImage(p.brand, p.model, cleanM) || p.image_url || '';
+      const customPr = getOverridePrice(p.brand, p.model, cleanM);
+      const basePr = customPr !== undefined ? customPr : (p.base_resale_value || 12000);
 
       modelMap.set(key, {
         id: `mp-${p.id || key}`,
         brand: p.brand,
-        model: p.model,
+        model: cleanM,
         storage: p.storage_options?.[0] || '128GB',
-        base_price: customPr !== undefined ? customPr : (p.base_resale_value || 12000),
-        default_mrp: p.default_mrp,
+        base_price: basePr,
+        default_mrp: p.default_mrp || Math.round(basePr * 1.5),
         excellent_multiplier: 0.75,
         good_multiplier: 0.60,
         fair_multiplier: 0.45,
         box_bonus: 600,
         charger_bonus: 400,
         image_url: customImg,
-        is_active: !isModelDeleted(p.brand, p.model),
+        is_active: !isModelDeleted(p.brand, p.model) && !isModelDeleted(p.brand, cleanM),
         hasCustomPrice: customPr !== undefined,
-        hasCustomImage: Boolean(customImages[key] || customImages[mNorm]),
+        hasCustomImage: Boolean(getOverrideImage(p.brand, p.model, cleanM)),
         masterPhoneId: p.id,
       });
     });
 
-    // 2. Process All Indian Phones Catalog (best-sellers fallback)
-    ALL_INDIAN_PHONES_CATALOG.forEach((p) => {
-      const bNorm = p.brand.trim().toLowerCase();
-      const mNorm = p.model.trim().toLowerCase();
-      const key = `${bNorm}:${mNorm}`;
+    // 2. Process Full Master Model Catalog (1,162 phones across all brands)
+    MASTER_MODEL_CATALOG.forEach((p) => {
+      const cleanM = getCleanModelName(p.brand, p.model);
+      const key = makeKey(p.brand, p.model);
 
       if (!modelMap.has(key)) {
-        const customImg = customImages[key] || customImages[mNorm] || p.image_url || '';
-        const customPr = localOverrides[key];
+        const customImg = getOverrideImage(p.brand, p.model, cleanM) || p.image || '';
+        const customPr = getOverridePrice(p.brand, p.model, cleanM);
+        const basePr = customPr !== undefined ? customPr : (p.price || 12000);
 
         modelMap.set(key, {
-          id: `cat-${key}`,
+          id: `master-${key}`,
           brand: p.brand,
-          model: p.model,
-          storage: p.storage_options?.[0] || '128GB',
-          base_price: customPr !== undefined ? customPr : (p.base_resale_value || 12000),
-          default_mrp: p.default_mrp,
+          model: cleanM,
+          storage: p.storage || '128GB',
+          base_price: basePr,
+          default_mrp: Math.round(basePr * 1.5),
           excellent_multiplier: 0.75,
           good_multiplier: 0.60,
           fair_multiplier: 0.45,
           box_bonus: 600,
           charger_bonus: 400,
           image_url: customImg,
-          is_active: !isModelDeleted(p.brand, p.model),
+          is_active: !isModelDeleted(p.brand, p.model) && !isModelDeleted(p.brand, cleanM),
           hasCustomPrice: customPr !== undefined,
-          hasCustomImage: Boolean(customImages[key] || customImages[mNorm]),
+          hasCustomImage: Boolean(getOverrideImage(p.brand, p.model, cleanM)),
         });
       }
     });
 
-    // 3. Overlay Explicit Database Sell Price Configs
+    // 3. Process All Indian Phones Catalog (best-sellers fallback)
+    ALL_INDIAN_PHONES_CATALOG.forEach((p) => {
+      const cleanM = getCleanModelName(p.brand, p.model);
+      const key = makeKey(p.brand, p.model);
+
+      if (!modelMap.has(key)) {
+        const customImg = getOverrideImage(p.brand, p.model, cleanM) || p.image_url || '';
+        const customPr = getOverridePrice(p.brand, p.model, cleanM);
+        const basePr = customPr !== undefined ? customPr : (p.base_resale_value || 12000);
+
+        modelMap.set(key, {
+          id: `cat-${key}`,
+          brand: p.brand,
+          model: cleanM,
+          storage: p.storage_options?.[0] || '128GB',
+          base_price: basePr,
+          default_mrp: p.default_mrp || Math.round(basePr * 1.5),
+          excellent_multiplier: 0.75,
+          good_multiplier: 0.60,
+          fair_multiplier: 0.45,
+          box_bonus: 600,
+          charger_bonus: 400,
+          image_url: customImg,
+          is_active: !isModelDeleted(p.brand, p.model) && !isModelDeleted(p.brand, cleanM),
+          hasCustomPrice: customPr !== undefined,
+          hasCustomImage: Boolean(getOverrideImage(p.brand, p.model, cleanM)),
+        });
+      }
+    });
+
+    // 4. Overlay Explicit Database Sell Price Configs
     configs.forEach((cfg) => {
-      const bNorm = cfg.brand.trim().toLowerCase();
-      const mNorm = cfg.model.trim().toLowerCase();
-      const key = `${bNorm}:${mNorm}`;
+      const cleanM = getCleanModelName(cfg.brand, cfg.model);
+      const key = makeKey(cfg.brand, cfg.model);
 
       const existing = modelMap.get(key);
-      const customImg = customImages[key] || customImages[mNorm] || existing?.image_url || '';
+      const customImg = getOverrideImage(cfg.brand, cfg.model, cleanM) || existing?.image_url || '';
 
       if (existing) {
         existing.configId = cfg.id;
@@ -236,13 +329,13 @@ export default function AdminSellPricing({
         existing.fair_multiplier = cfg.fair_multiplier;
         existing.box_bonus = cfg.box_bonus;
         existing.charger_bonus = cfg.charger_bonus;
-        existing.is_active = cfg.is_active !== false && !isModelDeleted(cfg.brand, cfg.model);
+        existing.is_active = cfg.is_active !== false && !isModelDeleted(cfg.brand, cfg.model) && !isModelDeleted(cfg.brand, cleanM);
         existing.hasCustomPrice = true;
       } else {
         modelMap.set(key, {
           id: `cfg-${cfg.id}`,
           brand: cfg.brand,
-          model: cfg.model,
+          model: cleanM,
           storage: cfg.storage || '128GB',
           base_price: cfg.base_price,
           default_mrp: Math.round(cfg.base_price * 1.5),
@@ -252,9 +345,9 @@ export default function AdminSellPricing({
           box_bonus: cfg.box_bonus,
           charger_bonus: cfg.charger_bonus,
           image_url: customImg,
-          is_active: cfg.is_active !== false && !isModelDeleted(cfg.brand, cfg.model),
+          is_active: cfg.is_active !== false && !isModelDeleted(cfg.brand, cfg.model) && !isModelDeleted(cfg.brand, cleanM),
           hasCustomPrice: true,
-          hasCustomImage: Boolean(customImages[key] || customImages[mNorm]),
+          hasCustomImage: Boolean(getOverrideImage(cfg.brand, cfg.model, cleanM)),
           configId: cfg.id,
         });
       }
@@ -267,11 +360,17 @@ export default function AdminSellPricing({
   const filteredModels = useMemo(() => {
     let result = unifiedModels;
 
-    // Brand filter
+    // Brand filter with alias matching
     if (selectedBrand !== 'All') {
-      result = result.filter(
-        (m) => m.brand.trim().toLowerCase() === selectedBrand.trim().toLowerCase()
-      );
+      const bTarget = selectedBrand.trim().toLowerCase();
+      result = result.filter((m) => {
+        const b = m.brand.trim().toLowerCase();
+        if (b === bTarget) return true;
+        if (bTarget === 'xiaomi' && (b === 'redmi' || b === 'poco')) return true;
+        if (bTarget === 'vivo' && b === 'iqoo') return true;
+        if (bTarget === 'motorola' && b === 'moto') return true;
+        return false;
+      });
     }
 
     // Filter Type
@@ -307,6 +406,11 @@ export default function AdminSellPricing({
 
     return result;
   }, [unifiedModels, selectedBrand, filterType, search, sortBy]);
+
+  // Paginated visible models
+  const displayedModels = useMemo(() => {
+    return filteredModels.slice(0, displayLimit);
+  }, [filteredModels, displayLimit]);
 
   // Selected item
   const selectedModel = useMemo(() => {
@@ -694,104 +798,125 @@ export default function AdminSellPricing({
               </button>
             </div>
           ) : (
-            filteredModels.map((item) => {
-              const isSelected = selectedModel?.id === item.id;
-              const displayImg = getCleanPhoneImage(item.brand, item.model, item.image_url);
+            <>
+              {displayedModels.map((item) => {
+                const isSelected = selectedModel?.id === item.id;
+                const displayImg = getCleanPhoneImage(item.brand, item.model, item.image_url);
 
-              return (
-                <div
-                  key={item.id}
-                  onClick={() => onSelectPricing(item.configId || item.id)}
-                  className={`card p-3.5 sm:p-4 rounded-2xl cursor-pointer transition-all border ${
-                    isSelected
-                      ? 'border-blue-600 bg-blue-50/50 shadow-md ring-2 ring-blue-500/20'
-                      : 'bg-white hover:border-gray-300 hover:shadow-xs'
-                  }`}
-                >
-                  <div className="flex items-center gap-3">
-                    {/* Model Image with Quick Change Trigger */}
-                    <div className="relative group shrink-0">
-                      <div className="h-14 w-14 rounded-2xl bg-white border border-gray-200 p-1 flex items-center justify-center overflow-hidden shadow-xs">
-                        <img
-                          src={displayImg}
-                          alt={item.model}
-                          className="max-h-full max-w-full object-contain mix-blend-multiply"
-                          loading="lazy"
-                        />
-                      </div>
-                      <button
-                        type="button"
-                        title="Change Photo"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleOpenImageModal(item);
-                        }}
-                        className="absolute -bottom-1 -right-1 h-6 w-6 rounded-full bg-slate-900 hover:bg-blue-600 text-white flex items-center justify-center shadow-md transition"
-                      >
-                        <Camera className="h-3 w-3" />
-                      </button>
-                    </div>
-
-                    {/* Details */}
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center justify-between gap-1">
-                        <p className="text-xs sm:text-sm font-black text-gray-900 truncate">
-                          {item.brand} {item.model}
-                        </p>
-                        <span
-                          className={`badge text-[9px] font-extrabold px-2 py-0.5 ${
-                            item.is_active
-                              ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
-                              : 'bg-gray-100 text-gray-500'
-                          }`}
+                return (
+                  <div
+                    key={item.id}
+                    onClick={() => onSelectPricing(item.configId || item.id)}
+                    className={`card p-3.5 sm:p-4 rounded-2xl cursor-pointer transition-all border ${
+                      isSelected
+                        ? 'border-blue-600 bg-blue-50/50 shadow-md ring-2 ring-blue-500/20'
+                        : 'bg-white hover:border-gray-300 hover:shadow-xs'
+                    }`}
+                  >
+                    <div className="flex items-center gap-3">
+                      {/* Model Image with Quick Change Trigger */}
+                      <div className="relative group shrink-0">
+                        <div className="h-14 w-14 rounded-2xl bg-white border border-gray-200 p-1 flex items-center justify-center overflow-hidden shadow-xs">
+                          <img
+                            src={displayImg}
+                            alt={item.model}
+                            className="max-h-full max-w-full object-contain mix-blend-multiply"
+                            loading="lazy"
+                          />
+                        </div>
+                        <button
+                          type="button"
+                          title="Change Photo"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleOpenImageModal(item);
+                          }}
+                          className="absolute -bottom-1 -right-1 h-6 w-6 rounded-full bg-slate-900 hover:bg-blue-600 text-white flex items-center justify-center shadow-md transition"
                         >
-                          {item.is_active ? 'Active' : 'Disabled'}
-                        </span>
+                          <Camera className="h-3 w-3" />
+                        </button>
                       </div>
 
-                      <div className="flex items-center gap-1.5 mt-1 flex-wrap">
-                        <span className="text-[10px] font-semibold text-gray-500 bg-gray-100 px-2 py-0.5 rounded-md">
-                          {item.storage || '128GB'}
-                        </span>
-                        {item.hasCustomPrice && (
-                          <span className="badge bg-amber-50 text-amber-800 border border-amber-200 text-[9px] font-bold">
-                            Custom Rate
-                          </span>
-                        )}
-                        {item.hasCustomImage && (
-                          <span className="badge bg-blue-50 text-blue-700 border border-blue-200 text-[9px] font-bold">
-                            Custom Photo
-                          </span>
-                        )}
-                      </div>
-
-                      {/* Buyback Price Row */}
-                      <div className="mt-2 flex items-center justify-between pt-1.5 border-t border-gray-100 text-xs">
-                        <div className="flex items-center gap-1">
-                          <span className="text-[10px] text-gray-400 font-bold uppercase">Buyback:</span>
-                          <span className="font-extrabold text-emerald-700 text-xs sm:text-sm">
-                            {formatINR(item.base_price)}
+                      {/* Details */}
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center justify-between gap-1">
+                          <p className="text-xs sm:text-sm font-black text-gray-900 truncate">
+                            {item.brand} {item.model}
+                          </p>
+                          <span
+                            className={`badge text-[9px] font-extrabold px-2 py-0.5 ${
+                              item.is_active
+                                ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                                : 'bg-gray-100 text-gray-500'
+                            }`}
+                          >
+                            {item.is_active ? 'Active' : 'Disabled'}
                           </span>
                         </div>
 
-                        <div className="flex items-center gap-1.5">
-                          <button
-                            type="button"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleOpenPriceModal(item);
-                            }}
-                            className="text-[11px] font-extrabold text-blue-600 hover:text-blue-800 hover:underline flex items-center gap-0.5"
-                          >
-                            <Edit2 className="h-3 w-3" /> Edit
-                          </button>
+                        <div className="flex items-center gap-1.5 mt-1 flex-wrap">
+                          <span className="text-[10px] font-semibold text-gray-500 bg-gray-100 px-2 py-0.5 rounded-md">
+                            {item.storage || '128GB'}
+                          </span>
+                          {item.hasCustomPrice && (
+                            <span className="badge bg-amber-50 text-amber-800 border border-amber-200 text-[9px] font-bold">
+                              Custom Rate
+                            </span>
+                          )}
+                          {item.hasCustomImage && (
+                            <span className="badge bg-blue-50 text-blue-800 border border-blue-200 text-[9px] font-bold">
+                              Custom Photo
+                            </span>
+                          )}
+                        </div>
+
+                        {/* Buyback Price Row */}
+                        <div className="mt-2 flex items-center justify-between pt-1.5 border-t border-gray-100 text-xs">
+                          <div className="flex items-center gap-1">
+                            <span className="text-[10px] text-gray-400 font-bold uppercase">Buyback:</span>
+                            <span className="font-extrabold text-emerald-700 text-xs sm:text-sm">
+                              {formatINR(item.base_price)}
+                            </span>
+                          </div>
+
+                          <div className="flex items-center gap-1.5">
+                            <button
+                              type="button"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleOpenPriceModal(item);
+                              }}
+                              className="text-[11px] font-extrabold text-blue-600 hover:text-blue-800 hover:underline flex items-center gap-0.5"
+                            >
+                              <Edit2 className="h-3 w-3" /> Edit
+                            </button>
+                          </div>
                         </div>
                       </div>
                     </div>
                   </div>
+                );
+              })}
+
+              {filteredModels.length > displayedModels.length && (
+                <div className="pt-2 pb-4 text-center space-y-1.5">
+                  <button
+                    type="button"
+                    onClick={() => setDisplayLimit((prev) => prev + 60)}
+                    className="w-full py-2.5 px-4 rounded-xl bg-slate-900 hover:bg-blue-600 text-white text-xs font-bold transition shadow-sm cursor-pointer"
+                  >
+                    Load More Models ({displayedModels.length} of {filteredModels.length})
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setDisplayLimit(filteredModels.length)}
+                    className="text-[11px] font-bold text-blue-600 hover:text-blue-800 hover:underline transition cursor-pointer"
+                  >
+                    Show all {filteredModels.length} models
+                  </button>
                 </div>
-              );
-            })
+              )}
+            </>
           )}
         </div>
 

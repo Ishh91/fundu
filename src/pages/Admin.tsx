@@ -322,14 +322,14 @@ export default function Admin() {
         await Promise.all([
           db.from('products').select('*').limit(250).sort({ field: 'created_at', ascending: false }),
           db.from('sell_requests').select('*').limit(250).sort({ field: 'created_at', ascending: false }),
-          db.from('sell_price_configs').select('*').limit(250).sort({ field: 'created_at', ascending: false }),
+          db.from('sell_price_configs').select('*').limit(5000).sort({ field: 'created_at', ascending: false }),
           db.from('repair_bookings').select('*').limit(250).sort({ field: 'created_at', ascending: false }),
           db.from('orders').select('*').limit(250).sort({ field: 'created_at', ascending: false }),
           db.from('spare_parts').select('*').limit(250).sort({ field: 'created_at', ascending: false }),
           db.from('profiles').select('*').limit(250).sort({ field: 'created_at', ascending: false }),
           db.from('reviews').select('*').limit(250).sort({ field: 'created_at', ascending: false }),
           db.from('delivery_agents').select('*').limit(100).sort({ field: 'created_at', ascending: false }),
-          db.from('master_phones').select('*').limit(150).sort({ field: 'release_year', ascending: false }),
+          db.from('master_phones').select('*').limit(5000).sort({ field: 'release_year', ascending: false }),
           db.from('repair_price_configs').select('*').limit(500).sort({ field: 'created_at', ascending: false }),
         ]);
 
