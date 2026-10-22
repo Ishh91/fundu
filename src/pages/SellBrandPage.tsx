@@ -223,53 +223,6 @@ export default function SellBrandPage() {
     return () => clearTimeout(timer);
   }, [rawSearchQuery]);
 
-  // Series sliding track state & smooth sliding controller
-  const seriesScrollRef = useRef<HTMLDivElement>(null);
-  const [canScrollLeft, setCanScrollLeft] = useState(false);
-  const [canScrollRight, setCanScrollRight] = useState(false);
-
-  const updateScrollButtons = () => {
-    const el = seriesScrollRef.current;
-    if (!el) return;
-    const { scrollLeft, scrollWidth, clientWidth } = el;
-    setCanScrollLeft(scrollLeft > 6);
-    setCanScrollRight(scrollLeft + clientWidth < scrollWidth - 6);
-  };
-
-  useEffect(() => {
-    updateScrollButtons();
-    const el = seriesScrollRef.current;
-    if (!el) return;
-    el.addEventListener('scroll', updateScrollButtons, { passive: true });
-    window.addEventListener('resize', updateScrollButtons);
-    return () => {
-      el.removeEventListener('scroll', updateScrollButtons);
-      window.removeEventListener('resize', updateScrollButtons);
-    };
-  }, [seriesGroups]);
-
-  // Automatically slide the selected series pill into center view
-  useEffect(() => {
-    const el = seriesScrollRef.current;
-    if (!el) return;
-    const activeBtn = el.querySelector<HTMLElement>('[data-active="true"]');
-    if (activeBtn) {
-      activeBtn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
-    }
-    const timer = setTimeout(updateScrollButtons, 320);
-    return () => clearTimeout(timer);
-  }, [selectedSeriesFilter]);
-
-  const slideSeries = (direction: 'left' | 'right') => {
-    const el = seriesScrollRef.current;
-    if (!el) return;
-    const scrollDistance = Math.max(260, Math.floor(el.clientWidth * 0.75));
-    el.scrollBy({
-      left: direction === 'left' ? -scrollDistance : scrollDistance,
-      behavior: 'smooth',
-    });
-  };
-
   // Auto Scroll to Top on Brand Page Load or Series Change
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -491,6 +444,53 @@ export default function SellBrandPage() {
   const handleSelectModel = (modelName: string, storage: string) => {
     const modelSlugClean = modelName.toLowerCase().replace(/\s+/g, '-');
     navigate(`/sell-old-mobile-phone/sell-${brandCleanKey}/sell-${modelSlugClean}?storage=${encodeURIComponent(storage)}`);
+  };
+
+  // Series sliding track state & smooth sliding controller (placed after seriesGroups declaration)
+  const seriesScrollRef = useRef<HTMLDivElement>(null);
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(false);
+
+  const updateScrollButtons = () => {
+    const el = seriesScrollRef.current;
+    if (!el) return;
+    const { scrollLeft, scrollWidth, clientWidth } = el;
+    setCanScrollLeft(scrollLeft > 6);
+    setCanScrollRight(scrollLeft + clientWidth < scrollWidth - 6);
+  };
+
+  useEffect(() => {
+    updateScrollButtons();
+    const el = seriesScrollRef.current;
+    if (!el) return;
+    el.addEventListener('scroll', updateScrollButtons, { passive: true });
+    window.addEventListener('resize', updateScrollButtons);
+    return () => {
+      el.removeEventListener('scroll', updateScrollButtons);
+      window.removeEventListener('resize', updateScrollButtons);
+    };
+  }, [seriesGroups]);
+
+  // Automatically slide the selected series pill into center view
+  useEffect(() => {
+    const el = seriesScrollRef.current;
+    if (!el) return;
+    const activeBtn = el.querySelector<HTMLElement>('[data-active="true"]');
+    if (activeBtn) {
+      activeBtn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+    }
+    const timer = setTimeout(updateScrollButtons, 320);
+    return () => clearTimeout(timer);
+  }, [selectedSeriesFilter]);
+
+  const slideSeries = (direction: 'left' | 'right') => {
+    const el = seriesScrollRef.current;
+    if (!el) return;
+    const scrollDistance = Math.max(260, Math.floor(el.clientWidth * 0.75));
+    el.scrollBy({
+      left: direction === 'left' ? -scrollDistance : scrollDistance,
+      behavior: 'smooth',
+    });
   };
 
   const handleSelectSeries = (series: SeriesGroup) => {
