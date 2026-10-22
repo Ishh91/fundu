@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect, useRef } from 'react';
 import { useNavigate, useParams, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import {
@@ -13,6 +13,8 @@ import {
   HelpCircle,
   ChevronDown,
   ChevronUp,
+  ChevronLeft,
+  ChevronRight,
   RefreshCw,
   AlertCircle,
   BatteryCharging,
@@ -282,6 +284,53 @@ export default function RepairBrandPage() {
     }
   }, [effectiveSeriesSlug, seriesGroups]);
 
+  // Series sliding track state & smooth sliding controller
+  const seriesScrollRef = useRef<HTMLDivElement>(null);
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(false);
+
+  const updateScrollButtons = () => {
+    const el = seriesScrollRef.current;
+    if (!el) return;
+    const { scrollLeft, scrollWidth, clientWidth } = el;
+    setCanScrollLeft(scrollLeft > 6);
+    setCanScrollRight(scrollLeft + clientWidth < scrollWidth - 6);
+  };
+
+  useEffect(() => {
+    updateScrollButtons();
+    const el = seriesScrollRef.current;
+    if (!el) return;
+    el.addEventListener('scroll', updateScrollButtons, { passive: true });
+    window.addEventListener('resize', updateScrollButtons);
+    return () => {
+      el.removeEventListener('scroll', updateScrollButtons);
+      window.removeEventListener('resize', updateScrollButtons);
+    };
+  }, [seriesTabs]);
+
+  // Automatically slide the selected series pill into center view
+  useEffect(() => {
+    const el = seriesScrollRef.current;
+    if (!el) return;
+    const activeBtn = el.querySelector<HTMLElement>('[data-active="true"]');
+    if (activeBtn) {
+      activeBtn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+    }
+    const timer = setTimeout(updateScrollButtons, 320);
+    return () => clearTimeout(timer);
+  }, [selectedSeries]);
+
+  const slideSeries = (direction: 'left' | 'right') => {
+    const el = seriesScrollRef.current;
+    if (!el) return;
+    const scrollDistance = Math.max(260, Math.floor(el.clientWidth * 0.75));
+    el.scrollBy({
+      left: direction === 'left' ? -scrollDistance : scrollDistance,
+      behavior: 'smooth',
+    });
+  };
+
   // 5. Flatten models in sequential series order, each stamped with its exact series
   const allModelsInSeriesOrder = useMemo(() => {
     const models: Array<{
@@ -478,24 +527,63 @@ export default function RepairBrandPage() {
             </span>
           </div>
 
-          {/* Horizontal Series Filter Tabs */}
+          {/* Horizontal Series Filter Tabs (Sliding with Smooth Navigation Arrows & Gradient Fades) */}
           {seriesTabs.length > 1 && (
-            <div className="flex items-center gap-2 overflow-x-auto scrollbar-hide py-1 border-b border-gray-100 pb-4">
-              <span className="text-xs font-bold text-[#8A9AAF] uppercase tracking-wider shrink-0 mr-2">Series:</span>
-              {seriesTabs.map((ser) => (
-                <button
-                  key={ser}
-                  type="button"
-                  onClick={() => setSelectedSeries(ser)}
-                  className={`px-4 py-2 rounded-full text-xs font-extrabold transition shrink-0 cursor-pointer ${
-                    selectedSeries === ser
-                      ? 'bg-gradient-to-r from-[#344257] to-[#5D6A82] text-white shadow-md'
-                      : 'bg-[#F7F7FA] text-[#47576E] hover:bg-[#F0F0F5] hover:text-[#344257] border border-transparent hover:border-[#C0C8D8]'
-                  }`}
-                >
-                  {ser}
-                </button>
-              ))}
+            <div className="relative border-b border-gray-100 pb-4 group/slider">
+              {/* Left Slide Arrow with Gradient Mask */}
+              {canScrollLeft && (
+                <div className="absolute left-0 top-0 bottom-4 z-10 flex items-center pr-3 bg-gradient-to-r from-white via-white/95 to-transparent">
+                  <button
+                    type="button"
+                    onClick={() => slideSeries('left')}
+                    aria-label="Slide Left"
+                    className="h-8 w-8 rounded-full bg-white border border-[#C0C8D8] text-[#344257] hover:bg-[#344257] hover:text-white shadow-md flex items-center justify-center transition-all duration-200 hover:scale-105 active:scale-95 cursor-pointer"
+                  >
+                    <ChevronLeft className="h-4 w-4" />
+                  </button>
+                </div>
+              )}
+
+              {/* Scrollable Sliding Track */}
+              <div
+                ref={seriesScrollRef}
+                className="flex items-center gap-2 overflow-x-auto scroll-smooth scrollbar-none py-1 select-none"
+                style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+              >
+                <span className="text-xs font-bold text-[#8A9AAF] uppercase tracking-wider shrink-0 mr-1">Series:</span>
+                {seriesTabs.map((ser) => {
+                  const isSelected = selectedSeries === ser;
+                  return (
+                    <button
+                      key={ser}
+                      type="button"
+                      data-active={isSelected}
+                      onClick={() => setSelectedSeries(ser)}
+                      className={`px-4 py-2 rounded-full text-xs font-extrabold transition shrink-0 cursor-pointer ${
+                        isSelected
+                          ? 'bg-gradient-to-r from-[#344257] to-[#5D6A82] text-white shadow-md scale-[1.02]'
+                          : 'bg-[#F7F7FA] text-[#47576E] hover:bg-[#F0F0F5] hover:text-[#344257] border border-transparent hover:border-[#C0C8D8]'
+                      }`}
+                    >
+                      {ser}
+                    </button>
+                  );
+                })}
+              </div>
+
+              {/* Right Slide Arrow with Gradient Mask */}
+              {canScrollRight && (
+                <div className="absolute right-0 top-0 bottom-4 z-10 flex items-center pl-3 bg-gradient-to-l from-white via-white/95 to-transparent">
+                  <button
+                    type="button"
+                    onClick={() => slideSeries('right')}
+                    aria-label="Slide Right"
+                    className="h-8 w-8 rounded-full bg-white border border-[#C0C8D8] text-[#344257] hover:bg-[#344257] hover:text-white shadow-md flex items-center justify-center transition-all duration-200 hover:scale-105 active:scale-95 cursor-pointer"
+                  >
+                    <ChevronRight className="h-4 w-4" />
+                  </button>
+                </div>
+              )}
             </div>
           )}
 
