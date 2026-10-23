@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { db } from './db';
 import { broadcastSync, subscribeToRealtimeSync } from './realtimeSync';
+import { pullLiveModelImagesFromDb } from './phoneImages';
 
 const OVERRIDES_STORAGE_KEY = 'fundu_price_overrides_v1';
 
@@ -126,6 +127,9 @@ export function usePriceSync() {
         payload.table === 'sell_price_configs' ||
         payload.table === 'master_phones'
       ) {
+        if (payload.action === 'MODEL_IMAGE_UPDATE' || payload.table === 'master_phones') {
+          pullLiveModelImagesFromDb().then(() => handleUpdate());
+        }
         handleUpdate();
       }
     });
@@ -162,6 +166,10 @@ export function usePriceSync() {
           }
         })
         .catch(() => null);
+
+      pullLiveModelImagesFromDb().then((changed) => {
+        if (changed) setVersion((v) => v + 1);
+      }).catch(() => null);
     };
 
     pullPriceRules();

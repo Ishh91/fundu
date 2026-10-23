@@ -24,7 +24,7 @@ import {
 import { getCleanBrandLogo, getCleanPhoneImage, BRAND_FRONT_FALLBACKS, getGenericDevicePlaceholder } from '../../lib/phoneImages';
 import { formatDisplayPrice } from '../../lib/db';
 import { BRAND_TILES, MASTER_MODEL_CATALOG, FAQS_LIST } from '../../data/masterModelCatalog';
-import { isModelDeleted } from '../../lib/priceSync';
+import { isModelDeleted, usePriceSync } from '../../lib/priceSync';
 import { getModelDedupeKey, sortDeviceModelsLatestFirst } from '../../data/brandSeriesCatalog';
 import { getModelHardwareSpecs } from '../../lib/deviceSpecs';
 
@@ -56,6 +56,7 @@ export default function SellStep1Device({
   dbReviews = [],
 }: SellStep1DeviceProps) {
   const navigate = useNavigate();
+  const { version: _imageSyncVersion } = usePriceSync();
   const [openFaqIndex, setOpenFaqIndex] = React.useState<number | null>(0);
   return (
           <div className="space-y-8 animate-fade-in">

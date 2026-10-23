@@ -864,13 +864,58 @@ export default function Admin() {
   };
 
   const handleUpdateMasterPhoneImage = async (phone: MasterPhone, newImageUrl: string) => {
-    saveCustomModelImage(phone.brand, phone.model, newImageUrl);
-    if (phone.id) {
-      await db.from('master_phones').update({ image_url: newImageUrl || null }).eq('id', phone.id);
+    const brand = (phone.brand || '').trim();
+    const model = (phone.model || '').trim();
+    const url = (newImageUrl || '').trim();
+
+    saveCustomModelImage(brand, model, url);
+
+    const bNorm = brand.toLowerCase();
+    const mNorm = model.toLowerCase();
+
+    // Check if record exists in masterPhones by ID or by normalized brand + model
+    const existing = phone.id
+      ? masterPhones.find((p) => p.id === phone.id)
+      : masterPhones.find((p) => {
+          const pb = (p.brand || '').toLowerCase().trim();
+          const pm = (p.model || '').toLowerCase().trim();
+          return (
+            pb === bNorm &&
+            (pm === mNorm ||
+             pm.replace(/[^a-z0-9]/g, '') === mNorm.replace(/[^a-z0-9]/g, '') ||
+             (mNorm.startsWith(bNorm) && pm === mNorm.slice(bNorm.length).trim()))
+          );
+        });
+
+    const targetId = phone.id || existing?.id;
+
+    if (targetId) {
+      await db.from('master_phones').update({ image_url: url || null }).eq('id', targetId);
+      setMasterPhones((prev) =>
+        prev.map((p) => (p.id === targetId ? { ...p, image_url: url } : p))
+      );
+    } else {
+      // Create new record in master_phones so it persists in the database for all visitors
+      const { data: insertedPhone } = await db
+        .from('master_phones')
+        .insert({
+          brand,
+          model,
+          image_url: url || null,
+          base_resale_value: phone.base_resale_value || 12000,
+          default_mrp: phone.default_mrp || 18000,
+          release_year: phone.release_year || new Date().getFullYear(),
+          ram_options: phone.ram_options || ['8GB'],
+          storage_options: phone.storage_options || ['128GB'],
+          is_active: true,
+        })
+        .select('*')
+        .single();
+
+      if (insertedPhone) {
+        setMasterPhones((prev) => [insertedPhone as MasterPhone, ...prev]);
+      }
     }
-    setMasterPhones((prev) =>
-      prev.map((p) => (p.id === phone.id ? { ...p, image_url: newImageUrl } : p))
-    );
   };
 
   const openAddProductModal = (initialData?: Partial<typeof productForm>) => {

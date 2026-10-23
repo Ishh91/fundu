@@ -32,6 +32,7 @@ import {
   resetCustomModelImage,
   hasCustomModelImage,
   getCustomModelImages,
+  generateModelLookupKeys,
 } from '../../lib/phoneImages';
 import { compressImage } from '../../lib/imageUtils';
 import {
@@ -212,16 +213,14 @@ export default function AdminSellPricing({
 
     // Helper to find custom image
     const getOverrideImage = (brand: string, rawModel: string, cleanModel: string) => {
-      const bNorm = brand.trim().toLowerCase();
-      const mNorm = rawModel.trim().toLowerCase();
-      const cNorm = cleanModel.trim().toLowerCase();
-      return (
-        customImages[`${bNorm}:${mNorm}`] ||
-        customImages[`${bNorm}:${cNorm}`] ||
-        customImages[mNorm] ||
-        customImages[cNorm] ||
-        ''
-      );
+      const keys = [
+        ...generateModelLookupKeys(brand, rawModel),
+        ...generateModelLookupKeys(brand, cleanModel),
+      ];
+      for (const k of keys) {
+        if (customImages[k]) return customImages[k];
+      }
+      return '';
     };
 
     // 1. Process Master Phones (from DB)
