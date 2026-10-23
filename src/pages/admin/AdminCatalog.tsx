@@ -27,6 +27,7 @@ import {
   getCustomModelImages,
   hasCustomModelImage,
 } from '../../lib/phoneImages';
+import { compressImage } from '../../lib/imageUtils';
 
 type AdminCatalogProps = {
   masterPhones: MasterPhone[];
@@ -86,7 +87,11 @@ export default function AdminCatalog({
     if (!editingPhone) return;
     setImageSaving(true);
     try {
-      const urlToSave = newImageUrl.trim();
+      let urlToSave = newImageUrl.trim();
+      // Compress if it is a large base64 data URL
+      if (urlToSave.startsWith('data:image/') && urlToSave.length > 30000) {
+        urlToSave = await compressImage(urlToSave, 640, 640, 0.82);
+      }
       saveCustomModelImage(editingPhone.brand, editingPhone.model, urlToSave);
 
       // Update in database master_phones
@@ -735,20 +740,21 @@ export default function AdminCatalog({
                   <input
                     type="file"
                     accept="image/*"
-                    onChange={(e) => {
+                    onChange={async (e) => {
                       const file = e.target.files?.[0];
                       if (!file) return;
-                      if (file.size > 8 * 1024 * 1024) {
-                        alert('Image file size too large. Please select an image under 8MB.');
-                        return;
+                      try {
+                        const compressed = await compressImage(file, 640, 640, 0.82);
+                        setNewImageUrl(compressed);
+                      } catch {
+                        const reader = new FileReader();
+                        reader.onload = () => {
+                          if (typeof reader.result === 'string') {
+                            setNewImageUrl(reader.result);
+                          }
+                        };
+                        reader.readAsDataURL(file);
                       }
-                      const reader = new FileReader();
-                      reader.onload = () => {
-                        if (typeof reader.result === 'string') {
-                          setNewImageUrl(reader.result);
-                        }
-                      };
-                      reader.readAsDataURL(file);
                     }}
                     className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
                   />

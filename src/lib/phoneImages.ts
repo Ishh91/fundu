@@ -380,35 +380,140 @@ import { broadcastSync } from './realtimeSync';
 
 export const CUSTOM_MODEL_IMAGES_KEY = 'fundu_custom_model_images_v1';
 
-export function getCustomModelImages(): Record<string, string> {
-  if (typeof window === 'undefined') return {};
+// In-memory fallback cache to ensure images render even if localStorage is full or disabled
+const memoryCustomCache: Record<string, string> = {};
+
+// Self-healing boot check: free up browser quota immediately if previous sessions bloated localStorage
+function cleanOversizedStorageOnBoot() {
+  if (typeof window === 'undefined') return;
   try {
     const raw = localStorage.getItem(CUSTOM_MODEL_IMAGES_KEY);
-    return raw ? JSON.parse(raw) : {};
-  } catch {
-    return {};
+    if (!raw) return;
+
+    // If raw JSON payload exceeds 300KB, prune oversized base64 dumps
+    if (raw.length > 300_000) {
+      console.warn('[phoneImages] Pruning bloated custom model images from localStorage (size:', raw.length, 'bytes)');
+      const parsed = JSON.parse(raw);
+      const cleaned: Record<string, string> = {};
+      for (const [k, v] of Object.entries(parsed)) {
+        if (typeof v === 'string') {
+          // Drop massive base64 uploads from persistent local storage
+          if (v.startsWith('data:') && v.length > 35_000) continue;
+          cleaned[k] = v;
+        }
+      }
+      const limited = Object.fromEntries(Object.entries(cleaned).slice(-40));
+      localStorage.setItem(CUSTOM_MODEL_IMAGES_KEY, JSON.stringify(limited));
+    }
+  } catch (err) {
+    try {
+      localStorage.removeItem(CUSTOM_MODEL_IMAGES_KEY);
+    } catch {}
   }
+}
+
+cleanOversizedStorageOnBoot();
+
+function safeSetLocalStorage(key: string, data: Record<string, string>) {
+  if (typeof window === 'undefined') return;
+
+  // Cap to 50 most recent models to prevent infinite localStorage growth
+  const entries = Object.entries(data);
+  const boundedData = entries.length > 50
+    ? Object.fromEntries(entries.slice(-50))
+    : data;
+
+  try {
+    localStorage.setItem(key, JSON.stringify(boundedData));
+  } catch (err: any) {
+    console.warn('[phoneImages] localStorage.setItem quota reached, executing emergency prune:', err?.message);
+
+    // Pass 1: Prune any base64 data URLs > 25KB
+    const pruned: Record<string, string> = {};
+    for (const [k, v] of Object.entries(boundedData)) {
+      if (typeof v === 'string' && v.startsWith('data:') && v.length > 25_000) {
+        continue;
+      }
+      pruned[k] = v;
+    }
+
+    try {
+      localStorage.setItem(key, JSON.stringify(pruned));
+      return;
+    } catch {
+      // Pass 2: Keep only 20 latest entries
+      const smallEntries = Object.entries(pruned).slice(-20);
+      try {
+        localStorage.setItem(key, JSON.stringify(Object.fromEntries(smallEntries)));
+      } catch {
+        // Pass 3: Origin quota completely exhausted by other items; fail silently without crashing
+        console.warn('[phoneImages] localStorage origin quota exhausted. Retaining images in memory & DB.');
+      }
+    }
+  }
+}
+
+export function getCustomModelImages(): Record<string, string> {
+  let stored: Record<string, string> = {};
+  if (typeof window !== 'undefined') {
+    try {
+      const raw = localStorage.getItem(CUSTOM_MODEL_IMAGES_KEY);
+      if (raw) stored = JSON.parse(raw);
+    } catch {
+      stored = {};
+    }
+  }
+  return { ...stored, ...memoryCustomCache };
 }
 
 export function saveCustomModelImage(brand: string, model: string, imageUrl: string) {
   if (typeof window === 'undefined') return;
-  const current = getCustomModelImages();
   const b = (brand || '').toLowerCase().trim();
   const m = (model || '').toLowerCase().trim();
   const key1 = `${b}:${m}`;
-  const key2 = m;
+  const val = imageUrl ? imageUrl.trim() : '';
 
-  if (imageUrl && imageUrl.trim()) {
-    current[key1] = imageUrl.trim();
-    current[key2] = imageUrl.trim();
+  if (val) {
+    memoryCustomCache[key1] = val;
+    if (m) memoryCustomCache[m] = val;
   } else {
-    delete current[key1];
-    delete current[key2];
+    delete memoryCustomCache[key1];
+    delete memoryCustomCache[m];
   }
 
-  localStorage.setItem(CUSTOM_MODEL_IMAGES_KEY, JSON.stringify(current));
-  broadcastSync('MODEL_IMAGE_UPDATE', 'master_phones', 'update', { brand, model, imageUrl });
-  window.dispatchEvent(new CustomEvent('fundu_model_image_updated', { detail: { brand, model, imageUrl } }));
+  // Persist safely to localStorage with auto-pruning & quota protection
+  try {
+    let current: Record<string, string> = {};
+    try {
+      const raw = localStorage.getItem(CUSTOM_MODEL_IMAGES_KEY);
+      if (raw) current = JSON.parse(raw);
+    } catch {
+      current = {};
+    }
+
+    if (val) {
+      current[key1] = val;
+      // Do not duplicate large data URLs under secondary key in localStorage
+      if (!val.startsWith('data:')) {
+        current[m] = val;
+      }
+    } else {
+      delete current[key1];
+      delete current[m];
+    }
+
+    safeSetLocalStorage(CUSTOM_MODEL_IMAGES_KEY, current);
+  } catch (err) {
+    console.warn('[phoneImages] Safe fallback: skipped localStorage write:', err);
+  }
+
+  try {
+    broadcastSync('MODEL_IMAGE_UPDATE', 'master_phones', 'update', { brand, model, imageUrl: val });
+  } catch {}
+
+  try {
+    window.dispatchEvent(new CustomEvent('fundu_model_image_updated', { detail: { brand, model, imageUrl: val } }));
+  } catch {}
 }
 
 export function resetCustomModelImage(brand: string, model: string) {

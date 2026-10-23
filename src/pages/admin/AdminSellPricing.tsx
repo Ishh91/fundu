@@ -33,6 +33,7 @@ import {
   hasCustomModelImage,
   getCustomModelImages,
 } from '../../lib/phoneImages';
+import { compressImage } from '../../lib/imageUtils';
 import {
   savePriceOverride,
   getLocalPriceOverrides,
@@ -444,7 +445,11 @@ export default function AdminSellPricing({
     if (!activeImageModel) return;
     setImageSaving(true);
     try {
-      const urlToSave = newImageUrl.trim();
+      let urlToSave = newImageUrl.trim();
+      // Compress if it is a large base64 data URL
+      if (urlToSave.startsWith('data:image/') && urlToSave.length > 30000) {
+        urlToSave = await compressImage(urlToSave, 640, 640, 0.82);
+      }
       saveCustomModelImage(activeImageModel.brand, activeImageModel.model, urlToSave);
 
       if (onUpdateImage) {
@@ -1207,18 +1212,19 @@ export default function AdminSellPricing({
                     type="file"
                     accept="image/*"
                     className="hidden"
-                    onChange={(e) => {
+                    onChange={async (e) => {
                       const file = e.target.files?.[0];
                       if (!file) return;
-                      if (file.size > 5 * 1024 * 1024) {
-                        alert('Image size exceeds 5MB limit');
-                        return;
+                      try {
+                        const compressed = await compressImage(file, 640, 640, 0.82);
+                        setNewImageUrl(compressed);
+                      } catch {
+                        const reader = new FileReader();
+                        reader.onloadend = () => {
+                          setNewImageUrl(reader.result as string);
+                        };
+                        reader.readAsDataURL(file);
                       }
-                      const reader = new FileReader();
-                      reader.onloadend = () => {
-                        setNewImageUrl(reader.result as string);
-                      };
-                      reader.readAsDataURL(file);
                     }}
                   />
                 </label>
