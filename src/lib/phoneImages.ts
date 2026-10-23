@@ -508,7 +508,7 @@ export function syncCustomImagesFromDatabase(phones: Array<{ brand: string; mode
   phones.forEach((p) => {
     if (p.brand && p.model && p.image_url) {
       const url = String(p.image_url).trim();
-      if (url) {
+      if (url && !url.includes('unsplash.com') && !url.includes('777/thumb')) {
         const keys = generateModelLookupKeys(p.brand, p.model);
         keys.forEach((k) => {
           if (memoryCustomCache[k] !== url) {
@@ -726,7 +726,7 @@ export function getCleanPhoneImage(brand?: string, model?: string, fallbackUrl?:
   const customImages = getCustomModelImages();
   const lookupKeys = generateModelLookupKeys(brand, model);
   for (const k of lookupKeys) {
-    if (customImages[k]) {
+    if (customImages[k] && !customImages[k].includes('unsplash.com') && !customImages[k].includes('777/thumb')) {
       return customImages[k];
     }
   }
