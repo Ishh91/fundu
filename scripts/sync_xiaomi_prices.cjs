@@ -145,11 +145,11 @@ function calculateFunduPrice(basePrice) {
 function normalizeKey(str) {
   return String(str || '')
     .toLowerCase()
-    .replace(/^(xiaomi|redmi|mi)\s+/i, '')
-    .replace(/\b5g\b/gi, '')
+    .replace(/^(xiaomi\s+|redmi\s+|mi\s+)+/gi, '')
     .replace(/\bplus\b/gi, '+')
+    .replace(/\s*\+\s*/g, '+')
     .replace(/\b(curved display|snapdragon 7s gen 2|200 mp ois|sony imx766|super amoled 120hz|leica summilux|leica|hypercharge 120w|4g slim|144hz|108 mp flagship|ceramic frame|discovery edition 210w|speed edition|helio g96|108 mp|64 mp amoled|japan edition|global|aura balance|helio g85|64 mp quad cam|48 mp sony imx586|dual front cameras|camera beast|dimensity 8100 flagship|pop-up amoled flagship|snapdragon 730|android one amoled|crystal glass design|4g starshine|snapdragon 4 gen 2|4g helio g88|stereo speakers|helio g80)\b/gi, '')
-    .replace(/[^a-z0-9]/g, '');
+    .replace(/[^a-z0-9+]/g, '');
 }
 
 // Build map with persistent randomized prices
@@ -174,7 +174,7 @@ function findXiaomiMatch(modelName) {
   if (xiaomiMap.has(k)) return xiaomiMap.get(k);
 
   for (const [dictKey, val] of xiaomiMap.entries()) {
-    if (dictKey.length >= 4 && (k === dictKey || k.startsWith(dictKey) || dictKey.startsWith(k))) {
+    if (k === dictKey) {
       return val;
     }
   }
@@ -195,11 +195,11 @@ async function run() {
     const b = (item.brand || '').toLowerCase();
     if (b === 'xiaomi' || b === 'redmi' || b === 'mi') {
       const match = findXiaomiMatch(item.model);
-      existingXiaomiKeys.add(normalizeKey(item.model));
       if (match) {
         item.base_resale_value = match.funduPrice;
         item.price = match.funduPrice;
         catalogUpdatedCount++;
+        existingXiaomiKeys.add(normalizeKey(item.model));
       }
     }
   });
@@ -209,7 +209,6 @@ async function run() {
   rawXiaomiList.forEach(item => {
     const k = normalizeKey(item.name);
     if (!existingXiaomiKeys.has(k)) {
-      const brand = item.name.toLowerCase().startsWith('redmi') ? 'Xiaomi' : 'Xiaomi';
       catalog.push({
         brand: 'Xiaomi',
         model: item.name,
@@ -302,16 +301,17 @@ async function run() {
     const match = findXiaomiMatch(item.name);
     if (!match) continue;
 
-    const cleanModel = item.name.replace(/^(xiaomi|redmi)\s+/i, '');
+    const cleanModel = item.name.replace(/^(xiaomi\s+|redmi\s+|mi\s+)+/i, '');
 
     // Update masterphones
     const resMaster = await db.collection('masterphones').updateMany(
       {
-        brand: { $regex: /^(xiaomi|redmi)$/i },
+        brand: { $regex: /^(xiaomi|redmi|mi)$/i },
         $or: [
           { model: new RegExp(`^${cleanModel.replace(/[^a-zA-Z0-9]/g, '.*')}$`, 'i') },
           { model: new RegExp(`^Xiaomi\\s+${cleanModel.replace(/[^a-zA-Z0-9]/g, '.*')}$`, 'i') },
-          { model: new RegExp(`^Redmi\\s+${cleanModel.replace(/[^a-zA-Z0-9]/g, '.*')}$`, 'i') }
+          { model: new RegExp(`^Redmi\\s+${cleanModel.replace(/[^a-zA-Z0-9]/g, '.*')}$`, 'i') },
+          { model: new RegExp(`^Mi\\s+${cleanModel.replace(/[^a-zA-Z0-9]/g, '.*')}$`, 'i') }
         ]
       },
       {
@@ -327,11 +327,12 @@ async function run() {
     // Upsert sellpriceconfigs
     const resConfig = await db.collection('sellpriceconfigs').updateOne(
       {
-        brand: { $regex: /^(xiaomi|redmi)$/i },
+        brand: { $regex: /^(xiaomi|redmi|mi)$/i },
         $or: [
           { model: new RegExp(`^${cleanModel.replace(/[^a-zA-Z0-9]/g, '.*')}$`, 'i') },
           { model: new RegExp(`^Xiaomi\\s+${cleanModel.replace(/[^a-zA-Z0-9]/g, '.*')}$`, 'i') },
-          { model: new RegExp(`^Redmi\\s+${cleanModel.replace(/[^a-zA-Z0-9]/g, '.*')}$`, 'i') }
+          { model: new RegExp(`^Redmi\\s+${cleanModel.replace(/[^a-zA-Z0-9]/g, '.*')}$`, 'i') },
+          { model: new RegExp(`^Mi\\s+${cleanModel.replace(/[^a-zA-Z0-9]/g, '.*')}$`, 'i') }
         ]
       },
       {
