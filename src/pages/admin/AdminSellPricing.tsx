@@ -279,6 +279,11 @@ export default function AdminSellPricing({
           hasCustomPrice: customPr !== undefined,
           hasCustomImage: Boolean(getOverrideImage(p.brand, p.model, cleanM)),
         });
+      } else {
+        const existing = modelMap.get(key);
+        if (existing && !existing.hasCustomPrice && p.price && p.price > 0) {
+          existing.base_price = p.price;
+        }
       }
     });
 
@@ -309,6 +314,11 @@ export default function AdminSellPricing({
           hasCustomPrice: customPr !== undefined,
           hasCustomImage: Boolean(getOverrideImage(p.brand, p.model, cleanM)),
         });
+      } else {
+        const existing = modelMap.get(key);
+        if (existing && !existing.hasCustomPrice && p.base_resale_value && p.base_resale_value > 0) {
+          existing.base_price = p.base_resale_value;
+        }
       }
     });
 
