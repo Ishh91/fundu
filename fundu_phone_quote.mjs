@@ -2538,7 +2538,7 @@ export function quotePhone(input = {}, options = {}) {
     activation_lock_cleared = true,
     ownership_verified = true,
     liquid_damage = false,
-    cosmetic_condition = 'good',
+    cosmetic_condition = input.cosmetic_condition || input.condition || 'good',
     screen_condition = 'flawless',
     body_condition = 'flawless',
     battery_health = 'healthy',
@@ -2758,23 +2758,20 @@ export function quotePhone(input = {}, options = {}) {
   }
 
   // Exact Business Formula:
-  const proceedsAdjustedForCondition = Math.round(expectedResaleProceeds * cosmeticMultiplier) + accessoriesBonusTotal;
-  let rawOffer;
-  if (options.isDirectBuybackPrice || options.catalogPrice !== undefined) {
-    const baseP = expectedResaleProceeds;
-    const condP = Math.round(baseP * cosmeticMultiplier);
+  // Base proceeds equals catalog/benchmark buyback value (Cashify + ₹1,000).
+  // In flawless condition with box and charger, the offer amount equals 100% of base proceeds.
+  const baseP = expectedResaleProceeds;
+  const condP = Math.round(baseP * cosmeticMultiplier);
 
-    // Missing accessories deductions if not included
-    let accessoriesAdjustment = 0;
-    const hasBox = Array.isArray(accessories) && accessories.includes('Original Box');
-    const hasCharger = Array.isArray(accessories) && accessories.includes('Original Charger');
-    if (!hasBox) accessoriesAdjustment -= (FUNDU_POLICY.accessoriesBonus['Original Box'] || 300);
-    if (!hasCharger) accessoriesAdjustment -= (FUNDU_POLICY.accessoriesBonus['Original Charger'] || 300);
+  // Missing accessories deductions if not included (box: -300, charger: -300)
+  let accessoriesAdjustment = 0;
+  const hasBox = Array.isArray(accessories) && (accessories.includes('Original Box') || accessories.includes('Box'));
+  const hasCharger = Array.isArray(accessories) && (accessories.includes('Original Charger') || accessories.includes('Charger'));
+  if (!hasBox) accessoriesAdjustment -= (FUNDU_POLICY.accessoriesBonus['Original Box'] || 300);
+  if (!hasCharger) accessoriesAdjustment -= (FUNDU_POLICY.accessoriesBonus['Original Charger'] || 300);
 
-    rawOffer = condP + accessoriesAdjustment - configuredRepairsTotal - missingStylusDeduction;
-  } else {
-    rawOffer = proceedsAdjustedForCondition - configuredRepairsTotal - pickupInspectionCost - warrantyAndRiskReserves - targetContributionMargin - missingStylusDeduction;
-  }
+  const proceedsAdjustedForCondition = condP + accessoriesAdjustment;
+  const rawOffer = proceedsAdjustedForCondition - configuredRepairsTotal - missingStylusDeduction;
 
   // If raw offer drops below minimum floor or repairs exceed proceeds, provide salvage/floor offer so estimate is never 0:
   if (rawOffer <= 0 || configuredRepairsTotal > expectedResaleProceeds * 0.70) {

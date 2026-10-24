@@ -136,10 +136,9 @@ const rawXiaomiList = [
   { name: 'Redmi 9i', variant: '64 GB', price: 2700 }
 ];
 
-// Calculate Fundu Base Price with ₹800 to ₹1,000 random value added
+// Calculate Fundu Base Price: Exactly +1,000 extra over Cashify Catalogue
 function calculateFunduPrice(basePrice) {
-  const randAddition = 800 + Math.floor(Math.random() * 21) * 10;
-  return basePrice + randAddition;
+  return basePrice + 1000;
 }
 
 function normalizeKey(str) {
@@ -178,6 +177,17 @@ function findXiaomiMatch(modelName) {
       return val;
     }
   }
+
+  // 5G agnostic match fallback
+  const kNo5g = k.replace(/5g/g, '');
+  if (kNo5g.length >= 2) {
+    for (const [dictKey, val] of xiaomiMap.entries()) {
+      if (dictKey.replace(/5g/g, '') === kNo5g) {
+        return val;
+      }
+    }
+  }
+
   return null;
 }
 

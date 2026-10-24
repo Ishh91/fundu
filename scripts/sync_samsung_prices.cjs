@@ -161,9 +161,9 @@ const rawSamsungList = [
   { name: 'Galaxy F62', variant: '128 GB', price: 7200 }
 ];
 
-// Calculate Fundu Buyback Price - EXACT PRICE FROM CASHIFY CATALOGUE (No random additions)
+// Calculate Fundu Buyback Price - EXACTLY CASHIFY CATALOGUE + 1,000 EXTRA
 function calculateFunduPrice(basePrice) {
-  return basePrice;
+  return basePrice + 1000;
 }
 
 function normalizeKey(str) {
