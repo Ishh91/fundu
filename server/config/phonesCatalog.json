@@ -25483,7 +25483,7 @@
       "256GB"
     ],
     "default_mrp": 9405,
-    "base_resale_value": 6270,
+    "base_resale_value": 5100,
     "image_url": "https://api.mobileapi.dev/devices/31570/thumb.png",
     "popular_tag": "Xiaomi Official Model",
     "processor": "High-Efficiency Processor",
@@ -25491,7 +25491,8 @@
     "battery_spec": "5000 mAh Fast Charging",
     "display_spec": "6.7\" AMOLED 120Hz",
     "is_5g": false,
-    "is_active": true
+    "is_active": true,
+    "price": 5100
   },
   {
     "brand": "Xiaomi",
@@ -25531,7 +25532,7 @@
       "256GB"
     ],
     "default_mrp": 9675,
-    "base_resale_value": 6450,
+    "base_resale_value": 6780,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-redmi-11-prime-5g.jpg",
     "popular_tag": "Xiaomi Official Model",
     "processor": "5G Octa-core Processor",
@@ -25539,7 +25540,8 @@
     "battery_spec": "5000 mAh Fast Charging",
     "display_spec": "6.7\" AMOLED 120Hz",
     "is_5g": true,
-    "is_active": true
+    "is_active": true,
+    "price": 6780
   },
   {
     "brand": "Xiaomi",
@@ -25555,7 +25557,7 @@
       "256GB"
     ],
     "default_mrp": 12060,
-    "base_resale_value": 8040,
+    "base_resale_value": 7130,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-redmi-12.jpg",
     "popular_tag": "Xiaomi Official Model",
     "processor": "5G Octa-core Processor",
@@ -25563,7 +25565,8 @@
     "battery_spec": "5000 mAh Fast Charging",
     "display_spec": "6.7\" AMOLED 120Hz",
     "is_5g": true,
-    "is_active": true
+    "is_active": true,
+    "price": 7130
   },
   {
     "brand": "Xiaomi",
@@ -25579,7 +25582,7 @@
       "256GB"
     ],
     "default_mrp": 11820,
-    "base_resale_value": 7880,
+    "base_resale_value": 6620,
     "image_url": "https://api.mobileapi.dev/devices/31508/thumb.png",
     "popular_tag": "Xiaomi Official Model",
     "processor": "5G Octa-core Processor",
@@ -25587,7 +25590,8 @@
     "battery_spec": "5000 mAh Fast Charging",
     "display_spec": "6.7\" AMOLED 120Hz",
     "is_5g": true,
-    "is_active": true
+    "is_active": true,
+    "price": 6620
   },
   {
     "brand": "Xiaomi",
@@ -25603,7 +25607,7 @@
       "256GB"
     ],
     "default_mrp": 7665,
-    "base_resale_value": 5110,
+    "base_resale_value": 4040,
     "image_url": "https://api.mobileapi.dev/devices/13626/thumb.png",
     "popular_tag": "Xiaomi Official Model",
     "processor": "High-Efficiency Processor",
@@ -25611,7 +25615,8 @@
     "battery_spec": "5000 mAh Fast Charging",
     "display_spec": "6.7\" AMOLED 120Hz",
     "is_5g": false,
-    "is_active": true
+    "is_active": true,
+    "price": 4040
   },
   {
     "brand": "Xiaomi",
@@ -25675,7 +25680,7 @@
       "256GB"
     ],
     "default_mrp": 9525,
-    "base_resale_value": 6350,
+    "base_resale_value": 5070,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-redmi-note-10.jpg",
     "popular_tag": "Xiaomi Official Model",
     "processor": "High-Efficiency Processor",
@@ -25683,7 +25688,8 @@
     "battery_spec": "5000 mAh Fast Charging",
     "display_spec": "6.7\" AMOLED 120Hz",
     "is_5g": false,
-    "is_active": true
+    "is_active": true,
+    "price": 5070
   },
   {
     "brand": "Xiaomi",
@@ -25699,7 +25705,7 @@
       "256GB"
     ],
     "default_mrp": 9765,
-    "base_resale_value": 6510,
+    "base_resale_value": 6760,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-redmi-note10-pro.jpg",
     "popular_tag": "Xiaomi Official Model",
     "processor": "5G Octa-core Processor",
@@ -25707,7 +25713,8 @@
     "battery_spec": "5000 mAh Fast Charging",
     "display_spec": "6.7\" AMOLED 120Hz",
     "is_5g": true,
-    "is_active": true
+    "is_active": true,
+    "price": 6760
   },
   {
     "brand": "Xiaomi",
@@ -25723,7 +25730,7 @@
       "256GB"
     ],
     "default_mrp": 19999,
-    "base_resale_value": 6900,
+    "base_resale_value": 13070,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-redmi-note10-pro-max.jpg",
     "popular_tag": "Xiaomi Official Model",
     "processor": "5G Octa-core Processor",
@@ -25731,7 +25738,8 @@
     "battery_spec": "5000 mAh Fast Charging",
     "display_spec": "6.7\" AMOLED 120Hz",
     "is_5g": true,
-    "is_active": true
+    "is_active": true,
+    "price": 13070
   },
   {
     "brand": "Xiaomi",
@@ -25747,7 +25755,7 @@
       "256GB"
     ],
     "default_mrp": 9780,
-    "base_resale_value": 6520,
+    "base_resale_value": 5530,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-redmi-note-10s.jpg",
     "popular_tag": "Xiaomi Official Model",
     "processor": "High-Efficiency Processor",
@@ -25755,7 +25763,8 @@
     "battery_spec": "5000 mAh Fast Charging",
     "display_spec": "6.7\" AMOLED 120Hz",
     "is_5g": false,
-    "is_active": true
+    "is_active": true,
+    "price": 5530
   },
   {
     "brand": "Xiaomi",
@@ -25771,7 +25780,7 @@
       "256GB"
     ],
     "default_mrp": 14250,
-    "base_resale_value": 9500,
+    "base_resale_value": 5600,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-redmi-note-11.jpg",
     "popular_tag": "Xiaomi Official Model",
     "processor": "High-Efficiency Processor",
@@ -25779,7 +25788,8 @@
     "battery_spec": "5000 mAh Fast Charging",
     "display_spec": "6.7\" AMOLED 120Hz",
     "is_5g": false,
-    "is_active": true
+    "is_active": true,
+    "price": 5600
   },
   {
     "brand": "Xiaomi",
@@ -25795,7 +25805,7 @@
       "256GB"
     ],
     "default_mrp": 13950,
-    "base_resale_value": 9300,
+    "base_resale_value": 7200,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-redmi-note-11-pro-global.jpg",
     "popular_tag": "Xiaomi Official Model",
     "processor": "5G Octa-core Processor",
@@ -25803,7 +25813,8 @@
     "battery_spec": "5000 mAh Fast Charging",
     "display_spec": "6.7\" AMOLED 120Hz",
     "is_5g": true,
-    "is_active": true
+    "is_active": true,
+    "price": 7200
   },
   {
     "brand": "Xiaomi",
@@ -25819,7 +25830,7 @@
       "256GB"
     ],
     "default_mrp": 14025,
-    "base_resale_value": 9350,
+    "base_resale_value": 8800,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-redmi-note-11-pro-plus-5g.jpg",
     "popular_tag": "Xiaomi Official Model",
     "processor": "5G Octa-core Processor",
@@ -25827,7 +25838,8 @@
     "battery_spec": "5000 mAh Fast Charging",
     "display_spec": "6.7\" AMOLED 120Hz",
     "is_5g": true,
-    "is_active": true
+    "is_active": true,
+    "price": 8800
   },
   {
     "brand": "Xiaomi",
@@ -25843,7 +25855,7 @@
       "256GB"
     ],
     "default_mrp": 9825,
-    "base_resale_value": 6550,
+    "base_resale_value": 6520,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-redmi-note-11s.jpg",
     "popular_tag": "Xiaomi Official Model",
     "processor": "High-Efficiency Processor",
@@ -25851,7 +25863,8 @@
     "battery_spec": "5000 mAh Fast Charging",
     "display_spec": "6.7\" AMOLED 120Hz",
     "is_5g": false,
-    "is_active": true
+    "is_active": true,
+    "price": 6520
   },
   {
     "brand": "Xiaomi",
@@ -25867,7 +25880,7 @@
       "256GB"
     ],
     "default_mrp": 13575,
-    "base_resale_value": 9050,
+    "base_resale_value": 7840,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-redmi-note-12-4g.jpg",
     "popular_tag": "Xiaomi Official Model",
     "processor": "5G Octa-core Processor",
@@ -25875,7 +25888,8 @@
     "battery_spec": "5000 mAh Fast Charging",
     "display_spec": "6.7\" AMOLED 120Hz",
     "is_5g": true,
-    "is_active": true
+    "is_active": true,
+    "price": 7840
   },
   {
     "brand": "Xiaomi",
@@ -25891,7 +25905,7 @@
       "256GB"
     ],
     "default_mrp": 21450,
-    "base_resale_value": 14300,
+    "base_resale_value": 9250,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-redmi-note-12.jpg",
     "popular_tag": "Xiaomi Official Model",
     "processor": "5G Octa-core Processor",
@@ -25899,7 +25913,8 @@
     "battery_spec": "5000 mAh Fast Charging",
     "display_spec": "6.7\" AMOLED 120Hz",
     "is_5g": true,
-    "is_active": true
+    "is_active": true,
+    "price": 9250
   },
   {
     "brand": "Xiaomi",
@@ -25915,7 +25930,7 @@
       "256GB"
     ],
     "default_mrp": 24999,
-    "base_resale_value": 14350,
+    "base_resale_value": 13000,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-redmi-note-12-pro.jpg",
     "popular_tag": "Xiaomi Official Model",
     "processor": "5G Octa-core Processor",
@@ -25923,7 +25938,8 @@
     "battery_spec": "5000 mAh Fast Charging",
     "display_spec": "6.7\" AMOLED 120Hz",
     "is_5g": true,
-    "is_active": true
+    "is_active": true,
+    "price": 13000
   },
   {
     "brand": "Xiaomi",
@@ -25939,7 +25955,7 @@
       "256GB"
     ],
     "default_mrp": 21675,
-    "base_resale_value": 14450,
+    "base_resale_value": 15350,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-redmi-note-12-pro-plus.jpg",
     "popular_tag": "Xiaomi Official Model",
     "processor": "5G Octa-core Processor",
@@ -25947,7 +25963,8 @@
     "battery_spec": "5000 mAh Fast Charging",
     "display_spec": "6.7\" AMOLED 120Hz",
     "is_5g": true,
-    "is_active": true
+    "is_active": true,
+    "price": 15350
   },
   {
     "brand": "Xiaomi",
@@ -25963,7 +25980,7 @@
       "256GB"
     ],
     "default_mrp": 17025,
-    "base_resale_value": 11350,
+    "base_resale_value": 8990,
     "image_url": "https://api.mobileapi.dev/devices/13590/thumb.png",
     "popular_tag": "Xiaomi Official Model",
     "processor": "5G Octa-core Processor",
@@ -25971,7 +25988,8 @@
     "battery_spec": "5000 mAh Fast Charging",
     "display_spec": "6.7\" AMOLED 120Hz",
     "is_5g": true,
-    "is_active": true
+    "is_active": true,
+    "price": 8990
   },
   {
     "brand": "Xiaomi",
@@ -25987,7 +26005,7 @@
       "256GB"
     ],
     "default_mrp": 29175,
-    "base_resale_value": 19450,
+    "base_resale_value": 11090,
     "image_url": "https://api.mobileapi.dev/devices/31521/thumb.png",
     "popular_tag": "Xiaomi Official Model",
     "processor": "5G Octa-core Processor",
@@ -25995,7 +26013,8 @@
     "battery_spec": "5000 mAh Fast Charging",
     "display_spec": "6.7\" AMOLED 120Hz",
     "is_5g": true,
-    "is_active": true
+    "is_active": true,
+    "price": 11090
   },
   {
     "brand": "Xiaomi",
@@ -26011,7 +26030,7 @@
       "256GB"
     ],
     "default_mrp": 25999,
-    "base_resale_value": 19450,
+    "base_resale_value": 14690,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-redmi-note-13-pro-5g.jpg",
     "popular_tag": "Xiaomi Official Model",
     "processor": "5G Octa-core Processor",
@@ -26019,7 +26038,8 @@
     "battery_spec": "5000 mAh Fast Charging",
     "display_spec": "6.7\" AMOLED 120Hz",
     "is_5g": true,
-    "is_active": true
+    "is_active": true,
+    "price": 14690
   },
   {
     "brand": "Xiaomi",
@@ -26035,7 +26055,7 @@
       "256GB"
     ],
     "default_mrp": 31999,
-    "base_resale_value": 19300,
+    "base_resale_value": 17740,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-redmi-note-13-pro-plus.jpg",
     "popular_tag": "Xiaomi Official Model",
     "processor": "5G Octa-core Processor",
@@ -26043,7 +26063,8 @@
     "battery_spec": "5000 mAh Fast Charging",
     "display_spec": "6.7\" AMOLED 120Hz",
     "is_5g": true,
-    "is_active": true
+    "is_active": true,
+    "price": 17740
   },
   {
     "brand": "Xiaomi",
@@ -26059,7 +26080,7 @@
       "256GB"
     ],
     "default_mrp": 8250,
-    "base_resale_value": 5500,
+    "base_resale_value": 3910,
     "image_url": "https://api.mobileapi.dev/devices/31618/thumb.png",
     "popular_tag": "Xiaomi Official Model",
     "processor": "High-Efficiency Processor",
@@ -26067,7 +26088,8 @@
     "battery_spec": "5000 mAh Fast Charging",
     "display_spec": "6.7\" AMOLED 120Hz",
     "is_5g": false,
-    "is_active": true
+    "is_active": true,
+    "price": 3910
   },
   {
     "brand": "Xiaomi",
@@ -26083,7 +26105,7 @@
       "256GB"
     ],
     "default_mrp": 9660,
-    "base_resale_value": 6440,
+    "base_resale_value": 4720,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-redmi-note-8-pro.jpg",
     "popular_tag": "Xiaomi Official Model",
     "processor": "5G Octa-core Processor",
@@ -26091,7 +26113,8 @@
     "battery_spec": "5000 mAh Fast Charging",
     "display_spec": "6.7\" AMOLED 120Hz",
     "is_5g": true,
-    "is_active": true
+    "is_active": true,
+    "price": 4720
   },
   {
     "brand": "Xiaomi",
@@ -26107,7 +26130,7 @@
       "256GB"
     ],
     "default_mrp": 9075,
-    "base_resale_value": 6050,
+    "base_resale_value": 4450,
     "image_url": "https://api.mobileapi.dev/devices/31608/thumb.png",
     "popular_tag": "Xiaomi Official Model",
     "processor": "High-Efficiency Processor",
@@ -26115,7 +26138,8 @@
     "battery_spec": "5000 mAh Fast Charging",
     "display_spec": "6.7\" AMOLED 120Hz",
     "is_5g": false,
-    "is_active": true
+    "is_active": true,
+    "price": 4450
   },
   {
     "brand": "Xiaomi",
@@ -26131,7 +26155,7 @@
       "256GB"
     ],
     "default_mrp": 9645,
-    "base_resale_value": 6430,
+    "base_resale_value": 5060,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-redmi-note-9-pro.jpg",
     "popular_tag": "Xiaomi Official Model",
     "processor": "5G Octa-core Processor",
@@ -26139,7 +26163,8 @@
     "battery_spec": "5000 mAh Fast Charging",
     "display_spec": "6.7\" AMOLED 120Hz",
     "is_5g": true,
-    "is_active": true
+    "is_active": true,
+    "price": 5060
   },
   {
     "brand": "Xiaomi",
@@ -26155,7 +26180,7 @@
       "256GB"
     ],
     "default_mrp": 10095,
-    "base_resale_value": 6730,
+    "base_resale_value": 13570,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-redmi-note-9-pro-max.jpg",
     "popular_tag": "Xiaomi Official Model",
     "processor": "5G Octa-core Processor",
@@ -26163,7 +26188,8 @@
     "battery_spec": "5000 mAh Fast Charging",
     "display_spec": "6.7\" AMOLED 120Hz",
     "is_5g": true,
-    "is_active": true
+    "is_active": true,
+    "price": 13570
   },
   {
     "brand": "Xiaomi",
@@ -26251,7 +26277,7 @@
       "256GB"
     ],
     "default_mrp": 17775,
-    "base_resale_value": 11850,
+    "base_resale_value": 12370,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-11t-pro.jpg",
     "popular_tag": "Xiaomi Official Model",
     "processor": "5G Octa-core Processor",
@@ -26259,7 +26285,8 @@
     "battery_spec": "5000 mAh Fast Charging",
     "display_spec": "6.7\" AMOLED 120Hz",
     "is_5g": true,
-    "is_active": true
+    "is_active": true,
+    "price": 12370
   },
   {
     "brand": "Xiaomi",
@@ -26299,7 +26326,7 @@
       "256GB"
     ],
     "default_mrp": 41175,
-    "base_resale_value": 27450,
+    "base_resale_value": 15920,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-12-pro.jpg",
     "popular_tag": "Xiaomi Official Model",
     "processor": "5G Octa-core Processor",
@@ -26307,7 +26334,8 @@
     "battery_spec": "5000 mAh Fast Charging",
     "display_spec": "6.7\" AMOLED 120Hz",
     "is_5g": true,
-    "is_active": true
+    "is_active": true,
+    "price": 15920
   },
   {
     "brand": "Xiaomi",
@@ -26323,7 +26351,7 @@
       "256GB"
     ],
     "default_mrp": 55425,
-    "base_resale_value": 36950,
+    "base_resale_value": 9780,
     "image_url": "https://api.mobileapi.dev/devices/31521/thumb.png",
     "popular_tag": "Xiaomi Official Model",
     "processor": "5G Octa-core Processor",
@@ -26331,7 +26359,8 @@
     "battery_spec": "5000 mAh Fast Charging",
     "display_spec": "6.7\" AMOLED 120Hz",
     "is_5g": true,
-    "is_active": true
+    "is_active": true,
+    "price": 9780
   },
   {
     "brand": "Xiaomi",
@@ -26371,7 +26400,7 @@
       "256GB"
     ],
     "default_mrp": 55425,
-    "base_resale_value": 36950,
+    "base_resale_value": 26300,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-13-pro.jpg",
     "popular_tag": "Xiaomi Official Model",
     "processor": "5G Octa-core Processor",
@@ -26379,7 +26408,8 @@
     "battery_spec": "5000 mAh Fast Charging",
     "display_spec": "6.7\" AMOLED 120Hz",
     "is_5g": true,
-    "is_active": true
+    "is_active": true,
+    "price": 26300
   },
   {
     "brand": "Xiaomi",
@@ -26395,7 +26425,7 @@
       "256GB"
     ],
     "default_mrp": 69999,
-    "base_resale_value": 48300,
+    "base_resale_value": 28540,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-14.jpg",
     "popular_tag": "Xiaomi Official Model",
     "processor": "5G Octa-core Processor",
@@ -26403,7 +26433,8 @@
     "battery_spec": "5000 mAh Fast Charging",
     "display_spec": "6.7\" AMOLED 120Hz",
     "is_5g": true,
-    "is_active": true
+    "is_active": true,
+    "price": 28540
   },
   {
     "brand": "Xiaomi",
@@ -26419,7 +26450,7 @@
       "256GB"
     ],
     "default_mrp": 31125,
-    "base_resale_value": 20750,
+    "base_resale_value": 19460,
     "image_url": "https://api.mobileapi.dev/devices/840/thumb.png",
     "popular_tag": "Xiaomi Official Model",
     "processor": "5G Octa-core Processor",
@@ -26427,7 +26458,8 @@
     "battery_spec": "5000 mAh Fast Charging",
     "display_spec": "6.7\" AMOLED 120Hz",
     "is_5g": true,
-    "is_active": true
+    "is_active": true,
+    "price": 19460
   },
   {
     "brand": "Xiaomi",
@@ -26443,7 +26475,7 @@
       "256GB"
     ],
     "default_mrp": 99999,
-    "base_resale_value": 39880,
+    "base_resale_value": 38820,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-14-ultra.jpg",
     "popular_tag": "Xiaomi Official Model",
     "processor": "5G Octa-core Processor",
@@ -26451,7 +26483,8 @@
     "battery_spec": "5000 mAh Fast Charging",
     "display_spec": "6.7\" AMOLED 120Hz",
     "is_5g": true,
-    "is_active": true
+    "is_active": true,
+    "price": 38820
   },
   {
     "brand": "Xiaomi",
@@ -26467,7 +26500,7 @@
       "256GB"
     ],
     "default_mrp": 93450,
-    "base_resale_value": 62300,
+    "base_resale_value": 35300,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-15.jpg",
     "popular_tag": "Xiaomi Official Model",
     "processor": "5G Octa-core Processor",
@@ -26475,7 +26508,8 @@
     "battery_spec": "5000 mAh Fast Charging",
     "display_spec": "6.7\" AMOLED 120Hz",
     "is_5g": true,
-    "is_active": true
+    "is_active": true,
+    "price": 35300
   },
   {
     "brand": "Xiaomi",
@@ -26515,7 +26549,7 @@
       "256GB"
     ],
     "default_mrp": 83895,
-    "base_resale_value": 55930,
+    "base_resale_value": 40710,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-17.jpg",
     "popular_tag": "Xiaomi Official Model",
     "processor": "High-Efficiency Processor",
@@ -26523,7 +26557,8 @@
     "battery_spec": "5000 mAh Fast Charging",
     "display_spec": "6.7\" AMOLED 120Hz",
     "is_5g": false,
-    "is_active": true
+    "is_active": true,
+    "price": 40710
   },
   {
     "brand": "Xiaomi",
@@ -26539,7 +26574,7 @@
       "256GB"
     ],
     "default_mrp": 116205,
-    "base_resale_value": 77470,
+    "base_resale_value": 59370,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-17-ultra.jpg",
     "popular_tag": "Xiaomi Official Model",
     "processor": "5G Octa-core Processor",
@@ -26547,7 +26582,8 @@
     "battery_spec": "5000 mAh Fast Charging",
     "display_spec": "6.7\" AMOLED 120Hz",
     "is_5g": true,
-    "is_active": true
+    "is_active": true,
+    "price": 59370
   },
   {
     "brand": "Xiaomi",
@@ -26611,7 +26647,7 @@
       "256GB"
     ],
     "default_mrp": 18375,
-    "base_resale_value": 12250,
+    "base_resale_value": 5100,
     "image_url": "https://api.mobileapi.dev/devices/1946/thumb.png",
     "popular_tag": "Xiaomi Official Model",
     "processor": "High-Efficiency Processor",
@@ -26619,7 +26655,8 @@
     "battery_spec": "5000 mAh Fast Charging",
     "display_spec": "6.7\" AMOLED 120Hz",
     "is_5g": false,
-    "is_active": true
+    "is_active": true,
+    "price": 5100
   },
   {
     "brand": "Xiaomi",
@@ -26731,7 +26768,7 @@
       "256GB"
     ],
     "default_mrp": 28905,
-    "base_resale_value": 19270,
+    "base_resale_value": 19350,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-mi-11-ultra.jpg",
     "popular_tag": "Xiaomi Official Model",
     "processor": "5G Octa-core Processor",
@@ -26739,7 +26776,8 @@
     "battery_spec": "5000 mAh Fast Charging",
     "display_spec": "6.7\" AMOLED 120Hz",
     "is_5g": true,
-    "is_active": true
+    "is_active": true,
+    "price": 19350
   },
   {
     "brand": "Xiaomi",
@@ -26899,7 +26937,7 @@
       "256GB"
     ],
     "default_mrp": 10800,
-    "base_resale_value": 7200,
+    "base_resale_value": 6360,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-redmi-10-power.jpg",
     "popular_tag": "Xiaomi Official Model",
     "processor": "High-Efficiency Processor",
@@ -26907,7 +26945,8 @@
     "battery_spec": "5000 mAh Fast Charging",
     "display_spec": "6.7\" AMOLED 120Hz",
     "is_5g": false,
-    "is_active": true
+    "is_active": true,
+    "price": 6360
   },
   {
     "brand": "Xiaomi",
@@ -26923,7 +26962,7 @@
       "256GB"
     ],
     "default_mrp": 9405,
-    "base_resale_value": 6270,
+    "base_resale_value": 5480,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-redmi-10-prime.jpg",
     "popular_tag": "Xiaomi Official Model",
     "processor": "High-Efficiency Processor",
@@ -26931,7 +26970,8 @@
     "battery_spec": "5000 mAh Fast Charging",
     "display_spec": "6.7\" AMOLED 120Hz",
     "is_5g": false,
-    "is_active": true
+    "is_active": true,
+    "price": 5480
   },
   {
     "brand": "Xiaomi",
@@ -26947,7 +26987,7 @@
       "256GB"
     ],
     "default_mrp": 9390,
-    "base_resale_value": 6260,
+    "base_resale_value": 5470,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-redmi-10-prime-2022.jpg",
     "popular_tag": "Xiaomi Official Model",
     "processor": "High-Efficiency Processor",
@@ -26955,7 +26995,8 @@
     "battery_spec": "5000 mAh Fast Charging",
     "display_spec": "6.7\" AMOLED 120Hz",
     "is_5g": false,
-    "is_active": true
+    "is_active": true,
+    "price": 5470
   },
   {
     "brand": "Xiaomi",
@@ -26971,7 +27012,7 @@
       "256GB"
     ],
     "default_mrp": 11190,
-    "base_resale_value": 7460,
+    "base_resale_value": 5870,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-redmi-12c.jpg",
     "popular_tag": "Xiaomi Official Model",
     "processor": "5G Octa-core Processor",
@@ -26979,7 +27020,8 @@
     "battery_spec": "5000 mAh Fast Charging",
     "display_spec": "6.7\" AMOLED 120Hz",
     "is_5g": true,
-    "is_active": true
+    "is_active": true,
+    "price": 5870
   },
   {
     "brand": "Xiaomi",
@@ -26995,7 +27037,7 @@
       "256GB"
     ],
     "default_mrp": 13999,
-    "base_resale_value": 10780,
+    "base_resale_value": 9780,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-redmi-13-5g.jpg",
     "popular_tag": "Xiaomi Official Model",
     "processor": "5G Octa-core Processor",
@@ -27003,7 +27045,8 @@
     "battery_spec": "5000 mAh Fast Charging",
     "display_spec": "6.7\" AMOLED 120Hz",
     "is_5g": true,
-    "is_active": true
+    "is_active": true,
+    "price": 9780
   },
   {
     "brand": "Xiaomi",
@@ -27019,7 +27062,7 @@
       "256GB"
     ],
     "default_mrp": 13830,
-    "base_resale_value": 9220,
+    "base_resale_value": 19460,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-redmi-14c-5g.jpg",
     "popular_tag": "Xiaomi Official Model",
     "processor": "5G Octa-core Processor",
@@ -27027,7 +27070,8 @@
     "battery_spec": "5000 mAh Fast Charging",
     "display_spec": "6.7\" AMOLED 120Hz",
     "is_5g": true,
-    "is_active": true
+    "is_active": true,
+    "price": 19460
   },
   {
     "brand": "Xiaomi",
@@ -27043,7 +27087,7 @@
       "256GB"
     ],
     "default_mrp": 19515,
-    "base_resale_value": 13010,
+    "base_resale_value": 35300,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-redmi-15-5g.jpg",
     "popular_tag": "Xiaomi Official Model",
     "processor": "5G Octa-core Processor",
@@ -27051,7 +27095,8 @@
     "battery_spec": "5000 mAh Fast Charging",
     "display_spec": "6.7\" AMOLED 120Hz",
     "is_5g": true,
-    "is_active": true
+    "is_active": true,
+    "price": 35300
   },
   {
     "brand": "Xiaomi",
@@ -27115,7 +27160,7 @@
       "256GB"
     ],
     "default_mrp": 26100,
-    "base_resale_value": 17400,
+    "base_resale_value": 40710,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-redmi-17-5g.jpg",
     "popular_tag": "Xiaomi Official Model",
     "processor": "5G Octa-core Processor",
@@ -27123,7 +27168,8 @@
     "battery_spec": "5000 mAh Fast Charging",
     "display_spec": "6.7\" AMOLED 120Hz",
     "is_5g": true,
-    "is_active": true
+    "is_active": true,
+    "price": 40710
   },
   {
     "brand": "Xiaomi",
@@ -27379,7 +27425,7 @@
       "256GB"
     ],
     "default_mrp": 7695,
-    "base_resale_value": 5130,
+    "base_resale_value": 4070,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-redmi-9-activ.jpg",
     "popular_tag": "Xiaomi Official Model",
     "processor": "High-Efficiency Processor",
@@ -27387,7 +27433,8 @@
     "battery_spec": "5000 mAh Fast Charging",
     "display_spec": "6.7\" AMOLED 120Hz",
     "is_5g": false,
-    "is_active": true
+    "is_active": true,
+    "price": 4070
   },
   {
     "brand": "Xiaomi",
@@ -27403,7 +27450,7 @@
       "256GB"
     ],
     "default_mrp": 8340,
-    "base_resale_value": 5560,
+    "base_resale_value": 4520,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-redmi-9-power.jpg",
     "popular_tag": "Xiaomi Official Model",
     "processor": "High-Efficiency Processor",
@@ -27411,7 +27458,8 @@
     "battery_spec": "5000 mAh Fast Charging",
     "display_spec": "6.7\" AMOLED 120Hz",
     "is_5g": false,
-    "is_active": true
+    "is_active": true,
+    "price": 4520
   },
   {
     "brand": "Xiaomi",
@@ -27427,7 +27475,7 @@
       "256GB"
     ],
     "default_mrp": 8580,
-    "base_resale_value": 5720,
+    "base_resale_value": 4270,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-redmi-9-prime.jpg",
     "popular_tag": "Xiaomi Official Model",
     "processor": "High-Efficiency Processor",
@@ -27435,7 +27483,8 @@
     "battery_spec": "5000 mAh Fast Charging",
     "display_spec": "6.7\" AMOLED 120Hz",
     "is_5g": false,
-    "is_active": true
+    "is_active": true,
+    "price": 4270
   },
   {
     "brand": "Xiaomi",
@@ -27451,7 +27500,7 @@
       "256GB"
     ],
     "default_mrp": 7110,
-    "base_resale_value": 4740,
+    "base_resale_value": 4070,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-redmi-9a.jpg",
     "popular_tag": "Xiaomi Official Model",
     "processor": "High-Efficiency Processor",
@@ -27459,7 +27508,8 @@
     "battery_spec": "5000 mAh Fast Charging",
     "display_spec": "6.7\" AMOLED 120Hz",
     "is_5g": false,
-    "is_active": true
+    "is_active": true,
+    "price": 4070
   },
   {
     "brand": "Xiaomi",
@@ -27475,7 +27525,7 @@
       "256GB"
     ],
     "default_mrp": 7605,
-    "base_resale_value": 5070,
+    "base_resale_value": 3580,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-redmi-9i.jpg",
     "popular_tag": "Xiaomi Official Model",
     "processor": "High-Efficiency Processor",
@@ -27483,7 +27533,8 @@
     "battery_spec": "5000 mAh Fast Charging",
     "display_spec": "6.7\" AMOLED 120Hz",
     "is_5g": false,
-    "is_active": true
+    "is_active": true,
+    "price": 3580
   },
   {
     "brand": "Xiaomi",
@@ -27715,7 +27766,7 @@
       "256GB"
     ],
     "default_mrp": 10005,
-    "base_resale_value": 6670,
+    "base_resale_value": 5520,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-redmi-k20.jpg",
     "popular_tag": "Xiaomi Official Model",
     "processor": "High-Efficiency Processor",
@@ -27723,7 +27774,8 @@
     "battery_spec": "5000 mAh Fast Charging",
     "display_spec": "6.7\" AMOLED 120Hz",
     "is_5g": false,
-    "is_active": true
+    "is_active": true,
+    "price": 5520
   },
   {
     "brand": "Xiaomi",
@@ -27739,7 +27791,7 @@
       "256GB"
     ],
     "default_mrp": 11655,
-    "base_resale_value": 7770,
+    "base_resale_value": 7110,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-redmi-k20-pro.jpg",
     "popular_tag": "Xiaomi Official Model",
     "processor": "5G Octa-core Processor",
@@ -27747,7 +27799,8 @@
     "battery_spec": "5000 mAh Fast Charging",
     "display_spec": "6.7\" AMOLED 120Hz",
     "is_5g": true,
-    "is_active": true
+    "is_active": true,
+    "price": 7110
   },
   {
     "brand": "Xiaomi",
@@ -27763,7 +27816,7 @@
       "256GB"
     ],
     "default_mrp": 15945,
-    "base_resale_value": 10630,
+    "base_resale_value": 9490,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-redmi-k50i-5g.jpg",
     "popular_tag": "Xiaomi Official Model",
     "processor": "5G Octa-core Processor",
@@ -27771,7 +27824,8 @@
     "battery_spec": "5000 mAh Fast Charging",
     "display_spec": "6.7\" AMOLED 120Hz",
     "is_5g": true,
-    "is_active": true
+    "is_active": true,
+    "price": 9490
   },
   {
     "brand": "Xiaomi",
@@ -27787,7 +27841,7 @@
       "256GB"
     ],
     "default_mrp": 9150,
-    "base_resale_value": 6100,
+    "base_resale_value": 4990,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-redmi-note-10-lite.jpg",
     "popular_tag": "Xiaomi Official Model",
     "processor": "High-Efficiency Processor",
@@ -27795,7 +27849,8 @@
     "battery_spec": "5000 mAh Fast Charging",
     "display_spec": "6.7\" AMOLED 120Hz",
     "is_5g": false,
-    "is_active": true
+    "is_active": true,
+    "price": 4990
   },
   {
     "brand": "Xiaomi",
@@ -27811,7 +27866,7 @@
       "256GB"
     ],
     "default_mrp": 12180,
-    "base_resale_value": 8120,
+    "base_resale_value": 5840,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-redmi-note-10t-5g.jpg",
     "popular_tag": "Xiaomi Official Model",
     "processor": "5G Octa-core Processor",
@@ -27819,7 +27874,8 @@
     "battery_spec": "5000 mAh Fast Charging",
     "display_spec": "6.7\" AMOLED 120Hz",
     "is_5g": true,
-    "is_active": true
+    "is_active": true,
+    "price": 5840
   },
   {
     "brand": "Xiaomi",
@@ -27835,7 +27891,7 @@
       "256GB"
     ],
     "default_mrp": 9900,
-    "base_resale_value": 6600,
+    "base_resale_value": 6010,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-redmi-note-11-se.jpg",
     "popular_tag": "Xiaomi Official Model",
     "processor": "High-Efficiency Processor",
@@ -27843,7 +27899,8 @@
     "battery_spec": "5000 mAh Fast Charging",
     "display_spec": "6.7\" AMOLED 120Hz",
     "is_5g": false,
-    "is_active": true
+    "is_active": true,
+    "price": 6010
   },
   {
     "brand": "Xiaomi",
@@ -27859,7 +27916,7 @@
       "256GB"
     ],
     "default_mrp": 9675,
-    "base_resale_value": 6450,
+    "base_resale_value": 6640,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-redmi-note-11t-5g.jpg",
     "popular_tag": "Xiaomi Official Model",
     "processor": "5G Octa-core Processor",
@@ -27867,7 +27924,8 @@
     "battery_spec": "5000 mAh Fast Charging",
     "display_spec": "6.7\" AMOLED 120Hz",
     "is_5g": true,
-    "is_active": true
+    "is_active": true,
+    "price": 6640
   },
   {
     "brand": "Xiaomi",
@@ -28075,7 +28133,7 @@
       "256GB"
     ],
     "default_mrp": 5655,
-    "base_resale_value": 3770,
+    "base_resale_value": 2580,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-redmi-note-5.jpg",
     "popular_tag": "Xiaomi Official Model",
     "processor": "High-Efficiency Processor",
@@ -28083,7 +28141,8 @@
     "battery_spec": "5000 mAh Fast Charging",
     "display_spec": "6.7\" AMOLED 120Hz",
     "is_5g": false,
-    "is_active": true
+    "is_active": true,
+    "price": 2580
   },
   {
     "brand": "Xiaomi",
@@ -28099,7 +28158,7 @@
       "256GB"
     ],
     "default_mrp": 6420,
-    "base_resale_value": 4280,
+    "base_resale_value": 2580,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-redmi-note-5-pro.jpg",
     "popular_tag": "Xiaomi Official Model",
     "processor": "5G Octa-core Processor",
@@ -28107,7 +28166,8 @@
     "battery_spec": "5000 mAh Fast Charging",
     "display_spec": "6.7\" AMOLED 120Hz",
     "is_5g": true,
-    "is_active": true
+    "is_active": true,
+    "price": 2580
   },
   {
     "brand": "Xiaomi",
@@ -28123,7 +28183,7 @@
       "256GB"
     ],
     "default_mrp": 7365,
-    "base_resale_value": 4910,
+    "base_resale_value": 2650,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-redmi-note-6-pro.jpg",
     "popular_tag": "Xiaomi Official Model",
     "processor": "5G Octa-core Processor",
@@ -28131,7 +28191,8 @@
     "battery_spec": "5000 mAh Fast Charging",
     "display_spec": "6.7\" AMOLED 120Hz",
     "is_5g": true,
-    "is_active": true
+    "is_active": true,
+    "price": 2650
   },
   {
     "brand": "Xiaomi",
@@ -28147,7 +28208,7 @@
       "256GB"
     ],
     "default_mrp": 6735,
-    "base_resale_value": 4490,
+    "base_resale_value": 3500,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-redmi-note-7.jpg",
     "popular_tag": "Xiaomi Official Model",
     "processor": "High-Efficiency Processor",
@@ -28155,7 +28216,8 @@
     "battery_spec": "5000 mAh Fast Charging",
     "display_spec": "6.7\" AMOLED 120Hz",
     "is_5g": false,
-    "is_active": true
+    "is_active": true,
+    "price": 3500
   },
   {
     "brand": "Xiaomi",
@@ -28171,7 +28233,7 @@
       "256GB"
     ],
     "default_mrp": 13999,
-    "base_resale_value": 5750,
+    "base_resale_value": 3500,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-redmi-note-7-pro.jpg",
     "popular_tag": "Xiaomi Official Model",
     "processor": "5G Octa-core Processor",
@@ -28179,7 +28241,8 @@
     "battery_spec": "5000 mAh Fast Charging",
     "display_spec": "6.7\" AMOLED 120Hz",
     "is_5g": true,
-    "is_active": true
+    "is_active": true,
+    "price": 3500
   },
   {
     "brand": "Xiaomi",
@@ -34002,5 +34065,810 @@
     "is_active": true,
     "base_resale_value": 5000,
     "price": 5000
+  },
+  {
+    "brand": "Xiaomi",
+    "model": "Xiaomi 17 Pro 5G",
+    "release_year": 2024,
+    "ram_options": [
+      "6GB",
+      "8GB",
+      "12GB"
+    ],
+    "storage_options": [
+      "256 GB",
+      "256GB"
+    ],
+    "default_mrp": null,
+    "image_url": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-14.jpg",
+    "popular_tag": "Xiaomi Official Model",
+    "processor": "Snapdragon / MediaTek Dimensity",
+    "camera_spec": "50MP OIS Camera",
+    "battery_spec": "5000 mAh Fast Charging",
+    "display_spec": "AMOLED 120Hz Display",
+    "is_5g": true,
+    "is_active": true
+  },
+  {
+    "brand": "Xiaomi",
+    "model": "Xiaomi 15 Pro 5G",
+    "release_year": 2024,
+    "ram_options": [
+      "6GB",
+      "8GB",
+      "12GB"
+    ],
+    "storage_options": [
+      "256 GB",
+      "256GB"
+    ],
+    "default_mrp": null,
+    "image_url": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-14.jpg",
+    "popular_tag": "Xiaomi Official Model",
+    "processor": "Snapdragon / MediaTek Dimensity",
+    "camera_spec": "50MP OIS Camera",
+    "battery_spec": "5000 mAh Fast Charging",
+    "display_spec": "AMOLED 120Hz Display",
+    "is_5g": true,
+    "is_active": true
+  },
+  {
+    "brand": "Xiaomi",
+    "model": "Xiaomi 13T Pro",
+    "release_year": 2024,
+    "ram_options": [
+      "6GB",
+      "8GB",
+      "12GB"
+    ],
+    "storage_options": [
+      "256 GB",
+      "256GB"
+    ],
+    "default_mrp": null,
+    "image_url": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-14.jpg",
+    "popular_tag": "Xiaomi Official Model",
+    "processor": "Snapdragon / MediaTek Dimensity",
+    "camera_spec": "50MP OIS Camera",
+    "battery_spec": "5000 mAh Fast Charging",
+    "display_spec": "AMOLED 120Hz Display",
+    "is_5g": true,
+    "is_active": true
+  },
+  {
+    "brand": "Xiaomi",
+    "model": "Xiaomi 13T",
+    "release_year": 2024,
+    "ram_options": [
+      "6GB",
+      "8GB",
+      "12GB"
+    ],
+    "storage_options": [
+      "256 GB",
+      "256GB"
+    ],
+    "default_mrp": null,
+    "image_url": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-14.jpg",
+    "popular_tag": "Xiaomi Official Model",
+    "processor": "Snapdragon / MediaTek Dimensity",
+    "camera_spec": "50MP OIS Camera",
+    "battery_spec": "5000 mAh Fast Charging",
+    "display_spec": "AMOLED 120Hz Display",
+    "is_5g": true,
+    "is_active": true
+  },
+  {
+    "brand": "Xiaomi",
+    "model": "Xiaomi Mi 11X Pro 5G",
+    "release_year": 2024,
+    "ram_options": [
+      "6GB",
+      "8GB",
+      "12GB"
+    ],
+    "storage_options": [
+      "128 GB",
+      "256GB"
+    ],
+    "default_mrp": null,
+    "image_url": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-14.jpg",
+    "popular_tag": "Xiaomi Official Model",
+    "processor": "Snapdragon / MediaTek Dimensity",
+    "camera_spec": "50MP OIS Camera",
+    "battery_spec": "5000 mAh Fast Charging",
+    "display_spec": "AMOLED 120Hz Display",
+    "is_5g": true,
+    "is_active": true
+  },
+  {
+    "brand": "Xiaomi",
+    "model": "Xiaomi Mi 11X 5G",
+    "release_year": 2024,
+    "ram_options": [
+      "6GB",
+      "8GB",
+      "12GB"
+    ],
+    "storage_options": [
+      "128 GB",
+      "256GB"
+    ],
+    "default_mrp": null,
+    "image_url": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-14.jpg",
+    "popular_tag": "Xiaomi Official Model",
+    "processor": "Snapdragon / MediaTek Dimensity",
+    "camera_spec": "50MP OIS Camera",
+    "battery_spec": "5000 mAh Fast Charging",
+    "display_spec": "AMOLED 120Hz Display",
+    "is_5g": true,
+    "is_active": true
+  },
+  {
+    "brand": "Xiaomi",
+    "model": "Xiaomi Mi 11 Lite NE 5G",
+    "release_year": 2024,
+    "ram_options": [
+      "6GB",
+      "8GB",
+      "12GB"
+    ],
+    "storage_options": [
+      "128 GB",
+      "256GB"
+    ],
+    "default_mrp": null,
+    "image_url": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-14.jpg",
+    "popular_tag": "Xiaomi Official Model",
+    "processor": "Snapdragon / MediaTek Dimensity",
+    "camera_spec": "50MP OIS Camera",
+    "battery_spec": "5000 mAh Fast Charging",
+    "display_spec": "AMOLED 120Hz Display",
+    "is_5g": true,
+    "is_active": true
+  },
+  {
+    "brand": "Xiaomi",
+    "model": "Xiaomi Mi 11 Lite",
+    "release_year": 2024,
+    "ram_options": [
+      "6GB",
+      "8GB",
+      "12GB"
+    ],
+    "storage_options": [
+      "128 GB",
+      "256GB"
+    ],
+    "default_mrp": null,
+    "image_url": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-14.jpg",
+    "popular_tag": "Xiaomi Official Model",
+    "processor": "Snapdragon / MediaTek Dimensity",
+    "camera_spec": "50MP OIS Camera",
+    "battery_spec": "5000 mAh Fast Charging",
+    "display_spec": "AMOLED 120Hz Display",
+    "is_5g": true,
+    "is_active": true
+  },
+  {
+    "brand": "Xiaomi",
+    "model": "Xiaomi Mi 10T Pro 5G",
+    "release_year": 2024,
+    "ram_options": [
+      "6GB",
+      "8GB",
+      "12GB"
+    ],
+    "storage_options": [
+      "128 GB",
+      "256GB"
+    ],
+    "default_mrp": null,
+    "image_url": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-14.jpg",
+    "popular_tag": "Xiaomi Official Model",
+    "processor": "Snapdragon / MediaTek Dimensity",
+    "camera_spec": "50MP OIS Camera",
+    "battery_spec": "5000 mAh Fast Charging",
+    "display_spec": "AMOLED 120Hz Display",
+    "is_5g": true,
+    "is_active": true
+  },
+  {
+    "brand": "Xiaomi",
+    "model": "Xiaomi Mi 10T 5G",
+    "release_year": 2024,
+    "ram_options": [
+      "6GB",
+      "8GB",
+      "12GB"
+    ],
+    "storage_options": [
+      "128 GB",
+      "256GB"
+    ],
+    "default_mrp": null,
+    "image_url": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-14.jpg",
+    "popular_tag": "Xiaomi Official Model",
+    "processor": "Snapdragon / MediaTek Dimensity",
+    "camera_spec": "50MP OIS Camera",
+    "battery_spec": "5000 mAh Fast Charging",
+    "display_spec": "AMOLED 120Hz Display",
+    "is_5g": true,
+    "is_active": true
+  },
+  {
+    "brand": "Xiaomi",
+    "model": "Xiaomi Mi 10i 5G",
+    "release_year": 2024,
+    "ram_options": [
+      "6GB",
+      "8GB",
+      "12GB"
+    ],
+    "storage_options": [
+      "128 GB",
+      "256GB"
+    ],
+    "default_mrp": null,
+    "image_url": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-14.jpg",
+    "popular_tag": "Xiaomi Official Model",
+    "processor": "Snapdragon / MediaTek Dimensity",
+    "camera_spec": "50MP OIS Camera",
+    "battery_spec": "5000 mAh Fast Charging",
+    "display_spec": "AMOLED 120Hz Display",
+    "is_5g": true,
+    "is_active": true
+  },
+  {
+    "brand": "Xiaomi",
+    "model": "Xiaomi Mi 10",
+    "release_year": 2024,
+    "ram_options": [
+      "6GB",
+      "8GB",
+      "12GB"
+    ],
+    "storage_options": [
+      "128 GB",
+      "256GB"
+    ],
+    "default_mrp": null,
+    "image_url": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-14.jpg",
+    "popular_tag": "Xiaomi Official Model",
+    "processor": "Snapdragon / MediaTek Dimensity",
+    "camera_spec": "50MP OIS Camera",
+    "battery_spec": "5000 mAh Fast Charging",
+    "display_spec": "AMOLED 120Hz Display",
+    "is_5g": true,
+    "is_active": true
+  },
+  {
+    "brand": "Xiaomi",
+    "model": "Xiaomi Mi Mix 2",
+    "release_year": 2024,
+    "ram_options": [
+      "6GB",
+      "8GB",
+      "12GB"
+    ],
+    "storage_options": [
+      "128 GB",
+      "256GB"
+    ],
+    "default_mrp": null,
+    "image_url": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-14.jpg",
+    "popular_tag": "Xiaomi Official Model",
+    "processor": "Snapdragon / MediaTek Dimensity",
+    "camera_spec": "50MP OIS Camera",
+    "battery_spec": "5000 mAh Fast Charging",
+    "display_spec": "AMOLED 120Hz Display",
+    "is_5g": false,
+    "is_active": true
+  },
+  {
+    "brand": "Xiaomi",
+    "model": "Xiaomi Mi Max 2",
+    "release_year": 2024,
+    "ram_options": [
+      "6GB",
+      "8GB",
+      "12GB"
+    ],
+    "storage_options": [
+      "64 GB",
+      "256GB"
+    ],
+    "default_mrp": null,
+    "image_url": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-14.jpg",
+    "popular_tag": "Xiaomi Official Model",
+    "processor": "Snapdragon / MediaTek Dimensity",
+    "camera_spec": "50MP OIS Camera",
+    "battery_spec": "5000 mAh Fast Charging",
+    "display_spec": "AMOLED 120Hz Display",
+    "is_5g": false,
+    "is_active": true
+  },
+  {
+    "brand": "Xiaomi",
+    "model": "Redmi Note 13R Pro",
+    "release_year": 2024,
+    "ram_options": [
+      "6GB",
+      "8GB",
+      "12GB"
+    ],
+    "storage_options": [
+      "128 GB",
+      "256GB"
+    ],
+    "default_mrp": null,
+    "image_url": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-14.jpg",
+    "popular_tag": "Xiaomi Official Model",
+    "processor": "Snapdragon / MediaTek Dimensity",
+    "camera_spec": "50MP OIS Camera",
+    "battery_spec": "5000 mAh Fast Charging",
+    "display_spec": "AMOLED 120Hz Display",
+    "is_5g": false,
+    "is_active": true
+  },
+  {
+    "brand": "Xiaomi",
+    "model": "Redmi Note 13R",
+    "release_year": 2024,
+    "ram_options": [
+      "6GB",
+      "8GB",
+      "12GB"
+    ],
+    "storage_options": [
+      "128 GB",
+      "256GB"
+    ],
+    "default_mrp": null,
+    "image_url": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-14.jpg",
+    "popular_tag": "Xiaomi Official Model",
+    "processor": "Snapdragon / MediaTek Dimensity",
+    "camera_spec": "50MP OIS Camera",
+    "battery_spec": "5000 mAh Fast Charging",
+    "display_spec": "AMOLED 120Hz Display",
+    "is_5g": false,
+    "is_active": true
+  },
+  {
+    "brand": "Xiaomi",
+    "model": "Redmi Note 12T Pro 5G",
+    "release_year": 2024,
+    "ram_options": [
+      "6GB",
+      "8GB",
+      "12GB"
+    ],
+    "storage_options": [
+      "128 GB",
+      "256GB"
+    ],
+    "default_mrp": null,
+    "image_url": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-14.jpg",
+    "popular_tag": "Xiaomi Official Model",
+    "processor": "Snapdragon / MediaTek Dimensity",
+    "camera_spec": "50MP OIS Camera",
+    "battery_spec": "5000 mAh Fast Charging",
+    "display_spec": "AMOLED 120Hz Display",
+    "is_5g": true,
+    "is_active": true
+  },
+  {
+    "brand": "Xiaomi",
+    "model": "Redmi Note 12S",
+    "release_year": 2024,
+    "ram_options": [
+      "6GB",
+      "8GB",
+      "12GB"
+    ],
+    "storage_options": [
+      "128 GB",
+      "256GB"
+    ],
+    "default_mrp": null,
+    "image_url": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-14.jpg",
+    "popular_tag": "Xiaomi Official Model",
+    "processor": "Snapdragon / MediaTek Dimensity",
+    "camera_spec": "50MP OIS Camera",
+    "battery_spec": "5000 mAh Fast Charging",
+    "display_spec": "AMOLED 120Hz Display",
+    "is_5g": false,
+    "is_active": true
+  },
+  {
+    "brand": "Xiaomi",
+    "model": "Redmi Note 12 Turbo",
+    "release_year": 2024,
+    "ram_options": [
+      "6GB",
+      "8GB",
+      "12GB"
+    ],
+    "storage_options": [
+      "256 GB",
+      "256GB"
+    ],
+    "default_mrp": null,
+    "image_url": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-14.jpg",
+    "popular_tag": "Xiaomi Official Model",
+    "processor": "Snapdragon / MediaTek Dimensity",
+    "camera_spec": "50MP OIS Camera",
+    "battery_spec": "5000 mAh Fast Charging",
+    "display_spec": "AMOLED 120Hz Display",
+    "is_5g": true,
+    "is_active": true
+  },
+  {
+    "brand": "Xiaomi",
+    "model": "Redmi Note 12R Pro",
+    "release_year": 2024,
+    "ram_options": [
+      "6GB",
+      "8GB",
+      "12GB"
+    ],
+    "storage_options": [
+      "128 GB",
+      "256GB"
+    ],
+    "default_mrp": null,
+    "image_url": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-14.jpg",
+    "popular_tag": "Xiaomi Official Model",
+    "processor": "Snapdragon / MediaTek Dimensity",
+    "camera_spec": "50MP OIS Camera",
+    "battery_spec": "5000 mAh Fast Charging",
+    "display_spec": "AMOLED 120Hz Display",
+    "is_5g": false,
+    "is_active": true
+  },
+  {
+    "brand": "Xiaomi",
+    "model": "Redmi Note 12R",
+    "release_year": 2024,
+    "ram_options": [
+      "6GB",
+      "8GB",
+      "12GB"
+    ],
+    "storage_options": [
+      "128 GB",
+      "256GB"
+    ],
+    "default_mrp": null,
+    "image_url": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-14.jpg",
+    "popular_tag": "Xiaomi Official Model",
+    "processor": "Snapdragon / MediaTek Dimensity",
+    "camera_spec": "50MP OIS Camera",
+    "battery_spec": "5000 mAh Fast Charging",
+    "display_spec": "AMOLED 120Hz Display",
+    "is_5g": false,
+    "is_active": true
+  },
+  {
+    "brand": "Xiaomi",
+    "model": "Redmi Note 12 Discovery Edition",
+    "release_year": 2024,
+    "ram_options": [
+      "6GB",
+      "8GB",
+      "12GB"
+    ],
+    "storage_options": [
+      "256 GB",
+      "256GB"
+    ],
+    "default_mrp": null,
+    "image_url": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-14.jpg",
+    "popular_tag": "Xiaomi Official Model",
+    "processor": "Snapdragon / MediaTek Dimensity",
+    "camera_spec": "50MP OIS Camera",
+    "battery_spec": "5000 mAh Fast Charging",
+    "display_spec": "AMOLED 120Hz Display",
+    "is_5g": true,
+    "is_active": true
+  },
+  {
+    "brand": "Xiaomi",
+    "model": "Redmi Note 11 4G",
+    "release_year": 2024,
+    "ram_options": [
+      "6GB",
+      "8GB",
+      "12GB"
+    ],
+    "storage_options": [
+      "128 GB",
+      "256GB"
+    ],
+    "default_mrp": null,
+    "image_url": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-14.jpg",
+    "popular_tag": "Xiaomi Official Model",
+    "processor": "Snapdragon / MediaTek Dimensity",
+    "camera_spec": "50MP OIS Camera",
+    "battery_spec": "5000 mAh Fast Charging",
+    "display_spec": "AMOLED 120Hz Display",
+    "is_5g": false,
+    "is_active": true
+  },
+  {
+    "brand": "Xiaomi",
+    "model": "Redmi Note 10 JE",
+    "release_year": 2024,
+    "ram_options": [
+      "6GB",
+      "8GB",
+      "12GB"
+    ],
+    "storage_options": [
+      "64 GB",
+      "256GB"
+    ],
+    "default_mrp": null,
+    "image_url": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-14.jpg",
+    "popular_tag": "Xiaomi Official Model",
+    "processor": "Snapdragon / MediaTek Dimensity",
+    "camera_spec": "50MP OIS Camera",
+    "battery_spec": "5000 mAh Fast Charging",
+    "display_spec": "AMOLED 120Hz Display",
+    "is_5g": false,
+    "is_active": true
+  },
+  {
+    "brand": "Xiaomi",
+    "model": "Redmi Turbo 3",
+    "release_year": 2024,
+    "ram_options": [
+      "6GB",
+      "8GB",
+      "12GB"
+    ],
+    "storage_options": [
+      "256 GB",
+      "256GB"
+    ],
+    "default_mrp": null,
+    "image_url": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-14.jpg",
+    "popular_tag": "Xiaomi Official Model",
+    "processor": "Snapdragon / MediaTek Dimensity",
+    "camera_spec": "50MP OIS Camera",
+    "battery_spec": "5000 mAh Fast Charging",
+    "display_spec": "AMOLED 120Hz Display",
+    "is_5g": true,
+    "is_active": true
+  },
+  {
+    "brand": "Xiaomi",
+    "model": "Redmi K70E",
+    "release_year": 2024,
+    "ram_options": [
+      "6GB",
+      "8GB",
+      "12GB"
+    ],
+    "storage_options": [
+      "256 GB",
+      "256GB"
+    ],
+    "default_mrp": null,
+    "image_url": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-14.jpg",
+    "popular_tag": "Xiaomi Official Model",
+    "processor": "Snapdragon / MediaTek Dimensity",
+    "camera_spec": "50MP OIS Camera",
+    "battery_spec": "5000 mAh Fast Charging",
+    "display_spec": "AMOLED 120Hz Display",
+    "is_5g": true,
+    "is_active": true
+  },
+  {
+    "brand": "Xiaomi",
+    "model": "Redmi K30 Pro 5G",
+    "release_year": 2024,
+    "ram_options": [
+      "6GB",
+      "8GB",
+      "12GB"
+    ],
+    "storage_options": [
+      "128 GB",
+      "256GB"
+    ],
+    "default_mrp": null,
+    "image_url": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-14.jpg",
+    "popular_tag": "Xiaomi Official Model",
+    "processor": "Snapdragon / MediaTek Dimensity",
+    "camera_spec": "50MP OIS Camera",
+    "battery_spec": "5000 mAh Fast Charging",
+    "display_spec": "AMOLED 120Hz Display",
+    "is_5g": true,
+    "is_active": true
+  },
+  {
+    "brand": "Xiaomi",
+    "model": "Redmi K30 5G",
+    "release_year": 2024,
+    "ram_options": [
+      "6GB",
+      "8GB",
+      "12GB"
+    ],
+    "storage_options": [
+      "128 GB",
+      "256GB"
+    ],
+    "default_mrp": null,
+    "image_url": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-14.jpg",
+    "popular_tag": "Xiaomi Official Model",
+    "processor": "Snapdragon / MediaTek Dimensity",
+    "camera_spec": "50MP OIS Camera",
+    "battery_spec": "5000 mAh Fast Charging",
+    "display_spec": "AMOLED 120Hz Display",
+    "is_5g": true,
+    "is_active": true
+  },
+  {
+    "brand": "Xiaomi",
+    "model": "Redmi K40 Gaming",
+    "release_year": 2024,
+    "ram_options": [
+      "6GB",
+      "8GB",
+      "12GB"
+    ],
+    "storage_options": [
+      "128 GB",
+      "256GB"
+    ],
+    "default_mrp": null,
+    "image_url": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-14.jpg",
+    "popular_tag": "Xiaomi Official Model",
+    "processor": "Snapdragon / MediaTek Dimensity",
+    "camera_spec": "50MP OIS Camera",
+    "battery_spec": "5000 mAh Fast Charging",
+    "display_spec": "AMOLED 120Hz Display",
+    "is_5g": true,
+    "is_active": true
+  },
+  {
+    "brand": "Xiaomi",
+    "model": "Redmi K60",
+    "release_year": 2024,
+    "ram_options": [
+      "6GB",
+      "8GB",
+      "12GB"
+    ],
+    "storage_options": [
+      "128 GB",
+      "256GB"
+    ],
+    "default_mrp": null,
+    "image_url": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-14.jpg",
+    "popular_tag": "Xiaomi Official Model",
+    "processor": "Snapdragon / MediaTek Dimensity",
+    "camera_spec": "50MP OIS Camera",
+    "battery_spec": "5000 mAh Fast Charging",
+    "display_spec": "AMOLED 120Hz Display",
+    "is_5g": true,
+    "is_active": true
+  },
+  {
+    "brand": "Xiaomi",
+    "model": "Xiaomi Mi A3",
+    "release_year": 2024,
+    "ram_options": [
+      "6GB",
+      "8GB",
+      "12GB"
+    ],
+    "storage_options": [
+      "64 GB",
+      "256GB"
+    ],
+    "default_mrp": null,
+    "image_url": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-14.jpg",
+    "popular_tag": "Xiaomi Official Model",
+    "processor": "Snapdragon / MediaTek Dimensity",
+    "camera_spec": "50MP OIS Camera",
+    "battery_spec": "5000 mAh Fast Charging",
+    "display_spec": "AMOLED 120Hz Display",
+    "is_5g": false,
+    "is_active": true
+  },
+  {
+    "brand": "Xiaomi",
+    "model": "Xiaomi Mi A2",
+    "release_year": 2024,
+    "ram_options": [
+      "6GB",
+      "8GB",
+      "12GB"
+    ],
+    "storage_options": [
+      "64 GB",
+      "256GB"
+    ],
+    "default_mrp": null,
+    "image_url": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-14.jpg",
+    "popular_tag": "Xiaomi Official Model",
+    "processor": "Snapdragon / MediaTek Dimensity",
+    "camera_spec": "50MP OIS Camera",
+    "battery_spec": "5000 mAh Fast Charging",
+    "display_spec": "AMOLED 120Hz Display",
+    "is_5g": false,
+    "is_active": true
+  },
+  {
+    "brand": "Xiaomi",
+    "model": "Xiaomi Mi A1",
+    "release_year": 2024,
+    "ram_options": [
+      "6GB",
+      "8GB",
+      "12GB"
+    ],
+    "storage_options": [
+      "64 GB",
+      "256GB"
+    ],
+    "default_mrp": null,
+    "image_url": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-14.jpg",
+    "popular_tag": "Xiaomi Official Model",
+    "processor": "Snapdragon / MediaTek Dimensity",
+    "camera_spec": "50MP OIS Camera",
+    "battery_spec": "5000 mAh Fast Charging",
+    "display_spec": "AMOLED 120Hz Display",
+    "is_5g": false,
+    "is_active": true
+  },
+  {
+    "brand": "Xiaomi",
+    "model": "Redmi 9 Active",
+    "release_year": 2024,
+    "ram_options": [
+      "6GB",
+      "8GB",
+      "12GB"
+    ],
+    "storage_options": [
+      "64 GB",
+      "256GB"
+    ],
+    "default_mrp": null,
+    "image_url": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-14.jpg",
+    "popular_tag": "Xiaomi Official Model",
+    "processor": "Snapdragon / MediaTek Dimensity",
+    "camera_spec": "50MP OIS Camera",
+    "battery_spec": "5000 mAh Fast Charging",
+    "display_spec": "AMOLED 120Hz Display",
+    "is_5g": false,
+    "is_active": true
+  },
+  {
+    "brand": "Xiaomi",
+    "model": "Redmi 9i Sport",
+    "release_year": 2024,
+    "ram_options": [
+      "6GB",
+      "8GB",
+      "12GB"
+    ],
+    "storage_options": [
+      "64 GB",
+      "256GB"
+    ],
+    "default_mrp": null,
+    "image_url": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-14.jpg",
+    "popular_tag": "Xiaomi Official Model",
+    "processor": "Snapdragon / MediaTek Dimensity",
+    "camera_spec": "50MP OIS Camera",
+    "battery_spec": "5000 mAh Fast Charging",
+    "display_spec": "AMOLED 120Hz Display",
+    "is_5g": false,
+    "is_active": true
   }
 ]
