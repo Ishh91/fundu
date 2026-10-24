@@ -518,6 +518,110 @@ const MODEL_HARDWARE_RULES: Array<{
   },
 
   // ==========================================
+  // ONEPLUS
+  // ==========================================
+  {
+    pattern: /6t\s*mclaren|mclaren.*6t/i,
+    variants: [
+      { storage: '256 GB', rams: ['10 GB'] },
+    ],
+  },
+  {
+    pattern: /7t\s*pro.*mclaren|mclaren.*7t\s*pro/i,
+    variants: [
+      { storage: '256 GB', rams: ['12 GB'] },
+    ],
+  },
+  {
+    pattern: /oneplus\s*13s\b/i,
+    variants: [
+      { storage: '256 GB', rams: ['12 GB', '16 GB'] },
+      { storage: '512 GB', rams: ['16 GB'] },
+    ],
+  },
+  {
+    pattern: /oneplus\s*13\b/i,
+    variants: [
+      { storage: '256 GB', rams: ['12 GB', '16 GB'] },
+      { storage: '512 GB', rams: ['16 GB'] },
+      { storage: '1 TB', rams: ['24 GB'] },
+    ],
+  },
+  {
+    pattern: /oneplus\s*13r\b/i,
+    variants: [
+      { storage: '128 GB', rams: ['8 GB'] },
+      { storage: '256 GB', rams: ['12 GB', '16 GB'] },
+      { storage: '512 GB', rams: ['16 GB'] },
+    ],
+  },
+  {
+    pattern: /oneplus\s*12\b/i,
+    variants: [
+      { storage: '256 GB', rams: ['12 GB', '16 GB'] },
+      { storage: '512 GB', rams: ['16 GB'] },
+    ],
+  },
+  {
+    pattern: /oneplus\s*12r\b/i,
+    variants: [
+      { storage: '128 GB', rams: ['8 GB'] },
+      { storage: '256 GB', rams: ['8 GB', '16 GB'] },
+    ],
+  },
+  {
+    pattern: /nord\s*ce\s*3\s*lite|nord\s*ce3\s*lite/i,
+    variants: [
+      { storage: '128 GB', rams: ['8 GB'] },
+      { storage: '256 GB', rams: ['8 GB'] },
+    ],
+  },
+  {
+    pattern: /nord\s*ce\s*3\b|nord\s*ce3\b/i,
+    variants: [
+      { storage: '128 GB', rams: ['8 GB'] },
+      { storage: '256 GB', rams: ['12 GB'] },
+    ],
+  },
+  {
+    pattern: /nord\s*ce\s*4\s*lite|nord\s*ce4\s*lite/i,
+    variants: [
+      { storage: '128 GB', rams: ['8 GB'] },
+      { storage: '256 GB', rams: ['8 GB'] },
+    ],
+  },
+  {
+    pattern: /nord\s*ce\s*4\b|nord\s*ce4\b/i,
+    variants: [
+      { storage: '128 GB', rams: ['8 GB'] },
+      { storage: '256 GB', rams: ['8 GB'] },
+    ],
+  },
+  {
+    pattern: /oneplus.*nord\s*4\b/i,
+    variants: [
+      { storage: '128 GB', rams: ['8 GB'] },
+      { storage: '256 GB', rams: ['8 GB', '12 GB'] },
+      { storage: '512 GB', rams: ['12 GB'] },
+    ],
+  },
+  {
+    pattern: /oneplus\s*6t\b/i,
+    variants: [
+      { storage: '128 GB', rams: ['6 GB', '8 GB'] },
+      { storage: '256 GB', rams: ['8 GB'] },
+    ],
+  },
+  {
+    pattern: /oneplus\s*6\b/i,
+    variants: [
+      { storage: '64 GB', rams: ['6 GB'] },
+      { storage: '128 GB', rams: ['8 GB'] },
+      { storage: '256 GB', rams: ['8 GB'] },
+    ],
+  },
+
+  // ==========================================
   // REALME
   // ==========================================
   {

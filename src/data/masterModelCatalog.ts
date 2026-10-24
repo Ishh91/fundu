@@ -275,6 +275,7 @@ export const MASTER_MODEL_CATALOG = [
   { brand: "Nothing", series: "Nothing Series", model: "Nothing Phone 4b", storage: "128 GB", price: 24900, image: "https://fdn2.gsmarena.com/vv/bigpic/nothing-nothing-phone-4b.jpg" },
   // OnePlus 13 & 12 Series
   { brand: "OnePlus", series: "OnePlus 13 & 12 Series", model: "OnePlus 13", storage: "256 GB", price: 36900, image: "https://fdn2.gsmarena.com/vv/bigpic/oneplus-13.jpg" },
+  { brand: "OnePlus", series: "OnePlus 13 & 12 Series", model: "OnePlus 13s", storage: "256 GB", price: 34500, image: "https://fdn2.gsmarena.com/vv/bigpic/oneplus-13.jpg" },
   { brand: "OnePlus", series: "OnePlus 13 & 12 Series", model: "OnePlus 13R", storage: "128 GB", price: 32950, image: "https://api.mobileapi.dev/devices/366/thumb.png" },
   { brand: "OnePlus", series: "OnePlus 13 & 12 Series", model: "OnePlus 12", storage: "256 GB", price: 27350, image: "https://fdn2.gsmarena.com/vv/bigpic/oneplus-12.jpg" },
   { brand: "OnePlus", series: "OnePlus 13 & 12 Series", model: "OnePlus 12R", storage: "128 GB", price: 24350, image: "https://api.mobileapi.dev/devices/364/thumb.png" },
@@ -298,6 +299,7 @@ export const MASTER_MODEL_CATALOG = [
   { brand: "OnePlus", series: "OnePlus 8 & 7 Series", model: "OnePlus 8 Pro", storage: "128 GB", price: 10450, image: "https://fdn2.gsmarena.com/vv/bigpic/oneplus-8-pro.jpg" },
   { brand: "OnePlus", series: "OnePlus 8 & 7 Series", model: "OnePlus 8T", storage: "128 GB", price: 9300, image: "https://fdn2.gsmarena.com/vv/bigpic/oneplus-8t.jpg" },
   { brand: "OnePlus", series: "OnePlus 8 & 7 Series", model: "OnePlus 8", storage: "128 GB", price: 10450, image: "https://api.mobileapi.dev/devices/16348/thumb.png" },
+  { brand: "OnePlus", series: "OnePlus 8 & 7 Series", model: "OnePlus 7T Pro McLaren Edition", storage: "256 GB", price: 13500, image: "https://fdn2.gsmarena.com/vv/bigpic/oneplus-7t-pro-mclaren.jpg" },
   { brand: "OnePlus", series: "OnePlus 8 & 7 Series", model: "OnePlus 7T Pro", storage: "256 GB", price: 9980, image: "https://fdn2.gsmarena.com/vv/bigpic/oneplus-7t-pro.jpg" },
   { brand: "OnePlus", series: "OnePlus 8 & 7 Series", model: "OnePlus 7T", storage: "128 GB", price: 8400, image: "https://fdn2.gsmarena.com/vv/bigpic/oneplus-7t-.jpg" },
   { brand: "OnePlus", series: "OnePlus 8 & 7 Series", model: "OnePlus 7 Pro", storage: "128 GB", price: 16350, image: "https://api.mobileapi.dev/devices/16351/thumb.png" },
@@ -322,6 +324,7 @@ export const MASTER_MODEL_CATALOG = [
   { brand: "OnePlus", series: "OnePlus Open & Foldable Series", model: "OnePlus Open", storage: "512 GB", price: 68900, image: "https://api.mobileapi.dev/devices/391/thumb.png" },
 
   // OnePlus 6 & Classic Series
+  { brand: "OnePlus", series: "OnePlus 6 & Classic Series", model: "OnePlus 6T McLaren", storage: "256 GB", price: 12500, image: "https://fdn2.gsmarena.com/vv/bigpic/oneplus-6t-mclaren.jpg" },
   { brand: "OnePlus", series: "OnePlus 6 & Classic Series", model: "OnePlus 6T", storage: "128 GB", price: 18400, image: "https://api.mobileapi.dev/devices/16352/thumb.png" },
   { brand: "OnePlus", series: "OnePlus 6 & Classic Series", model: "OnePlus 6", storage: "64 GB", price: 77300, image: "https://fdn2.gsmarena.com/vv/bigpic/oneplus-6-.jpg" },
   { brand: "OnePlus", series: "OnePlus 6 & Classic Series", model: "OnePlus 5T", storage: "64 GB", price: 4510, image: "https://fdn2.gsmarena.com/vv/bigpic/oneplus-5t.jpg" },
@@ -1208,6 +1211,14 @@ export const MASTER_MODEL_CATALOG = [
   { brand: "Xiaomi", series: "Xiaomi Series", model: "Xiaomi Redmi Y1 Lite", storage: "16 GB", price: 3000, image: "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-redmi-y1-lite.jpg" },
   { brand: "Xiaomi", series: "Xiaomi Series", model: "Xiaomi Redmi Y2", storage: "32 GB", price: 4120, image: "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-redmi-y2.jpg" },
   { brand: "Xiaomi", series: "Xiaomi Series", model: "Xiaomi Redmi Y3", storage: "32 GB", price: 4360, image: "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-redmi-y3.jpg" },
+  { brand: "OnePlus", series: "OnePlus Nord Series", model: "OnePlus Nord CE 5", storage: "128 GB", price: 18500, image: "https://api.mobileapi.dev/devices/809/thumb.png" },
+  { brand: "OnePlus", series: "OnePlus Nord Series", model: "OnePlus Nord 6", storage: "128 GB", price: 24500, image: "https://api.mobileapi.dev/devices/809/thumb.png" },
+  { brand: "OnePlus", series: "OnePlus Nord Series", model: "OnePlus Nord 5", storage: "128 GB", price: 21500, image: "https://api.mobileapi.dev/devices/809/thumb.png" },
+  { brand: "Xiaomi", series: "Xiaomi Mi / Flagship Series", model: "Xiaomi 11X Pro", storage: "128 GB", price: 13500, image: "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-mi11x-pro.jpg" },
+  { brand: "Samsung", series: "Galaxy S26 & Flagship Series", model: "Samsung Galaxy S26 FE", storage: "128 GB", price: 38000, image: "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s24-fe.jpg" },
+  { brand: "Samsung", series: "Galaxy Z Fold & Flip Series", model: "Samsung Galaxy Z Flip 8", storage: "256 GB", price: 62000, image: "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-z-flip6.jpg" },
+  { brand: "Samsung", series: "Galaxy Z Fold & Flip Series", model: "Samsung Galaxy Z Fold 8", storage: "256 GB", price: 88000, image: "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-z-fold6.jpg" },
+  { brand: "Samsung", series: "Galaxy A & M Series", model: "Samsung Galaxy A8", storage: "32 GB", price: 4800, image: "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-a8-2018.jpg" },
 ];
 
 export const STORAGE_OPTIONS = ['64 GB', '128 GB', '256 GB', '512 GB', '1 TB'];

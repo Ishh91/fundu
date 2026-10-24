@@ -12,7 +12,7 @@ export function getModelDedupeKey(brand: string, model: string): string {
     clean = clean.slice(bClean.length).trim();
   }
   // Normalize special editions & redundant suffixes
-  clean = clean.replace(/\b(marble\s*edition|mclaren\s*edition|mclaren|150w|edition)\b/gi, '');
+  clean = clean.replace(/\b(marble\s*edition|150w|edition)\b/gi, '');
 
   // Normalize Fold / Flip 5G redundancy
   clean = clean.replace(/\b(fold|flip)\s*([0-9]+)\s*5g\b/gi, '$1 $2');
@@ -934,10 +934,11 @@ export const BRAND_SERIES_DEFINITIONS: Record<string, BrandSeriesDefinition[]> =
       name: 'OnePlus 13 & 12 Series',
       brand: 'OnePlus',
       image: 'https://fdn2.gsmarena.com/vv/bigpic/oneplus-12.jpg',
-      description: 'OnePlus 13, 13R, 12, 12R',
-      pattern: /\b(13|13r|12|12r)\b/i,
+      description: 'OnePlus 13, 13s, 13R, 12, 12R',
+      pattern: /\b(13|13s|13r|12|12r)\b/i,
       defaultModels: [
         { brand: 'OnePlus', series: 'OnePlus 13 & 12 Series', model: 'OnePlus 13', storage: '256 GB', price: 36850, image: 'https://fdn2.gsmarena.com/vv/bigpic/oneplus-13.jpg' },
+        { brand: 'OnePlus', series: 'OnePlus 13 & 12 Series', model: 'OnePlus 13s', storage: '256 GB', price: 34999, image: 'https://fdn2.gsmarena.com/vv/bigpic/oneplus-13.jpg' },
         { brand: 'OnePlus', series: 'OnePlus 13 & 12 Series', model: 'OnePlus 13R', storage: '128 GB', price: 32850, image: 'https://api.mobileapi.dev/devices/366/thumb.png' },
         { brand: 'OnePlus', series: 'OnePlus 13 & 12 Series', model: 'OnePlus 12', storage: '256 GB', price: 27350, image: 'https://fdn2.gsmarena.com/vv/bigpic/oneplus-12.jpg' },
         { brand: 'OnePlus', series: 'OnePlus 13 & 12 Series', model: 'OnePlus 12R', storage: '128 GB', price: 24300, image: 'https://api.mobileapi.dev/devices/364/thumb.png' },
@@ -991,12 +992,13 @@ export const BRAND_SERIES_DEFINITIONS: Record<string, BrandSeriesDefinition[]> =
       name: 'OnePlus 8 & 7 Series',
       brand: 'OnePlus',
       image: 'https://fdn2.gsmarena.com/vv/bigpic/oneplus-8-pro.jpg',
-      description: 'OnePlus 8 Pro, 8T, 8, 7T Pro, 7T, 7 Pro, 7',
+      description: 'OnePlus 8 Pro, 8T, 8, 7T Pro McLaren, 7T Pro, 7T, 7 Pro, 7',
       pattern: /\b(8\s*pro|8t|8|7t\s*pro|7t|7\s*pro|7)\b/i,
       defaultModels: [
         { brand: 'OnePlus', series: 'OnePlus 8 & 7 Series', model: 'OnePlus 8 Pro', storage: '128 GB', price: 10500, image: 'https://fdn2.gsmarena.com/vv/bigpic/oneplus-8-pro.jpg' },
         { brand: 'OnePlus', series: 'OnePlus 8 & 7 Series', model: 'OnePlus 8T', storage: '128 GB', price: 9350, image: 'https://fdn2.gsmarena.com/vv/bigpic/oneplus-8t.jpg' },
         { brand: 'OnePlus', series: 'OnePlus 8 & 7 Series', model: 'OnePlus 8', storage: '128 GB', price: 10450, image: 'https://api.mobileapi.dev/devices/16348/thumb.png' },
+        { brand: 'OnePlus', series: 'OnePlus 8 & 7 Series', model: 'OnePlus 7T Pro McLaren Edition', storage: '256 GB', price: 14500, image: 'https://fdn2.gsmarena.com/vv/bigpic/oneplus-7t-pro.jpg' },
         { brand: 'OnePlus', series: 'OnePlus 8 & 7 Series', model: 'OnePlus 7T Pro', storage: '256 GB', price: 10030, image: 'https://fdn2.gsmarena.com/vv/bigpic/oneplus-7t-pro.jpg' },
         { brand: 'OnePlus', series: 'OnePlus 8 & 7 Series', model: 'OnePlus 7T', storage: '128 GB', price: 8400, image: 'https://fdn2.gsmarena.com/vv/bigpic/oneplus-7t-.jpg' },
         { brand: 'OnePlus', series: 'OnePlus 8 & 7 Series', model: 'OnePlus 7 Pro', storage: '128 GB', price: 16300, image: 'https://api.mobileapi.dev/devices/16351/thumb.png' },
@@ -1045,9 +1047,10 @@ export const BRAND_SERIES_DEFINITIONS: Record<string, BrandSeriesDefinition[]> =
       name: 'OnePlus 6 & Classic Series',
       brand: 'OnePlus',
       image: 'https://api.mobileapi.dev/devices/16352/thumb.png',
-      description: 'OnePlus 6T, 6, 5T, 5, 3T, 3',
-      pattern: /\b(6t|6|5t|5|3t|3|one|x)\b/i,
+      description: 'OnePlus 6T McLaren, 6T, 6, 5T, 5, 3T, 3',
+      pattern: /\b(6t|6|5t|5|3t|3|one|x|mclaren)\b/i,
       defaultModels: [
+        { brand: 'OnePlus', series: 'OnePlus 6 & Classic Series', model: 'OnePlus 6T McLaren', storage: '256 GB', price: 12500, image: 'https://fdn2.gsmarena.com/vv/bigpic/oneplus-6t-mclaren.jpg' },
         { brand: 'OnePlus', series: 'OnePlus 6 & Classic Series', model: 'OnePlus 6T', storage: '128 GB', price: 18350, image: 'https://api.mobileapi.dev/devices/16352/thumb.png' },
         { brand: 'OnePlus', series: 'OnePlus 6 & Classic Series', model: 'OnePlus 6', storage: '64 GB', price: 77400, image: 'https://fdn2.gsmarena.com/vv/bigpic/oneplus-6-.jpg' },
         { brand: 'OnePlus', series: 'OnePlus 6 & Classic Series', model: 'OnePlus 5T', storage: '64 GB', price: 4360, image: 'https://fdn2.gsmarena.com/vv/bigpic/oneplus-5t.jpg' },
