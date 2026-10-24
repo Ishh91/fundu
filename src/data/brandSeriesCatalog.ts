@@ -322,6 +322,7 @@ export function inferModelSeries(
     if (/(?:galaxy\s*)?z\s*(?:fold|flip)|\b(fold|flip)/i.test(mLower)) {
       return { seriesName: 'Galaxy Z Series (Fold & Flip)', seriesSlug: 'galaxy-z-series' };
     }
+    if (/\bs26\b/i.test(mLower)) return { seriesName: 'Galaxy S26 Series', seriesSlug: 'galaxy-s26-series' };
     if (/\bs25\b/i.test(mLower)) return { seriesName: 'Galaxy S25 Series', seriesSlug: 'galaxy-s25-series' };
     if (/\bs24\b/i.test(mLower)) return { seriesName: 'Galaxy S24 Series', seriesSlug: 'galaxy-s24-series' };
     if (/\bs23\b/i.test(mLower)) return { seriesName: 'Galaxy S23 Series', seriesSlug: 'galaxy-s23-series' };
@@ -639,17 +640,32 @@ export const BRAND_SERIES_DEFINITIONS: Record<string, BrandSeriesDefinition[]> =
 
   samsung: [
     {
+      id: 'galaxy-s26',
+      slug: 'galaxy-s26-series',
+      name: 'Galaxy S26 Series',
+      brand: 'Samsung',
+      image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s25-ultra-sm-s938.jpg',
+      description: 'S26 Ultra, S26+, S26 5G',
+      pattern: /\bs26\b/i,
+      defaultModels: [
+        { brand: 'Samsung', series: 'Galaxy S26 Series', model: 'Samsung Galaxy S26 Ultra', storage: '256 GB', price: 92950, image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s25-ultra-sm-s938.jpg' },
+        { brand: 'Samsung', series: 'Galaxy S26 Series', model: 'Samsung Galaxy S26+', storage: '256 GB', price: 74800, image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s24-plus-5g-sm-s926.jpg' },
+        { brand: 'Samsung', series: 'Galaxy S26 Series', model: 'Samsung Galaxy S26 5G', storage: '128 GB', price: 51850, image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s24-5g-sm-s921.jpg' },
+      ],
+    },
+    {
       id: 'galaxy-s25',
       slug: 'galaxy-s25-series',
       name: 'Galaxy S25 Series',
       brand: 'Samsung',
       image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s25-ultra-sm-s938.jpg',
-      description: 'S25 Ultra, S25+, S25 5G',
+      description: 'S25 Ultra, S25+, S25 5G, S25 FE',
       pattern: /\bs25\b/i,
       defaultModels: [
         { brand: 'Samsung', series: 'Galaxy S25 Series', model: 'Samsung Galaxy S25 Ultra', storage: '256 GB', price: 84950, image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s25-ultra-sm-s938.jpg' },
         { brand: 'Samsung', series: 'Galaxy S25 Series', model: 'Samsung Galaxy S25+', storage: '256 GB', price: 68800, image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s24-plus-5g-sm-s926.jpg' },
         { brand: 'Samsung', series: 'Galaxy S25 Series', model: 'Samsung Galaxy S25 5G', storage: '128 GB', price: 43850, image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s24-5g-sm-s921.jpg' },
+        { brand: 'Samsung', series: 'Galaxy S25 Series', model: 'Samsung Galaxy S25 FE', storage: '128 GB', price: 34850, image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s24-fe.jpg' },
       ],
     },
     {
@@ -763,9 +779,13 @@ export const BRAND_SERIES_DEFINITIONS: Record<string, BrandSeriesDefinition[]> =
       name: 'Galaxy Z Series (Fold & Flip)',
       brand: 'Samsung',
       image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-z-fold6.jpg',
-      description: 'Fold 6, Flip 6, Fold 5, Flip 5, Fold 4, Flip 4',
+      description: 'Fold 7, Flip 7, Fold 6, Flip 6, Fold 5, Flip 5, Fold 4, Flip 4',
       pattern: /(?:galaxy\s*)?z\s*(?:fold|flip)|\b(fold|flip)/i,
       defaultModels: [
+        { brand: 'Samsung', series: 'Galaxy Z Series (Fold & Flip)', model: 'Samsung Galaxy Z Fold 7', storage: '256 GB', price: 94900, image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-z-fold6.jpg' },
+        { brand: 'Samsung', series: 'Galaxy Z Series (Fold & Flip)', model: 'Samsung Galaxy Z Flip 7', storage: '256 GB', price: 54000, image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-z-flip6.jpg' },
+        { brand: 'Samsung', series: 'Galaxy Z Series (Fold & Flip)', model: 'Samsung Galaxy Z Fold Special Edition', storage: '512 GB', price: 88900, image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-z-fold6.jpg' },
+        { brand: 'Samsung', series: 'Galaxy Z Series (Fold & Flip)', model: 'Samsung Galaxy Z Flip7 FE 5G', storage: '256 GB', price: 38500, image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-z-flip6.jpg' },
         { brand: 'Samsung', series: 'Galaxy Z Series (Fold & Flip)', model: 'Samsung Galaxy Z Fold 6', storage: '256 GB', price: 82900, image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-z-fold6.jpg' },
         { brand: 'Samsung', series: 'Galaxy Z Series (Fold & Flip)', model: 'Samsung Galaxy Z Flip 6', storage: '256 GB', price: 47000, image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-z-flip6.jpg' },
         { brand: 'Samsung', series: 'Galaxy Z Series (Fold & Flip)', model: 'Samsung Galaxy Z Fold 5', storage: '256 GB', price: 56850, image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-z-fold5.jpg' },

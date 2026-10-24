@@ -387,7 +387,7 @@ export function getDynamicFallbackConfig(brand: string, model: string, storage: 
       else if (modelLower.includes('12')) basePrice = 22000;
       else basePrice = 16000;
     } else if (brandLower.includes('samsung')) {
-      if (modelLower.includes('s25') || modelLower.includes('s24') || modelLower.includes('s23 ultra')) basePrice = 58000;
+      if (modelLower.includes('s26') || modelLower.includes('s25') || modelLower.includes('s24') || modelLower.includes('s23 ultra')) basePrice = 58000;
       else if (modelLower.includes('s23') || modelLower.includes('fold') || modelLower.includes('flip')) basePrice = 42000;
       else if (modelLower.includes('s22')) basePrice = 26000;
       else basePrice = 16000;
