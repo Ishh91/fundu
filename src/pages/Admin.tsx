@@ -317,21 +317,26 @@ export default function Admin() {
     setDataLoading(true);
     setFetchError(null);
     try {
-      // Fetch all tables independently so one failure doesn't block others
-      const [productsRes, sellsRes, pricingRes, repairsRes, ordersRes, partsRes, profilesRes, reviewsRes, agentsRes, masterPhonesRes, repairPricingRes] =
-        await Promise.all([
-          db.from('products').select('*').limit(250).sort({ field: 'created_at', ascending: false }),
-          db.from('sell_requests').select('*').limit(250).sort({ field: 'created_at', ascending: false }),
-          db.from('sell_price_configs').select('*').limit(5000).sort({ field: 'created_at', ascending: false }),
-          db.from('repair_bookings').select('*').limit(250).sort({ field: 'created_at', ascending: false }),
-          db.from('orders').select('*').limit(250).sort({ field: 'created_at', ascending: false }),
-          db.from('spare_parts').select('*').limit(250).sort({ field: 'created_at', ascending: false }),
-          db.from('profiles').select('*').limit(250).sort({ field: 'created_at', ascending: false }),
-          db.from('reviews').select('*').limit(250).sort({ field: 'created_at', ascending: false }),
-          db.from('delivery_agents').select('*').limit(100).sort({ field: 'created_at', ascending: false }),
-          db.from('master_phones').select('*').limit(5000).sort({ field: 'release_year', ascending: false }),
-          db.from('repair_price_configs').select('*').limit(500).sort({ field: 'created_at', ascending: false }),
-        ]);
+      // Fetch tables in 3 batches to avoid overwhelming the backend during cold-starts
+      const [pricingRes, masterPhonesRes, repairPricingRes] = await Promise.all([
+        db.from('sell_price_configs').select('*').limit(5000).sort({ field: 'created_at', ascending: false }),
+        db.from('master_phones').select('*').limit(5000).sort({ field: 'release_year', ascending: false }),
+        db.from('repair_price_configs').select('*').limit(500).sort({ field: 'created_at', ascending: false }),
+      ]);
+
+      const [productsRes, sellsRes, repairsRes, ordersRes] = await Promise.all([
+        db.from('products').select('*').limit(250).sort({ field: 'created_at', ascending: false }),
+        db.from('sell_requests').select('*').limit(250).sort({ field: 'created_at', ascending: false }),
+        db.from('repair_bookings').select('*').limit(250).sort({ field: 'created_at', ascending: false }),
+        db.from('orders').select('*').limit(250).sort({ field: 'created_at', ascending: false }),
+      ]);
+
+      const [partsRes, profilesRes, reviewsRes, agentsRes] = await Promise.all([
+        db.from('spare_parts').select('*').limit(250).sort({ field: 'created_at', ascending: false }),
+        db.from('profiles').select('*').limit(250).sort({ field: 'created_at', ascending: false }),
+        db.from('reviews').select('*').limit(250).sort({ field: 'created_at', ascending: false }),
+        db.from('delivery_agents').select('*').limit(100).sort({ field: 'created_at', ascending: false }),
+      ]);
 
       // Log any per-table errors but keep loading the rest
       const errors: string[] = [];

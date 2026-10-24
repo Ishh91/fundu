@@ -65,7 +65,9 @@ const notifyAuthChange = (event: 'SIGNED_IN' | 'SIGNED_OUT' | 'TOKEN_REFRESHED',
   authListeners.forEach((listener) => listener(event, session));
 };
 
-const apiRequest = async <T>(path: string, init: RequestInit = {}, useAuth = true): Promise<QueryResponse<T>> => {
+const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
+const apiRequest = async <T>(path: string, init: RequestInit = {}, useAuth = true, retryCount = 2): Promise<QueryResponse<T>> => {
   const session = readSession();
   const headers = new Headers(init.headers || {});
 
@@ -77,30 +79,49 @@ const apiRequest = async <T>(path: string, init: RequestInit = {}, useAuth = tru
     headers.set('Authorization', `Bearer ${session.access_token}`);
   }
 
-  // 1. Try Primary API_BASE
-  try {
-    const response = await fetch(`${API_BASE}${path}`, {
-      ...init,
-      headers,
-    });
+  let attempt = 0;
+  while (attempt <= retryCount) {
+    try {
+      const response = await fetch(`${API_BASE}${path}`, {
+        ...init,
+        headers,
+      });
 
-    const payload = await response.json().catch(() => null);
+      // If server returned 502/503/504 (Render cold-start wake-up response), retry
+      if ([502, 503, 504].includes(response.status) && attempt < retryCount) {
+        attempt++;
+        await wait(1200 * attempt);
+        continue;
+      }
 
-    if (!response.ok) {
-      const errorMessage =
-        typeof payload?.error === 'string'
-          ? payload.error
-          : payload?.error?.message || payload?.message || 'Authentication failed.';
-      return { data: null, error: createError(errorMessage) };
+      const payload = await response.json().catch(() => null);
+
+      if (!response.ok) {
+        const errorMessage =
+          typeof payload?.error === 'string'
+            ? payload.error
+            : payload?.error?.message || payload?.message || 'Authentication failed.';
+        return { data: null, error: createError(errorMessage) };
+      }
+
+      return { data: (payload?.data ?? null) as T | null, error: null };
+    } catch (error: any) {
+      if (attempt < retryCount) {
+        attempt++;
+        await wait(1200 * attempt);
+        continue;
+      }
+      return {
+        data: null,
+        error: createError(error?.message || 'Backend server connection failed. Please try again.'),
+      };
     }
-
-    return { data: (payload?.data ?? null) as T | null, error: null };
-  } catch (error: any) {
-    return {
-      data: null,
-      error: createError(error?.message || 'Backend server connection failed. Please try again.'),
-    };
   }
+
+  return {
+    data: null,
+    error: createError('Backend server connection failed after retries.'),
+  };
 };
 
 class QueryBuilder<T = unknown> implements PromiseLike<QueryResponse<T>> {
