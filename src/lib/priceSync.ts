@@ -151,10 +151,23 @@ export function usePriceSync() {
 
             data.forEach((rule: any) => {
               if (rule.brand && rule.model && rule.base_price) {
-                const k = `${rule.brand.trim().toLowerCase()}:${rule.model.trim().toLowerCase()}`;
-                if (current[k] !== rule.base_price) {
-                  current[k] = rule.base_price;
-                  changed = true;
+                const baseKey = `${rule.brand.trim().toLowerCase()}:${rule.model.trim().toLowerCase()}`;
+                const stg = rule.storage ? rule.storage.trim().toLowerCase() : null;
+                const storageKey = stg ? `${baseKey}:${stg}` : null;
+
+                if (storageKey) {
+                  if (current[storageKey] !== rule.base_price) {
+                    current[storageKey] = rule.base_price;
+                    changed = true;
+                  }
+                }
+
+                // Baseline key (used when storage is unspecified or default baseline variant)
+                if (!stg || stg.includes('128') || current[baseKey] === undefined) {
+                  if (current[baseKey] !== rule.base_price) {
+                    current[baseKey] = rule.base_price;
+                    changed = true;
+                  }
                 }
               }
             });
@@ -166,10 +179,6 @@ export function usePriceSync() {
           }
         })
         .catch(() => null);
-
-      pullLiveModelImagesFromDb().then((changed) => {
-        if (changed) setVersion((v) => v + 1);
-      }).catch(() => null);
     };
 
     pullPriceRules();

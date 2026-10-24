@@ -2368,6 +2368,7 @@ export function lookupResaleBenchmark(brand, model, storage, options = {}) {
   const normStorage = normalizeStorage(storage);
   const ram = options.ram || '';
 
+  let matchedDirectly = false;
   // 1. Direct exact match in RESALE_BENCHMARKS
   let benchmark = RESALE_BENCHMARKS.find((b) => {
     const bBrand = b.brand.toLowerCase();
@@ -2376,6 +2377,11 @@ export function lookupResaleBenchmark(brand, model, storage, options = {}) {
 
     return bBrand === normBrand && bModel === normModel && bStorage === normStorage;
   });
+
+  if (benchmark) {
+    matchedDirectly = true;
+    benchmark = { ...benchmark };
+  }
 
   // 2. Same model with different storage variant in RESALE_BENCHMARKS
   if (!benchmark) {
@@ -2413,7 +2419,7 @@ export function lookupResaleBenchmark(brand, model, storage, options = {}) {
   }
 
   // 4. Variant adjustments for RAM on direct matches (where benchmark storage matched, but RAM differs)
-  if (ram && benchmark && benchmark.proceeds) {
+  if (matchedDirectly && ram && benchmark && benchmark.proceeds) {
     const ramRatio = calculateHardwareVariantMultiplier(normStorage, ram, brand) / calculateHardwareVariantMultiplier(normStorage, '', brand);
     if (Math.abs(ramRatio - 1.0) > 0.001) {
       benchmark.proceeds = Math.round((benchmark.proceeds * ramRatio) / 50) * 50;

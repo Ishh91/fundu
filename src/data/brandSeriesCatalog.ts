@@ -649,7 +649,7 @@ export const BRAND_SERIES_DEFINITIONS: Record<string, BrandSeriesDefinition[]> =
       defaultModels: [
         { brand: 'Samsung', series: 'Galaxy S25 Series', model: 'Samsung Galaxy S25 Ultra', storage: '256 GB', price: 84950, image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s25-ultra-sm-s938.jpg' },
         { brand: 'Samsung', series: 'Galaxy S25 Series', model: 'Samsung Galaxy S25+', storage: '256 GB', price: 68800, image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s24-plus-5g-sm-s926.jpg' },
-        { brand: 'Samsung', series: 'Galaxy S25 Series', model: 'Samsung Galaxy S25 5G', storage: '128 GB', price: 57000, image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s24-5g-sm-s921.jpg' },
+        { brand: 'Samsung', series: 'Galaxy S25 Series', model: 'Samsung Galaxy S25 5G', storage: '128 GB', price: 43850, image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s24-5g-sm-s921.jpg' },
       ],
     },
     {
@@ -663,7 +663,7 @@ export const BRAND_SERIES_DEFINITIONS: Record<string, BrandSeriesDefinition[]> =
       defaultModels: [
         { brand: 'Samsung', series: 'Galaxy S24 Series', model: 'Samsung Galaxy S24 Ultra', storage: '256 GB', price: 64950, image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s24-ultra-5g-sm-s928-stylus.jpg' },
         { brand: 'Samsung', series: 'Galaxy S24 Series', model: 'Samsung Galaxy S24+', storage: '256 GB', price: 44850, image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s24-plus-5g-sm-s926.jpg' },
-        { brand: 'Samsung', series: 'Galaxy S24 Series', model: 'Samsung Galaxy S24 5G', storage: '128 GB', price: 65000, image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s24-5g-sm-s921.jpg' },
+        { brand: 'Samsung', series: 'Galaxy S24 Series', model: 'Samsung Galaxy S24 5G', storage: '128 GB', price: 42850, image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s24-5g-sm-s921.jpg' },
         { brand: 'Samsung', series: 'Galaxy S24 Series', model: 'Samsung Galaxy S24 FE', storage: '128 GB', price: 33450, image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s24-fe.jpg' },
       ],
     },
