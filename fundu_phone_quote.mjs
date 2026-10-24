@@ -35,8 +35,8 @@ export const FUNDU_POLICY = {
   // Cosmetic condition adjustment multipliers
   cosmeticMultipliers: {
     flawless: 1.00, // Like new, zero scratches/scuffs
-    good: 0.92,     // Normal wear, light micro-scratches (-8% markdown)
-    fair: 0.82,     // Heavy scratches, scuffs (-18% markdown)
+    good: 1.00,     // Normal daily wear (standard used phone) - full Cashify + 1000 buyback rate
+    fair: 0.85,     // Heavy scratches, scuffs (-15% markdown)
   },
   
   // Accessories bonus credits added to proceeds

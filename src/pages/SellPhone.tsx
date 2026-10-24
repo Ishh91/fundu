@@ -185,7 +185,7 @@ export default function SellPhone() {
     activationLockCleared: true,
     ownershipVerified: true,
     liquidDamage: false,
-    cosmeticCondition: 'good' as 'flawless' | 'good' | 'fair',
+    cosmeticCondition: 'flawless' as 'flawless' | 'good' | 'fair',
     screenCondition: 'flawless' as 'flawless' | 'scratched' | 'cracked' | 'touch_fault' | 'display_lines',
     bodyCondition: 'flawless' as 'flawless' | 'minor_scratches' | 'dents_bent',
     batteryHealth: 'healthy' as 'healthy' | 'degraded_service' | 'unknown',
@@ -710,13 +710,11 @@ export default function SellPhone() {
 
     if (baseModelPrice > 0) {
       let val = baseModelPrice;
-      if (form.cosmeticCondition === 'good') val *= 0.92;
-      else if (form.cosmeticCondition === 'fair') val *= 0.82;
+      if (form.cosmeticCondition === 'fair') val *= 0.85;
       if (form.screenCondition === 'scratched') val *= 0.90;
       else if (form.screenCondition === 'cracked') val *= 0.68;
       else if (form.screenCondition === 'touch_fault' || form.screenCondition === 'display_lines') val *= 0.60;
-      if (form.bodyCondition === 'minor_scratches') val *= 0.95;
-      else if (form.bodyCondition === 'dents_bent') val *= 0.82;
+      if (form.bodyCondition === 'dents_bent') val *= 0.85;
       if (form.batteryHealth === 'degraded_service') val *= 0.92;
       if (form.powersOn === false) val *= 0.35;
       if (form.liquidDamage) val *= 0.50;
