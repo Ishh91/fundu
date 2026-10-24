@@ -94,14 +94,11 @@ export default function AdminCatalog({
       }
       saveCustomModelImage(editingPhone.brand, editingPhone.model, urlToSave);
 
-      // Update in database master_phones
-      if (editingPhone.id) {
-        await db.from('master_phones').update({ image_url: urlToSave }).eq('id', editingPhone.id);
-      }
-
-      // Also call parent prop if present
+      // Also call parent prop if present (handles Mongo ObjectId resolution & insertion)
       if (onUpdatePhoneImage) {
         await onUpdatePhoneImage(editingPhone, urlToSave);
+      } else if (editingPhone.id && /^[0-9a-fA-F]{24}$/.test(editingPhone.id)) {
+        await db.from('master_phones').update({ image_url: urlToSave }).eq('id', editingPhone.id);
       }
 
       editingPhone.image_url = urlToSave;
@@ -121,13 +118,12 @@ export default function AdminCatalog({
     setImageSaving(true);
     try {
       resetCustomModelImage(editingPhone.brand, editingPhone.model);
-      if (editingPhone.id) {
+      if (onUpdatePhoneImage) {
+        await onUpdatePhoneImage(editingPhone, '');
+      } else if (editingPhone.id && /^[0-9a-fA-F]{24}$/.test(editingPhone.id)) {
         await db.from('master_phones').update({ image_url: null }).eq('id', editingPhone.id);
       }
       editingPhone.image_url = '';
-      if (onUpdatePhoneImage) {
-        await onUpdatePhoneImage(editingPhone, '');
-      }
       setCustomImagesVer((v) => v + 1);
       setImageModalOpen(false);
       alert(`✅ Reset to default official render for ${editingPhone.brand} ${editingPhone.model}!`);

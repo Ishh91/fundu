@@ -873,30 +873,37 @@ export default function Admin() {
     const bNorm = brand.toLowerCase();
     const mNorm = model.toLowerCase();
 
-    // Check if record exists in masterPhones by ID or by normalized brand + model
-    const existing = phone.id
-      ? masterPhones.find((p) => p.id === phone.id)
-      : masterPhones.find((p) => {
-          const pb = (p.brand || '').toLowerCase().trim();
-          const pm = (p.model || '').toLowerCase().trim();
-          return (
-            pb === bNorm &&
-            (pm === mNorm ||
-             pm.replace(/[^a-z0-9]/g, '') === mNorm.replace(/[^a-z0-9]/g, '') ||
-             (mNorm.startsWith(bNorm) && pm === mNorm.slice(bNorm.length).trim()))
-          );
-        });
+    // Check if an ID is a valid 24-character hexadecimal MongoDB ObjectId
+    const isMongoId = (id?: string) => Boolean(id && /^[0-9a-fA-F]{24}$/.test(id));
 
-    const targetId = phone.id || existing?.id;
+    // Search for existing database phone record (ignoring synthetic client IDs like 'master-...')
+    const existing = masterPhones.find((p) => {
+      if (phone.id && isMongoId(phone.id) && p.id === phone.id) return true;
+      const pb = (p.brand || '').toLowerCase().trim();
+      const pm = (p.model || '').toLowerCase().trim();
+      return (
+        pb === bNorm &&
+        (pm === mNorm ||
+         pm.replace(/[^a-z0-9]/g, '') === mNorm.replace(/[^a-z0-9]/g, '') ||
+         (mNorm.startsWith(bNorm) && pm === mNorm.slice(bNorm.length).trim()) ||
+         (pm.startsWith(pb) && pm.slice(pb.length).trim() === mNorm))
+      );
+    });
+
+    const targetId = isMongoId(phone.id) ? phone.id : (isMongoId(existing?.id) ? existing?.id : undefined);
 
     if (targetId) {
-      await db.from('master_phones').update({ image_url: url || null }).eq('id', targetId);
+      const res = await db.from('master_phones').update({ image_url: url || null }).eq('id', targetId);
+      if (res.error) {
+        console.error('[Admin] Failed to update phone image in database:', res.error);
+        throw new Error(`Database error: ${res.error.message}`);
+      }
       setMasterPhones((prev) =>
         prev.map((p) => (p.id === targetId ? { ...p, image_url: url } : p))
       );
     } else {
       // Create new record in master_phones so it persists in the database for all visitors
-      const { data: insertedPhone } = await db
+      const res = await db
         .from('master_phones')
         .insert({
           brand,
@@ -912,8 +919,14 @@ export default function Admin() {
         .select('*')
         .single();
 
-      if (insertedPhone) {
-        setMasterPhones((prev) => [insertedPhone as MasterPhone, ...prev]);
+      if (res.error) {
+        console.error('[Admin] Failed to insert new phone into master_phones:', res.error);
+        throw new Error(`Database error: ${res.error.message}`);
+      }
+
+      const inserted = Array.isArray(res.data) ? res.data[0] : res.data;
+      if (inserted) {
+        setMasterPhones((prev) => [inserted as MasterPhone, ...prev]);
       }
     }
   };

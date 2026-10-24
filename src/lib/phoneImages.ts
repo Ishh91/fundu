@@ -521,6 +521,24 @@ export function syncCustomImagesFromDatabase(phones: Array<{ brand: string; mode
   });
 
   if (changed && typeof window !== 'undefined') {
+    try {
+      let current: Record<string, string> = {};
+      try {
+        const raw = localStorage.getItem(CUSTOM_MODEL_IMAGES_KEY);
+        if (raw) current = JSON.parse(raw);
+      } catch {
+        current = {};
+      }
+      Object.entries(memoryCustomCache).forEach(([k, v]) => {
+        if (v && !v.includes('unsplash.com') && !v.includes('777/thumb')) {
+          current[k] = v;
+        }
+      });
+      safeSetLocalStorage(CUSTOM_MODEL_IMAGES_KEY, current);
+    } catch (e) {
+      console.warn('[phoneImages] Failed to write db sync to localStorage:', e);
+    }
+
     window.dispatchEvent(new CustomEvent('fundu_model_image_updated', { detail: { count: phones.length } }));
   }
 
@@ -588,6 +606,10 @@ export function saveCustomModelImage(brand: string, model: string, imageUrl: str
     const secondaryKey = strippedM || (model || '').toLowerCase().trim();
 
     if (val) {
+      // Store all variations so both full name and clean name lookups match instantly
+      keys.forEach((k) => {
+        current[k] = val;
+      });
       current[primaryKey] = val;
       if (secondaryKey) {
         current[secondaryKey] = val;

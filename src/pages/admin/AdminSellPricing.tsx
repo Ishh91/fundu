@@ -462,6 +462,13 @@ export default function AdminSellPricing({
         );
       }
 
+      activeImageModel.image_url = urlToSave;
+      activeImageModel.hasCustomImage = Boolean(urlToSave);
+      if (selectedModel && (selectedModel.id === activeImageModel.id || selectedModel.model === activeImageModel.model)) {
+        selectedModel.image_url = urlToSave;
+        selectedModel.hasCustomImage = Boolean(urlToSave);
+      }
+
       setRefreshVer((v) => v + 1);
       setImageModalOpen(false);
       alert(`🎉 Photo updated for ${activeImageModel.brand} ${activeImageModel.model}! Live across sell catalog.`);
@@ -489,6 +496,13 @@ export default function AdminSellPricing({
           },
           ''
         );
+      }
+
+      activeImageModel.image_url = '';
+      activeImageModel.hasCustomImage = false;
+      if (selectedModel && (selectedModel.id === activeImageModel.id || selectedModel.model === activeImageModel.model)) {
+        selectedModel.image_url = '';
+        selectedModel.hasCustomImage = false;
       }
 
       setRefreshVer((v) => v + 1);
