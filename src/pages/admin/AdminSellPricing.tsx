@@ -367,8 +367,13 @@ export default function AdminSellPricing({
         const b = m.brand.trim().toLowerCase();
         if (b === bTarget) return true;
         if (bTarget === 'xiaomi' && (b === 'redmi' || b === 'poco')) return true;
+        if (bTarget === 'poco' && (b === 'poco' || (b === 'xiaomi' && /poco/i.test(m.model)))) return true;
+        if (bTarget === 'redmi' && (b === 'redmi' || (b === 'xiaomi' && /redmi/i.test(m.model)))) return true;
         if (bTarget === 'vivo' && b === 'iqoo') return true;
-        if (bTarget === 'motorola' && b === 'moto') return true;
+        if (bTarget === 'iqoo' && (b === 'iqoo' || (b === 'vivo' && /iqoo/i.test(m.model)))) return true;
+        if (bTarget === 'motorola' && (b === 'moto' || b === 'motorola')) return true;
+        if (bTarget === 'moto' && (b === 'moto' || b === 'motorola')) return true;
+        if (bTarget === 'apple' && (b === 'apple' || /iphone/i.test(m.model))) return true;
         return false;
       });
     }

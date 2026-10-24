@@ -265,7 +265,7 @@ export default function SellBrandPage() {
     });
     const combinedMap = new Map<string, CatalogModelItem>();
 
-    // Add all master catalog items first (deduplicated)
+    // 1. Add all master catalog items first (deduplicated)
     masterList.forEach((m) => {
       const key = getModelDedupeKey(m.brand || brandDisplayName, m.model);
       if (!combinedMap.has(key)) {
@@ -273,7 +273,32 @@ export default function SellBrandPage() {
       }
     });
 
-    // Merge any live API models (deduplicated)
+    // 2. Add all Indian phones catalog items (adds unique models like Nord 2, Nord 2T, Nord 3, Galaxy J7, etc.)
+    const indianList = ALL_INDIAN_PHONES_CATALOG.filter((p) => {
+      const b = p.brand.toLowerCase();
+      if (b === brandCanonicalKey || b === brandCleanKey) return true;
+      if (brandCanonicalKey === 'xiaomi' && (b === 'redmi' || b === 'poco')) return true;
+      if (brandCanonicalKey === 'vivo' && b === 'iqoo') return true;
+      if (brandCanonicalKey === 'motorola' && b === 'moto') return true;
+      return false;
+    });
+
+    indianList.forEach((p) => {
+      const key = getModelDedupeKey(p.brand || brandDisplayName, p.model);
+      if (!combinedMap.has(key)) {
+        combinedMap.set(key, {
+          brand: p.brand,
+          model: p.model,
+          series: inferModelSeries(p.brand, p.model),
+          storage: p.storage_options?.[0] || '128 GB',
+          price: p.base_resale_value || 12000,
+          image: p.image_url || getCleanPhoneImage(p.brand, p.model),
+          base_resale_value: p.base_resale_value || 12000,
+        });
+      }
+    });
+
+    // 3. Merge any live API models (deduplicated)
     apiModels.forEach((m) => {
       const key = getModelDedupeKey(m.brand || brandDisplayName, m.model);
       if (!combinedMap.has(key)) {

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import {
   Smartphone,
   Search,
@@ -20,6 +20,8 @@ import {
 import type { MasterPhone, Product } from './adminTypes';
 import { db, formatINR } from '../../lib/db';
 import { searchMobileApiDev, importPhoneFromMobileApi } from '../../lib/mobileApi';
+import { ALL_INDIAN_PHONES_CATALOG } from '../../data/indianPhonesCatalog';
+import { MASTER_MODEL_CATALOG } from '../../data/masterModelCatalog';
 import {
   getCleanPhoneImage,
   saveCustomModelImage,
@@ -134,15 +136,83 @@ export default function AdminCatalog({
     }
   };
 
-  const filteredCatalog = masterPhones.filter((mp) => {
-    const matchesBrand = brandFilter === 'All' || mp.brand.toLowerCase() === brandFilter.toLowerCase();
+  // Build comprehensive unified catalog (1,260+ models) across DB master phones, Indian catalog, and Master catalog
+  const allCatalogPhones = useMemo<MasterPhone[]>(() => {
+    const map = new Map<string, MasterPhone>();
+    const normKey = (brand: string, model: string) => {
+      let b = (brand || '').toLowerCase().trim();
+      let m = (model || '').toLowerCase().trim();
+      if (m.startsWith(b)) m = m.slice(b.length).trim();
+      return `${b}:${m}`;
+    };
+
+    // 1. Process masterPhones passed from props (DB / live imported)
+    masterPhones.forEach((mp) => {
+      const key = normKey(mp.brand, mp.model);
+      map.set(key, mp);
+    });
+
+    // 2. Process ALL_INDIAN_PHONES_CATALOG
+    ALL_INDIAN_PHONES_CATALOG.forEach((p) => {
+      const key = normKey(p.brand, p.model);
+      if (!map.has(key)) {
+        map.set(key, p);
+      }
+    });
+
+    // 3. Process MASTER_MODEL_CATALOG (1,167 models)
+    MASTER_MODEL_CATALOG.forEach((m) => {
+      const key = normKey(m.brand, m.model);
+      if (!map.has(key)) {
+        let cleanModel = m.model.trim();
+        if (cleanModel.toLowerCase().startsWith(m.brand.toLowerCase())) {
+          cleanModel = cleanModel.slice(m.brand.length).trim();
+        }
+        map.set(key, {
+          id: `master-${key}`,
+          brand: m.brand,
+          model: cleanModel || m.model,
+          release_year: 2024,
+          ram_options: ['6GB', '8GB', '12GB'],
+          storage_options: m.storage ? [m.storage, '256GB'] : ['128GB', '256GB'],
+          default_mrp: Math.round((m.price || 15000) * 1.5),
+          base_resale_value: m.price || 12000,
+          image_url: m.image || getCleanPhoneImage(m.brand, m.model),
+          popular_tag: `${m.brand} 5G Device`,
+          processor: 'High Performance Processor',
+          camera_spec: '50MP OIS Camera',
+          battery_spec: '5000 mAh Fast Charging',
+          display_spec: '6.7" AMOLED 120Hz',
+          is_5g: true,
+          is_active: true,
+        });
+      }
+    });
+
+    return Array.from(map.values());
+  }, [masterPhones]);
+
+  const filteredCatalog = allCatalogPhones.filter((mp) => {
+    const bLower = brandFilter.toLowerCase();
+    const mpBLower = mp.brand.toLowerCase();
+    let matchesBrand = brandFilter === 'All' || mpBLower === bLower;
+    if (!matchesBrand) {
+      if (bLower === 'xiaomi' && (mpBLower === 'redmi' || mpBLower === 'poco')) matchesBrand = true;
+      if (bLower === 'poco' && (mpBLower === 'xiaomi' || mpBLower === 'poco') && /poco/i.test(mp.model)) matchesBrand = true;
+      if (bLower === 'redmi' && (mpBLower === 'xiaomi' || mpBLower === 'redmi') && /redmi/i.test(mp.model)) matchesBrand = true;
+      if (bLower === 'vivo' && mpBLower === 'iqoo') matchesBrand = true;
+      if (bLower === 'iqoo' && (mpBLower === 'vivo' || mpBLower === 'iqoo') && /iqoo/i.test(mp.model)) matchesBrand = true;
+      if (bLower === 'motorola' && (mpBLower === 'moto' || mpBLower === 'motorola')) matchesBrand = true;
+      if (bLower === 'moto' && (mpBLower === 'moto' || mpBLower === 'motorola')) matchesBrand = true;
+      if (bLower === 'apple' && (mpBLower === 'apple' || /iphone/i.test(mp.model))) matchesBrand = true;
+    }
     const matchesSearch = `${mp.brand} ${mp.model} ${mp.release_year} ${mp.popular_tag || ''}`
       .toLowerCase()
       .includes(search.toLowerCase());
     return matchesBrand && matchesSearch;
   });
 
-  const selectedPhone = masterPhones.find((p) => p.id === selectedPhoneId) || filteredCatalog[0] || null;
+  const selectedPhone = allCatalogPhones.find((p) => p.id === selectedPhoneId) || filteredCatalog[0] || null;
 
   const handleSearchMobileApi = async () => {
     if (!mobileApiQuery.trim() && mobileApiBrand === 'All') {
@@ -198,7 +268,9 @@ export default function AdminCatalog({
     'iQOO',
     'Infinix',
     'Tecno',
+    'Itel',
     'Honor',
+    'Lenovo',
   ];
 
   return (
