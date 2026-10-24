@@ -1283,4 +1283,10 @@ export const FAQS_LIST = [
   { q: 'Can I sell multiple phones at once?', a: 'Absolutely! You can book individual sell requests or inform our executive during doorstep visit for bulk spot cash payouts.' },
   { q: 'What if my phone brand is not listed?', a: 'You can use our live search bar or contact our customer hotline +91-9839122345 for custom manual valuation.' },
   { q: 'Do I get a legal seller invoice?', a: 'Yes, an official digital seller invoice & receipt is sent to your mobile number immediately upon completion of pickup.' },
+  { brand: 'Apple', series: 'iPhone 18 Series', model: 'Apple iPhone 18 Pro Max', storage: '256 GB', price: 88000, image: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-16-pro-max.jpg' },
+  { brand: 'Apple', series: 'iPhone 18 Series', model: 'Apple iPhone 18 Pro', storage: '128 GB', price: 78000, image: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-16-pro.jpg' },
+  { brand: 'Samsung', series: 'Galaxy A Series', model: 'Samsung Galaxy A7', storage: '64 GB', price: 4200, image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-a7-2018.jpg' },
+  { brand: 'Samsung', series: 'Galaxy J Series (Classic)', model: 'Samsung Galaxy J2', storage: '16 GB', price: 1800, image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-j2-2018.jpg' },
+  { brand: 'Vivo', series: 'Vivo Y Series', model: 'Vivo Y15', storage: '64 GB', price: 3500, image: 'https://fdn2.gsmarena.com/vv/bigpic/vivo-y15-2019.jpg' },
+  { brand: 'Oppo', series: 'Oppo Find Series', model: 'Oppo Find N3', storage: '512 GB', price: 58000, image: 'https://fdn2.gsmarena.com/vv/bigpic/oppo-find-n3.jpg' },
 ];
