@@ -161,10 +161,9 @@ const rawSamsungList = [
   { name: 'Galaxy F62', variant: '128 GB', price: 7200 }
 ];
 
-// Calculate Fundu Buyback Price with ₹700 to ₹1,000 random value added
+// Calculate Fundu Buyback Price - EXACT PRICE FROM CASHIFY CATALOGUE (No random additions)
 function calculateFunduPrice(basePrice) {
-  const randAddition = 700 + Math.floor(Math.random() * 31) * 10;
-  return basePrice + randAddition;
+  return basePrice;
 }
 
 function normalizeKey(str) {
@@ -297,7 +296,25 @@ async function run() {
   fs.writeFileSync(masterCatalogPath, masterContent, 'utf8');
   console.log(`masterModelCatalog.ts: Updated prices for ${masterUpdated} matching items.`);
 
-  // 4. UPDATE MongoDB Atlas (masterphones & sellpriceconfigs for Admin Sell Pricing)
+  // 4. UPDATE src/data/brandSeriesCatalog.ts
+  const brandSeriesCatalogPath = path.join(__dirname, '../src/data/brandSeriesCatalog.ts');
+  let brandSeriesContent = fs.readFileSync(brandSeriesCatalogPath, 'utf8');
+  let brandSeriesUpdated = 0;
+
+  rawSamsungList.forEach(item => {
+    const match = findSamsungMatch(item.name);
+    if (!match) return;
+    const cleanPattern = item.name.replace(/\\/g, '\\\\').replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const regex = new RegExp(`(model:\\s*['"](?:Samsung\\s+)?${cleanPattern}['"][\\s\\S]*?price:\\s*)\\d+`, 'gi');
+    if (regex.test(brandSeriesContent)) {
+      brandSeriesContent = brandSeriesContent.replace(regex, `$1${match.funduPrice}`);
+      brandSeriesUpdated++;
+    }
+  });
+  fs.writeFileSync(brandSeriesCatalogPath, brandSeriesContent, 'utf8');
+  console.log(`brandSeriesCatalog.ts: Updated prices for ${brandSeriesUpdated} matching items.`);
+
+  // 5. UPDATE MongoDB Atlas (masterphones & sellpriceconfigs for Admin Sell Pricing)
   console.log('Connecting to MongoDB Atlas...');
   await mongoose.connect(process.env.MONGODB_URI, { dbName: process.env.MONGODB_DB_NAME || 'fundu' });
   const db = mongoose.connection.db;
