@@ -10,9 +10,11 @@ import {
   Zap,
   Sparkles,
   CheckCircle2,
+  PenTool,
 } from 'lucide-react';
 import { formatINR, formatMaskedPrice } from '../../lib/db';
 import { calculateMarketPriceComparison } from '../../lib/mobileApi';
+import { deviceIncludesStylus } from '../../lib/deviceSpecs';
 import type { FunduQuoteResponse } from '../../lib/quoteEngine';
 
 interface SellStep3QuoteProps {
@@ -21,6 +23,7 @@ interface SellStep3QuoteProps {
     model: string;
     storage: string;
     cosmeticCondition: string;
+    stylusAvailable?: boolean;
     payoutMethod: 'UPI' | 'Cash' | 'Bank';
     payoutDetails: string;
   };
@@ -295,6 +298,33 @@ export default function SellStep3Quote({
                 <li className="text-gray-500">Device in evaluated standard condition.</li>
               )}
             </ul>
+
+            {deviceIncludesStylus(form.brand, form.model) && (
+              <div
+                className={`p-3 rounded-xl border flex items-center justify-between gap-2 text-xs font-bold ${
+                  form.stylusAvailable === false
+                    ? 'bg-rose-50 border-rose-200 text-rose-900'
+                    : 'bg-emerald-50 border-emerald-200 text-emerald-900'
+                }`}
+              >
+                <div className="flex items-center gap-2">
+                  <PenTool className="h-4 w-4 shrink-0" />
+                  <span>
+                    Original Stylus / S-Pen:{' '}
+                    {form.stylusAvailable === false ? 'Missing / Not Available' : 'Available & Working'}
+                  </span>
+                </div>
+                <span
+                  className={`shrink-0 font-extrabold px-2 py-0.5 rounded-md text-[11px] ${
+                    form.stylusAvailable === false
+                      ? 'bg-rose-200 text-rose-900 border border-rose-300'
+                      : 'bg-emerald-200 text-emerald-900 border border-emerald-300'
+                  }`}
+                >
+                  {form.stylusAvailable === false ? '-₹3,000 Deducted' : 'Full Value Retained'}
+                </span>
+              </div>
+            )}
 
             <div className="mt-3 p-3 rounded-xl bg-blue-50/70 border border-blue-200/80 text-[11px] text-blue-900 leading-relaxed">
               <strong>Inspection Discrepancy Rule:</strong> If the inspected phone materially differs from your answers above, our technician will explain the mismatch, present a revised offer, and require your explicit acceptance before payment proceeds.

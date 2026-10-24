@@ -8,10 +8,12 @@ import {
   AlertCircle,
   Truck,
   Sparkles,
+  PenTool,
 } from 'lucide-react';
 import { getCleanPhoneImage, BRAND_FRONT_FALLBACKS, getGenericDevicePlaceholder } from '../../lib/phoneImages';
 import { formatINR, formatMaskedPrice } from '../../lib/db';
 import { HARDWARE_DEFECTS, ACCESSORIES_LIST } from '../../data/masterModelCatalog';
+import { deviceIncludesStylus } from '../../lib/deviceSpecs';
 import type { FunduQuoteResponse } from '../../lib/quoteEngine';
 
 interface SellStep2ConditionProps {
@@ -507,6 +509,73 @@ export default function SellStep2Condition({
             })}
           </div>
         </div>
+
+        {/* 7. S-Pen / Stylus Availability for supported models (Galaxy S Ultra, Note series, Moto G Stylus) */}
+        {deviceIncludesStylus(form.brand, form.model) && (
+          <div className="space-y-3 p-4 sm:p-5 rounded-2xl border-2 border-indigo-200 bg-gradient-to-br from-indigo-50/70 via-white to-blue-50/50 shadow-xs">
+            <div className="flex items-start justify-between gap-3">
+              <div className="flex items-start gap-2.5">
+                <div className="p-2 rounded-xl bg-indigo-600 text-white shrink-0 mt-0.5 shadow-xs">
+                  <PenTool className="h-4 w-4" />
+                </div>
+                <div>
+                  <h4 className="font-extrabold text-sm text-gray-900 flex items-center gap-1.5 flex-wrap">
+                    Original Stylus / S-Pen Available?
+                    <span className="text-[10px] bg-indigo-100 text-indigo-700 font-extrabold px-2 py-0.5 rounded-full uppercase tracking-wider">
+                      Included With Model
+                    </span>
+                  </h4>
+                  <p className="text-[11px] text-gray-600 mt-0.5 leading-relaxed">
+                    This phone ({form.model}) comes with an original built-in stylus / S-Pen.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+              <button
+                type="button"
+                onClick={() => setForm((f: any) => ({ ...f, stylusAvailable: true }))}
+                className={`p-3.5 rounded-xl border text-left transition-all duration-200 cursor-pointer ${
+                  form.stylusAvailable !== false
+                    ? 'border-emerald-500 bg-emerald-50/80 text-emerald-950 ring-2 ring-emerald-500/30 shadow-xs'
+                    : 'border-gray-200 bg-white hover:border-gray-300 text-gray-700'
+                }`}
+              >
+                <div className="flex items-center gap-2">
+                  <CheckCircle2 className="h-4 w-4 text-emerald-600 shrink-0" />
+                  <div>
+                    <p className="font-extrabold text-xs text-gray-900">Yes, S-Pen Available & Working</p>
+                    <p className="text-[11px] text-emerald-700 font-semibold mt-0.5">Full base quote preserved</p>
+                  </div>
+                </div>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setForm((f: any) => ({ ...f, stylusAvailable: false }))}
+                className={`p-3.5 rounded-xl border text-left transition-all duration-200 cursor-pointer ${
+                  form.stylusAvailable === false
+                    ? 'border-rose-500 bg-rose-50/90 text-rose-950 ring-2 ring-rose-500/30 shadow-xs'
+                    : 'border-gray-200 bg-white hover:border-gray-300 text-gray-700'
+                }`}
+              >
+                <div className="flex items-center gap-2">
+                  <AlertCircle className="h-4 w-4 text-rose-600 shrink-0" />
+                  <div>
+                    <p className="font-extrabold text-xs text-gray-900">No, S-Pen Missing / Not Available</p>
+                    <p className="text-[11px] text-rose-700 font-bold mt-0.5">₹3,000 deducted from base price</p>
+                  </div>
+                </div>
+              </button>
+            </div>
+            {form.stylusAvailable === false && (
+              <p className="text-[11px] text-rose-800 font-bold bg-rose-100/70 border border-rose-200 px-3 py-1.5 rounded-xl">
+                ⚠️ ₹3,000 has been deducted from your base price because the original stylus is missing.
+              </p>
+            )}
+          </div>
+        )}
 
         <div className="flex justify-between gap-3 pt-4 border-t border-gray-100">
           <button type="button" onClick={handleStep2Back} className="btn-outline text-sm">

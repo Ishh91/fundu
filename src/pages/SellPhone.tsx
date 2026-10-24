@@ -1055,6 +1055,7 @@ export default function SellPhone() {
             batteryHealth: 'healthy',
             canMakeCalls: true,
             underWarranty: false,
+            stylusAvailable: true,
             defects: [],
             imei: '',
             imeiPhoto: '',
