@@ -2462,6 +2462,42 @@ export function lookupModelRepairs(brand, model, benchmarkProceeds = 20000) {
 }
 
 /**
+ * Detects if a phone or tablet originally comes with a built-in or in-the-box stylus/S-Pen.
+ */
+export function isStylusDevice(brand, model) {
+  const b = String(brand || '').toLowerCase().trim();
+  const m = String(model || '').toLowerCase().trim();
+  const full = `${b} ${m}`;
+
+  // Samsung Galaxy Note Series (Exclude Redmi/Infinix/Lenovo Note)
+  if (full.includes('note') && (b.includes('samsung') || full.includes('galaxy'))) {
+    if (!full.includes('redmi') && !full.includes('infinix') && !full.includes('k10') && !full.includes('k8')) {
+      return true;
+    }
+  }
+
+  // Samsung Galaxy S Ultra Series with built-in S-Pen (S22 Ultra, S23 Ultra, S24 Ultra, S25 Ultra, S26 Ultra)
+  if (
+    (b.includes('samsung') || full.includes('galaxy')) &&
+    /\bs2[2-6]\s*ultra\b/i.test(m)
+  ) {
+    return true;
+  }
+
+  // Motorola Moto G Stylus / Moto G Pro
+  if (m.includes('stylus') || (b.includes('motorola') && m.includes('g pro'))) {
+    return true;
+  }
+
+  // Samsung Galaxy Tab S with S-Pen included
+  if (b.includes('samsung') && /\btab\s*s[6-9]|\btab\s*s10/i.test(m)) {
+    return true;
+  }
+
+  return false;
+}
+
+/**
  * Generates an end-to-end, deterministic Fundu buyback quote
  * 
  * Formula:
@@ -2495,6 +2531,7 @@ export function quotePhone(input = {}, options = {}) {
     defects = [],
     accessories = [],
     under_warranty = false,
+    stylus_available = true,
   } = input;
 
   // 1. Validate mandatory basic input structure
@@ -2698,10 +2735,18 @@ export function quotePhone(input = {}, options = {}) {
   // Target Contribution Margin (Internal)
   const targetContributionMargin = Math.round(expectedResaleProceeds * FUNDU_POLICY.targetContributionMarginRate);
 
+  // Missing S-Pen / Stylus Deduction (Mandatory ₹3,000 deduction on devices that include S-Pen)
+  let missingStylusDeduction = 0;
+  const isStylusModel = isStylusDevice(brand, model);
+  if (isStylusModel && (stylus_available === false || input.stylusAvailable === false)) {
+    missingStylusDeduction = 3000;
+    conditionReasons.push('Original S-Pen / Stylus missing (-₹3,000)');
+  }
+
   // Exact Business Formula:
-  // proceeds adjusted for condition - repairs - pickup - reserves - margin
+  // proceeds adjusted for condition - repairs - pickup - reserves - margin - missing stylus
   const proceedsAdjustedForCondition = Math.round(expectedResaleProceeds * cosmeticMultiplier) + accessoriesBonusTotal;
-  const rawOffer = proceedsAdjustedForCondition - configuredRepairsTotal - pickupInspectionCost - warrantyAndRiskReserves - targetContributionMargin;
+  const rawOffer = proceedsAdjustedForCondition - configuredRepairsTotal - pickupInspectionCost - warrantyAndRiskReserves - targetContributionMargin - missingStylusDeduction;
 
   // If raw offer drops below minimum floor or repairs exceed proceeds, provide salvage/floor offer so estimate is never 0:
   if (rawOffer <= 0 || configuredRepairsTotal > expectedResaleProceeds * 0.70) {

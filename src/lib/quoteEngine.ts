@@ -22,6 +22,7 @@ export interface FunduQuoteRequest {
   defects?: string[];
   accessories?: string[];
   under_warranty?: boolean;
+  stylus_available?: boolean;
 }
 
 export interface FunduQuoteResponse {

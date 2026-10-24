@@ -27,6 +27,45 @@ export function normalizeRamString(str: string): string {
   return `${match[1]} GB`;
 }
 
+export const MISSING_STYLUS_DEDUCTION = 3000;
+
+/**
+ * Checks if a device originally includes an integrated or in-box S-Pen / Stylus.
+ * Devices: Samsung Galaxy S22/S23/S24/S25/S26 Ultra, Samsung Galaxy Note Series, Moto G Stylus.
+ */
+export function deviceIncludesStylus(brand?: string, model?: string): boolean {
+  const b = String(brand || '').toLowerCase().trim();
+  const m = String(model || '').toLowerCase().trim();
+  const full = `${b} ${m}`;
+
+  // Samsung Galaxy Note Series (Exclude Redmi/Infinix/Lenovo Note)
+  if (full.includes('note') && (b.includes('samsung') || full.includes('galaxy'))) {
+    if (!full.includes('redmi') && !full.includes('infinix') && !full.includes('k10') && !full.includes('k8')) {
+      return true;
+    }
+  }
+
+  // Samsung Galaxy S Ultra Series with built-in S-Pen (S22 Ultra, S23 Ultra, S24 Ultra, S25 Ultra, S26 Ultra)
+  if (
+    (b.includes('samsung') || full.includes('galaxy')) &&
+    /\bs2[2-6]\s*ultra\b/i.test(m)
+  ) {
+    return true;
+  }
+
+  // Motorola Moto G Stylus / Moto G Pro
+  if (m.includes('stylus') || (b.includes('motorola') && m.includes('g pro'))) {
+    return true;
+  }
+
+  // Samsung Galaxy Tab S with S-Pen included
+  if (b.includes('samsung') && /\btab\s*s[6-9]|\btab\s*s10/i.test(m)) {
+    return true;
+  }
+
+  return false;
+}
+
 /**
  * Calculates deterministic dynamic price multiplier based on RAM + Storage combination.
  * Standard baseline: 6GB RAM + 128GB Storage = 1.000x multiplier.

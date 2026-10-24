@@ -37,7 +37,7 @@ import { useAuth } from '../context/AuthContext';
 import { ALL_INDIAN_PHONES_CATALOG } from '../data/indianPhonesCatalog';
 import { getCleanPhoneImage, getCleanBrandLogo, BRAND_FRONT_FALLBACKS, getGenericDevicePlaceholder } from '../lib/phoneImages';
 import { usePriceSync, applyPriceOverrides, isModelDeleted } from '../lib/priceSync';
-import { getModelHardwareSpecs, calculateHardwareVariantMultiplier } from '../lib/deviceSpecs';
+import { getModelHardwareSpecs, calculateHardwareVariantMultiplier, deviceIncludesStylus } from '../lib/deviceSpecs';
 import {
   getPanIndiaLocation,
   searchPanIndiaLocations,
@@ -191,6 +191,7 @@ export default function SellPhone() {
     batteryHealth: 'healthy' as 'healthy' | 'degraded_service' | 'unknown',
     canMakeCalls: true,
     underWarranty: false,
+    stylusAvailable: true,
     defects: [] as string[],
     imei: '',
     imeiPhoto: '',
@@ -602,6 +603,7 @@ export default function SellPhone() {
       defects: form.defects,
       accessories: form.accessories,
       under_warranty: form.underWarranty,
+      stylus_available: form.stylusAvailable !== false,
     })
       .then((quote) => {
         if (active) setFunduQuote(quote);
@@ -632,6 +634,7 @@ export default function SellPhone() {
     form.defects,
     form.accessories,
     form.underWarranty,
+    form.stylusAvailable,
     version,
   ]);
 
@@ -709,6 +712,9 @@ export default function SellPhone() {
       if (Array.isArray(form.accessories)) {
         val += form.accessories.length * 300;
       }
+      if (deviceIncludesStylus(form.brand, form.model) && form.stylusAvailable === false) {
+        val -= 3000;
+      }
       return Math.max(800, Math.round(val / 50) * 50);
     }
 
@@ -716,6 +722,9 @@ export default function SellPhone() {
   }, [
     funduQuote?.offerAmount,
     baseModelPrice,
+    form.brand,
+    form.model,
+    form.stylusAvailable,
     form.cosmeticCondition,
     form.screenCondition,
     form.bodyCondition,
@@ -739,13 +748,14 @@ export default function SellPhone() {
         underWarranty: form.underWarranty,
         defects: form.defects,
         accessories: form.accessories,
+        stylusAvailable: form.stylusAvailable !== false,
       },
       form.brand,
       form.model,
       form.storage,
       form.ram
     );
-  }, [pricingConfig, form.screenCondition, form.bodyCondition, form.canMakeCalls, form.underWarranty, form.defects, form.accessories, form.brand, form.model, form.storage, form.ram]);
+  }, [pricingConfig, form.screenCondition, form.bodyCondition, form.canMakeCalls, form.underWarranty, form.defects, form.accessories, form.stylusAvailable, form.brand, form.model, form.storage, form.ram]);
 
   // Filtered Master Models for Search Autocomplete (Combines Master Catalog, Indian Phones Catalog, & MobileAPI Live Fallback)
   const searchResults = useMemo(() => {

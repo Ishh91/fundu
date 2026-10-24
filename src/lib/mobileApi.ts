@@ -1,4 +1,5 @@
 import { API_BASE } from '../config/apiConfig';
+import { deviceIncludesStylus } from './deviceSpecs';
 
 export type PhoneModelOption = {
 
@@ -482,6 +483,7 @@ export type ResaleDiagnosticParams = {
   underWarranty?: boolean;
   defects?: string[];
   accessories?: string[];
+  stylusAvailable?: boolean;
 };
 export type CashifyDiagnosticParams = ResaleDiagnosticParams;
 
@@ -490,6 +492,7 @@ export type ValuationBreakdown = {
   screenDeduction: number;
   bodyDeduction: number;
   callDeduction: number;
+  stylusDeduction?: number;
   defectDeductionTotal: number;
   defectsBreakdown: Array<{ name: string; amount: number }>;
   warrantyBonus: number;
@@ -552,12 +555,19 @@ export function computeDetailedResaleValuation(
     if (params.accessories.includes('Bill')) accessoriesBonus += 300;
   }
 
+  let stylusDeduction = 0;
+  if (deviceIncludesStylus(fallbackBrand, fallbackModel) && params.stylusAvailable === false) {
+    stylusDeduction = 3000;
+    defectsBreakdown.push({ name: 'Missing Original S-Pen / Stylus', amount: 3000 });
+  }
+
   const calculatedTotal =
     basePrice -
     screenDeduction -
     bodyDeduction -
     callDeduction -
-    defectDeductionTotal +
+    defectDeductionTotal -
+    stylusDeduction +
     warrantyBonus +
     accessoriesBonus;
 
@@ -569,6 +579,7 @@ export function computeDetailedResaleValuation(
     screenDeduction,
     bodyDeduction,
     callDeduction,
+    stylusDeduction,
     defectDeductionTotal,
     defectsBreakdown,
     warrantyBonus,
