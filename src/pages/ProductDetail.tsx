@@ -26,7 +26,7 @@ import {
 import { db, formatINR } from '../lib/db';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
-import { getCleanPhoneImage } from '../lib/phoneImages';
+import { getCleanPhoneImage, pullLiveModelImagesFromDb } from '../lib/phoneImages';
 import type { Product, Review } from '../types';
 
 // Doorstep PIN code to Area mapping dictionary
@@ -247,6 +247,15 @@ export default function ProductDetail() {
   const [showExchangeModal, setShowExchangeModal] = useState(false);
 
   useEffect(() => {
+    pullLiveModelImagesFromDb();
+    const handleModelImageUpdate = () => {
+      setProduct((prev) => (prev ? { ...prev } : null));
+    };
+    window.addEventListener('fundu_model_image_updated', handleModelImageUpdate);
+    return () => window.removeEventListener('fundu_model_image_updated', handleModelImageUpdate);
+  }, []);
+
+  useEffect(() => {
     if (!id) return;
     setLoading(true);
 
@@ -431,14 +440,14 @@ export default function ProductDetail() {
               )}
 
               <img
-                src={getCleanPhoneImage(product.brand, product.title, selectedImage || images[0])}
+                src={getCleanPhoneImage(product.brand, product.model || product.title, selectedImage || images[0])}
                 alt={product.title}
                 className="h-80 w-auto object-contain transition-transform duration-300 group-hover:scale-105 drop-shadow-md"
                 onError={(e) => {
                   const target = e.target as HTMLImageElement;
                   if (!target.dataset.triedFallback) {
                     target.dataset.triedFallback = '1';
-                    target.src = getCleanPhoneImage(product.brand, product.title, '');
+                    target.src = getCleanPhoneImage(product.brand, product.model || product.title, '');
                   }
                 }}
               />
@@ -961,7 +970,11 @@ export default function ProductDetail() {
       <div className="fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-ink-200 shadow-2xl py-3 px-4 transition-all">
         <div className="container-page flex items-center justify-between gap-4 max-w-5xl mx-auto">
           <div className="flex items-center gap-3 shrink-0">
-            <img src={images[0]} alt={product.title} className="h-10 w-10 object-contain rounded-lg hidden sm:block" />
+            <img
+              src={getCleanPhoneImage(product.brand, product.model || product.title, images[0])}
+              alt={product.title}
+              className="h-10 w-10 object-contain rounded-lg hidden sm:block"
+            />
             <div>
               <p className="font-bold text-xs text-ink-900 truncate max-w-[160px] sm:max-w-xs">{product.brand} {product.model}</p>
               <p className="text-[10px] text-ink-500">{selectedGrade} Grade · {selectedStorage}</p>

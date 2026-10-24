@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Store, Search, Plus, Edit2, Trash2, Smartphone, Tag } from 'lucide-react';
 import type { Product } from './adminTypes';
 import { formatINR } from '../../lib/db';
+import { getCleanPhoneImage } from '../../lib/phoneImages';
 
 type AdminProductsProps = {
   products: Product[];
@@ -89,12 +90,12 @@ export default function AdminProducts({
                         : 'bg-white hover:border-brand-300 hover:shadow-xs'
                     }`}
                   >
-                    <div className="h-12 w-12 rounded-xl bg-ink-100 overflow-hidden shrink-0">
-                      {p.images?.[0] ? (
-                        <img src={p.images[0]} alt="" className="h-full w-full object-cover" />
-                      ) : (
-                        <Smartphone className="h-6 w-6 text-ink-400 m-3" />
-                      )}
+                    <div className="h-12 w-12 rounded-xl bg-ink-100 overflow-hidden shrink-0 flex items-center justify-center p-1 bg-white border border-gray-100">
+                      <img
+                        src={getCleanPhoneImage(p.brand, p.model || p.title, p.images?.[0])}
+                        alt=""
+                        className="h-full w-full object-contain"
+                      />
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-1.5">
@@ -186,11 +187,13 @@ export default function AdminProducts({
                 </div>
               )}
 
-              {selectedProduct.images?.[0] && (
-                <div className="rounded-2xl overflow-hidden border border-ink-200">
-                  <img src={selectedProduct.images[0]} alt="" className="h-52 w-full object-cover" />
+                <div className="rounded-2xl overflow-hidden border border-ink-200 bg-white p-4 flex items-center justify-center">
+                  <img
+                    src={getCleanPhoneImage(selectedProduct.brand, selectedProduct.model || selectedProduct.title, selectedProduct.images?.[0])}
+                    alt=""
+                    className="h-52 w-auto object-contain"
+                  />
                 </div>
-              )}
             </div>
           ) : (
             <div className="card p-12 text-center bg-white rounded-[28px] border border-[#dce5e8]">

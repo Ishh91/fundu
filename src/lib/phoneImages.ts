@@ -403,20 +403,38 @@ export function generateModelLookupKeys(brand?: string, model?: string): string[
   const modelNorm = m.replace(/[^a-z0-9]/g, ' ').replace(/\s+/g, ' ').trim();
   const strippedNorm = strippedM.replace(/[^a-z0-9]/g, ' ').replace(/\s+/g, ' ').trim();
 
-  if (b && strippedM) keys.add(`${b}:${strippedM}`);
-  if (b && m) keys.add(`${b}:${m}`);
-  if (strippedM) keys.add(strippedM);
-  if (m) keys.add(m);
+  // Generate cleaned base name without storage specs, colors, cellular generation, or parenthesized info
+  // e.g. "Galaxy S22 5G" -> "galaxy s22"
+  // e.g. "Samsung Galaxy S22 (128GB) - Phantom Black" -> "galaxy s22"
+  const cleanBase = strippedNorm
+    .replace(/\b(16|32|64|128|256|512|1024)\s*(gb|tb)\b/gi, '')
+    .replace(/\b(3g|4g|5g|lte)\b/gi, '')
+    .replace(/\b(phantom black|starlight|midnight|cream|green|blue|black|white|purple|red|gold|silver|titanium|gray|grey)\b/gi, '')
+    .replace(/\s+/g, ' ')
+    .trim();
 
-  if (b && strippedNorm) keys.add(`${b}:${strippedNorm}`);
-  if (b && modelNorm) keys.add(`${b}:${modelNorm}`);
-  if (strippedNorm) keys.add(strippedNorm);
-  if (modelNorm) keys.add(modelNorm);
+  const addCombos = (val: string) => {
+    if (!val) return;
+    keys.add(val);
+    if (b) {
+      keys.add(`${b}:${val}`);
+      keys.add(`${b} ${val}`);
+    }
+  };
 
-  if (b && strippedM) keys.add(`${b} ${strippedM}`);
-  if (b && m) keys.add(`${b} ${m}`);
-  if (b && strippedNorm) keys.add(`${b} ${strippedNorm}`);
-  if (b && modelNorm) keys.add(`${b} ${modelNorm}`);
+  addCombos(strippedM);
+  addCombos(m);
+  addCombos(strippedNorm);
+  addCombos(modelNorm);
+  if (cleanBase && cleanBase !== strippedNorm) {
+    addCombos(cleanBase);
+  }
+
+  // Also strip "galaxy", "phone" if model is like "Galaxy S22" -> "s22"
+  const shortCode = cleanBase.replace(/^(galaxy|phone|redmi|poco|nord|iqoo|narzo)\s+/i, '').trim();
+  if (shortCode && shortCode !== cleanBase && shortCode.length >= 2) {
+    addCombos(shortCode);
+  }
 
   return Array.from(keys);
 }
@@ -655,7 +673,12 @@ function cleanUrl(url: string, brandHint?: string): string {
   let cleaned = url.trim();
 
   // Reject fake placeholder patterns immediately
-  if (cleaned.includes('777/thumb') || cleaned.includes('unsplash.com')) {
+  if (
+    cleaned.includes('777/thumb') ||
+    cleaned.includes('unsplash.com') ||
+    cleaned.includes('pexels.com') ||
+    cleaned.includes('pixabay.com')
+  ) {
     return '';
   }
 
@@ -750,13 +773,24 @@ export function getCleanPhoneImage(brand?: string, model?: string, fallbackUrl?:
   const customImages = getCustomModelImages();
   const lookupKeys = generateModelLookupKeys(brand, model);
   for (const k of lookupKeys) {
-    if (customImages[k] && !customImages[k].includes('unsplash.com') && !customImages[k].includes('777/thumb')) {
+    if (
+      customImages[k] &&
+      !customImages[k].includes('unsplash.com') &&
+      !customImages[k].includes('pexels.com') &&
+      !customImages[k].includes('777/thumb')
+    ) {
       return customImages[k];
     }
   }
 
   // 1. If explicit valid image (uploaded by admin, data URI, CDN, or direct http/https link), use it immediately!
-  const isInvalidUrl = !rawUrl || rawUrl.includes('unsplash.com') || rawUrl.includes('777/thumb');
+  const isInvalidUrl =
+    !rawUrl ||
+    rawUrl.includes('unsplash.com') ||
+    rawUrl.includes('pexels.com') ||
+    rawUrl.includes('pixabay.com') ||
+    rawUrl.includes('777/thumb');
+
   if (
     !isInvalidUrl &&
     (rawUrl.startsWith('data:image/') ||
