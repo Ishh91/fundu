@@ -72,8 +72,24 @@ const MODEL_HARDWARE_RULES: Array<{
   variants: StorageVariantRule[];
 }> = [
   // ==========================================
-  // APPLE iPHONES (Strictly sold by storage, RAM row hidden)
+  // APPLE iPHONES & iPADS (Strictly sold by storage, RAM row hidden)
   // ==========================================
+  {
+    pattern: /ipad\s*pro\s*13/i,
+    variants: [
+      { storage: '256 GB', rams: [] },
+      { storage: '512 GB', rams: [] },
+      { storage: '1 TB', rams: [] },
+      { storage: '2 TB', rams: [] },
+    ],
+  },
+  {
+    pattern: /ipad\s*10\.9/i,
+    variants: [
+      { storage: '64 GB', rams: [] },
+      { storage: '256 GB', rams: [] },
+    ],
+  },
   {
     pattern: /iphone\s*(17|16|15)\s*pro\s*max/i,
     variants: [
@@ -486,6 +502,41 @@ const MODEL_HARDWARE_RULES: Array<{
     ],
   },
   {
+    pattern: /iqoo\s*15\b/i,
+    variants: [
+      { storage: '256 GB', rams: ['12 GB', '16 GB'] },
+      { storage: '512 GB', rams: ['16 GB'] },
+    ],
+  },
+  {
+    pattern: /iqoo\s*neo\s*10r/i,
+    variants: [
+      { storage: '128 GB', rams: ['8 GB'] },
+      { storage: '256 GB', rams: ['8 GB', '12 GB'] },
+    ],
+  },
+  {
+    pattern: /iqoo\s*neo\s*9\s*se/i,
+    variants: [
+      { storage: '128 GB', rams: ['8 GB'] },
+      { storage: '256 GB', rams: ['8 GB', '12 GB'] },
+    ],
+  },
+  {
+    pattern: /iqoo\s*z11/i,
+    variants: [
+      { storage: '128 GB', rams: ['8 GB'] },
+      { storage: '256 GB', rams: ['8 GB', '12 GB'] },
+    ],
+  },
+  {
+    pattern: /iqoo\s*z10/i,
+    variants: [
+      { storage: '128 GB', rams: ['8 GB'] },
+      { storage: '256 GB', rams: ['8 GB'] },
+    ],
+  },
+  {
     pattern: /iqoo\s*neo\s*9\s*pro/i,
     variants: [
       { storage: '128 GB', rams: ['8 GB'] },
@@ -613,11 +664,145 @@ const MODEL_HARDWARE_RULES: Array<{
     ],
   },
   {
+    pattern: /nord\s*6\b/i,
+    variants: [
+      { storage: '128 GB', rams: ['8 GB'] },
+      { storage: '256 GB', rams: ['12 GB'] },
+      { storage: '512 GB', rams: ['16 GB'] },
+    ],
+  },
+  {
+    pattern: /nord\s*5\b/i,
+    variants: [
+      { storage: '128 GB', rams: ['8 GB'] },
+      { storage: '256 GB', rams: ['12 GB'] },
+    ],
+  },
+  {
+    pattern: /nord\s*ce\s*5\b|nord\s*ce5\b/i,
+    variants: [
+      { storage: '128 GB', rams: ['8 GB'] },
+      { storage: '256 GB', rams: ['12 GB'] },
+    ],
+  },
+  {
+    pattern: /nord\s*ce\s*2\s*lite|nord\s*ce2\s*lite/i,
+    variants: [
+      { storage: '128 GB', rams: ['6 GB', '8 GB'] },
+    ],
+  },
+  {
     pattern: /oneplus\s*6\b/i,
     variants: [
       { storage: '64 GB', rams: ['6 GB'] },
       { storage: '128 GB', rams: ['8 GB'] },
       { storage: '256 GB', rams: ['8 GB'] },
+    ],
+  },
+  {
+    pattern: /oneplus\s*10r(\s*5g)?/i,
+    variants: [
+      { storage: '128 GB', rams: ['8 GB'] },
+      { storage: '256 GB', rams: ['8 GB', '12 GB'] },
+    ],
+  },
+  {
+    pattern: /oneplus\s*8(\s*5g)?(\s*uw)?/i,
+    variants: [
+      { storage: '128 GB', rams: ['8 GB'] },
+      { storage: '256 GB', rams: ['12 GB'] },
+    ],
+  },
+
+  // ==========================================
+  // SAMSUNG
+  // ==========================================
+  {
+    pattern: /s26\s*fe|s26fe/i,
+    variants: [
+      { storage: '128 GB', rams: ['8 GB'] },
+      { storage: '256 GB', rams: ['8 GB'] },
+    ],
+  },
+  {
+    pattern: /z\s*flip\s*8|flip\s*8|flip8/i,
+    variants: [
+      { storage: '256 GB', rams: ['12 GB'] },
+      { storage: '512 GB', rams: ['12 GB'] },
+    ],
+  },
+  {
+    pattern: /z\s*fold\s*8|fold\s*8|fold8/i,
+    variants: [
+      { storage: '256 GB', rams: ['12 GB', '16 GB'] },
+      { storage: '512 GB', rams: ['16 GB'] },
+      { storage: '1 TB', rams: ['16 GB'] },
+    ],
+  },
+  {
+    pattern: /galaxy\s*a8\b|\ba8\s*\(2018\)|\ba8\b/i,
+    variants: [
+      { storage: '32 GB', rams: ['4 GB'] },
+      { storage: '64 GB', rams: ['4 GB'] },
+    ],
+  },
+
+  // ==========================================
+  // XIAOMI & POCO
+  // ==========================================
+  {
+    pattern: /11x\s*pro|11xpro/i,
+    variants: [
+      { storage: '128 GB', rams: ['8 GB'] },
+      { storage: '256 GB', rams: ['8 GB'] },
+    ],
+  },
+  {
+    pattern: /poco\s*f7\b/i,
+    variants: [
+      { storage: '256 GB', rams: ['12 GB'] },
+      { storage: '512 GB', rams: ['12 GB', '16 GB'] },
+    ],
+  },
+  {
+    pattern: /poco\s*x7\b/i,
+    variants: [
+      { storage: '128 GB', rams: ['8 GB'] },
+      { storage: '256 GB', rams: ['8 GB', '12 GB'] },
+    ],
+  },
+  {
+    pattern: /poco\s*m7\s*plus/i,
+    variants: [
+      { storage: '128 GB', rams: ['6 GB', '8 GB'] },
+    ],
+  },
+  {
+    pattern: /poco\s*m8\b/i,
+    variants: [
+      { storage: '128 GB', rams: ['6 GB', '8 GB'] },
+      { storage: '256 GB', rams: ['8 GB'] },
+    ],
+  },
+  {
+    pattern: /poco\s*c75\b/i,
+    variants: [
+      { storage: '128 GB', rams: ['6 GB'] },
+      { storage: '256 GB', rams: ['8 GB'] },
+    ],
+  },
+  {
+    pattern: /poco\s*m2\b/i,
+    variants: [
+      { storage: '64 GB', rams: ['6 GB'] },
+      { storage: '128 GB', rams: ['6 GB'] },
+    ],
+  },
+  {
+    pattern: /redmi\s*11\s*prime/i,
+    variants: [
+      { storage: '64 GB', rams: ['4 GB'] },
+      { storage: '128 GB', rams: ['6 GB'] },
     ],
   },
 
@@ -638,10 +823,44 @@ const MODEL_HARDWARE_RULES: Array<{
       { storage: '256 GB', rams: ['8 GB', '12 GB'] },
     ],
   },
+  {
+    pattern: /realme\s*11\s*pro\+/i,
+    variants: [
+      { storage: '256 GB', rams: ['8 GB', '12 GB'] },
+    ],
+  },
+  {
+    pattern: /realme\s*12\s*plus|realme\s*12\+/i,
+    variants: [
+      { storage: '128 GB', rams: ['8 GB'] },
+      { storage: '256 GB', rams: ['8 GB'] },
+    ],
+  },
+  {
+    pattern: /narzo\s*80\s*lite/i,
+    variants: [
+      { storage: '128 GB', rams: ['6 GB', '8 GB'] },
+      { storage: '256 GB', rams: ['8 GB'] },
+    ],
+  },
+  {
+    pattern: /realme\s*c19\b/i,
+    variants: [
+      { storage: '64 GB', rams: ['4 GB'] },
+      { storage: '128 GB', rams: ['4 GB', '6 GB'] },
+    ],
+  },
 
   // ==========================================
   // GOOGLE PIXEL
   // ==========================================
+  {
+    pattern: /pixel\s*10\b/i,
+    variants: [
+      { storage: '128 GB', rams: ['12 GB'] },
+      { storage: '256 GB', rams: ['12 GB'] },
+    ],
+  },
   {
     pattern: /pixel\s*9\s*pro/i,
     variants: [
@@ -667,8 +886,21 @@ const MODEL_HARDWARE_RULES: Array<{
   },
 
   // ==========================================
-  // LENOVO
+  // LENOVO & MOTO
   // ==========================================
+  {
+    pattern: /lenovo\s*phab\s*2/i,
+    variants: [
+      { storage: '32 GB', rams: ['3 GB'] },
+    ],
+  },
+  {
+    pattern: /lenovo\s*moto\s*m|\bmoto\s*m\b/i,
+    variants: [
+      { storage: '32 GB', rams: ['3 GB'] },
+      { storage: '64 GB', rams: ['4 GB'] },
+    ],
+  },
   {
     pattern: /lenovo\s*k10\s*note/i,
     variants: [

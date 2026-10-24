@@ -392,12 +392,20 @@ export default function AdminSellPricing({
     // Search query
     if (search.trim()) {
       const q = search.trim().toLowerCase();
-      result = result.filter(
-        (m) =>
-          m.model.toLowerCase().includes(q) ||
-          m.brand.toLowerCase().includes(q) ||
-          `${m.brand} ${m.model}`.toLowerCase().includes(q)
-      );
+      const cleanQ = q.replace(/[^a-z0-9]/g, '');
+      const queryWords = q.split(/\s+/).filter(Boolean);
+      result = result.filter((m) => {
+        const mLower = m.model.toLowerCase();
+        const bLower = m.brand.toLowerCase();
+        const full = `${bLower} ${mLower}`;
+        if (mLower.includes(q) || bLower.includes(q) || full.includes(q)) return true;
+        if (queryWords.every((word) => full.includes(word))) return true;
+        if (cleanQ) {
+          const cleanFull = full.replace(/[^a-z0-9]/g, '');
+          if (cleanFull.includes(cleanQ)) return true;
+        }
+        return false;
+      });
     }
 
     // Sorting

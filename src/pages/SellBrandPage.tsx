@@ -408,8 +408,21 @@ export default function SellBrandPage() {
 
     // 1. Search filter (sorted latest first)
     if (debouncedQuery) {
-      const q = debouncedQuery.toLowerCase();
-      const filtered = list.filter((m) => m.model.toLowerCase().includes(q));
+      const q = debouncedQuery.toLowerCase().trim();
+      const cleanQ = q.replace(/[^a-z0-9]/g, '');
+      const queryWords = q.split(/\s+/).filter(Boolean);
+      const filtered = list.filter((m) => {
+        const mLower = (m.model || '').toLowerCase();
+        const bLower = (m.brand || brandDisplayName).toLowerCase();
+        const full = `${bLower} ${mLower}`;
+        if (mLower.includes(q) || full.includes(q)) return true;
+        if (queryWords.every((word) => full.includes(word))) return true;
+        if (cleanQ) {
+          const cleanFull = full.replace(/[^a-z0-9]/g, '');
+          if (cleanFull.includes(cleanQ)) return true;
+        }
+        return false;
+      });
       return sortDeviceModelsLatestFirst(brandCanonicalKey, filtered);
     }
 
