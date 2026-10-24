@@ -3580,7 +3580,7 @@ export const ALL_INDIAN_PHONES_CATALOG: MasterPhone[] = [
     ram_options: ['8GB'],
     storage_options: ['128GB', '256GB'],
     default_mrp: 27999,
-    base_resale_value: 13700,
+    base_resale_value: 13630,
     image_url: 'https://images.unsplash.com/photo-1598327105666-5b89351aff97?w=800&auto=format&fit=crop&q=80',
     popular_tag: 'India First IP69 Waterproof Rugged',
     processor: 'MediaTek Dimensity 7050 (6nm)',

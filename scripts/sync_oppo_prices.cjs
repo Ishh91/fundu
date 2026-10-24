@@ -252,6 +252,8 @@ async function run() {
   let catalogAddedCount = 0;
   rawOppoList.forEach(item => {
     const k = normalizeKey(item.name);
+    const match = findOppoMatch(item.name);
+    const fPrice = match ? match.funduPrice : calculateFunduPrice(item.price);
     if (!existingOppoKeys.has(k)) {
       catalog.push({
         brand: 'Oppo',
@@ -259,9 +261,9 @@ async function run() {
         release_year: 2024,
         ram_options: ['6GB', '8GB', '12GB'],
         storage_options: [item.variant, '256GB'],
-        default_mrp: Math.round(item.funduPrice * 1.5),
-        base_resale_value: item.funduPrice,
-        price: item.funduPrice,
+        default_mrp: Math.round(fPrice * 1.5),
+        base_resale_value: fPrice,
+        price: fPrice,
         image_url: 'https://fdn2.gsmarena.com/vv/bigpic/oppo-reno12-pro.jpg',
         popular_tag: 'Oppo Official Model',
         processor: 'MediaTek Dimensity / Snapdragon',
