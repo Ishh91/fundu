@@ -612,6 +612,162 @@ const MODEL_HARDWARE_RULES: Array<{
 ];
 
 /**
+ * Infers authentic, tier-accurate storage and RAM hardware options
+ * for any smartphone based on brand, model series, and market release tier.
+ */
+export function inferTierHardwareSpecs(
+  brand = '',
+  model = '',
+  seedStorages: string[] = [],
+  seedRams: string[] = []
+): DeviceHardwareSpecs {
+  const bLower = (brand || '').toLowerCase().trim();
+  const mLower = (model || '').toLowerCase().trim();
+  const fullText = `${bLower} ${mLower}`;
+  const isApple = bLower.includes('apple') || mLower.includes('iphone') || mLower.includes('ipad');
+
+  if (isApple) {
+    let storages = ['128 GB', '256 GB', '512 GB'];
+    if (/pro\s*max/i.test(mLower)) {
+      if (/1[567]/i.test(mLower)) storages = ['256 GB', '512 GB', '1 TB'];
+      else storages = ['128 GB', '256 GB', '512 GB', '1 TB'];
+    } else if (/\bpro\b/i.test(mLower)) {
+      storages = ['128 GB', '256 GB', '512 GB', '1 TB'];
+    } else if (/\b(11|12|xr|xs|x\b|8\b|8\s*plus|se\b)/i.test(mLower)) {
+      storages = /xs/i.test(mLower) ? ['64 GB', '256 GB', '512 GB'] : ['64 GB', '128 GB', '256 GB'];
+    } else if (/\b(7|6s|6|5s|5c|5)\b/i.test(mLower)) {
+      storages = ['16 GB', '32 GB', '64 GB', '128 GB'];
+    } else if (/plus\b/i.test(mLower)) {
+      storages = ['128 GB', '256 GB', '512 GB'];
+    } else if (/ipad/i.test(mLower)) {
+      storages = ['128 GB', '256 GB', '512 GB', '1 TB'];
+    }
+
+    const normSeeds = seedStorages.map(normalizeStorageString).filter(Boolean);
+    const finalStorages = Array.from(new Set([...normSeeds, ...storages]));
+    const defaultStorage = normSeeds[0] || finalStorages[0] || '128 GB';
+
+    return {
+      storages: finalStorages,
+      rams: [],
+      defaultStorage,
+      defaultRam: '',
+      getRamsForStorage: () => [],
+    };
+  }
+
+  // Non-Apple (Android) Specs Generation by Tier
+  let tierStorages = ['128 GB', '256 GB'];
+  let tierRamMap: Record<string, string[]> = {
+    '128 GB': ['6 GB', '8 GB'],
+    '256 GB': ['8 GB', '12 GB'],
+  };
+  let allRams = ['6 GB', '8 GB', '12 GB'];
+
+  // 1. Ultra / Fold / Flip / Top Flagships
+  if (
+    /ultra|fold|flip|find\s*x|pixel.*pro|oneplus\s*(13|12|11|10\s*pro|open)|x100|x90|s2[0-6]|note\s*20/i.test(fullText)
+  ) {
+    if (/ultra|fold/i.test(mLower)) {
+      tierStorages = ['256 GB', '512 GB', '1 TB'];
+      tierRamMap = {
+        '256 GB': ['12 GB', '16 GB'],
+        '512 GB': ['12 GB', '16 GB'],
+        '1 TB': ['16 GB'],
+      };
+      allRams = ['12 GB', '16 GB'];
+    } else {
+      tierStorages = ['128 GB', '256 GB', '512 GB'];
+      tierRamMap = {
+        '128 GB': ['8 GB', '12 GB'],
+        '256 GB': ['8 GB', '12 GB', '16 GB'],
+        '512 GB': ['12 GB', '16 GB'],
+      };
+      allRams = ['8 GB', '12 GB', '16 GB'];
+    }
+  }
+  // 2. Upper Mid-Range / Pro / Performance / Neo / GT / Edge / Reno / V series
+  else if (
+    /pro\+|pro\s*plus|\bpro\b|neo|turbo|gt|plus|\+|fe|nord|reno|iqoo\s*z|poco\s*(f|x)|note.*pro|a5\d|a7\d|m5\d|f5\d|edge|v\d+/i.test(fullText)
+  ) {
+    tierStorages = ['128 GB', '256 GB', '512 GB'];
+    tierRamMap = {
+      '128 GB': ['6 GB', '8 GB'],
+      '256 GB': ['8 GB', '12 GB'],
+      '512 GB': ['12 GB'],
+    };
+    allRams = ['6 GB', '8 GB', '12 GB'];
+  }
+  // 3. Budget / Entry-level (A0x, A1x, Redmi C, Realme C, Poco C, Spark, etc.)
+  else if (
+    /a0\d|a1\d|m0\d|m1\d|f0\d|f1\d|redmi\s*c|realme\s*c|poco\s*c|vivo\s*y|itel|spark|smart|pova|camon|moto\s*e/i.test(fullText)
+  ) {
+    tierStorages = ['32 GB', '64 GB', '128 GB'];
+    tierRamMap = {
+      '32 GB': ['2 GB', '3 GB'],
+      '64 GB': ['3 GB', '4 GB', '6 GB'],
+      '128 GB': ['4 GB', '6 GB', '8 GB'],
+    };
+    allRams = ['3 GB', '4 GB', '6 GB', '8 GB'];
+  }
+  // 4. Classic / Vintage J, C, On series
+  else if (/galaxy\s*[jcon]\d|\bj\d|\bc\d|\bon\d|galaxy\s*core|galaxy\s*grand/i.test(fullText)) {
+    tierStorages = ['16 GB', '32 GB', '64 GB', '128 GB'];
+    tierRamMap = {
+      '16 GB': ['2 GB', '3 GB'],
+      '32 GB': ['2 GB', '3 GB', '4 GB'],
+      '64 GB': ['4 GB', '6 GB'],
+      '128 GB': ['6 GB'],
+    };
+    allRams = ['2 GB', '3 GB', '4 GB', '6 GB'];
+  }
+  // 5. Standard Mid-range default (A2x, A3x, M3x, Redmi Note base, Realme number, Moto G, etc.)
+  else {
+    tierStorages = ['64 GB', '128 GB', '256 GB'];
+    tierRamMap = {
+      '64 GB': ['4 GB', '6 GB'],
+      '128 GB': ['6 GB', '8 GB'],
+      '256 GB': ['8 GB'],
+    };
+    allRams = ['4 GB', '6 GB', '8 GB'];
+  }
+
+  const normSeeds = seedStorages.map(normalizeStorageString).filter(Boolean);
+  const finalStorages = Array.from(new Set([...normSeeds, ...tierStorages]));
+  const normalizedSeedRams = seedRams.map(normalizeRamString).filter(Boolean);
+  const finalRams = Array.from(new Set([...normalizedSeedRams, ...allRams]));
+
+  const getRamsForStorage = (stg: string): string[] => {
+    const norm = normalizeStorageString(stg);
+    if (tierRamMap[norm] && tierRamMap[norm].length > 0) {
+      if (normalizedSeedRams.length > 0) {
+        return Array.from(new Set([...normalizedSeedRams, ...tierRamMap[norm]]));
+      }
+      return tierRamMap[norm];
+    }
+    if (norm.includes('16 GB')) return ['2 GB', '3 GB'];
+    if (norm.includes('32 GB')) return ['2 GB', '3 GB', '4 GB'];
+    if (norm.includes('64 GB')) return ['4 GB', '6 GB'];
+    if (norm.includes('128 GB')) return ['6 GB', '8 GB'];
+    if (norm.includes('256 GB')) return ['8 GB', '12 GB'];
+    if (norm.includes('512 GB')) return ['12 GB', '16 GB'];
+    if (norm.includes('1 TB')) return ['12 GB', '16 GB'];
+    return finalRams.slice(0, 2);
+  };
+
+  const defaultStorage = normSeeds[0] || finalStorages[0] || '128 GB';
+  const defaultRams = getRamsForStorage(defaultStorage);
+
+  return {
+    storages: finalStorages,
+    rams: defaultRams,
+    defaultStorage,
+    defaultRam: defaultRams[0] || '',
+    getRamsForStorage,
+  };
+}
+
+/**
  * Returns exact model-accurate storage and RAM variant options.
  * Guarantees that invalid storage tiers and invalid RAM tiers
  * (e.g. 12GB on 128GB or 6GB on 64GB) are NEVER displayed.
@@ -624,6 +780,7 @@ export function getModelHardwareSpecs(
   const normBrand = (brand || '').toLowerCase().trim();
   const normModel = (model || '').toLowerCase().trim();
   const fullText = `${normBrand} ${normModel}`;
+  const isApple = normBrand.includes('apple') || normModel.includes('iphone') || normModel.includes('ipad');
 
   // 1. Check Explicit Hardware Rules with Exact Storage <-> RAM Pairing
   for (const rule of MODEL_HARDWARE_RULES) {
@@ -662,29 +819,31 @@ export function getModelHardwareSpecs(
   });
 
   if (foundPhone) {
-    const storages = Array.isArray(foundPhone.storage_options) && foundPhone.storage_options.length > 0
+    const dbStorages = Array.isArray(foundPhone.storage_options) && foundPhone.storage_options.length > 0
       ? Array.from(new Set(foundPhone.storage_options.map(normalizeStorageString)))
       : [];
-    const rams = Array.isArray(foundPhone.ram_options) && foundPhone.ram_options.length > 0
+    const dbRams = Array.isArray(foundPhone.ram_options) && foundPhone.ram_options.length > 0
       ? Array.from(new Set(foundPhone.ram_options.map(normalizeRamString)))
       : [];
 
-    if (storages.length > 0) {
-      const defaultStorage = storages[0] || '128 GB';
-      const isApple = normBrand.includes('apple') || normModel.includes('iphone');
-      const validRams = isApple ? [] : rams;
+    if (dbStorages.length > 1 && (isApple || dbRams.length > 0)) {
+      const defaultStorage = dbStorages[0] || '128 GB';
+      const validRams = isApple ? [] : dbRams;
 
       return {
-        storages,
+        storages: dbStorages,
         rams: validRams,
         defaultStorage,
         defaultRam: validRams[0] || '',
         getRamsForStorage: () => validRams,
       };
     }
+
+    // If database has incomplete options (e.g. only 1 storage or empty RAM), enhance with tier specs
+    return inferTierHardwareSpecs(brand, model, dbStorages, dbRams);
   }
 
-  // 3. Check customCatalog variants if provided
+  // 3. Check customCatalog variants if provided (e.g. MASTER_MODEL_CATALOG)
   if (Array.isArray(customCatalog) && customCatalog.length > 0) {
     const catalogVariants = customCatalog.filter((m) => {
       const mModel = m.model.toLowerCase();
@@ -695,36 +854,11 @@ export function getModelHardwareSpecs(
     });
 
     if (catalogVariants.length > 0) {
-      const storages = Array.from(new Set(catalogVariants.map((v) => normalizeStorageString(v.storage))));
-      if (storages.length > 0) {
-        return {
-          storages,
-          rams: [],
-          defaultStorage: storages[0],
-          defaultRam: '',
-          getRamsForStorage: () => [],
-        };
-      }
+      const seedStorages = Array.from(new Set(catalogVariants.map((v) => normalizeStorageString(v.storage))));
+      return inferTierHardwareSpecs(brand, model, seedStorages, []);
     }
   }
 
-  // 4. Intelligent Fallback by Brand & Generation
-  if (normBrand.includes('apple') || normModel.includes('iphone')) {
-    return {
-      storages: ['128 GB', '256 GB', '512 GB'],
-      rams: [],
-      defaultStorage: '128 GB',
-      defaultRam: '',
-      getRamsForStorage: () => [],
-    };
-  }
-
-  // Default Standard Modern Android Phone
-  return {
-    storages: ['128 GB', '256 GB'],
-    rams: ['6 GB', '8 GB'],
-    defaultStorage: '128 GB',
-    defaultRam: '6 GB',
-    getRamsForStorage: () => ['6 GB', '8 GB'],
-  };
+  // 4. Intelligent Fallback by Brand & Generation Tier
+  return inferTierHardwareSpecs(brand, model);
 }
