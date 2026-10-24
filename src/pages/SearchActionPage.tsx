@@ -17,7 +17,7 @@ import {
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { ALL_INDIAN_PHONES_CATALOG } from '../data/indianPhonesCatalog';
-import { getCleanPhoneImage } from '../lib/phoneImages';
+import { getCleanPhoneImage, pullLiveModelImagesFromDb, getGenericDevicePlaceholder } from '../lib/phoneImages';
 import { db, formatINR } from '../lib/db';
 import type { Product } from '../types';
 
@@ -61,6 +61,16 @@ export default function SearchActionPage() {
       }
     }
     loadProducts();
+    pullLiveModelImagesFromDb();
+
+    const handleModelImageUpdate = () => {
+      // Re-render when images are updated from admin or synced
+      setProducts((prev) => [...prev]);
+    };
+    window.addEventListener('fundu_model_image_updated', handleModelImageUpdate);
+    return () => {
+      window.removeEventListener('fundu_model_image_updated', handleModelImageUpdate);
+    };
   }, []);
 
   // Handle Search Submission
@@ -104,16 +114,21 @@ export default function SearchActionPage() {
       const full = `${prod.brand} ${prod.model} ${prod.title}`.toLowerCase();
       const strippedFull = full.replace(/[\s-]+/g, '');
       const key = `${prod.brand}__${prod.model}`.toLowerCase();
-      if (
-        (full.includes(cleanQ) || strippedFull.includes(strippedQ)) &&
-        !matches.has(key)
-      ) {
-        matches.set(key, {
-          brand: prod.brand,
-          model: prod.model,
-          price: prod.price,
-          image: prod.images?.[0] || undefined,
-        });
+      const prodImg = prod.images && prod.images.length > 0 ? prod.images[0] : undefined;
+
+      if (full.includes(cleanQ) || strippedFull.includes(strippedQ)) {
+        if (matches.has(key)) {
+          const item = matches.get(key)!;
+          if (prodImg) item.image = prodImg;
+          if (prod.price) item.price = prod.price;
+        } else {
+          matches.set(key, {
+            brand: prod.brand,
+            model: prod.model,
+            price: prod.price,
+            image: prodImg,
+          });
+        }
       }
     });
 
@@ -258,6 +273,15 @@ export default function SearchActionPage() {
                         alt={phone.model}
                         className="h-full w-full object-contain drop-shadow-xs"
                         loading="lazy"
+                        onError={(e) => {
+                          const target = e.currentTarget;
+                          const fallback = getCleanPhoneImage(phone.brand, phone.model);
+                          if (target.src !== fallback && !target.src.includes('data:image/svg+xml')) {
+                            target.src = fallback;
+                          } else {
+                            target.src = getGenericDevicePlaceholder(phone.brand, phone.model);
+                          }
+                        }}
                       />
                     </div>
                     <div className="space-y-1">

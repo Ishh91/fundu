@@ -624,6 +624,9 @@ export default function Admin() {
 
       setProducts((prev) => [newProduct, ...prev]);
       setSelectedProductId(newProduct.id);
+      if (payload.images && payload.images.length > 0 && payload.images[0]) {
+        saveCustomModelImage(payload.brand, payload.model, payload.images[0]);
+      }
       setListPhoneModal(null);
 
       if (error) console.warn('Product insert notice:', error.message);
@@ -999,6 +1002,9 @@ export default function Admin() {
         if (error) throw error;
         setProducts((prev) => [data as Product, ...prev]);
         setSelectedProductId((data as Product).id);
+      }
+      if (payload.images && payload.images.length > 0 && payload.images[0]) {
+        saveCustomModelImage(payload.brand, payload.model, payload.images[0]);
       }
       setProductModal(null);
     } catch (err: any) {

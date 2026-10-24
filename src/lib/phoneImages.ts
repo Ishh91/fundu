@@ -308,8 +308,8 @@ export const RAW_MODEL_EXACT_RENDERS: Array<{ keyword: string; url: string }> = 
   { keyword: 'pixel 8 pro', url: 'https://fdn2.gsmarena.com/vv/bigpic/google-pixel-8-pro.jpg' },
   { keyword: 'pixel 8', url: 'https://fdn2.gsmarena.com/vv/bigpic/google-pixel-8.jpg' },
   { keyword: 'pixel 7a', url: 'https://fdn2.gsmarena.com/vv/bigpic/google-pixel-7a.jpg' },
-  { keyword: 'pixel 7 pro', url: 'https://fdn2.gsmarena.com/vv/bigpic/google-pixel-7-pro-.jpg' },
-  { keyword: 'pixel 7', url: 'https://fdn2.gsmarena.com/vv/bigpic/google-pixel-7-.jpg' },
+  { keyword: 'pixel 7 pro', url: 'https://fdn2.gsmarena.com/vv/bigpic/google-pixel7-pro-new.jpg' },
+  { keyword: 'pixel 7', url: 'https://fdn2.gsmarena.com/vv/bigpic/google-pixel7-new.jpg' },
   { keyword: 'pixel 6 pro', url: 'https://fdn2.gsmarena.com/vv/bigpic/google-pixel-6-pro.jpg' },
   { keyword: 'pixel 6a', url: 'https://fdn2.gsmarena.com/vv/bigpic/google-pixel-6a.jpg' },
   { keyword: 'pixel 6', url: 'https://fdn2.gsmarena.com/vv/bigpic/google-pixel-6.jpg' },
@@ -691,8 +691,10 @@ function cleanUrl(url: string, brandHint?: string): string {
 
   // Google Pixel URL fixes
   cleaned = cleaned.replace(/google-pixel-9-pro\.jpg$/i, 'google-pixel-9-pro-.jpg');
-  cleaned = cleaned.replace(/google-pixel-7\.jpg$/i, 'google-pixel-7-.jpg');
-  cleaned = cleaned.replace(/google-pixel-7-pro\.jpg$/i, 'google-pixel-7-pro-.jpg');
+  cleaned = cleaned.replace(/google-pixel-?7-pro(-)?\.jpg$/i, 'google-pixel7-pro-new.jpg');
+  cleaned = cleaned.replace(/google-pixel-?7(-)?\.jpg$/i, 'google-pixel7-new.jpg');
+  cleaned = cleaned.replace(/google-pixel7\.jpg$/i, 'google-pixel7-new.jpg');
+  cleaned = cleaned.replace(/google-pixel7-pro\.jpg$/i, 'google-pixel7-pro-new.jpg');
 
   // OnePlus URL fixes (GSMArena requires trailing dash for some models)
   cleaned = cleaned.replace(/oneplus-6\.jpg$/i, 'oneplus-6-.jpg');
@@ -753,33 +755,27 @@ export function getCleanPhoneImage(brand?: string, model?: string, fallbackUrl?:
     }
   }
 
-  // 1. If explicit user-uploaded image (data URL or custom backend CDN), use it
+  // 1. If explicit valid image (uploaded by admin, data URI, CDN, or direct http/https link), use it immediately!
+  const isInvalidUrl = !rawUrl || rawUrl.includes('unsplash.com') || rawUrl.includes('777/thumb');
   if (
-    rawUrl &&
-    !rawUrl.includes('unsplash.com') &&
-    !rawUrl.includes('777/thumb') &&
+    !isInvalidUrl &&
     (rawUrl.startsWith('data:image/') ||
-      rawUrl.includes('supabase') ||
-      rawUrl.includes('cloudinary') ||
-      rawUrl.includes('firebase') ||
-      rawUrl.includes('blob:'))
+      rawUrl.startsWith('http://') ||
+      rawUrl.startsWith('https://') ||
+      rawUrl.startsWith('/') ||
+      rawUrl.startsWith('blob:'))
   ) {
     return rawUrl;
   }
 
-  // 2. Reject fake placeholder patterns in fallbackUrl
-  const isInvalidUrl =
-    rawUrl.includes('unsplash.com') ||
-    rawUrl.includes('777/thumb');
-
-  // 3. Try high-resolution flagship & classic renders (sorted longest keyword first)
+  // 2. Try high-resolution flagship & classic renders (sorted longest keyword first)
   for (const item of MODEL_EXACT_RENDERS) {
     if (fullText.includes(item.keyword) || modelNorm.includes(item.keyword)) {
       return cleanUrl(item.url, b);
     }
   }
 
-  // 4. Exact dictionary lookup from verified 4,000+ device catalog
+  // 3. Exact dictionary lookup from verified 4,000+ device catalog
   if (MOBILE_API_THUMBS[fullText]) {
     return cleanUrl(MOBILE_API_THUMBS[fullText], b);
   }
@@ -787,16 +783,11 @@ export function getCleanPhoneImage(brand?: string, model?: string, fallbackUrl?:
     return cleanUrl(MOBILE_API_THUMBS[modelNorm], b);
   }
 
-  // 5. Intelligent substring match in deviceImageDictionary
+  // 4. Intelligent substring match in deviceImageDictionary
   for (const k of SORTED_THUMB_KEYS) {
     if (k.length >= 5 && (fullText.includes(k) || modelNorm.includes(k))) {
       return cleanUrl(MOBILE_API_THUMBS[k], b);
     }
-  }
-
-  // 6. If fallbackUrl was a valid non-fake URL, return it
-  if (rawUrl && !isInvalidUrl && rawUrl.startsWith('http')) {
-    return cleanUrl(rawUrl, b);
   }
 
   // 7. Intelligent Series & Family Studio Renders
