@@ -441,7 +441,17 @@ export default function SellPhone() {
       setForm((cur) => ({ ...cur, brand: foundBrand }));
 
       if (modelSlug) {
-        const cleanModelKey = modelSlug.replace(/^sell-/, '').replace(/-/g, ' ').toLowerCase().trim();
+        // Strip any repeated SEO prefixes: sell-, old-, used-, sell-old-, and brand prefixes
+        let sanitizedSlug = modelSlug.toLowerCase();
+        let prevSlug = '';
+        while (sanitizedSlug !== prevSlug) {
+          prevSlug = sanitizedSlug;
+          sanitizedSlug = sanitizedSlug
+            .replace(/^(sell-old-|old-sell-|sell-|old-|used-)/, '')
+            .replace(new RegExp(`^${cleanBrandKey}-`), '');
+        }
+
+        const cleanModelKey = sanitizedSlug.replace(/-/g, ' ').trim();
         const stripped = cleanModelKey.replace(/[\s-]+/g, '');
         const strippedNoBrand = stripped.replace(new RegExp(`^${cleanBrandKey}`), '');
 
@@ -457,10 +467,16 @@ export default function SellPhone() {
           );
         };
 
-        const foundModel =
+        let foundModel =
           ALL_INDIAN_PHONES_CATALOG.find((p) => matchCandidate(p.model, p.brand))?.model ||
           MASTER_MODEL_CATALOG.find((m) => matchCandidate(m.model, m.brand))?.model ||
           cleanModelKey.split(' ').map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+
+        // Clean out any rogue 'Sell ' or duplicate brand prefixes
+        foundModel = foundModel.replace(/^(sell\s+|old\s+|used\s+)+/i, '').trim();
+        if (foundModel.toLowerCase().startsWith(foundBrand.toLowerCase())) {
+          foundModel = foundModel.slice(foundBrand.length).trim();
+        }
 
         const storageParam = searchParams.get('storage');
         const urlStep = parseInt(searchParams.get('step') || '', 10);

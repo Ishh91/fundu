@@ -2378,6 +2378,20 @@ export function lookupResaleBenchmark(brand, model, storage, options = {}) {
   const normStorage = normalizeStorage(storage);
   const ram = options.ram || '';
 
+  // Direct catalog price override (e.g. from phonesCatalog.json or DB)
+  if (options.catalogPrice && options.catalogPrice > 0) {
+    return {
+      found: true,
+      benchmark: {
+        brand: brand || 'Smartphone',
+        model: options.cleanedModel || model,
+        storage: normStorage,
+        proceeds: options.catalogPrice,
+        lastUpdated: '2026-10-24',
+      },
+    };
+  }
+
   let matchedDirectly = false;
   // 1. Direct exact match in RESALE_BENCHMARKS
   let benchmark = RESALE_BENCHMARKS.find((b) => {
@@ -2744,9 +2758,23 @@ export function quotePhone(input = {}, options = {}) {
   }
 
   // Exact Business Formula:
-  // proceeds adjusted for condition - repairs - pickup - reserves - margin - missing stylus
   const proceedsAdjustedForCondition = Math.round(expectedResaleProceeds * cosmeticMultiplier) + accessoriesBonusTotal;
-  const rawOffer = proceedsAdjustedForCondition - configuredRepairsTotal - pickupInspectionCost - warrantyAndRiskReserves - targetContributionMargin - missingStylusDeduction;
+  let rawOffer;
+  if (options.isDirectBuybackPrice || options.catalogPrice !== undefined) {
+    const baseP = expectedResaleProceeds;
+    const condP = Math.round(baseP * cosmeticMultiplier);
+
+    // Missing accessories deductions if not included
+    let accessoriesAdjustment = 0;
+    const hasBox = Array.isArray(accessories) && accessories.includes('Original Box');
+    const hasCharger = Array.isArray(accessories) && accessories.includes('Original Charger');
+    if (!hasBox) accessoriesAdjustment -= (FUNDU_POLICY.accessoriesBonus['Original Box'] || 300);
+    if (!hasCharger) accessoriesAdjustment -= (FUNDU_POLICY.accessoriesBonus['Original Charger'] || 300);
+
+    rawOffer = condP + accessoriesAdjustment - configuredRepairsTotal - missingStylusDeduction;
+  } else {
+    rawOffer = proceedsAdjustedForCondition - configuredRepairsTotal - pickupInspectionCost - warrantyAndRiskReserves - targetContributionMargin - missingStylusDeduction;
+  }
 
   // If raw offer drops below minimum floor or repairs exceed proceeds, provide salvage/floor offer so estimate is never 0:
   if (rawOffer <= 0 || configuredRepairsTotal > expectedResaleProceeds * 0.70) {

@@ -44,9 +44,10 @@ export default function SellStep3Quote({
   handleGoToLoginForExactPrice,
   goToStep,
 }: SellStep3QuoteProps) {
-  const phoneDisplayName = form.model.toLowerCase().startsWith(form.brand.toLowerCase())
-    ? form.model
-    : `${form.brand} ${form.model}`;
+  const cleanModelForDisplay = (form.model || '').replace(/^(sell\s+|old\s+|used\s+)+/i, '').trim();
+  const phoneDisplayName = cleanModelForDisplay.toLowerCase().startsWith(form.brand.toLowerCase())
+    ? cleanModelForDisplay
+    : `${form.brand} ${cleanModelForDisplay}`;
   const rawInspectionOffer = funduQuote?.offerAmount || estimate;
   const safeInspectionOffer = Math.min(180000, Math.max(500, rawInspectionOffer));
 
