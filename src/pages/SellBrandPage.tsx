@@ -289,7 +289,7 @@ export default function SellBrandPage() {
         combinedMap.set(key, {
           brand: p.brand,
           model: p.model,
-          series: inferModelSeries(p.brand, p.model),
+          series: p.series || inferModelSeries(p.brand, p.model).seriesName,
           storage: p.storage_options?.[0] || '128 GB',
           price: p.base_resale_value || 12000,
           image: p.image_url || getCleanPhoneImage(p.brand, p.model),

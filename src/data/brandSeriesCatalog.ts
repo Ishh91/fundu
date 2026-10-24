@@ -263,15 +263,18 @@ export function sortDeviceModelsLatestFirst<
 export function inferModelSeries(
   brand: string,
   modelName: string,
-  existingSeries?: string
+  existingSeries?: string | { seriesName?: string; seriesSlug?: string }
 ): { seriesName: string; seriesSlug: string } {
-  const bLower = (brand || '').toLowerCase().trim();
-  const mLower = (modelName || '').toLowerCase().trim();
-  const sLower = (existingSeries || '').toLowerCase().trim();
+  const bLower = String(brand || '').toLowerCase().trim();
+  const mLower = String(modelName || '').toLowerCase().trim();
+  const rawSeries = typeof existingSeries === 'object' && existingSeries !== null
+    ? (existingSeries.seriesName || '')
+    : String(existingSeries || '');
+  const sLower = rawSeries.toLowerCase().trim();
 
   // If existingSeries is already specific and valid (not generic)
   if (
-    existingSeries &&
+    rawSeries &&
     !sLower.endsWith(' other models') &&
     !sLower.endsWith(`${bLower} series`) &&
     sLower !== 'all models' &&
@@ -1948,16 +1951,19 @@ export function groupModelsBySeries(brand: string, allModels: CatalogModelItem[]
         return false;
       }
 
-      const text = `${m.model} ${m.series || ''}`;
-      const inferred = inferModelSeries(brand, m.model, m.series);
+      const mSeriesStr = typeof m.series === 'string'
+        ? m.series
+        : (typeof m.series === 'object' && m.series ? (m.series as any).seriesName || '' : '');
+      const text = `${m.model || ''} ${mSeriesStr}`;
+      const inferred = inferModelSeries(brand, m.model, mSeriesStr);
       return (
         def.pattern.test(text) ||
         inferred.seriesSlug === def.slug ||
         inferred.seriesName.toLowerCase() === def.name.toLowerCase() ||
-        (m.series && (
-          m.series.toLowerCase() === def.name.toLowerCase() ||
-          m.series.toLowerCase().includes(def.name.toLowerCase()) ||
-          def.name.toLowerCase().includes(m.series.toLowerCase())
+        (mSeriesStr && (
+          mSeriesStr.toLowerCase() === def.name.toLowerCase() ||
+          mSeriesStr.toLowerCase().includes(def.name.toLowerCase()) ||
+          def.name.toLowerCase().includes(mSeriesStr.toLowerCase())
         ))
       );
     });
