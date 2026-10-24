@@ -455,11 +455,11 @@ export const BRAND_SERIES_DEFINITIONS: Record<string, BrandSeriesDefinition[]> =
       description: '16 Pro Max, 16 Pro, 16 Plus, 16, 16e',
       pattern: /\biphone\s*16([a-z0-9]|\b)/i,
       defaultModels: [
-        { brand: 'Apple', series: 'iPhone 16 Series', model: 'Apple iPhone 16 Pro Max', storage: '256 GB', price: 77300, image: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-16-pro-max.jpg' },
-        { brand: 'Apple', series: 'iPhone 16 Series', model: 'Apple iPhone 16 Pro', storage: '128 GB', price: 77400, image: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-16-pro.jpg' },
-        { brand: 'Apple', series: 'iPhone 16 Series', model: 'Apple iPhone 16 Plus', storage: '128 GB', price: 52900, image: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-16.jpg' },
-        { brand: 'Apple', series: 'iPhone 16 Series', model: 'Apple iPhone 16', storage: '128 GB', price: 77350, image: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-16.jpg' },
-        { brand: 'Apple', series: 'iPhone 16 Series', model: 'Apple iPhone 16e', storage: '128 GB', price: 48500, image: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-16e.jpg' },
+        { brand: 'Apple', series: 'iPhone 16 Series', model: 'Apple iPhone 16 Pro Max', storage: '256 GB', price: 88000, image: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-16-pro-max.jpg' },
+        { brand: 'Apple', series: 'iPhone 16 Series', model: 'Apple iPhone 16 Pro', storage: '128 GB', price: 78000, image: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-16-pro.jpg' },
+        { brand: 'Apple', series: 'iPhone 16 Series', model: 'Apple iPhone 16 Plus', storage: '128 GB', price: 61000, image: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-16.jpg' },
+        { brand: 'Apple', series: 'iPhone 16 Series', model: 'Apple iPhone 16', storage: '128 GB', price: 52800, image: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-16.jpg' },
+        { brand: 'Apple', series: 'iPhone 16 Series', model: 'Apple iPhone 16e', storage: '128 GB', price: 48000, image: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-16e.jpg' },
       ],
     },
     {
@@ -471,10 +471,10 @@ export const BRAND_SERIES_DEFINITIONS: Record<string, BrandSeriesDefinition[]> =
       description: '15 Pro Max, 15 Pro, 15 Plus, 15',
       pattern: /\biphone\s*15\b/i,
       defaultModels: [
-        { brand: 'Apple', series: 'iPhone 15 Series', model: 'Apple iPhone 15 Pro Max', storage: '256 GB', price: 62400, image: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-15-pro-max.jpg' },
-        { brand: 'Apple', series: 'iPhone 15 Series', model: 'Apple iPhone 15 Pro', storage: '128 GB', price: 62350, image: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-15-pro.jpg' },
-        { brand: 'Apple', series: 'iPhone 15 Series', model: 'Apple iPhone 15 Plus', storage: '128 GB', price: 42850, image: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-15.jpg' },
-        { brand: 'Apple', series: 'iPhone 15 Series', model: 'Apple iPhone 15', storage: '128 GB', price: 62400, image: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-15.jpg' },
+        { brand: 'Apple', series: 'iPhone 15 Series', model: 'Apple iPhone 15 Pro Max', storage: '256 GB', price: 70000, image: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-15-pro-max.jpg' },
+        { brand: 'Apple', series: 'iPhone 15 Series', model: 'Apple iPhone 15 Pro', storage: '128 GB', price: 62000, image: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-15-pro.jpg' },
+        { brand: 'Apple', series: 'iPhone 15 Series', model: 'Apple iPhone 15 Plus', storage: '128 GB', price: 48000, image: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-15.jpg' },
+        { brand: 'Apple', series: 'iPhone 15 Series', model: 'Apple iPhone 15', storage: '128 GB', price: 42220, image: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-15.jpg' },
       ],
     },
     {
@@ -486,10 +486,10 @@ export const BRAND_SERIES_DEFINITIONS: Record<string, BrandSeriesDefinition[]> =
       description: '14 Pro Max, 14 Pro, 14 Plus, 14',
       pattern: /\biphone\s*14\b/i,
       defaultModels: [
-        { brand: 'Apple', series: 'iPhone 14 Series', model: 'Apple iPhone 14 Pro Max', storage: '128 GB', price: 48350, image: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-14-pro.jpg' },
-        { brand: 'Apple', series: 'iPhone 14 Series', model: 'Apple iPhone 14 Pro', storage: '128 GB', price: 48450, image: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-14-pro.jpg' },
-        { brand: 'Apple', series: 'iPhone 14 Series', model: 'Apple iPhone 14 Plus', storage: '128 GB', price: 31350, image: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-14.jpg' },
-        { brand: 'Apple', series: 'iPhone 14 Series', model: 'Apple iPhone 14', storage: '128 GB', price: 48400, image: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-14.jpg' },
+        { brand: 'Apple', series: 'iPhone 14 Series', model: 'Apple iPhone 14 Pro Max', storage: '128 GB', price: 51000, image: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-14-pro.jpg' },
+        { brand: 'Apple', series: 'iPhone 14 Series', model: 'Apple iPhone 14 Pro', storage: '128 GB', price: 42690, image: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-14-pro.jpg' },
+        { brand: 'Apple', series: 'iPhone 14 Series', model: 'Apple iPhone 14 Plus', storage: '128 GB', price: 33500, image: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-14.jpg' },
+        { brand: 'Apple', series: 'iPhone 14 Series', model: 'Apple iPhone 14', storage: '128 GB', price: 28030, image: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-14.jpg' },
       ],
     },
     {
@@ -501,10 +501,10 @@ export const BRAND_SERIES_DEFINITIONS: Record<string, BrandSeriesDefinition[]> =
       description: '13 Pro Max, 13 Pro, 13, 13 mini',
       pattern: /\biphone\s*13\b/i,
       defaultModels: [
-        { brand: 'Apple', series: 'iPhone 13 Series', model: 'Apple iPhone 13 Pro Max', storage: '128 GB', price: 37000, image: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-13-pro-max.jpg' },
-        { brand: 'Apple', series: 'iPhone 13 Series', model: 'Apple iPhone 13 Pro', storage: '128 GB', price: 36950, image: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-13-pro-max.jpg' },
-        { brand: 'Apple', series: 'iPhone 13 Series', model: 'Apple iPhone 13', storage: '128 GB', price: 36950, image: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-13.jpg' },
-        { brand: 'Apple', series: 'iPhone 13 mini', model: 'Apple iPhone 13 mini', storage: '128 GB', price: 25260, image: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-13-mini.jpg' },
+        { brand: 'Apple', series: 'iPhone 13 Series', model: 'Apple iPhone 13 Pro Max', storage: '128 GB', price: 40000, image: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-13-pro-max.jpg' },
+        { brand: 'Apple', series: 'iPhone 13 Series', model: 'Apple iPhone 13 Pro', storage: '128 GB', price: 35000, image: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-13-pro-max.jpg' },
+        { brand: 'Apple', series: 'iPhone 13 Series', model: 'Apple iPhone 13', storage: '128 GB', price: 24260, image: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-13.jpg' },
+        { brand: 'Apple', series: 'iPhone 13 mini', model: 'Apple iPhone 13 mini', storage: '128 GB', price: 20500, image: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-13-mini.jpg' },
       ],
     },
     {
@@ -516,10 +516,10 @@ export const BRAND_SERIES_DEFINITIONS: Record<string, BrandSeriesDefinition[]> =
       description: '12 Pro Max, 12 Pro, 12, 12 mini',
       pattern: /\biphone\s*12\b/i,
       defaultModels: [
-        { brand: 'Apple', series: 'iPhone 12 Series', model: 'Apple iPhone 12 Pro Max', storage: '128 GB', price: 27400, image: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-12.jpg' },
-        { brand: 'Apple', series: 'iPhone 12 Series', model: 'Apple iPhone 12 Pro', storage: '128 GB', price: 27400, image: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-12.jpg' },
-        { brand: 'Apple', series: 'iPhone 12 Series', model: 'Apple iPhone 12', storage: '64 GB', price: 27400, image: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-12.jpg' },
-        { brand: 'Apple', series: 'iPhone 12 Series', model: 'Apple iPhone 12 mini', storage: '64 GB', price: 18320, image: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-12.jpg' },
+        { brand: 'Apple', series: 'iPhone 12 Series', model: 'Apple iPhone 12 Pro Max', storage: '128 GB', price: 30000, image: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-12.jpg' },
+        { brand: 'Apple', series: 'iPhone 12 Series', model: 'Apple iPhone 12 Pro', storage: '128 GB', price: 25500, image: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-12.jpg' },
+        { brand: 'Apple', series: 'iPhone 12 Series', model: 'Apple iPhone 12', storage: '64 GB', price: 16490, image: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-12.jpg' },
+        { brand: 'Apple', series: 'iPhone 12 Series', model: 'Apple iPhone 12 mini', storage: '64 GB', price: 13500, image: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-12.jpg' },
       ],
     },
     {
@@ -531,9 +531,9 @@ export const BRAND_SERIES_DEFINITIONS: Record<string, BrandSeriesDefinition[]> =
       description: '11 Pro Max, 11 Pro, 11',
       pattern: /\biphone\s*11\b/i,
       defaultModels: [
-        { brand: 'Apple', series: 'iPhone 11 Series', model: 'Apple iPhone 11 Pro Max', storage: '64 GB', price: 18950, image: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-11.jpg' },
-        { brand: 'Apple', series: 'iPhone 11 Series', model: 'Apple iPhone 11 Pro', storage: '64 GB', price: 18850, image: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-11.jpg' },
-        { brand: 'Apple', series: 'iPhone 11 Series', model: 'Apple iPhone 11', storage: '64 GB', price: 18900, image: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-11.jpg' },
+        { brand: 'Apple', series: 'iPhone 11 Series', model: 'Apple iPhone 11 Pro Max', storage: '64 GB', price: 22000, image: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-11.jpg' },
+        { brand: 'Apple', series: 'iPhone 11 Series', model: 'Apple iPhone 11 Pro', storage: '64 GB', price: 18500, image: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-11.jpg' },
+        { brand: 'Apple', series: 'iPhone 11 Series', model: 'Apple iPhone 11', storage: '64 GB', price: 12490, image: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-11.jpg' },
       ],
     },
     {
@@ -545,10 +545,10 @@ export const BRAND_SERIES_DEFINITIONS: Record<string, BrandSeriesDefinition[]> =
       description: 'XS Max, XS, XR, iPhone X',
       pattern: /\biphone\s*(x|xs|xr)\b/i,
       defaultModels: [
-        { brand: 'Apple', series: 'iPhone X Series', model: 'Apple iPhone XS Max', storage: '64 GB', price: 11850, image: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-x.jpg' },
-        { brand: 'Apple', series: 'iPhone X Series', model: 'Apple iPhone XS', storage: '64 GB', price: 11900, image: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-x.jpg' },
-        { brand: 'Apple', series: 'iPhone X Series', model: 'Apple iPhone XR', storage: '64 GB', price: 9600, image: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-xr.jpg' },
-        { brand: 'Apple', series: 'iPhone X Series', model: 'Apple iPhone X', storage: '64 GB', price: 11950, image: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-x.jpg' },
+        { brand: 'Apple', series: 'iPhone X Series', model: 'Apple iPhone XS Max', storage: '64 GB', price: 13500, image: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-x.jpg' },
+        { brand: 'Apple', series: 'iPhone X Series', model: 'Apple iPhone XS', storage: '64 GB', price: 11000, image: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-x.jpg' },
+        { brand: 'Apple', series: 'iPhone X Series', model: 'Apple iPhone XR', storage: '64 GB', price: 10200, image: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-xr.jpg' },
+        { brand: 'Apple', series: 'iPhone X Series', model: 'Apple iPhone X', storage: '64 GB', price: 9500, image: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-x.jpg' },
       ],
     },
     {
@@ -560,8 +560,8 @@ export const BRAND_SERIES_DEFINITIONS: Record<string, BrandSeriesDefinition[]> =
       description: 'iPhone 8 Plus, iPhone 8',
       pattern: /\biphone\s*8\b/i,
       defaultModels: [
-        { brand: 'Apple', series: 'iPhone 8 Series', model: 'Apple iPhone 8 Plus', storage: '64 GB', price: 11950, image: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-8.jpg' },
-        { brand: 'Apple', series: 'iPhone 8 Series', model: 'Apple iPhone 8', storage: '64 GB', price: 9450, image: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-8.jpg' },
+        { brand: 'Apple', series: 'iPhone 8 Series', model: 'Apple iPhone 8 Plus', storage: '64 GB', price: 7800, image: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-8.jpg' },
+        { brand: 'Apple', series: 'iPhone 8 Series', model: 'Apple iPhone 8', storage: '64 GB', price: 5800, image: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-8.jpg' },
       ],
     },
     {
@@ -573,8 +573,8 @@ export const BRAND_SERIES_DEFINITIONS: Record<string, BrandSeriesDefinition[]> =
       description: 'iPhone 7 Plus, iPhone 7',
       pattern: /\biphone\s*7\b/i,
       defaultModels: [
-        { brand: 'Apple', series: 'iPhone 7 Series', model: 'Apple iPhone 7 Plus', storage: '32 GB', price: 8350, image: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-7r4.jpg' },
-        { brand: 'Apple', series: 'iPhone 7 Series', model: 'Apple iPhone 7', storage: '32 GB', price: 6400, image: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-7r4.jpg' },
+        { brand: 'Apple', series: 'iPhone 7 Series', model: 'Apple iPhone 7 Plus', storage: '32 GB', price: 5400, image: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-7r4.jpg' },
+        { brand: 'Apple', series: 'iPhone 7 Series', model: 'Apple iPhone 7', storage: '32 GB', price: 3600, image: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-7r4.jpg' },
       ],
     },
     {
@@ -586,10 +586,10 @@ export const BRAND_SERIES_DEFINITIONS: Record<string, BrandSeriesDefinition[]> =
       description: '6S Plus, 6S, 6 Plus, 6',
       pattern: /\biphone\s*6[s]?\b|\b6s\s*plus\b/i,
       defaultModels: [
-        { brand: 'Apple', series: 'iPhone 6 Series', model: 'Apple iPhone 6s Plus', storage: '32 GB', price: 5600, image: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-6s-plus.jpg' },
-        { brand: 'Apple', series: 'iPhone 6 Series', model: 'Apple iPhone 6s', storage: '32 GB', price: 4750, image: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-6s.jpg' },
-        { brand: 'Apple', series: 'iPhone 6 Series', model: 'Apple iPhone 6 Plus', storage: '16 GB', price: 4500, image: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-6-plus.jpg' },
-        { brand: 'Apple', series: 'iPhone 6 Series', model: 'Apple iPhone 6', storage: '16 GB', price: 3750, image: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-6s.jpg' },
+        { brand: 'Apple', series: 'iPhone 6 Series', model: 'Apple iPhone 6s Plus', storage: '32 GB', price: 3000, image: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-6s-plus.jpg' },
+        { brand: 'Apple', series: 'iPhone 6 Series', model: 'Apple iPhone 6s', storage: '32 GB', price: 2500, image: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-6s.jpg' },
+        { brand: 'Apple', series: 'iPhone 6 Series', model: 'Apple iPhone 6 Plus', storage: '16 GB', price: 2000, image: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-6-plus.jpg' },
+        { brand: 'Apple', series: 'iPhone 6 Series', model: 'Apple iPhone 6', storage: '16 GB', price: 1600, image: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-6s.jpg' },
       ],
     },
     {
@@ -601,9 +601,9 @@ export const BRAND_SERIES_DEFINITIONS: Record<string, BrandSeriesDefinition[]> =
       description: 'SE 3rd Gen, SE 2020, SE 1st Gen',
       pattern: /\biphone\s*se\b/i,
       defaultModels: [
-        { brand: 'Apple', series: 'iPhone SE Series', model: 'Apple iPhone SE 3rd Gen (2022)', storage: '64 GB', price: 18850, image: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-se-2022.jpg' },
-        { brand: 'Apple', series: 'iPhone SE Series', model: 'Apple iPhone SE 2nd Gen (2020)', storage: '64 GB', price: 11900, image: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-se-2020.jpg' },
-        { brand: 'Apple', series: 'iPhone SE Series', model: 'Apple iPhone SE 1st Gen (2016)', storage: '16 GB', price: 3950, image: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-5s.jpg' },
+        { brand: 'Apple', series: 'iPhone SE Series', model: 'Apple iPhone SE 3rd Gen (2022)', storage: '64 GB', price: 13500, image: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-se-2022.jpg' },
+        { brand: 'Apple', series: 'iPhone SE Series', model: 'Apple iPhone SE 2nd Gen (2020)', storage: '64 GB', price: 8200, image: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-se-2020.jpg' },
+        { brand: 'Apple', series: 'iPhone SE Series', model: 'Apple iPhone SE 1st Gen (2016)', storage: '16 GB', price: 1800, image: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-5s.jpg' },
       ],
     },
     {
@@ -615,14 +615,14 @@ export const BRAND_SERIES_DEFINITIONS: Record<string, BrandSeriesDefinition[]> =
       description: 'iPhone 5S, 5C, 5, 4S, 4, 3GS, 3G, 1',
       pattern: /\biphone\s*(5s|5c|5|4s|4|3gs|3g|2g|1)\b|\bapple\s*iphone\b$|\biphone\s*original\b|\bclassic\b/i,
       defaultModels: [
-        { brand: 'Apple', series: 'Classic Series', model: 'Apple iPhone 5s', storage: '16 GB', price: 3200, image: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-5s.jpg' },
-        { brand: 'Apple', series: 'Classic Series', model: 'Apple iPhone 5c', storage: '16 GB', price: 2750, image: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-5c.jpg' },
-        { brand: 'Apple', series: 'Classic Series', model: 'Apple iPhone 5', storage: '16 GB', price: 2500, image: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-5.jpg' },
-        { brand: 'Apple', series: 'Classic Series', model: 'Apple iPhone 4s', storage: '8 GB', price: 2050, image: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-4s.jpg' },
-        { brand: 'Apple', series: 'Classic Series', model: 'Apple iPhone 4', storage: '8 GB', price: 1900, image: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-4.jpg' },
-        { brand: 'Apple', series: 'Classic Series', model: 'Apple iPhone 3GS', storage: '8 GB', price: 1650, image: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-3gs.jpg' },
-        { brand: 'Apple', series: 'Classic Series', model: 'Apple iPhone 3G', storage: '8 GB', price: 1550, image: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-3gs.jpg' },
-        { brand: 'Apple', series: 'Classic Series', model: 'Apple iPhone 1 (Original 2007)', storage: '4 GB', price: 1550, image: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-3gs.jpg' },
+        { brand: 'Apple', series: 'Classic Series', model: 'Apple iPhone 5s', storage: '16 GB', price: 900, image: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-5s.jpg' },
+        { brand: 'Apple', series: 'Classic Series', model: 'Apple iPhone 5c', storage: '16 GB', price: 900, image: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-5c.jpg' },
+        { brand: 'Apple', series: 'Classic Series', model: 'Apple iPhone 5', storage: '16 GB', price: 900, image: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-5.jpg' },
+        { brand: 'Apple', series: 'Classic Series', model: 'Apple iPhone 4s', storage: '8 GB', price: 700, image: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-4s.jpg' },
+        { brand: 'Apple', series: 'Classic Series', model: 'Apple iPhone 4', storage: '8 GB', price: 600, image: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-4.jpg' },
+        { brand: 'Apple', series: 'Classic Series', model: 'Apple iPhone 3GS', storage: '8 GB', price: 500, image: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-3gs.jpg' },
+        { brand: 'Apple', series: 'Classic Series', model: 'Apple iPhone 3G', storage: '8 GB', price: 400, image: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-3gs.jpg' },
+        { brand: 'Apple', series: 'Classic Series', model: 'Apple iPhone 1 (Original 2007)', storage: '4 GB', price: 500, image: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-3gs.jpg' },
       ],
     },
     {
