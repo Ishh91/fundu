@@ -252,7 +252,7 @@ export default function SellStep3Quote({
 
                 <div className="grid grid-cols-2 gap-3 text-center">
                   <div className="bg-white p-3.5 rounded-xl border border-gray-200/90 shadow-2xs">
-                    <p className="text-[11px] font-bold text-gray-500">Cashify & Market Rate</p>
+                    <p className="text-[11px] font-bold text-gray-500"> Market Rate</p>
                     <p className="text-base sm:text-lg font-black text-gray-600 line-through decoration-rose-500 decoration-2 mt-0.5">
                       {user ? formatINR(comparison.standardMarketPrice) : formatMaskedPrice(comparison.standardMarketPrice)}
                     </p>
@@ -263,7 +263,6 @@ export default function SellStep3Quote({
                     <p className="text-base sm:text-lg font-black text-white mt-0.5">
                       {user ? formatINR(comparison.funduPrice) : formatMaskedPrice(comparison.funduPrice)}
                     </p>
-                    <span className="text-[10px] text-emerald-100 font-extrabold">+{formatINR(comparison.extraBonus)} Cash Advantage</span>
                   </div>
                 </div>
 
@@ -302,11 +301,10 @@ export default function SellStep3Quote({
 
             {deviceIncludesStylus(form.brand, form.model) && (
               <div
-                className={`p-3 rounded-xl border flex items-center justify-between gap-2 text-xs font-bold ${
-                  form.stylusAvailable === false
-                    ? 'bg-rose-50 border-rose-200 text-rose-900'
-                    : 'bg-emerald-50 border-emerald-200 text-emerald-900'
-                }`}
+                className={`p-3 rounded-xl border flex items-center justify-between gap-2 text-xs font-bold ${form.stylusAvailable === false
+                  ? 'bg-rose-50 border-rose-200 text-rose-900'
+                  : 'bg-emerald-50 border-emerald-200 text-emerald-900'
+                  }`}
               >
                 <div className="flex items-center gap-2">
                   <PenTool className="h-4 w-4 shrink-0" />
@@ -316,11 +314,10 @@ export default function SellStep3Quote({
                   </span>
                 </div>
                 <span
-                  className={`shrink-0 font-extrabold px-2 py-0.5 rounded-md text-[11px] ${
-                    form.stylusAvailable === false
-                      ? 'bg-rose-200 text-rose-900 border border-rose-300'
-                      : 'bg-emerald-200 text-emerald-900 border border-emerald-300'
-                  }`}
+                  className={`shrink-0 font-extrabold px-2 py-0.5 rounded-md text-[11px] ${form.stylusAvailable === false
+                    ? 'bg-rose-200 text-rose-900 border border-rose-300'
+                    : 'bg-emerald-200 text-emerald-900 border border-emerald-300'
+                    }`}
                 >
                   {form.stylusAvailable === false ? 'Not Included' : 'Included'}
                 </span>
@@ -346,8 +343,8 @@ export default function SellStep3Quote({
                   type="button"
                   onClick={() => setForm((prev: any) => ({ ...prev, payoutMethod: p.id as any }))}
                   className={`p-3 rounded-xl border text-center transition cursor-pointer ${form.payoutMethod === p.id
-                      ? 'border-[#344257] bg-[#F0F0F5] font-extrabold text-[#344257] ring-2 ring-[#344257]/20'
-                      : 'border-gray-200 bg-white text-gray-700 hover:border-gray-300'
+                    ? 'border-[#344257] bg-[#F0F0F5] font-extrabold text-[#344257] ring-2 ring-[#344257]/20'
+                    : 'border-gray-200 bg-white text-gray-700 hover:border-gray-300'
                     }`}
                 >
                   <p className="text-xs font-bold">{p.label}</p>
