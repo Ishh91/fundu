@@ -189,7 +189,7 @@ export default function SellStep2Condition({
             </p>
           </div>
 
-          <div className="bg-white/10 rounded-xl px-4 py-3 border border-white/10 text-center sm:text-right shrink-0 w-full sm:w-auto">
+          {/* <div className="bg-white/10 rounded-xl px-4 py-3 border border-white/10 text-center sm:text-right shrink-0 w-full sm:w-auto">
             <div className="text-[10px] uppercase font-extrabold text-[#9ac0dd] tracking-wider">
               Current Live Estimate
             </div>
@@ -199,7 +199,7 @@ export default function SellStep2Condition({
             <div className="text-[11px] font-semibold text-emerald-300 mt-0.5">
               Instant Valuation
             </div>
-          </div>
+          </div> */}
         </div>
 
         {/* 1. Critical Device Status & Ownership */}
@@ -582,8 +582,8 @@ export default function SellStep2Condition({
                 type="button"
                 onClick={() => setForm((f: any) => ({ ...f, stylusAvailable: true }))}
                 className={`p-3.5 rounded-xl border text-left transition-all duration-200 cursor-pointer ${form.stylusAvailable !== false
-                    ? 'border-emerald-500 bg-emerald-50/80 text-emerald-950 ring-2 ring-emerald-500/30 shadow-xs'
-                    : 'border-gray-200 bg-white hover:border-gray-300 text-gray-700'
+                  ? 'border-emerald-500 bg-emerald-50/80 text-emerald-950 ring-2 ring-emerald-500/30 shadow-xs'
+                  : 'border-gray-200 bg-white hover:border-gray-300 text-gray-700'
                   }`}
               >
                 <div className="flex items-center gap-2">
@@ -599,8 +599,8 @@ export default function SellStep2Condition({
                 type="button"
                 onClick={() => setForm((f: any) => ({ ...f, stylusAvailable: false }))}
                 className={`p-3.5 rounded-xl border text-left transition-all duration-200 cursor-pointer ${form.stylusAvailable === false
-                    ? 'border-rose-500 bg-rose-50/90 text-rose-950 ring-2 ring-rose-500/30 shadow-xs'
-                    : 'border-gray-200 bg-white hover:border-gray-300 text-gray-700'
+                  ? 'border-rose-500 bg-rose-50/90 text-rose-950 ring-2 ring-rose-500/30 shadow-xs'
+                  : 'border-gray-200 bg-white hover:border-gray-300 text-gray-700'
                   }`}
               >
                 <div className="flex items-center gap-2">
@@ -619,35 +619,6 @@ export default function SellStep2Condition({
             )}
           </div>
         )}
-
-        {/* STICKY / BOTTOM LIVE VALUATION SUMMARY CARD */}
-        <div className="p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-[#1E2734] via-[#344257] to-[#47576E] text-white shadow-xl flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div className="space-y-1 text-center sm:text-left">
-            <span className="text-[10px] uppercase font-black tracking-widest text-[#9ac0dd]">
-              Live Real-Time Buyback Estimate
-            </span>
-            <div className="flex items-baseline gap-2 justify-center sm:justify-start">
-              <span className="font-display text-3xl sm:text-4xl font-black text-white">
-                {user ? formatINR(currentLiveOffer) : formatMaskedPrice(currentLiveOffer)}
-              </span>
-            </div>
-            <p className="text-xs text-gray-300">
-              Guaranteed spot cash valuation based on your selected device specifications & diagnostics.
-            </p>
-          </div>
-
-          <button
-            type="button"
-            onClick={() => goToStep(3)}
-            className="btn bg-white text-[#344257] hover:bg-gray-100 font-black text-sm px-6 py-3 rounded-xl flex items-center gap-2 shadow-md shrink-0 w-full sm:w-auto justify-center transition cursor-pointer"
-          >
-            {funduQuote?.status === 'requires_manual_review'
-              ? 'View Inspection Details'
-              : 'Lock Price & Schedule Pickup'}{' '}
-            <ArrowRight className="h-4 w-4 text-[#344257]" />
-          </button>
-        </div>
-
         <div className="flex justify-between gap-3 pt-4 border-t border-gray-100">
           <button type="button" onClick={handleStep2Back} className="btn-outline text-sm">
             Back
