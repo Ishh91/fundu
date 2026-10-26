@@ -29,6 +29,7 @@ interface CompetitorData {
   logo: string;
   tagline: string;
   baseOffer: number;
+  isLive?: boolean;
   flawlessOffer: number;
   goodOffer: number;
   payoutSpeed: string;
@@ -62,6 +63,9 @@ interface RadarResponse {
     marketAverage: number;
     isWinning: boolean;
     diffFromHighest: number;
+    diffFromCashify?: number;
+    isLiveCashify?: boolean;
+    targetFunduMin?: number;
     status: 'WINNING' | 'COMPETITIVE' | 'BELOW_MARKET';
     suggestedOptimumPrice: number;
     b2bLiquidationEst: number;
@@ -541,7 +545,7 @@ export default function AdminCompetitorRadar() {
                   </button>
                 </div>
 
-                <div className="flex gap-2">
+                <div className="flex flex-col gap-1.5">
                   <button
                     type="button"
                     onClick={() => {
@@ -551,8 +555,13 @@ export default function AdminCompetitorRadar() {
                     }}
                     className="text-[11px] font-bold text-emerald-300 hover:text-white underline flex items-center gap-1 cursor-pointer"
                   >
-                    Match Market + ₹500 ({formatINR(radarData.marketAnalytics.suggestedOptimumPrice)})
+                    Match Market + ₹1,000 ({formatINR(radarData.marketAnalytics.suggestedOptimumPrice)})
                   </button>
+                  {radarData.marketAnalytics.diffFromCashify !== undefined && radarData.marketAnalytics.diffFromCashify < 800 && (
+                    <span className="text-[10px] font-bold text-amber-300">
+                      ⚠️ Current price is below the ₹1,000 lead over Cashify! Click above to auto-beat.
+                    </span>
+                  )}
                 </div>
               </div>
             </div>
@@ -596,7 +605,14 @@ export default function AdminCompetitorRadar() {
                             }}
                           />
                           <div>
-                            <h5 className="font-extrabold text-sm text-gray-900">{comp.name}</h5>
+                            <div className="flex items-center gap-1.5">
+                              <h5 className="font-extrabold text-sm text-gray-900">{comp.name}</h5>
+                              {comp.isLive && (
+                                <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-black bg-emerald-100 text-emerald-800 border border-emerald-300">
+                                  LIVE
+                                </span>
+                              )}
+                            </div>
                             <span className="text-[10px] text-gray-500 font-semibold">{comp.tagline}</span>
                           </div>
                         </div>
