@@ -238,7 +238,7 @@ export default function SellStep3Quote({
             const comparison = calculateMarketPriceComparison(finalAmt);
             return (
               <div className="rounded-2xl border-2 border-emerald-500/40 bg-gradient-to-br from-emerald-50/80 via-white to-teal-50/60 p-5 text-left space-y-3.5 shadow-sm">
-                <div className="flex flex-wrap items-center justify-between gap-2">
+                {/* <div className="flex flex-wrap items-center justify-between gap-2">
                   <div className="flex items-center gap-2">
                     <span className="h-2.5 w-2.5 rounded-full bg-emerald-500 animate-pulse" />
                     <h4 className="font-extrabold text-xs uppercase tracking-wider text-emerald-950 flex items-center gap-1.5">
@@ -264,7 +264,7 @@ export default function SellStep3Quote({
                       {user ? formatINR(comparison.funduPrice) : formatMaskedPrice(comparison.funduPrice)}
                     </p>
                   </div>
-                </div>
+                </div> */}
 
                 <div className="p-2.5 rounded-xl bg-emerald-100/70 border border-emerald-200 text-center">
                   <p className="text-xs text-emerald-950 font-bold">
