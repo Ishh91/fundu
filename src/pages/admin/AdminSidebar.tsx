@@ -18,6 +18,7 @@ import {
   Image as ImageIcon,
   Building2,
   LogOut,
+  Radar,
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import type { AdminTab } from './adminTypes';
@@ -105,6 +106,14 @@ export default function AdminSidebar({
           badge: 'Rates & Photos',
           badgeColor: 'bg-emerald-600 text-white',
           path: '/admin/pricing',
+        },
+        {
+          id: 'competitor_radar' as AdminTab,
+          label: 'Competitor Price Radar',
+          icon: Radar,
+          badge: 'Live Market',
+          badgeColor: 'bg-indigo-600 text-white animate-pulse',
+          path: '/admin/competitor-radar',
         },
         {
           id: 'repair_pricing' as AdminTab,

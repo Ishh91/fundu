@@ -63,6 +63,7 @@ import AdminReviews from './admin/AdminReviews';
 import AdminHeroPosters from './admin/AdminHeroPosters';
 import AdminWholesalers from './admin/AdminWholesalers';
 import AdminContactQueries from './admin/AdminContactQueries';
+import AdminCompetitorRadar from './admin/AdminCompetitorRadar';
 import {
   buildConfigFromSeedItem,
   SEED_REPAIR_MODELS,
@@ -155,6 +156,10 @@ export default function Admin() {
         setTab('repair_pricing');
         return;
       }
+      if (subtab === 'competitor-radar' || subtab === 'competitor_radar') {
+        setTab('competitor_radar');
+        return;
+      }
       const validTabs: AdminTab[] = [
         'overview',
         'catalog',
@@ -166,10 +171,12 @@ export default function Admin() {
         'agents',
         'products',
         'pricing',
+        'competitor_radar',
         'banners',
         'parts',
         'users',
         'reviews',
+        'contact',
       ];
       if (validTabs.includes(subtab as AdminTab)) {
         setTab(subtab as AdminTab);
@@ -180,6 +187,8 @@ export default function Admin() {
     if (queryTab) {
       if (queryTab === 'repair-pricing' || queryTab === 'repair_pricing') {
         setTab('repair_pricing');
+      } else if (queryTab === 'competitor-radar' || queryTab === 'competitor_radar') {
+        setTab('competitor_radar');
       } else {
         setTab(queryTab as AdminTab);
       }
@@ -1385,6 +1394,7 @@ export default function Admin() {
                 {tab === 'repairs' && 'Repair Diagnostics'}
                 {tab === 'catalog' && 'Master Smartphone Catalog'}
                 {tab === 'pricing' && 'Sell Mobile — Price & Image Manager'}
+                {tab === 'competitor_radar' && 'Competitor Price Radar — Live Market Intelligence'}
                 {tab === 'orders' && 'Store Customer Orders'}
                 {tab === 'products' && 'Refurbished Store Inventory'}
                 {tab === 'wholesalers' && 'B2B Wholesalers & Vendor Khata'}
@@ -1673,6 +1683,10 @@ export default function Admin() {
                 }
               }}
             />
+          )}
+
+          {tab === 'competitor_radar' && (
+            <AdminCompetitorRadar />
           )}
 
           {tab === 'repair_pricing' && (
