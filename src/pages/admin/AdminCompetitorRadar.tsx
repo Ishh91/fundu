@@ -20,7 +20,7 @@ import {
 } from 'lucide-react';
 import { formatINR } from '../../lib/db';
 import { API_BASE } from '../../config/apiConfig';
-import { getCleanPhoneImage } from '../../lib/phoneImages';
+import { getCleanPhoneImage, BRAND_FRONT_FALLBACKS, getGenericDevicePlaceholder } from '../../lib/phoneImages';
 
 interface CompetitorData {
   id: string;
@@ -97,6 +97,21 @@ const BRANDS = [
   'Poco',
 ];
 
+const DEFAULT_BRAND_MODELS: Record<string, { model: string; storage: string }> = {
+  Apple: { model: 'iPhone 16 Pro', storage: '128 GB' },
+  Samsung: { model: 'Galaxy S24 Ultra', storage: '256 GB' },
+  OnePlus: { model: 'OnePlus 12', storage: '256 GB' },
+  Vivo: { model: 'Vivo V40', storage: '128 GB' },
+  Oppo: { model: 'Reno 12 Pro', storage: '256 GB' },
+  Xiaomi: { model: 'Redmi Note 13 Pro', storage: '128 GB' },
+  Realme: { model: 'Realme GT 6', storage: '256 GB' },
+  Motorola: { model: 'Moto Edge 50 Pro', storage: '256 GB' },
+  Google: { model: 'Pixel 9 Pro', storage: '128 GB' },
+  Nothing: { model: 'Nothing Phone (2)', storage: '128 GB' },
+  iQOO: { model: 'iQOO 12', storage: '256 GB' },
+  Poco: { model: 'Poco X6 Pro', storage: '256 GB' },
+};
+
 const STORAGES = ['64 GB', '128 GB', '256 GB', '512 GB', '1 TB'];
 
 export default function AdminCompetitorRadar() {
@@ -124,6 +139,12 @@ export default function AdminCompetitorRadar() {
       if (json.data) {
         setRadarData(json.data);
         setCustomPriceInput(String(json.data.fundu.basePrice));
+        if (json.data.device.brand) {
+          setSelectedBrand(json.data.device.brand);
+        }
+        if (json.data.device.model) {
+          setSearchModel(json.data.device.model);
+        }
       }
     } catch (err: any) {
       setError(err?.message || 'Error loading live market prices');
@@ -135,6 +156,41 @@ export default function AdminCompetitorRadar() {
   useEffect(() => {
     fetchRadar(selectedBrand, searchModel, selectedStorage);
   }, []);
+
+  const handleBrandChange = (newBrand: string) => {
+    setSelectedBrand(newBrand);
+    const def = DEFAULT_BRAND_MODELS[newBrand] || { model: `${newBrand} Phone`, storage: '128 GB' };
+    setSearchModel(def.model);
+    setSelectedStorage(def.storage);
+    fetchRadar(newBrand, def.model, def.storage);
+  };
+
+  const handleModelInputChange = (val: string) => {
+    setSearchModel(val);
+    const low = val.toLowerCase();
+    let detectedBrand = selectedBrand;
+    if (low.includes('iphone') || low.includes('apple') || low.includes('ipad')) {
+      detectedBrand = 'Apple';
+    } else if (low.includes('galaxy') || low.includes('s24') || low.includes('s23') || low.includes('z fold') || low.includes('z flip')) {
+      detectedBrand = 'Samsung';
+    } else if (low.includes('oneplus') || low.includes('nord')) {
+      detectedBrand = 'OnePlus';
+    } else if (low.includes('pixel')) {
+      detectedBrand = 'Google';
+    } else if (low.includes('redmi') || low.includes('poco') || low.includes('xiaomi')) {
+      detectedBrand = 'Xiaomi';
+    } else if (low.includes('iqoo')) {
+      detectedBrand = 'iQOO';
+    } else if (low.includes('realme')) {
+      detectedBrand = 'Realme';
+    } else if (low.includes('moto') || low.includes('edge 50')) {
+      detectedBrand = 'Motorola';
+    }
+
+    if (detectedBrand !== selectedBrand) {
+      setSelectedBrand(detectedBrand);
+    }
+  };
 
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -251,8 +307,8 @@ export default function AdminCompetitorRadar() {
             <label className="text-xs font-bold text-gray-700">Select Brand</label>
             <select
               value={selectedBrand}
-              onChange={(e) => setSelectedBrand(e.target.value)}
-              className="w-full px-3 py-2.5 bg-gray-50 border border-gray-300 rounded-xl text-xs font-bold text-gray-900 focus:ring-2 focus:ring-[#344257] focus:border-transparent outline-none"
+              onChange={(e) => handleBrandChange(e.target.value)}
+              className="w-full px-3 py-2.5 bg-gray-50 border border-gray-300 rounded-xl text-xs font-bold text-gray-900 focus:ring-2 focus:ring-[#344257] focus:border-transparent outline-none cursor-pointer"
             >
               {BRANDS.map((b) => (
                 <option key={b} value={b}>
@@ -269,7 +325,7 @@ export default function AdminCompetitorRadar() {
               <input
                 type="text"
                 value={searchModel}
-                onChange={(e) => setSearchModel(e.target.value)}
+                onChange={(e) => handleModelInputChange(e.target.value)}
                 placeholder="e.g. iPhone 16 Pro, Galaxy S24 Ultra, Vivo V40..."
                 className="w-full pl-9 pr-3 py-2.5 bg-gray-50 border border-gray-300 rounded-xl text-xs font-bold text-gray-900 focus:ring-2 focus:ring-[#344257] focus:border-transparent outline-none"
               />
@@ -321,11 +377,19 @@ export default function AdminCompetitorRadar() {
             {/* Selected Device & Fundu Status (7 Cols) */}
             <div className="lg:col-span-7 bg-white p-6 rounded-3xl border border-gray-200 shadow-sm flex flex-col justify-between space-y-5">
               <div className="flex flex-col sm:flex-row items-center sm:items-start gap-5">
-                <div className="h-28 w-28 shrink-0 rounded-2xl bg-gray-50 border border-gray-200 p-2 flex items-center justify-center shadow-inner">
+                <div className="h-28 w-28 shrink-0 rounded-2xl bg-gray-50 border border-gray-200 p-2 flex items-center justify-center shadow-inner overflow-hidden">
                   <img
                     src={radarData.device.image || getCleanPhoneImage(radarData.device.brand, radarData.device.model)}
                     alt={radarData.device.model}
                     className="h-full w-full object-contain"
+                    onError={(e) => {
+                      const b = (radarData.device.brand || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+                      const target = e.currentTarget as HTMLImageElement;
+                      if (!target.dataset.triedFallback) {
+                        target.dataset.triedFallback = 'true';
+                        target.src = BRAND_FRONT_FALLBACKS[b] || BRAND_FRONT_FALLBACKS.apple || getGenericDevicePlaceholder(radarData.device.brand, radarData.device.model);
+                      }
+                    }}
                   />
                 </div>
                 <div className="space-y-2 text-center sm:text-left flex-1">

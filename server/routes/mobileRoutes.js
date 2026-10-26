@@ -691,9 +691,30 @@ router.get('/sell-pricing/config', async (req, res, next) => {
  */
 router.get('/sell-pricing/competitor-radar', async (req, res, next) => {
   try {
-    const rawBrand = typeof req.query.brand === 'string' && req.query.brand.trim() ? req.query.brand.trim() : 'Apple';
+    const inputBrand = typeof req.query.brand === 'string' && req.query.brand.trim() ? req.query.brand.trim() : 'Apple';
     let rawModel = typeof req.query.model === 'string' && req.query.model.trim() ? req.query.model.trim() : 'iPhone 15';
     const storage = typeof req.query.storage === 'string' && req.query.storage.trim() ? req.query.storage.trim() : '128 GB';
+
+    // Smart brand auto-correction to prevent mismatched queries like Samsung iPhone 16 Pro
+    let rawBrand = inputBrand;
+    const mLower = rawModel.toLowerCase();
+    if (mLower.includes('iphone') || mLower.includes('ipad') || mLower.includes('apple')) {
+      rawBrand = 'Apple';
+    } else if (mLower.includes('galaxy') || mLower.includes('z fold') || mLower.includes('z flip') || /\bs2[0-5]\b/i.test(mLower)) {
+      rawBrand = 'Samsung';
+    } else if (mLower.includes('oneplus') || mLower.includes('nord')) {
+      rawBrand = 'OnePlus';
+    } else if (mLower.includes('pixel')) {
+      rawBrand = 'Google';
+    } else if (mLower.includes('redmi') || mLower.includes('poco') || mLower.includes('xiaomi')) {
+      rawBrand = 'Xiaomi';
+    } else if (mLower.includes('iqoo')) {
+      rawBrand = 'iQOO';
+    } else if (mLower.includes('realme')) {
+      rawBrand = 'Realme';
+    } else if (mLower.includes('moto') || mLower.includes('motorola') || mLower.includes('edge 50') || mLower.includes('edge 40')) {
+      rawBrand = 'Motorola';
+    }
 
     // Sanitize model
     rawModel = rawModel
