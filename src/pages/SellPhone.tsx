@@ -31,7 +31,7 @@ import {
   Phone,
 } from 'lucide-react';
 import { computeDetailedResaleValuation, fetchSellPriceConfig, fetchPhoneModels, searchMobileApiDev, calculateMarketPriceComparison, getDynamicFallbackConfig, type SellPriceConfig } from '../lib/mobileApi';
-import { getFunduPhoneQuote, type FunduQuoteResponse } from '../lib/quoteEngine';
+import { getFunduPhoneQuote, calculatePhoneAgingFactor, type FunduQuoteResponse } from '../lib/quoteEngine';
 import { db, formatINR, formatMaskedPrice, formatDisplayPrice } from '../lib/db';
 import { useAuth } from '../context/AuthContext';
 import { ALL_INDIAN_PHONES_CATALOG } from '../data/indianPhonesCatalog';
@@ -721,6 +721,11 @@ export default function SellPhone() {
 
     if (baseModelPrice > 0) {
       let val = baseModelPrice;
+
+      // 1. Natural Aging & Generation factor (waived if under active warranty)
+      const aging = calculatePhoneAgingFactor(form.brand, form.model, !!form.underWarranty);
+      val *= aging;
+
       const excMult = pricingConfig?.excellent_multiplier ?? 0.85;
       const goodMult = pricingConfig?.good_multiplier ?? 0.70;
       const fairMult = pricingConfig?.fair_multiplier ?? 0.55;
@@ -740,9 +745,14 @@ export default function SellPhone() {
       if (Array.isArray(form.defects)) {
         val -= form.defects.length * (baseModelPrice * 0.08);
       }
-      if (Array.isArray(form.accessories)) {
-        val += form.accessories.length * 300;
-      }
+      // Deduct missing accessories silently without exposing amounts to user (box: -300, charger: -300, bill: -200)
+      const hasBox = Array.isArray(form.accessories) && form.accessories.some((a: string) => /box/i.test(a));
+      const hasCharger = Array.isArray(form.accessories) && form.accessories.some((a: string) => /charger/i.test(a));
+      const hasBill = Array.isArray(form.accessories) && form.accessories.some((a: string) => /bill/i.test(a));
+      if (!hasBox) val -= 300;
+      if (!hasCharger) val -= 300;
+      if (!hasBill) val -= 200;
+
       if (deviceIncludesStylus(form.brand, form.model) && form.stylusAvailable === false) {
         val -= 3000;
       }

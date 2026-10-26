@@ -322,7 +322,7 @@ export default function SellStep3Quote({
                       : 'bg-emerald-200 text-emerald-900 border border-emerald-300'
                   }`}
                 >
-                  {form.stylusAvailable === false ? '-₹3,000 Deducted' : 'Full Value Retained'}
+                  {form.stylusAvailable === false ? 'Not Included' : 'Included'}
                 </span>
               </div>
             )}

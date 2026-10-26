@@ -2518,17 +2518,95 @@ export function isStylusDevice(brand, model) {
 }
 
 /**
+ * Calculates smartphone age depreciation factor based on release year / launch generation.
+ * If under active manufacturer warranty (< 10-12 months old), aging penalty is 0% (factor = 1.00).
+ */
+export function calculatePhoneAgingFactor(brand = '', model = '', underWarranty = false) {
+  if (underWarranty) return 1.00;
+
+  const currentYear = new Date().getFullYear();
+  let releaseYear = null;
+
+  const m = String(model || '').toLowerCase();
+  
+  // Apple iPhone
+  if (/iphone\s*17/i.test(m)) releaseYear = 2025;
+  else if (/iphone\s*16/i.test(m)) releaseYear = 2024;
+  else if (/iphone\s*15/i.test(m)) releaseYear = 2023;
+  else if (/iphone\s*14/i.test(m)) releaseYear = 2022;
+  else if (/iphone\s*13/i.test(m)) releaseYear = 2021;
+  else if (/iphone\s*12/i.test(m)) releaseYear = 2020;
+  else if (/iphone\s*11/i.test(m)) releaseYear = 2019;
+  else if (/iphone\s*(xs|xr|x\b)/i.test(m)) releaseYear = 2018;
+  else if (/iphone\s*8/i.test(m)) releaseYear = 2017;
+  else if (/iphone\s*7/i.test(m)) releaseYear = 2016;
+  else if (/se\s*\(?2022\)?|se\s*3rd/i.test(m)) releaseYear = 2022;
+  else if (/se\s*\(?2020\)?|se\s*2nd/i.test(m)) releaseYear = 2020;
+  
+  // Samsung Galaxy S / Z / Note
+  else if (/\bs26/i.test(m)) releaseYear = 2026;
+  else if (/\bs25/i.test(m)) releaseYear = 2025;
+  else if (/\bs24/i.test(m)) releaseYear = 2024;
+  else if (/\bs23/i.test(m)) releaseYear = 2023;
+  else if (/\bs22/i.test(m)) releaseYear = 2022;
+  else if (/\bs21/i.test(m)) releaseYear = 2021;
+  else if (/\bs20/i.test(m)) releaseYear = 2020;
+  else if (/\bfold\s*6|\bflip\s*6/i.test(m)) releaseYear = 2024;
+  else if (/\bfold\s*5|\bflip\s*5/i.test(m)) releaseYear = 2023;
+  else if (/\bfold\s*4|\bflip\s*4/i.test(m)) releaseYear = 2022;
+  else if (/\bfold\s*3|\bflip\s*3/i.test(m)) releaseYear = 2021;
+  else if (/\bnote\s*20/i.test(m)) releaseYear = 2020;
+  else if (/\bnote\s*10/i.test(m)) releaseYear = 2019;
+
+  // OnePlus
+  else if (/oneplus\s*13/i.test(m)) releaseYear = 2025;
+  else if (/oneplus\s*12/i.test(m)) releaseYear = 2024;
+  else if (/oneplus\s*11/i.test(m)) releaseYear = 2023;
+  else if (/oneplus\s*10/i.test(m)) releaseYear = 2022;
+  else if (/oneplus\s*9/i.test(m)) releaseYear = 2021;
+  else if (/oneplus\s*8/i.test(m)) releaseYear = 2020;
+  else if (/nord\s*4/i.test(m)) releaseYear = 2024;
+  else if (/nord\s*3/i.test(m)) releaseYear = 2023;
+  else if (/nord\s*2/i.test(m)) releaseYear = 2021;
+
+  // Google Pixel
+  else if (/pixel\s*9/i.test(m)) releaseYear = 2024;
+  else if (/pixel\s*8/i.test(m)) releaseYear = 2023;
+  else if (/pixel\s*7/i.test(m)) releaseYear = 2022;
+  else if (/pixel\s*6/i.test(m)) releaseYear = 2021;
+
+  // Year in parentheses e.g. "Galaxy A54 (2023)"
+  if (!releaseYear) {
+    const yrMatch = m.match(/\b(201[5-9]|202[0-6])\b/);
+    if (yrMatch) releaseYear = parseInt(yrMatch[1], 10);
+  }
+
+  if (!releaseYear) {
+    releaseYear = currentYear - 2;
+  }
+
+  const ageYears = Math.max(0, currentYear - releaseYear);
+
+  if (ageYears <= 1) return 1.00;
+  if (ageYears === 2) return 0.95;
+  if (ageYears === 3) return 0.90;
+  if (ageYears === 4) return 0.82;
+  if (ageYears === 5) return 0.74;
+  return 0.65;
+}
+
+/**
  * Generates an end-to-end, deterministic Fundu buyback quote
  * 
  * Formula:
- * rawOffer = (resaleProceeds * cosmeticMultiplier + accessoriesBonus)
+ * rawOffer = (resaleProceeds * agingFactor * cosmeticMultiplier + accessoriesBonus)
  *            - configuredRepairs
  *            - pickupInspectionRefurbCost
  *            - warrantyAndRiskReserves
  *            - targetContributionMargin
  *
  * Internal unit economics remain on the server; sellers receive the net conditional offer
- * and understandable condition-related reasons.
+ * and understandable condition-related reasons without raw mathematical leakages.
  *
  * @param {Object} input
  * @param {Object} [options]
@@ -2700,7 +2778,7 @@ export function quotePhone(input = {}, options = {}) {
       const bonus = FUNDU_POLICY.accessoriesBonus[acc];
       if (bonus) {
         accessoriesBonusTotal += bonus;
-        conditionReasons.push(`Included ${acc} bonus (+₹${bonus})`);
+        conditionReasons.push(`Included ${acc} verified`);
       }
     });
   }
@@ -2764,21 +2842,24 @@ export function quotePhone(input = {}, options = {}) {
   const isStylusModel = isStylusDevice(brand, model);
   if (isStylusModel && (stylus_available === false || input.stylusAvailable === false)) {
     missingStylusDeduction = 3000;
-    conditionReasons.push('Original S-Pen / Stylus missing (-₹3,000)');
+    conditionReasons.push('Original S-Pen / Stylus not included');
   }
 
   // Exact Business Formula:
-  // Base proceeds equals catalog/benchmark buyback value (Cashify + ₹1,000).
-  // In flawless condition with box and charger, the offer amount equals 100% of base proceeds.
-  const baseP = expectedResaleProceeds;
+  // Base proceeds equals catalog/benchmark buyback value.
+  // 1. Natural Aging & Generation factor
+  const agingFactor = calculatePhoneAgingFactor(brand, model, under_warranty);
+  const baseP = Math.round(expectedResaleProceeds * agingFactor);
   const condP = Math.round(baseP * cosmeticMultiplier);
 
-  // Missing accessories deductions if not included (box: -300, charger: -300)
+  // Missing accessories deductions if not included (box: -300, charger: -300, bill: -200)
   let accessoriesAdjustment = 0;
   const hasBox = Array.isArray(accessories) && (accessories.includes('Original Box') || accessories.includes('Box'));
   const hasCharger = Array.isArray(accessories) && (accessories.includes('Original Charger') || accessories.includes('Charger'));
+  const hasBill = Array.isArray(accessories) && (accessories.includes('Valid Bill') || accessories.includes('Bill'));
   if (!hasBox) accessoriesAdjustment -= (FUNDU_POLICY.accessoriesBonus['Original Box'] || 300);
   if (!hasCharger) accessoriesAdjustment -= (FUNDU_POLICY.accessoriesBonus['Original Charger'] || 300);
+  if (!hasBill) accessoriesAdjustment -= (FUNDU_POLICY.accessoriesBonus['Valid Bill'] || 200);
 
   const proceedsAdjustedForCondition = condP + accessoriesAdjustment;
   const rawOffer = proceedsAdjustedForCondition - configuredRepairsTotal - missingStylusDeduction;

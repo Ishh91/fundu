@@ -1,10 +1,19 @@
 import { API_BASE } from '../config/apiConfig';
 import {
   quotePhone,
+  calculatePhoneAgingFactor,
   recalculateInspectedQuote,
   FUNDU_POLICY,
   FUNDU_SERVICE_LOCALITIES,
 } from '../../fundu_phone_quote.mjs';
+
+export {
+  calculatePhoneAgingFactor,
+  quotePhone,
+  recalculateInspectedQuote,
+  FUNDU_POLICY,
+  FUNDU_SERVICE_LOCALITIES,
+};
 import { getEffectivePrice } from './priceSync';
 
 export interface FunduQuoteRequest {
@@ -176,5 +185,3 @@ export async function respondToRevisedOffer(
 
   return { success: false, message: 'Could not communicate with Fundu server.' };
 }
-
-export { FUNDU_POLICY, FUNDU_SERVICE_LOCALITIES };

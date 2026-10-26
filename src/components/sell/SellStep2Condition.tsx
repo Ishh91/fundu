@@ -116,8 +116,8 @@ export default function SellStep2Condition({
                     setForm((f) => ({ ...f, storage: stg, ram: nextRam }));
                   }}
                   className={`px-2.5 py-1 rounded-lg text-xs font-bold transition ${form.storage === stg
-                      ? 'bg-[#344257] text-white shadow-xs'
-                      : 'bg-white text-gray-700 border border-[#C0C8D8] hover:bg-[#F0F0F5] hover:border-[#6A859F]'
+                    ? 'bg-[#344257] text-white shadow-xs'
+                    : 'bg-white text-gray-700 border border-[#C0C8D8] hover:bg-[#F0F0F5] hover:border-[#6A859F]'
                     }`}
                 >
                   {stg}
@@ -135,8 +135,8 @@ export default function SellStep2Condition({
                     type="button"
                     onClick={() => setForm((f) => ({ ...f, ram: ramVal }))}
                     className={`px-2.5 py-1 rounded-lg text-xs font-bold transition ${form.ram === ramVal
-                        ? 'bg-[#344257] text-white shadow-xs'
-                        : 'bg-white text-gray-700 border border-[#C0C8D8] hover:bg-[#F0F0F5] hover:border-[#6A859F]'
+                      ? 'bg-[#344257] text-white shadow-xs'
+                      : 'bg-white text-gray-700 border border-[#C0C8D8] hover:bg-[#F0F0F5] hover:border-[#6A859F]'
                       }`}
                   >
                     {ramVal}
@@ -182,7 +182,7 @@ export default function SellStep2Condition({
               <span className="font-display text-2xl sm:text-3xl font-black text-white">
                 {effectiveBasePrice > 0 ? formatINR(effectiveBasePrice) : 'Calculating...'}
               </span>
-              <span className="text-xs text-gray-300 font-medium">(Database Driven)</span>
+
             </div>
             <p className="text-[11px] text-gray-300">
               Maximum starting valuation. Your answers below adjust this price transparently.
@@ -196,16 +196,8 @@ export default function SellStep2Condition({
             <div className="font-display text-2xl sm:text-3xl font-black text-emerald-400">
               {user ? formatINR(currentLiveOffer) : formatMaskedPrice(currentLiveOffer)}
             </div>
-            <div className="text-[11px] font-semibold text-gray-200 mt-0.5">
-              {totalDeductions > 0 ? (
-                <span className="text-rose-300 font-bold">
-                  - {formatINR(totalDeductions)} deductions applied
-                </span>
-              ) : (
-                <span className="text-emerald-300 font-bold">
-                  ✓ Full base quote preserved
-                </span>
-              )}
+            <div className="text-[11px] font-semibold text-emerald-300 mt-0.5">
+              Instant Valuation
             </div>
           </div>
         </div>
@@ -371,8 +363,8 @@ export default function SellStep2Condition({
                 type="button"
                 onClick={() => setForm((f) => ({ ...f, screenCondition: sc.id as any }))}
                 className={`p-4 rounded-2xl border text-left transition-all duration-200 cursor-pointer ${form.screenCondition === sc.id
-                    ? 'border-[#344257] bg-[#F0F0F5] shadow-md ring-2 ring-[#344257]/20 -translate-y-1'
-                    : 'border-gray-200 bg-white hover:border-[#6A859F] hover:bg-[#F7F7FA]'
+                  ? 'border-[#344257] bg-[#F0F0F5] shadow-md ring-2 ring-[#344257]/20 -translate-y-1'
+                  : 'border-gray-200 bg-white hover:border-[#6A859F] hover:bg-[#F7F7FA]'
                   }`}
               >
                 <p className="font-extrabold text-xs text-gray-900">{sc.label}</p>
@@ -422,8 +414,8 @@ export default function SellStep2Condition({
                   }))
                 }
                 className={`p-4 rounded-2xl border text-left transition-all duration-200 cursor-pointer ${form.bodyCondition === bc.id
-                    ? 'border-[#344257] bg-[#F0F0F5] shadow-md ring-2 ring-[#344257]/20 -translate-y-1'
-                    : 'border-gray-200 bg-white hover:border-[#6A859F] hover:bg-[#F7F7FA]'
+                  ? 'border-[#344257] bg-[#F0F0F5] shadow-md ring-2 ring-[#344257]/20 -translate-y-1'
+                  : 'border-gray-200 bg-white hover:border-[#6A859F] hover:bg-[#F7F7FA]'
                   }`}
               >
                 <p className="font-extrabold text-xs text-gray-900">{bc.label}</p>
@@ -464,8 +456,8 @@ export default function SellStep2Condition({
                 type="button"
                 onClick={() => setForm((f) => ({ ...f, batteryHealth: bat.id as any }))}
                 className={`p-4 rounded-2xl border text-left transition-all duration-200 cursor-pointer ${form.batteryHealth === bat.id
-                    ? 'border-[#344257] bg-[#F0F0F5] shadow-md ring-2 ring-[#344257]/20 -translate-y-1'
-                    : 'border-gray-200 bg-white hover:border-[#6A859F] hover:bg-[#F7F7FA]'
+                  ? 'border-[#344257] bg-[#F0F0F5] shadow-md ring-2 ring-[#344257]/20 -translate-y-1'
+                  : 'border-gray-200 bg-white hover:border-[#6A859F] hover:bg-[#F7F7FA]'
                   }`}
               >
                 <p className="font-extrabold text-xs text-gray-900">{bat.label}</p>
@@ -492,8 +484,8 @@ export default function SellStep2Condition({
                   type="button"
                   onClick={() => toggleDefect(def.id)}
                   className={`flex items-center gap-3 p-3.5 rounded-xl border text-xs font-bold transition-all duration-200 cursor-pointer ${hasDefect
-                      ? 'border-rose-400 bg-rose-50 text-rose-900 shadow-xs'
-                      : 'border-gray-200 bg-white text-gray-700 hover:border-gray-300'
+                    ? 'border-rose-400 bg-rose-50 text-rose-900 shadow-xs'
+                    : 'border-gray-200 bg-white text-gray-700 hover:border-gray-300'
                     }`}
                 >
                   <div
@@ -515,7 +507,7 @@ export default function SellStep2Condition({
             <label className="label text-sm font-extrabold text-gray-900">
               6. Warranty & Included Original Accessories
             </label>
-            <span className="text-[11px] text-emerald-600 font-bold">Earns Extra Bonus</span>
+            <span className="text-[11px] text-gray-500 font-medium">Select included items</span>
           </div>
 
           <div className="p-4 rounded-2xl border border-gray-200 bg-gray-50/50 flex items-center justify-between mb-2">
@@ -552,11 +544,11 @@ export default function SellStep2Condition({
                   type="button"
                   onClick={() => toggleAccessory(acc.id)}
                   className={`rounded-full px-4 py-2 text-xs font-bold border transition-all duration-200 active:scale-95 cursor-pointer ${isSel
-                      ? 'border-[#344257] bg-[#344257] text-white shadow-md shadow-slate-500/20 scale-105'
-                      : 'border-gray-200 bg-white text-gray-700 hover:border-[#6A859F] hover:bg-[#F0F0F5]'
+                    ? 'border-[#344257] bg-[#344257] text-white shadow-md shadow-slate-500/20 scale-105'
+                    : 'border-gray-200 bg-white text-gray-700 hover:border-[#6A859F] hover:bg-[#F0F0F5]'
                     }`}
                 >
-                  {acc.label} <span className="opacity-80 font-normal">{acc.bonus}</span>
+                  {acc.label}
                 </button>
               );
             })}
@@ -589,17 +581,16 @@ export default function SellStep2Condition({
               <button
                 type="button"
                 onClick={() => setForm((f: any) => ({ ...f, stylusAvailable: true }))}
-                className={`p-3.5 rounded-xl border text-left transition-all duration-200 cursor-pointer ${
-                  form.stylusAvailable !== false
+                className={`p-3.5 rounded-xl border text-left transition-all duration-200 cursor-pointer ${form.stylusAvailable !== false
                     ? 'border-emerald-500 bg-emerald-50/80 text-emerald-950 ring-2 ring-emerald-500/30 shadow-xs'
                     : 'border-gray-200 bg-white hover:border-gray-300 text-gray-700'
-                }`}
+                  }`}
               >
                 <div className="flex items-center gap-2">
                   <CheckCircle2 className="h-4 w-4 text-emerald-600 shrink-0" />
                   <div>
                     <p className="font-extrabold text-xs text-gray-900">Yes, S-Pen Available & Working</p>
-                    <p className="text-[11px] text-emerald-700 font-semibold mt-0.5">Full base quote preserved</p>
+                    <p className="text-[11px] text-emerald-700 font-medium mt-0.5">Original stylus included</p>
                   </div>
                 </div>
               </button>
@@ -607,24 +598,23 @@ export default function SellStep2Condition({
               <button
                 type="button"
                 onClick={() => setForm((f: any) => ({ ...f, stylusAvailable: false }))}
-                className={`p-3.5 rounded-xl border text-left transition-all duration-200 cursor-pointer ${
-                  form.stylusAvailable === false
+                className={`p-3.5 rounded-xl border text-left transition-all duration-200 cursor-pointer ${form.stylusAvailable === false
                     ? 'border-rose-500 bg-rose-50/90 text-rose-950 ring-2 ring-rose-500/30 shadow-xs'
                     : 'border-gray-200 bg-white hover:border-gray-300 text-gray-700'
-                }`}
+                  }`}
               >
                 <div className="flex items-center gap-2">
                   <AlertCircle className="h-4 w-4 text-rose-600 shrink-0" />
                   <div>
                     <p className="font-extrabold text-xs text-gray-900">No, S-Pen Missing / Not Available</p>
-                    <p className="text-[11px] text-rose-700 font-bold mt-0.5">₹3,000 deducted from base price</p>
+                    <p className="text-[11px] text-rose-700 font-medium mt-0.5">Original stylus not available</p>
                   </div>
                 </div>
               </button>
             </div>
             {form.stylusAvailable === false && (
-              <p className="text-[11px] text-rose-800 font-bold bg-rose-100/70 border border-rose-200 px-3 py-1.5 rounded-xl">
-                ⚠️ ₹3,000 has been deducted from your base price because the original stylus is missing.
+              <p className="text-[11px] text-gray-600 bg-gray-100 border border-gray-200 px-3 py-1.5 rounded-xl">
+                Original built-in stylus not included.
               </p>
             )}
           </div>
@@ -640,16 +630,9 @@ export default function SellStep2Condition({
               <span className="font-display text-3xl sm:text-4xl font-black text-white">
                 {user ? formatINR(currentLiveOffer) : formatMaskedPrice(currentLiveOffer)}
               </span>
-              {effectiveBasePrice > 0 && totalDeductions > 0 && (
-                <span className="text-xs text-rose-300 font-bold">
-                  (Base: {formatINR(effectiveBasePrice)} - {formatINR(totalDeductions)})
-                </span>
-              )}
             </div>
             <p className="text-xs text-gray-300">
-              {totalDeductions === 0
-                ? '✨ Maximum base quote preserved! 100% full payout for flawless condition.'
-                : `Deductions calculated for ${form.cosmeticCondition} condition & selected diagnostics.`}
+              Guaranteed spot cash valuation based on your selected device specifications & diagnostics.
             </p>
           </div>
 
