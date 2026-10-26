@@ -5,10 +5,10 @@ import path from 'node:path';
 // 1. Load Data Sources
 const cashifyData = JSON.parse(fs.readFileSync('./scripts/cashify_scraped_prices.json', 'utf8'));
 
-// Extract MASTER_MODEL_CATALOG from SellPhone.tsx
-const sellPhoneContent = fs.readFileSync('./src/pages/SellPhone.tsx', 'utf8');
-const masterMatch = sellPhoneContent.match(/export const MASTER_MODEL_CATALOG = \[([\s\S]*?)\];/);
-const masterCatalog = eval('[' + masterMatch[1] + ']');
+// Extract MASTER_MODEL_CATALOG from masterModelCatalog.ts
+const masterContent = fs.readFileSync('./src/data/masterModelCatalog.ts', 'utf8');
+const masterMatch = masterContent.match(/export const MASTER_MODEL_CATALOG = (\[[\s\S]*?\]);\s*\nexport const STORAGE_OPTIONS/);
+const masterCatalog = eval(masterMatch[1]);
 
 console.log(`Loaded ${masterCatalog.length} models from MASTER_MODEL_CATALOG.`);
 console.log(`Loaded ${cashifyData.length} variants from dataset.`);
@@ -49,7 +49,15 @@ masterCatalog.forEach(item => {
   const variants = cashifyData.filter(c => {
     const cBrand = c.brand.toLowerCase();
     const cModel = c.cleanModel.toLowerCase().replace(new RegExp(`^${brand.toLowerCase()}\\s*`), '').trim();
-    return cBrand === brand.toLowerCase() && (cModel === mClean || cModel.includes(mClean) || mClean.includes(cModel));
+    const matchesModel = cBrand === brand.toLowerCase() && (cModel === mClean || cModel.includes(mClean) || mClean.includes(cModel));
+    if (!matchesModel) return false;
+
+    // Filter out variants that are <= 32GB
+    const mStorage = String(c.storage || '').match(/(\d+)\s*(?:gb|tb)/i);
+    if (mStorage && parseInt(mStorage[1], 10) <= 32 && (mStorage[2] || '').toLowerCase() !== 'tb') {
+      return false;
+    }
+    return true;
   });
 
   modelsByBrand[brand].push({
