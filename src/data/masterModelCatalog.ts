@@ -3463,7 +3463,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Realme Number & Plus Series",
     "model": "Realme 10 5G",
     "storage": "128 GB",
-    "price": 18450,
+    "price": 7400,
     "image": "https://api.mobileapi.dev/devices/13759/thumb.png"
   },
   {
@@ -3471,7 +3471,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Realme Number Pro Series",
     "model": "Realme 10 Pro 5G",
     "storage": "128 GB",
-    "price": 18400,
+    "price": 9200,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/realme-10-pro.jpg"
   },
   {
@@ -3479,7 +3479,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Realme Number Pro Series",
     "model": "Realme 10 Pro+ 5G",
     "storage": "128 GB",
-    "price": 12950,
+    "price": 10500,
     "image": "https://api.mobileapi.dev/devices/13760/thumb.png"
   },
   {
@@ -3487,7 +3487,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Realme Number & Plus Series",
     "model": "Realme 11 5G",
     "storage": "128 GB",
-    "price": 18850,
+    "price": 9600,
     "image": "https://api.mobileapi.dev/devices/13819/thumb.png"
   },
   {
@@ -3495,7 +3495,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Realme Number Pro Series",
     "model": "Realme 11 Pro 5G",
     "storage": "128 GB",
-    "price": 18900,
+    "price": 11400,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/realme-11-pro.jpg"
   },
   {
@@ -3503,7 +3503,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Realme Number Pro Series",
     "model": "Realme 11 Pro+ 5G",
     "storage": "256 GB",
-    "price": 9400,
+    "price": 12900,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/realme-11-pro-plus.jpg"
   },
   {
@@ -3511,7 +3511,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Realme Number & Plus Series",
     "model": "Realme 11x 5G",
     "storage": "128 GB",
-    "price": 11170,
+    "price": 8700,
     "image": "https://api.mobileapi.dev/devices/13739/thumb.png"
   },
   {
@@ -3519,7 +3519,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Realme Number & Plus Series",
     "model": "Realme 12 5G",
     "storage": "128 GB",
-    "price": 27300,
+    "price": 9800,
     "image": "https://api.mobileapi.dev/devices/13728/thumb.png"
   },
   {
@@ -3527,7 +3527,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Realme Number Pro Series",
     "model": "Realme 12 Pro 5G",
     "storage": "128 GB",
-    "price": 27500,
+    "price": 12400,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/realme-12-pro.jpg"
   },
   {
@@ -3535,7 +3535,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Realme Number Pro Series",
     "model": "Realme 12 Pro+ 5G",
     "storage": "256 GB",
-    "price": 14450,
+    "price": 14850,
     "image": "https://api.mobileapi.dev/devices/13731/thumb.png"
   },
   {
@@ -3543,7 +3543,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Realme Number & Plus Series",
     "model": "Realme 12+ 5G",
     "storage": "128 GB",
-    "price": 15450,
+    "price": 11600,
     "image": "https://api.mobileapi.dev/devices/13729/thumb.png"
   },
   {
@@ -3551,7 +3551,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Realme Number & Plus Series",
     "model": "Realme 12x 5G",
     "storage": "128 GB",
-    "price": 10020,
+    "price": 8200,
     "image": "https://api.mobileapi.dev/devices/13726/thumb.png"
   },
   {
@@ -3559,7 +3559,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Realme Number & Plus Series",
     "model": "Realme 13 5G",
     "storage": "128 GB",
-    "price": 36950,
+    "price": 10900,
     "image": "https://api.mobileapi.dev/devices/13814/thumb.png"
   },
   {
@@ -3567,7 +3567,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Realme Number Pro Series",
     "model": "Realme 13 Pro 5G",
     "storage": "128 GB",
-    "price": 36900,
+    "price": 14500,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/realme-13-pro.jpg"
   },
   {
@@ -3575,7 +3575,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Realme Number Pro Series",
     "model": "Realme 13 Pro+ 5G",
     "storage": "256 GB",
-    "price": 19300,
+    "price": 16890,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/realme-13-pro-plus.jpg"
   },
   {
@@ -3583,7 +3583,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Realme Number & Plus Series",
     "model": "Realme 13+ 5G",
     "storage": "128 GB",
-    "price": 17300,
+    "price": 12800,
     "image": "https://api.mobileapi.dev/devices/13706/thumb.png"
   },
   {
@@ -3703,7 +3703,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Realme Series",
     "model": "Realme 5 Pro",
     "storage": "64 GB",
-    "price": 62350,
+    "price": 3800,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/realme-5-pro.jpg"
   },
   {
@@ -3719,7 +3719,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Realme Series",
     "model": "Realme 5s",
     "storage": "64 GB",
-    "price": 5050,
+    "price": 3800,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/realme-5s.jpg"
   },
   {
@@ -3727,7 +3727,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Realme Series",
     "model": "Realme 6",
     "storage": "64 GB",
-    "price": 77450,
+    "price": 4600,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/realme-6.jpg"
   },
   {
@@ -3735,7 +3735,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Realme Series",
     "model": "Realme 6 Pro",
     "storage": "64 GB",
-    "price": 77350,
+    "price": 4600,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/realme-6-pro.jpg"
   },
   {
@@ -3751,7 +3751,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Realme Series",
     "model": "Realme 7",
     "storage": "64 GB",
-    "price": 16300,
+    "price": 5400,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/realme-7.jpg"
   },
   {
@@ -3759,7 +3759,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Realme Series",
     "model": "Realme 7 Pro",
     "storage": "128 GB",
-    "price": 16400,
+    "price": 6200,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/realme-7-pro.jpg"
   },
   {
@@ -3775,7 +3775,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Realme Number & Plus Series",
     "model": "Realme 8 5G",
     "storage": "64 GB",
-    "price": 10300,
+    "price": 6600,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/realme-8-5g.jpg"
   },
   {
@@ -3783,7 +3783,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Realme Number Pro Series",
     "model": "Realme 8 Pro",
     "storage": "128 GB",
-    "price": 10300,
+    "price": 7400,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/realme-8-pro.jpg"
   },
   {
@@ -3791,7 +3791,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Realme Series",
     "model": "Realme 8i",
     "storage": "64 GB",
-    "price": 6240,
+    "price": 5800,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/realme-8i.jpg"
   },
   {
@@ -3799,7 +3799,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Realme Series",
     "model": "Realme 8s 5G",
     "storage": "128 GB",
-    "price": 9580,
+    "price": 6900,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/realme-8s-5g.jpg"
   },
   {
@@ -3807,7 +3807,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Realme Series",
     "model": "Realme 9",
     "storage": "128 GB",
-    "price": 14450,
+    "price": 7200,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/realme-9.jpg"
   },
   {
@@ -3815,7 +3815,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Realme Series",
     "model": "Realme 9 5G Speed Edition",
     "storage": "128 GB",
-    "price": 9430,
+    "price": 8900,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/realme-9-5g-speed-edition.jpg"
   },
   {
@@ -3823,7 +3823,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Realme Number Pro Series",
     "model": "Realme 9 Pro 5G",
     "storage": "128 GB",
-    "price": 14500,
+    "price": 8600,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/realme-9-pro.jpg"
   },
   {
@@ -3831,7 +3831,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Realme Number Pro Series",
     "model": "Realme 9 Pro+ 5G",
     "storage": "128 GB",
-    "price": 10500,
+    "price": 9800,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/realme-9-pro-plus.jpg"
   },
   {
@@ -3839,7 +3839,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Realme Number & Plus Series",
     "model": "Realme 9i 5G",
     "storage": "64 GB",
-    "price": 6310,
+    "price": 6800,
     "image": "https://api.mobileapi.dev/devices/13763/thumb.png"
   },
   {
@@ -3863,7 +3863,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Realme Series",
     "model": "Realme C25",
     "storage": "64 GB",
-    "price": 5240,
+    "price": 4200,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/realme-c25.jpg"
   },
   {
@@ -3871,7 +3871,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Realme Series",
     "model": "Realme C25s",
     "storage": "64 GB",
-    "price": 5560,
+    "price": 4200,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/realme-c25s.jpg"
   },
   {
@@ -3879,7 +3879,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Realme Series",
     "model": "Realme C25Y",
     "storage": "64 GB",
-    "price": 5830,
+    "price": 4200,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/realme-c25y.jpg"
   },
   {
@@ -3895,7 +3895,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Realme C Series",
     "model": "Realme C35",
     "storage": "64 GB",
-    "price": 5780,
+    "price": 4800,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/realme-c35.jpg"
   },
   {
@@ -3903,7 +3903,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Realme Series",
     "model": "Realme C51",
     "storage": "64 GB",
-    "price": 6990,
+    "price": 4600,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/realme-c51.jpg"
   },
   {
@@ -3911,7 +3911,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Realme C Series",
     "model": "Realme C53",
     "storage": "64 GB",
-    "price": 7190,
+    "price": 4600,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/realme-c53.jpg"
   },
   {
@@ -3919,7 +3919,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Realme C Series",
     "model": "Realme C55",
     "storage": "64 GB",
-    "price": 7680,
+    "price": 5900,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/realme-c55.jpg"
   },
   {
@@ -3927,7 +3927,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Realme Series",
     "model": "Realme C61",
     "storage": "64 GB",
-    "price": 5940,
+    "price": 4490,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/realme-c61.jpg"
   },
   {
@@ -3935,7 +3935,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Realme C Series",
     "model": "Realme C63 5G",
     "storage": "128 GB",
-    "price": 6650,
+    "price": 5800,
     "image": "https://api.mobileapi.dev/devices/13705/thumb.png"
   },
   {
@@ -3943,7 +3943,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Realme C Series",
     "model": "Realme C65 5G",
     "storage": "128 GB",
-    "price": 6320,
+    "price": 6800,
     "image": "https://api.mobileapi.dev/devices/13720/thumb.png"
   },
   {
@@ -3999,7 +3999,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Realme Series",
     "model": "Realme GT 2",
     "storage": "128 GB",
-    "price": 11410,
+    "price": 12400,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/realme-gt-2.jpg"
   },
   {
@@ -4007,7 +4007,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Realme GT Series",
     "model": "Realme GT 2 Pro",
     "storage": "128 GB",
-    "price": 11520,
+    "price": 14800,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/realme-gt2-pro.jpg"
   },
   {
@@ -4023,7 +4023,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Realme GT Series",
     "model": "Realme GT 6",
     "storage": "256 GB",
-    "price": 24350,
+    "price": 19240,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/realme-gt-6.jpg"
   },
   {
@@ -4031,7 +4031,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Realme GT Series",
     "model": "Realme GT 6T",
     "storage": "128 GB",
-    "price": 18400,
+    "price": 16450,
     "image": "https://api.mobileapi.dev/devices/13718/thumb.png"
   },
   {
@@ -4071,7 +4071,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Realme GT Series",
     "model": "Realme GT Master Edition",
     "storage": "128 GB",
-    "price": 9930,
+    "price": 9450,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/realme-gt-master.jpg"
   },
   {
@@ -4087,7 +4087,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Realme GT Series",
     "model": "Realme GT Neo 3",
     "storage": "128 GB",
-    "price": 11310,
+    "price": 13600,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/realme-gt-neo3.jpg"
   },
   {
@@ -4095,7 +4095,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Realme Series",
     "model": "Realme GT NEO 3T",
     "storage": "128 GB",
-    "price": 10310,
+    "price": 11200,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/realme-gt-neo-3t.jpg"
   },
   {
@@ -4119,7 +4119,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Realme Series",
     "model": "Realme Narzo 20",
     "storage": "64 GB",
-    "price": 6350,
+    "price": 4200,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/realme-narzo-20.jpg"
   },
   {
@@ -4127,7 +4127,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Realme Series",
     "model": "Realme Narzo 20 Pro",
     "storage": "64 GB",
-    "price": 6260,
+    "price": 4900,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/realme-narzo-20-pro.jpg"
   },
   {
@@ -4135,7 +4135,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Realme Series",
     "model": "Realme Narzo 30",
     "storage": "64 GB",
-    "price": 6190,
+    "price": 5800,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/realme-narzo-30.jpg"
   },
   {
@@ -4143,7 +4143,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Realme Series",
     "model": "Realme Narzo 30 Pro 5G",
     "storage": "64 GB",
-    "price": 9130,
+    "price": 5800,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/realme-narzo-30-pro-5g.jpg"
   },
   {
@@ -4151,7 +4151,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Realme Narzo & P Series",
     "model": "Realme Narzo 50",
     "storage": "64 GB",
-    "price": 6530,
+    "price": 7100,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/realme-narzo-50.jpg"
   },
   {
@@ -4159,7 +4159,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Realme Narzo & P Series",
     "model": "Realme Narzo 50 Pro 5G",
     "storage": "128 GB",
-    "price": 9450,
+    "price": 7100,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/realme-narzo-50-pro-5g.jpg"
   },
   {
@@ -4175,7 +4175,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Realme Series",
     "model": "Realme Narzo 50A Prime",
     "storage": "64 GB",
-    "price": 5850,
+    "price": 4800,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/realme-narzo-50a-prime.jpg"
   },
   {
@@ -4183,7 +4183,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Realme Narzo & P Series",
     "model": "Realme Narzo 60 5G",
     "storage": "128 GB",
-    "price": 12140,
+    "price": 7800,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/realme-narzo-60.jpg"
   },
   {
@@ -4191,7 +4191,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Realme Narzo & P Series",
     "model": "Realme Narzo 60 Pro 5G",
     "storage": "128 GB",
-    "price": 15320,
+    "price": 11800,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/realme-narzo-60-pro.jpg"
   },
   {
@@ -4199,7 +4199,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Realme Series",
     "model": "Realme Narzo 60X 5G",
     "storage": "128 GB",
-    "price": 10540,
+    "price": 7800,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/realme-narzo-60x-5g.jpg"
   },
   {
@@ -4207,7 +4207,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Realme Series",
     "model": "Realme Narzo 70 5G",
     "storage": "128 GB",
-    "price": 11450,
+    "price": 7900,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/realme-narzo-70-5g.jpg"
   },
   {
@@ -4215,7 +4215,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Realme Narzo & P Series",
     "model": "Realme Narzo 70 Pro 5G",
     "storage": "128 GB",
-    "price": 11400,
+    "price": 12400,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/realme-narzo-70-pro.jpg"
   },
   {
@@ -4223,7 +4223,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Realme Series",
     "model": "Realme Narzo 70 Turbo 5G",
     "storage": "128 GB",
-    "price": 11800,
+    "price": 10800,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/realme-narzo-70-turbo-5g.jpg"
   },
   {
@@ -4231,7 +4231,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Realme Narzo & P Series",
     "model": "Realme Narzo 70x 5G",
     "storage": "128 GB",
-    "price": 7980,
+    "price": 7900,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/realme-narzo-70x.jpg"
   },
   {
@@ -4255,7 +4255,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Realme Series",
     "model": "Realme Narzo N53",
     "storage": "64 GB",
-    "price": 7400,
+    "price": 5600,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/realme-narzo-n53.jpg"
   },
   {
@@ -4263,7 +4263,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Realme Series",
     "model": "Realme Narzo N55",
     "storage": "64 GB",
-    "price": 7890,
+    "price": 5600,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/realme-narzo-n55.jpg"
   },
   {
@@ -4279,7 +4279,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Realme Series",
     "model": "Realme Narzo N63",
     "storage": "64 GB",
-    "price": 6140,
+    "price": 5400,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/realme-narzo-n63.jpg"
   },
   {
@@ -4287,7 +4287,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Realme Series",
     "model": "Realme Narzo N65 5G",
     "storage": "128 GB",
-    "price": 7790,
+    "price": 5400,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/realme-narzo-n65-5g.jpg"
   },
   {
@@ -4303,7 +4303,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Realme Narzo & P Series",
     "model": "Realme P1 5G",
     "storage": "128 GB",
-    "price": 11750,
+    "price": 9900,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/realme-p1.jpg"
   },
   {
@@ -4311,7 +4311,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Realme Narzo & P Series",
     "model": "Realme P1 Pro 5G",
     "storage": "128 GB",
-    "price": 11050,
+    "price": 11800,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/realme-p1-pro.jpg"
   },
   {
@@ -4319,7 +4319,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Realme Series",
     "model": "Realme P2 Pro 5G",
     "storage": "128 GB",
-    "price": 11800,
+    "price": 13500,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/realme-p2-pro-5g.jpg"
   },
   {
@@ -4423,7 +4423,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Realme Series",
     "model": "Realme X",
     "storage": "128 GB",
-    "price": 77450,
+    "price": 5400,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/realme-x.jpg"
   },
   {
@@ -4431,7 +4431,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Realme Series",
     "model": "Realme X2",
     "storage": "64 GB",
-    "price": 6070,
+    "price": 6400,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/realme-x2.jpg"
   },
   {
@@ -4439,7 +4439,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Realme Series",
     "model": "Realme X2 Pro",
     "storage": "64 GB",
-    "price": 6580,
+    "price": 7800,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/realme-x2-pro.jpg"
   },
   {
@@ -4447,7 +4447,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Realme Series",
     "model": "Realme X3",
     "storage": "128 GB",
-    "price": 7300,
+    "price": 7900,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/realme-x3.jpg"
   },
   {
@@ -4455,7 +4455,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Realme Series",
     "model": "Realme X3 SuperZoom",
     "storage": "128 GB",
-    "price": 6990,
+    "price": 7900,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/realme-x3-superzoom.jpg"
   },
   {
@@ -4463,7 +4463,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Realme Series",
     "model": "Realme X50 Pro",
     "storage": "128 GB",
-    "price": 8330,
+    "price": 9800,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/realme-x50-pro.jpg"
   },
   {
@@ -4495,7 +4495,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Realme Series",
     "model": "Realme XT",
     "storage": "64 GB",
-    "price": 6530,
+    "price": 5800,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/realme-xt.jpg"
   },
   {
@@ -8247,7 +8247,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Realme Number Series",
     "model": "Realme 11 Pro+ 5G",
     "storage": "256 GB",
-    "price": 14500,
+    "price": 12900,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/realme-11-pro-plus.jpg"
   },
   {
@@ -8255,7 +8255,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Realme Number Series",
     "model": "Realme 12 Plus",
     "storage": "128 GB",
-    "price": 12800,
+    "price": 11600,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/realme-12-plus-5g.jpg"
   },
   {
