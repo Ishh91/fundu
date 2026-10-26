@@ -319,7 +319,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Pixel 6 & Older Generation Series",
     "model": "Google Pixel 3 XL",
     "storage": "64 GB",
-    "price": 5950,
+    "price": 1950,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/google-pixel-3-xl.jpg"
   },
   {
@@ -327,7 +327,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Pixel 6 & Older Generation Series",
     "model": "Google Pixel 3a",
     "storage": "64 GB",
-    "price": 6350,
+    "price": 1850,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/google-pixel-3a.jpg"
   },
   {
@@ -335,7 +335,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Pixel 6 & Older Generation Series",
     "model": "Google Pixel 3a XL",
     "storage": "64 GB",
-    "price": 6850,
+    "price": 2150,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/google-pixel-3a-xl.jpg"
   },
   {
@@ -343,7 +343,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Pixel 6 & Older Generation Series",
     "model": "Google Pixel 4 XL",
     "storage": "64 GB",
-    "price": 8950,
+    "price": 3100,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/google-pixel-4-xl.jpg"
   },
   {
@@ -351,7 +351,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Pixel 6 & Older Generation Series",
     "model": "Google Pixel 4a",
     "storage": "128 GB",
-    "price": 6140,
+    "price": 4240,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/google-pixel-4a.jpg"
   },
   {
@@ -359,7 +359,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Pixel 6 & Older Generation Series",
     "model": "Google Pixel 5",
     "storage": "128 GB",
-    "price": 11850,
+    "price": 6400,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/google-pixel-5-5g.jpg"
   },
   {
@@ -367,7 +367,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Pixel 6 & Older Generation Series",
     "model": "Google Pixel 6",
     "storage": "128 GB",
-    "price": 13900,
+    "price": 11400,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/google-pixel-6.jpg"
   },
   {
@@ -375,7 +375,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Pixel 6 & Older Generation Series",
     "model": "Google Pixel 6 Pro",
     "storage": "128 GB",
-    "price": 13900,
+    "price": 11500,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/google-pixel-6-pro.jpg"
   },
   {
@@ -383,7 +383,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Pixel 6 & Older Generation Series",
     "model": "Google Pixel 6a",
     "storage": "128 GB",
-    "price": 10450,
+    "price": 9810,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/google-pixel-6a.jpg"
   },
   {
@@ -391,7 +391,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Google Pixel 7 Series",
     "model": "Google Pixel 7",
     "storage": "128 GB",
-    "price": 22350,
+    "price": 15400,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/google-pixel-7-.jpg"
   },
   {
@@ -399,7 +399,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Google Pixel 7 Series",
     "model": "Google Pixel 7 Pro",
     "storage": "128 GB",
-    "price": 22350,
+    "price": 19800,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/google-pixel-7-pro-.jpg"
   },
   {
@@ -407,7 +407,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Google Pixel 7 Series",
     "model": "Google Pixel 7a",
     "storage": "128 GB",
-    "price": 16150,
+    "price": 11850,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/google-pixel-7a.jpg"
   },
   {
@@ -415,7 +415,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Google Pixel 8 Series",
     "model": "Google Pixel 8",
     "storage": "128 GB",
-    "price": 36900,
+    "price": 18500,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/google-pixel-8.jpg"
   },
   {
@@ -423,7 +423,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Google Pixel 8 Series",
     "model": "Google Pixel 8 Pro",
     "storage": "128 GB",
-    "price": 36850,
+    "price": 32880,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/google-pixel-8-pro.jpg"
   },
   {
@@ -431,7 +431,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Google Pixel 8 Series",
     "model": "Google Pixel 8a",
     "storage": "128 GB",
-    "price": 25500,
+    "price": 15800,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/google-pixel-8a.jpg"
   },
   {
@@ -439,7 +439,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Google Pixel 9 Series",
     "model": "Google Pixel 9",
     "storage": "128 GB",
-    "price": 56900,
+    "price": 37440,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/google-pixel-9.jpg"
   },
   {
@@ -447,7 +447,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Google Pixel 9 Series",
     "model": "Google Pixel 9 Pro",
     "storage": "128 GB",
-    "price": 56950,
+    "price": 52800,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/google-pixel-9-pro-.jpg"
   },
   {
@@ -455,7 +455,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Google Pixel 9 Series",
     "model": "Google Pixel 9 Pro Fold",
     "storage": "256 GB",
-    "price": 41800,
+    "price": 72500,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/google-pixel-9-pro-fold.jpg"
   },
   {
@@ -463,7 +463,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Google Pixel 9 Series",
     "model": "Google Pixel 9 Pro XL",
     "storage": "128 GB",
-    "price": 56850,
+    "price": 68500,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/google-pixel-9-pro-xl.jpg"
   },
   {
@@ -471,7 +471,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Pixel 6 & Older Generation Series",
     "model": "Google Pixel Fold",
     "storage": "256 GB",
-    "price": 55850,
+    "price": 42000,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/google-pixel-fold.jpg"
   },
   {
@@ -479,7 +479,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "GT Gaming Series",
     "model": "Infinix GT 10 Pro 5G",
     "storage": "128 GB",
-    "price": 13300,
+    "price": 8600,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/infinix-gt-10-pro.jpg"
   },
   {
@@ -487,7 +487,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "GT Gaming Series",
     "model": "Infinix GT 20 Pro 5G",
     "storage": "256 GB",
-    "price": 17950,
+    "price": 11200,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/infinix-gt-20-pro.jpg"
   },
   {
@@ -503,7 +503,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Note Series",
     "model": "Infinix Note 40 Pro 5G",
     "storage": "256 GB",
-    "price": 13950,
+    "price": 10500,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/infinix-note-40-pro-5g.jpg"
   },
   {
@@ -511,7 +511,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Note Series",
     "model": "Infinix Note 40 Pro+ 5G",
     "storage": "256 GB",
-    "price": 16300,
+    "price": 10500,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/infinix-note-40-pro-plus-5g.jpg"
   },
   {
@@ -527,7 +527,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Zero Series",
     "model": "Infinix Zero 30 5G",
     "storage": "256 GB",
-    "price": 15000,
+    "price": 11400,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/infinix-zero-30-5g.jpg"
   },
   {
@@ -823,7 +823,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "K Note Series",
     "model": "Lenovo K10 Note",
     "storage": "128 GB",
-    "price": 2515,
+    "price": 3200,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/lenovo-k10-note.jpg"
   },
   {
@@ -831,7 +831,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "K Note Series",
     "model": "Lenovo K10 Plus",
     "storage": "64 GB",
-    "price": 4000,
+    "price": 2400,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/lenovo-k10-plus.jpg"
   },
   {
@@ -839,7 +839,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "K Note Series",
     "model": "Lenovo K8 Note",
     "storage": "64 GB",
-    "price": 3250,
+    "price": 1350,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/lenovo-k8-note.jpg"
   },
   {
@@ -847,7 +847,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "K Note Series",
     "model": "Lenovo K9 Note",
     "storage": "64 GB",
-    "price": 3500,
+    "price": 2100,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/lenovo-k9-note.jpg"
   },
   {
@@ -903,7 +903,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Z Series Flagships",
     "model": "Lenovo Z6 Pro",
     "storage": "128 GB",
-    "price": 9400,
+    "price": 5800,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/lenovo-z6-pro.jpg"
   },
   {
@@ -911,7 +911,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Moto Edge Series",
     "model": "Motorola Edge 30",
     "storage": "128 GB",
-    "price": 12450,
+    "price": 9600,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/motorola-edge-30.jpg"
   },
   {
@@ -919,7 +919,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Moto Edge Series",
     "model": "Motorola Edge 30 Fusion",
     "storage": "128 GB",
-    "price": 15350,
+    "price": 11800,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/motorola-edge-30-fusion.jpg"
   },
   {
@@ -927,7 +927,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Moto Edge Series",
     "model": "Motorola Edge 30 Ultra",
     "storage": "128 GB",
-    "price": 18850,
+    "price": 15800,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/motorola-edge-30-ultra.jpg"
   },
   {
@@ -935,7 +935,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Moto Edge Series",
     "model": "Motorola Edge 40",
     "storage": "256 GB",
-    "price": 15500,
+    "price": 13200,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/motorola-edge-40.jpg"
   },
   {
@@ -943,7 +943,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Moto Edge Series",
     "model": "Motorola Edge 40 Neo",
     "storage": "128 GB",
-    "price": 14850,
+    "price": 11600,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/motorola-edge-40-neo.jpg"
   },
   {
@@ -959,7 +959,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Moto Edge Series",
     "model": "Motorola Edge 50 Fusion",
     "storage": "128 GB",
-    "price": 18400,
+    "price": 15500,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/motorola-edge-50-fusion.jpg"
   },
   {
@@ -967,7 +967,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Moto Edge Series",
     "model": "Motorola Edge 50 Pro",
     "storage": "256 GB",
-    "price": 20300,
+    "price": 18900,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/motorola-edge-50-pro.jpg"
   },
   {
@@ -975,7 +975,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Moto Edge Series",
     "model": "Motorola Edge 50 Ultra",
     "storage": "512 GB",
-    "price": 31900,
+    "price": 28640,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/motorola-edge-50-ultra.jpg"
   },
   {
@@ -1639,7 +1639,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Motorola Series",
     "model": "Motorola One Action",
     "storage": "128 GB",
-    "price": 4370,
+    "price": 3600,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/motorola-motorola-one-action.jpg"
   },
   {
@@ -1647,7 +1647,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Motorola Series",
     "model": "Motorola One Fusion Plus",
     "storage": "128 GB",
-    "price": 6660,
+    "price": 4890,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/motorola-motorola-one-fusion-plus.jpg"
   },
   {
@@ -1663,7 +1663,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Motorola Series",
     "model": "Motorola One Power",
     "storage": "64 GB",
-    "price": 4110,
+    "price": 2800,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/motorola-motorola-one-power.jpg"
   },
   {
@@ -1671,7 +1671,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Motorola Series",
     "model": "Motorola One Vision",
     "storage": "128 GB",
-    "price": 4130,
+    "price": 3700,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/motorola-motorola-one-vision.jpg"
   },
   {
@@ -1679,7 +1679,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Moto Razr Series",
     "model": "Motorola Razr 40",
     "storage": "256 GB",
-    "price": 25800,
+    "price": 18200,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/motorola-razr-40.jpg"
   },
   {
@@ -1687,7 +1687,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Moto Razr Series",
     "model": "Motorola Razr 40 Ultra",
     "storage": "256 GB",
-    "price": 34950,
+    "price": 24500,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/motorola-razr-40-ultra.jpg"
   },
   {
@@ -1695,7 +1695,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Moto Razr Series",
     "model": "Motorola Razr 50",
     "storage": "256 GB",
-    "price": 46950,
+    "price": 29500,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/motorola-razr-50.jpg"
   },
   {
@@ -1703,7 +1703,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Moto Razr Series",
     "model": "Motorola Razr 50 Ultra",
     "storage": "512 GB",
-    "price": 46900,
+    "price": 39800,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/motorola-razr-50-ultra.jpg"
   },
   {
@@ -4599,7 +4599,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Galaxy A Series",
     "model": "Samsung Galaxy A22 5G",
     "storage": "128 GB",
-    "price": 7200,
+    "price": 4900,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-a22-5g.jpg"
   },
   {
@@ -4607,7 +4607,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Galaxy A Series",
     "model": "Samsung Galaxy A23 5G",
     "storage": "128 GB",
-    "price": 6530,
+    "price": 7500,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-a23-5g.jpg"
   },
   {
@@ -4615,7 +4615,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Galaxy A Series",
     "model": "Samsung Galaxy A24",
     "storage": "128 GB",
-    "price": 9500,
+    "price": 6500,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-a24-4g.jpg"
   },
   {
@@ -4623,7 +4623,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Galaxy A Series",
     "model": "Samsung Galaxy A25 5G",
     "storage": "128 GB",
-    "price": 11500,
+    "price": 10500,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-a25.jpg"
   },
   {
@@ -4647,7 +4647,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Samsung Series",
     "model": "Samsung Galaxy A30",
     "storage": "64 GB",
-    "price": 4200,
+    "price": 2900,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-a30.jpg"
   },
   {
@@ -4655,7 +4655,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Samsung Series",
     "model": "Samsung Galaxy A30s",
     "storage": "64 GB",
-    "price": 4800,
+    "price": 3800,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-a30s.jpg"
   },
   {
@@ -4663,7 +4663,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Samsung Series",
     "model": "Samsung Galaxy A31",
     "storage": "128 GB",
-    "price": 5710,
+    "price": 4500,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-a31.jpg"
   },
   {
@@ -4671,7 +4671,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Galaxy A Series",
     "model": "Samsung Galaxy A32",
     "storage": "128 GB",
-    "price": 6930,
+    "price": 5600,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-a32-4g.jpg"
   },
   {
@@ -4679,7 +4679,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Galaxy A Series",
     "model": "Samsung Galaxy A33 5G",
     "storage": "128 GB",
-    "price": 10500,
+    "price": 8500,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-a33-5g.jpg"
   },
   {
@@ -4687,7 +4687,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Galaxy A Series",
     "model": "Samsung Galaxy A34 5G",
     "storage": "128 GB",
-    "price": 12000,
+    "price": 11000,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-a34.jpg"
   },
   {
@@ -4695,7 +4695,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Galaxy A Series",
     "model": "Samsung Galaxy A35 5G",
     "storage": "128 GB",
-    "price": 15500,
+    "price": 14500,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-a35.jpg"
   },
   {
@@ -4719,7 +4719,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Galaxy A Series",
     "model": "Samsung Galaxy A50",
     "storage": "64 GB",
-    "price": 5000,
+    "price": 3600,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-a50.jpg"
   },
   {
@@ -4727,7 +4727,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Samsung Series",
     "model": "Samsung Galaxy A50s",
     "storage": "128 GB",
-    "price": 5500,
+    "price": 5000,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-a50s.jpg"
   },
   {
@@ -4735,7 +4735,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Galaxy A Series",
     "model": "Samsung Galaxy A51",
     "storage": "128 GB",
-    "price": 6000,
+    "price": 5400,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-a51.jpg"
   },
   {
@@ -4743,7 +4743,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Galaxy A Series",
     "model": "Samsung Galaxy A52",
     "storage": "128 GB",
-    "price": 9200,
+    "price": 7500,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-a52-5g.jpg"
   },
   {
@@ -4751,7 +4751,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Galaxy A Series",
     "model": "Samsung Galaxy A52s 5G",
     "storage": "128 GB",
-    "price": 10200,
+    "price": 9200,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-a52s-5g.jpg"
   },
   {
@@ -4759,7 +4759,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Galaxy A Series",
     "model": "Samsung Galaxy A53 5G",
     "storage": "128 GB",
-    "price": 13000,
+    "price": 12000,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-a53-5g.jpg"
   },
   {
@@ -4767,7 +4767,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Galaxy A Series",
     "model": "Samsung Galaxy A54 5G",
     "storage": "128 GB",
-    "price": 16000,
+    "price": 15000,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-a54.jpg"
   },
   {
@@ -4775,7 +4775,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Galaxy A Series",
     "model": "Samsung Galaxy A55 5G",
     "storage": "128 GB",
-    "price": 19500,
+    "price": 18500,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-a55.jpg"
   },
   {
@@ -4807,7 +4807,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Galaxy A Series",
     "model": "Samsung Galaxy A70",
     "storage": "128 GB",
-    "price": 6200,
+    "price": 4700,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-a70.jpg"
   },
   {
@@ -4815,7 +4815,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Samsung Series",
     "model": "Samsung Galaxy A70s",
     "storage": "128 GB",
-    "price": 7000,
+    "price": 5200,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-a70s.jpg"
   },
   {
@@ -4823,7 +4823,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Galaxy A Series",
     "model": "Samsung Galaxy A71",
     "storage": "128 GB",
-    "price": 8000,
+    "price": 7000,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-a71.jpg"
   },
   {
@@ -4831,7 +4831,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Galaxy A Series",
     "model": "Samsung Galaxy A72",
     "storage": "128 GB",
-    "price": 10500,
+    "price": 8500,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-a72-4g.jpg"
   },
   {
@@ -4839,7 +4839,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Galaxy A Series",
     "model": "Samsung Galaxy A73 5G",
     "storage": "128 GB",
-    "price": 14500,
+    "price": 13500,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-a73-5g.jpg"
   },
   {
@@ -4847,7 +4847,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Samsung Series",
     "model": "Samsung Galaxy A8 Plus",
     "storage": "64 GB",
-    "price": 4190,
+    "price": 2600,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-a8-plus.jpg"
   },
   {
@@ -4863,7 +4863,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Samsung Series",
     "model": "Samsung Galaxy A80",
     "storage": "128 GB",
-    "price": 7000,
+    "price": 6100,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-a80.jpg"
   },
   {
@@ -4903,7 +4903,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Samsung Series",
     "model": "Samsung Galaxy F04",
     "storage": "64 GB",
-    "price": 3800,
+    "price": 2800,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-f04.jpg"
   },
   {
@@ -4935,7 +4935,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Samsung Series",
     "model": "Samsung Galaxy F12",
     "storage": "64 GB",
-    "price": 4400,
+    "price": 3000,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-f12.jpg"
   },
   {
@@ -4943,7 +4943,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Galaxy M & F Series",
     "model": "Samsung Galaxy F13",
     "storage": "64 GB",
-    "price": 5000,
+    "price": 4000,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-f13.jpg"
   },
   {
@@ -4959,7 +4959,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Samsung Series",
     "model": "Samsung Galaxy F15 5G",
     "storage": "128 GB",
-    "price": 7500,
+    "price": 6500,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-f15-5g.jpg"
   },
   {
@@ -4983,7 +4983,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Samsung Series",
     "model": "Samsung Galaxy F22",
     "storage": "64 GB",
-    "price": 5800,
+    "price": 4800,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-f22.jpg"
   },
   {
@@ -4991,7 +4991,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Galaxy M & F Series",
     "model": "Samsung Galaxy F23 5G",
     "storage": "128 GB",
-    "price": 7000,
+    "price": 6000,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-f23-5g.jpg"
   },
   {
@@ -4999,7 +4999,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Galaxy M & F Series",
     "model": "Samsung Galaxy F34 5G",
     "storage": "128 GB",
-    "price": 9500,
+    "price": 8500,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-f34-5g.jpg"
   },
   {
@@ -5015,7 +5015,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Samsung Series",
     "model": "Samsung Galaxy F41",
     "storage": "64 GB",
-    "price": 5500,
+    "price": 3800,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-f41.jpg"
   },
   {
@@ -5023,7 +5023,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Samsung Series",
     "model": "Samsung Galaxy F42 5G",
     "storage": "128 GB",
-    "price": 6500,
+    "price": 5500,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-f42-5g.jpg"
   },
   {
@@ -5031,7 +5031,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Galaxy M & F Series",
     "model": "Samsung Galaxy F54 5G",
     "storage": "256 GB",
-    "price": 13000,
+    "price": 12000,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-f54.jpg"
   },
   {
@@ -5039,7 +5039,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Galaxy M & F Series",
     "model": "Samsung Galaxy F55 5G",
     "storage": "128 GB",
-    "price": 17000,
+    "price": 16000,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-f55.jpg"
   },
   {
@@ -5055,7 +5055,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Samsung Series",
     "model": "Samsung Galaxy F62",
     "storage": "128 GB",
-    "price": 8200,
+    "price": 7200,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-f62.jpg"
   },
   {
@@ -5119,7 +5119,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Galaxy M & F Series",
     "model": "Samsung Galaxy M04",
     "storage": "64 GB",
-    "price": 3800,
+    "price": 2800,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-m04.jpg"
   },
   {
@@ -5151,7 +5151,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Galaxy M & F Series",
     "model": "Samsung Galaxy M12",
     "storage": "64 GB",
-    "price": 4500,
+    "price": 3000,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-m12.jpg"
   },
   {
@@ -5159,7 +5159,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Galaxy M & F Series",
     "model": "Samsung Galaxy M13",
     "storage": "64 GB",
-    "price": 5500,
+    "price": 4500,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-m13-4g.jpg"
   },
   {
@@ -5183,7 +5183,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Samsung Series",
     "model": "Samsung Galaxy M15 5G",
     "storage": "128 GB",
-    "price": 7500,
+    "price": 6500,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-m15-5g.jpg"
   },
   {
@@ -5215,7 +5215,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Galaxy M & F Series",
     "model": "Samsung Galaxy M21",
     "storage": "64 GB",
-    "price": 4500,
+    "price": 3500,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-m21.jpg"
   },
   {
@@ -5231,7 +5231,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Samsung Series",
     "model": "Samsung Galaxy M30s",
     "storage": "64 GB",
-    "price": 4800,
+    "price": 3800,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-m30s.jpg"
   },
   {
@@ -5239,7 +5239,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Galaxy M & F Series",
     "model": "Samsung Galaxy M31",
     "storage": "64 GB",
-    "price": 5600,
+    "price": 5000,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-m31.jpg"
   },
   {
@@ -5247,7 +5247,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Galaxy M & F Series",
     "model": "Samsung Galaxy M31s",
     "storage": "128 GB",
-    "price": 6800,
+    "price": 5800,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-m31s.jpg"
   },
   {
@@ -5271,7 +5271,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Galaxy M & F Series",
     "model": "Samsung Galaxy M33 5G",
     "storage": "128 GB",
-    "price": 8200,
+    "price": 7200,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-m33-5g.jpg"
   },
   {
@@ -5279,7 +5279,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Galaxy M & F Series",
     "model": "Samsung Galaxy M34 5G",
     "storage": "128 GB",
-    "price": 9500,
+    "price": 8500,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-m34-5g.jpg"
   },
   {
@@ -5287,7 +5287,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Galaxy M & F Series",
     "model": "Samsung Galaxy M35 5G",
     "storage": "128 GB",
-    "price": 12000,
+    "price": 11000,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-m35.jpg"
   },
   {
@@ -5303,7 +5303,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Samsung Series",
     "model": "Samsung Galaxy M40",
     "storage": "128 GB",
-    "price": 5500,
+    "price": 3600,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-m40.jpg"
   },
   {
@@ -5311,7 +5311,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Samsung Series",
     "model": "Samsung Galaxy M42 5G",
     "storage": "128 GB",
-    "price": 7800,
+    "price": 6800,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-m42-5g.jpg"
   },
   {
@@ -5327,7 +5327,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Galaxy M & F Series",
     "model": "Samsung Galaxy M51",
     "storage": "128 GB",
-    "price": 8000,
+    "price": 7000,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-m51.jpg"
   },
   {
@@ -5335,7 +5335,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Galaxy M & F Series",
     "model": "Samsung Galaxy M52 5G",
     "storage": "128 GB",
-    "price": 9500,
+    "price": 7500,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-m52-5g.jpg"
   },
   {
@@ -5343,7 +5343,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Galaxy M & F Series",
     "model": "Samsung Galaxy M53 5G",
     "storage": "128 GB",
-    "price": 11500,
+    "price": 10500,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-m53-5g.jpg"
   },
   {
@@ -5351,7 +5351,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Galaxy M & F Series",
     "model": "Samsung Galaxy M54 5G",
     "storage": "128 GB",
-    "price": 12500,
+    "price": 10500,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-m54.jpg"
   },
   {
@@ -5359,7 +5359,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Galaxy M & F Series",
     "model": "Samsung Galaxy M55 5G",
     "storage": "128 GB",
-    "price": 14500,
+    "price": 13500,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-m55.jpg"
   },
   {
@@ -5383,7 +5383,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Galaxy Note Series",
     "model": "Samsung Galaxy Note 10",
     "storage": "256 GB",
-    "price": 10800,
+    "price": 9800,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-note10-.jpg"
   },
   {
@@ -5391,7 +5391,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Galaxy Note Series",
     "model": "Samsung Galaxy Note 10 Lite",
     "storage": "128 GB",
-    "price": 9500,
+    "price": 7500,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-note10-lite.jpg"
   },
   {
@@ -5399,7 +5399,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Galaxy Note Series",
     "model": "Samsung Galaxy Note 10+",
     "storage": "256 GB",
-    "price": 19950,
+    "price": 9800,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-note10-plus-.jpg"
   },
   {
@@ -5407,7 +5407,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Galaxy Note Series",
     "model": "Samsung Galaxy Note 20",
     "storage": "256 GB",
-    "price": 17000,
+    "price": 14000,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-note20-5g-r.jpg"
   },
   {
@@ -5415,7 +5415,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Galaxy Note Series",
     "model": "Samsung Galaxy Note 20 Ultra 5G",
     "storage": "256 GB",
-    "price": 24000,
+    "price": 23000,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-note20-ultra-5g-.jpg"
   },
   {
@@ -5423,7 +5423,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Galaxy Note Series",
     "model": "Samsung Galaxy Note 8",
     "storage": "64 GB",
-    "price": 6000,
+    "price": 5000,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-note8-sm-n950.jpg"
   },
   {
@@ -5431,7 +5431,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Galaxy Note Series",
     "model": "Samsung Galaxy Note 9",
     "storage": "128 GB",
-    "price": 7500,
+    "price": 6500,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-note9-r1.jpg"
   },
   {
@@ -5455,7 +5455,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Galaxy S10 Series",
     "model": "Samsung Galaxy S10",
     "storage": "128 GB",
-    "price": 8500,
+    "price": 7500,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s10-1.jpg"
   },
   {
@@ -5463,7 +5463,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Galaxy S10 Series",
     "model": "Samsung Galaxy S10 Lite",
     "storage": "128 GB",
-    "price": 7770,
+    "price": 6500,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s10-lite-sm-g770f.jpg"
   },
   {
@@ -5471,7 +5471,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Galaxy S10 Series",
     "model": "Samsung Galaxy S10+",
     "storage": "128 GB",
-    "price": 13450,
+    "price": 7500,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s10-plus-new.jpg"
   },
   {
@@ -5479,7 +5479,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Galaxy S10 Series",
     "model": "Samsung Galaxy S10e",
     "storage": "128 GB",
-    "price": 7500,
+    "price": 6000,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s10e-1.jpg"
   },
   {
@@ -5487,7 +5487,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Galaxy S20 Series",
     "model": "Samsung Galaxy S20",
     "storage": "128 GB",
-    "price": 13000,
+    "price": 11000,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s20-r.jpg"
   },
   {
@@ -5503,7 +5503,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Galaxy S20 Series",
     "model": "Samsung Galaxy S20 Ultra 5G",
     "storage": "128 GB",
-    "price": 19000,
+    "price": 18000,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s20-ultra-5g-r.jpg"
   },
   {
@@ -5511,7 +5511,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Galaxy S20 Series",
     "model": "Samsung Galaxy S20+",
     "storage": "128 GB",
-    "price": 18800,
+    "price": 11000,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s20-plus-r.jpg"
   },
   {
@@ -5519,7 +5519,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Galaxy S21 Series",
     "model": "Samsung Galaxy S21 5G",
     "storage": "128 GB",
-    "price": 17000,
+    "price": 16000,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s21-5g-r.jpg"
   },
   {
@@ -5527,7 +5527,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Galaxy S21 Series",
     "model": "Samsung Galaxy S21 FE 5G",
     "storage": "128 GB",
-    "price": 15000,
+    "price": 14000,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s21-fe-5g.jpg"
   },
   {
@@ -5535,7 +5535,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Galaxy S21 Series",
     "model": "Samsung Galaxy S21 Ultra 5G",
     "storage": "128 GB",
-    "price": 26500,
+    "price": 25500,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s21-ultra-5g-.jpg"
   },
   {
@@ -5543,7 +5543,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Galaxy S21 Series",
     "model": "Samsung Galaxy S21+ 5G",
     "storage": "128 GB",
-    "price": 15500,
+    "price": 16000,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s21-plus-5g-.jpg"
   },
   {
@@ -5551,7 +5551,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Galaxy S22 Series",
     "model": "Samsung Galaxy S22 5G",
     "storage": "128 GB",
-    "price": 22500,
+    "price": 21500,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s22-5g.jpg"
   },
   {
@@ -5559,7 +5559,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Galaxy S22 Series",
     "model": "Samsung Galaxy S22 Ultra 5G",
     "storage": "128 GB",
-    "price": 33000,
+    "price": 32000,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s22-ultra-5g.jpg"
   },
   {
@@ -5567,7 +5567,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Galaxy S22 Series",
     "model": "Samsung Galaxy S22+ 5G",
     "storage": "128 GB",
-    "price": 21450,
+    "price": 21500,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s22-plus-5g.jpg"
   },
   {
@@ -5575,7 +5575,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Galaxy S23 Series",
     "model": "Samsung Galaxy S23 5G",
     "storage": "128 GB",
-    "price": 29000,
+    "price": 28000,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s23-5g.jpg"
   },
   {
@@ -5583,7 +5583,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Galaxy S23 Series",
     "model": "Samsung Galaxy S23 FE 5G",
     "storage": "128 GB",
-    "price": 22500,
+    "price": 21500,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s23-fe.jpg"
   },
   {
@@ -5591,7 +5591,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Galaxy S23 Series",
     "model": "Samsung Galaxy S23 Ultra",
     "storage": "256 GB",
-    "price": 46950,
+    "price": 48000,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s23-ultra-5g.jpg"
   },
   {
@@ -5599,7 +5599,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Galaxy S23 Series",
     "model": "Samsung Galaxy S23+",
     "storage": "256 GB",
-    "price": 31950,
+    "price": 28000,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s23-plus-5g.jpg"
   },
   {
@@ -5623,7 +5623,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Galaxy S24 Series",
     "model": "Samsung Galaxy S24 Ultra",
     "storage": "256 GB",
-    "price": 64950,
+    "price": 65500,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s24-ultra-5g-sm-s928-stylus.jpg"
   },
   {
@@ -5631,7 +5631,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Galaxy S24 Series",
     "model": "Samsung Galaxy S24+",
     "storage": "256 GB",
-    "price": 44850,
+    "price": 43000,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s24-plus-5g-sm-s926.jpg"
   },
   {
@@ -5735,7 +5735,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Galaxy S Legacy Series",
     "model": "Samsung Galaxy S9",
     "storage": "64 GB",
-    "price": 5200,
+    "price": 3500,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s9.jpg"
   },
   {
@@ -5743,7 +5743,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Galaxy S Legacy Series",
     "model": "Samsung Galaxy S9 Plus",
     "storage": "64 GB",
-    "price": 5800,
+    "price": 4800,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s9-plus.jpg"
   },
   {
@@ -5815,7 +5815,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Galaxy Z Series (Fold & Flip)",
     "model": "Samsung Galaxy Z Fold 4",
     "storage": "256 GB",
-    "price": 43000,
+    "price": 42000,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-z-fold4.jpg"
   },
   {
@@ -5823,7 +5823,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Galaxy Z Series (Fold & Flip)",
     "model": "Samsung Galaxy Z Fold 5",
     "storage": "256 GB",
-    "price": 56000,
+    "price": 55000,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-z-fold5.jpg"
   },
   {
@@ -5831,7 +5831,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Galaxy Z Series (Fold & Flip)",
     "model": "Samsung Galaxy Z Fold 6",
     "storage": "256 GB",
-    "price": 77000,
+    "price": 76000,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-z-fold6.jpg"
   },
   {
