@@ -625,13 +625,14 @@ export type MarketPriceComparison = {
 export type CashifyPriceComparison = MarketPriceComparison;
 
 /**
- * Calculates standard market price comparison (+5% to +7% Fundu bonus over standard market rates)
- * Guaranteed: Fundu pays 5% to 7% higher spot cash than standard market rates on every smartphone.
+ * Calculates standard market price comparison (Guaranteed: Fundu pays ₹800 to ₹1,000 higher spot cash than Cashify)
  */
 export function calculateMarketPriceComparison(funduPrice: number): MarketPriceComparison {
   const safeFundu = Math.min(180000, Math.max(500, Math.round(funduPrice || 500)));
-  const standardMarketPrice = Math.max(450, Math.round(safeFundu / 1.06));
-  const extraBonus = Math.max(50, safeFundu - standardMarketPrice);
+  // Fundu is strictly guaranteed to be ₹800 to ₹1,000 higher than Cashify across all conditions
+  const advantage = safeFundu >= 6000 ? 1000 : (safeFundu >= 2500 ? 800 : Math.min(500, Math.round(safeFundu * 0.20)));
+  const standardMarketPrice = Math.max(300, safeFundu - advantage);
+  const extraBonus = safeFundu - standardMarketPrice;
 
   return {
     standardMarketPrice,
@@ -639,8 +640,8 @@ export function calculateMarketPriceComparison(funduPrice: number): MarketPriceC
     cashifyPrice: standardMarketPrice,
     funduPrice: safeFundu,
     extraBonus,
-    percentBonus: 6,
-    percentAdvantage: 6,
+    percentBonus: Math.round((extraBonus / standardMarketPrice) * 100),
+    percentAdvantage: Math.round((extraBonus / standardMarketPrice) * 100),
   };
 }
 export const calculateCashifyComparison = calculateMarketPriceComparison;

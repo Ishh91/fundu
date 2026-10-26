@@ -3,6 +3,8 @@ import { db } from './db';
 import { broadcastSync, subscribeToRealtimeSync } from './realtimeSync';
 import { pullLiveModelImagesFromDb } from './phoneImages';
 
+import { calculateHardwareVariantMultiplier } from './deviceSpecs';
+
 const OVERRIDES_STORAGE_KEY = 'fundu_price_overrides_v1';
 
 export type PriceOverrideItem = {
@@ -27,26 +29,22 @@ export function getLocalPriceOverrides(): Record<string, number> {
 }
 
 /**
- * Generates all normalized lookup keys for matching brand + model + storage variations
+ * Generates exact storage-specific keys for a brand + model + storage
  */
-export function getPriceLookupKeys(brand: string, model: string, storage?: string): string[] {
+export function getPriceStorageKeys(brand: string, model: string, storage: string): string[] {
   const b = (brand || '').trim().toLowerCase();
   let m = (model || '').trim().toLowerCase();
-
-  // Strip brand prefix if model already contains brand (e.g. 'Apple iPhone 15' -> 'iphone 15')
   let cleanM = m;
   if (b && cleanM.startsWith(b)) {
     cleanM = cleanM.slice(b.length).trim();
   }
 
   const models = Array.from(new Set([cleanM, m])).filter(Boolean);
-  const s = storage ? storage.trim().toLowerCase() : null;
-  const sNorm = s ? s.replace(/\s+/g, '') : null;
-
-  const storageVariants = Array.from(new Set([sNorm, s])).filter((x): x is string => Boolean(x));
+  const s = storage.trim().toLowerCase();
+  const sNorm = s.replace(/\s+/g, '');
+  const storageVariants = Array.from(new Set([sNorm, s])).filter(Boolean);
   const keys: string[] = [];
 
-  // 1. Storage-specific exact variant keys first
   models.forEach((mod) => {
     storageVariants.forEach((stg) => {
       if (b) keys.push(`${b}:${mod}:${stg}`);
@@ -54,7 +52,23 @@ export function getPriceLookupKeys(brand: string, model: string, storage?: strin
     });
   });
 
-  // 2. Base model fallback keys
+  return keys;
+}
+
+/**
+ * Generates generic model keys for a brand + model
+ */
+export function getPriceModelKeys(brand: string, model: string): string[] {
+  const b = (brand || '').trim().toLowerCase();
+  let m = (model || '').trim().toLowerCase();
+  let cleanM = m;
+  if (b && cleanM.startsWith(b)) {
+    cleanM = cleanM.slice(b.length).trim();
+  }
+
+  const models = Array.from(new Set([cleanM, m])).filter(Boolean);
+  const keys: string[] = [];
+
   models.forEach((mod) => {
     if (b) keys.push(`${b}:${mod}`);
     keys.push(mod);
@@ -64,14 +78,26 @@ export function getPriceLookupKeys(brand: string, model: string, storage?: strin
 }
 
 /**
- * Saves a price override for a specific brand + model (or storage)
+ * Generates lookup keys (storage-specific first, then model-wide fallback)
+ */
+export function getPriceLookupKeys(brand: string, model: string, storage?: string): string[] {
+  if (storage) {
+    return [...getPriceStorageKeys(brand, model, storage), ...getPriceModelKeys(brand, model)];
+  }
+  return getPriceModelKeys(brand, model);
+}
+
+/**
+ * Saves a price override for a specific brand + model (or specific storage)
  */
 export function savePriceOverride(brand: string, model: string, newPrice: number, storage?: string) {
   if (typeof window === 'undefined') return;
   const current = getLocalPriceOverrides();
-  const keys = getPriceLookupKeys(brand, model, storage);
-  
-  keys.forEach((k) => {
+  const saveKeys = storage
+    ? getPriceStorageKeys(brand, model, storage)
+    : getPriceModelKeys(brand, model);
+
+  saveKeys.forEach((k) => {
     current[k] = newPrice;
   });
 
@@ -89,16 +115,33 @@ export function savePriceOverride(brand: string, model: string, newPrice: number
  */
 export function getEffectivePrice(brand: string, model: string, defaultPrice: number, storage?: string): number {
   const overrides = getLocalPriceOverrides();
-  const keys = getPriceLookupKeys(brand, model, storage);
 
-  for (const k of keys) {
+  // 1. Exact storage match first
+  if (storage) {
+    const storageKeys = getPriceStorageKeys(brand, model, storage);
+    for (const k of storageKeys) {
+      const val = overrides[k];
+      if (typeof val === 'number' && val > 0 && val <= 250000) {
+        return val;
+      }
+    }
+  }
+
+  // 2. Generic base model match (with dynamic variant scaling if storage requested)
+  const modelKeys = getPriceModelKeys(brand, model);
+  for (const k of modelKeys) {
     const val = overrides[k];
     if (typeof val === 'number' && val > 0 && val <= 250000) {
+      if (storage) {
+        const baseMult = calculateHardwareVariantMultiplier('128 GB', '', brand);
+        const targetMult = calculateHardwareVariantMultiplier(storage, '', brand);
+        const ratio = baseMult > 0 ? targetMult / baseMult : 1.0;
+        return Math.max(500, Math.round((val * ratio) / 50) * 50);
+      }
       return val;
     }
   }
 
-  // Reject unrealistic price overrides (e.g. corrupt values exceeding ₹2,50,000)
   if (typeof defaultPrice === 'number' && defaultPrice > 250000) {
     return 50000;
   }
@@ -187,9 +230,18 @@ export function usePriceSync() {
             const current = getLocalPriceOverrides();
             let changed = false;
 
-            data.forEach((rule: any) => {
+            // Sort ascending so newest updated rule always wins
+            const sortedData = [...data].sort((a: any, b: any) => {
+              const ta = new Date(a.updated_at || a.created_at || 0).getTime();
+              const tb = new Date(b.updated_at || b.created_at || 0).getTime();
+              return ta - tb;
+            });
+
+            sortedData.forEach((rule: any) => {
               if (rule.brand && rule.model && typeof rule.base_price === 'number' && rule.base_price > 0) {
-                const keys = getPriceLookupKeys(rule.brand, rule.model, rule.storage);
+                const keys = rule.storage
+                  ? getPriceStorageKeys(rule.brand, rule.model, rule.storage)
+                  : getPriceModelKeys(rule.brand, rule.model);
                 keys.forEach((k) => {
                   if (current[k] !== rule.base_price) {
                     current[k] = rule.base_price;

@@ -252,24 +252,24 @@ export default function SellStep3Quote({
 
                 <div className="grid grid-cols-2 gap-3 text-center">
                   <div className="bg-white p-3.5 rounded-xl border border-gray-200/90 shadow-2xs">
-                    <p className="text-[11px] font-bold text-gray-500">Standard Market Value</p>
+                    <p className="text-[11px] font-bold text-gray-500">Cashify & Market Rate</p>
                     <p className="text-base sm:text-lg font-black text-gray-600 line-through decoration-rose-500 decoration-2 mt-0.5">
                       {user ? formatINR(comparison.standardMarketPrice) : formatMaskedPrice(comparison.standardMarketPrice)}
                     </p>
-                    <span className="text-[10px] text-gray-400 font-medium">Other Buyback Sites</span>
+                    <span className="text-[10px] text-gray-400 font-medium">Standard Buyback Sites</span>
                   </div>
                   <div className="bg-gradient-to-r from-emerald-600 to-teal-600 text-white p-3.5 rounded-xl shadow-md">
                     <p className="text-[11px] font-bold text-emerald-100">Fundu Spot Cash Offer</p>
                     <p className="text-base sm:text-lg font-black text-white mt-0.5">
                       {user ? formatINR(comparison.funduPrice) : formatMaskedPrice(comparison.funduPrice)}
                     </p>
-                    <span className="text-[10px] text-emerald-100 font-extrabold">+5% Extra Cash Bonus</span>
+                    <span className="text-[10px] text-emerald-100 font-extrabold">+{formatINR(comparison.extraBonus)} Cash Advantage</span>
                   </div>
                 </div>
 
                 <div className="p-2.5 rounded-xl bg-emerald-100/70 border border-emerald-200 text-center">
                   <p className="text-xs text-emerald-950 font-bold">
-                    🎉 You receive <span className="font-black text-emerald-900 underline">{user ? `+${formatINR(comparison.extraBonus)} Extra Cash` : 'Extra Cash Bonus'}</span> over standard market rates with 100% free doorstep pickup & instant payment!
+                    🎉 You receive <span className="font-black text-emerald-900 underline">{user ? `+${formatINR(comparison.extraBonus)} Extra Cash` : 'Up to +₹1,000 Extra Cash'}</span> over Cashify & market rates with 100% free doorstep pickup & instant payment!
                   </p>
                 </div>
               </div>

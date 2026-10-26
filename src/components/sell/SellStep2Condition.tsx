@@ -182,24 +182,11 @@ export default function SellStep2Condition({
               <span className="font-display text-2xl sm:text-3xl font-black text-white">
                 {effectiveBasePrice > 0 ? formatINR(effectiveBasePrice) : 'Calculating...'}
               </span>
-
             </div>
             <p className="text-[11px] text-gray-300">
-              Maximum starting valuation. Your answers below adjust this price transparently.
+              Starting base quote. Your answers below will generate your final spot cash quote.
             </p>
           </div>
-
-          {/* <div className="bg-white/10 rounded-xl px-4 py-3 border border-white/10 text-center sm:text-right shrink-0 w-full sm:w-auto">
-            <div className="text-[10px] uppercase font-extrabold text-[#9ac0dd] tracking-wider">
-              Current Live Estimate
-            </div>
-            <div className="font-display text-2xl sm:text-3xl font-black text-emerald-400">
-              {user ? formatINR(currentLiveOffer) : formatMaskedPrice(currentLiveOffer)}
-            </div>
-            <div className="text-[11px] font-semibold text-emerald-300 mt-0.5">
-              Instant Valuation
-            </div>
-          </div> */}
         </div>
 
         {/* 1. Critical Device Status & Ownership */}
