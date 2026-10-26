@@ -1623,16 +1623,37 @@ export default function Admin() {
               onSelectPricing={(id) => setSelectedPricingId(id)}
               onSavePriceConfig={async (configData) => {
                 const payload = { ...configData };
-                if (payload.id) {
+                const bNorm = (payload.brand || '').trim().toLowerCase();
+                let mNorm = (payload.model || '').trim().toLowerCase();
+                if (bNorm && mNorm.startsWith(bNorm)) {
+                  mNorm = mNorm.slice(bNorm.length).trim();
+                }
+                const sNorm = (payload.storage || '').replace(/\s+/g, '').toLowerCase();
+
+                const existing = payload.id
+                  ? sellPriceConfigs.find((c) => c.id === payload.id)
+                  : sellPriceConfigs.find((c) => {
+                      const cB = (c.brand || '').trim().toLowerCase();
+                      let cM = (c.model || '').trim().toLowerCase();
+                      if (cB && cM.startsWith(cB)) cM = cM.slice(cB.length).trim();
+                      const cS = (c.storage || '').replace(/\s+/g, '').toLowerCase();
+                      const modelMatches = cM === mNorm || cM.includes(mNorm) || mNorm.includes(cM);
+                      const storageMatches = !sNorm || !cS || cS === sNorm;
+                      return cB === bNorm && modelMatches && storageMatches;
+                    });
+
+                const targetId = payload.id || existing?.id;
+
+                if (targetId) {
                   const { data, error } = await db
                     .from('sell_price_configs')
                     .update(payload)
-                    .eq('id', payload.id)
+                    .eq('id', targetId)
                     .select('*')
                     .single();
                   if (error) throw error;
                   setSellPriceConfigs((prev) =>
-                    prev.map((c) => (c.id === payload.id ? (data as SellPriceConfig) : c))
+                    prev.map((c) => (c.id === targetId ? (data as SellPriceConfig) : c))
                   );
                 } else {
                   const { data, error } = await db

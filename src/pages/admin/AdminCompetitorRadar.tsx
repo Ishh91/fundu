@@ -21,6 +21,7 @@ import {
 import { formatINR } from '../../lib/db';
 import { API_BASE } from '../../config/apiConfig';
 import { getCleanPhoneImage, BRAND_FRONT_FALLBACKS, getGenericDevicePlaceholder } from '../../lib/phoneImages';
+import { savePriceOverride } from '../../lib/priceSync';
 
 interface CompetitorData {
   id: string;
@@ -231,6 +232,7 @@ export default function AdminCompetitorRadar() {
       });
 
       if (!res.ok) throw new Error('Failed to update price in database');
+      savePriceOverride(selectedBrand, searchModel, priceToSave, selectedStorage);
       setSaveSuccess(true);
       // Refresh radar data
       fetchRadar(selectedBrand, searchModel, selectedStorage);

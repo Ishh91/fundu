@@ -27,18 +27,53 @@ export function getLocalPriceOverrides(): Record<string, number> {
 }
 
 /**
+ * Generates all normalized lookup keys for matching brand + model + storage variations
+ */
+export function getPriceLookupKeys(brand: string, model: string, storage?: string): string[] {
+  const b = (brand || '').trim().toLowerCase();
+  let m = (model || '').trim().toLowerCase();
+
+  // Strip brand prefix if model already contains brand (e.g. 'Apple iPhone 15' -> 'iphone 15')
+  let cleanM = m;
+  if (b && cleanM.startsWith(b)) {
+    cleanM = cleanM.slice(b.length).trim();
+  }
+
+  const models = Array.from(new Set([cleanM, m])).filter(Boolean);
+  const s = storage ? storage.trim().toLowerCase() : null;
+  const sNorm = s ? s.replace(/\s+/g, '') : null;
+
+  const storageVariants = Array.from(new Set([sNorm, s])).filter((x): x is string => Boolean(x));
+  const keys: string[] = [];
+
+  // 1. Storage-specific exact variant keys first
+  models.forEach((mod) => {
+    storageVariants.forEach((stg) => {
+      if (b) keys.push(`${b}:${mod}:${stg}`);
+      keys.push(`${mod}:${stg}`);
+    });
+  });
+
+  // 2. Base model fallback keys
+  models.forEach((mod) => {
+    if (b) keys.push(`${b}:${mod}`);
+    keys.push(mod);
+  });
+
+  return keys;
+}
+
+/**
  * Saves a price override for a specific brand + model (or storage)
  */
 export function savePriceOverride(brand: string, model: string, newPrice: number, storage?: string) {
   if (typeof window === 'undefined') return;
   const current = getLocalPriceOverrides();
-  const key = `${brand.trim().toLowerCase()}:${model.trim().toLowerCase()}`;
-  current[key] = newPrice;
+  const keys = getPriceLookupKeys(brand, model, storage);
   
-  if (storage) {
-    const keyWithStorage = `${key}:${storage.trim().toLowerCase()}`;
-    current[keyWithStorage] = newPrice;
-  }
+  keys.forEach((k) => {
+    current[k] = newPrice;
+  });
 
   localStorage.setItem(OVERRIDES_STORAGE_KEY, JSON.stringify(current));
 
@@ -54,39 +89,41 @@ export function savePriceOverride(brand: string, model: string, newPrice: number
  */
 export function getEffectivePrice(brand: string, model: string, defaultPrice: number, storage?: string): number {
   const overrides = getLocalPriceOverrides();
-  const key = `${brand.trim().toLowerCase()}:${model.trim().toLowerCase()}`;
-  
-  let price = defaultPrice;
-  if (storage) {
-    const keyWithStorage = `${key}:${storage.trim().toLowerCase()}`;
-    if (overrides[keyWithStorage] !== undefined) {
-      price = overrides[keyWithStorage];
+  const keys = getPriceLookupKeys(brand, model, storage);
+
+  for (const k of keys) {
+    const val = overrides[k];
+    if (typeof val === 'number' && val > 0 && val <= 250000) {
+      return val;
     }
   }
 
-  if (price === defaultPrice && overrides[key] !== undefined) {
-    price = overrides[key];
+  // Reject unrealistic price overrides (e.g. corrupt values exceeding ₹2,50,000)
+  if (typeof defaultPrice === 'number' && defaultPrice > 250000) {
+    return 50000;
   }
 
-  // Reject unrealistic price overrides (e.g. corrupt values exceeding ₹2,00,000)
-  if (typeof price === 'number' && price > 200000) {
-    return defaultPrice > 0 && defaultPrice <= 200000 ? defaultPrice : 50000;
-  }
-
-  return price;
+  return defaultPrice;
 }
 
 /**
  * Helper to apply dynamic price overrides to any array of phone models
  */
-export function applyPriceOverrides<T extends { brand: string; model: string; price?: number; base_resale_value?: number }>(
+export function applyPriceOverrides<T extends { brand: string; model: string; storage?: string; price?: number; base_resale_value?: number }>(
   items: T[]
 ): T[] {
   const overrides = getLocalPriceOverrides();
   return items.map((item) => {
-    const key = `${item.brand.trim().toLowerCase()}:${item.model.trim().toLowerCase()}`;
-    const overridePrice = overrides[key];
-    
+    const keys = getPriceLookupKeys(item.brand, item.model, item.storage);
+    let overridePrice: number | undefined;
+
+    for (const k of keys) {
+      if (typeof overrides[k] === 'number' && overrides[k] > 0) {
+        overridePrice = overrides[k];
+        break;
+      }
+    }
+
     if (overridePrice !== undefined) {
       return {
         ...item,
@@ -144,31 +181,21 @@ export function usePriceSync() {
     const pullPriceRules = () => {
       db.from('sell_price_configs')
         .select('*')
+        .limit(5000)
         .then(({ data }) => {
           if (Array.isArray(data) && data.length > 0) {
             const current = getLocalPriceOverrides();
             let changed = false;
 
             data.forEach((rule: any) => {
-              if (rule.brand && rule.model && rule.base_price) {
-                const baseKey = `${rule.brand.trim().toLowerCase()}:${rule.model.trim().toLowerCase()}`;
-                const stg = rule.storage ? rule.storage.trim().toLowerCase() : null;
-                const storageKey = stg ? `${baseKey}:${stg}` : null;
-
-                if (storageKey) {
-                  if (current[storageKey] !== rule.base_price) {
-                    current[storageKey] = rule.base_price;
+              if (rule.brand && rule.model && typeof rule.base_price === 'number' && rule.base_price > 0) {
+                const keys = getPriceLookupKeys(rule.brand, rule.model, rule.storage);
+                keys.forEach((k) => {
+                  if (current[k] !== rule.base_price) {
+                    current[k] = rule.base_price;
                     changed = true;
                   }
-                }
-
-                // Baseline key (used when storage is unspecified or default baseline variant)
-                if (!stg || stg.includes('128') || current[baseKey] === undefined) {
-                  if (current[baseKey] !== rule.base_price) {
-                    current[baseKey] = rule.base_price;
-                    changed = true;
-                  }
-                }
+                });
               }
             });
 

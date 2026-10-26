@@ -665,6 +665,12 @@ export default function SellPhone() {
       return pricingConfig.base_price;
     }
 
+    // 2. Check dynamic database synced price from priceSync
+    const directEffective = getEffectivePrice(form.brand, form.model, 0, form.storage);
+    if (directEffective > 0) {
+      return directEffective;
+    }
+
     const master = MASTER_MODEL_CATALOG.find((m) =>
       m.model.toLowerCase() === modelNorm ||
       `${m.brand} ${m.model}`.toLowerCase() === `${brandNorm} ${modelNorm}` ||

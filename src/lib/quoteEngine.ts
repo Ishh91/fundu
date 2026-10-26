@@ -5,6 +5,7 @@ import {
   FUNDU_POLICY,
   FUNDU_SERVICE_LOCALITIES,
 } from '../../fundu_phone_quote.mjs';
+import { getEffectivePrice } from './priceSync';
 
 export interface FunduQuoteRequest {
   brand: string;
@@ -92,8 +93,14 @@ export async function getFunduPhoneQuote(params: FunduQuoteRequest): Promise<Fun
     // Server connection fallback: run deterministic quote algorithm locally
   }
 
-  // Local fallback execution using the exact same formula
-  const localResult = quotePhone(params);
+  // Local fallback execution using the exact same formula, grounded in database price if available
+  const dbPrice = getEffectivePrice(params.brand, params.model, 0, params.storage);
+  const quoteOptions = dbPrice > 0 ? {
+    catalogPrice: dbPrice,
+    catalogStorage: params.storage || '128 GB',
+    isDirectBuybackPrice: true,
+  } : {};
+  const localResult = quotePhone(params, quoteOptions);
   const { _internalAudit, ...publicQuote } = localResult as any;
   return publicQuote as FunduQuoteResponse;
 }

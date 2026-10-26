@@ -23,7 +23,7 @@ import {
 } from 'lucide-react';
 import { formatINR } from '../lib/db';
 import { getCleanPhoneImage, getCleanBrandLogo, BRAND_FRONT_FALLBACKS, getGenericDevicePlaceholder } from '../lib/phoneImages';
-import { usePriceSync, applyPriceOverrides, isModelDeleted } from '../lib/priceSync';
+import { usePriceSync, applyPriceOverrides, isModelDeleted, getEffectivePrice } from '../lib/priceSync';
 import { MASTER_MODEL_CATALOG } from '../data/masterModelCatalog';
 import { fetchBrandCatalogFromApi, getDynamicFallbackConfig, calculateMarketPriceComparison, type CatalogModelItem } from '../lib/mobileApi';
 import { ALL_INDIAN_PHONES_CATALOG } from '../data/indianPhonesCatalog';
@@ -445,6 +445,10 @@ export default function SellBrandPage() {
 
   // Helper to resolve guaranteed non-zero estimated valuation for any phone model
   const getModelEstimatedPrice = (m: CatalogModelItem): number => {
+    // 1. Authoritative Admin/Database synced price
+    const liveDbPrice = getEffectivePrice(m.brand || brandDisplayName, m.model, 0, m.storage);
+    if (liveDbPrice > 0) return liveDbPrice;
+
     if (m.price && m.price > 0) return m.price;
     if (m.base_resale_value && m.base_resale_value > 0) return m.base_resale_value;
     const modelNorm = m.model.toLowerCase().trim();
