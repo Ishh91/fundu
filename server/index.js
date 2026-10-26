@@ -5,8 +5,9 @@ import dotenv from 'dotenv';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Load .env FIRST before importing any routes or services
+// Load .env FIRST before importing any routes or services (if present locally)
 dotenv.config({ path: path.resolve(__dirname, '..', '.env') });
+dotenv.config();
 
 import express from 'express';
 import cors from 'cors';
@@ -43,12 +44,39 @@ app.use((req, res, next) => {
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
+// Ensure DB is connected for serverless invocations
+app.use(async (_req, _res, next) => {
+  try {
+    await connectDB();
+  } catch (err) {
+    console.error('Serverless DB connection notice:', err.message || err);
+  }
+  next();
+});
+
 app.use(parseAuth);
-app.use('/api', apiRoutes);
+
+// Health check and root ping
+app.get('/', (_req, res) => {
+  res.json({
+    status: 'ok',
+    service: 'fundu-api',
+    message: 'Fundu Backend API is live and operational',
+    time: new Date().toISOString(),
+  });
+});
 
 app.get('/health', (_req, res) => {
   res.json({ status: 'ok', service: 'fundu-api', time: new Date().toISOString() });
 });
+
+app.get('/api/health', (_req, res) => {
+  res.json({ status: 'ok', service: 'fundu-api', time: new Date().toISOString() });
+});
+
+// Mount routes under both /api and / for flexible routing
+app.use('/api', apiRoutes);
+app.use('/', apiRoutes);
 
 // Global Error Handler with guaranteed CORS headers on failure
 app.use((err, req, res, _next) => {
@@ -70,7 +98,11 @@ async function startServer() {
   });
 }
 
-startServer().catch((err) => {
-  console.error('Failed to start server:', err);
-  process.exit(1);
-});
+// Only start the HTTP listener when NOT running inside Vercel Serverless
+if (!process.env.VERCEL) {
+  startServer().catch((err) => {
+    console.error('Failed to start server:', err);
+  });
+}
+
+export default app;

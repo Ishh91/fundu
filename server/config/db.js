@@ -330,6 +330,10 @@ export const seedDatabase = async () => {
 };
 
 export const connectDB = async () => {
+  if (mongoose.connection && mongoose.connection.readyState >= 1) {
+    return;
+  }
+
   const MONGODB_URI = process.env.MONGODB_URI || process.env.VITE_MONGODB_URI;
   const MONGODB_DB_NAME = process.env.MONGODB_DB_NAME || 'fundu';
 

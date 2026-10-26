@@ -2,7 +2,8 @@
  * API Configuration helper for Fundu App
  * Supports both unified same-origin /api (Vercel serverless) and external backend URLs
  */
-export const RENDER_BACKEND_URL = 'https://fundu.onrender.com/api';
+export const PROD_BACKEND_URL = 'https://funduserver.vercel.app/api';
+export const RENDER_BACKEND_URL = PROD_BACKEND_URL;
 
 export const getApiBaseUrl = (): string => {
   const envUrl = (typeof import.meta !== 'undefined' && import.meta?.env?.VITE_API_URL)
