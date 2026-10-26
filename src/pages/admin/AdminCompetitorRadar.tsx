@@ -232,7 +232,7 @@ export default function AdminCompetitorRadar() {
       });
 
       if (!res.ok) throw new Error('Failed to update price in database');
-      savePriceOverride(selectedBrand, searchModel, priceToSave, selectedStorage);
+      savePriceOverride(selectedBrand, searchModel, newPrice, selectedStorage);
       setSaveSuccess(true);
       // Refresh radar data
       fetchRadar(selectedBrand, searchModel, selectedStorage);
