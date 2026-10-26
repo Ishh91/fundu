@@ -2380,13 +2380,19 @@ export function lookupResaleBenchmark(brand, model, storage, options = {}) {
 
   // Direct catalog price override (e.g. from phonesCatalog.json or DB)
   if (options.catalogPrice && options.catalogPrice > 0) {
+    const baseStorage = options.catalogStorage ? normalizeStorage(options.catalogStorage) : '128 GB';
+    const baseMult = calculateHardwareVariantMultiplier(baseStorage, '', brand);
+    const targetMult = calculateHardwareVariantMultiplier(normStorage, ram, brand);
+    const ratio = (baseMult > 0) ? (targetMult / baseMult) : 1.0;
+    const adjustedProceeds = Math.max(500, Math.round((options.catalogPrice * ratio) / 50) * 50);
+
     return {
       found: true,
       benchmark: {
         brand: brand || 'Smartphone',
         model: options.cleanedModel || model,
         storage: normStorage,
-        proceeds: options.catalogPrice,
+        proceeds: adjustedProceeds,
         lastUpdated: '2026-10-24',
       },
     };
@@ -2666,7 +2672,11 @@ export function quotePhone(input = {}, options = {}) {
 
   // 5. Compute Deductions & Adjustments according to Business Formula
   const cosmeticKey = String(cosmetic_condition).toLowerCase();
-  const cosmeticMultiplier = FUNDU_POLICY.cosmeticMultipliers[cosmeticKey] ?? FUNDU_POLICY.cosmeticMultipliers.good;
+  const activeCosmeticMultipliers = {
+    ...FUNDU_POLICY.cosmeticMultipliers,
+    ...(options.cosmeticMultipliers || {}),
+  };
+  const cosmeticMultiplier = activeCosmeticMultipliers[cosmeticKey] ?? activeCosmeticMultipliers.good ?? 1.0;
 
   // Customer-facing condition explanations
   const conditionReasons = [];

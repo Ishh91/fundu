@@ -3463,7 +3463,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Realme Number & Plus Series",
     "model": "Realme 10 5G",
     "storage": "128 GB",
-    "price": 7400,
+    "price": 6000,
     "image": "https://api.mobileapi.dev/devices/13759/thumb.png"
   },
   {

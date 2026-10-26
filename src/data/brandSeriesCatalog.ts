@@ -1283,7 +1283,7 @@ export const BRAND_SERIES_DEFINITIONS: Record<string, BrandSeriesDefinition[]> =
         { brand: 'Realme', series: 'Realme Number & Plus Series', model: 'Realme 12x 5G', storage: '128 GB', price: 8200, image: 'https://api.mobileapi.dev/devices/13726/thumb.png' },
         { brand: 'Realme', series: 'Realme Number & Plus Series', model: 'Realme 11 5G', storage: '128 GB', price: 9600, image: 'https://api.mobileapi.dev/devices/13819/thumb.png' },
         { brand: 'Realme', series: 'Realme Number & Plus Series', model: 'Realme 11x 5G', storage: '128 GB', price: 8700, image: 'https://api.mobileapi.dev/devices/13739/thumb.png' },
-        { brand: 'Realme', series: 'Realme Number & Plus Series', model: 'Realme 10 5G', storage: '128 GB', price: 18450, image: 'https://api.mobileapi.dev/devices/13759/thumb.png' },
+        { brand: 'Realme', series: 'Realme Number & Plus Series', model: 'Realme 10 5G', storage: '128 GB', price: 6000, image: 'https://api.mobileapi.dev/devices/13759/thumb.png' },
         { brand: 'Realme', series: 'Realme Number & Plus Series', model: 'Realme 9i 5G', storage: '64 GB', price: 6800, image: 'https://api.mobileapi.dev/devices/13763/thumb.png' },
         { brand: 'Realme', series: 'Realme Number & Plus Series', model: 'Realme 8 5G', storage: '64 GB', price: 6600, image: 'https://fdn2.gsmarena.com/vv/bigpic/realme-8-5g.jpg' },
       ],
