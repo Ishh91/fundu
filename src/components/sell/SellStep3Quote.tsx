@@ -266,11 +266,7 @@ export default function SellStep3Quote({
                   </div>
                 </div> */}
 
-                <div className="p-2.5 rounded-xl bg-emerald-100/70 border border-emerald-200 text-center">
-                  <p className="text-xs text-emerald-950 font-bold">
-                    🎉 You receive <span className="font-black text-emerald-900 underline">{user ? `+${formatINR(comparison.extraBonus)} Extra Cash` : 'Up to +₹1,000 Extra Cash'}</span> over Cashify & market rates with 100% free doorstep pickup & instant payment!
-                  </p>
-                </div>
+
               </div>
             );
           })()}
