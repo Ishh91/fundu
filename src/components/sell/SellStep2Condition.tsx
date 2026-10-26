@@ -26,6 +26,8 @@ interface SellStep2ConditionProps {
     getRamsForStorage: (stg: string) => string[];
   };
   brandSlug?: string;
+  baseModelPrice?: number;
+  pricingConfig?: any;
   estimate: number;
   user: any;
   handleGoToLoginForExactPrice: (targetStep?: number) => void;
@@ -41,6 +43,8 @@ export default function SellStep2Condition({
   setForm,
   currentDeviceSpecs,
   brandSlug,
+  baseModelPrice,
+  pricingConfig,
   estimate,
   user,
   handleGoToLoginForExactPrice,
@@ -53,6 +57,14 @@ export default function SellStep2Condition({
   const availableRams = currentDeviceSpecs?.getRamsForStorage
     ? currentDeviceSpecs.getRamsForStorage(form.storage)
     : (currentDeviceSpecs?.rams || []);
+
+  const effectiveBasePrice = (baseModelPrice && baseModelPrice > 0)
+    ? baseModelPrice
+    : (pricingConfig?.base_price || 0);
+
+  const rawOffer = funduQuote?.offerAmount ?? estimate;
+  const currentLiveOffer = Math.min(effectiveBasePrice > 0 ? effectiveBasePrice : 180000, Math.max(500, rawOffer));
+  const totalDeductions = effectiveBasePrice > 0 ? Math.max(0, effectiveBasePrice - currentLiveOffer) : 0;
 
   return (
     <div className="max-w-3xl mx-auto space-y-6 animate-fade-in">
@@ -154,6 +166,47 @@ export default function SellStep2Condition({
             <span className="badge bg-[#F0F0F5] text-[#344257] border border-[#C0C8D8] text-[10px] font-bold px-2 py-0.5">
               Step 2 of 4
             </span>
+          </div>
+        </div>
+
+        {/* BASE PRICE & LIVE REAL-TIME OFFER HERO BAR */}
+        <div className="rounded-2xl bg-gradient-to-r from-[#1E2734] via-[#344257] to-[#47576E] p-4 sm:p-5 text-white shadow-lg flex flex-col sm:flex-row items-center justify-between gap-4 border border-[#C0C8D8]/20">
+          <div className="text-center sm:text-left space-y-1">
+            <div className="flex items-center justify-center sm:justify-start gap-2">
+              <span className="badge bg-white/20 text-white font-black text-[10px] tracking-wider uppercase px-2 py-0.5 rounded-md">
+                Starting Base Price
+              </span>
+              <span className="text-[11px] text-emerald-300 font-bold">100% Flawless Benchmark</span>
+            </div>
+            <div className="flex items-baseline justify-center sm:justify-start gap-2">
+              <span className="font-display text-2xl sm:text-3xl font-black text-white">
+                {effectiveBasePrice > 0 ? formatINR(effectiveBasePrice) : 'Calculating...'}
+              </span>
+              <span className="text-xs text-gray-300 font-medium">(Database Driven)</span>
+            </div>
+            <p className="text-[11px] text-gray-300">
+              Maximum starting valuation. Your answers below adjust this price transparently.
+            </p>
+          </div>
+
+          <div className="bg-white/10 rounded-xl px-4 py-3 border border-white/10 text-center sm:text-right shrink-0 w-full sm:w-auto">
+            <div className="text-[10px] uppercase font-extrabold text-[#9ac0dd] tracking-wider">
+              Current Live Estimate
+            </div>
+            <div className="font-display text-2xl sm:text-3xl font-black text-emerald-400">
+              {user ? formatINR(currentLiveOffer) : formatMaskedPrice(currentLiveOffer)}
+            </div>
+            <div className="text-[11px] font-semibold text-gray-200 mt-0.5">
+              {totalDeductions > 0 ? (
+                <span className="text-rose-300 font-bold">
+                  - {formatINR(totalDeductions)} deductions applied
+                </span>
+              ) : (
+                <span className="text-emerald-300 font-bold">
+                  ✓ Full base quote preserved
+                </span>
+              )}
+            </div>
           </div>
         </div>
 
@@ -576,6 +629,41 @@ export default function SellStep2Condition({
             )}
           </div>
         )}
+
+        {/* STICKY / BOTTOM LIVE VALUATION SUMMARY CARD */}
+        <div className="p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-[#1E2734] via-[#344257] to-[#47576E] text-white shadow-xl flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="space-y-1 text-center sm:text-left">
+            <span className="text-[10px] uppercase font-black tracking-widest text-[#9ac0dd]">
+              Live Real-Time Buyback Estimate
+            </span>
+            <div className="flex items-baseline gap-2 justify-center sm:justify-start">
+              <span className="font-display text-3xl sm:text-4xl font-black text-white">
+                {user ? formatINR(currentLiveOffer) : formatMaskedPrice(currentLiveOffer)}
+              </span>
+              {effectiveBasePrice > 0 && totalDeductions > 0 && (
+                <span className="text-xs text-rose-300 font-bold">
+                  (Base: {formatINR(effectiveBasePrice)} - {formatINR(totalDeductions)})
+                </span>
+              )}
+            </div>
+            <p className="text-xs text-gray-300">
+              {totalDeductions === 0
+                ? '✨ Maximum base quote preserved! 100% full payout for flawless condition.'
+                : `Deductions calculated for ${form.cosmeticCondition} condition & selected diagnostics.`}
+            </p>
+          </div>
+
+          <button
+            type="button"
+            onClick={() => goToStep(3)}
+            className="btn bg-white text-[#344257] hover:bg-gray-100 font-black text-sm px-6 py-3 rounded-xl flex items-center gap-2 shadow-md shrink-0 w-full sm:w-auto justify-center transition cursor-pointer"
+          >
+            {funduQuote?.status === 'requires_manual_review'
+              ? 'View Inspection Details'
+              : 'Lock Price & Schedule Pickup'}{' '}
+            <ArrowRight className="h-4 w-4 text-[#344257]" />
+          </button>
+        </div>
 
         <div className="flex justify-between gap-3 pt-4 border-t border-gray-100">
           <button type="button" onClick={handleStep2Back} className="btn-outline text-sm">

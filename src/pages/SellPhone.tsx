@@ -1355,6 +1355,8 @@ export default function SellPhone() {
             setForm={setForm}
             currentDeviceSpecs={currentDeviceSpecs}
             brandSlug={brandSlug}
+            baseModelPrice={baseModelPrice}
+            pricingConfig={pricingConfig}
             estimate={estimate}
             user={user}
             handleGoToLoginForExactPrice={handleGoToLoginForExactPrice}
