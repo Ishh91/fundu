@@ -1,6 +1,6 @@
 /**
  * API Configuration helper for Fundu App
- * Exclusively connected to the production Render cloud backend
+ * Supports both unified same-origin /api (Vercel serverless) and external backend URLs
  */
 export const RENDER_BACKEND_URL = 'https://fundu.onrender.com/api';
 
@@ -8,10 +8,18 @@ export const getApiBaseUrl = (): string => {
   const envUrl = (typeof import.meta !== 'undefined' && import.meta?.env?.VITE_API_URL)
     ? import.meta.env.VITE_API_URL
     : (typeof process !== 'undefined' ? process.env?.VITE_API_URL : undefined);
-  if (envUrl && !envUrl.includes('localhost') && !envUrl.includes('127.0.0.1') && envUrl !== '/api') {
+
+  if (envUrl && !envUrl.includes('localhost') && !envUrl.includes('127.0.0.1')) {
     return envUrl.replace(/\/$/, '');
   }
-  return RENDER_BACKEND_URL;
+
+  // When running on the production domain thefundu.com, use relative /api for zero-CORS same-domain deployment
+  if (typeof window !== 'undefined' && window.location.hostname.includes('thefundu.com')) {
+    return '/api';
+  }
+
+  // Default to relative /api (works with local Vite proxy and Vercel)
+  return '/api';
 };
 
 export const API_BASE = getApiBaseUrl();
