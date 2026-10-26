@@ -44,6 +44,7 @@ import {
 } from '../../lib/priceSync';
 import { ALL_INDIAN_PHONES_CATALOG } from '../../data/indianPhonesCatalog';
 import { MASTER_MODEL_CATALOG } from '../../data/masterModelCatalog';
+import { getModelHardwareSpecs, calculateHardwareVariantMultiplier } from '../../lib/deviceSpecs';
 
 export type UnifiedSellModel = {
   id: string;
@@ -446,12 +447,76 @@ export default function AdminSellPricing({
     return filteredModels[0] || unifiedModels[0] || null;
   }, [selectedPricingId, unifiedModels, filteredModels]);
 
-  // Sync inlinePrice state when selectedModel changes
+  // Selected Storage Variant on Right Panel
+  const [selectedStorage, setSelectedStorage] = useState<string>('');
+
+  // Default to model's base storage when selectedModel changes
   React.useEffect(() => {
     if (selectedModel) {
-      setInlinePrice(String(selectedModel.base_price));
+      setSelectedStorage(selectedModel.storage || '128 GB');
     }
-  }, [selectedModel?.id, selectedModel?.base_price]);
+  }, [selectedModel?.id]);
+
+  // All official and configured storage options for this model
+  const selectedModelStorages = useMemo(() => {
+    if (!selectedModel) return ['128 GB'];
+    const specs = getModelHardwareSpecs(selectedModel.brand, selectedModel.model, MASTER_MODEL_CATALOG);
+    const set = new Set<string>();
+    if (selectedModel.storage) set.add(selectedModel.storage);
+    (specs.storages || []).forEach((s) => set.add(s));
+
+    configs.forEach((c) => {
+      const bMatch = c.brand.toLowerCase() === selectedModel.brand.toLowerCase();
+      const mMatch = c.model.toLowerCase() === selectedModel.model.toLowerCase() ||
+                     c.model.toLowerCase().includes(selectedModel.model.toLowerCase()) ||
+                     selectedModel.model.toLowerCase().includes(c.model.toLowerCase());
+      if (bMatch && mMatch && c.storage) {
+        set.add(c.storage);
+      }
+    });
+
+    const arr = Array.from(set);
+    return arr.length > 0 ? arr : ['64 GB', '128 GB', '256 GB'];
+  }, [selectedModel, configs]);
+
+  // Helper to get variant pricing for any storage option of the selected model
+  const getStorageVariantPricing = (stg: string) => {
+    if (!selectedModel) return { basePrice: 0, isCustom: false, config: null as SellPriceConfig | null };
+    const sNorm = stg.replace(/\s+/g, '').toLowerCase();
+    const match = configs.find((c) => {
+      const bMatch = c.brand.toLowerCase() === selectedModel.brand.toLowerCase();
+      const mMatch = c.model.toLowerCase() === selectedModel.model.toLowerCase() ||
+                     c.model.toLowerCase().includes(selectedModel.model.toLowerCase()) ||
+                     selectedModel.model.toLowerCase().includes(c.model.toLowerCase());
+      const stgMatch = (c.storage || '').replace(/\s+/g, '').toLowerCase() === sNorm;
+      return bMatch && mMatch && stgMatch;
+    });
+
+    if (match && match.base_price > 0) {
+      return { basePrice: match.base_price, isCustom: true, config: match };
+    }
+
+    const baseStorage = selectedModel.storage || '128 GB';
+    const baseMult = calculateHardwareVariantMultiplier(baseStorage, '', selectedModel.brand);
+    const targetMult = calculateHardwareVariantMultiplier(stg, '', selectedModel.brand);
+    const ratio = baseMult > 0 ? targetMult / baseMult : 1.0;
+    return {
+      basePrice: Math.max(500, Math.round((selectedModel.base_price * ratio) / 50) * 50),
+      isCustom: false,
+      config: null as SellPriceConfig | null,
+    };
+  };
+
+  const activeVariantPricing = useMemo(() => {
+    return getStorageVariantPricing(selectedStorage || selectedModel?.storage || '128 GB');
+  }, [selectedModel, selectedStorage, configs]);
+
+  // Sync inlinePrice state when selectedModel or activeVariantPricing changes
+  React.useEffect(() => {
+    if (activeVariantPricing.basePrice > 0) {
+      setInlinePrice(String(activeVariantPricing.basePrice));
+    }
+  }, [activeVariantPricing.basePrice, selectedStorage, selectedModel?.id]);
 
   // Open Image Change Modal
   const handleOpenImageModal = (modelItem: UnifiedSellModel) => {
@@ -605,23 +670,26 @@ export default function AdminSellPricing({
 
     setInlineSaving(true);
     try {
+      const storageToSave = selectedStorage || selectedModel.storage || '128 GB';
+      const existingCfg = activeVariantPricing.config;
+
       await onSavePriceConfig({
-        id: selectedModel.configId,
+        id: existingCfg?.id,
         brand: selectedModel.brand,
         model: selectedModel.model,
-        storage: selectedModel.storage,
+        storage: storageToSave,
         base_price: priceNum,
-        excellent_multiplier: selectedModel.excellent_multiplier,
-        good_multiplier: selectedModel.good_multiplier,
-        fair_multiplier: selectedModel.fair_multiplier,
-        box_bonus: selectedModel.box_bonus,
-        charger_bonus: selectedModel.charger_bonus,
+        excellent_multiplier: existingCfg?.excellent_multiplier ?? selectedModel.excellent_multiplier,
+        good_multiplier: existingCfg?.good_multiplier ?? selectedModel.good_multiplier,
+        fair_multiplier: existingCfg?.fair_multiplier ?? selectedModel.fair_multiplier,
+        box_bonus: existingCfg?.box_bonus ?? selectedModel.box_bonus,
+        charger_bonus: existingCfg?.charger_bonus ?? selectedModel.charger_bonus,
         is_active: selectedModel.is_active,
       });
 
-      savePriceOverride(selectedModel.brand, selectedModel.model, priceNum, selectedModel.storage);
+      savePriceOverride(selectedModel.brand, selectedModel.model, priceNum, storageToSave);
       setRefreshVer((v) => v + 1);
-      alert(`✅ Updated base price to ${formatINR(priceNum)} for ${selectedModel.brand} ${selectedModel.model}!`);
+      alert(`✅ Updated base price to ${formatINR(priceNum)} for ${selectedModel.brand} ${selectedModel.model} (${storageToSave})!`);
     } catch (err: any) {
       alert(err?.message || 'Failed to update base price');
     } finally {
@@ -1043,7 +1111,7 @@ export default function AdminSellPricing({
                       ⚡ Quick Resale Price Controller
                     </span>
                     <h4 className="font-display text-base font-black text-gray-900 mt-0.5">
-                      Base Valuation: {formatINR(selectedModel.base_price)}
+                      Base Valuation ({selectedStorage || selectedModel.storage}): {formatINR(activeVariantPricing.basePrice)}
                     </h4>
                   </div>
                   <span className="badge bg-emerald-100 text-emerald-800 text-[10px] font-bold">
@@ -1051,7 +1119,51 @@ export default function AdminSellPricing({
                   </span>
                 </div>
 
-                <div className="flex items-center gap-3">
+                {/* Storage Variant Selector for this Model */}
+                <div className="space-y-1.5 pt-1">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[11px] font-bold text-gray-700 flex items-center gap-1">
+                      <Layers className="h-3.5 w-3.5 text-emerald-700" /> Select Storage Variant to View / Update:
+                    </span>
+                    <span className="text-[10px] text-gray-500 font-semibold">
+                      {selectedModelStorages.length} variants available
+                    </span>
+                  </div>
+                  <div className="flex flex-wrap gap-1.5">
+                    {selectedModelStorages.map((stg) => {
+                      const vInfo = getStorageVariantPricing(stg);
+                      const isSelected = (selectedStorage || selectedModel.storage) === stg;
+                      return (
+                        <button
+                          key={stg}
+                          type="button"
+                          onClick={() => setSelectedStorage(stg)}
+                          className={`px-3 py-1.5 rounded-xl text-xs font-black transition flex items-center gap-1.5 cursor-pointer ${
+                            isSelected
+                              ? 'bg-emerald-700 text-white shadow-sm ring-2 ring-emerald-500'
+                              : 'bg-white text-gray-700 border border-gray-300 hover:border-emerald-500 hover:bg-emerald-50/50'
+                          }`}
+                        >
+                          <span>{stg}</span>
+                          <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${
+                            isSelected ? 'bg-emerald-800 text-emerald-100' : 'bg-gray-100 text-gray-600'
+                          }`}>
+                            {formatINR(vInfo.basePrice)}
+                          </span>
+                          {vInfo.isCustom && (
+                            <span className={`text-[9px] font-extrabold uppercase px-1 rounded ${
+                              isSelected ? 'bg-amber-400 text-amber-950' : 'bg-amber-100 text-amber-800'
+                            }`}>
+                              Custom
+                            </span>
+                          )}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-3 pt-1">
                   <div className="relative flex-1">
                     <span className="absolute left-3.5 top-1/2 -translate-y-1/2 font-bold text-gray-400 text-sm">₹</span>
                     <input
@@ -1066,14 +1178,14 @@ export default function AdminSellPricing({
                   <button
                     type="button"
                     onClick={handleSaveInlinePrice}
-                    disabled={inlineSaving || Number(inlinePrice) === selectedModel.base_price}
+                    disabled={inlineSaving || Number(inlinePrice) === activeVariantPricing.basePrice}
                     className="btn bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 text-white font-extrabold text-xs px-5 py-3 rounded-xl flex items-center gap-1.5 shadow-md cursor-pointer transition"
                   >
                     {inlineSaving ? 'Saving...' : 'Save Price'}
                   </button>
                 </div>
                 <p className="text-[11px] text-gray-500">
-                  Customers selling their <strong className="text-gray-800">{selectedModel.brand} {selectedModel.model}</strong> will immediately see this updated rate on the sell page.
+                  Customers selling their <strong className="text-gray-800">{selectedModel.brand} {selectedModel.model} ({selectedStorage || selectedModel.storage})</strong> will immediately see this updated rate on the sell page.
                 </p>
               </div>
 
@@ -1081,7 +1193,7 @@ export default function AdminSellPricing({
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
                   <span className="text-xs font-black text-gray-900 uppercase tracking-wider flex items-center gap-1.5">
-                    <DollarSign className="h-4 w-4 text-emerald-600" /> What Customers Get (Condition Breakdown)
+                    <DollarSign className="h-4 w-4 text-emerald-600" /> What Customers Get ({selectedStorage || selectedModel.storage})
                   </span>
                   <button
                     type="button"
@@ -1102,7 +1214,7 @@ export default function AdminSellPricing({
                       </span>
                     </div>
                     <p className="text-base font-black text-gray-900">
-                      {formatINR(Math.round(selectedModel.base_price * selectedModel.excellent_multiplier))}
+                      {formatINR(Math.round(activeVariantPricing.basePrice * selectedModel.excellent_multiplier))}
                     </p>
                     <p className="text-[10px] text-gray-400">Zero scratches, 100% working</p>
                   </div>
@@ -1116,7 +1228,7 @@ export default function AdminSellPricing({
                       </span>
                     </div>
                     <p className="text-base font-black text-gray-900">
-                      {formatINR(Math.round(selectedModel.base_price * selectedModel.good_multiplier))}
+                      {formatINR(Math.round(activeVariantPricing.basePrice * selectedModel.good_multiplier))}
                     </p>
                     <p className="text-[10px] text-gray-400">Minor scratches, normal wear</p>
                   </div>
@@ -1130,7 +1242,7 @@ export default function AdminSellPricing({
                       </span>
                     </div>
                     <p className="text-base font-black text-gray-900">
-                      {formatINR(Math.round(selectedModel.base_price * selectedModel.fair_multiplier))}
+                      {formatINR(Math.round(activeVariantPricing.basePrice * selectedModel.fair_multiplier))}
                     </p>
                     <p className="text-[10px] text-gray-400">Dents, deep scratches</p>
                   </div>
@@ -1141,6 +1253,62 @@ export default function AdminSellPricing({
                   <span className="font-bold text-gray-900">
                     Original Box (+{formatINR(selectedModel.box_bonus)}) · Original Charger (+{formatINR(selectedModel.charger_bonus)})
                   </span>
+                </div>
+              </div>
+
+              {/* All Storage Variants Overview Matrix */}
+              <div className="space-y-2 p-4 rounded-2xl bg-white border border-gray-200 shadow-xs">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-black text-gray-800 uppercase tracking-wider flex items-center gap-1.5">
+                    <Layers className="h-4 w-4 text-indigo-600" /> All Storage Variants for {selectedModel.brand} {selectedModel.model}
+                  </span>
+                  <span className="text-[10px] text-gray-400 font-bold">Tap any variant to edit rate</span>
+                </div>
+                <div className="overflow-x-auto">
+                  <table className="w-full text-xs text-left">
+                    <thead>
+                      <tr className="border-b border-gray-100 text-[10px] text-gray-400 font-bold uppercase">
+                        <th className="pb-2">Storage</th>
+                        <th className="pb-2">Base Valuation</th>
+                        <th className="pb-2">Flawless</th>
+                        <th className="pb-2">Good</th>
+                        <th className="pb-2">Status</th>
+                        <th className="pb-2 text-right">Action</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-gray-50">
+                      {selectedModelStorages.map((stg) => {
+                        const v = getStorageVariantPricing(stg);
+                        const isCur = (selectedStorage || selectedModel.storage) === stg;
+                        return (
+                          <tr key={stg} className={`hover:bg-gray-50/80 transition ${isCur ? 'bg-emerald-50/50 font-bold' : ''}`}>
+                            <td className="py-2.5 font-black text-gray-900">{stg}</td>
+                            <td className="py-2.5 font-bold text-gray-700">{formatINR(v.basePrice)}</td>
+                            <td className="py-2.5 font-black text-emerald-700">{formatINR(Math.round(v.basePrice * selectedModel.excellent_multiplier))}</td>
+                            <td className="py-2.5 font-medium text-blue-700">{formatINR(Math.round(v.basePrice * selectedModel.good_multiplier))}</td>
+                            <td className="py-2.5">
+                              {v.isCustom ? (
+                                <span className="badge bg-amber-100 text-amber-900 text-[10px] font-bold">Custom Admin Rate</span>
+                              ) : (
+                                <span className="badge bg-slate-100 text-slate-700 text-[10px] font-medium">Auto-Scaled</span>
+                              )}
+                            </td>
+                            <td className="py-2.5 text-right">
+                              <button
+                                type="button"
+                                onClick={() => setSelectedStorage(stg)}
+                                className={`text-[11px] font-bold px-2 py-1 rounded-lg transition cursor-pointer ${
+                                  isCur ? 'bg-emerald-600 text-white' : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
+                                }`}
+                              >
+                                {isCur ? 'Editing' : 'Edit Rate'}
+                              </button>
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
                 </div>
               </div>
 

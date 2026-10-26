@@ -660,6 +660,11 @@ export default function SellPhone() {
     const modelNorm = form.model.toLowerCase().trim();
     const brandNorm = (form.brand || '').toLowerCase().trim();
 
+    // 1. Authoritative Admin Pricing: Use live pricingConfig from database if available
+    if (pricingConfig && pricingConfig.base_price > 0) {
+      return pricingConfig.base_price;
+    }
+
     const master = MASTER_MODEL_CATALOG.find((m) =>
       m.model.toLowerCase() === modelNorm ||
       `${m.brand} ${m.model}`.toLowerCase() === `${brandNorm} ${modelNorm}` ||
@@ -700,7 +705,7 @@ export default function SellPhone() {
     const variantRatio = selectedMult / (catalogMult || 1.0);
 
     return Math.max(1000, Math.round((rawBase * variantRatio) / 50) * 50);
-  }, [form.brand, form.model, form.storage, form.ram, version, getEffectivePrice]);
+  }, [form.brand, form.model, form.storage, form.ram, version, getEffectivePrice, pricingConfig]);
 
   // Guaranteed non-zero smartphone valuation estimate
   const estimate = useMemo(() => {
@@ -710,7 +715,13 @@ export default function SellPhone() {
 
     if (baseModelPrice > 0) {
       let val = baseModelPrice;
-      if (form.cosmeticCondition === 'fair') val *= 0.85;
+      const excMult = pricingConfig?.excellent_multiplier ?? 0.85;
+      const goodMult = pricingConfig?.good_multiplier ?? 0.70;
+      const fairMult = pricingConfig?.fair_multiplier ?? 0.55;
+
+      if (form.cosmeticCondition === 'fair') val *= fairMult;
+      else if (form.cosmeticCondition === 'good') val *= goodMult;
+      else if (form.cosmeticCondition === 'flawless') val *= excMult;
       if (form.screenCondition === 'scratched') val *= 0.90;
       else if (form.screenCondition === 'cracked') val *= 0.68;
       else if (form.screenCondition === 'touch_fault' || form.screenCondition === 'display_lines') val *= 0.60;
