@@ -488,38 +488,87 @@ export default function SellStep2Condition({
           </div>
         </div>
 
-        {/* 6. Warranty & Original Accessories */}
+        {/* 6. Device Age & Warranty Period */}
         <div className="space-y-3">
           <div className="flex items-center justify-between">
             <label className="label text-sm font-extrabold text-gray-900">
-              6. Warranty & Included Original Accessories
+              6. Device Age & Purchase Period
             </label>
-            <span className="text-[11px] text-gray-500 font-medium">Select included items</span>
+            <span className="text-[11px] text-[#6A859F] font-bold">How old is your phone?</span>
           </div>
 
-          <div className="p-4 rounded-2xl border border-gray-200 bg-gray-50/50 flex items-center justify-between mb-2">
-            <div>
-              <p className="font-bold text-xs text-gray-900">Is phone under valid brand warranty?</p>
-              <p className="text-[11px] text-gray-500">Original manufacturer warranty invoice available</p>
-            </div>
-            <div className="flex gap-1 shrink-0">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            {[
+              {
+                id: 'below_3_months',
+                label: '✨ Below 3 Months',
+                warranty: true,
+                badge: 'Brand New',
+                desc: 'Bought recently, valid GST invoice & full brand warranty',
+              },
+              {
+                id: '3_to_10_months',
+                label: '🛡️ 3 to 10 Months',
+                warranty: true,
+                badge: 'Under Warranty',
+                desc: 'Active manufacturer brand warranty remaining',
+              },
+              {
+                id: '10_to_12_months',
+                label: '⏳ 10 to 12 Months',
+                warranty: false,
+                badge: 'Warranty Ending',
+                desc: 'Almost 1 year old, brand warranty expiring or expired',
+              },
+              {
+                id: 'above_11_months',
+                label: '📅 Above 11 Months / 1+ Year',
+                warranty: false,
+                badge: 'Out of Warranty',
+                desc: 'More than 1 year old, standard out-of-warranty device',
+              },
+            ].map((age) => (
               <button
+                key={age.id}
                 type="button"
-                onClick={() => setForm((f) => ({ ...f, underWarranty: true }))}
-                className={`px-3 py-1.5 rounded-xl text-xs font-bold transition ${form.underWarranty ? 'bg-[#344257] text-white shadow-xs' : 'bg-white text-gray-600 border border-gray-200'
-                  }`}
+                onClick={() =>
+                  setForm((f: any) => ({
+                    ...f,
+                    agePeriod: age.id,
+                    underWarranty: age.warranty,
+                  }))
+                }
+                className={`p-4 rounded-2xl border text-left transition-all duration-200 cursor-pointer ${
+                  (form.agePeriod || 'above_11_months') === age.id
+                    ? 'border-[#344257] bg-[#F0F0F5] shadow-md ring-2 ring-[#344257]/20 -translate-y-0.5'
+                    : 'border-gray-200 bg-white hover:border-[#6A859F] hover:bg-[#F7F7FA]'
+                }`}
               >
-                Yes
+                <div className="flex items-center justify-between gap-2 mb-1">
+                  <p className="font-extrabold text-xs text-gray-900">{age.label}</p>
+                  <span
+                    className={`text-[9px] font-black uppercase px-2 py-0.5 rounded-full ${
+                      age.warranty
+                        ? 'bg-emerald-100 text-emerald-800 border border-emerald-300'
+                        : 'bg-gray-100 text-gray-600'
+                    }`}
+                  >
+                    {age.badge}
+                  </span>
+                </div>
+                <p className="text-[11px] text-gray-500 leading-snug">{age.desc}</p>
               </button>
-              <button
-                type="button"
-                onClick={() => setForm((f) => ({ ...f, underWarranty: false }))}
-                className={`px-3 py-1.5 rounded-xl text-xs font-bold transition ${!form.underWarranty ? 'bg-gray-700 text-white shadow-xs' : 'bg-white text-gray-600 border border-gray-200'
-                  }`}
-              >
-                No
-              </button>
-            </div>
+            ))}
+          </div>
+        </div>
+
+        {/* 7. Included Original Accessories */}
+        <div className="space-y-3">
+          <div className="flex items-center justify-between">
+            <label className="label text-sm font-extrabold text-gray-900">
+              7. Included Original Accessories
+            </label>
+            <span className="text-[11px] text-gray-500 font-medium">Select included items</span>
           </div>
 
           <div className="flex flex-wrap gap-2">
@@ -542,7 +591,7 @@ export default function SellStep2Condition({
           </div>
         </div>
 
-        {/* 7. S-Pen / Stylus Availability for supported models (Galaxy S Ultra, Note series, Moto G Stylus) */}
+        {/* 8. S-Pen / Stylus Availability for supported models (Galaxy S Ultra, Note series, Moto G Stylus) */}
         {deviceIncludesStylus(form.brand, form.model) && (
           <div className="space-y-3 p-4 sm:p-5 rounded-2xl border-2 border-indigo-200 bg-gradient-to-br from-indigo-50/70 via-white to-blue-50/50 shadow-xs">
             <div className="flex items-start justify-between gap-3">
@@ -552,7 +601,7 @@ export default function SellStep2Condition({
                 </div>
                 <div>
                   <h4 className="font-extrabold text-sm text-gray-900 flex items-center gap-1.5 flex-wrap">
-                    Original Stylus / S-Pen Available?
+                    8. Original Stylus / S-Pen Available?
                     <span className="text-[10px] bg-indigo-100 text-indigo-700 font-extrabold px-2 py-0.5 rounded-full uppercase tracking-wider">
                       Included With Model
                     </span>

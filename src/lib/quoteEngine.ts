@@ -32,6 +32,7 @@ export interface FunduQuoteRequest {
   defects?: string[];
   accessories?: string[];
   under_warranty?: boolean;
+  age_period?: 'below_3_months' | '3_to_10_months' | '10_to_12_months' | 'above_11_months';
   stylus_available?: boolean;
 }
 

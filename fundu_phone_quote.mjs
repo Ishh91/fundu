@@ -34,9 +34,9 @@ export const FUNDU_POLICY = {
   
   // Cosmetic condition adjustment multipliers
   cosmeticMultipliers: {
-    flawless: 1.00, // Like new, zero scratches/scuffs
-    good: 1.00,     // Normal daily wear (standard used phone) - full Cashify + 1000 buyback rate
-    fair: 0.85,     // Heavy scratches, scuffs (-15% markdown)
+    flawless: 0.82, // 18% less than theoretical maximum base price (15-20% range)
+    good: 0.70,     // 30% markdown for normal daily wear
+    fair: 0.55,     // 45% markdown for heavy scratches, scuffs
   },
   
   // Accessories bonus credits added to proceeds
@@ -2521,7 +2521,11 @@ export function isStylusDevice(brand, model) {
  * Calculates smartphone age depreciation factor based on release year / launch generation.
  * If under active manufacturer warranty (< 10-12 months old), aging penalty is 0% (factor = 1.00).
  */
-export function calculatePhoneAgingFactor(brand = '', model = '', underWarranty = false) {
+export function calculatePhoneAgingFactor(brand = '', model = '', underWarranty = false, agePeriod = '') {
+  if (agePeriod === 'below_3_months') return 1.00;
+  if (agePeriod === '3_to_10_months') return 0.96;
+  if (agePeriod === '10_to_12_months') return 0.92;
+
   if (underWarranty) return 1.00;
 
   const currentYear = new Date().getFullYear();
@@ -2848,7 +2852,8 @@ export function quotePhone(input = {}, options = {}) {
   // Exact Business Formula:
   // Base proceeds equals catalog/benchmark buyback value.
   // 1. Natural Aging & Generation factor
-  const agingFactor = calculatePhoneAgingFactor(brand, model, under_warranty);
+  const agePeriod = input.age_period || input.agePeriod || '';
+  const agingFactor = calculatePhoneAgingFactor(brand, model, under_warranty, agePeriod);
   const baseP = Math.round(expectedResaleProceeds * agingFactor);
   const condP = Math.round(baseP * cosmeticMultiplier);
 

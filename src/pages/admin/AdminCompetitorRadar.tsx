@@ -221,7 +221,7 @@ export default function AdminCompetitorRadar() {
         model: searchModel,
         storage: selectedStorage.replace(/\s+/g, ''),
         base_price: newPrice,
-        excellent_multiplier: 0.85,
+        excellent_multiplier: 0.82,
         good_multiplier: 0.70,
         fair_multiplier: 0.55,
         box_bonus: 600,
@@ -454,7 +454,7 @@ export default function AdminCompetitorRadar() {
                 {/* Grade breakdown */}
                 <div className="grid grid-cols-3 gap-2 pt-1 text-center">
                   <div className="bg-white/10 p-2 rounded-xl">
-                    <span className="text-[10px] uppercase font-bold text-gray-300 block">Flawless (85%)</span>
+                    <span className="text-[10px] uppercase font-bold text-gray-300 block">Flawless (82%)</span>
                     <span className="text-sm font-black text-white">{formatINR(radarData.fundu.flawlessOffer)}</span>
                   </div>
                   <div className="bg-white/10 p-2 rounded-xl">

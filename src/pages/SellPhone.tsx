@@ -190,6 +190,7 @@ export default function SellPhone() {
     bodyCondition: 'flawless' as 'flawless' | 'minor_scratches' | 'dents_bent',
     batteryHealth: 'healthy' as 'healthy' | 'degraded_service' | 'unknown',
     canMakeCalls: true,
+    agePeriod: 'above_11_months' as 'below_3_months' | '3_to_10_months' | '10_to_12_months' | 'above_11_months',
     underWarranty: false,
     stylusAvailable: true,
     defects: [] as string[],
@@ -619,6 +620,7 @@ export default function SellPhone() {
       defects: form.defects,
       accessories: form.accessories,
       under_warranty: form.underWarranty,
+      age_period: form.agePeriod,
       stylus_available: form.stylusAvailable !== false,
     })
       .then((quote) => {
@@ -650,6 +652,7 @@ export default function SellPhone() {
     form.defects,
     form.accessories,
     form.underWarranty,
+    form.agePeriod,
     form.stylusAvailable,
     version,
   ]);
@@ -722,11 +725,11 @@ export default function SellPhone() {
     if (baseModelPrice > 0) {
       let val = baseModelPrice;
 
-      // 1. Natural Aging & Generation factor (waived if under active warranty)
-      const aging = calculatePhoneAgingFactor(form.brand, form.model, !!form.underWarranty);
+      // 1. Natural Aging & Generation factor (waived if under active warranty or new purchase)
+      const aging = calculatePhoneAgingFactor(form.brand, form.model, !!form.underWarranty, form.agePeriod);
       val *= aging;
 
-      const excMult = pricingConfig?.excellent_multiplier ?? 0.85;
+      const excMult = pricingConfig?.excellent_multiplier ?? 0.82; // 18% less than theoretical base (15-20% deduction range)
       const goodMult = pricingConfig?.good_multiplier ?? 0.70;
       const fairMult = pricingConfig?.fair_multiplier ?? 0.55;
 
