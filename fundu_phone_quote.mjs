@@ -2305,22 +2305,22 @@ export function isStylusDevice(brand, model) {
 /**
  * Calculates smartphone age depreciation factor based on purchase period.
  * Business Rules:
- * - 0 to 3 months: 30% deduction (factor = 0.70)
- * - 3 to 6 months: 35% deduction (factor = 0.65)
- * - 6 to 9 months: 38% deduction (factor = 0.62)
- * - Older than 9 months (and pre-2024 models where aging is skipped): 40% deduction for all (factor = 0.60)
+ * - 0 to 3 months: 10% deduction (factor = 0.90)
+ * - 3 to 6 months: 15% deduction (factor = 0.85)
+ * - 6 to 9 months: 20% deduction (factor = 0.80)
+ * - Older than 9 months (and pre-2024 models where aging is skipped): 25% deduction for all (factor = 0.75)
  */
 export function calculatePhoneAgingFactor(brand = '', model = '', underWarranty = false, agePeriod = '') {
   const normAge = String(agePeriod || '').toLowerCase().trim();
 
   if (normAge === '0_to_3_months' || normAge === 'below_3_months') {
-    return 0.70;
+    return 0.90;
   }
   if (normAge === '3_to_6_months') {
-    return 0.65;
+    return 0.85;
   }
   if (normAge === '6_to_9_months') {
-    return 0.62;
+    return 0.80;
   }
   if (
     normAge === 'above_9_months' ||
@@ -2329,11 +2329,11 @@ export function calculatePhoneAgingFactor(brand = '', model = '', underWarranty 
     normAge === '10_to_12_months' ||
     normAge === '3_to_10_months'
   ) {
-    return 0.60;
+    return 0.75;
   }
 
-  // Older than 9 months / pre-2024 devices: 40% deduction for all
-  return 0.60;
+  // Older than 9 months / pre-2024 devices: 25% deduction for all
+  return 0.75;
 }
 
 /**

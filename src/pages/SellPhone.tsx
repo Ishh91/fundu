@@ -569,7 +569,7 @@ export default function SellPhone() {
         changed = true;
       }
 
-      // 3. For devices launched before 2024 (< 2024), default aging to above 9 months and out-of-warranty (40% deduction)
+      // 3. For devices launched before 2024 (< 2024), default aging to above 9 months and out-of-warranty (25% deduction)
       const releaseYear = getModelReleaseYear(cur.brand, cur.model);
       if (releaseYear < 2024) {
         if (cur.agePeriod !== 'above_9_months' || cur.underWarranty !== false) {
