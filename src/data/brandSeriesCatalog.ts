@@ -1973,51 +1973,6 @@ export const BRAND_SERIES_DEFINITIONS: Record<string, BrandSeriesDefinition[]> =
       ],
     },
   ],
-    },
-    {
-      id: 'lenovo-legion',
-      slug: 'lenovo-legion-series',
-      name: 'Legion Gaming Series',
-      brand: 'Lenovo',
-      image: 'https://fdn2.gsmarena.com/vv/bigpic/lenovo-legion-duel-2.jpg',
-      description: 'Lenovo Legion Duel 2, Legion Pro, Legion Y90',
-      pattern: /\blegion\b/i,
-      defaultModels: [
-        { brand: 'Lenovo', series: 'Legion Gaming Series', model: 'Lenovo Legion Duel 2', storage: '256 GB', price: 19350, image: 'https://fdn2.gsmarena.com/vv/bigpic/lenovo-legion-duel-2.jpg' },
-        { brand: 'Lenovo', series: 'Legion Gaming Series', model: 'Lenovo Legion Pro', storage: '128 GB', price: 15000, image: 'https://fdn2.gsmarena.com/vv/bigpic/lenovo-legion-pro.jpg' },
-        { brand: 'Lenovo', series: 'Legion Gaming Series', model: 'Lenovo Legion Y90', storage: '256 GB', price: 22850, image: 'https://fdn2.gsmarena.com/vv/bigpic/lenovo-legion-y90.jpg' },
-      ],
-    },
-    {
-      id: 'lenovo-z-series',
-      slug: 'lenovo-z-series',
-      name: 'Z Series Flagships',
-      brand: 'Lenovo',
-      image: 'https://fdn2.gsmarena.com/vv/bigpic/lenovo-z6-pro.jpg',
-      description: 'Lenovo Z6 Pro, Z6 Lite, Z5 Pro GT, Z5s',
-      pattern: /\bz\d+/i,
-      defaultModels: [
-        { brand: 'Lenovo', series: 'Z Series Flagships', model: 'Lenovo Z6 Pro', storage: '128 GB', price: 5800, image: 'https://fdn2.gsmarena.com/vv/bigpic/lenovo-z6-pro.jpg' },
-        { brand: 'Lenovo', series: 'Z Series Flagships', model: 'Lenovo Z6 Lite', storage: '64 GB', price: 5050, image: 'https://fdn2.gsmarena.com/vv/bigpic/lenovo-z6-lite.jpg' },
-        { brand: 'Lenovo', series: 'Z Series Flagships', model: 'Lenovo Z5 Pro GT', storage: '128 GB', price: 7650, image: 'https://fdn2.gsmarena.com/vv/bigpic/lenovo-z5-pro-gt.jpg' },
-        { brand: 'Lenovo', series: 'Z Series Flagships', model: 'Lenovo Z5s', storage: '64 GB', price: 4750, image: 'https://fdn2.gsmarena.com/vv/bigpic/lenovo-z5s.jpg' },
-      ],
-    },
-    {
-      id: 'lenovo-a-vibe',
-      slug: 'lenovo-a-vibe-series',
-      name: 'A & Vibe Series',
-      brand: 'Lenovo',
-      image: 'https://fdn2.gsmarena.com/vv/bigpic/lenovo-a6-note.jpg',
-      description: 'Lenovo A6 Note, Vibe K5, Vibe P1m',
-      pattern: /\b(a\d+|vibe)\b/i,
-      defaultModels: [
-        { brand: 'Lenovo', series: 'A & Vibe Series', model: 'Lenovo A6 Note', storage: '64 GB', price: 1500, image: 'https://fdn2.gsmarena.com/vv/bigpic/lenovo-a6-note.jpg' },
-        { brand: 'Lenovo', series: 'A & Vibe Series', model: 'Lenovo Vibe K5 Note', storage: '64 GB', price: 950, image: 'https://fdn2.gsmarena.com/vv/bigpic/lenovo-vibe-k5-note.jpg' },
-        { brand: 'Lenovo', series: 'A & Vibe Series', model: 'Lenovo Vibe P1m', storage: '16 GB', price: 2400, image: 'https://fdn2.gsmarena.com/vv/bigpic/lenovo-vibe-p1m.jpg' },
-      ],
-    },
-  ],
 };
 
 export function groupModelsBySeries(brand: string, allModels: CatalogModelItem[]): SeriesGroup[] {
