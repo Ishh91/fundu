@@ -38,6 +38,7 @@ import AdminLogin from './pages/AdminLogin';
 import VendorLogin from './pages/VendorLogin';
 import WholesalerLogin from './pages/WholesalerLogin';
 import DeliveryLogin from './pages/DeliveryLogin';
+import DemoConditionFilter from './pages/DemoConditionFilter';
 import SEO from './components/SEO';
 
 // Security Guard for Role-based Protected Routes
@@ -130,6 +131,7 @@ function MainLayout() {
           <Route path="/buy" element={<BuyPhones />} />
           <Route path="/search" element={<SearchActionPage />} />
           <Route path="/product/:id" element={<ProductDetail />} />
+          <Route path="/demo-condition-filter" element={<DemoConditionFilter />} />
           {/* Multi-Page Sell Ecosystem: Brand -> Series -> Sub-Models -> Step 2 Valuation */}
           <Route path="/sell" element={<SellPhone />} />
           <Route path="/sell/:brandSlug" element={<SellBrandPage />} />

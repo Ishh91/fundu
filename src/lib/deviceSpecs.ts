@@ -67,6 +67,108 @@ export function deviceIncludesStylus(brand?: string, model?: string): boolean {
 }
 
 /**
+ * Detects whether a smartphone has an AMOLED / OLED display.
+ * Policy:
+ * - If phone has AMOLED/OLED display -> 45% direct deduction for broken screen
+ * - If phone has normal (LCD/IPS/TFT) display -> 40% direct deduction for broken screen
+ */
+export function isAmoledDisplay(brand = '', model = '', displaySpec = ''): boolean {
+  const spec = String(displaySpec || '').toLowerCase();
+  if (spec.length > 0) {
+    if (/amoled|oled|retina|poled/i.test(spec)) return true;
+    if (/ips|lcd|tft/i.test(spec)) return false;
+  }
+
+  const b = String(brand || '').toLowerCase().trim();
+  const m = String(model || '').toLowerCase().trim();
+  const full = `${b} ${m}`;
+
+  // 1. Catalog lookup
+  const foundPhone = ALL_INDIAN_PHONES_CATALOG.find((p) => {
+    const pModel = p.model.toLowerCase();
+    const pFull = `${p.brand.toLowerCase()} ${pModel}`;
+    return pFull === full || pModel === m || (m.length > 5 && (pFull.includes(m) || m.includes(pModel)));
+  });
+  if (foundPhone?.display_spec) {
+    if (/amoled|oled|retina|poled/i.test(foundPhone.display_spec)) return true;
+    if (/ips|lcd|tft/i.test(foundPhone.display_spec)) return false;
+  }
+
+  // 2. Apple iPhones
+  if (b.includes('apple') || full.includes('iphone')) {
+    if (/iphone\s*(x[s\b]|11\s*pro|12|13|14|15|16)/i.test(m)) return true;
+    if (/iphone\s*(xr|11\b|se|8|7|6)/i.test(m)) return false;
+    return true; // Modern iPhones default to OLED
+  }
+
+  // 3. Samsung Galaxy
+  if (b.includes('samsung') || full.includes('galaxy')) {
+    if (/\b(s[6-9]|s10|s2[0-6]|note|z\s*fold|z\s*flip|a5[0-5]|a3[0-5]|m5[0-5]|m3[0-5]|f54)\b/i.test(m)) return true;
+    if (/\b(m0[1-5]|m1[0-5]|a0[1-5]|a1[0-5]|f0[1-5]|f1[0-5])\b/i.test(m)) return false;
+    return true;
+  }
+
+  // 4. OnePlus
+  if (b.includes('oneplus')) {
+    if (/nord\s*ce\s*\d+\s*lite/i.test(m)) return false;
+    return true;
+  }
+
+  // 5. Google Pixel
+  if (b.includes('google') || full.includes('pixel')) return true;
+
+  // 6. Nothing & CMF
+  if (b.includes('nothing') || full.includes('cmf')) return true;
+
+  // 7. POCO
+  if (b.includes('poco')) {
+    if (/\b(f[1-6]|x[4-7]|m6\s*pro)\b/i.test(m)) return true;
+    if (/\b(c[5-7]\d|m[2-5])\b/i.test(m)) return false;
+  }
+
+  // 8. iQOO
+  if (b.includes('iqoo')) {
+    if (/\b(3|7|9|11|12|13|15|neo|z[6-9]\s*pro|z9|z10)\b/i.test(m)) return true;
+    if (/lite|z6\s*5g/i.test(m)) return false;
+  }
+
+  // 9. Vivo
+  if (b.includes('vivo')) {
+    if (/\b(x\d+|v\d+|t[2-4]\s*pro|t3|y200|y100)\b/i.test(m)) return true;
+    if (/\b(y[0-9]{1,2}\b|t1\b|t1x)/i.test(m)) return false;
+  }
+
+  // 10. Oppo
+  if (b.includes('oppo')) {
+    if (/\b(find|reno|f2[1-7]\s*pro)\b/i.test(m)) return true;
+    if (/\b(a[1-7]\d)\b/i.test(m)) return false;
+  }
+
+  // 11. Infinix
+  if (b.includes('infinix')) {
+    if (/\b(gt\s*\d+|zero\s*\d+|note\s*40|note\s*12)\b/i.test(m)) return true;
+    return false;
+  }
+
+  // 12. Lenovo
+  if (b.includes('lenovo')) {
+    if (/\b(legion|z6\s*pro|z5\s*pro)\b/i.test(m)) return true;
+    return false;
+  }
+
+  return false;
+}
+
+/**
+ * Returns direct deduction percentage for broken/cracked screen:
+ * - 45% (0.45) for AMOLED displays
+ * - 40% (0.40) for Normal LCD displays
+ */
+export function getBrokenScreenDeductionRate(brand = '', model = '', displaySpec = ''): number {
+  return isAmoledDisplay(brand, model, displaySpec) ? 0.45 : 0.40;
+}
+
+/**
  * Resolves the official market release / launch year for a phone model.
  * Used to determine if the device is recent enough to have active brand warranty (< 1 year old, i.e. 2024+).
  */

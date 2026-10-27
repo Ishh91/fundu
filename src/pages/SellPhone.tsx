@@ -37,7 +37,7 @@ import { useAuth } from '../context/AuthContext';
 import { ALL_INDIAN_PHONES_CATALOG } from '../data/indianPhonesCatalog';
 import { getCleanPhoneImage, getCleanBrandLogo, BRAND_FRONT_FALLBACKS, getGenericDevicePlaceholder } from '../lib/phoneImages';
 import { usePriceSync, applyPriceOverrides, isModelDeleted, savePriceOverride, getEffectivePrice } from '../lib/priceSync';
-import { getModelHardwareSpecs, calculateHardwareVariantMultiplier, deviceIncludesStylus, getModelReleaseYear } from '../lib/deviceSpecs';
+import { getModelHardwareSpecs, calculateHardwareVariantMultiplier, deviceIncludesStylus, getModelReleaseYear, isAmoledDisplay } from '../lib/deviceSpecs';
 import {
   getPanIndiaLocation,
   searchPanIndiaLocations,
@@ -767,7 +767,10 @@ export default function SellPhone() {
       else if (form.cosmeticCondition === 'good') val *= goodMult;
       else if (form.cosmeticCondition === 'flawless') val *= excMult;
       if (form.screenCondition === 'scratched') val *= 0.90;
-      else if (form.screenCondition === 'cracked') val *= 0.68;
+      else if (form.screenCondition === 'cracked') {
+        const isAmoled = isAmoledDisplay(form.brand, form.model);
+        val *= isAmoled ? 0.55 : 0.60; // 45% direct deduction for AMOLED, 40% for Normal LCD
+      }
       else if (form.screenCondition === 'touch_fault' || form.screenCondition === 'display_lines') val *= 0.60;
       if (form.bodyCondition === 'dents_bent') val *= 0.85;
       if (isApple) {

@@ -1,5 +1,5 @@
 import { API_BASE } from '../config/apiConfig';
-import { deviceIncludesStylus } from './deviceSpecs';
+import { deviceIncludesStylus, isAmoledDisplay } from './deviceSpecs';
 
 export type PhoneModelOption = {
 
@@ -515,7 +515,10 @@ export function computeDetailedResaleValuation(
 
   let screenDeduction = 0;
   if (params.screenCondition === 'scratches') screenDeduction = Math.round(basePrice * 0.12);
-  else if (params.screenCondition === 'cracked') screenDeduction = Math.round(basePrice * 0.35);
+  else if (params.screenCondition === 'cracked') {
+    const isAmoled = isAmoledDisplay(fallbackBrand, fallbackModel, activeConfig.display_spec);
+    screenDeduction = Math.round(basePrice * (isAmoled ? 0.45 : 0.40));
+  }
 
   let bodyDeduction = 0;
   if (params.bodyCondition === 'scratches') bodyDeduction = Math.round(basePrice * 0.08);

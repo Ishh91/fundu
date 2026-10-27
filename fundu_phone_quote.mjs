@@ -2273,14 +2273,57 @@ export function lookupResaleBenchmark(brand, model, storage, options = {}) {
 /**
  * Lookup configured repairs for device model with proportional fallback
  */
+export function isAmoledModel(brand, model) {
+  const b = String(brand || '').toLowerCase();
+  const m = String(model || '').toLowerCase();
+  if (b.includes('apple') || m.includes('iphone')) {
+    if (/iphone\s*(x[s\b]|11\s*pro|12|13|14|15|16)/i.test(m)) return true;
+    if (/iphone\s*(xr|11\b|se|8|7|6)/i.test(m)) return false;
+    return true;
+  }
+  if (b.includes('samsung') || m.includes('galaxy')) {
+    if (/\b(s[6-9]|s10|s2[0-6]|note|z\s*fold|z\s*flip|a5[0-5]|a3[0-5]|m5[0-5]|m3[0-5]|f54)\b/i.test(m)) return true;
+    if (/\b(m0[1-5]|m1[0-5]|a0[1-5]|a1[0-5]|f0[1-5]|f1[0-5])\b/i.test(m)) return false;
+    return true;
+  }
+  if (b.includes('oneplus')) {
+    if (/nord\s*ce\s*\d+\s*lite/i.test(m)) return false;
+    return true;
+  }
+  if (b.includes('google') || m.includes('pixel')) return true;
+  if (b.includes('nothing') || m.includes('cmf')) return true;
+  if (b.includes('poco')) {
+    if (/\b(f[1-6]|x[4-7]|m6\s*pro)\b/i.test(m)) return true;
+    return false;
+  }
+  if (b.includes('iqoo') || b.includes('vivo') || b.includes('oppo')) {
+    if (/\b(x\d+|v\d+|find|reno|neo|3|7|9|11|12|13|15)\b/i.test(m)) return true;
+  }
+  if (b.includes('infinix')) {
+    if (/\b(gt\s*\d+|zero\s*\d+|note\s*40)\b/i.test(m)) return true;
+  }
+  if (b.includes('lenovo')) {
+    if (/\b(legion|z6\s*pro)\b/i.test(m)) return true;
+  }
+  return false;
+}
+
 export function lookupModelRepairs(brand, model, benchmarkProceeds = 20000) {
+  const isAmoled = isAmoledModel(brand, model);
+  const screenDeductionRate = isAmoled ? 0.45 : 0.40;
+  const p = benchmarkProceeds > 0 ? benchmarkProceeds : 20000;
+
   const key = `${String(brand).trim().toLowerCase()}:${normalizeKey(model)}`;
-  if (CONFIGURED_REPAIRS[key]) return CONFIGURED_REPAIRS[key];
+  if (CONFIGURED_REPAIRS[key]) {
+    return {
+      ...CONFIGURED_REPAIRS[key],
+      screen: Math.max(1999, Math.round(p * screenDeductionRate)),
+    };
+  }
 
   // Proportional repair rates for models not explicitly in CONFIGURED_REPAIRS
-  const p = benchmarkProceeds > 0 ? benchmarkProceeds : 20000;
   return {
-    screen: Math.max(1999, Math.round(p * 0.22 / 100) * 100 - 1),
+    screen: Math.max(1999, Math.round(p * screenDeductionRate)),
     battery: Math.max(999, Math.round(p * 0.06 / 100) * 100 - 1),
     charging: 899,
     camera: Math.max(1499, Math.round(p * 0.08 / 100) * 100 - 1),
