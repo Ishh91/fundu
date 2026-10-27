@@ -2,73 +2,6 @@ import type { MasterPhone } from '../types';
 
 export const ALL_INDIAN_PHONES_CATALOG: MasterPhone[] = [
   {
-    "id": "samsung-galaxy-j7-pro",
-    "brand": "Samsung",
-    "model": "Galaxy J7 Pro",
-    "release_year": 2017,
-    "ram_options": [
-      "3GB"
-    ],
-    "storage_options": [
-      "64GB"
-    ],
-    "default_mrp": 20900,
-    "base_resale_value": 28000,
-    "image_url": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-j7-pro.jpg",
-    "popular_tag": "Samsung Pay Ready Super AMOLED",
-    "processor": "Exynos 7870 Octa-core",
-    "camera_spec": "13MP f/1.7 Low Light Camera + 13MP Front",
-    "battery_spec": "3600 mAh Battery",
-    "display_spec": "5.5\" Full HD Super AMOLED Always-on Display",
-    "is_5g": false,
-    "is_active": true
-  },
-  {
-    "id": "samsung-galaxy-j6",
-    "brand": "Samsung",
-    "model": "Galaxy J6",
-    "release_year": 2018,
-    "ram_options": [
-      "3GB",
-      "4GB"
-    ],
-    "storage_options": [
-      "64GB"
-    ],
-    "default_mrp": 13990,
-    "base_resale_value": 3420,
-    "image_url": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-j6.jpg",
-    "popular_tag": "Infinity Display Super AMOLED",
-    "processor": "Exynos 7870 Octa-core",
-    "camera_spec": "13MP f/1.9 + 8MP Front Selfie",
-    "battery_spec": "3000 mAh Battery",
-    "display_spec": "5.6\" HD+ Super AMOLED Infinity Display",
-    "is_5g": false,
-    "is_active": true
-  },
-  {
-    "id": "samsung-galaxy-j8",
-    "brand": "Samsung",
-    "model": "Galaxy J8",
-    "release_year": 2018,
-    "ram_options": [
-      "4GB"
-    ],
-    "storage_options": [
-      "64GB"
-    ],
-    "default_mrp": 18990,
-    "base_resale_value": 4160,
-    "image_url": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-j8.jpg",
-    "popular_tag": "Dual Camera Infinity Display",
-    "processor": "Qualcomm Snapdragon 450",
-    "camera_spec": "16MP + 5MP Dual Cameras + 16MP Front",
-    "battery_spec": "3500 mAh Battery",
-    "display_spec": "6.0\" Super AMOLED Infinity Display",
-    "is_5g": false,
-    "is_active": true
-  },
-  {
     "id": "oneplus-nord-2",
     "brand": "OnePlus",
     "model": "OnePlus Nord 2 5G",
@@ -317,7 +250,7 @@ export const ALL_INDIAN_PHONES_CATALOG: MasterPhone[] = [
       "512GB"
     ],
     "default_mrp": 144900,
-    "base_resale_value": 88000,
+    "base_resale_value": 90000,
     "image_url": "https://images.unsplash.com/photo-1695048133142-1a20484d2569?w=800&auto=format&fit=crop&q=80",
     "popular_tag": "Apple Intelligence Flagship",
     "processor": "Apple A18 Pro (3nm) + Camera Control",
@@ -341,7 +274,7 @@ export const ALL_INDIAN_PHONES_CATALOG: MasterPhone[] = [
       "512GB"
     ],
     "default_mrp": 119900,
-    "base_resale_value": 78000,
+    "base_resale_value": 80000,
     "image_url": "https://images.unsplash.com/photo-1695048133142-1a20484d2569?w=800&auto=format&fit=crop&q=80",
     "popular_tag": "Pro Camera Control",
     "processor": "Apple A18 Pro (3nm)",
@@ -365,7 +298,7 @@ export const ALL_INDIAN_PHONES_CATALOG: MasterPhone[] = [
       "512GB"
     ],
     "default_mrp": 79900,
-    "base_resale_value": 52800,
+    "base_resale_value": 55000,
     "image_url": "https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=800&auto=format&fit=crop&q=80",
     "popular_tag": "Action Button + A18",
     "processor": "Apple A18 (3nm)",
@@ -389,7 +322,7 @@ export const ALL_INDIAN_PHONES_CATALOG: MasterPhone[] = [
       "512GB"
     ],
     "default_mrp": 89900,
-    "base_resale_value": 61000,
+    "base_resale_value": 63000,
     "image_url": "https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=800&auto=format&fit=crop&q=80",
     "popular_tag": "Big Screen A18 Power",
     "processor": "Apple A18 (3nm)",
@@ -412,7 +345,7 @@ export const ALL_INDIAN_PHONES_CATALOG: MasterPhone[] = [
       "512GB"
     ],
     "default_mrp": 159900,
-    "base_resale_value": 70000,
+    "base_resale_value": 72500,
     "image_url": "https://images.unsplash.com/photo-1695048133142-1a20484d2569?w=800&auto=format&fit=crop&q=80",
     "popular_tag": "Titanium Bestseller",
     "processor": "Apple A17 Pro (3nm)",
@@ -436,7 +369,7 @@ export const ALL_INDIAN_PHONES_CATALOG: MasterPhone[] = [
       "512GB"
     ],
     "default_mrp": 134900,
-    "base_resale_value": 62000,
+    "base_resale_value": 64000,
     "image_url": "https://images.unsplash.com/photo-1695048133142-1a20484d2569?w=800&auto=format&fit=crop&q=80",
     "popular_tag": "Compact Titanium",
     "processor": "Apple A17 Pro (3nm)",
@@ -460,7 +393,7 @@ export const ALL_INDIAN_PHONES_CATALOG: MasterPhone[] = [
       "512GB"
     ],
     "default_mrp": 79900,
-    "base_resale_value": 42220,
+    "base_resale_value": 45500,
     "image_url": "https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=800&auto=format&fit=crop&q=80",
     "popular_tag": "Dynamic Island Favorite",
     "processor": "Apple A16 Bionic",
@@ -484,7 +417,7 @@ export const ALL_INDIAN_PHONES_CATALOG: MasterPhone[] = [
       "512GB"
     ],
     "default_mrp": 89900,
-    "base_resale_value": 48000,
+    "base_resale_value": 50500,
     "image_url": "https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=800&auto=format&fit=crop&q=80",
     "popular_tag": "Big Screen + Huge Battery",
     "processor": "Apple A16 Bionic",
@@ -508,7 +441,7 @@ export const ALL_INDIAN_PHONES_CATALOG: MasterPhone[] = [
       "512GB"
     ],
     "default_mrp": 139900,
-    "base_resale_value": 51000,
+    "base_resale_value": 56000,
     "image_url": "https://images.unsplash.com/photo-1663499482523-1c0c1bae4ce1?w=800&auto=format&fit=crop&q=80",
     "popular_tag": "Original Dynamic Island",
     "processor": "Apple A16 Bionic",
@@ -532,7 +465,7 @@ export const ALL_INDIAN_PHONES_CATALOG: MasterPhone[] = [
       "512GB"
     ],
     "default_mrp": 129900,
-    "base_resale_value": 42690,
+    "base_resale_value": 48000,
     "image_url": "https://images.unsplash.com/photo-1663499482523-1c0c1bae4ce1?w=800&auto=format&fit=crop&q=80",
     "popular_tag": "Pro Power Compact",
     "processor": "Apple A16 Bionic",
@@ -556,7 +489,7 @@ export const ALL_INDIAN_PHONES_CATALOG: MasterPhone[] = [
       "512GB"
     ],
     "default_mrp": 69900,
-    "base_resale_value": 28030,
+    "base_resale_value": 37000,
     "image_url": "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=800&auto=format&fit=crop&q=80",
     "popular_tag": "High Value Pick",
     "processor": "Apple A15 Bionic (5-core GPU)",
@@ -580,7 +513,7 @@ export const ALL_INDIAN_PHONES_CATALOG: MasterPhone[] = [
       "512GB"
     ],
     "default_mrp": 129900,
-    "base_resale_value": 40000,
+    "base_resale_value": 44000,
     "image_url": "https://images.unsplash.com/photo-1632661674596-df8be070a5c5?w=800&auto=format&fit=crop&q=80",
     "popular_tag": "Battery Monster Legend",
     "processor": "Apple A15 Bionic",
@@ -604,7 +537,7 @@ export const ALL_INDIAN_PHONES_CATALOG: MasterPhone[] = [
       "512GB"
     ],
     "default_mrp": 59900,
-    "base_resale_value": 24260,
+    "base_resale_value": 32500,
     "image_url": "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=800&auto=format&fit=crop&q=80",
     "popular_tag": "India Top Seller",
     "processor": "Apple A15 Bionic",
@@ -628,7 +561,7 @@ export const ALL_INDIAN_PHONES_CATALOG: MasterPhone[] = [
       "256GB"
     ],
     "default_mrp": 54900,
-    "base_resale_value": 16490,
+    "base_resale_value": 22500,
     "image_url": "https://images.unsplash.com/photo-1605236453806-6ff36851218e?w=800&auto=format&fit=crop&q=80",
     "popular_tag": "Entry 5G iPhone",
     "processor": "Apple A14 Bionic",
@@ -652,7 +585,7 @@ export const ALL_INDIAN_PHONES_CATALOG: MasterPhone[] = [
       "256GB"
     ],
     "default_mrp": 49900,
-    "base_resale_value": 12490,
+    "base_resale_value": 15500,
     "image_url": "https://images.unsplash.com/photo-1574755393849-623942496936?w=800&auto=format&fit=crop&q=80",
     "popular_tag": "Budget iPhone Pick",
     "processor": "Apple A13 Bionic",
@@ -675,7 +608,7 @@ export const ALL_INDIAN_PHONES_CATALOG: MasterPhone[] = [
       "128GB"
     ],
     "default_mrp": 49900,
-    "base_resale_value": 10200,
+    "base_resale_value": 10500,
     "image_url": "https://images.unsplash.com/photo-1574755393849-623942496936?w=800&auto=format&fit=crop&q=80",
     "popular_tag": "Classic Workhorse",
     "processor": "Apple A12 Bionic",
@@ -705,52 +638,6 @@ export const ALL_INDIAN_PHONES_CATALOG: MasterPhone[] = [
     "camera_spec": "12MP Dual OIS",
     "battery_spec": "2716 mAh",
     "display_spec": "5.8\" Super Retina OLED",
-    "is_5g": false,
-    "is_active": true
-  },
-  {
-    "id": "apple-ip8p",
-    "brand": "Apple",
-    "model": "iPhone 8 Plus",
-    "release_year": 2017,
-    "ram_options": [
-      "3GB"
-    ],
-    "storage_options": [
-      "64GB",
-      "128GB",
-      "256GB"
-    ],
-    "default_mrp": 73000,
-    "base_resale_value": 7800,
-    "image_url": "https://images.unsplash.com/photo-1510557880182-3d4d3cba35a5?w=800&auto=format&fit=crop&q=80",
-    "popular_tag": "Touch ID Classic",
-    "processor": "Apple A11 Bionic",
-    "camera_spec": "12MP Dual Camera",
-    "battery_spec": "2691 mAh",
-    "display_spec": "5.5\" Retina IPS",
-    "is_5g": false,
-    "is_active": true
-  },
-  {
-    "id": "apple-ip7p",
-    "brand": "Apple",
-    "model": "iPhone 7 Plus",
-    "release_year": 2016,
-    "ram_options": [
-      "3GB"
-    ],
-    "storage_options": [
-      "128GB"
-    ],
-    "default_mrp": 72000,
-    "base_resale_value": 5400,
-    "image_url": "https://images.unsplash.com/photo-1510557880182-3d4d3cba35a5?w=800&auto=format&fit=crop&q=80",
-    "popular_tag": "Portrait Pioneer",
-    "processor": "Apple A10 Fusion",
-    "camera_spec": "12MP Dual Camera",
-    "battery_spec": "2900 mAh",
-    "display_spec": "5.5\" Retina IPS",
     "is_5g": false,
     "is_active": true
   },
@@ -826,76 +713,6 @@ export const ALL_INDIAN_PHONES_CATALOG: MasterPhone[] = [
     "is_active": true
   },
   {
-    "id": "samsung-s26-fe",
-    "brand": "Samsung",
-    "model": "Samsung Galaxy S26 FE",
-    "release_year": 2026,
-    "ram_options": [
-      "8GB"
-    ],
-    "storage_options": [
-      "128GB",
-      "256GB"
-    ],
-    "default_mrp": 59999,
-    "base_resale_value": 38000,
-    "image_url": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s24-fe.jpg",
-    "popular_tag": "Galaxy AI Fan Edition 2026",
-    "processor": "Exynos 2500 / Snapdragon 8 Gen 4",
-    "camera_spec": "50MP OIS Triple Camera",
-    "battery_spec": "4700 mAh Fast Charging",
-    "display_spec": "6.7\" Dynamic AMOLED 2X 120Hz",
-    "is_5g": true,
-    "is_active": true
-  },
-  {
-    "id": "samsung-fold8",
-    "brand": "Samsung",
-    "model": "Samsung Galaxy Z Fold 8",
-    "release_year": 2026,
-    "ram_options": [
-      "12GB",
-      "16GB"
-    ],
-    "storage_options": [
-      "256GB",
-      "512GB"
-    ],
-    "default_mrp": 174999,
-    "base_resale_value": 88000,
-    "image_url": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-z-fold6.jpg",
-    "popular_tag": "Titanium Ultra-Thin Book Foldable",
-    "processor": "Snapdragon 8 Gen 5 for Galaxy",
-    "camera_spec": "200MP + 50MP Periscope + 12MP Ultra-wide Triple OIS",
-    "battery_spec": "5000 mAh 45W Fast Charging",
-    "display_spec": "7.6\" Main QXGA+ Dynamic AMOLED 2X + 6.3\" Cover AMOLED",
-    "is_5g": true,
-    "is_active": true
-  },
-  {
-    "id": "samsung-flip8",
-    "brand": "Samsung",
-    "model": "Samsung Galaxy Z Flip 8",
-    "release_year": 2026,
-    "ram_options": [
-      "12GB"
-    ],
-    "storage_options": [
-      "256GB",
-      "512GB"
-    ],
-    "default_mrp": 119999,
-    "base_resale_value": 62000,
-    "image_url": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-z-flip6.jpg",
-    "popular_tag": "Next-Gen Flex Window Foldable",
-    "processor": "Snapdragon 8 Gen 5 for Galaxy",
-    "camera_spec": "50MP Dual OIS FlexCam",
-    "battery_spec": "4300 mAh Super Fast Charging",
-    "display_spec": "6.7\" Foldable Dynamic AMOLED 2X + 4.0\" Cover Display",
-    "is_5g": true,
-    "is_active": true
-  },
-  {
     "id": "samsung-fold7",
     "brand": "Samsung",
     "model": "Galaxy Z Fold 7",
@@ -909,7 +726,7 @@ export const ALL_INDIAN_PHONES_CATALOG: MasterPhone[] = [
       "512GB"
     ],
     "default_mrp": 174999,
-    "base_resale_value": 94900,
+    "base_resale_value": 98000,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-z-fold6.jpg",
     "popular_tag": "Next-Gen Ultra Slim Foldable",
     "processor": "Snapdragon 8 Elite for Galaxy",
@@ -932,7 +749,7 @@ export const ALL_INDIAN_PHONES_CATALOG: MasterPhone[] = [
       "512GB"
     ],
     "default_mrp": 114999,
-    "base_resale_value": 54000,
+    "base_resale_value": 62000,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-z-flip6.jpg",
     "popular_tag": "Full Flex Cover Screen AI Flip",
     "processor": "Snapdragon 8 Elite for Galaxy",
@@ -1038,52 +855,6 @@ export const ALL_INDIAN_PHONES_CATALOG: MasterPhone[] = [
     "is_active": true
   },
   {
-    "id": "samsung-fold6",
-    "brand": "Samsung",
-    "model": "Galaxy Z Fold6",
-    "release_year": 2024,
-    "ram_options": [
-      "12GB"
-    ],
-    "storage_options": [
-      "256GB",
-      "512GB"
-    ],
-    "default_mrp": 164999,
-    "base_resale_value": 76000,
-    "image_url": "https://images.unsplash.com/photo-1610945415295-d9bbf067e59c?w=800&auto=format&fit=crop&q=80",
-    "popular_tag": "Ultra Lightweight AI Foldable",
-    "processor": "Snapdragon 8 Gen 3 for Galaxy",
-    "camera_spec": "50MP OIS + 10MP 3x Telephoto + 12MP UW",
-    "battery_spec": "4400 mAh 25W Charging",
-    "display_spec": "7.6\" Dynamic AMOLED 2X Inner + 6.3\" Outer 120Hz",
-    "is_5g": true,
-    "is_active": true
-  },
-  {
-    "id": "samsung-flip6",
-    "brand": "Samsung",
-    "model": "Galaxy Z Flip6",
-    "release_year": 2024,
-    "ram_options": [
-      "12GB"
-    ],
-    "storage_options": [
-      "256GB",
-      "512GB"
-    ],
-    "default_mrp": 109999,
-    "base_resale_value": 40650,
-    "image_url": "https://images.unsplash.com/photo-1610945415295-d9bbf067e59c?w=800&auto=format&fit=crop&q=80",
-    "popular_tag": "50MP FlexCam + Vapor Chamber",
-    "processor": "Snapdragon 8 Gen 3 for Galaxy",
-    "camera_spec": "50MP Dual Pixel OIS + 12MP UW",
-    "battery_spec": "4000 mAh Fast Charging",
-    "display_spec": "6.7\" Dynamic AMOLED 120Hz + 3.4\" Flex Window",
-    "is_5g": true,
-    "is_active": true
-  },
-  {
     "id": "samsung-s24u",
     "brand": "Samsung",
     "model": "Galaxy S24 Ultra",
@@ -1119,7 +890,7 @@ export const ALL_INDIAN_PHONES_CATALOG: MasterPhone[] = [
       "512GB"
     ],
     "default_mrp": 99999,
-    "base_resale_value": 43000,
+    "base_resale_value": 50000,
     "image_url": "https://images.unsplash.com/photo-1610945415295-d9bbf067e59c?w=800&auto=format&fit=crop&q=80",
     "popular_tag": "QHD+ AMOLED Flagship",
     "processor": "Exynos 2400 / SD 8 Gen 3",
@@ -1293,52 +1064,6 @@ export const ALL_INDIAN_PHONES_CATALOG: MasterPhone[] = [
     "is_active": true
   },
   {
-    "id": "samsung-fold5",
-    "brand": "Samsung",
-    "model": "Galaxy Z Fold5",
-    "release_year": 2023,
-    "ram_options": [
-      "12GB"
-    ],
-    "storage_options": [
-      "256GB",
-      "512GB"
-    ],
-    "default_mrp": 154999,
-    "base_resale_value": 55000,
-    "image_url": "https://images.unsplash.com/photo-1610945415295-d9bbf067e59c?w=800&auto=format&fit=crop&q=80",
-    "popular_tag": "Multitasking Foldable King",
-    "processor": "Snapdragon 8 Gen 2 for Galaxy",
-    "camera_spec": "50MP Triple Camera with FlexCam",
-    "battery_spec": "4400 mAh 25W",
-    "display_spec": "7.6\" QXGA+ Dynamic AMOLED 120Hz Inner",
-    "is_5g": true,
-    "is_active": true
-  },
-  {
-    "id": "samsung-flip5",
-    "brand": "Samsung",
-    "model": "Galaxy Z Flip5",
-    "release_year": 2023,
-    "ram_options": [
-      "8GB"
-    ],
-    "storage_options": [
-      "256GB",
-      "512GB"
-    ],
-    "default_mrp": 99999,
-    "base_resale_value": 28850,
-    "image_url": "https://images.unsplash.com/photo-1610945415295-d9bbf067e59c?w=800&auto=format&fit=crop&q=80",
-    "popular_tag": "Flex Window Pocket Foldable",
-    "processor": "Snapdragon 8 Gen 2 for Galaxy",
-    "camera_spec": "12MP Dual Pixel OIS",
-    "battery_spec": "3700 mAh Fast Charging",
-    "display_spec": "6.7\" Dynamic AMOLED 120Hz + 3.4\" Cover Screen",
-    "is_5g": true,
-    "is_active": true
-  },
-  {
     "id": "samsung-a55",
     "brand": "Samsung",
     "model": "Galaxy A55 5G",
@@ -1383,28 +1108,6 @@ export const ALL_INDIAN_PHONES_CATALOG: MasterPhone[] = [
     "battery_spec": "5000 mAh 25W",
     "display_spec": "6.4\" Super AMOLED 120Hz",
     "is_5g": true,
-    "is_active": true
-  },
-  {
-    "id": "samsung-galaxy-a8",
-    "brand": "Samsung",
-    "model": "Samsung Galaxy A8",
-    "release_year": 2018,
-    "ram_options": [
-      "4GB"
-    ],
-    "storage_options": [
-      "64GB"
-    ],
-    "default_mrp": 31990,
-    "base_resale_value": 4800,
-    "image_url": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-a8-2018.jpg",
-    "popular_tag": "Dual Front Camera Infinity Display",
-    "processor": "Exynos 7885 Octa",
-    "camera_spec": "16MP Rear + 16MP+8MP Dual Front",
-    "battery_spec": "3000 mAh Fast Charging",
-    "display_spec": "5.6\" Super AMOLED FHD+ Infinity Display",
-    "is_5g": false,
     "is_active": true
   },
   {
@@ -1892,7 +1595,7 @@ export const ALL_INDIAN_PHONES_CATALOG: MasterPhone[] = [
       "512GB"
     ],
     "default_mrp": 69999,
-    "base_resale_value": 28740,
+    "base_resale_value": 35000,
     "image_url": "https://images.unsplash.com/photo-1598327105666-5b89351aff97?w=800&auto=format&fit=crop&q=80",
     "popular_tag": "Leica Summilux Master",
     "processor": "Snapdragon 8 Gen 3 (4nm)",
@@ -1915,7 +1618,7 @@ export const ALL_INDIAN_PHONES_CATALOG: MasterPhone[] = [
       "256GB"
     ],
     "default_mrp": 39999,
-    "base_resale_value": 13500,
+    "base_resale_value": 14500,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-mi11x-pro.jpg",
     "popular_tag": "Snapdragon 888 108MP Flagship",
     "processor": "Snapdragon 888 5G",
@@ -1937,7 +1640,7 @@ export const ALL_INDIAN_PHONES_CATALOG: MasterPhone[] = [
       "512GB"
     ],
     "default_mrp": 99999,
-    "base_resale_value": 39880,
+    "base_resale_value": 56000,
     "image_url": "https://images.unsplash.com/photo-1598327105666-5b89351aff97?w=800&auto=format&fit=crop&q=80",
     "popular_tag": "1-inch Leica Quad Camera",
     "processor": "Snapdragon 8 Gen 3 (4nm)",
@@ -1960,7 +1663,7 @@ export const ALL_INDIAN_PHONES_CATALOG: MasterPhone[] = [
       "128GB"
     ],
     "default_mrp": 13999,
-    "base_resale_value": 9880,
+    "base_resale_value": 9500,
     "image_url": "https://images.unsplash.com/photo-1598327105666-5b89351aff97?w=800&auto=format&fit=crop&q=80",
     "popular_tag": "108MP Camera Budget 5G",
     "processor": "Snapdragon 4 Gen 2 AE (4nm)",
@@ -1984,7 +1687,7 @@ export const ALL_INDIAN_PHONES_CATALOG: MasterPhone[] = [
       "512GB"
     ],
     "default_mrp": 31999,
-    "base_resale_value": 17800,
+    "base_resale_value": 18500,
     "image_url": "https://images.unsplash.com/photo-1598327105666-5b89351aff97?w=800&auto=format&fit=crop&q=80",
     "popular_tag": "200MP OIS + 120W + IP68",
     "processor": "MediaTek Dimensity 7200 Ultra (4nm)",
@@ -2008,7 +1711,7 @@ export const ALL_INDIAN_PHONES_CATALOG: MasterPhone[] = [
       "256GB"
     ],
     "default_mrp": 25999,
-    "base_resale_value": 14690,
+    "base_resale_value": 15500,
     "image_url": "https://images.unsplash.com/photo-1598327105666-5b89351aff97?w=800&auto=format&fit=crop&q=80",
     "popular_tag": "200MP Camera Value",
     "processor": "Snapdragon 7s Gen 2 (4nm)",
@@ -2032,7 +1735,7 @@ export const ALL_INDIAN_PHONES_CATALOG: MasterPhone[] = [
       "256GB"
     ],
     "default_mrp": 24999,
-    "base_resale_value": 13130,
+    "base_resale_value": 13500,
     "image_url": "https://images.unsplash.com/photo-1598327105666-5b89351aff97?w=800&auto=format&fit=crop&q=80",
     "popular_tag": "Sony IMX766 Favorite",
     "processor": "MediaTek Dimensity 1080 (6nm)",
@@ -2062,53 +1765,6 @@ export const ALL_INDIAN_PHONES_CATALOG: MasterPhone[] = [
     "camera_spec": "108MP Quad Camera + 5MP Telemacro",
     "battery_spec": "5020 mAh 33W",
     "display_spec": "6.67\" Super AMOLED 120Hz HDR10",
-    "is_5g": false,
-    "is_active": true
-  },
-  {
-    "id": "xiaomi-note7p",
-    "brand": "Xiaomi",
-    "model": "Redmi Note 7 Pro",
-    "release_year": 2019,
-    "ram_options": [
-      "4GB",
-      "6GB"
-    ],
-    "storage_options": [
-      "64GB",
-      "128GB"
-    ],
-    "default_mrp": 13999,
-    "base_resale_value": 3600,
-    "image_url": "https://images.unsplash.com/photo-1598327105666-5b89351aff97?w=800&auto=format&fit=crop&q=80",
-    "popular_tag": "48MP Record Breaker",
-    "processor": "Snapdragon 675",
-    "camera_spec": "48MP Sony IMX586",
-    "battery_spec": "4000 mAh Quick Charge 4",
-    "display_spec": "6.3\" FHD+ Dot Notch",
-    "is_5g": false,
-    "is_active": true
-  },
-  {
-    "id": "xiaomi-note4",
-    "brand": "Xiaomi",
-    "model": "Redmi Note 4",
-    "release_year": 2017,
-    "ram_options": [
-      "3GB",
-      "4GB"
-    ],
-    "storage_options": [
-      "64GB"
-    ],
-    "default_mrp": 12999,
-    "base_resale_value": 3450,
-    "image_url": "https://images.unsplash.com/photo-1598327105666-5b89351aff97?w=800&auto=format&fit=crop&q=80",
-    "popular_tag": "India #1 Bestseller 2017",
-    "processor": "Snapdragon 625 14nm FinFET",
-    "camera_spec": "13MP Rear Camera CMOS",
-    "battery_spec": "4100 mAh Long Battery",
-    "display_spec": "5.5\" 1080p IPS Full HD",
     "is_5g": false,
     "is_active": true
   },
@@ -5269,30 +4925,6 @@ export const ALL_INDIAN_PHONES_CATALOG: MasterPhone[] = [
     "is_active": true
   },
   {
-    "id": "xiaomi-poco-redmi-11-prime",
-    "brand": "Xiaomi",
-    "model": "Poco Redmi 11 Prime",
-    "release_year": 2022,
-    "ram_options": [
-      "4GB",
-      "6GB"
-    ],
-    "storage_options": [
-      "64GB",
-      "128GB"
-    ],
-    "default_mrp": 12999,
-    "base_resale_value": 6400,
-    "image_url": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-redmi-11-prime.jpg",
-    "popular_tag": "Helio G99 Gaming Performance",
-    "processor": "MediaTek Helio G99 (6nm)",
-    "camera_spec": "50MP AI Triple Camera",
-    "battery_spec": "5000 mAh 18W Fast Charging",
-    "display_spec": "6.58\" 90Hz FHD+ AdaptiveSync",
-    "is_5g": false,
-    "is_active": true
-  },
-  {
     "id": "vivo-iqoo-15",
     "brand": "Vivo",
     "model": "iQOO 15",
@@ -5595,31 +5227,6 @@ export const ALL_INDIAN_PHONES_CATALOG: MasterPhone[] = [
     "battery_spec": "3650 mAh Fast MagSafe Charging",
     "display_spec": "6.3\" ProMotion OLED 120Hz",
     "is_5g": true,
-    "is_active": true
-  },
-  {
-    "brand": "Samsung",
-    "model": "Samsung Galaxy A7",
-    "release_year": 2018,
-    "storage_options": [
-      "64 GB",
-      "128 GB"
-    ],
-    "ram_options": [
-      "4 GB",
-      "6 GB"
-    ],
-    "default_storage": "64 GB",
-    "default_ram": "4 GB",
-    "default_mrp": 23990,
-    "base_resale_value": 4200,
-    "image_url": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-a7-2018.jpg",
-    "popular_tag": "Triple Camera Pioneer",
-    "processor": "Exynos 7885 Octa-core",
-    "camera_spec": "24MP + 8MP Ultrawide + 5MP Depth",
-    "battery_spec": "3300 mAh",
-    "display_spec": "6.0\" Super AMOLED FHD+",
-    "is_5g": false,
     "is_active": true
   },
   {

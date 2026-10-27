@@ -2162,7 +2162,7 @@ export const MASTER_MODEL_CATALOG = [
     "price": 2200,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/oneplus-3.jpg"
   },
-    {
+  {
     "brand": "Oppo",
     "series": "Oppo Series",
     "model": "OPPO A16",
@@ -2178,7 +2178,7 @@ export const MASTER_MODEL_CATALOG = [
     "price": 7130,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/oppo-a17.jpg"
   },
-    {
+  {
     "brand": "Oppo",
     "series": "Oppo A & K Series",
     "model": "Oppo A18",
@@ -2354,7 +2354,7 @@ export const MASTER_MODEL_CATALOG = [
     "price": 11090,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/oppo-a6x-5g.jpg"
   },
-    {
+  {
     "brand": "Oppo",
     "series": "Oppo Series",
     "model": "OPPO A74 5G",
@@ -2434,7 +2434,7 @@ export const MASTER_MODEL_CATALOG = [
     "price": 8690,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/oppo-a96.jpg"
   },
-    {
+  {
     "brand": "Oppo",
     "series": "Oppo Series",
     "model": "OPPO F11",
@@ -2578,7 +2578,7 @@ export const MASTER_MODEL_CATALOG = [
     "price": 17860,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/oppo-f29-pro-5g.jpg"
   },
-      {
+  {
     "brand": "Oppo",
     "series": "Oppo Series",
     "model": "OPPO F31 5G",
@@ -2802,7 +2802,7 @@ export const MASTER_MODEL_CATALOG = [
     "price": 8000,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/oppo-k3.jpg"
   },
-    {
+  {
     "brand": "Oppo",
     "series": "Oppo Series",
     "model": "OPPO R17",
@@ -3802,7 +3802,7 @@ export const MASTER_MODEL_CATALOG = [
     "price": 11590,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/realme-c100x.jpg"
   },
-        {
+  {
     "brand": "Realme",
     "series": "Realme Series",
     "model": "Realme C33 2023",
@@ -4082,7 +4082,7 @@ export const MASTER_MODEL_CATALOG = [
     "price": 9000,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/realme-narzo-50-pro-5g.jpg"
   },
-      {
+  {
     "brand": "Realme",
     "series": "Realme Narzo & P Series",
     "model": "Realme Narzo 60 5G",
@@ -4988,38 +4988,6 @@ export const MASTER_MODEL_CATALOG = [
   },
   {
     "brand": "Samsung",
-    "series": "Galaxy J Series (Classic)",
-    "model": "Samsung Galaxy J6",
-    "storage": "64 GB",
-    "price": 3320,
-    "image": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-j6.jpg"
-  },
-  {
-    "brand": "Samsung",
-    "series": "Galaxy J Series (Classic)",
-    "model": "Samsung Galaxy J6+",
-    "storage": "64 GB",
-    "price": 4450,
-    "image": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-j6-plus-sm-j610f.jpg"
-  },
-  {
-    "brand": "Samsung",
-    "series": "Galaxy J Series (Classic)",
-    "model": "Samsung Galaxy J7 Pro",
-    "storage": "64 GB",
-    "price": 2940,
-    "image": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-j7-pro.jpg"
-  },
-  {
-    "brand": "Samsung",
-    "series": "Galaxy J Series (Classic)",
-    "model": "Samsung Galaxy J8",
-    "storage": "64 GB",
-    "price": 4160,
-    "image": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-j8-j800.jpg"
-  },
-  {
-    "brand": "Samsung",
     "series": "Galaxy M & F Series",
     "model": "Samsung Galaxy M04",
     "storage": "64 GB",
@@ -5340,22 +5308,6 @@ export const MASTER_MODEL_CATALOG = [
   },
   {
     "brand": "Samsung",
-    "series": "Samsung Series",
-    "model": "Samsung Galaxy On6",
-    "storage": "64 GB",
-    "price": 2900,
-    "image": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-on6.jpg"
-  },
-  {
-    "brand": "Samsung",
-    "series": "Samsung Series",
-    "model": "Samsung Galaxy On8 2018",
-    "storage": "64 GB",
-    "price": 3600,
-    "image": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-on8-2018.jpg"
-  },
-  {
-    "brand": "Samsung",
     "series": "Galaxy S10 Series",
     "model": "Samsung Galaxy S10",
     "storage": "128 GB",
@@ -5415,7 +5367,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Galaxy S20 Series",
     "model": "Samsung Galaxy S20+",
     "storage": "128 GB",
-    "price": 11000,
+    "price": 13500,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s20-plus-r.jpg"
   },
   {
@@ -5471,7 +5423,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Galaxy S22 Series",
     "model": "Samsung Galaxy S22+ 5G",
     "storage": "128 GB",
-    "price": 21500,
+    "price": 25500,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s22-plus-5g.jpg"
   },
   {
@@ -5503,7 +5455,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Galaxy S23 Series",
     "model": "Samsung Galaxy S23+",
     "storage": "256 GB",
-    "price": 28000,
+    "price": 34000,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s23-plus-5g.jpg"
   },
   {
@@ -5535,7 +5487,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Galaxy S24 Series",
     "model": "Samsung Galaxy S24+",
     "storage": "256 GB",
-    "price": 43000,
+    "price": 50000,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s24-plus-5g-sm-s926.jpg"
   },
   {
@@ -5591,7 +5543,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Galaxy Z Series (Fold & Flip)",
     "model": "Samsung Galaxy Z Fold 7",
     "storage": "256 GB",
-    "price": 94900,
+    "price": 98000,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-z-fold6.jpg"
   },
   {
@@ -5599,7 +5551,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Galaxy Z Series (Fold & Flip)",
     "model": "Samsung Galaxy Z Flip 7",
     "storage": "256 GB",
-    "price": 54000,
+    "price": 62000,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-z-flip6.jpg"
   },
   {
@@ -5621,25 +5573,9 @@ export const MASTER_MODEL_CATALOG = [
   {
     "brand": "Samsung",
     "series": "Galaxy S Legacy Series",
-    "model": "Samsung Galaxy S8",
-    "storage": "64 GB",
-    "price": 5290,
-    "image": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s8.jpg"
-  },
-  {
-    "brand": "Samsung",
-    "series": "Galaxy S Legacy Series",
-    "model": "Samsung Galaxy S8 Plus",
-    "storage": "64 GB",
-    "price": 5530,
-    "image": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s8-plus.jpg"
-  },
-  {
-    "brand": "Samsung",
-    "series": "Galaxy S Legacy Series",
     "model": "Samsung Galaxy S9",
     "storage": "64 GB",
-    "price": 3500,
+    "price": 4500,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s9.jpg"
   },
   {
@@ -5647,7 +5583,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Galaxy S Legacy Series",
     "model": "Samsung Galaxy S9 Plus",
     "storage": "64 GB",
-    "price": 4800,
+    "price": 5500,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s9-plus.jpg"
   },
   {
@@ -5695,7 +5631,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Galaxy Z Series (Fold & Flip)",
     "model": "Samsung Galaxy Z Flip7 FE 5G",
     "storage": "256 GB",
-    "price": 53100,
+    "price": 42000,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-z-flip6.jpg"
   },
   {
@@ -7415,7 +7351,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Redmi Note 12 & 11 Series",
     "model": "Redmi Note 12 5G",
     "storage": "128 GB",
-    "price": 9400,
+    "price": 9500,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-redmi-note-12.jpg"
   },
   {
@@ -7423,7 +7359,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Redmi Note 12 & 11 Series",
     "model": "Redmi Note 12 Pro 5G",
     "storage": "128 GB",
-    "price": 13130,
+    "price": 13500,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-redmi-note-12-pro.jpg"
   },
   {
@@ -7447,7 +7383,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Redmi Note 13 & 14 Series",
     "model": "Redmi Note 13 5G",
     "storage": "128 GB",
-    "price": 11200,
+    "price": 11500,
     "image": "https://api.mobileapi.dev/devices/31521/thumb.png"
   },
   {
@@ -7455,7 +7391,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Redmi Note 13 & 14 Series",
     "model": "Redmi Note 13 Pro 5G",
     "storage": "128 GB",
-    "price": 14690,
+    "price": 15500,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-redmi-note-13-pro-5g.jpg"
   },
   {
@@ -7463,7 +7399,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Redmi Note 13 & 14 Series",
     "model": "Redmi Note 13 Pro+ 5G",
     "storage": "256 GB",
-    "price": 17800,
+    "price": 18500,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-redmi-note-13-pro-plus.jpg"
   },
   {
@@ -7551,7 +7487,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Xiaomi Mi / Flagship Series",
     "model": "Xiaomi 12 Pro",
     "storage": "256 GB",
-    "price": 15920,
+    "price": 19000,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-12-pro.jpg"
   },
   {
@@ -7575,7 +7511,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Xiaomi Mi / Flagship Series",
     "model": "Xiaomi 13 Pro",
     "storage": "256 GB",
-    "price": 26460,
+    "price": 31000,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-13-pro.jpg"
   },
   {
@@ -7583,7 +7519,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Xiaomi Mi / Flagship Series",
     "model": "Xiaomi 14",
     "storage": "256 GB",
-    "price": 28740,
+    "price": 35000,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-14.jpg"
   },
   {
@@ -7599,7 +7535,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Xiaomi Mi / Flagship Series",
     "model": "Xiaomi 14 Ultra",
     "storage": "512 GB",
-    "price": 39980,
+    "price": 56000,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-14-ultra.jpg"
   },
   {
@@ -7685,62 +7621,6 @@ export const MASTER_MODEL_CATALOG = [
   {
     "brand": "Xiaomi",
     "series": "Xiaomi Series",
-    "model": "Xiaomi Mi 11 Lite",
-    "storage": "128 GB",
-    "price": 14200,
-    "image": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-mi-11-lite.jpg"
-  },
-  {
-    "brand": "Xiaomi",
-    "series": "Xiaomi Series",
-    "model": "Xiaomi Mi 11 Ultra",
-    "storage": "256 GB",
-    "price": 19270,
-    "image": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-mi-11-ultra.jpg"
-  },
-  {
-    "brand": "Xiaomi",
-    "series": "Xiaomi Mi / Flagship Series",
-    "model": "Xiaomi Mi 11X",
-    "storage": "128 GB",
-    "price": 15480,
-    "image": "https://api.mobileapi.dev/devices/1935/thumb.png"
-  },
-  {
-    "brand": "Xiaomi",
-    "series": "Xiaomi Mi / Flagship Series",
-    "model": "Xiaomi Mi 11X Pro",
-    "storage": "128 GB",
-    "price": 13800,
-    "image": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-mi-11x-pro.jpg"
-  },
-  {
-    "brand": "Xiaomi",
-    "series": "Xiaomi Series",
-    "model": "Xiaomi Mi A2",
-    "storage": "64 GB",
-    "price": 2800,
-    "image": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-mi-a2.jpg"
-  },
-  {
-    "brand": "Xiaomi",
-    "series": "Xiaomi Series",
-    "model": "Xiaomi Mi A3",
-    "storage": "64 GB",
-    "price": 3500,
-    "image": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-mi-a3.jpg"
-  },
-  {
-    "brand": "Xiaomi",
-    "series": "Xiaomi Series",
-    "model": "Xiaomi Mi Mix 2",
-    "storage": "128 GB",
-    "price": 4200,
-    "image": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-mi-mix-2.jpg"
-  },
-  {
-    "brand": "Xiaomi",
-    "series": "Xiaomi Series",
     "model": "Xiaomi Redmi 10 Power",
     "storage": "128 GB",
     "price": 6400,
@@ -7775,7 +7655,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Xiaomi Series",
     "model": "Xiaomi Redmi 13 5G",
     "storage": "128 GB",
-    "price": 9880,
+    "price": 9500,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-redmi-13-5g.jpg"
   },
   {
@@ -7783,7 +7663,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Xiaomi Series",
     "model": "Xiaomi Redmi 14C 5G",
     "storage": "64 GB",
-    "price": 9220,
+    "price": 7500,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-redmi-14c-5g.jpg"
   },
   {
@@ -7791,7 +7671,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Xiaomi Series",
     "model": "Xiaomi Redmi 15 5G",
     "storage": "128 GB",
-    "price": 13010,
+    "price": 11000,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-redmi-15-5g.jpg"
   },
   {
@@ -7821,14 +7701,6 @@ export const MASTER_MODEL_CATALOG = [
   {
     "brand": "Xiaomi",
     "series": "Xiaomi Series",
-    "model": "Xiaomi Redmi 8",
-    "storage": "64 GB",
-    "price": 5280,
-    "image": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-redmi-8.jpg"
-  },
-  {
-    "brand": "Xiaomi",
-    "series": "Xiaomi Series",
     "model": "Xiaomi Redmi 9 Activ",
     "storage": "64 GB",
     "price": 5130,
@@ -7849,14 +7721,6 @@ export const MASTER_MODEL_CATALOG = [
     "storage": "64 GB",
     "price": 4300,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-redmi-9-prime.jpg"
-  },
-  {
-    "brand": "Xiaomi",
-    "series": "Xiaomi Series",
-    "model": "Xiaomi Redmi 9i",
-    "storage": "64 GB",
-    "price": 3700,
-    "image": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-redmi-9i.jpg"
   },
   {
     "brand": "Xiaomi",
@@ -8021,30 +7885,6 @@ export const MASTER_MODEL_CATALOG = [
   {
     "brand": "Xiaomi",
     "series": "Xiaomi Series",
-    "model": "Xiaomi Redmi Note 5 Pro",
-    "storage": "64 GB",
-    "price": 2600,
-    "image": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-redmi-note-5-pro.jpg"
-  },
-  {
-    "brand": "Xiaomi",
-    "series": "Xiaomi Series",
-    "model": "Xiaomi Redmi Note 6 Pro",
-    "storage": "64 GB",
-    "price": 2800,
-    "image": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-redmi-note-6-pro.jpg"
-  },
-  {
-    "brand": "Xiaomi",
-    "series": "Xiaomi Series",
-    "model": "Xiaomi Redmi Note 7 Pro",
-    "storage": "64 GB",
-    "price": 3600,
-    "image": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-redmi-note-7-pro.jpg"
-  },
-  {
-    "brand": "Xiaomi",
-    "series": "Xiaomi Series",
     "model": "Xiaomi Redmi Turbo 5",
     "storage": "256 GB",
     "price": 26550,
@@ -8079,32 +7919,8 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Xiaomi Mi / Flagship Series",
     "model": "Xiaomi 11X Pro",
     "storage": "128 GB",
-    "price": 13500,
+    "price": 14500,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-mi11x-pro.jpg"
-  },
-  {
-    "brand": "Samsung",
-    "series": "Galaxy S26 & Flagship Series",
-    "model": "Samsung Galaxy S26 FE",
-    "storage": "128 GB",
-    "price": 38000,
-    "image": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s24-fe.jpg"
-  },
-  {
-    "brand": "Samsung",
-    "series": "Galaxy Z Fold & Flip Series",
-    "model": "Samsung Galaxy Z Flip 8",
-    "storage": "256 GB",
-    "price": 62000,
-    "image": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-z-flip6.jpg"
-  },
-  {
-    "brand": "Samsung",
-    "series": "Galaxy Z Fold & Flip Series",
-    "model": "Samsung Galaxy Z Fold 8",
-    "storage": "256 GB",
-    "price": 88000,
-    "image": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-z-fold6.jpg"
   },
   {
     "brand": "Apple",
@@ -8235,14 +8051,6 @@ export const MASTER_MODEL_CATALOG = [
     "image": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-poco-m2.jpg"
   },
   {
-    "brand": "Xiaomi",
-    "series": "Redmi Series",
-    "model": "Poco Redmi 11 Prime",
-    "storage": "64 GB",
-    "price": 6400,
-    "image": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-redmi-11-prime.jpg"
-  },
-  {
     "brand": "Vivo",
     "series": "iQOO Flagship Series",
     "model": "iQOO 15",
@@ -8337,14 +8145,6 @@ export const MASTER_MODEL_CATALOG = [
     "storage": "128 GB",
     "price": 152000,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-16-pro.jpg"
-  },
-  {
-    "brand": "Samsung",
-    "series": "Galaxy A Series",
-    "model": "Samsung Galaxy A7",
-    "storage": "64 GB",
-    "price": 4200,
-    "image": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-a7-2018.jpg"
   },
   {
     "brand": "Vivo",
