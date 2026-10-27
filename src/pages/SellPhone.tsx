@@ -803,7 +803,7 @@ export default function SellPhone() {
       if (!hasBill) val -= 200;
 
       if (deviceIncludesStylus(form.brand, form.model) && form.stylusAvailable === false) {
-        val -= 3000;
+        val -= 1500;
       }
       if (baseModelPrice > 0 && Math.abs(val - baseModelPrice) < 1) {
         return baseModelPrice;

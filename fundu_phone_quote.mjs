@@ -2717,11 +2717,11 @@ export function quotePhone(input = {}, options = {}) {
   // Target Contribution Margin (Internal)
   const targetContributionMargin = Math.round(expectedResaleProceeds * FUNDU_POLICY.targetContributionMarginRate);
 
-  // Missing S-Pen / Stylus Deduction (Mandatory ₹3,000 deduction on devices that include S-Pen)
+  // Missing S-Pen / Stylus Deduction (₹1,500 deduction on devices that include S-Pen)
   let missingStylusDeduction = 0;
   const isStylusModel = isStylusDevice(brand, model);
   if (isStylusModel && (stylus_available === false || input.stylusAvailable === false)) {
-    missingStylusDeduction = 3000;
+    missingStylusDeduction = 1500;
     conditionReasons.push('Original S-Pen / Stylus not included');
   }
 

@@ -27,7 +27,7 @@ export function normalizeRamString(str: string): string {
   return `${match[1]} GB`;
 }
 
-export const MISSING_STYLUS_DEDUCTION = 3000;
+export const MISSING_STYLUS_DEDUCTION = 1500;
 
 /**
  * Checks if a device originally includes an integrated or in-box S-Pen / Stylus.
