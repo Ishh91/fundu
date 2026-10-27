@@ -216,17 +216,20 @@ export default function AdminCompetitorRadar() {
     setSavingPrice(true);
     setSaveSuccess(false);
     try {
+      const isApple = selectedBrand.toLowerCase() === 'apple' || searchModel.toLowerCase().includes('iphone');
       const payload = {
         brand: selectedBrand,
         model: searchModel,
-        storage: selectedStorage.replace(/\s+/g, ''),
+        storage: selectedStorage.trim(),
         base_price: newPrice,
-        excellent_multiplier: 0.82,
-        good_multiplier: 0.70,
-        fair_multiplier: 0.55,
+        excellent_multiplier: isApple ? 1.00 : 0.82,
+        good_multiplier: isApple ? 0.80 : 0.70,
+        fair_multiplier: isApple ? 0.60 : 0.55,
         box_bonus: 600,
         charger_bonus: 400,
         is_active: true,
+        is_locked: true,
+        manual_override: true,
       };
 
       const res = await fetch(`${API_BASE}/sell-pricing/config`, {

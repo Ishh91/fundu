@@ -2166,10 +2166,16 @@ export function lookupResaleBenchmark(brand, model, storage, options = {}) {
   // Direct catalog price override (e.g. from phonesCatalog.json or DB)
   if (options.catalogPrice && options.catalogPrice > 0) {
     const baseStorage = options.catalogStorage ? normalizeStorage(options.catalogStorage) : '128 GB';
-    const baseMult = calculateHardwareVariantMultiplier(baseStorage, '', brand);
-    const targetMult = calculateHardwareVariantMultiplier(normStorage, ram, brand);
-    const ratio = (baseMult > 0) ? (targetMult / baseMult) : 1.0;
-    const adjustedProceeds = Math.max(500, Math.round((options.catalogPrice * ratio) / 50) * 50);
+    const isExactStorage = baseStorage.toLowerCase() === normStorage.toLowerCase();
+    let adjustedProceeds;
+    if (isExactStorage) {
+      adjustedProceeds = options.catalogPrice; // Preserve exact fixed base price
+    } else {
+      const baseMult = calculateHardwareVariantMultiplier(baseStorage, '', brand);
+      const targetMult = calculateHardwareVariantMultiplier(normStorage, ram, brand);
+      const ratio = (baseMult > 0) ? (targetMult / baseMult) : 1.0;
+      adjustedProceeds = Math.max(500, Math.round((options.catalogPrice * ratio) / 50) * 50);
+    }
 
     return {
       found: true,
