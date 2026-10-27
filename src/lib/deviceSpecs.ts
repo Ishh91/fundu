@@ -226,7 +226,24 @@ export function getModelReleaseYear(brand = '', model = ''): number {
   if (/pixel\s*6/i.test(m)) return 2021;
   if (/pixel\s*5/i.test(m)) return 2020;
 
-  // 11. Explicit 4-digit year match if present
+  // 11. Itel Smartphones
+  if (/itel/i.test(full)) {
+    if (/color\s*pro|s24|p55\s*t|p55\s*\+|p55\s*5g|\bp55\b|a70/i.test(m)) return 2024;
+    if (/s23\s*\+|s23|a60s|a60|a05s|p40\s*\+|p40/i.test(m)) return 2023;
+    if (/vision\s*3|a58|a49|a27/i.test(m)) return 2022;
+    if (/vision\s*2|vision\s*1|a48|a23/i.test(m)) return 2021;
+    return 2023;
+  }
+
+  // 12. Tecno / Techno Smartphones
+  if (/tecno|techno/i.test(full)) {
+    if (/camon\s*30|pova\s*6|spark\s*20|spark\s*go\s*2024/i.test(m)) return 2024;
+    if (/phantom\s*v|pova\s*5|camon\s*20/i.test(m)) return 2023;
+    if (/phantom\s*x2/i.test(m)) return 2022;
+    return 2023;
+  }
+
+  // 13. Explicit 4-digit year match if present
   if (yrMatch) return parseInt(yrMatch[1], 10);
 
   // Default older devices to 2022
@@ -452,7 +469,6 @@ const MODEL_HARDWARE_RULES: Array<{
   {
     pattern: /iphone\s*7\s*plus\b/i,
     variants: [
-      { storage: '32 GB', rams: [] },
       { storage: '128 GB', rams: [] },
       { storage: '256 GB', rams: [] },
     ],
@@ -460,7 +476,6 @@ const MODEL_HARDWARE_RULES: Array<{
   {
     pattern: /iphone\s*7\b(?!\s*plus)/i,
     variants: [
-      { storage: '32 GB', rams: [] },
       { storage: '128 GB', rams: [] },
       { storage: '256 GB', rams: [] },
     ],
@@ -468,8 +483,6 @@ const MODEL_HARDWARE_RULES: Array<{
   {
     pattern: /iphone\s*6s\s*plus\b/i,
     variants: [
-      { storage: '16 GB', rams: [] },
-      { storage: '32 GB', rams: [] },
       { storage: '64 GB', rams: [] },
       { storage: '128 GB', rams: [] },
     ],
@@ -477,8 +490,6 @@ const MODEL_HARDWARE_RULES: Array<{
   {
     pattern: /iphone\s*6s\b(?!\s*plus)/i,
     variants: [
-      { storage: '16 GB', rams: [] },
-      { storage: '32 GB', rams: [] },
       { storage: '64 GB', rams: [] },
       { storage: '128 GB', rams: [] },
     ],
@@ -1013,7 +1024,6 @@ const MODEL_HARDWARE_RULES: Array<{
   {
     pattern: /galaxy\s*a8\b|\ba8\s*\(2018\)|\ba8\b/i,
     variants: [
-      { storage: '32 GB', rams: ['4 GB'] },
       { storage: '64 GB', rams: ['4 GB'] },
     ],
   },
@@ -1160,15 +1170,8 @@ const MODEL_HARDWARE_RULES: Array<{
   // LENOVO & MOTO
   // ==========================================
   {
-    pattern: /lenovo\s*phab\s*2/i,
-    variants: [
-      { storage: '32 GB', rams: ['3 GB'] },
-    ],
-  },
-  {
     pattern: /lenovo\s*moto\s*m|\bmoto\s*m\b/i,
     variants: [
-      { storage: '32 GB', rams: ['3 GB'] },
       { storage: '64 GB', rams: ['4 GB'] },
     ],
   },
@@ -1188,7 +1191,6 @@ const MODEL_HARDWARE_RULES: Array<{
   {
     pattern: /lenovo\s*k8\s*note/i,
     variants: [
-      { storage: '32 GB', rams: ['3 GB'] },
       { storage: '64 GB', rams: ['4 GB'] },
     ],
   },
@@ -1213,6 +1215,163 @@ const MODEL_HARDWARE_RULES: Array<{
     pattern: /edge\s*50\s*fusion/i,
     variants: [
       { storage: '128 GB', rams: ['8 GB'] },
+      { storage: '256 GB', rams: ['12 GB'] },
+    ],
+  },
+
+  // ==========================================
+  // ITEL SMARTPHONES
+  // ==========================================
+  {
+    pattern: /itel\s*s23\s*\+/i,
+    variants: [
+      { storage: '128 GB', rams: ['8 GB'] },
+      { storage: '256 GB', rams: ['8 GB'] },
+    ],
+  },
+  {
+    pattern: /itel\s*s24\b/i,
+    variants: [
+      { storage: '128 GB', rams: ['8 GB'] },
+    ],
+  },
+  {
+    pattern: /itel\s*s23\b/i,
+    variants: [
+      { storage: '128 GB', rams: ['8 GB'] },
+    ],
+  },
+  {
+    pattern: /itel\s*color\s*pro/i,
+    variants: [
+      { storage: '128 GB', rams: ['6 GB'] },
+    ],
+  },
+  {
+    pattern: /itel\s*p55\s*5g/i,
+    variants: [
+      { storage: '64 GB', rams: ['4 GB', '6 GB'] },
+      { storage: '128 GB', rams: ['6 GB'] },
+    ],
+  },
+  {
+    pattern: /itel\s*p55\s*\+/i,
+    variants: [
+      { storage: '128 GB', rams: ['8 GB'] },
+      { storage: '256 GB', rams: ['8 GB'] },
+    ],
+  },
+  {
+    pattern: /itel\s*p55\s*t/i,
+    variants: [
+      { storage: '128 GB', rams: ['4 GB'] },
+    ],
+  },
+  {
+    pattern: /itel\s*p55\b/i,
+    variants: [
+      { storage: '128 GB', rams: ['8 GB'] },
+    ],
+  },
+  {
+    pattern: /itel\s*a70\b/i,
+    variants: [
+      { storage: '64 GB', rams: ['4 GB'] },
+      { storage: '128 GB', rams: ['4 GB'] },
+      { storage: '256 GB', rams: ['4 GB'] },
+    ],
+  },
+  {
+    pattern: /itel\s*a60s?\b/i,
+    variants: [
+      { storage: '64 GB', rams: ['4 GB'] },
+      { storage: '128 GB', rams: ['4 GB'] },
+    ],
+  },
+  {
+    pattern: /itel\s*a05s\b/i,
+    variants: [
+      { storage: '64 GB', rams: ['4 GB'] },
+    ],
+  },
+
+  // ==========================================
+  // TECNO SMARTPHONES
+  // ==========================================
+  {
+    pattern: /camon\s*30\s*premier/i,
+    variants: [
+      { storage: '512 GB', rams: ['12 GB'] },
+    ],
+  },
+  {
+    pattern: /camon\s*30\s*pro/i,
+    variants: [
+      { storage: '256 GB', rams: ['12 GB'] },
+    ],
+  },
+  {
+    pattern: /camon\s*30\b/i,
+    variants: [
+      { storage: '256 GB', rams: ['8 GB'] },
+    ],
+  },
+  {
+    pattern: /camon\s*20\s*pro/i,
+    variants: [
+      { storage: '128 GB', rams: ['8 GB'] },
+      { storage: '256 GB', rams: ['8 GB'] },
+    ],
+  },
+  {
+    pattern: /pova\s*6\s*pro/i,
+    variants: [
+      { storage: '128 GB', rams: ['8 GB'] },
+      { storage: '256 GB', rams: ['8 GB', '12 GB'] },
+    ],
+  },
+  {
+    pattern: /pova\s*5\s*pro/i,
+    variants: [
+      { storage: '128 GB', rams: ['8 GB'] },
+      { storage: '256 GB', rams: ['8 GB'] },
+    ],
+  },
+  {
+    pattern: /spark\s*20\s*pro/i,
+    variants: [
+      { storage: '256 GB', rams: ['8 GB'] },
+    ],
+  },
+  {
+    pattern: /spark\s*20\b/i,
+    variants: [
+      { storage: '128 GB', rams: ['8 GB'] },
+    ],
+  },
+  {
+    pattern: /spark\s*go/i,
+    variants: [
+      { storage: '64 GB', rams: ['4 GB'] },
+      { storage: '128 GB', rams: ['4 GB'] },
+    ],
+  },
+  {
+    pattern: /phantom\s*v\s*fold/i,
+    variants: [
+      { storage: '256 GB', rams: ['12 GB'] },
+      { storage: '512 GB', rams: ['12 GB'] },
+    ],
+  },
+  {
+    pattern: /phantom\s*v\s*flip/i,
+    variants: [
+      { storage: '256 GB', rams: ['8 GB'] },
+    ],
+  },
+  {
+    pattern: /phantom\s*x2\s*pro/i,
+    variants: [
       { storage: '256 GB', rams: ['12 GB'] },
     ],
   },
@@ -1246,7 +1405,7 @@ export function inferTierHardwareSpecs(
       else if (/x\b/i.test(mLower)) storages = ['64 GB', '256 GB'];
       else storages = ['64 GB', '128 GB', '256 GB'];
     } else if (/\b(7|6s|6|5s|5c|5)\b/i.test(mLower)) {
-      storages = ['16 GB', '32 GB', '64 GB', '128 GB'];
+      storages = ['64 GB', '128 GB'];
     } else if (/plus\b/i.test(mLower)) {
       storages = ['128 GB', '256 GB', '512 GB'];
     } else if (/ipad/i.test(mLower)) {
@@ -1306,9 +1465,19 @@ export function inferTierHardwareSpecs(
     };
     allRams = ['6 GB', '8 GB', '12 GB'];
   }
-  // 3. Budget / Entry-level (A0x, A1x, Redmi C, Realme C, Poco C, Spark, etc.)
+  // 3. Itel Budget Series (Accurate 4GB-8GB RAM, 64GB-256GB Storage)
+  else if (/itel/i.test(fullText)) {
+    tierStorages = ['64 GB', '128 GB', '256 GB'];
+    tierRamMap = {
+      '64 GB': ['4 GB'],
+      '128 GB': ['4 GB', '6 GB', '8 GB'],
+      '256 GB': ['8 GB'],
+    };
+    allRams = ['4 GB', '6 GB', '8 GB'];
+  }
+  // 4. Budget / Entry-level (A0x, A1x, Redmi C, Realme C, Poco C, Spark, etc.)
   else if (
-    /a0\d|a1\d|m0\d|m1\d|f0\d|f1\d|redmi\s*c|realme\s*c|poco\s*c|vivo\s*y|itel|spark|smart|pova|camon|moto\s*e/i.test(fullText)
+    /a0\d|a1\d|m0\d|m1\d|f0\d|f1\d|redmi\s*c|realme\s*c|poco\s*c|vivo\s*y|spark|smart|pova|camon|moto\s*e/i.test(fullText)
   ) {
     tierStorages = ['64 GB', '128 GB'];
     tierRamMap = {
@@ -1341,11 +1510,11 @@ export function inferTierHardwareSpecs(
     .map(normalizeStorageString)
     .filter((s) => {
       const m = s.match(/(\d+)\s*(?:gb|tb)/i);
-      return !m || parseInt(m[1], 10) > 32;
+      return !m || parseInt(m[1], 10) >= 64;
     });
   const finalStorages = Array.from(new Set([...normSeeds, ...tierStorages])).filter((s) => {
     const m = s.match(/(\d+)\s*(?:gb|tb)/i);
-    return !m || parseInt(m[1], 10) > 32;
+    return !m || parseInt(m[1], 10) >= 64;
   });
   const normalizedSeedRams = seedRams.map(normalizeRamString).filter(Boolean);
   const finalRams = Array.from(new Set([...normalizedSeedRams, ...allRams]));
@@ -1381,7 +1550,7 @@ export function inferTierHardwareSpecs(
     }
 
     if (tierRamMap[norm] && tierRamMap[norm].length > 0) {
-      return tierRamMap[norm];
+      return tierRamMap[norm].filter((r) => !/^(2|3)\s*gb$/i.test(r));
     }
     return [];
   };
@@ -1408,7 +1577,8 @@ export function getModelHardwareSpecs(
   model = '',
   customCatalog?: Array<{ brand: string; model: string; storage: string }>
 ): DeviceHardwareSpecs {
-  const normBrand = (brand || '').toLowerCase().trim();
+  let normBrand = (brand || '').toLowerCase().trim();
+  if (normBrand === 'techno') normBrand = 'tecno';
   const normModel = (model || '').toLowerCase().trim();
   const fullText = `${normBrand} ${normModel}`;
   const isApple = normBrand.includes('apple') || normModel.includes('iphone') || normModel.includes('ipad');
@@ -1420,7 +1590,7 @@ export function getModelHardwareSpecs(
         .map((v) => normalizeStorageString(v.storage))
         .filter((s) => {
           const m = s.match(/(\d+)\s*(?:gb|tb)/i);
-          return !m || parseInt(m[1], 10) > 32;
+          return !m || parseInt(m[1], 10) >= 64;
         });
 
       if (storages.length > 0) {
@@ -1429,7 +1599,7 @@ export function getModelHardwareSpecs(
         const getRamsForStorage = (stg: string): string[] => {
           const normStg = normalizeStorageString(stg);
           const match = rule.variants.find((v) => normalizeStorageString(v.storage) === normStg);
-          return match ? match.rams.map(normalizeRamString) : [];
+          return match ? match.rams.map(normalizeRamString).filter((r) => !/^(2|3)\s*gb$/i.test(r)) : [];
         };
 
         const defaultRams = getRamsForStorage(defaultStorage);
@@ -1462,7 +1632,7 @@ export function getModelHardwareSpecs(
       ? Array.from(new Set(foundPhone.storage_options.map(normalizeStorageString)))
           .filter((s) => {
             const m = s.match(/(\d+)\s*(?:gb|tb)/i);
-            return !m || parseInt(m[1], 10) > 32;
+            return !m || parseInt(m[1], 10) >= 64;
           })
       : [];
     const dbRams = isApple
@@ -1517,15 +1687,16 @@ export function getModelHardwareSpecs(
   // 3. Check customCatalog variants if provided (e.g. MASTER_MODEL_CATALOG)
   if (Array.isArray(customCatalog) && customCatalog.length > 0) {
     const cleanTarget = normModel
-      .replace(/^(apple|samsung|oneplus|xiaomi|vivo|oppo|realme|motorola|google|nothing)\s+/i, '')
+      .replace(/^(apple|samsung|oneplus|xiaomi|vivo|oppo|realme|motorola|google|nothing|tecno|techno|itel|infinix)\s+/i, '')
       .replace(/[\s-]+/g, ' ')
       .trim();
 
     const catalogVariants = customCatalog.filter((m) => {
-      if (m.brand.toLowerCase() !== normBrand) return false;
+      const mBrand = m.brand.toLowerCase();
+      if (mBrand !== normBrand && !(normBrand === 'tecno' && mBrand === 'techno')) return false;
       const cleanM = m.model
         .toLowerCase()
-        .replace(/^(apple|samsung|oneplus|xiaomi|vivo|oppo|realme|motorola|google|nothing)\s+/i, '')
+        .replace(/^(apple|samsung|oneplus|xiaomi|vivo|oppo|realme|motorola|google|nothing|tecno|techno|itel|infinix)\s+/i, '')
         .replace(/[\s-]+/g, ' ')
         .trim();
       return cleanM === cleanTarget;
@@ -1535,7 +1706,7 @@ export function getModelHardwareSpecs(
       const seedStorages = Array.from(new Set(catalogVariants.map((v) => normalizeStorageString(v.storage))))
         .filter((s) => {
           const m = s.match(/(\d+)\s*(?:gb|tb)/i);
-          return !m || parseInt(m[1], 10) > 32;
+          return !m || parseInt(m[1], 10) >= 64;
         });
       return inferTierHardwareSpecs(brand, model, seedStorages, []);
     }

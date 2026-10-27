@@ -134,7 +134,7 @@ const BRAND_DETAILS: Record<
   itel: {
     logo: getCleanBrandLogo('itel'),
     tagline: 'Sell Old Itel Mobile Phone Online for Instant Cash',
-    desc: 'Sell used Itel Color Pro, S24, P55, A70 & A60 series smartphones at your doorstep with free doorstep pickup & instant payment.',
+    desc: 'Sell used Itel Color Pro, S24, P55, A70 & A60s series smartphones at your doorstep with free doorstep pickup & instant payment.',
     count: '20+ Itel Models',
   },
   infinix: {

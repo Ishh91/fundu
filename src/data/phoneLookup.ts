@@ -80,6 +80,7 @@ export function getModelsForBrand(brand: string): string[] {
   const matches = PHONE_LOOKUP_CATALOG.filter((entry) => {
     const eBrand = entry.brand.toLowerCase().trim();
     if (eBrand === bLower) return true;
+    if (bLower === 'techno' && eBrand === 'tecno') return true;
     if (bLower === 'xiaomi' && (eBrand === 'redmi' || eBrand === 'poco')) return true;
     if (bLower === 'redmi' && (eBrand === 'redmi' || (eBrand === 'xiaomi' && /redmi/i.test(entry.model)))) return true;
     if (bLower === 'poco' && (eBrand === 'poco' || (eBrand === 'xiaomi' && /poco/i.test(entry.model)))) return true;

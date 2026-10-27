@@ -819,6 +819,22 @@ export const MASTER_MODEL_CATALOG = [
     "image": "https://fdn2.gsmarena.com/vv/bigpic/itel-s24.jpg"
   },
   {
+    "brand": "Itel",
+    "series": "S Series",
+    "model": "Itel S23",
+    "storage": "128 GB",
+    "price": 5800,
+    "image": "https://fdn2.gsmarena.com/vv/bigpic/itel-s23.jpg"
+  },
+  {
+    "brand": "Itel",
+    "series": "P Series",
+    "model": "Itel P55 5G",
+    "storage": "128 GB",
+    "price": 6800,
+    "image": "https://fdn2.gsmarena.com/vv/bigpic/itel-p55.jpg"
+  },
+  {
     "brand": "Lenovo",
     "series": "K Note Series",
     "model": "Lenovo K10 Note",
@@ -5693,9 +5709,17 @@ export const MASTER_MODEL_CATALOG = [
   {
     "brand": "Tecno",
     "series": "Camon Series",
+    "model": "Tecno Camon 30 Pro 5G",
+    "storage": "256 GB",
+    "price": 18900,
+    "image": "https://fdn2.gsmarena.com/vv/bigpic/tecno-camon-30-pro.jpg"
+  },
+  {
+    "brand": "Tecno",
+    "series": "Camon Series",
     "model": "Tecno Camon 30 Premier 5G",
     "storage": "512 GB",
-    "price": 22900,
+    "price": 24850,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/tecno-camon-30-premier.jpg"
   },
   {

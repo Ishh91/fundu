@@ -573,8 +573,8 @@ export const BRAND_SERIES_DEFINITIONS: Record<string, BrandSeriesDefinition[]> =
       description: 'iPhone 7 Plus, iPhone 7',
       pattern: /\biphone\s*7\b/i,
       defaultModels: [
-        { brand: 'Apple', series: 'iPhone 7 Series', model: 'Apple iPhone 7 Plus', storage: '32 GB', price: 5400, image: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-7r4.jpg' },
-        { brand: 'Apple', series: 'iPhone 7 Series', model: 'Apple iPhone 7', storage: '32 GB', price: 3600, image: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-7r4.jpg' },
+        { brand: 'Apple', series: 'iPhone 7 Series', model: 'Apple iPhone 7 Plus', storage: '64 GB', price: 5400, image: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-7r4.jpg' },
+        { brand: 'Apple', series: 'iPhone 7 Series', model: 'Apple iPhone 7', storage: '64 GB', price: 3600, image: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-7r4.jpg' },
       ],
     },
     {
@@ -586,8 +586,8 @@ export const BRAND_SERIES_DEFINITIONS: Record<string, BrandSeriesDefinition[]> =
       description: '6S Plus, 6S, 6 Plus, 6',
       pattern: /\biphone\s*6[s]?\b|\b6s\s*plus\b/i,
       defaultModels: [
-        { brand: 'Apple', series: 'iPhone 6 Series', model: 'Apple iPhone 6s Plus', storage: '32 GB', price: 3000, image: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-6s-plus.jpg' },
-        { brand: 'Apple', series: 'iPhone 6 Series', model: 'Apple iPhone 6s', storage: '32 GB', price: 2500, image: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-6s.jpg' },
+        { brand: 'Apple', series: 'iPhone 6 Series', model: 'Apple iPhone 6s Plus', storage: '64 GB', price: 3000, image: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-6s-plus.jpg' },
+        { brand: 'Apple', series: 'iPhone 6 Series', model: 'Apple iPhone 6s', storage: '64 GB', price: 2500, image: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-6s.jpg' },
         { brand: 'Apple', series: 'iPhone 6 Series', model: 'Apple iPhone 6 Plus', storage: '16 GB', price: 2000, image: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-6-plus.jpg' },
         { brand: 'Apple', series: 'iPhone 6 Series', model: 'Apple iPhone 6', storage: '16 GB', price: 1600, image: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-6s.jpg' },
       ],
@@ -857,7 +857,7 @@ export const BRAND_SERIES_DEFINITIONS: Record<string, BrandSeriesDefinition[]> =
         { brand: 'Samsung', series: 'Galaxy A Series', model: 'Samsung Galaxy A72', storage: '128 GB', price: 8500, image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-a72-4g.jpg' },
         { brand: 'Samsung', series: 'Galaxy A Series', model: 'Samsung Galaxy A71', storage: '128 GB', price: 7000, image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-a71.jpg' },
         { brand: 'Samsung', series: 'Galaxy A Series', model: 'Samsung Galaxy A70', storage: '128 GB', price: 4700, image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-a70.jpg' },
-        { brand: 'Samsung', series: 'Galaxy A Series', model: 'Samsung Galaxy A8', storage: '32 GB', price: 4800, image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-a8-2018.jpg' },
+        { brand: 'Samsung', series: 'Galaxy A Series', model: 'Samsung Galaxy A8', storage: '64 GB', price: 4800, image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-a8-2018.jpg' },
       ],
     },
     {
@@ -903,15 +903,15 @@ export const BRAND_SERIES_DEFINITIONS: Record<string, BrandSeriesDefinition[]> =
       pattern: /\bj\d+/i,
       defaultModels: [
         { brand: 'Samsung', series: 'Galaxy J Series (Classic)', model: 'Samsung Galaxy J8', storage: '64 GB', price: 4160, image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-j8.jpg' },
-        { brand: 'Samsung', series: 'Galaxy J Series (Classic)', model: 'Samsung Galaxy J7 Prime', storage: '32 GB', price: 4750, image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-j7-prime.jpg' },
+        { brand: 'Samsung', series: 'Galaxy J Series (Classic)', model: 'Samsung Galaxy J7 Prime', storage: '64 GB', price: 4750, image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-j7-prime.jpg' },
         { brand: 'Samsung', series: 'Galaxy J Series (Classic)', model: 'Samsung Galaxy J7 Pro', storage: '64 GB', price: 2790, image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-j7-pro.jpg' },
-        { brand: 'Samsung', series: 'Galaxy J Series (Classic)', model: 'Samsung Galaxy J7 Max', storage: '32 GB', price: 3230, image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-j7-max.jpg' },
-        { brand: 'Samsung', series: 'Galaxy J Series (Classic)', model: 'Samsung Galaxy J7 Nxt', storage: '32 GB', price: 2980, image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-j7-nxt.jpg' },
-        { brand: 'Samsung', series: 'Galaxy J Series (Classic)', model: 'Samsung Galaxy J7 Duo', storage: '32 GB', price: 3310, image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-j7-duo.jpg' },
+        { brand: 'Samsung', series: 'Galaxy J Series (Classic)', model: 'Samsung Galaxy J7 Max', storage: '64 GB', price: 3230, image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-j7-max.jpg' },
+        { brand: 'Samsung', series: 'Galaxy J Series (Classic)', model: 'Samsung Galaxy J7 Nxt', storage: '64 GB', price: 2980, image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-j7-nxt.jpg' },
+        { brand: 'Samsung', series: 'Galaxy J Series (Classic)', model: 'Samsung Galaxy J7 Duo', storage: '64 GB', price: 3310, image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-j7-duo.jpg' },
         { brand: 'Samsung', series: 'Galaxy J Series (Classic)', model: 'Samsung Galaxy J7 (2016)', storage: '16 GB', price: 4150, image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-j7-2016.jpg' },
         { brand: 'Samsung', series: 'Galaxy J Series (Classic)', model: 'Samsung Galaxy J6+', storage: '64 GB', price: 4450, image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-j6-plus.jpg' },
         { brand: 'Samsung', series: 'Galaxy J Series (Classic)', model: 'Samsung Galaxy J6', storage: '64 GB', price: 3420, image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-j6.jpg' },
-        { brand: 'Samsung', series: 'Galaxy J Series (Classic)', model: 'Samsung Galaxy J4+', storage: '32 GB', price: 3850, image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-j4-plus.jpg' },
+        { brand: 'Samsung', series: 'Galaxy J Series (Classic)', model: 'Samsung Galaxy J4+', storage: '64 GB', price: 3850, image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-j4-plus.jpg' },
         { brand: 'Samsung', series: 'Galaxy J Series (Classic)', model: 'Samsung Galaxy J4', storage: '16 GB', price: 3550, image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-j4.jpg' },
         { brand: 'Samsung', series: 'Galaxy J Series (Classic)', model: 'Samsung Galaxy J2 Pro', storage: '16 GB', price: 3050, image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-j2-pro-2018.jpg' },
         { brand: 'Samsung', series: 'Galaxy J Series (Classic)', model: 'Samsung Galaxy J2 (2018)', storage: '16 GB', price: 2700, image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-j2-2018.jpg' },
@@ -1180,7 +1180,7 @@ export const BRAND_SERIES_DEFINITIONS: Record<string, BrandSeriesDefinition[]> =
         { brand: 'Xiaomi', series: 'Redmi Number & C/A Series', model: 'Redmi 10A', storage: '64 GB', price: 5200, image: getApiThumb('Xiaomi', '10A', 'https://fdn2.gsmarena.com/vv/bigpic/xiaomi-redmi-10a.jpg') },
         { brand: 'Xiaomi', series: 'Redmi Number & C/A Series', model: 'Redmi 9', storage: '64 GB', price: 4100, image: getApiThumb('Xiaomi', '9 India', 'https://fdn2.gsmarena.com/vv/bigpic/xiaomi-redmi-9.jpg') },
         { brand: 'Xiaomi', series: 'Redmi Number & C/A Series', model: 'Redmi A3', storage: '64 GB', price: 5500, image: 'https://fdn2.gsmarena.com/vv/bigpic/xiaomi-redmi-a3.jpg' },
-        { brand: 'Xiaomi', series: 'Redmi Number & C/A Series', model: 'Redmi A2', storage: '32 GB', price: 4400, image: 'https://fdn2.gsmarena.com/vv/bigpic/xiaomi-redmi-a2.jpg' },
+        { brand: 'Xiaomi', series: 'Redmi Number & C/A Series', model: 'Redmi A2', storage: '64 GB', price: 4400, image: 'https://fdn2.gsmarena.com/vv/bigpic/xiaomi-redmi-a2.jpg' },
       ],
     },
     {
@@ -1322,7 +1322,7 @@ export const BRAND_SERIES_DEFINITIONS: Record<string, BrandSeriesDefinition[]> =
         { brand: 'Realme', series: 'Realme C Series', model: 'Realme C55', storage: '64 GB', price: 5900, image: 'https://fdn2.gsmarena.com/vv/bigpic/realme-c55.jpg' },
         { brand: 'Realme', series: 'Realme C Series', model: 'Realme C53', storage: '64 GB', price: 4600, image: 'https://fdn2.gsmarena.com/vv/bigpic/realme-c53.jpg' },
         { brand: 'Realme', series: 'Realme C Series', model: 'Realme C35', storage: '64 GB', price: 4800, image: 'https://fdn2.gsmarena.com/vv/bigpic/realme-c35.jpg' },
-        { brand: 'Realme', series: 'Realme C Series', model: 'Realme C33', storage: '32 GB', price: 4800, image: 'https://fdn2.gsmarena.com/vv/bigpic/realme-c33.jpg' },
+        { brand: 'Realme', series: 'Realme C Series', model: 'Realme C33', storage: '64 GB', price: 4800, image: 'https://fdn2.gsmarena.com/vv/bigpic/realme-c33.jpg' },
       ],
     },
   ],
@@ -1681,7 +1681,7 @@ export const BRAND_SERIES_DEFINITIONS: Record<string, BrandSeriesDefinition[]> =
     },
   ],
 
-  tecno: [
+    tecno: [
     {
       id: 'tecno-camon',
       slug: 'tecno-camon-series',
@@ -1691,9 +1691,10 @@ export const BRAND_SERIES_DEFINITIONS: Record<string, BrandSeriesDefinition[]> =
       description: 'Camon 30 Premier, Camon 30 Pro, Camon 30, Camon 20 Pro',
       pattern: /\bcamon\b/i,
       defaultModels: [
-        { brand: 'Tecno', series: 'Camon Imaging Series', model: 'Tecno Camon 30 Premier 5G', storage: '512 GB', price: 27950, image: 'https://fdn2.gsmarena.com/vv/bigpic/tecno-camon-30-pro.jpg' },
-        { brand: 'Tecno', series: 'Camon Imaging Series', model: 'Tecno Camon 30 Pro 5G', storage: '256 GB', price: 21900, image: 'https://fdn2.gsmarena.com/vv/bigpic/tecno-camon-30-pro.jpg' },
-        { brand: 'Tecno', series: 'Camon Imaging Series', model: 'Tecno Camon 30 5G', storage: '256 GB', price: 17300, image: 'https://fdn2.gsmarena.com/vv/bigpic/tecno-camon-30-pro.jpg' },
+        { brand: 'Tecno', series: 'Camon Imaging Series', model: 'Tecno Camon 30 Premier 5G', storage: '512 GB', price: 24850, image: 'https://fdn2.gsmarena.com/vv/bigpic/tecno-camon-30-premier.jpg' },
+        { brand: 'Tecno', series: 'Camon Imaging Series', model: 'Tecno Camon 30 Pro 5G', storage: '256 GB', price: 18900, image: 'https://fdn2.gsmarena.com/vv/bigpic/tecno-camon-30-pro.jpg' },
+        { brand: 'Tecno', series: 'Camon Imaging Series', model: 'Tecno Camon 30 5G', storage: '256 GB', price: 14950, image: 'https://fdn2.gsmarena.com/vv/bigpic/tecno-camon-30-5g.jpg' },
+        { brand: 'Tecno', series: 'Camon Imaging Series', model: 'Tecno Camon 20 Pro 5G', storage: '128 GB', price: 11900, image: 'https://fdn2.gsmarena.com/vv/bigpic/tecno-camon-20-pro-5g.jpg' },
       ],
     },
     {
@@ -1705,8 +1706,8 @@ export const BRAND_SERIES_DEFINITIONS: Record<string, BrandSeriesDefinition[]> =
       description: 'Pova 6 Pro 5G, Pova 5 Pro, Pova Neo 3',
       pattern: /\bpova\b/i,
       defaultModels: [
-        { brand: 'Tecno', series: 'Pova Power Gaming Series', model: 'Tecno Pova 6 Pro 5G', storage: '256 GB', price: 16450, image: 'https://fdn2.gsmarena.com/vv/bigpic/tecno-pova6-pro.jpg' },
-        { brand: 'Tecno', series: 'Pova Power Gaming Series', model: 'Tecno Pova 5 Pro 5G', storage: '128 GB', price: 11850, image: 'https://fdn2.gsmarena.com/vv/bigpic/tecno-pova6-pro.jpg' },
+        { brand: 'Tecno', series: 'Pova Power Gaming Series', model: 'Tecno Pova 6 Pro 5G', storage: '128 GB', price: 13450, image: 'https://fdn2.gsmarena.com/vv/bigpic/tecno-pova-6-pro.jpg' },
+        { brand: 'Tecno', series: 'Pova Power Gaming Series', model: 'Tecno Pova 5 Pro 5G', storage: '128 GB', price: 10800, image: 'https://fdn2.gsmarena.com/vv/bigpic/tecno-pova-5-pro.jpg' },
       ],
     },
     {
@@ -1718,8 +1719,9 @@ export const BRAND_SERIES_DEFINITIONS: Record<string, BrandSeriesDefinition[]> =
       description: 'Spark 20 Pro+, Spark 20, Spark Go 2024',
       pattern: /\bspark\b/i,
       defaultModels: [
-        { brand: 'Tecno', series: 'Spark Series', model: 'Tecno Spark 20 Pro+ 5G', storage: '256 GB', price: 13450, image: 'https://fdn2.gsmarena.com/vv/bigpic/tecno-spark-20.jpg' },
-        { brand: 'Tecno', series: 'Spark Series', model: 'Tecno Spark 20', storage: '128 GB', price: 8800, image: 'https://fdn2.gsmarena.com/vv/bigpic/tecno-spark-20.jpg' },
+        { brand: 'Tecno', series: 'Spark Series', model: 'Tecno Spark 20 Pro+', storage: '256 GB', price: 11400, image: 'https://fdn2.gsmarena.com/vv/bigpic/tecno-spark-20-pro-plus.jpg' },
+        { brand: 'Tecno', series: 'Spark Series', model: 'Tecno Spark 20', storage: '128 GB', price: 7700, image: 'https://fdn2.gsmarena.com/vv/bigpic/tecno-spark-20.jpg' },
+        { brand: 'Tecno', series: 'Spark Series', model: 'Tecno Spark Go 2024', storage: '64 GB', price: 5350, image: 'https://fdn2.gsmarena.com/vv/bigpic/tecno-spark-go-2024.jpg' },
       ],
     },
     {
@@ -1731,7 +1733,9 @@ export const BRAND_SERIES_DEFINITIONS: Record<string, BrandSeriesDefinition[]> =
       description: 'Phantom V Fold, Phantom V Flip, Phantom X2 Pro',
       pattern: /\bphantom\b/i,
       defaultModels: [
-        { brand: 'Tecno', series: 'Phantom Flagship Series', model: 'Tecno Phantom V Fold', storage: '256 GB', price: 42800, image: 'https://fdn2.gsmarena.com/vv/bigpic/tecno-phantom-v-fold.jpg' },
+        { brand: 'Tecno', series: 'Phantom Flagship Series', model: 'Tecno Phantom V Fold 5G', storage: '256 GB', price: 47000, image: 'https://fdn2.gsmarena.com/vv/bigpic/tecno-phantom-v-fold.jpg' },
+        { brand: 'Tecno', series: 'Phantom Flagship Series', model: 'Tecno Phantom V Flip 5G', storage: '256 GB', price: 32900, image: 'https://fdn2.gsmarena.com/vv/bigpic/tecno-phantom-v-flip.jpg' },
+        { brand: 'Tecno', series: 'Phantom Flagship Series', model: 'Tecno Phantom X2 Pro 5G', storage: '256 GB', price: 24950, image: 'https://fdn2.gsmarena.com/vv/bigpic/tecno-phantom-x2-pro.jpg' },
       ],
     },
   ],
@@ -1746,7 +1750,7 @@ export const BRAND_SERIES_DEFINITIONS: Record<string, BrandSeriesDefinition[]> =
       description: 'Itel Color Pro 5G',
       pattern: /\bcolor\s*pro\b/i,
       defaultModels: [
-        { brand: 'Itel', series: 'Color Pro 5G Series', model: 'Itel Color Pro 5G', storage: '128 GB', price: 9400, image: 'https://fdn2.gsmarena.com/vv/bigpic/itel-color-pro-5g.jpg' },
+        { brand: 'Itel', series: 'Color Pro 5G Series', model: 'Itel Color Pro 5G', storage: '128 GB', price: 7050, image: 'https://fdn2.gsmarena.com/vv/bigpic/itel-color-pro-5g.jpg' },
       ],
     },
     {
@@ -1755,11 +1759,12 @@ export const BRAND_SERIES_DEFINITIONS: Record<string, BrandSeriesDefinition[]> =
       name: 'S Series (Curved AMOLED)',
       brand: 'Itel',
       image: 'https://fdn2.gsmarena.com/vv/bigpic/itel-s23-plus.jpg',
-      description: 'Itel S24, Itel S23+',
+      description: 'Itel S24, Itel S23+, Itel S23',
       pattern: /\bs\d+/i,
       defaultModels: [
-        { brand: 'Itel', series: 'S Series', model: 'Itel S24', storage: '128 GB', price: 8050, image: 'https://fdn2.gsmarena.com/vv/bigpic/itel-s24.jpg' },
-        { brand: 'Itel', series: 'S Series', model: 'Itel S23+', storage: '256 GB', price: 9700, image: 'https://fdn2.gsmarena.com/vv/bigpic/itel-s23-plus.jpg' },
+        { brand: 'Itel', series: 'S Series', model: 'Itel S24', storage: '128 GB', price: 7500, image: 'https://fdn2.gsmarena.com/vv/bigpic/itel-s24.jpg' },
+        { brand: 'Itel', series: 'S Series', model: 'Itel S23+', storage: '256 GB', price: 8750, image: 'https://fdn2.gsmarena.com/vv/bigpic/itel-s23-plus.jpg' },
+        { brand: 'Itel', series: 'S Series', model: 'Itel S23', storage: '128 GB', price: 5800, image: 'https://fdn2.gsmarena.com/vv/bigpic/itel-s23.jpg' },
       ],
     },
     {
@@ -1771,8 +1776,10 @@ export const BRAND_SERIES_DEFINITIONS: Record<string, BrandSeriesDefinition[]> =
       description: 'Itel P55 5G, P55+, P55, P55T',
       pattern: /\bp\d+/i,
       defaultModels: [
-        { brand: 'Itel', series: 'P Series', model: 'Itel P55 5G', storage: '128 GB', price: 8650, image: 'https://fdn2.gsmarena.com/vv/bigpic/itel-p55.jpg' },
-        { brand: 'Itel', series: 'P Series', model: 'Itel P55+', storage: '128 GB', price: 7700, image: 'https://fdn2.gsmarena.com/vv/bigpic/itel-p55.jpg' },
+        { brand: 'Itel', series: 'P Series', model: 'Itel P55 5G', storage: '128 GB', price: 6800, image: 'https://fdn2.gsmarena.com/vv/bigpic/itel-p55.jpg' },
+        { brand: 'Itel', series: 'P Series', model: 'Itel P55+', storage: '256 GB', price: 6800, image: 'https://fdn2.gsmarena.com/vv/bigpic/itel-p55-plus.jpg' },
+        { brand: 'Itel', series: 'P Series', model: 'Itel P55', storage: '128 GB', price: 5500, image: 'https://fdn2.gsmarena.com/vv/bigpic/itel-p55.jpg' },
+        { brand: 'Itel', series: 'P Series', model: 'Itel P55T', storage: '128 GB', price: 5600, image: 'https://fdn2.gsmarena.com/vv/bigpic/itel-p55t.jpg' },
       ],
     },
     {
@@ -1784,8 +1791,9 @@ export const BRAND_SERIES_DEFINITIONS: Record<string, BrandSeriesDefinition[]> =
       description: 'Itel A70, A60s, A05s',
       pattern: /\ba\d+/i,
       defaultModels: [
-        { brand: 'Itel', series: 'A Series', model: 'Itel A70', storage: '128 GB', price: 6450, image: 'https://fdn2.gsmarena.com/vv/bigpic/itel-a70.jpg' },
-        { brand: 'Itel', series: 'A Series', model: 'Itel A60s', storage: '64 GB', price: 5000, image: 'https://fdn2.gsmarena.com/vv/bigpic/itel-a70.jpg' },
+        { brand: 'Itel', series: 'A Series', model: 'Itel A70', storage: '128 GB', price: 4700, image: 'https://fdn2.gsmarena.com/vv/bigpic/itel-a70.jpg' },
+        { brand: 'Itel', series: 'A Series', model: 'Itel A60s', storage: '64 GB', price: 4050, image: 'https://fdn2.gsmarena.com/vv/bigpic/itel-a60s.jpg' },
+        { brand: 'Itel', series: 'A Series', model: 'Itel A05s', storage: '64 GB', price: 3800, image: 'https://fdn2.gsmarena.com/vv/bigpic/itel-a05s.jpg' },
       ],
     },
   ],
@@ -1844,7 +1852,7 @@ export const BRAND_SERIES_DEFINITIONS: Record<string, BrandSeriesDefinition[]> =
         { brand: 'Lenovo', series: 'K Note Series', model: 'Lenovo K10 Plus', storage: '64 GB', price: 2400, image: 'https://fdn2.gsmarena.com/vv/bigpic/lenovo-k10-plus.jpg' },
         { brand: 'Lenovo', series: 'K Note Series', model: 'Lenovo K9 Note', storage: '64 GB', price: 2100, image: 'https://fdn2.gsmarena.com/vv/bigpic/lenovo-k9-note.jpg' },
         { brand: 'Lenovo', series: 'K Note Series', model: 'Lenovo K8 Note', storage: '64 GB', price: 1350, image: 'https://fdn2.gsmarena.com/vv/bigpic/lenovo-k8-note.jpg' },
-        { brand: 'Lenovo', series: 'K Note Series', model: 'Lenovo K8 Plus', storage: '32 GB', price: 1150, image: 'https://fdn2.gsmarena.com/vv/bigpic/lenovo-k8-plus.jpg' },
+        { brand: 'Lenovo', series: 'K Note Series', model: 'Lenovo K8 Plus', storage: '64 GB', price: 1150, image: 'https://fdn2.gsmarena.com/vv/bigpic/lenovo-k8-plus.jpg' },
       ],
     },
     {
@@ -1885,8 +1893,8 @@ export const BRAND_SERIES_DEFINITIONS: Record<string, BrandSeriesDefinition[]> =
       description: 'Lenovo A6 Note, Vibe K5, Vibe P1m',
       pattern: /\b(a\d+|vibe)\b/i,
       defaultModels: [
-        { brand: 'Lenovo', series: 'A & Vibe Series', model: 'Lenovo A6 Note', storage: '32 GB', price: 1500, image: 'https://fdn2.gsmarena.com/vv/bigpic/lenovo-a6-note.jpg' },
-        { brand: 'Lenovo', series: 'A & Vibe Series', model: 'Lenovo Vibe K5 Note', storage: '32 GB', price: 950, image: 'https://fdn2.gsmarena.com/vv/bigpic/lenovo-vibe-k5-note.jpg' },
+        { brand: 'Lenovo', series: 'A & Vibe Series', model: 'Lenovo A6 Note', storage: '64 GB', price: 1500, image: 'https://fdn2.gsmarena.com/vv/bigpic/lenovo-a6-note.jpg' },
+        { brand: 'Lenovo', series: 'A & Vibe Series', model: 'Lenovo Vibe K5 Note', storage: '64 GB', price: 950, image: 'https://fdn2.gsmarena.com/vv/bigpic/lenovo-vibe-k5-note.jpg' },
         { brand: 'Lenovo', series: 'A & Vibe Series', model: 'Lenovo Vibe P1m', storage: '16 GB', price: 2400, image: 'https://fdn2.gsmarena.com/vv/bigpic/lenovo-vibe-p1m.jpg' },
       ],
     },
