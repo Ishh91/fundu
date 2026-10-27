@@ -2522,16 +2522,20 @@ export function quotePhone(input = {}, options = {}) {
   const hasSpeakerDefect = Array.isArray(defects) && defects.includes('speaker_mic');
 
   // 5. Compute Deductions & Adjustments according to Business Formula
+  const agePeriod = input.age_period || input.agePeriod || '';
+  const normAge = String(agePeriod || '').toLowerCase().trim();
+  const is0to3Months = isApple && (normAge === '0_to_3_months' || normAge === 'below_3_months');
+
   const cosmeticKey = String(cosmetic_condition).toLowerCase();
   const activeCosmeticMultipliers = isApple ? {
-    flawless: 0.95,
+    flawless: is0to3Months ? 1.00 : 0.95,
     good: 0.80,
     fair: 0.60,
   } : {
     ...FUNDU_POLICY.cosmeticMultipliers,
     ...(options.cosmeticMultipliers || {}),
   };
-  const cosmeticMultiplier = activeCosmeticMultipliers[cosmeticKey] ?? (isApple ? 0.80 : (activeCosmeticMultipliers.good ?? 1.0));
+  const cosmeticMultiplier = activeCosmeticMultipliers[cosmeticKey] ?? (isApple ? (is0to3Months ? 1.00 : 0.80) : (activeCosmeticMultipliers.good ?? 1.0));
 
   // Customer-facing condition explanations
   const conditionReasons = [];
@@ -2647,7 +2651,6 @@ export function quotePhone(input = {}, options = {}) {
   // Exact Business Formula:
   // Base proceeds equals catalog/benchmark buyback value.
   // 1. Natural Aging & Generation factor
-  const agePeriod = input.age_period || input.agePeriod || '';
   const agingFactor = calculatePhoneAgingFactor(brand, model, under_warranty, agePeriod);
   const baseP = Math.round(expectedResaleProceeds * agingFactor);
   const condP = Math.round(baseP * cosmeticMultiplier);
