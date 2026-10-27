@@ -80,6 +80,21 @@ type AdminSellPricingProps = {
   onAddNewModel?: (data: { brand: string; model: string; base_price: number; default_mrp?: number; image_url?: string; storage?: string }) => Promise<void>;
 };
 
+export function areModelsEquivalent(modelA: string, modelB: string): boolean {
+  const norm = (s: string) =>
+    (s || '')
+      .toLowerCase()
+      .replace(/^apple\s+/i, '')
+      .replace(/^samsung\s+/i, '')
+      .replace(/[^a-z0-9]/g, '')
+      .replace(/5g$/i, '');
+
+  const cleanA = norm(modelA);
+  const cleanB = norm(modelB);
+  if (!cleanA || !cleanB) return false;
+  return cleanA === cleanB;
+}
+
 const POPULAR_BRANDS = [
   'All',
   'Apple',
@@ -328,16 +343,16 @@ export default function AdminSellPricing({
     configs.forEach((cfg) => {
       const cleanM = getCleanModelName(cfg.brand, cfg.model);
       const key = makeKey(cfg.brand, cfg.model);
+      const cfgPrice = Number(cfg.base_price);
+      if (isNaN(cfgPrice) || cfgPrice <= 0) return; // Ignore any broken/invalid price configs
 
-      // Match directly or find fuzzy match across model map
+      // Match directly or find equivalent model
       let existing = modelMap.get(key);
       if (!existing) {
         const bNorm = (cfg.brand || '').trim().toLowerCase();
-        const mClean = (cfg.model || '').toLowerCase().replace(/[^a-z0-9]/g, '');
         for (const item of modelMap.values()) {
           const itemBNorm = item.brand.trim().toLowerCase();
-          const itemMClean = item.model.toLowerCase().replace(/[^a-z0-9]/g, '');
-          if (itemBNorm === bNorm && (itemMClean === mClean || itemMClean.includes(mClean) || mClean.includes(itemMClean))) {
+          if (itemBNorm === bNorm && areModelsEquivalent(item.model, cfg.model)) {
             existing = item;
             break;
           }
@@ -348,29 +363,33 @@ export default function AdminSellPricing({
       const normStorage = normalizeStorageString(cfg.storage || existing?.storage || '128 GB');
 
       if (existing) {
-        existing.configId = cfg.id;
-        existing.base_price = cfg.base_price;
-        existing.storage = normStorage;
-        existing.excellent_multiplier = cfg.excellent_multiplier;
-        existing.good_multiplier = cfg.good_multiplier;
-        existing.fair_multiplier = cfg.fair_multiplier;
-        existing.box_bonus = cfg.box_bonus;
-        existing.charger_bonus = cfg.charger_bonus;
-        existing.is_active = cfg.is_active !== false && !isModelDeleted(cfg.brand, cfg.model) && !isModelDeleted(cfg.brand, cleanM);
-        existing.hasCustomPrice = true;
+        // If this config is for the phone's primary storage (or generic), update base_price
+        const isPrimary = !cfg.storage || normalizeStorageString(cfg.storage) === normalizeStorageString(existing.storage);
+        if (isPrimary || !existing.hasCustomPrice) {
+          existing.configId = cfg.id;
+          existing.base_price = cfgPrice;
+          if (cfg.storage) existing.storage = normStorage;
+          existing.excellent_multiplier = Number(cfg.excellent_multiplier) || 0.85;
+          existing.good_multiplier = Number(cfg.good_multiplier) || 0.70;
+          existing.fair_multiplier = Number(cfg.fair_multiplier) || 0.55;
+          existing.box_bonus = Number(cfg.box_bonus) || 500;
+          existing.charger_bonus = Number(cfg.charger_bonus) || 400;
+          existing.is_active = cfg.is_active !== false && !isModelDeleted(cfg.brand, cfg.model) && !isModelDeleted(cfg.brand, cleanM);
+          existing.hasCustomPrice = true;
+        }
       } else {
         modelMap.set(key, {
           id: `cfg-${cfg.id}`,
           brand: cfg.brand,
           model: cleanM,
           storage: normStorage,
-          base_price: cfg.base_price,
-          default_mrp: Math.round(cfg.base_price * 1.5),
-          excellent_multiplier: cfg.excellent_multiplier,
-          good_multiplier: cfg.good_multiplier,
-          fair_multiplier: cfg.fair_multiplier,
-          box_bonus: cfg.box_bonus,
-          charger_bonus: cfg.charger_bonus,
+          base_price: cfgPrice,
+          default_mrp: Math.round(cfgPrice * 1.5),
+          excellent_multiplier: Number(cfg.excellent_multiplier) || 0.85,
+          good_multiplier: Number(cfg.good_multiplier) || 0.70,
+          fair_multiplier: Number(cfg.fair_multiplier) || 0.55,
+          box_bonus: Number(cfg.box_bonus) || 500,
+          charger_bonus: Number(cfg.charger_bonus) || 400,
           image_url: customImg,
           is_active: cfg.is_active !== false && !isModelDeleted(cfg.brand, cfg.model) && !isModelDeleted(cfg.brand, cleanM),
           hasCustomPrice: true,
@@ -469,7 +488,7 @@ export default function AdminSellPricing({
   // Default to model's base storage when selectedModel changes
   React.useEffect(() => {
     if (selectedModel) {
-      setSelectedStorage(selectedModel.storage || '128 GB');
+      setSelectedStorage(normalizeStorageString(selectedModel.storage || '128 GB'));
     }
   }, [selectedModel?.id]);
 
@@ -482,10 +501,8 @@ export default function AdminSellPricing({
     (specs.storages || []).forEach((s) => set.add(normalizeStorageString(s)));
 
     configs.forEach((c) => {
-      const bMatch = c.brand.toLowerCase() === selectedModel.brand.toLowerCase();
-      const mMatch = c.model.toLowerCase() === selectedModel.model.toLowerCase() ||
-                     c.model.toLowerCase().includes(selectedModel.model.toLowerCase()) ||
-                     selectedModel.model.toLowerCase().includes(c.model.toLowerCase());
+      const bMatch = c.brand.toLowerCase().trim() === selectedModel.brand.toLowerCase().trim();
+      const mMatch = areModelsEquivalent(c.model, selectedModel.model);
       if (bMatch && mMatch && c.storage) {
         set.add(normalizeStorageString(c.storage));
       }
@@ -503,29 +520,32 @@ export default function AdminSellPricing({
     if (!selectedModel) return { basePrice: 0, isCustom: false, config: null as SellPriceConfig | null };
     const normStg = normalizeStorageString(stg);
     const sNorm = normStg.replace(/\s+/g, '').toLowerCase();
-    const selModelClean = selectedModel.model.toLowerCase().replace(/[^a-z0-9]/g, '');
 
+    // 1. Look for explicit exact storage match for this model in configs
     const match = configs.find((c) => {
       const bMatch = c.brand.toLowerCase().trim() === selectedModel.brand.toLowerCase().trim();
-      const cModelClean = c.model.toLowerCase().replace(/[^a-z0-9]/g, '');
-      const mMatch = cModelClean === selModelClean ||
-                     cModelClean.includes(selModelClean) ||
-                     selModelClean.includes(cModelClean);
+      const mMatch = areModelsEquivalent(c.model, selectedModel.model);
       const cStorageNorm = normalizeStorageString(c.storage || '').replace(/\s+/g, '').toLowerCase();
-      const stgMatch = !sNorm || !cStorageNorm || cStorageNorm === sNorm;
-      return bMatch && mMatch && stgMatch;
+      const stgMatch = cStorageNorm === sNorm;
+      const validPrice = Number(c.base_price);
+      return bMatch && mMatch && stgMatch && !isNaN(validPrice) && validPrice > 0;
     });
 
-    if (match && match.base_price > 0) {
-      return { basePrice: match.base_price, isCustom: true, config: match };
+    if (match && Number(match.base_price) > 0) {
+      return { basePrice: Number(match.base_price), isCustom: true, config: match };
     }
 
+    // 2. Fallback: scale from model base_price using hardware multipliers
+    const selBase = Number(selectedModel.base_price);
+    const safeBase = (!isNaN(selBase) && selBase > 0) ? selBase : 50000;
     const baseStorage = normalizeStorageString(selectedModel.storage || '128 GB');
     const baseMult = calculateHardwareVariantMultiplier(baseStorage, '', selectedModel.brand);
     const targetMult = calculateHardwareVariantMultiplier(normStg, '', selectedModel.brand);
-    const ratio = baseMult > 0 ? targetMult / baseMult : 1.0;
+    const ratio = (baseMult > 0 && !isNaN(baseMult) && !isNaN(targetMult)) ? targetMult / baseMult : 1.0;
+    const calcPrice = Math.max(500, Math.round((safeBase * ratio) / 50) * 50);
+
     return {
-      basePrice: Math.max(500, Math.round((selectedModel.base_price * ratio) / 50) * 50),
+      basePrice: !isNaN(calcPrice) && calcPrice > 0 ? calcPrice : safeBase,
       isCustom: false,
       config: null as SellPriceConfig | null,
     };

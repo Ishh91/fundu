@@ -172,7 +172,8 @@ export default function SellBrandPage() {
   }, [brandSlug]);
 
   const brandCanonicalKey = useMemo(() => {
-    if (brandCleanKey === 'poco' || brandCleanKey === 'redmi') return 'xiaomi';
+    if (brandCleanKey === 'redmi') return 'xiaomi';
+    if (brandCleanKey === 'poco') return 'poco';
     if (brandCleanKey === 'iqoo') return 'vivo';
     if (brandCleanKey === 'moto') return 'motorola';
     if (brandCleanKey === 'pixel') return 'google';
@@ -257,8 +258,9 @@ export default function SellBrandPage() {
   const allBrandModels = useMemo(() => {
     const masterList = MASTER_MODEL_CATALOG.filter((m) => {
       const b = m.brand.toLowerCase();
+      if (brandCleanKey === 'poco') return b === 'poco';
       if (b === brandCanonicalKey || b === brandCleanKey) return true;
-      if (brandCanonicalKey === 'xiaomi' && (b === 'redmi' || b === 'poco')) return true;
+      if (brandCanonicalKey === 'xiaomi' && b === 'redmi') return true;
       if (brandCanonicalKey === 'vivo' && b === 'iqoo') return true;
       if (brandCanonicalKey === 'motorola' && b === 'moto') return true;
       return false;
@@ -276,8 +278,9 @@ export default function SellBrandPage() {
     // 2. Add all Indian phones catalog items (adds unique models like Nord 2, Nord 2T, Nord 3, Galaxy J7, etc.)
     const indianList = ALL_INDIAN_PHONES_CATALOG.filter((p) => {
       const b = p.brand.toLowerCase();
+      if (brandCleanKey === 'poco') return b === 'poco';
       if (b === brandCanonicalKey || b === brandCleanKey) return true;
-      if (brandCanonicalKey === 'xiaomi' && (b === 'redmi' || b === 'poco')) return true;
+      if (brandCanonicalKey === 'xiaomi' && b === 'redmi') return true;
       if (brandCanonicalKey === 'vivo' && b === 'iqoo') return true;
       if (brandCanonicalKey === 'motorola' && b === 'moto') return true;
       return false;

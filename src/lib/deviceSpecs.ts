@@ -221,10 +221,30 @@ export function getModelReleaseYear(brand = '', model = ''): number {
   // 10. Google Pixel
   if (/pixel\s*10/i.test(m)) return 2025;
   if (/pixel\s*9/i.test(m)) return 2024;
+  if (/pixel\s*8a/i.test(m)) return 2024;
   if (/pixel\s*8/i.test(m)) return 2023;
+  if (/pixel\s*7a/i.test(m)) return 2023;
+  if (/pixel\s*fold\b/i.test(m)) return 2023;
   if (/pixel\s*7/i.test(m)) return 2022;
+  if (/pixel\s*6a/i.test(m)) return 2022;
   if (/pixel\s*6/i.test(m)) return 2021;
+  if (/pixel\s*5a/i.test(m)) return 2021;
   if (/pixel\s*5/i.test(m)) return 2020;
+  if (/pixel\s*4a/i.test(m)) return 2020;
+  if (/pixel\s*4/i.test(m)) return 2019;
+  if (/pixel\s*3a/i.test(m)) return 2019;
+  if (/pixel\s*3/i.test(m)) return 2018;
+  if (/pixel\s*2/i.test(m)) return 2017;
+
+  // 11. Motorola / Moto
+  if (/moto|motorola/i.test(full)) {
+    if (/razr\s*60/i.test(m)) return 2025;
+    if (/razr\s*50|edge\s*50|g85|g64|g45|g35|g34|g24|g04/i.test(m)) return 2024;
+    if (/razr\s*40|edge\s*40|g84|g54|g73|g14|e13/i.test(m)) return 2023;
+    if (/edge\s*30|g82|g72|g62|g52|g42|g32|g22|e22/i.test(m)) return 2022;
+    if (/edge\s*20|g71|g51|g31/i.test(m)) return 2021;
+    return 2023;
+  }
 
   // 11. Itel Smartphones
   if (/itel/i.test(full)) {
@@ -243,7 +263,26 @@ export function getModelReleaseYear(brand = '', model = ''): number {
     return 2023;
   }
 
-  // 13. Explicit 4-digit year match if present
+  // 13. Nothing & CMF
+  if (/nothing|cmf/i.test(full)) {
+    if (/phone\s*\(?2a\)?\s*plus|phone\s*\(?2a\)?|cmf/i.test(m)) return 2024;
+    if (/phone\s*\(?2\)?/i.test(m)) return 2023;
+    if (/phone\s*\(?1\)?/i.test(m)) return 2022;
+    return 2024;
+  }
+
+  // 14. POCO
+  if (/poco/i.test(full)) {
+    if (/\b(f6|x6\s*pro|x6\s*neo|x6|m6\s*plus|c61)\b/i.test(m)) return 2024;
+    if (/\b(f5|x5\s*pro|x5|m6\s*pro|m6|c55|c51|c65)\b/i.test(m)) return 2023;
+    if (/\b(f4\s*gt|f4|x4\s*pro|m5|m4\s*5g|m4\s*pro)\b/i.test(m)) return 2022;
+    if (/\b(f3\s*gt|x3\s*pro|m3\s*pro|m2\s*reloaded)\b/i.test(m)) return 2021;
+    if (/\b(x3|m3|m2\s*pro|m2)\b/i.test(m)) return 2020;
+    if (/\bf1\b/i.test(m)) return 2018;
+    return 2023;
+  }
+
+  // 15. Explicit 4-digit year match if present
   if (yrMatch) return parseInt(yrMatch[1], 10);
 
   // Default older devices to 2022
@@ -735,8 +774,21 @@ const MODEL_HARDWARE_RULES: Array<{
   },
 
   // ==========================================
-  // NOTHING
+  // NOTHING & CMF
   // ==========================================
+  {
+    pattern: /nothing\s*phone\s*\(?2a\)?\s*plus/i,
+    variants: [
+      { storage: '256 GB', rams: ['8 GB', '12 GB'] },
+    ],
+  },
+  {
+    pattern: /nothing\s*phone\s*\(?2a\)?\b/i,
+    variants: [
+      { storage: '128 GB', rams: ['8 GB'] },
+      { storage: '256 GB', rams: ['8 GB', '12 GB'] },
+    ],
+  },
   {
     pattern: /nothing\s*phone\s*\(?2\)?\b/i,
     variants: [
@@ -746,7 +798,7 @@ const MODEL_HARDWARE_RULES: Array<{
     ],
   },
   {
-    pattern: /nothing\s*phone\s*\(?2a\)?/i,
+    pattern: /nothing\s*phone\s*\(?1\)?\b/i,
     variants: [
       { storage: '128 GB', rams: ['8 GB'] },
       { storage: '256 GB', rams: ['8 GB', '12 GB'] },
@@ -756,6 +808,7 @@ const MODEL_HARDWARE_RULES: Array<{
     pattern: /cmf\s*phone\s*1/i,
     variants: [
       { storage: '128 GB', rams: ['6 GB', '8 GB'] },
+      { storage: '256 GB', rams: ['8 GB'] },
     ],
   },
 
@@ -1038,38 +1091,167 @@ const MODEL_HARDWARE_RULES: Array<{
       { storage: '256 GB', rams: ['8 GB'] },
     ],
   },
+  // POCO
   {
-    pattern: /poco\s*f7\b/i,
+    pattern: /poco\s*f6/i,
     variants: [
-      { storage: '256 GB', rams: ['12 GB'] },
-      { storage: '512 GB', rams: ['12 GB', '16 GB'] },
+      { storage: '256 GB', rams: ['8 GB', '12 GB'] },
+      { storage: '512 GB', rams: ['12 GB'] },
     ],
   },
   {
-    pattern: /poco\s*x7\b/i,
+    pattern: /poco\s*f5/i,
     variants: [
-      { storage: '128 GB', rams: ['8 GB'] },
       { storage: '256 GB', rams: ['8 GB', '12 GB'] },
     ],
   },
   {
-    pattern: /poco\s*m7\s*plus/i,
+    pattern: /poco\s*f4\s*gt/i,
     variants: [
-      { storage: '128 GB', rams: ['6 GB', '8 GB'] },
+      { storage: '128 GB', rams: ['8 GB'] },
+      { storage: '256 GB', rams: ['12 GB'] },
     ],
   },
   {
-    pattern: /poco\s*m8\b/i,
+    pattern: /poco\s*f4\b/i,
+    variants: [
+      { storage: '128 GB', rams: ['6 GB', '8 GB'] },
+      { storage: '256 GB', rams: ['12 GB'] },
+    ],
+  },
+  {
+    pattern: /poco\s*f3\s*gt/i,
     variants: [
       { storage: '128 GB', rams: ['6 GB', '8 GB'] },
       { storage: '256 GB', rams: ['8 GB'] },
     ],
   },
   {
-    pattern: /poco\s*c75\b/i,
+    pattern: /poco\s*f1\b/i,
+    variants: [
+      { storage: '64 GB', rams: ['6 GB'] },
+      { storage: '128 GB', rams: ['6 GB'] },
+      { storage: '256 GB', rams: ['8 GB'] },
+    ],
+  },
+  {
+    pattern: /poco\s*x6\s*pro/i,
+    variants: [
+      { storage: '256 GB', rams: ['8 GB', '12 GB'] },
+      { storage: '512 GB', rams: ['12 GB'] },
+    ],
+  },
+  {
+    pattern: /poco\s*x6\s*neo/i,
+    variants: [
+      { storage: '128 GB', rams: ['8 GB'] },
+      { storage: '256 GB', rams: ['12 GB'] },
+    ],
+  },
+  {
+    pattern: /poco\s*x6\b/i,
+    variants: [
+      { storage: '128 GB', rams: ['8 GB'] },
+      { storage: '256 GB', rams: ['8 GB', '12 GB'] },
+      { storage: '512 GB', rams: ['12 GB'] },
+    ],
+  },
+  {
+    pattern: /poco\s*x5\s*pro/i,
     variants: [
       { storage: '128 GB', rams: ['6 GB'] },
       { storage: '256 GB', rams: ['8 GB'] },
+    ],
+  },
+  {
+    pattern: /poco\s*x5\b/i,
+    variants: [
+      { storage: '128 GB', rams: ['6 GB'] },
+      { storage: '256 GB', rams: ['8 GB'] },
+    ],
+  },
+  {
+    pattern: /poco\s*x4\s*pro/i,
+    variants: [
+      { storage: '64 GB', rams: ['6 GB'] },
+      { storage: '128 GB', rams: ['6 GB', '8 GB'] },
+    ],
+  },
+  {
+    pattern: /poco\s*x3\s*pro/i,
+    variants: [
+      { storage: '128 GB', rams: ['6 GB', '8 GB'] },
+    ],
+  },
+  {
+    pattern: /poco\s*x3\b/i,
+    variants: [
+      { storage: '64 GB', rams: ['6 GB'] },
+      { storage: '128 GB', rams: ['6 GB', '8 GB'] },
+    ],
+  },
+  {
+    pattern: /poco\s*m6\s*plus/i,
+    variants: [
+      { storage: '128 GB', rams: ['6 GB', '8 GB'] },
+    ],
+  },
+  {
+    pattern: /poco\s*m6\s*pro/i,
+    variants: [
+      { storage: '64 GB', rams: ['4 GB'] },
+      { storage: '128 GB', rams: ['6 GB'] },
+      { storage: '256 GB', rams: ['8 GB'] },
+    ],
+  },
+  {
+    pattern: /poco\s*m6\b/i,
+    variants: [
+      { storage: '64 GB', rams: ['4 GB'] },
+      { storage: '128 GB', rams: ['6 GB'] },
+      { storage: '256 GB', rams: ['8 GB'] },
+    ],
+  },
+  {
+    pattern: /poco\s*m5\b/i,
+    variants: [
+      { storage: '64 GB', rams: ['4 GB'] },
+      { storage: '128 GB', rams: ['6 GB'] },
+    ],
+  },
+  {
+    pattern: /poco\s*m4\s*pro/i,
+    variants: [
+      { storage: '64 GB', rams: ['6 GB'] },
+      { storage: '128 GB', rams: ['6 GB', '8 GB'] },
+    ],
+  },
+  {
+    pattern: /poco\s*m4\b/i,
+    variants: [
+      { storage: '64 GB', rams: ['4 GB'] },
+      { storage: '128 GB', rams: ['6 GB'] },
+    ],
+  },
+  {
+    pattern: /poco\s*m3\s*pro/i,
+    variants: [
+      { storage: '64 GB', rams: ['4 GB'] },
+      { storage: '128 GB', rams: ['6 GB'] },
+    ],
+  },
+  {
+    pattern: /poco\s*m3\b/i,
+    variants: [
+      { storage: '64 GB', rams: ['6 GB'] },
+      { storage: '128 GB', rams: ['6 GB'] },
+    ],
+  },
+  {
+    pattern: /poco\s*m2\s*pro/i,
+    variants: [
+      { storage: '64 GB', rams: ['4 GB', '6 GB'] },
+      { storage: '128 GB', rams: ['6 GB'] },
     ],
   },
   {
@@ -1077,6 +1259,33 @@ const MODEL_HARDWARE_RULES: Array<{
     variants: [
       { storage: '64 GB', rams: ['6 GB'] },
       { storage: '128 GB', rams: ['6 GB'] },
+    ],
+  },
+  {
+    pattern: /poco\s*c65\b/i,
+    variants: [
+      { storage: '128 GB', rams: ['4 GB', '6 GB'] },
+      { storage: '256 GB', rams: ['8 GB'] },
+    ],
+  },
+  {
+    pattern: /poco\s*c61\b/i,
+    variants: [
+      { storage: '64 GB', rams: ['4 GB'] },
+      { storage: '128 GB', rams: ['6 GB'] },
+    ],
+  },
+  {
+    pattern: /poco\s*c55\b/i,
+    variants: [
+      { storage: '64 GB', rams: ['4 GB'] },
+      { storage: '128 GB', rams: ['6 GB'] },
+    ],
+  },
+  {
+    pattern: /poco\s*c51\b/i,
+    variants: [
+      { storage: '64 GB', rams: ['4 GB'] },
     ],
   },
   {
@@ -1136,10 +1345,33 @@ const MODEL_HARDWARE_RULES: Array<{
   // GOOGLE PIXEL
   // ==========================================
   {
+    pattern: /pixel\s*10\s*pro\s*fold/i,
+    variants: [
+      { storage: '256 GB', rams: ['16 GB'] },
+      { storage: '512 GB', rams: ['16 GB'] },
+    ],
+  },
+  {
+    pattern: /pixel\s*10\s*pro/i,
+    variants: [
+      { storage: '128 GB', rams: ['16 GB'] },
+      { storage: '256 GB', rams: ['16 GB'] },
+      { storage: '512 GB', rams: ['16 GB'] },
+      { storage: '1 TB', rams: ['16 GB'] },
+    ],
+  },
+  {
     pattern: /pixel\s*10\b/i,
     variants: [
       { storage: '128 GB', rams: ['12 GB'] },
       { storage: '256 GB', rams: ['12 GB'] },
+    ],
+  },
+  {
+    pattern: /pixel\s*9\s*pro\s*fold/i,
+    variants: [
+      { storage: '256 GB', rams: ['16 GB'] },
+      { storage: '512 GB', rams: ['16 GB'] },
     ],
   },
   {
@@ -1159,10 +1391,134 @@ const MODEL_HARDWARE_RULES: Array<{
     ],
   },
   {
-    pattern: /pixel\s*(8a|8|7a)\b/i,
+    pattern: /pixel\s*8\s*pro/i,
+    variants: [
+      { storage: '128 GB', rams: ['12 GB'] },
+      { storage: '256 GB', rams: ['12 GB'] },
+      { storage: '512 GB', rams: ['12 GB'] },
+      { storage: '1 TB', rams: ['12 GB'] },
+    ],
+  },
+  {
+    pattern: /pixel\s*8a\b/i,
     variants: [
       { storage: '128 GB', rams: ['8 GB'] },
       { storage: '256 GB', rams: ['8 GB'] },
+    ],
+  },
+  {
+    pattern: /pixel\s*8\b/i,
+    variants: [
+      { storage: '128 GB', rams: ['8 GB'] },
+      { storage: '256 GB', rams: ['8 GB'] },
+    ],
+  },
+  {
+    pattern: /pixel\s*fold\b/i,
+    variants: [
+      { storage: '256 GB', rams: ['12 GB'] },
+      { storage: '512 GB', rams: ['12 GB'] },
+    ],
+  },
+  {
+    pattern: /pixel\s*7\s*pro/i,
+    variants: [
+      { storage: '128 GB', rams: ['12 GB'] },
+      { storage: '256 GB', rams: ['12 GB'] },
+      { storage: '512 GB', rams: ['12 GB'] },
+    ],
+  },
+  {
+    pattern: /pixel\s*7a\b/i,
+    variants: [
+      { storage: '128 GB', rams: ['8 GB'] },
+    ],
+  },
+  {
+    pattern: /pixel\s*7\b/i,
+    variants: [
+      { storage: '128 GB', rams: ['8 GB'] },
+      { storage: '256 GB', rams: ['8 GB'] },
+    ],
+  },
+  {
+    pattern: /pixel\s*6\s*pro/i,
+    variants: [
+      { storage: '128 GB', rams: ['12 GB'] },
+      { storage: '256 GB', rams: ['12 GB'] },
+      { storage: '512 GB', rams: ['12 GB'] },
+    ],
+  },
+  {
+    pattern: /pixel\s*6a\b/i,
+    variants: [
+      { storage: '128 GB', rams: ['6 GB'] },
+    ],
+  },
+  {
+    pattern: /pixel\s*6\b/i,
+    variants: [
+      { storage: '128 GB', rams: ['8 GB'] },
+      { storage: '256 GB', rams: ['8 GB'] },
+    ],
+  },
+  {
+    pattern: /pixel\s*5a\b/i,
+    variants: [
+      { storage: '128 GB', rams: ['6 GB'] },
+    ],
+  },
+  {
+    pattern: /pixel\s*5\b/i,
+    variants: [
+      { storage: '128 GB', rams: ['8 GB'] },
+    ],
+  },
+  {
+    pattern: /pixel\s*4a\b/i,
+    variants: [
+      { storage: '128 GB', rams: ['6 GB'] },
+    ],
+  },
+  {
+    pattern: /pixel\s*4\s*xl/i,
+    variants: [
+      { storage: '64 GB', rams: ['6 GB'] },
+      { storage: '128 GB', rams: ['6 GB'] },
+    ],
+  },
+  {
+    pattern: /pixel\s*4\b/i,
+    variants: [
+      { storage: '64 GB', rams: ['6 GB'] },
+      { storage: '128 GB', rams: ['6 GB'] },
+    ],
+  },
+  {
+    pattern: /pixel\s*3a/i,
+    variants: [
+      { storage: '64 GB', rams: ['4 GB'] },
+    ],
+  },
+  {
+    pattern: /pixel\s*3\s*xl/i,
+    variants: [
+      { storage: '64 GB', rams: ['4 GB'] },
+      { storage: '128 GB', rams: ['4 GB'] },
+    ],
+  },
+  {
+    pattern: /pixel\s*3\b/i,
+    variants: [
+      { storage: '64 GB', rams: ['4 GB'] },
+      { storage: '128 GB', rams: ['4 GB'] },
+    ],
+  },
+  {
+    pattern: /pixel\s*2/i,
+    variants: [
+      { storage: '64 GB', rams: ['4 GB'] },
+      { storage: '128 GB', rams: ['4 GB'] },
     ],
   },
 
@@ -1206,6 +1562,50 @@ const MODEL_HARDWARE_RULES: Array<{
   // MOTOROLA
   // ==========================================
   {
+    pattern: /razr\s*60\s*ultra/i,
+    variants: [
+      { storage: '256 GB', rams: ['12 GB'] },
+      { storage: '512 GB', rams: ['16 GB'] },
+    ],
+  },
+  {
+    pattern: /razr\s*60\b/i,
+    variants: [
+      { storage: '256 GB', rams: ['8 GB'] },
+      { storage: '512 GB', rams: ['12 GB'] },
+    ],
+  },
+  {
+    pattern: /razr\s*50\s*ultra/i,
+    variants: [
+      { storage: '512 GB', rams: ['12 GB'] },
+    ],
+  },
+  {
+    pattern: /razr\s*50\b/i,
+    variants: [
+      { storage: '256 GB', rams: ['8 GB'] },
+    ],
+  },
+  {
+    pattern: /razr\s*40\s*ultra/i,
+    variants: [
+      { storage: '256 GB', rams: ['8 GB', '12 GB'] },
+    ],
+  },
+  {
+    pattern: /razr\s*40\b/i,
+    variants: [
+      { storage: '256 GB', rams: ['8 GB'] },
+    ],
+  },
+  {
+    pattern: /edge\s*50\s*ultra/i,
+    variants: [
+      { storage: '512 GB', rams: ['12 GB', '16 GB'] },
+    ],
+  },
+  {
     pattern: /edge\s*50\s*pro/i,
     variants: [
       { storage: '256 GB', rams: ['8 GB', '12 GB'] },
@@ -1216,6 +1616,102 @@ const MODEL_HARDWARE_RULES: Array<{
     variants: [
       { storage: '128 GB', rams: ['8 GB'] },
       { storage: '256 GB', rams: ['12 GB'] },
+    ],
+  },
+  {
+    pattern: /edge\s*50\s*neo/i,
+    variants: [
+      { storage: '256 GB', rams: ['8 GB'] },
+    ],
+  },
+  {
+    pattern: /edge\s*40\s*pro/i,
+    variants: [
+      { storage: '256 GB', rams: ['12 GB'] },
+    ],
+  },
+  {
+    pattern: /edge\s*40\s*neo/i,
+    variants: [
+      { storage: '128 GB', rams: ['8 GB'] },
+      { storage: '256 GB', rams: ['12 GB'] },
+    ],
+  },
+  {
+    pattern: /edge\s*40\b/i,
+    variants: [
+      { storage: '256 GB', rams: ['8 GB'] },
+    ],
+  },
+  {
+    pattern: /edge\s*30\s*ultra/i,
+    variants: [
+      { storage: '128 GB', rams: ['8 GB'] },
+      { storage: '256 GB', rams: ['12 GB'] },
+    ],
+  },
+  {
+    pattern: /edge\s*30\s*fusion/i,
+    variants: [
+      { storage: '128 GB', rams: ['8 GB'] },
+    ],
+  },
+  {
+    pattern: /edge\s*30\b/i,
+    variants: [
+      { storage: '128 GB', rams: ['6 GB', '8 GB'] },
+    ],
+  },
+  {
+    pattern: /moto\s*g85/i,
+    variants: [
+      { storage: '128 GB', rams: ['8 GB'] },
+      { storage: '256 GB', rams: ['12 GB'] },
+    ],
+  },
+  {
+    pattern: /moto\s*g64/i,
+    variants: [
+      { storage: '128 GB', rams: ['8 GB'] },
+      { storage: '256 GB', rams: ['12 GB'] },
+    ],
+  },
+  {
+    pattern: /moto\s*g84/i,
+    variants: [
+      { storage: '256 GB', rams: ['12 GB'] },
+    ],
+  },
+  {
+    pattern: /moto\s*g54/i,
+    variants: [
+      { storage: '128 GB', rams: ['8 GB'] },
+      { storage: '256 GB', rams: ['12 GB'] },
+    ],
+  },
+  {
+    pattern: /moto\s*g34/i,
+    variants: [
+      { storage: '128 GB', rams: ['4 GB', '8 GB'] },
+    ],
+  },
+  {
+    pattern: /moto\s*g24/i,
+    variants: [
+      { storage: '128 GB', rams: ['4 GB', '8 GB'] },
+    ],
+  },
+  {
+    pattern: /moto\s*g14/i,
+    variants: [
+      { storage: '128 GB', rams: ['4 GB'] },
+    ],
+  },
+  {
+    pattern: /moto\s*e13/i,
+    variants: [
+      { storage: '64 GB', rams: ['2 GB', '4 GB'] },
+      { storage: '128 GB', rams: ['8 GB'] },
     ],
   },
 
@@ -1686,17 +2182,31 @@ export function getModelHardwareSpecs(
 
   // 3. Check customCatalog variants if provided (e.g. MASTER_MODEL_CATALOG)
   if (Array.isArray(customCatalog) && customCatalog.length > 0) {
+    const brandPrefixRegex = /^(apple|samsung|oneplus|xiaomi|vivo|oppo|realme|motorola|moto|google|pixel|nothing|cmf|tecno|techno|itel|infinix|poco|iqoo|honor|lenovo)\s+/i;
     const cleanTarget = normModel
-      .replace(/^(apple|samsung|oneplus|xiaomi|vivo|oppo|realme|motorola|google|nothing|tecno|techno|itel|infinix)\s+/i, '')
+      .replace(brandPrefixRegex, '')
       .replace(/[\s-]+/g, ' ')
       .trim();
 
+    const areBrandsEquivalent = (b1: string, b2: string) => {
+      const a = b1.toLowerCase().trim();
+      const b = b2.toLowerCase().trim();
+      if (a === b) return true;
+      if ((a === 'tecno' && b === 'techno') || (a === 'techno' && b === 'tecno')) return true;
+      if ((a === 'moto' && b === 'motorola') || (a === 'motorola' && b === 'moto')) return true;
+      if ((a === 'pixel' && b === 'google') || (a === 'google' && b === 'pixel')) return true;
+      if ((a === 'poco' && b === 'xiaomi') || (a === 'xiaomi' && b === 'poco')) return true;
+      if ((a === 'iqoo' && b === 'vivo') || (a === 'vivo' && b === 'iqoo')) return true;
+      if ((a === 'cmf' && b === 'nothing') || (a === 'nothing' && b === 'cmf')) return true;
+      return false;
+    };
+
     const catalogVariants = customCatalog.filter((m) => {
       const mBrand = m.brand.toLowerCase();
-      if (mBrand !== normBrand && !(normBrand === 'tecno' && mBrand === 'techno')) return false;
+      if (!areBrandsEquivalent(mBrand, normBrand)) return false;
       const cleanM = m.model
         .toLowerCase()
-        .replace(/^(apple|samsung|oneplus|xiaomi|vivo|oppo|realme|motorola|google|nothing|tecno|techno|itel|infinix)\s+/i, '')
+        .replace(brandPrefixRegex, '')
         .replace(/[\s-]+/g, ' ')
         .trim();
       return cleanM === cleanTarget;

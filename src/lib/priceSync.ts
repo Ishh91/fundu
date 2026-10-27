@@ -97,16 +97,25 @@ export function savePriceOverride(brand: string, model: string, newPrice: number
     ? getPriceStorageKeys(brand, model, storage)
     : getPriceModelKeys(brand, model);
 
+  const numPrice = Number(newPrice);
+  if (isNaN(numPrice) || numPrice <= 0) return;
+
   saveKeys.forEach((k) => {
-    current[k] = newPrice;
+    current[k] = numPrice;
   });
 
   localStorage.setItem(OVERRIDES_STORAGE_KEY, JSON.stringify(current));
 
   // Dispatch real-time broadcast across all tabs and open components
-  broadcastSync('PRICE_UPDATE', 'sell_price_configs', 'update', { brand, model, storage, newPrice });
+  broadcastSync('PRICE_UPDATE', 'sell_price_configs', 'update', {
+    brand,
+    model,
+    storage,
+    base_price: numPrice,
+    newPrice: numPrice,
+  });
   window.dispatchEvent(new CustomEvent('fundu_price_updated', {
-    detail: { brand, model, storage, newPrice }
+    detail: { brand, model, storage, newPrice: numPrice, base_price: numPrice }
   }));
 }
 

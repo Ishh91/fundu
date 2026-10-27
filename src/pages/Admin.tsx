@@ -487,8 +487,25 @@ export default function Admin() {
   useEffect(() => {
     const unsubscribe = subscribeToRealtimeSync((payload) => {
       if ((payload.action === 'PRICE_UPDATE' || payload.table === 'sell_price_configs') && payload.data) {
-        const updated = payload.data as SellPriceConfig;
-        if (!updated || !updated.brand || !updated.model) return;
+        const raw = payload.data as any;
+        if (!raw || !raw.brand || !raw.model) return;
+        const validPrice = Number(raw.base_price ?? raw.newPrice);
+        if (isNaN(validPrice) || validPrice <= 0) return;
+
+        const updated: SellPriceConfig = {
+          id: raw.id || `sync_${Date.now()}`,
+          brand: String(raw.brand).trim(),
+          model: String(raw.model).trim(),
+          storage: raw.storage ? String(raw.storage).trim() : '128 GB',
+          base_price: validPrice,
+          excellent_multiplier: Number(raw.excellent_multiplier) || 0.85,
+          good_multiplier: Number(raw.good_multiplier) || 0.70,
+          fair_multiplier: Number(raw.fair_multiplier) || 0.55,
+          box_bonus: Number(raw.box_bonus) || 500,
+          charger_bonus: Number(raw.charger_bonus) || 400,
+          is_active: raw.is_active !== false,
+        };
+
         setSellPriceConfigs((prev) => {
           const bNorm = updated.brand.toLowerCase().trim();
           const mNorm = updated.model.toLowerCase().trim();

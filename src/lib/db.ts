@@ -455,12 +455,15 @@ export const db = {
   },
 };
 
-export const formatINR = (amount: number) =>
-  new Intl.NumberFormat('en-IN', {
+export const formatINR = (amount: number | string | null | undefined): string => {
+  const num = Number(amount);
+  if (amount === null || amount === undefined || isNaN(num) || num <= 0) return '₹0';
+  return new Intl.NumberFormat('en-IN', {
     style: 'currency',
     currency: 'INR',
     maximumFractionDigits: 0,
-  }).format(amount);
+  }).format(num);
+};
 
 /**
  * Masks price when customer is not logged in:
