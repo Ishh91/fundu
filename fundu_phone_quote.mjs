@@ -2565,7 +2565,7 @@ export function quotePhone(input = {}, options = {}) {
     const batteryDeductionAmount = Math.round(expectedResaleProceeds * batteryDeductionRate);
     configuredRepairsTotal += batteryDeductionAmount;
     internalRepairBreakdown.push({ item: 'battery_health', cost: batteryDeductionAmount });
-    conditionReasons.push(`iPhone Battery Health (${Math.round(batteryDeductionRate * 100)}% deduction applied)`);
+    conditionReasons.push('iPhone Battery Health wear verified');
   }
 
   if (hasCameraDefect && repairCosts?.camera) {
