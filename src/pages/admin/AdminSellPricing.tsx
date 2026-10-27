@@ -44,7 +44,7 @@ import {
 } from '../../lib/priceSync';
 import { ALL_INDIAN_PHONES_CATALOG } from '../../data/indianPhonesCatalog';
 import { MASTER_MODEL_CATALOG } from '../../data/masterModelCatalog';
-import { getModelHardwareSpecs, calculateHardwareVariantMultiplier } from '../../lib/deviceSpecs';
+import { getModelHardwareSpecs, calculateHardwareVariantMultiplier, normalizeStorageString } from '../../lib/deviceSpecs';
 
 export type UnifiedSellModel = {
   id: string;
@@ -267,7 +267,7 @@ export default function AdminSellPricing({
           id: `master-${key}`,
           brand: p.brand,
           model: cleanM,
-          storage: p.storage || '128GB',
+          storage: normalizeStorageString(p.storage || '128 GB'),
           base_price: basePr,
           default_mrp: Math.round(basePr * 1.5),
           excellent_multiplier: 0.75,
@@ -302,7 +302,7 @@ export default function AdminSellPricing({
           id: `cat-${key}`,
           brand: p.brand,
           model: cleanM,
-          storage: p.storage_options?.[0] || '128GB',
+          storage: normalizeStorageString(p.storage_options?.[0] || '128 GB'),
           base_price: basePr,
           default_mrp: p.default_mrp || Math.round(basePr * 1.5),
           excellent_multiplier: 0.75,
@@ -317,24 +317,40 @@ export default function AdminSellPricing({
         });
       } else {
         const existing = modelMap.get(key);
+        // Only take catalog price if no custom price and no explicit database config exists
         if (existing && !existing.hasCustomPrice && p.base_resale_value && p.base_resale_value > 0) {
           existing.base_price = p.base_resale_value;
         }
       }
     });
 
-    // 4. Overlay Explicit Database Sell Price Configs
+    // 4. Overlay Explicit Database Sell Price Configs (Absolute Single Source of Truth)
     configs.forEach((cfg) => {
       const cleanM = getCleanModelName(cfg.brand, cfg.model);
       const key = makeKey(cfg.brand, cfg.model);
 
-      const existing = modelMap.get(key);
+      // Match directly or find fuzzy match across model map
+      let existing = modelMap.get(key);
+      if (!existing) {
+        const bNorm = (cfg.brand || '').trim().toLowerCase();
+        const mClean = (cfg.model || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+        for (const item of modelMap.values()) {
+          const itemBNorm = item.brand.trim().toLowerCase();
+          const itemMClean = item.model.toLowerCase().replace(/[^a-z0-9]/g, '');
+          if (itemBNorm === bNorm && (itemMClean === mClean || itemMClean.includes(mClean) || mClean.includes(itemMClean))) {
+            existing = item;
+            break;
+          }
+        }
+      }
+
       const customImg = getOverrideImage(cfg.brand, cfg.model, cleanM) || existing?.image_url || '';
+      const normStorage = normalizeStorageString(cfg.storage || existing?.storage || '128 GB');
 
       if (existing) {
         existing.configId = cfg.id;
         existing.base_price = cfg.base_price;
-        existing.storage = cfg.storage || existing.storage;
+        existing.storage = normStorage;
         existing.excellent_multiplier = cfg.excellent_multiplier;
         existing.good_multiplier = cfg.good_multiplier;
         existing.fair_multiplier = cfg.fair_multiplier;
@@ -347,7 +363,7 @@ export default function AdminSellPricing({
           id: `cfg-${cfg.id}`,
           brand: cfg.brand,
           model: cleanM,
-          storage: cfg.storage || '128GB',
+          storage: normStorage,
           base_price: cfg.base_price,
           default_mrp: Math.round(cfg.base_price * 1.5),
           excellent_multiplier: cfg.excellent_multiplier,
@@ -462,8 +478,8 @@ export default function AdminSellPricing({
     if (!selectedModel) return ['128 GB'];
     const specs = getModelHardwareSpecs(selectedModel.brand, selectedModel.model, MASTER_MODEL_CATALOG);
     const set = new Set<string>();
-    if (selectedModel.storage) set.add(selectedModel.storage);
-    (specs.storages || []).forEach((s) => set.add(s));
+    if (selectedModel.storage) set.add(normalizeStorageString(selectedModel.storage));
+    (specs.storages || []).forEach((s) => set.add(normalizeStorageString(s)));
 
     configs.forEach((c) => {
       const bMatch = c.brand.toLowerCase() === selectedModel.brand.toLowerCase();
@@ -471,24 +487,32 @@ export default function AdminSellPricing({
                      c.model.toLowerCase().includes(selectedModel.model.toLowerCase()) ||
                      selectedModel.model.toLowerCase().includes(c.model.toLowerCase());
       if (bMatch && mMatch && c.storage) {
-        set.add(c.storage);
+        set.add(normalizeStorageString(c.storage));
       }
     });
 
-    const arr = Array.from(set);
+    const arr = Array.from(set).filter((s) => {
+      const m = s.match(/(\d+)\s*(?:gb|tb)/i);
+      return !m || parseInt(m[1], 10) >= 64;
+    });
     return arr.length > 0 ? arr : ['64 GB', '128 GB', '256 GB'];
   }, [selectedModel, configs]);
 
   // Helper to get variant pricing for any storage option of the selected model
   const getStorageVariantPricing = (stg: string) => {
     if (!selectedModel) return { basePrice: 0, isCustom: false, config: null as SellPriceConfig | null };
-    const sNorm = stg.replace(/\s+/g, '').toLowerCase();
+    const normStg = normalizeStorageString(stg);
+    const sNorm = normStg.replace(/\s+/g, '').toLowerCase();
+    const selModelClean = selectedModel.model.toLowerCase().replace(/[^a-z0-9]/g, '');
+
     const match = configs.find((c) => {
-      const bMatch = c.brand.toLowerCase() === selectedModel.brand.toLowerCase();
-      const mMatch = c.model.toLowerCase() === selectedModel.model.toLowerCase() ||
-                     c.model.toLowerCase().includes(selectedModel.model.toLowerCase()) ||
-                     selectedModel.model.toLowerCase().includes(c.model.toLowerCase());
-      const stgMatch = (c.storage || '').replace(/\s+/g, '').toLowerCase() === sNorm;
+      const bMatch = c.brand.toLowerCase().trim() === selectedModel.brand.toLowerCase().trim();
+      const cModelClean = c.model.toLowerCase().replace(/[^a-z0-9]/g, '');
+      const mMatch = cModelClean === selModelClean ||
+                     cModelClean.includes(selModelClean) ||
+                     selModelClean.includes(cModelClean);
+      const cStorageNorm = normalizeStorageString(c.storage || '').replace(/\s+/g, '').toLowerCase();
+      const stgMatch = !sNorm || !cStorageNorm || cStorageNorm === sNorm;
       return bMatch && mMatch && stgMatch;
     });
 
@@ -496,9 +520,9 @@ export default function AdminSellPricing({
       return { basePrice: match.base_price, isCustom: true, config: match };
     }
 
-    const baseStorage = selectedModel.storage || '128 GB';
+    const baseStorage = normalizeStorageString(selectedModel.storage || '128 GB');
     const baseMult = calculateHardwareVariantMultiplier(baseStorage, '', selectedModel.brand);
-    const targetMult = calculateHardwareVariantMultiplier(stg, '', selectedModel.brand);
+    const targetMult = calculateHardwareVariantMultiplier(normStg, '', selectedModel.brand);
     const ratio = baseMult > 0 ? targetMult / baseMult : 1.0;
     return {
       basePrice: Math.max(500, Math.round((selectedModel.base_price * ratio) / 50) * 50),
@@ -609,7 +633,7 @@ export default function AdminSellPricing({
     setPriceForm({
       brand: modelItem.brand,
       model: modelItem.model,
-      storage: modelItem.storage || '128GB',
+      storage: normalizeStorageString(modelItem.storage || '128 GB'),
       base_price: String(modelItem.base_price),
       excellent_multiplier: String(modelItem.excellent_multiplier),
       good_multiplier: String(modelItem.good_multiplier),
@@ -632,7 +656,7 @@ export default function AdminSellPricing({
     const newPriceNum = Number(priceForm.base_price);
     const brandTrim = priceForm.brand.trim();
     const modelTrim = priceForm.model.trim();
-    const storageTrim = priceForm.storage.trim() || undefined;
+    const storageTrim = normalizeStorageString(priceForm.storage.trim() || '128 GB');
 
     // 1. INSTANT 0ms ZERO-LATENCY BROADCAST
     savePriceOverride(brandTrim, modelTrim, newPriceNum, storageTrim);
@@ -671,7 +695,7 @@ export default function AdminSellPricing({
       return;
     }
 
-    const storageToSave = selectedStorage || selectedModel.storage || '128 GB';
+    const storageToSave = normalizeStorageString(selectedStorage || selectedModel.storage || '128 GB');
     const existingCfg = activeVariantPricing.config;
 
     // 1. INSTANT 0ms OPTIMISTIC UPDATE: LocalStorage + Multi-tab BroadcastChannel

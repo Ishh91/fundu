@@ -436,12 +436,12 @@ export const ALL_INDIAN_PHONES_CATALOG: MasterPhone[] = [
       "6GB"
     ],
     "storage_options": [
-      "128GB",
-      "256GB",
-      "512GB"
+      "128 GB",
+      "256 GB",
+      "512 GB"
     ],
     "default_mrp": 139900,
-    "base_resale_value": 56000,
+    "base_resale_value": 44860,
     "image_url": "https://images.unsplash.com/photo-1663499482523-1c0c1bae4ce1?w=800&auto=format&fit=crop&q=80",
     "popular_tag": "Original Dynamic Island",
     "processor": "Apple A16 Bionic",

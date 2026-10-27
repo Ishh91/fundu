@@ -37,6 +37,8 @@ import type { AdminTab } from './admin/adminTypes';
 import { savePriceOverride } from '../lib/priceSync';
 import { DOORSTEP_AREAS } from '../types';
 import { db, formatINR } from '../lib/db';
+import { API_BASE } from '../config/apiConfig';
+import { broadcastSync, subscribeToRealtimeSync } from '../lib/realtimeSync';
 import { ALL_INDIAN_PHONES_CATALOG } from '../data/indianPhonesCatalog';
 import {
   syncAllIndianPhonesToDbApi,
@@ -480,6 +482,44 @@ export default function Admin() {
 
     return () => clearInterval(pollInterval);
   }, [user, profile, sells, repairs, orders]);
+
+  // Real-time synchronization across Admin tabs (Competitor Radar <-> Sell Pricing Manager)
+  useEffect(() => {
+    const unsubscribe = subscribeToRealtimeSync((payload) => {
+      if ((payload.action === 'PRICE_UPDATE' || payload.table === 'sell_price_configs') && payload.data) {
+        const updated = payload.data as SellPriceConfig;
+        if (!updated || !updated.brand || !updated.model) return;
+        setSellPriceConfigs((prev) => {
+          const bNorm = updated.brand.toLowerCase().trim();
+          const mNorm = updated.model.toLowerCase().trim();
+          const sNorm = (updated.storage || '').replace(/\s+/g, '').toLowerCase();
+
+          const exists = prev.some((c) => {
+            if (updated.id && c.id === updated.id) return true;
+            const cb = (c.brand || '').toLowerCase().trim();
+            const cm = (c.model || '').toLowerCase().trim();
+            const cs = (c.storage || '').replace(/\s+/g, '').toLowerCase();
+            return cb === bNorm && (cm === mNorm || cm.includes(mNorm) || mNorm.includes(cm)) && (!sNorm || cs === sNorm);
+          });
+
+          if (exists) {
+            return prev.map((c) => {
+              if (updated.id && c.id === updated.id) return updated;
+              const cb = (c.brand || '').toLowerCase().trim();
+              const cm = (c.model || '').toLowerCase().trim();
+              const cs = (c.storage || '').replace(/\s+/g, '').toLowerCase();
+              if (cb === bNorm && (cm === mNorm || cm.includes(mNorm) || mNorm.includes(cm)) && (!sNorm || cs === sNorm)) {
+                return updated;
+              }
+              return c;
+            });
+          }
+          return [updated, ...prev];
+        });
+      }
+    });
+    return unsubscribe;
+  }, []);
 
   const handleSimulateTestAlert = () => {
     const mockLead: LiveNotification = {
@@ -1626,49 +1666,70 @@ export default function Admin() {
               onSelectPricing={(id) => setSelectedPricingId(id)}
               onSavePriceConfig={async (configData) => {
                 const payload = { ...configData };
-                if (payload.brand && payload.model && payload.base_price) {
-                  savePriceOverride(payload.brand, payload.model, Number(payload.base_price), payload.storage || undefined);
+                const rawBrand = (payload.brand || '').trim();
+                let rawModel = (payload.model || '').trim();
+                if (rawBrand && rawModel.toLowerCase().startsWith(rawBrand.toLowerCase())) {
+                  rawModel = rawModel.slice(rawBrand.length).trim();
                 }
-                const bNorm = (payload.brand || '').trim().toLowerCase();
-                let mNorm = (payload.model || '').trim().toLowerCase();
-                if (bNorm && mNorm.startsWith(bNorm)) {
-                  mNorm = mNorm.slice(bNorm.length).trim();
-                }
-                const sNorm = (payload.storage || '').replace(/\s+/g, '').toLowerCase();
+                const cleanStorage = payload.storage
+                  ? payload.storage.trim().replace(/(\d+)\s*(gb|tb)/i, (_, n, u) => `${n} ${u.toUpperCase()}`)
+                  : '128 GB';
+                const priceNum = Number(payload.base_price);
 
-                const existing = payload.id
-                  ? sellPriceConfigs.find((c) => c.id === payload.id)
-                  : sellPriceConfigs.find((c) => {
-                      const cB = (c.brand || '').trim().toLowerCase();
-                      let cM = (c.model || '').trim().toLowerCase();
-                      if (cB && cM.startsWith(cB)) cM = cM.slice(cB.length).trim();
-                      const cS = (c.storage || '').replace(/\s+/g, '').toLowerCase();
-                      const modelMatches = cM === mNorm || cM.includes(mNorm) || mNorm.includes(cM);
-                      const storageMatches = !sNorm || !cS || cS === sNorm;
-                      return cB === bNorm && modelMatches && storageMatches;
+                if (rawBrand && rawModel && priceNum > 0) {
+                  savePriceOverride(rawBrand, rawModel, priceNum, cleanStorage);
+                }
+
+                try {
+                  const res = await fetch(`${API_BASE}/sell-pricing/config`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                      ...payload,
+                      brand: rawBrand,
+                      model: rawModel,
+                      storage: cleanStorage,
+                      base_price: priceNum,
+                    }),
+                  });
+                  if (!res.ok) throw new Error('Failed to update price in database');
+                  const json = await res.json();
+                  const savedDoc = json.data as SellPriceConfig;
+
+                  if (savedDoc) {
+                    setSellPriceConfigs((prev) => {
+                      const bNorm = rawBrand.toLowerCase();
+                      const mNorm = rawModel.toLowerCase();
+                      const sNorm = cleanStorage.replace(/\s+/g, '').toLowerCase();
+
+                      const exists = prev.some((c) => {
+                        if (savedDoc.id && c.id === savedDoc.id) return true;
+                        const cb = (c.brand || '').toLowerCase();
+                        const cm = (c.model || '').toLowerCase();
+                        const cs = (c.storage || '').replace(/\s+/g, '').toLowerCase();
+                        return cb === bNorm && (cm === mNorm || cm.includes(mNorm) || mNorm.includes(cm)) && (!sNorm || cs === sNorm);
+                      });
+
+                      if (exists) {
+                        return prev.map((c) => {
+                          if (savedDoc.id && c.id === savedDoc.id) return savedDoc;
+                          const cb = (c.brand || '').toLowerCase();
+                          const cm = (c.model || '').toLowerCase();
+                          const cs = (c.storage || '').replace(/\s+/g, '').toLowerCase();
+                          if (cb === bNorm && (cm === mNorm || cm.includes(mNorm) || mNorm.includes(cm)) && (!sNorm || cs === sNorm)) {
+                            return savedDoc;
+                          }
+                          return c;
+                        });
+                      }
+                      return [savedDoc, ...prev];
                     });
 
-                const targetId = payload.id || existing?.id;
-
-                if (targetId) {
-                  const { data, error } = await db
-                    .from('sell_price_configs')
-                    .update(payload)
-                    .eq('id', targetId)
-                    .select('*')
-                    .single();
-                  if (error) throw error;
-                  setSellPriceConfigs((prev) =>
-                    prev.map((c) => (c.id === targetId ? (data as SellPriceConfig) : c))
-                  );
-                } else {
-                  const { data, error } = await db
-                    .from('sell_price_configs')
-                    .insert(payload)
-                    .select('*')
-                    .single();
-                  if (error) throw error;
-                  setSellPriceConfigs((prev) => [data as SellPriceConfig, ...prev]);
+                    broadcastSync('PRICE_UPDATE', 'sell_price_configs', 'upsert', savedDoc);
+                  }
+                } catch (err) {
+                  console.error('[Admin] Price save error:', err);
+                  throw err;
                 }
               }}
               onUpdateImage={async (phone, newImageUrl) => {

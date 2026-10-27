@@ -22,6 +22,8 @@ import { formatINR } from '../../lib/db';
 import { API_BASE } from '../../config/apiConfig';
 import { getCleanPhoneImage, BRAND_FRONT_FALLBACKS, getGenericDevicePlaceholder } from '../../lib/phoneImages';
 import { savePriceOverride } from '../../lib/priceSync';
+import { broadcastSync } from '../../lib/realtimeSync';
+import { normalizeStorageString } from '../../lib/deviceSpecs';
 
 interface CompetitorData {
   id: string;
@@ -215,7 +217,8 @@ export default function AdminCompetitorRadar() {
     if (!newPrice || newPrice <= 0) return;
 
     // 1. INSTANT ZERO-LATENCY OPTIMISTIC UPDATE (0ms)
-    savePriceOverride(selectedBrand, searchModel, newPrice, selectedStorage);
+    const normStorage = normalizeStorageString(selectedStorage);
+    savePriceOverride(selectedBrand, searchModel, newPrice, normStorage);
     setSaveSuccess(true);
     setRadarData((prev) => {
       if (!prev) return prev;
@@ -224,9 +227,9 @@ export default function AdminCompetitorRadar() {
         fundu: {
           ...prev.fundu,
           basePrice: newPrice,
-          flawlessOffer: newPrice,
-          goodOffer: Math.round(newPrice * 0.80),
-          fairOffer: Math.round(newPrice * 0.60),
+          flawlessOffer: Math.round(newPrice * 0.82),
+          goodOffer: Math.round(newPrice * 0.70),
+          fairOffer: Math.round(newPrice * 0.55),
         },
       };
     });
@@ -234,15 +237,14 @@ export default function AdminCompetitorRadar() {
     // 2. Persist to Backend in Background
     setSavingPrice(true);
     try {
-      const isApple = selectedBrand.toLowerCase() === 'apple' || searchModel.toLowerCase().includes('iphone');
       const payload = {
         brand: selectedBrand,
         model: searchModel,
-        storage: selectedStorage.trim(),
+        storage: normStorage,
         base_price: newPrice,
-        excellent_multiplier: 1.00,
-        good_multiplier: 0.80,
-        fair_multiplier: 0.60,
+        excellent_multiplier: 0.85,
+        good_multiplier: 0.70,
+        fair_multiplier: 0.55,
         box_bonus: 600,
         charger_bonus: 400,
         is_active: true,
@@ -257,6 +259,10 @@ export default function AdminCompetitorRadar() {
       });
 
       if (!res.ok) throw new Error('Failed to update price in database');
+      const json = await res.json();
+      if (json.data) {
+        broadcastSync('PRICE_UPDATE', 'sell_price_configs', 'upsert', json.data);
+      }
       setTimeout(() => setSaveSuccess(false), 2500);
     } catch (err: any) {
       console.error('Background price sync failed:', err);
