@@ -552,7 +552,7 @@ export default function SellStep2Condition({
                 },
                 {
                   id: '6_to_9_months',
-                  label: '⏳ 6 to 9 Months',
+                  label: '⏳ 6 to 11 Months',
                   warranty: true,
                   badge: 'Under Warranty',
                   badgeColor: 'bg-indigo-100 text-indigo-800 border-indigo-300',
@@ -560,11 +560,11 @@ export default function SellStep2Condition({
                 },
                 {
                   id: 'above_9_months',
-                  label: '📅 Older than 9 Months',
+                  label: '📅 Older than 11 Months',
                   warranty: false,
                   badge: 'Out of Warranty',
                   badgeColor: 'bg-gray-100 text-gray-700 border-gray-300',
-                  desc: 'More than 9 months old, standard out-of-warranty device',
+                  desc: 'More than 11 months old, standard out-of-warranty device',
                 },
               ].map((age) => {
                 const isSelected =

@@ -2306,10 +2306,10 @@ export function isStylusDevice(brand, model) {
  * Calculates smartphone age depreciation factor based on purchase period.
  * Business Rules:
  * - Apple:
- *     0 to 3 months: 0% deduction (factor = 1.00)
- *     3 to 6 months: 10% deduction (factor = 0.90)
- *     6 to 9 months: 15% deduction (factor = 0.85)
- *     Older than 9 months / Out of warranty: 20% deduction (factor = 0.80)
+ *     0 to 3 months: 0% deduction (factor = 1.00) -> 74,910 on 74,910 base
+ *     3 to 6 months: 6.55% deduction (factor = 0.9345) -> 70,000 on 74,910 base
+ *     6 to 11 months: 9.22% deduction (factor = 0.9078) -> 68,000 on 74,910 base
+ *     Out of warranty (>11 months): 17.23% deduction (factor = 0.8277) -> 62,000 on 74,910 base
  * - Android / Other Brands:
  *     0 to 3 months: 10% deduction (factor = 0.90)
  *     3 to 6 months: 15% deduction (factor = 0.85)
@@ -2327,21 +2327,25 @@ export function calculatePhoneAgingFactor(brand = '', model = '', underWarranty 
       return 1.00;
     }
     if (normAge === '3_to_6_months') {
-      return 0.90;
+      return 0.9345;
     }
-    if (normAge === '6_to_9_months') {
-      return 0.85;
+    if (
+      normAge === '6_to_9_months' ||
+      normAge === '6_to_11_months' ||
+      normAge === '3_to_10_months' ||
+      normAge === '10_to_12_months'
+    ) {
+      return 0.9078;
     }
     if (
       normAge === 'above_9_months' ||
       normAge === 'older_than_9_months' ||
       normAge === 'above_11_months' ||
-      normAge === '10_to_12_months' ||
-      normAge === '3_to_10_months'
+      normAge === 'out_of_warranty'
     ) {
-      return 0.80;
+      return 0.8277;
     }
-    return 0.80;
+    return 0.8277;
   }
 
   // Non-Apple models
@@ -2528,14 +2532,14 @@ export function quotePhone(input = {}, options = {}) {
 
   const cosmeticKey = String(cosmetic_condition).toLowerCase();
   const activeCosmeticMultipliers = isApple ? {
-    flawless: is0to3Months ? 1.00 : 0.95,
+    flawless: 1.00,
     good: 0.80,
     fair: 0.60,
   } : {
     ...FUNDU_POLICY.cosmeticMultipliers,
     ...(options.cosmeticMultipliers || {}),
   };
-  const cosmeticMultiplier = activeCosmeticMultipliers[cosmeticKey] ?? (isApple ? (is0to3Months ? 1.00 : 0.80) : (activeCosmeticMultipliers.good ?? 1.0));
+  const cosmeticMultiplier = activeCosmeticMultipliers[cosmeticKey] ?? (isApple ? 1.00 : (activeCosmeticMultipliers.good ?? 1.0));
 
   // Customer-facing condition explanations
   const conditionReasons = [];
