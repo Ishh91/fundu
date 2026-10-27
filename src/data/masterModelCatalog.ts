@@ -476,10 +476,26 @@ export const MASTER_MODEL_CATALOG = [
   },
   {
     "brand": "Infinix",
+    "series": "Note Pro Series",
+    "model": "Infinix Note 30 5G",
+    "storage": "256 GB",
+    "price": 8400,
+    "image": "https://fdn2.gsmarena.com/vv/bigpic/infinix-note-30-5g.jpg"
+  },
+  {
+    "brand": "Infinix",
+    "series": "Hot Performance Series",
+    "model": "Infinix Hot 30 5G",
+    "storage": "128 GB",
+    "price": 6800,
+    "image": "https://fdn2.gsmarena.com/vv/bigpic/infinix-hot-30-5g.jpg"
+  },
+  {
+    "brand": "Infinix",
     "series": "GT Gaming Series",
     "model": "Infinix GT 10 Pro 5G",
-    "storage": "128 GB",
-    "price": 8600,
+    "storage": "256 GB",
+    "price": 11800,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/infinix-gt-10-pro.jpg"
   },
   {
@@ -487,7 +503,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "GT Gaming Series",
     "model": "Infinix GT 20 Pro 5G",
     "storage": "256 GB",
-    "price": 11200,
+    "price": 15200,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/infinix-gt-20-pro.jpg"
   },
   {
@@ -495,7 +511,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Hot Series",
     "model": "Infinix Hot 40 Pro",
     "storage": "128 GB",
-    "price": 9050,
+    "price": 7200,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/infinix-hot-40-pro.jpg"
   },
   {
@@ -503,7 +519,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Note Series",
     "model": "Infinix Note 40 Pro 5G",
     "storage": "256 GB",
-    "price": 10500,
+    "price": 11800,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/infinix-note-40-pro-5g.jpg"
   },
   {
@@ -511,23 +527,15 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Note Series",
     "model": "Infinix Note 40 Pro+ 5G",
     "storage": "256 GB",
-    "price": 10500,
+    "price": 13500,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/infinix-note-40-pro-plus-5g.jpg"
   },
-  {
-    "brand": "Infinix",
-    "series": "Smart Series",
-    "model": "Infinix Smart 8 HD",
-    "storage": "64 GB",
-    "price": 5100,
-    "image": "https://fdn2.gsmarena.com/vv/bigpic/infinix-smart-8-hd.jpg"
-  },
-  {
+    {
     "brand": "Infinix",
     "series": "Zero Series",
     "model": "Infinix Zero 30 5G",
     "storage": "256 GB",
-    "price": 11400,
+    "price": 12400,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/infinix-zero-30-5g.jpg"
   },
   {
@@ -838,8 +846,8 @@ export const MASTER_MODEL_CATALOG = [
     "brand": "Lenovo",
     "series": "K Note Series",
     "model": "Lenovo K10 Note",
-    "storage": "128 GB",
-    "price": 3200,
+    "storage": "64 GB",
+    "price": 2600,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/lenovo-k10-note.jpg"
   },
   {
@@ -847,31 +855,23 @@ export const MASTER_MODEL_CATALOG = [
     "series": "K Note Series",
     "model": "Lenovo K10 Plus",
     "storage": "64 GB",
-    "price": 2400,
+    "price": 2200,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/lenovo-k10-plus.jpg"
   },
   {
     "brand": "Lenovo",
-    "series": "K Note Series",
-    "model": "Lenovo K8 Note",
+    "series": "Z Series Flagships",
+    "model": "Lenovo Z2 Plus",
     "storage": "64 GB",
-    "price": 1350,
-    "image": "https://fdn2.gsmarena.com/vv/bigpic/lenovo-k8-note.jpg"
+    "price": 1800,
+    "image": "https://fdn2.gsmarena.com/vv/bigpic/lenovo-z2-plus.jpg"
   },
-  {
-    "brand": "Lenovo",
-    "series": "K Note Series",
-    "model": "Lenovo K9 Note",
-    "storage": "64 GB",
-    "price": 2100,
-    "image": "https://fdn2.gsmarena.com/vv/bigpic/lenovo-k9-note.jpg"
-  },
-  {
+      {
     "brand": "Lenovo",
     "series": "Legion Gaming Series",
     "model": "Lenovo Legion Duel 2",
     "storage": "256 GB",
-    "price": 19300,
+    "price": 18700,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/lenovo-legion-duel-2.jpg"
   },
   {
@@ -879,7 +879,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Legion Gaming Series",
     "model": "Lenovo Legion Pro",
     "storage": "128 GB",
-    "price": 14900,
+    "price": 14500,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/lenovo-legion-pro.jpg"
   },
   {
@@ -887,7 +887,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Legion Gaming Series",
     "model": "Lenovo Legion Y90",
     "storage": "256 GB",
-    "price": 22950,
+    "price": 22850,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/lenovo-legion-y90.jpg"
   },
   {
@@ -895,7 +895,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Z Series Flagships",
     "model": "Lenovo Z5 Pro GT",
     "storage": "128 GB",
-    "price": 7600,
+    "price": 5800,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/lenovo-z5-pro-gt.jpg"
   },
   {
@@ -903,7 +903,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Z Series Flagships",
     "model": "Lenovo Z5s",
     "storage": "64 GB",
-    "price": 4800,
+    "price": 3900,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/lenovo-z5s.jpg"
   },
   {
@@ -911,7 +911,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Z Series Flagships",
     "model": "Lenovo Z6 Lite",
     "storage": "64 GB",
-    "price": 5000,
+    "price": 4500,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/lenovo-z6-lite.jpg"
   },
   {
@@ -919,7 +919,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Z Series Flagships",
     "model": "Lenovo Z6 Pro",
     "storage": "128 GB",
-    "price": 5800,
+    "price": 6400,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/lenovo-z6-pro.jpg"
   },
   {

@@ -178,6 +178,7 @@ export default function SellBrandPage() {
     if (brandCleanKey === 'moto') return 'motorola';
     if (brandCleanKey === 'pixel') return 'google';
     if (brandCleanKey === 'iphone') return 'apple';
+    if (brandCleanKey === 'lenevo') return 'lenovo';
     return brandCleanKey;
   }, [brandCleanKey]);
 

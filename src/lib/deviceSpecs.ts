@@ -282,7 +282,27 @@ export function getModelReleaseYear(brand = '', model = ''): number {
     return 2023;
   }
 
-  // 15. Explicit 4-digit year match if present
+  // 15. Infinix
+  if (/infinix/i.test(full)) {
+    if (/gt\s*20\s*pro|note\s*40/i.test(m)) return 2024;
+    if (/gt\s*10\s*pro|note\s*30|zero\s*30|hot\s*40|hot\s*30/i.test(m)) return 2023;
+    if (/zero\s*20|note\s*12|hot\s*20|hot\s*12/i.test(m)) return 2022;
+    if (/note\s*11|note\s*10|hot\s*11|hot\s*10/i.test(m)) return 2021;
+    return 2023;
+  }
+
+  // 16. Lenovo
+  if (/lenovo/i.test(full)) {
+    if (/legion\s*y90/i.test(m)) return 2022;
+    if (/legion\s*duel\s*2/i.test(m)) return 2021;
+    if (/legion\s*pro/i.test(m)) return 2020;
+    if (/z6\s*pro|z6\s*lite|k10\s*note|k10\s*plus/i.test(m)) return 2019;
+    if (/z5\s*pro\s*gt|z5s|z5/i.test(m)) return 2018;
+    if (/z2\s*plus/i.test(m)) return 2016;
+    return 2019;
+  }
+
+  // 17. Explicit 4-digit year match if present
   if (yrMatch) return parseInt(yrMatch[1], 10);
 
   // Default older devices to 2022
@@ -1523,12 +1543,111 @@ const MODEL_HARDWARE_RULES: Array<{
   },
 
   // ==========================================
-  // LENOVO & MOTO
+  // INFINIX
   // ==========================================
   {
-    pattern: /lenovo\s*moto\s*m|\bmoto\s*m\b/i,
+    pattern: /infinix\s*gt\s*20\s*pro/i,
     variants: [
-      { storage: '64 GB', rams: ['4 GB'] },
+      { storage: '256 GB', rams: ['8 GB', '12 GB'] },
+    ],
+  },
+  {
+    pattern: /infinix\s*gt\s*10\s*pro/i,
+    variants: [
+      { storage: '128 GB', rams: ['8 GB'] },
+      { storage: '256 GB', rams: ['8 GB'] },
+    ],
+  },
+  {
+    pattern: /infinix\s*note\s*40\s*pro\+/i,
+    variants: [
+      { storage: '256 GB', rams: ['12 GB'] },
+    ],
+  },
+  {
+    pattern: /infinix\s*note\s*40\s*pro\b/i,
+    variants: [
+      { storage: '256 GB', rams: ['8 GB'] },
+    ],
+  },
+  {
+    pattern: /infinix\s*note\s*30/i,
+    variants: [
+      { storage: '128 GB', rams: ['4 GB', '8 GB'] },
+      { storage: '256 GB', rams: ['8 GB'] },
+    ],
+  },
+  {
+    pattern: /infinix\s*zero\s*30/i,
+    variants: [
+      { storage: '256 GB', rams: ['8 GB', '12 GB'] },
+    ],
+  },
+  {
+    pattern: /infinix\s*hot\s*40\s*pro/i,
+    variants: [
+      { storage: '128 GB', rams: ['8 GB'] },
+      { storage: '256 GB', rams: ['8 GB'] },
+    ],
+  },
+  {
+    pattern: /infinix\s*hot\s*30/i,
+    variants: [
+      { storage: '128 GB', rams: ['4 GB', '8 GB'] },
+    ],
+  },
+
+  // ==========================================
+  // LENOVO
+  // ==========================================
+  {
+    pattern: /lenovo\s*legion\s*y90/i,
+    variants: [
+      { storage: '256 GB', rams: ['12 GB', '16 GB', '18 GB'] },
+      { storage: '512 GB', rams: ['18 GB'] },
+    ],
+  },
+  {
+    pattern: /lenovo\s*legion\s*duel\s*2/i,
+    variants: [
+      { storage: '256 GB', rams: ['12 GB'] },
+      { storage: '512 GB', rams: ['16 GB'] },
+    ],
+  },
+  {
+    pattern: /lenovo\s*legion\s*pro/i,
+    variants: [
+      { storage: '128 GB', rams: ['8 GB', '12 GB'] },
+      { storage: '256 GB', rams: ['12 GB'] },
+      { storage: '512 GB', rams: ['16 GB'] },
+    ],
+  },
+  {
+    pattern: /lenovo\s*z6\s*pro/i,
+    variants: [
+      { storage: '128 GB', rams: ['6 GB', '8 GB'] },
+      { storage: '256 GB', rams: ['8 GB', '12 GB'] },
+    ],
+  },
+  {
+    pattern: /lenovo\s*z6\s*lite/i,
+    variants: [
+      { storage: '64 GB', rams: ['4 GB', '6 GB'] },
+      { storage: '128 GB', rams: ['6 GB'] },
+    ],
+  },
+  {
+    pattern: /lenovo\s*z5\s*pro\s*gt/i,
+    variants: [
+      { storage: '128 GB', rams: ['6 GB', '8 GB'] },
+      { storage: '256 GB', rams: ['8 GB', '12 GB'] },
+    ],
+  },
+  {
+    pattern: /lenovo\s*z5s/i,
+    variants: [
+      { storage: '64 GB', rams: ['4 GB', '6 GB'] },
+      { storage: '128 GB', rams: ['6 GB'] },
     ],
   },
   {
@@ -1545,16 +1664,9 @@ const MODEL_HARDWARE_RULES: Array<{
     ],
   },
   {
-    pattern: /lenovo\s*k8\s*note/i,
+    pattern: /lenovo\s*z2\s*plus/i,
     variants: [
       { storage: '64 GB', rams: ['4 GB'] },
-    ],
-  },
-  {
-    pattern: /lenovo\s*legion\s*duel\s*2/i,
-    variants: [
-      { storage: '256 GB', rams: ['12 GB'] },
-      { storage: '512 GB', rams: ['16 GB'] },
     ],
   },
 

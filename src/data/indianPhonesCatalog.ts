@@ -601,7 +601,7 @@ export const ALL_INDIAN_PHONES_CATALOG: MasterPhone[] = [
     "model": "iPhone XR",
     "release_year": 2018,
     "ram_options": [
-      "3GB"
+      "4GB"
     ],
     "storage_options": [
       "64GB",
@@ -624,7 +624,7 @@ export const ALL_INDIAN_PHONES_CATALOG: MasterPhone[] = [
     "model": "iPhone X",
     "release_year": 2017,
     "ram_options": [
-      "3GB"
+      "4GB"
     ],
     "storage_options": [
       "64GB",
@@ -3341,7 +3341,6 @@ export const ALL_INDIAN_PHONES_CATALOG: MasterPhone[] = [
     "model": "Vivo Y20 / Y20G / Y20i / Y20A",
     "release_year": 2020,
     "ram_options": [
-      "3GB",
       "4GB",
       "6GB"
     ],
@@ -3454,7 +3453,6 @@ export const ALL_INDIAN_PHONES_CATALOG: MasterPhone[] = [
     "model": "Vivo Y15 (2019) / Y12",
     "release_year": 2019,
     "ram_options": [
-      "3GB",
       "4GB"
     ],
     "storage_options": [
@@ -3477,8 +3475,6 @@ export const ALL_INDIAN_PHONES_CATALOG: MasterPhone[] = [
     "model": "Vivo Y95 / Y93 / Y91",
     "release_year": 2018,
     "ram_options": [
-      "2GB",
-      "3GB",
       "4GB"
     ],
     "storage_options": [
@@ -3501,7 +3497,6 @@ export const ALL_INDIAN_PHONES_CATALOG: MasterPhone[] = [
     "model": "Vivo Y83 / Y83 Pro / Y81",
     "release_year": 2018,
     "ram_options": [
-      "3GB",
       "4GB"
     ],
     "storage_options": [
@@ -3736,7 +3731,6 @@ export const ALL_INDIAN_PHONES_CATALOG: MasterPhone[] = [
     "model": "Vivo U20 / U10",
     "release_year": 2019,
     "ram_options": [
-      "3GB",
       "4GB",
       "6GB"
     ],
@@ -5167,7 +5161,6 @@ export const ALL_INDIAN_PHONES_CATALOG: MasterPhone[] = [
     "model": "Lenovo Moto M",
     "release_year": 2016,
     "ram_options": [
-      "3GB",
       "4GB"
     ],
     "storage_options": [
