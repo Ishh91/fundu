@@ -2406,7 +2406,7 @@ export function getModelReleaseYear(brand = '', model = '') {
  *     0 to 3 months: 0% deduction (factor = 1.00) -> 100% full base price
  *     3 to 6 months: 6.55% deduction (factor = 0.9345)
  *     6 to 11 months: 9.22% deduction (factor = 0.9078)
- *     Out of warranty (>11 months): 17.23% deduction (factor = 0.8277)
+ *     Out of warranty (>11 months): 20% deduction (factor = 0.80)
  */
 export function calculatePhoneAgingFactor(brand = '', model = '', underWarranty = false, agePeriod = '') {
   const normAge = String(agePeriod || '').toLowerCase().trim();
@@ -2435,16 +2435,17 @@ export function calculatePhoneAgingFactor(brand = '', model = '', underWarranty 
   ) {
     return 0.9078;
   }
-  // 4. Out of warranty (>11 months): 17.23% deduction (0.8277 multiplier)
+  // 4. Out of warranty (>11 months): 20% deduction (0.80 multiplier)
   if (
     normAge === 'above_9_months' ||
     normAge === 'older_than_9_months' ||
     normAge === 'above_11_months' ||
-    normAge === 'out_of_warranty'
+    normAge === 'out_of_warranty' ||
+    underWarranty === false
   ) {
-    return 0.8277;
+    return 0.80;
   }
-  return 0.8277;
+  return 0.80;
 }
 
 /**
