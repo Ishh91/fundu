@@ -18,27 +18,27 @@ export const FUNDU_POLICY = {
   version: 'fundu-policy-2025.1',
   effectiveDate: '2025-01-01',
   maxStalenessDays: 90, // Benchmarks older than 90 days trigger manual review
-  
+
   // Internal Operational Costs (Kept confidential on server)
   pickupInspectionRefurbCost: 450, // INR: Doorstep pickup logistics, physical bench diagnostics, sanitization
-  
+
   // Reserves (Kept confidential on server)
   warrantyAndRiskReservesRate: 0.05, // 5% risk reserve for component variance, price fluctuation, and holding risk
   warrantyBonusCredit: 500, // INR credit reducing risk reserve if device is covered under active manufacturer warranty
-  
+
   // Target Economics (Kept confidential on server)
   targetContributionMarginRate: 0.10, // 10% target gross contribution margin for Fundu buyback operations
-  
+
   // Price Floor (Minimum cash offer for viable functioning device)
   minOfferFloor: 500, // INR
-  
+
   // Cosmetic condition adjustment multipliers
   cosmeticMultipliers: {
     flawless: 0.82, // 18% less than theoretical maximum base price (15-20% range)
     good: 0.70,     // 30% markdown for normal daily wear
     fair: 0.55,     // 45% markdown for heavy scratches, scuffs
   },
-  
+
   // Accessories bonus credits added to proceeds
   accessoriesBonus: {
     'Original Box': 300,
@@ -537,17 +537,17 @@ export const RESALE_BENCHMARKS = [
   { brand: 'OnePlus', model: "OnePlus Nord CE4 Lite 5G", storage: '128 GB', proceeds: 2800, lastUpdated: '2026-10-27' },
   { brand: 'OnePlus', model: "OnePlus Nord CE4 Lite 5G", storage: '256 GB', proceeds: 2800, lastUpdated: '2026-10-27' },
   { brand: 'OnePlus', model: "Oneplus Open", storage: '512 GB', proceeds: 65000, lastUpdated: '2026-10-27' },
-              { brand: 'Oppo', model: "OPPO A16", storage: '64 GB', proceeds: 3800, lastUpdated: '2026-10-27' },
-          { brand: 'Oppo', model: "OPPO A17", storage: '64 GB', proceeds: 4900, lastUpdated: '2026-10-08' },
-    { brand: 'Oppo', model: "Oppo A18", storage: '64 GB', proceeds: 6500, lastUpdated: '2026-10-27' },
+  { brand: 'Oppo', model: "OPPO A16", storage: '64 GB', proceeds: 3800, lastUpdated: '2026-10-27' },
+  { brand: 'Oppo', model: "OPPO A17", storage: '64 GB', proceeds: 4900, lastUpdated: '2026-10-08' },
+  { brand: 'Oppo', model: "Oppo A18", storage: '64 GB', proceeds: 6500, lastUpdated: '2026-10-27' },
   { brand: 'Oppo', model: "Oppo A18", storage: '128 GB', proceeds: 6500, lastUpdated: '2026-10-27' },
-    { brand: 'Oppo', model: "OPPO A3 5G", storage: '128 GB', proceeds: 11300, lastUpdated: '2026-10-08' },
+  { brand: 'Oppo', model: "OPPO A3 5G", storage: '128 GB', proceeds: 11300, lastUpdated: '2026-10-08' },
   { brand: 'Oppo', model: "OPPO A3 Pro 5G", storage: '128 GB', proceeds: 12950, lastUpdated: '2026-10-08' },
   { brand: 'Oppo', model: "OPPO A3 Pro 5G", storage: '256 GB', proceeds: 13550, lastUpdated: '2026-10-08' },
   { brand: 'Oppo', model: "OPPO A31", storage: '64 GB', proceeds: 5000, lastUpdated: '2026-10-08' },
   { brand: 'Oppo', model: "OPPO A31", storage: '128 GB', proceeds: 5700, lastUpdated: '2026-10-08' },
-    { brand: 'Oppo', model: "OPPO A38", storage: '128 GB', proceeds: 7200, lastUpdated: '2026-10-27' },
-        { brand: 'Oppo', model: "OPPO A3x", storage: '128 GB', proceeds: 6400, lastUpdated: '2026-10-08' },
+  { brand: 'Oppo', model: "OPPO A38", storage: '128 GB', proceeds: 7200, lastUpdated: '2026-10-27' },
+  { brand: 'Oppo', model: "OPPO A3x", storage: '128 GB', proceeds: 6400, lastUpdated: '2026-10-08' },
   { brand: 'Oppo', model: "OPPO A3x 5G", storage: '64 GB', proceeds: 9650, lastUpdated: '2026-10-08' },
   { brand: 'Oppo', model: "OPPO A5", storage: '32 GB', proceeds: 3700, lastUpdated: '2026-10-08' },
   { brand: 'Oppo', model: "OPPO A5", storage: '64 GB', proceeds: 3850, lastUpdated: '2026-10-08' },
@@ -568,7 +568,7 @@ export const RESALE_BENCHMARKS = [
   { brand: 'Oppo', model: "OPPO A57 2022", storage: '64 GB', proceeds: 5350, lastUpdated: '2026-10-08' },
   { brand: 'Oppo', model: "OPPO A58", storage: '128 GB', proceeds: 8000, lastUpdated: '2026-10-27' },
   { brand: 'Oppo', model: "OPPO A59 5G", storage: '128 GB', proceeds: 9500, lastUpdated: '2026-10-27' },
-      { brand: 'Oppo', model: "OPPO A5X", storage: '64 GB', proceeds: 7000, lastUpdated: '2026-10-08' },
+  { brand: 'Oppo', model: "OPPO A5X", storage: '64 GB', proceeds: 7000, lastUpdated: '2026-10-08' },
   { brand: 'Oppo', model: "OPPO A5x 5G", storage: '128 GB', proceeds: 10800, lastUpdated: '2026-10-08' },
   { brand: 'Oppo', model: "OPPO A6 5G", storage: '128 GB', proceeds: 15950, lastUpdated: '2026-10-08' },
   { brand: 'Oppo', model: "OPPO A6 5G", storage: '256 GB', proceeds: 16800, lastUpdated: '2026-10-08' },
@@ -579,7 +579,7 @@ export const RESALE_BENCHMARKS = [
   { brand: 'Oppo', model: "OPPO A6s 5G", storage: '128 GB', proceeds: 13500, lastUpdated: '2026-10-08' },
   { brand: 'Oppo', model: "OPPO A6x 5G", storage: '64 GB', proceeds: 10350, lastUpdated: '2026-10-08' },
   { brand: 'Oppo', model: "OPPO A6x 5G", storage: '128 GB', proceeds: 11900, lastUpdated: '2026-10-08' },
-      { brand: 'Oppo', model: "OPPO A74 5G", storage: '128 GB', proceeds: 7500, lastUpdated: '2026-10-27' },
+  { brand: 'Oppo', model: "OPPO A74 5G", storage: '128 GB', proceeds: 7500, lastUpdated: '2026-10-27' },
   { brand: 'Oppo', model: "Oppo A76", storage: '128 GB', proceeds: 6550, lastUpdated: '2026-10-08' },
   { brand: 'Oppo', model: "OPPO A77", storage: '64 GB', proceeds: 2600, lastUpdated: '2026-10-08' },
   { brand: 'Oppo', model: "OPPO A77 2022", storage: '128 GB', proceeds: 5150, lastUpdated: '2026-10-08' },
@@ -587,10 +587,10 @@ export const RESALE_BENCHMARKS = [
   { brand: 'Oppo', model: "OPPO A77s", storage: '128 GB', proceeds: 6600, lastUpdated: '2026-10-08' },
   { brand: 'Oppo', model: "OPPO A78 5G", storage: '128 GB', proceeds: 9800, lastUpdated: '2026-10-27' },
   { brand: 'Oppo', model: "OPPO A79 5G", storage: '128 GB', proceeds: 10800, lastUpdated: '2026-10-27' },
-        { brand: 'Oppo', model: "OPPO A9", storage: '128 GB', proceeds: 5200, lastUpdated: '2026-10-08' },
+  { brand: 'Oppo', model: "OPPO A9", storage: '128 GB', proceeds: 5200, lastUpdated: '2026-10-08' },
   { brand: 'Oppo', model: "OPPO A9 2020", storage: '128 GB', proceeds: 5050, lastUpdated: '2026-10-08' },
   { brand: 'Oppo', model: "OPPO A96", storage: '128 GB', proceeds: 6700, lastUpdated: '2026-10-08' },
-    { brand: 'Oppo', model: "OPPO F11", storage: '128 GB', proceeds: 4200, lastUpdated: '2026-10-27' },
+  { brand: 'Oppo', model: "OPPO F11", storage: '128 GB', proceeds: 4200, lastUpdated: '2026-10-27' },
   { brand: 'Oppo', model: "OPPO F11 Pro", storage: '128 GB', proceeds: 4800, lastUpdated: '2026-10-27' },
   { brand: 'Oppo', model: "OPPO F11 Pro", storage: '64 GB', proceeds: 4800, lastUpdated: '2026-10-27' },
   { brand: 'Oppo', model: "OPPO F11 Pro Avenger Edition", storage: '128 GB', proceeds: 5400, lastUpdated: '2026-10-27' },
@@ -602,7 +602,7 @@ export const RESALE_BENCHMARKS = [
   { brand: 'Oppo', model: "OPPO F19 Pro", storage: '256 GB', proceeds: 7800, lastUpdated: '2026-10-27' },
   { brand: 'Oppo', model: "OPPO F19 Pro Plus 5G", storage: '128 GB', proceeds: 8500, lastUpdated: '2026-10-27' },
   { brand: 'Oppo', model: "OPPO F19s", storage: '128 GB', proceeds: 7200, lastUpdated: '2026-10-27' },
-      { brand: 'Oppo', model: "OPPO F21 Pro", storage: '128 GB', proceeds: 8500, lastUpdated: '2026-10-27' },
+  { brand: 'Oppo', model: "OPPO F21 Pro", storage: '128 GB', proceeds: 8500, lastUpdated: '2026-10-27' },
   { brand: 'Oppo', model: "OPPO F21s Pro 5G", storage: '128 GB', proceeds: 10000, lastUpdated: '2026-10-27' },
   { brand: 'Oppo', model: "OPPO F23 5G", storage: '256 GB', proceeds: 10800, lastUpdated: '2026-10-27' },
   { brand: 'Oppo', model: "OPPO F25 Pro 5G", storage: '256 GB', proceeds: 13500, lastUpdated: '2026-10-27' },
@@ -615,7 +615,7 @@ export const RESALE_BENCHMARKS = [
   { brand: 'Oppo', model: "OPPO F29 5G", storage: '256 GB', proceeds: 17950, lastUpdated: '2026-10-08' },
   { brand: 'Oppo', model: "OPPO F29 Pro 5G", storage: '256 GB', proceeds: 18100, lastUpdated: '2026-10-08' },
   { brand: 'Oppo', model: "OPPO F29 Pro 5G", storage: '128 GB', proceeds: 16850, lastUpdated: '2026-10-08' },
-      { brand: 'Oppo', model: "OPPO F31 5G", storage: '256 GB', proceeds: 19450, lastUpdated: '2026-10-08' },
+  { brand: 'Oppo', model: "OPPO F31 5G", storage: '256 GB', proceeds: 19450, lastUpdated: '2026-10-08' },
   { brand: 'Oppo', model: "OPPO F31 5G", storage: '128 GB', proceeds: 18100, lastUpdated: '2026-10-08' },
   { brand: 'Oppo', model: "OPPO F31 Pro 5G", storage: '128 GB', proceeds: 19800, lastUpdated: '2026-10-08' },
   { brand: 'Oppo', model: "OPPO F31 Pro 5G", storage: '256 GB', proceeds: 21100, lastUpdated: '2026-10-08' },
@@ -624,7 +624,7 @@ export const RESALE_BENCHMARKS = [
   { brand: 'Oppo', model: "OPPO F33 5G", storage: '256 GB', proceeds: 25950, lastUpdated: '2026-10-08' },
   { brand: 'Oppo', model: "OPPO F33 Pro 5G", storage: '128 GB', proceeds: 23200, lastUpdated: '2026-10-08' },
   { brand: 'Oppo', model: "OPPO F33 Pro 5G", storage: '256 GB', proceeds: 25350, lastUpdated: '2026-10-08' },
-        { brand: 'Oppo', model: "OPPO F7", storage: '128 GB', proceeds: 2800, lastUpdated: '2026-10-27' },
+  { brand: 'Oppo', model: "OPPO F7", storage: '128 GB', proceeds: 2800, lastUpdated: '2026-10-27' },
   { brand: 'Oppo', model: "OPPO F7", storage: '64 GB', proceeds: 2800, lastUpdated: '2026-10-27' },
   { brand: 'Oppo', model: "OPPO F9", storage: '64 GB', proceeds: 3000, lastUpdated: '2026-10-27' },
   { brand: 'Oppo', model: "OPPO F9 Pro", storage: '128 GB', proceeds: 3500, lastUpdated: '2026-10-27' },
@@ -655,7 +655,7 @@ export const RESALE_BENCHMARKS = [
   { brand: 'Oppo', model: "OPPO K14x 5G", storage: '128 GB', proceeds: 12800, lastUpdated: '2026-10-08' },
   { brand: 'Oppo', model: "OPPO K3", storage: '64 GB', proceeds: 5000, lastUpdated: '2026-10-08' },
   { brand: 'Oppo', model: "OPPO K3", storage: '128 GB', proceeds: 5200, lastUpdated: '2026-10-08' },
-    { brand: 'Oppo', model: "OPPO R17", storage: '128 GB', proceeds: 5300, lastUpdated: '2026-10-08' },
+  { brand: 'Oppo', model: "OPPO R17", storage: '128 GB', proceeds: 5300, lastUpdated: '2026-10-08' },
   { brand: 'Oppo', model: "OPPO Reno", storage: '128 GB', proceeds: 6000, lastUpdated: '2026-10-08' },
   { brand: 'Oppo', model: "OPPO Reno 10x Zoom", storage: '256 GB', proceeds: 7500, lastUpdated: '2026-10-27' },
   { brand: 'Oppo', model: "OPPO Reno 10x Zoom", storage: '128 GB', proceeds: 7500, lastUpdated: '2026-10-27' },
@@ -848,7 +848,7 @@ export const RESALE_BENCHMARKS = [
   { brand: 'Realme', model: "Realme 3", storage: '32 GB', proceeds: 1900, lastUpdated: '2026-10-27' },
   { brand: 'Realme', model: "Realme 3 Pro", storage: '128 GB', proceeds: 2400, lastUpdated: '2026-10-27' },
   { brand: 'Realme', model: "Realme 3 Pro", storage: '64 GB', proceeds: 2400, lastUpdated: '2026-10-27' },
-      { brand: 'Realme', model: "Realme 5", storage: '64 GB', proceeds: 2400, lastUpdated: '2026-10-27' },
+  { brand: 'Realme', model: "Realme 5", storage: '64 GB', proceeds: 2400, lastUpdated: '2026-10-27' },
   { brand: 'Realme', model: "Realme 5", storage: '32 GB', proceeds: 2400, lastUpdated: '2026-10-27' },
   { brand: 'Realme', model: "Realme 5", storage: '128 GB', proceeds: 2400, lastUpdated: '2026-10-27' },
   { brand: 'Realme', model: "Realme 5 Pro", storage: '64 GB', proceeds: 3000, lastUpdated: '2026-10-27' },
@@ -881,9 +881,9 @@ export const RESALE_BENCHMARKS = [
   { brand: 'Realme', model: "Realme 9 Pro Plus 5G", storage: '128 GB', proceeds: 9800, lastUpdated: '2026-10-27' },
   { brand: 'Realme', model: "Realme 9i 5G", storage: '64 GB', proceeds: 7000, lastUpdated: '2026-10-27' },
   { brand: 'Realme', model: "Realme 9i 5G", storage: '128 GB', proceeds: 7000, lastUpdated: '2026-10-27' },
-      { brand: 'Realme', model: "Realme C100i", storage: '64 GB', proceeds: 10550, lastUpdated: '2026-10-08' },
+  { brand: 'Realme', model: "Realme C100i", storage: '64 GB', proceeds: 10550, lastUpdated: '2026-10-08' },
   { brand: 'Realme', model: "Realme C100x", storage: '64 GB', proceeds: 10750, lastUpdated: '2026-10-08' },
-                                                            { brand: 'Realme', model: "Realme C33", storage: '32 GB', proceeds: 4300, lastUpdated: '2026-10-27' },
+  { brand: 'Realme', model: "Realme C33", storage: '32 GB', proceeds: 4300, lastUpdated: '2026-10-27' },
   { brand: 'Realme', model: "Realme C33", storage: '64 GB', proceeds: 4300, lastUpdated: '2026-10-27' },
   { brand: 'Realme', model: "Realme C33 2023", storage: '64 GB', proceeds: 4800, lastUpdated: '2026-10-27' },
   { brand: 'Realme', model: "Realme C33 2023", storage: '128 GB', proceeds: 4800, lastUpdated: '2026-10-27' },
@@ -940,18 +940,18 @@ export const RESALE_BENCHMARKS = [
   { brand: 'Realme', model: "Realme Narzo 10", storage: '128 GB', proceeds: 3900, lastUpdated: '2026-10-27' },
   { brand: 'Realme', model: "Realme Narzo 100 Lite 5G", storage: '128 GB', proceeds: 12600, lastUpdated: '2026-10-08' },
   { brand: 'Realme', model: "Realme Narzo 100 Lite 5G", storage: '64 GB', proceeds: 10250, lastUpdated: '2026-10-08' },
-      { brand: 'Realme', model: "Realme Narzo 20", storage: '64 GB', proceeds: 3900, lastUpdated: '2026-10-27' },
+  { brand: 'Realme', model: "Realme Narzo 20", storage: '64 GB', proceeds: 3900, lastUpdated: '2026-10-27' },
   { brand: 'Realme', model: "Realme Narzo 20", storage: '128 GB', proceeds: 3900, lastUpdated: '2026-10-27' },
   { brand: 'Realme', model: "Realme Narzo 20 Pro", storage: '128 GB', proceeds: 4800, lastUpdated: '2026-10-27' },
   { brand: 'Realme', model: "Realme Narzo 20 Pro", storage: '64 GB', proceeds: 4800, lastUpdated: '2026-10-27' },
-      { brand: 'Realme', model: "Realme Narzo 30", storage: '64 GB', proceeds: 5200, lastUpdated: '2026-10-27' },
+  { brand: 'Realme', model: "Realme Narzo 30", storage: '64 GB', proceeds: 5200, lastUpdated: '2026-10-27' },
   { brand: 'Realme', model: "Realme Narzo 30 5G", storage: '128 GB', proceeds: 8350, lastUpdated: '2026-10-08' },
   { brand: 'Realme', model: "Realme Narzo 30 Pro 5G", storage: '128 GB', proceeds: 6200, lastUpdated: '2026-10-27' },
   { brand: 'Realme', model: "Realme Narzo 30 Pro 5G", storage: '64 GB', proceeds: 6200, lastUpdated: '2026-10-27' },
-      { brand: 'Realme', model: "Realme Narzo 50", storage: '128 GB', proceeds: 6500, lastUpdated: '2026-10-27' },
+  { brand: 'Realme', model: "Realme Narzo 50", storage: '128 GB', proceeds: 6500, lastUpdated: '2026-10-27' },
   { brand: 'Realme', model: "Realme Narzo 50 5G", storage: '64 GB', proceeds: 6000, lastUpdated: '2026-10-08' },
   { brand: 'Realme', model: "Realme Narzo 50 Pro 5G", storage: '128 GB', proceeds: 8000, lastUpdated: '2026-10-27' },
-                  { brand: 'Realme', model: "Realme Narzo 60 5G", storage: '256 GB', proceeds: 8800, lastUpdated: '2026-10-27' },
+  { brand: 'Realme', model: "Realme Narzo 60 5G", storage: '256 GB', proceeds: 8800, lastUpdated: '2026-10-27' },
   { brand: 'Realme', model: "Realme Narzo 60 5G", storage: '128 GB', proceeds: 8800, lastUpdated: '2026-10-27' },
   { brand: 'Realme', model: "Realme Narzo 60 Pro 5G", storage: '1 TB', proceeds: 11500, lastUpdated: '2026-10-27' },
   { brand: 'Realme', model: "Realme Narzo 60 Pro 5G", storage: '128 GB', proceeds: 11500, lastUpdated: '2026-10-27' },
@@ -1012,7 +1012,7 @@ export const RESALE_BENCHMARKS = [
   { brand: 'Realme', model: "Realme P4s 5G", storage: '128 GB', proceeds: 23550, lastUpdated: '2026-10-08' },
   { brand: 'Realme', model: "Realme P4x 5G", storage: '128 GB', proceeds: 11450, lastUpdated: '2026-10-08' },
   { brand: 'Realme', model: "Realme P4x 5G", storage: '256 GB', proceeds: 12350, lastUpdated: '2026-10-08' },
-      { brand: 'Realme', model: "Realme X", storage: '128 GB', proceeds: 3900, lastUpdated: '2026-10-27' },
+  { brand: 'Realme', model: "Realme X", storage: '128 GB', proceeds: 3900, lastUpdated: '2026-10-27' },
   { brand: 'Realme', model: "Realme X2", storage: '64 GB', proceeds: 4800, lastUpdated: '2026-10-27' },
   { brand: 'Realme', model: "Realme X2", storage: '128 GB', proceeds: 4800, lastUpdated: '2026-10-27' },
   { brand: 'Realme', model: "Realme X2", storage: '256 GB', proceeds: 4800, lastUpdated: '2026-10-27' },
@@ -2346,7 +2346,7 @@ export function calculatePhoneAgingFactor(brand = '', model = '', underWarranty 
 
   // Non-Apple models
   if (normAge === '0_to_3_months' || normAge === 'below_3_months') {
-    return 0.90;
+    return 0.98;
   }
   if (normAge === '3_to_6_months') {
     return 0.85;
