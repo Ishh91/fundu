@@ -2324,7 +2324,7 @@ export function calculatePhoneAgingFactor(brand = '', model = '', underWarranty 
 
   if (isApple) {
     if (normAge === '0_to_3_months' || normAge === 'below_3_months') {
-      return 0.90;
+      return 1.00;
     }
     if (normAge === '3_to_6_months') {
       return 0.80;
