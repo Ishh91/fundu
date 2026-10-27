@@ -2327,10 +2327,10 @@ export function calculatePhoneAgingFactor(brand = '', model = '', underWarranty 
       return 1.00;
     }
     if (normAge === '3_to_6_months') {
-      return 0.80;
+      return 0.88;
     }
     if (normAge === '6_to_9_months') {
-      return 0.75;
+      return 0.78;
     }
     if (
       normAge === 'above_9_months' ||
