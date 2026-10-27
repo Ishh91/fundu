@@ -421,13 +421,14 @@ export default function DeliveryAgentPortal() {
     setSubmittingInspection(true);
     try {
       const payoutAmount = Number(proposedPayout);
+      const isAppleDevice = inspectingSell?.brand?.toLowerCase() === 'apple' || inspectingSell?.model?.toLowerCase().includes('iphone');
       const updatePayload: Partial<SellRequest> = {
         status: 'inspection_submitted',
         imei: imeiInput,
         imei_photo: photoImei || undefined,
         condition: selectedCondition,
         final_price: payoutAmount,
-        notes: `[Rider Inspection Completed]: Battery ${batteryHealth}%, Screen: ${screenCondition}, Frame: ${bodyCondition}. ${riderNotes}`,
+        notes: `[Rider Inspection Completed]: ${isAppleDevice ? `Battery ${batteryHealth}%, ` : ''}Screen: ${screenCondition}, Frame: ${bodyCondition}. ${riderNotes}`,
         device_photos: {
           front: photoFront || undefined,
           back: photoBack || undefined,
@@ -437,7 +438,7 @@ export default function DeliveryAgentPortal() {
         diagnostics: {
           screen_touch: screenCondition !== 'cracked',
           cameras: cameraWorking,
-          battery_health: batteryHealth,
+          battery_health: isAppleDevice ? batteryHealth : 'Normal',
           biometrics: biometricsWorking,
           speaker_mic: speakerMicWorking,
           charging_port: chargingPortWorking,
@@ -558,13 +559,14 @@ export default function DeliveryAgentPortal() {
 
   // Generate 1-Click WhatsApp Report link to Admin Desk
   const getAdminWhatsAppReportLink = (sell: SellRequest) => {
+    const isApple = sell.brand?.toLowerCase() === 'apple' || sell.model?.toLowerCase().includes('iphone');
     const text = `🚨 *FUNDU DOORSTEP INSPECTION REPORT - APPROVAL REQUEST*\n\n` +
       `👤 *Executive:* ${selectedRiderName}\n` +
       `📋 *Sell Request ID:* #${sell.id.slice(0, 8).toUpperCase()}\n` +
       `📱 *Device:* ${sell.brand} ${sell.model} (${sell.storage || '128GB'})\n` +
       `🔍 *Verified IMEI:* ${imeiInput || sell.imei || 'Checked'}\n` +
       `⚡ *Declared vs Tested Condition:* ${sell.condition} ➔ ${selectedCondition}\n` +
-      `🔋 *Battery Health:* ${batteryHealth}%\n` +
+      (isApple ? `🔋 *Battery Health:* ${batteryHealth}%\n` : '') +
       `🖥️ *Screen / Display:* ${screenCondition}\n` +
       `🔨 *Frame & Body:* ${bodyCondition}\n` +
       `💰 *Initial Web Quote:* ₹${(sell.estimated_price || 0).toLocaleString('en-IN')}\n` +
@@ -1760,17 +1762,19 @@ export default function DeliveryAgentPortal() {
                     </select>
                   </div>
 
-                  {/* Battery Health */}
-                  <div>
-                    <p className="font-bold text-slate-700 mb-1">Battery Health % (iOS / Android)</p>
-                    <input
-                      type="number"
-                      value={batteryHealth}
-                      onChange={(e) => setBatteryHealth(e.target.value)}
-                      placeholder="e.g. 88"
-                      className="input text-xs py-1.5 bg-white font-medium"
-                    />
-                  </div>
+                  {/* Battery Health (Apple iOS Only) */}
+                  {(inspectingSell?.brand?.toLowerCase() === 'apple' || inspectingSell?.model?.toLowerCase().includes('iphone')) && (
+                    <div>
+                      <p className="font-bold text-slate-700 mb-1">Battery Health % (iOS Only)</p>
+                      <input
+                        type="number"
+                        value={batteryHealth}
+                        onChange={(e) => setBatteryHealth(e.target.value)}
+                        placeholder="e.g. 88"
+                        className="input text-xs py-1.5 bg-white font-medium"
+                      />
+                    </div>
+                  )}
 
                   {/* Overall Grade */}
                   <div>

@@ -54,6 +54,10 @@ export default function SellStep2Condition({
   handleStep2Back,
   goToStep,
 }: SellStep2ConditionProps) {
+  const isApple = (form.brand?.toLowerCase() === 'apple') ||
+                  (brandSlug?.toLowerCase() === 'apple') ||
+                  (form.model?.toLowerCase().includes('iphone'));
+
   const availableRams = currentDeviceSpecs?.getRamsForStorage
     ? currentDeviceSpecs.getRamsForStorage(form.storage)
     : (currentDeviceSpecs?.rams || []);
@@ -412,53 +416,55 @@ export default function SellStep2Condition({
           </div>
         </div>
 
-        {/* 4. Battery Health */}
-        <div className="space-y-3">
-          <div className="flex items-center justify-between">
-            <label className="label text-sm font-extrabold text-gray-900">
-              4. Battery Health (if known)
-            </label>
-            <span className="text-[11px] text-gray-500">Capacity & backup</span>
+        {/* 4. Battery Health (Apple iOS Only - Android does not have battery health percentage) */}
+        {isApple && (
+          <div className="space-y-3">
+            <div className="flex items-center justify-between">
+              <label className="label text-sm font-extrabold text-gray-900">
+                4. iPhone Battery Health (Maximum Capacity %)
+              </label>
+              <span className="text-[11px] text-gray-500">Settings &gt; Battery &gt; Battery Health</span>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              {[
+                {
+                  id: 'healthy',
+                  label: '🔋 Healthy (85%+ / Normal)',
+                  desc: 'Maximum capacity 85% or above, normal backup',
+                },
+                {
+                  id: 'degraded_service',
+                  label: '⚠️ Degraded / Service (<80%)',
+                  desc: 'Shows "Service" or capacity below 80%',
+                },
+                {
+                  id: 'unknown',
+                  label: '❓ Unknown / Cannot Check',
+                  desc: 'Device reset or cannot check Settings',
+                },
+              ].map((bat) => (
+                <button
+                  key={bat.id}
+                  type="button"
+                  onClick={() => setForm((f: any) => ({ ...f, batteryHealth: bat.id as any }))}
+                  className={`p-4 rounded-2xl border text-left transition-all duration-200 cursor-pointer ${form.batteryHealth === bat.id
+                    ? 'border-[#344257] bg-[#F0F0F5] shadow-md ring-2 ring-[#344257]/20 -translate-y-1'
+                    : 'border-gray-200 bg-white hover:border-[#6A859F] hover:bg-[#F7F7FA]'
+                    }`}
+                >
+                  <p className="font-extrabold text-xs text-gray-900">{bat.label}</p>
+                  <p className="mt-1 text-[11px] text-gray-500 leading-snug">{bat.desc}</p>
+                </button>
+              ))}
+            </div>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-            {[
-              {
-                id: 'healthy',
-                label: '🔋 Healthy (85%+ / Normal)',
-                desc: 'Holds full day charge without quick drain',
-              },
-              {
-                id: 'degraded_service',
-                label: '⚠️ Degraded / Service (<80%)',
-                desc: 'Needs frequent charging or shows Service',
-              },
-              {
-                id: 'unknown',
-                label: '❓ Unknown / Cannot Check',
-                desc: 'Not sure or Android without % indicator',
-              },
-            ].map((bat) => (
-              <button
-                key={bat.id}
-                type="button"
-                onClick={() => setForm((f) => ({ ...f, batteryHealth: bat.id as any }))}
-                className={`p-4 rounded-2xl border text-left transition-all duration-200 cursor-pointer ${form.batteryHealth === bat.id
-                  ? 'border-[#344257] bg-[#F0F0F5] shadow-md ring-2 ring-[#344257]/20 -translate-y-1'
-                  : 'border-gray-200 bg-white hover:border-[#6A859F] hover:bg-[#F7F7FA]'
-                  }`}
-              >
-                <p className="font-extrabold text-xs text-gray-900">{bat.label}</p>
-                <p className="mt-1 text-[11px] text-gray-500 leading-snug">{bat.desc}</p>
-              </button>
-            ))}
-          </div>
-        </div>
+        )}
 
-        {/* 5. Known Hardware Faults */}
+        {/* Known Hardware Faults */}
         <div className="space-y-3">
           <div className="flex items-center justify-between">
             <label className="label text-sm font-extrabold text-gray-900">
-              5. Other Known Faults (Select any that apply)
+              {isApple ? '5.' : '4.'} Other Known Faults (Select any that apply)
             </label>
             <span className="text-[11px] text-gray-500">Leave unchecked if working</span>
           </div>
@@ -488,11 +494,11 @@ export default function SellStep2Condition({
           </div>
         </div>
 
-        {/* 6. Device Age & Warranty Period */}
+        {/* Device Age & Warranty Period */}
         <div className="space-y-3">
           <div className="flex items-center justify-between">
             <label className="label text-sm font-extrabold text-gray-900">
-              6. Device Age & Purchase Period
+              {isApple ? '6.' : '5.'} Device Age &amp; Purchase Period
             </label>
             <span className="text-[11px] text-[#6A859F] font-bold">How old is your phone?</span>
           </div>
@@ -562,11 +568,11 @@ export default function SellStep2Condition({
           </div>
         </div>
 
-        {/* 7. Included Original Accessories */}
+        {/* Included Original Accessories */}
         <div className="space-y-3">
           <div className="flex items-center justify-between">
             <label className="label text-sm font-extrabold text-gray-900">
-              7. Included Original Accessories
+              {isApple ? '7.' : '6.'} Included Original Accessories
             </label>
             <span className="text-[11px] text-gray-500 font-medium">Select included items</span>
           </div>
@@ -591,7 +597,7 @@ export default function SellStep2Condition({
           </div>
         </div>
 
-        {/* 8. S-Pen / Stylus Availability for supported models (Galaxy S Ultra, Note series, Moto G Stylus) */}
+        {/* S-Pen / Stylus Availability for supported models (Galaxy S Ultra, Note series, Moto G Stylus) */}
         {deviceIncludesStylus(form.brand, form.model) && (
           <div className="space-y-3 p-4 sm:p-5 rounded-2xl border-2 border-indigo-200 bg-gradient-to-br from-indigo-50/70 via-white to-blue-50/50 shadow-xs">
             <div className="flex items-start justify-between gap-3">
@@ -601,7 +607,7 @@ export default function SellStep2Condition({
                 </div>
                 <div>
                   <h4 className="font-extrabold text-sm text-gray-900 flex items-center gap-1.5 flex-wrap">
-                    8. Original Stylus / S-Pen Available?
+                    {isApple ? '8.' : '7.'} Original Stylus / S-Pen Available?
                     <span className="text-[10px] bg-indigo-100 text-indigo-700 font-extrabold px-2 py-0.5 rounded-full uppercase tracking-wider">
                       Included With Model
                     </span>

@@ -2532,7 +2532,8 @@ export function quotePhone(input = {}, options = {}) {
 
   const requiresScreenRepair = screen_condition === 'cracked' || screen_condition === 'touch_fault' || screen_condition === 'display_lines';
   const requiresBackglassRepair = body_condition === 'dents_bent';
-  const requiresBatteryRepair = battery_health === 'degraded_service';
+  const isApple = String(brand).toLowerCase() === 'apple' || String(model).toLowerCase().includes('iphone');
+  const requiresBatteryRepair = isApple && battery_health === 'degraded_service';
   const hasCameraDefect = Array.isArray(defects) && defects.includes('camera');
   const hasChargingDefect = Array.isArray(defects) && defects.includes('charging_port');
   const hasSpeakerDefect = Array.isArray(defects) && defects.includes('speaker_mic');
@@ -2808,8 +2809,8 @@ export function recalculateInspectedQuote(initialAudit, inspectedAnswers = {}) {
   if (inspectedAnswers.body_condition && inspectedAnswers.body_condition !== initialAnswers.body_condition) {
     mismatches.push(`Body reported as "${initialAnswers.body_condition}", but physical inspection identified "${inspectedAnswers.body_condition}".`);
   }
-
-  if (inspectedAnswers.battery_health && inspectedAnswers.battery_health !== initialAnswers.battery_health) {
+  const isAppleDevice = String(variant.brand).toLowerCase() === 'apple' || String(variant.model).toLowerCase().includes('iphone');
+  if (isAppleDevice && inspectedAnswers.battery_health && inspectedAnswers.battery_health !== initialAnswers.battery_health) {
     mismatches.push(`Battery health reported as "${initialAnswers.battery_health}", but diagnostic report showed "${inspectedAnswers.battery_health}".`);
   }
 

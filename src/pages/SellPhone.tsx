@@ -740,7 +740,8 @@ export default function SellPhone() {
       else if (form.screenCondition === 'cracked') val *= 0.68;
       else if (form.screenCondition === 'touch_fault' || form.screenCondition === 'display_lines') val *= 0.60;
       if (form.bodyCondition === 'dents_bent') val *= 0.85;
-      if (form.batteryHealth === 'degraded_service') val *= 0.92;
+      const isApple = (form.brand?.toLowerCase() === 'apple') || (brandSlug?.toLowerCase() === 'apple') || (form.model?.toLowerCase().includes('iphone'));
+      if (isApple && form.batteryHealth === 'degraded_service') val *= 0.92;
       if (form.powersOn === false) val *= 0.35;
       if (form.liquidDamage) val *= 0.50;
       if (form.canMakeCalls === false) val *= 0.85;
