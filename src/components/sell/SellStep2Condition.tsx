@@ -114,7 +114,7 @@ export default function SellStep2Condition({
                 {form.brand}
               </span>
               <h3 className="font-extrabold text-base sm:text-lg text-gray-900">
-                {form.model} {form.ram ? `(${form.ram} / ${form.storage})` : `(${form.storage})`}
+                {form.model} {form.ram && availableRams.length > 1 ? `(${form.ram} / ${form.storage})` : `(${form.storage})`}
               </h3>
             </div>
 
@@ -127,7 +127,7 @@ export default function SellStep2Condition({
                   type="button"
                   onClick={() => {
                     const nextRams = currentDeviceSpecs.getRamsForStorage(stg);
-                    const nextRam = nextRams.includes(form.ram) ? form.ram : (nextRams[0] || '');
+                    const nextRam = nextRams.length > 1 ? (nextRams.includes(form.ram) ? form.ram : nextRams[0]) : (nextRams[0] || '');
                     setForm((f) => ({ ...f, storage: stg, ram: nextRam }));
                   }}
                   className={`px-2.5 py-1 rounded-lg text-xs font-bold transition ${form.storage === stg
@@ -140,8 +140,8 @@ export default function SellStep2Condition({
               ))}
             </div>
 
-            {/* Quick RAM Variant Switcher (strictly displays only officially launched RAMs for the chosen storage) */}
-            {availableRams.length > 0 && (
+            {/* Quick RAM Variant Switcher (strictly displays only when multiple authentic RAMs exist for the chosen storage) */}
+            {availableRams.length > 1 && (
               <div className="flex items-center justify-center sm:justify-start gap-1.5 flex-wrap">
                 <span className="text-[11px] font-bold text-gray-500 mr-1">RAM:</span>
                 {availableRams.map((ramVal) => (

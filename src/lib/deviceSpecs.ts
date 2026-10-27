@@ -1285,19 +1285,39 @@ export function inferTierHardwareSpecs(
   const finalRams = Array.from(new Set([...normalizedSeedRams, ...allRams]));
 
   const getRamsForStorage = (stg: string): string[] => {
+    if (isApple) return [];
     const norm = normalizeStorageString(stg);
-    if (tierRamMap[norm] && tierRamMap[norm].length > 0) {
-      if (normalizedSeedRams.length > 0) {
-        return Array.from(new Set([...normalizedSeedRams, ...tierRamMap[norm]]));
+
+    // If explicit seed RAM was defined in database/catalog for this model:
+    if (normalizedSeedRams.length === 1) {
+      // Exactly 1 RAM exists for this phone - NEVER fabricate a second fake RAM!
+      return normalizedSeedRams;
+    }
+    if (normalizedSeedRams.length > 1) {
+      // Multiple authentic RAMs exist across storages
+      if (norm.includes('64 GB')) {
+        const match = normalizedSeedRams.filter((r) => parseInt(r, 10) <= 6);
+        return match.length > 0 ? match : [normalizedSeedRams[0]];
       }
+      if (norm.includes('128 GB')) {
+        const match = normalizedSeedRams.filter((r) => parseInt(r, 10) <= 8);
+        return match.length > 0 ? match : [normalizedSeedRams[0]];
+      }
+      if (norm.includes('256 GB')) {
+        const match = normalizedSeedRams.filter((r) => parseInt(r, 10) >= 8);
+        return match.length > 0 ? match : [normalizedSeedRams[normalizedSeedRams.length - 1]];
+      }
+      if (norm.includes('512 GB') || norm.includes('1 TB')) {
+        const match = normalizedSeedRams.filter((r) => parseInt(r, 10) >= 12);
+        return match.length > 0 ? match : [normalizedSeedRams[normalizedSeedRams.length - 1]];
+      }
+      return normalizedSeedRams;
+    }
+
+    if (tierRamMap[norm] && tierRamMap[norm].length > 0) {
       return tierRamMap[norm];
     }
-    if (norm.includes('64 GB')) return ['4 GB', '6 GB'];
-    if (norm.includes('128 GB')) return ['6 GB', '8 GB'];
-    if (norm.includes('256 GB')) return ['8 GB', '12 GB'];
-    if (norm.includes('512 GB')) return ['12 GB', '16 GB'];
-    if (norm.includes('1 TB')) return ['12 GB', '16 GB'];
-    return finalRams.slice(0, 2);
+    return [];
   };
 
   const defaultStorage = normSeeds[0] || finalStorages[0] || '128 GB';
@@ -1379,20 +1399,48 @@ export function getModelHardwareSpecs(
             return !m || parseInt(m[1], 10) > 32;
           })
       : [];
-    const dbRams = Array.isArray(foundPhone.ram_options) && foundPhone.ram_options.length > 0
-      ? Array.from(new Set(foundPhone.ram_options.map(normalizeRamString)))
-      : [];
+    const dbRams = isApple
+      ? []
+      : (Array.isArray(foundPhone.ram_options) && foundPhone.ram_options.length > 0
+          ? Array.from(new Set(foundPhone.ram_options.map(normalizeRamString)))
+          : []);
 
-    if (dbStorages.length > 1 && (isApple || dbRams.length > 0)) {
+    if (dbStorages.length > 0) {
       const defaultStorage = dbStorages[0] || '128 GB';
       const validRams = isApple ? [] : dbRams;
 
+      const getRamsForStorage = (stg: string): string[] => {
+        if (isApple || validRams.length === 0) return [];
+        if (validRams.length === 1) return validRams;
+
+        const norm = normalizeStorageString(stg);
+        if (norm.includes('64 GB')) {
+          const match = validRams.filter((r) => parseInt(r, 10) <= 6);
+          return match.length > 0 ? match : [validRams[0]];
+        }
+        if (norm.includes('128 GB')) {
+          const match = validRams.filter((r) => parseInt(r, 10) <= 8);
+          return match.length > 0 ? match : [validRams[0]];
+        }
+        if (norm.includes('256 GB')) {
+          const match = validRams.filter((r) => parseInt(r, 10) >= 8);
+          return match.length > 0 ? match : [validRams[validRams.length - 1]];
+        }
+        if (norm.includes('512 GB') || norm.includes('1 TB')) {
+          const match = validRams.filter((r) => parseInt(r, 10) >= 12);
+          return match.length > 0 ? match : [validRams[validRams.length - 1]];
+        }
+        return validRams;
+      };
+
+      const defaultRams = getRamsForStorage(defaultStorage);
+
       return {
         storages: dbStorages,
-        rams: validRams,
+        rams: defaultRams,
         defaultStorage,
-        defaultRam: validRams[0] || '',
-        getRamsForStorage: () => validRams,
+        defaultRam: defaultRams[0] || '',
+        getRamsForStorage,
       };
     }
 

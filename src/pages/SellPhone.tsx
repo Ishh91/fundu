@@ -742,7 +742,9 @@ export default function SellPhone() {
 
     // Dynamic variant multiplier based on exact RAM + Storage combination:
     const catalogMult = calculateHardwareVariantMultiplier(catalogStorage, '', form.brand);
-    const selectedMult = calculateHardwareVariantMultiplier(form.storage, form.ram, form.brand);
+    // Only pass RAM to multiplier if this model actually has multiple RAM choices:
+    const effectiveRam = availableRams.length > 1 ? form.ram : '';
+    const selectedMult = calculateHardwareVariantMultiplier(form.storage, effectiveRam, form.brand);
     const variantRatio = selectedMult / (catalogMult || 1.0);
 
     if (Math.abs(variantRatio - 1.0) < 0.001) {
