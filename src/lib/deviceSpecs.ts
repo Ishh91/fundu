@@ -297,7 +297,7 @@ const MODEL_HARDWARE_RULES: Array<{
     ],
   },
   {
-    pattern: /iphone\s*(17|16|15)\s*pro\s*max/i,
+    pattern: /iphone\s*(17|16|15)\s*pro\s*max\b/i,
     variants: [
       { storage: '256 GB', rams: [] },
       { storage: '512 GB', rams: [] },
@@ -305,16 +305,7 @@ const MODEL_HARDWARE_RULES: Array<{
     ],
   },
   {
-    pattern: /iphone\s*(17|16|15|14|13)\s*pro\b/i,
-    variants: [
-      { storage: '128 GB', rams: [] },
-      { storage: '256 GB', rams: [] },
-      { storage: '512 GB', rams: [] },
-      { storage: '1 TB', rams: [] },
-    ],
-  },
-  {
-    pattern: /iphone\s*14\s*pro\s*max/i,
+    pattern: /iphone\s*14\s*pro\s*max\b/i,
     variants: [
       { storage: '128 GB', rams: [] },
       { storage: '256 GB', rams: [] },
@@ -323,7 +314,7 @@ const MODEL_HARDWARE_RULES: Array<{
     ],
   },
   {
-    pattern: /iphone\s*13\s*pro\s*max/i,
+    pattern: /iphone\s*13\s*pro\s*max\b/i,
     variants: [
       { storage: '128 GB', rams: [] },
       { storage: '256 GB', rams: [] },
@@ -332,7 +323,23 @@ const MODEL_HARDWARE_RULES: Array<{
     ],
   },
   {
-    pattern: /iphone\s*(17\s*air|16|15|14|13)\s*(plus|\b)/i,
+    pattern: /iphone\s*(17|16|15|14|13)\s*pro(?!\s*max)\b/i,
+    variants: [
+      { storage: '128 GB', rams: [] },
+      { storage: '256 GB', rams: [] },
+      { storage: '512 GB', rams: [] },
+      { storage: '1 TB', rams: [] },
+    ],
+  },
+  {
+    pattern: /iphone\s*16e\b/i,
+    variants: [
+      { storage: '128 GB', rams: [] },
+      { storage: '256 GB', rams: [] },
+    ],
+  },
+  {
+    pattern: /iphone\s*(17\s*air|16|15|14|13)\s*(plus|\b)(?!\s*(pro|max|mini))/i,
     variants: [
       { storage: '128 GB', rams: [] },
       { storage: '256 GB', rams: [] },
@@ -340,7 +347,7 @@ const MODEL_HARDWARE_RULES: Array<{
     ],
   },
   {
-    pattern: /iphone\s*13\s*mini/i,
+    pattern: /iphone\s*13\s*mini\b/i,
     variants: [
       { storage: '128 GB', rams: [] },
       { storage: '256 GB', rams: [] },
@@ -348,7 +355,7 @@ const MODEL_HARDWARE_RULES: Array<{
     ],
   },
   {
-    pattern: /iphone\s*12\s*(pro\s*max|pro)/i,
+    pattern: /iphone\s*12\s*pro\s*max\b/i,
     variants: [
       { storage: '128 GB', rams: [] },
       { storage: '256 GB', rams: [] },
@@ -356,7 +363,15 @@ const MODEL_HARDWARE_RULES: Array<{
     ],
   },
   {
-    pattern: /iphone\s*12\s*(mini|\b)/i,
+    pattern: /iphone\s*12\s*pro(?!\s*max)\b/i,
+    variants: [
+      { storage: '128 GB', rams: [] },
+      { storage: '256 GB', rams: [] },
+      { storage: '512 GB', rams: [] },
+    ],
+  },
+  {
+    pattern: /iphone\s*12\s*(mini|\b)(?!\s*pro)/i,
     variants: [
       { storage: '64 GB', rams: [] },
       { storage: '128 GB', rams: [] },
@@ -364,7 +379,7 @@ const MODEL_HARDWARE_RULES: Array<{
     ],
   },
   {
-    pattern: /iphone\s*11\s*(pro\s*max|pro)/i,
+    pattern: /iphone\s*11\s*pro\s*max\b/i,
     variants: [
       { storage: '64 GB', rams: [] },
       { storage: '256 GB', rams: [] },
@@ -372,15 +387,7 @@ const MODEL_HARDWARE_RULES: Array<{
     ],
   },
   {
-    pattern: /iphone\s*11\b/i,
-    variants: [
-      { storage: '64 GB', rams: [] },
-      { storage: '128 GB', rams: [] },
-      { storage: '256 GB', rams: [] },
-    ],
-  },
-  {
-    pattern: /iphone\s*(xs\s*max|xs)/i,
+    pattern: /iphone\s*11\s*pro(?!\s*max)\b/i,
     variants: [
       { storage: '64 GB', rams: [] },
       { storage: '256 GB', rams: [] },
@@ -388,21 +395,7 @@ const MODEL_HARDWARE_RULES: Array<{
     ],
   },
   {
-    pattern: /iphone\s*xr/i,
-    variants: [
-      { storage: '64 GB', rams: [] },
-      { storage: '128 GB', rams: [] },
-    ],
-  },
-  {
-    pattern: /iphone\s*x\b/i,
-    variants: [
-      { storage: '64 GB', rams: [] },
-      { storage: '256 GB', rams: [] },
-    ],
-  },
-  {
-    pattern: /iphone\s*8\s*plus/i,
+    pattern: /iphone\s*11\b(?!\s*pro)/i,
     variants: [
       { storage: '64 GB', rams: [] },
       { storage: '128 GB', rams: [] },
@@ -410,7 +403,23 @@ const MODEL_HARDWARE_RULES: Array<{
     ],
   },
   {
-    pattern: /iphone\s*8\b/i,
+    pattern: /iphone\s*xs\s*max\b/i,
+    variants: [
+      { storage: '64 GB', rams: [] },
+      { storage: '256 GB', rams: [] },
+      { storage: '512 GB', rams: [] },
+    ],
+  },
+  {
+    pattern: /iphone\s*xs(?!\s*max)\b/i,
+    variants: [
+      { storage: '64 GB', rams: [] },
+      { storage: '256 GB', rams: [] },
+      { storage: '512 GB', rams: [] },
+    ],
+  },
+  {
+    pattern: /iphone\s*xr\b/i,
     variants: [
       { storage: '64 GB', rams: [] },
       { storage: '128 GB', rams: [] },
@@ -418,7 +427,30 @@ const MODEL_HARDWARE_RULES: Array<{
     ],
   },
   {
-    pattern: /iphone\s*7/i,
+    pattern: /iphone\s*x\b(?!\s*(r|s|s\s*max))/i,
+    variants: [
+      { storage: '64 GB', rams: [] },
+      { storage: '256 GB', rams: [] },
+    ],
+  },
+  {
+    pattern: /iphone\s*8\s*plus\b/i,
+    variants: [
+      { storage: '64 GB', rams: [] },
+      { storage: '128 GB', rams: [] },
+      { storage: '256 GB', rams: [] },
+    ],
+  },
+  {
+    pattern: /iphone\s*8\b(?!\s*plus)/i,
+    variants: [
+      { storage: '64 GB', rams: [] },
+      { storage: '128 GB', rams: [] },
+      { storage: '256 GB', rams: [] },
+    ],
+  },
+  {
+    pattern: /iphone\s*7\s*plus\b/i,
     variants: [
       { storage: '32 GB', rams: [] },
       { storage: '128 GB', rams: [] },
@@ -426,7 +458,15 @@ const MODEL_HARDWARE_RULES: Array<{
     ],
   },
   {
-    pattern: /iphone\s*6s/i,
+    pattern: /iphone\s*7\b(?!\s*plus)/i,
+    variants: [
+      { storage: '32 GB', rams: [] },
+      { storage: '128 GB', rams: [] },
+      { storage: '256 GB', rams: [] },
+    ],
+  },
+  {
+    pattern: /iphone\s*6s\s*plus\b/i,
     variants: [
       { storage: '16 GB', rams: [] },
       { storage: '32 GB', rams: [] },
@@ -435,7 +475,32 @@ const MODEL_HARDWARE_RULES: Array<{
     ],
   },
   {
-    pattern: /iphone\s*se\s*(\(2022\)|3rd|2022)/i,
+    pattern: /iphone\s*6s\b(?!\s*plus)/i,
+    variants: [
+      { storage: '16 GB', rams: [] },
+      { storage: '32 GB', rams: [] },
+      { storage: '64 GB', rams: [] },
+      { storage: '128 GB', rams: [] },
+    ],
+  },
+  {
+    pattern: /iphone\s*6\s*plus\b/i,
+    variants: [
+      { storage: '16 GB', rams: [] },
+      { storage: '64 GB', rams: [] },
+      { storage: '128 GB', rams: [] },
+    ],
+  },
+  {
+    pattern: /iphone\s*6\b(?!\s*(s|plus))/i,
+    variants: [
+      { storage: '16 GB', rams: [] },
+      { storage: '64 GB', rams: [] },
+      { storage: '128 GB', rams: [] },
+    ],
+  },
+  {
+    pattern: /iphone\s*se\s*(\(2022\)|3rd|2022)\b/i,
     variants: [
       { storage: '64 GB', rams: [] },
       { storage: '128 GB', rams: [] },
@@ -443,7 +508,7 @@ const MODEL_HARDWARE_RULES: Array<{
     ],
   },
   {
-    pattern: /iphone\s*se\s*(\(2020\)|2nd|2020)/i,
+    pattern: /iphone\s*se\s*(\(2020\)|2nd|2020)\b/i,
     variants: [
       { storage: '64 GB', rams: [] },
       { storage: '128 GB', rams: [] },
@@ -1174,9 +1239,12 @@ export function inferTierHardwareSpecs(
       if (/1[567]/i.test(mLower)) storages = ['256 GB', '512 GB', '1 TB'];
       else storages = ['128 GB', '256 GB', '512 GB', '1 TB'];
     } else if (/\bpro\b/i.test(mLower)) {
-      storages = ['128 GB', '256 GB', '512 GB', '1 TB'];
+      if (/1[12]/i.test(mLower)) storages = /11/i.test(mLower) ? ['64 GB', '256 GB', '512 GB'] : ['128 GB', '256 GB', '512 GB'];
+      else storages = ['128 GB', '256 GB', '512 GB', '1 TB'];
     } else if (/\b(11|12|xr|xs|x\b|8\b|8\s*plus|se\b)/i.test(mLower)) {
-      storages = /xs/i.test(mLower) ? ['64 GB', '256 GB', '512 GB'] : ['64 GB', '128 GB', '256 GB'];
+      if (/xs/i.test(mLower)) storages = ['64 GB', '256 GB', '512 GB'];
+      else if (/x\b/i.test(mLower)) storages = ['64 GB', '256 GB'];
+      else storages = ['64 GB', '128 GB', '256 GB'];
     } else if (/\b(7|6s|6|5s|5c|5)\b/i.test(mLower)) {
       storages = ['16 GB', '32 GB', '64 GB', '128 GB'];
     } else if (/plus\b/i.test(mLower)) {
@@ -1185,12 +1253,10 @@ export function inferTierHardwareSpecs(
       storages = ['128 GB', '256 GB', '512 GB', '1 TB'];
     }
 
-    const normSeeds = seedStorages.map(normalizeStorageString).filter(Boolean);
-    const finalStorages = Array.from(new Set([...normSeeds, ...storages]));
-    const defaultStorage = normSeeds[0] || finalStorages[0] || '128 GB';
+    const defaultStorage = storages[0] || '128 GB';
 
     return {
-      storages: finalStorages,
+      storages,
       rams: [],
       defaultStorage,
       defaultRam: '',
@@ -1450,12 +1516,19 @@ export function getModelHardwareSpecs(
 
   // 3. Check customCatalog variants if provided (e.g. MASTER_MODEL_CATALOG)
   if (Array.isArray(customCatalog) && customCatalog.length > 0) {
+    const cleanTarget = normModel
+      .replace(/^(apple|samsung|oneplus|xiaomi|vivo|oppo|realme|motorola|google|nothing)\s+/i, '')
+      .replace(/[\s-]+/g, ' ')
+      .trim();
+
     const catalogVariants = customCatalog.filter((m) => {
-      const mModel = m.model.toLowerCase();
-      return (
-        m.brand.toLowerCase() === normBrand &&
-        (mModel === normModel || mModel.includes(normModel) || normModel.includes(mModel))
-      );
+      if (m.brand.toLowerCase() !== normBrand) return false;
+      const cleanM = m.model
+        .toLowerCase()
+        .replace(/^(apple|samsung|oneplus|xiaomi|vivo|oppo|realme|motorola|google|nothing)\s+/i, '')
+        .replace(/[\s-]+/g, ' ')
+        .trim();
+      return cleanM === cleanTarget;
     });
 
     if (catalogVariants.length > 0) {
