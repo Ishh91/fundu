@@ -67,6 +67,173 @@ export function deviceIncludesStylus(brand?: string, model?: string): boolean {
 }
 
 /**
+ * Resolves the official market release / launch year for a phone model.
+ * Used to determine if the device is recent enough to have active brand warranty (< 1 year old, i.e. 2024+).
+ */
+export function getModelReleaseYear(brand = '', model = ''): number {
+  const b = String(brand || '').toLowerCase().trim();
+  const m = String(model || '').toLowerCase().trim();
+  const full = `${b} ${m}`;
+
+  // 1. Check exact match in ALL_INDIAN_PHONES_CATALOG
+  const foundPhone = ALL_INDIAN_PHONES_CATALOG.find((p) => {
+    const pModel = p.model.toLowerCase();
+    const pFull = `${p.brand.toLowerCase()} ${pModel}`;
+    return pFull === full || pModel === m || (m.length > 5 && (pFull.includes(m) || m.includes(pModel)));
+  });
+  if (foundPhone && foundPhone.release_year) {
+    return foundPhone.release_year;
+  }
+
+  // 2. Year in parentheses or suffix, e.g. "Galaxy A54 (2023)" or "iPhone SE 2022" or "SE (2020)"
+  const yrMatch = full.match(/\b(201[5-9]|202[0-6])\b/);
+  if (yrMatch && (full.includes('(') || full.includes('edition') || full.includes('se '))) {
+    return parseInt(yrMatch[1], 10);
+  }
+
+  // 3. Apple iPhone
+  if (/iphone\s*18/i.test(m)) return 2026;
+  if (/iphone\s*17/i.test(m)) return 2025;
+  if (/iphone\s*16/i.test(m)) return 2024;
+  if (/iphone\s*15/i.test(m)) return 2023;
+  if (/iphone\s*14/i.test(m)) return 2022;
+  if (/iphone\s*13/i.test(m)) return 2021;
+  if (/iphone\s*12/i.test(m)) return 2020;
+  if (/iphone\s*11/i.test(m)) return 2019;
+  if (/iphone\s*(xs|xr|x\b)/i.test(m)) return 2018;
+  if (/se\s*\(?2022\)?|se\s*3rd/i.test(m)) return 2022;
+  if (/se\s*\(?2020\)?|se\s*2nd/i.test(m)) return 2020;
+
+  // 4. Samsung Galaxy S / Z / Note / A / M / F
+  if (/\bs26/i.test(m)) return 2026;
+  if (/\bs25/i.test(m)) return 2025;
+  if (/\bs24/i.test(m)) return 2024;
+  if (/\bs23/i.test(m)) return 2023;
+  if (/\bs22/i.test(m)) return 2022;
+  if (/\bs21/i.test(m)) return 2021;
+  if (/\bs20/i.test(m)) return 2020;
+  if (/\bs10/i.test(m)) return 2019;
+  if (/\bs9/i.test(m)) return 2018;
+  if (/\bfold\s*8|\bflip\s*8/i.test(m)) return 2026;
+  if (/\bfold\s*7|\bflip\s*7/i.test(m)) return 2025;
+  if (/\bfold\s*6|\bflip\s*6/i.test(m)) return 2024;
+  if (/\bfold\s*5|\bflip\s*5/i.test(m)) return 2023;
+  if (/\bfold\s*4|\bflip\s*4/i.test(m)) return 2022;
+  if (/\bfold\s*3|\bflip\s*3/i.test(m)) return 2021;
+  if (/\bnote\s*20/i.test(m)) return 2020;
+  if (/\bnote\s*10/i.test(m)) return 2019;
+  if (/galaxy\s*[amf]56|[amf]36|[amf]26|[amf]16|[amf]06/i.test(m)) return 2025;
+  if (/galaxy\s*[amf]55|[amf]35|[amf]25|[amf]15|[amf]05/i.test(m)) return 2024;
+  if (/galaxy\s*[amf]54|[amf]34|[amf]24|[amf]14|[amf]04/i.test(m)) return 2023;
+  if (/galaxy\s*[amf]53|[amf]33|[amf]23|[amf]13|[amf]03/i.test(m)) return 2022;
+  if (/galaxy\s*[amf]52|[amf]32|[amf]22|[amf]12|[amf]02/i.test(m)) return 2021;
+  if (/galaxy\s*[amf]51|[amf]31|[amf]21|[amf]11|[amf]01/i.test(m)) return 2020;
+
+  // 5. OnePlus
+  if (/oneplus\s*14/i.test(m)) return 2026;
+  if (/oneplus\s*13/i.test(m)) return 2025;
+  if (/oneplus\s*12/i.test(m)) return 2024;
+  if (/oneplus\s*11/i.test(m)) return 2023;
+  if (/oneplus\s*10/i.test(m)) return 2022;
+  if (/oneplus\s*9/i.test(m)) return 2021;
+  if (/oneplus\s*8/i.test(m)) return 2020;
+  if (/oneplus\s*open\s*2/i.test(m)) return 2025;
+  if (/oneplus\s*open/i.test(m)) return 2023;
+  if (/nord\s*5/i.test(m)) return 2025;
+  if (/nord\s*4|nord\s*ce\s*4/i.test(m)) return 2024;
+  if (/nord\s*3|nord\s*ce\s*3/i.test(m)) return 2023;
+  if (/nord\s*2|nord\s*ce\s*2/i.test(m)) return 2022;
+  if (/nord\s*ce\b|nord\s*n/i.test(m)) return 2021;
+
+  // 6. Vivo
+  if (/vivo\s*x200/i.test(full)) return 2024;
+  if (/vivo\s*x100/i.test(full)) return 2023;
+  if (/vivo\s*x90/i.test(full)) return 2022;
+  if (/vivo\s*x80/i.test(full)) return 2022;
+  if (/vivo\s*x70/i.test(full)) return 2021;
+  if (/vivo\s*v50/i.test(full)) return 2025;
+  if (/vivo\s*v40/i.test(full)) return 2024;
+  if (/vivo\s*v30|vivo\s*v29/i.test(full)) return 2024;
+  if (/vivo\s*v27/i.test(full)) return 2023;
+  if (/vivo\s*v25/i.test(full)) return 2022;
+  if (/vivo\s*v23/i.test(full)) return 2022;
+  if (/vivo\s*v21/i.test(full)) return 2021;
+  if (/vivo\s*v20/i.test(full)) return 2020;
+  if (/vivo\s*t3/i.test(full)) return 2024;
+  if (/vivo\s*t2/i.test(full)) return 2023;
+  if (/vivo\s*t1/i.test(full)) return 2022;
+  if (/vivo\s*y200/i.test(full)) return 2024;
+  if (/vivo\s*y100/i.test(full)) return 2023;
+
+  // 7. Oppo
+  if (/find\s*x8/i.test(m)) return 2024;
+  if (/find\s*x7/i.test(m)) return 2024;
+  if (/find\s*x6/i.test(m)) return 2023;
+  if (/find\s*x5/i.test(m)) return 2022;
+  if (/find\s*n3/i.test(m)) return 2023;
+  if (/find\s*n2/i.test(m)) return 2022;
+  if (/reno\s*13/i.test(m)) return 2025;
+  if (/reno\s*12/i.test(m)) return 2024;
+  if (/reno\s*11/i.test(m)) return 2024;
+  if (/reno\s*10/i.test(m)) return 2023;
+  if (/reno\s*8/i.test(m)) return 2022;
+  if (/reno\s*7/i.test(m)) return 2022;
+  if (/reno\s*6/i.test(m)) return 2021;
+  if (/oppo\s*f27/i.test(full)) return 2024;
+  if (/oppo\s*f25/i.test(full)) return 2024;
+  if (/oppo\s*f23/i.test(full)) return 2023;
+  if (/oppo\s*f21/i.test(full)) return 2022;
+  if (/oppo\s*f19/i.test(full)) return 2021;
+  if (/oppo\s*k12/i.test(full)) return 2024;
+  if (/oppo\s*k10/i.test(full)) return 2022;
+
+  // 8. Xiaomi / Redmi
+  if (/xiaomi\s*15/i.test(full)) return 2025;
+  if (/xiaomi\s*14/i.test(full)) return 2024;
+  if (/xiaomi\s*13/i.test(full)) return 2023;
+  if (/xiaomi\s*12/i.test(full)) return 2022;
+  if (/xiaomi\s*11/i.test(full)) return 2021;
+  if (/redmi\s*note\s*14/i.test(full)) return 2024;
+  if (/redmi\s*note\s*13/i.test(full)) return 2024;
+  if (/redmi\s*note\s*12/i.test(full)) return 2023;
+  if (/redmi\s*note\s*11/i.test(full)) return 2022;
+  if (/redmi\s*note\s*10/i.test(full)) return 2021;
+  if (/redmi\s*note\s*9/i.test(full)) return 2020;
+  if (/redmi\s*14/i.test(full)) return 2024;
+  if (/redmi\s*13/i.test(full)) return 2024;
+  if (/redmi\s*12/i.test(full)) return 2023;
+  if (/redmi\s*11/i.test(full)) return 2022;
+  if (/redmi\s*10/i.test(full)) return 2021;
+
+  // 9. Realme
+  if (/realme\s*gt\s*7/i.test(full)) return 2025;
+  if (/realme\s*gt\s*6/i.test(full)) return 2024;
+  if (/realme\s*gt\s*neo\s*3/i.test(full)) return 2022;
+  if (/realme\s*gt\s*2/i.test(full)) return 2022;
+  if (/realme\s*14/i.test(full)) return 2025;
+  if (/realme\s*13/i.test(full)) return 2024;
+  if (/realme\s*12/i.test(full)) return 2024;
+  if (/realme\s*11/i.test(full)) return 2023;
+  if (/realme\s*10/i.test(full)) return 2022;
+  if (/realme\s*9/i.test(full)) return 2022;
+  if (/realme\s*8/i.test(full)) return 2021;
+
+  // 10. Google Pixel
+  if (/pixel\s*10/i.test(m)) return 2025;
+  if (/pixel\s*9/i.test(m)) return 2024;
+  if (/pixel\s*8/i.test(m)) return 2023;
+  if (/pixel\s*7/i.test(m)) return 2022;
+  if (/pixel\s*6/i.test(m)) return 2021;
+  if (/pixel\s*5/i.test(m)) return 2020;
+
+  // 11. Explicit 4-digit year match if present
+  if (yrMatch) return parseInt(yrMatch[1], 10);
+
+  // Default older devices to 2022
+  return 2022;
+}
+
+/**
  * Calculates deterministic dynamic price multiplier based on RAM + Storage combination.
  * Standard baseline: 6GB RAM + 128GB Storage = 1.000x multiplier.
  */

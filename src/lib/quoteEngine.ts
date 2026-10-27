@@ -28,11 +28,11 @@ export interface FunduQuoteRequest {
   cosmetic_condition?: 'flawless' | 'good' | 'fair';
   screen_condition?: 'flawless' | 'scratched' | 'cracked' | 'touch_fault' | 'display_lines';
   body_condition?: 'flawless' | 'minor_scratches' | 'dents_bent';
-  battery_health?: 'healthy' | 'degraded_service' | 'unknown';
+  battery_health?: 'above_85' | '75_to_85' | 'below_75' | 'healthy' | 'degraded_service' | 'unknown' | string;
   defects?: string[];
   accessories?: string[];
   under_warranty?: boolean;
-  age_period?: 'below_3_months' | '3_to_10_months' | '10_to_12_months' | 'above_11_months';
+  age_period?: '0_to_3_months' | '3_to_6_months' | '6_to_9_months' | 'above_9_months' | 'below_3_months' | '3_to_10_months' | '10_to_12_months' | 'above_11_months' | string;
   stylus_available?: boolean;
 }
 

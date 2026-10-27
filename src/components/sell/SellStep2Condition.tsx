@@ -13,7 +13,7 @@ import {
 import { getCleanPhoneImage, BRAND_FRONT_FALLBACKS, getGenericDevicePlaceholder } from '../../lib/phoneImages';
 import { formatINR, formatMaskedPrice } from '../../lib/db';
 import { HARDWARE_DEFECTS, ACCESSORIES_LIST } from '../../data/masterModelCatalog';
-import { deviceIncludesStylus } from '../../lib/deviceSpecs';
+import { deviceIncludesStylus, getModelReleaseYear } from '../../lib/deviceSpecs';
 import type { FunduQuoteResponse } from '../../lib/quoteEngine';
 
 interface SellStep2ConditionProps {
@@ -57,6 +57,17 @@ export default function SellStep2Condition({
   const isApple = (form.brand?.toLowerCase() === 'apple') ||
                   (brandSlug?.toLowerCase() === 'apple') ||
                   (form.model?.toLowerCase().includes('iphone'));
+
+  const releaseYear = getModelReleaseYear(form.brand, form.model);
+  const showsAging = releaseYear >= 2024;
+  const hasStylus = deviceIncludesStylus(form.brand, form.model);
+
+  let nextSection = 3;
+  const batterySectionNum = isApple ? ++nextSection : 0;
+  const faultsSectionNum = ++nextSection;
+  const agingSectionNum = showsAging ? ++nextSection : 0;
+  const accessoriesSectionNum = ++nextSection;
+  const stylusSectionNum = hasStylus ? ++nextSection : 0;
 
   const availableRams = currentDeviceSpecs?.getRamsForStorage
     ? currentDeviceSpecs.getRamsForStorage(form.storage)
@@ -416,46 +427,63 @@ export default function SellStep2Condition({
           </div>
         </div>
 
-        {/* 4. Battery Health (Apple iOS Only - Android does not have battery health percentage) */}
+        {/* Battery Health (Apple iOS Only - Android does not have battery health percentage) */}
         {isApple && (
           <div className="space-y-3">
             <div className="flex items-center justify-between">
               <label className="label text-sm font-extrabold text-gray-900">
-                4. iPhone Battery Health (Maximum Capacity %)
+                {batterySectionNum}. iPhone Battery Health (Maximum Capacity %)
               </label>
               <span className="text-[11px] text-gray-500">Settings &gt; Battery &gt; Battery Health</span>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
               {[
                 {
-                  id: 'healthy',
-                  label: '🔋 Healthy (85%+ / Normal)',
-                  desc: 'Maximum capacity 85% or above, normal backup',
+                  id: 'above_85',
+                  label: '🔋 Greater than 85% (>85%)',
+                  badge: '0% Deduction',
+                  badgeColor: 'bg-emerald-100 text-emerald-800 border-emerald-300',
+                  desc: 'Healthy battery capacity above 85% — No deduction (0%)',
                 },
                 {
-                  id: 'degraded_service',
-                  label: '⚠️ Degraded / Service (<80%)',
-                  desc: 'Shows "Service" or capacity below 80%',
+                  id: '75_to_85',
+                  label: '⚡ 75% to 85%',
+                  badge: '1% Reduction',
+                  badgeColor: 'bg-amber-100 text-amber-800 border-amber-300',
+                  desc: 'Battery capacity between 75% and 85% — 1% reduction',
                 },
                 {
-                  id: 'unknown',
-                  label: '❓ Unknown / Cannot Check',
-                  desc: 'Device reset or cannot check Settings',
+                  id: 'below_75',
+                  label: '⚠️ Less than 75% (<75%)',
+                  badge: '2% Deduction',
+                  badgeColor: 'bg-rose-100 text-rose-800 border-rose-300',
+                  desc: 'Degraded battery capacity below 75% — 2% deduction',
                 },
-              ].map((bat) => (
-                <button
-                  key={bat.id}
-                  type="button"
-                  onClick={() => setForm((f: any) => ({ ...f, batteryHealth: bat.id as any }))}
-                  className={`p-4 rounded-2xl border text-left transition-all duration-200 cursor-pointer ${form.batteryHealth === bat.id
-                    ? 'border-[#344257] bg-[#F0F0F5] shadow-md ring-2 ring-[#344257]/20 -translate-y-1'
-                    : 'border-gray-200 bg-white hover:border-[#6A859F] hover:bg-[#F7F7FA]'
+              ].map((bat) => {
+                const isSelected = form.batteryHealth === bat.id ||
+                  (bat.id === 'above_85' && (form.batteryHealth === 'healthy' || !form.batteryHealth)) ||
+                  (bat.id === 'below_75' && form.batteryHealth === 'degraded_service');
+                return (
+                  <button
+                    key={bat.id}
+                    type="button"
+                    onClick={() => setForm((f: any) => ({ ...f, batteryHealth: bat.id as any }))}
+                    className={`p-4 rounded-2xl border text-left transition-all duration-200 cursor-pointer ${
+                      isSelected
+                        ? 'border-[#344257] bg-[#F0F0F5] shadow-md ring-2 ring-[#344257]/20 -translate-y-1'
+                        : 'border-gray-200 bg-white hover:border-[#6A859F] hover:bg-[#F7F7FA]'
                     }`}
-                >
-                  <p className="font-extrabold text-xs text-gray-900">{bat.label}</p>
-                  <p className="mt-1 text-[11px] text-gray-500 leading-snug">{bat.desc}</p>
-                </button>
-              ))}
+                  >
+                    <div className="flex items-center justify-between gap-2 mb-1">
+                      <p className="font-extrabold text-xs text-gray-900">{bat.label}</p>
+                      <span className={`text-[9px] font-black uppercase px-2 py-0.5 rounded-full border ${bat.badgeColor}`}>
+                        {bat.badge}
+                      </span>
+                    </div>
+                    <p className="mt-1 text-[11px] text-gray-500 leading-snug">{bat.desc}</p>
+                  </button>
+                );
+              })}
             </div>
           </div>
         )}
@@ -464,7 +492,7 @@ export default function SellStep2Condition({
         <div className="space-y-3">
           <div className="flex items-center justify-between">
             <label className="label text-sm font-extrabold text-gray-900">
-              {isApple ? '5.' : '4.'} Other Known Faults (Select any that apply)
+              {faultsSectionNum}. Other Known Faults (Select any that apply)
             </label>
             <span className="text-[11px] text-gray-500">Leave unchecked if working</span>
           </div>
@@ -494,85 +522,96 @@ export default function SellStep2Condition({
           </div>
         </div>
 
-        {/* Device Age & Warranty Period */}
-        <div className="space-y-3">
-          <div className="flex items-center justify-between">
-            <label className="label text-sm font-extrabold text-gray-900">
-              {isApple ? '6.' : '5.'} Device Age &amp; Purchase Period
-            </label>
-            <span className="text-[11px] text-[#6A859F] font-bold">How old is your phone?</span>
-          </div>
+        {/* Device Age & Warranty Period (Only for models launched in 2024 or later) */}
+        {showsAging && (
+          <div className="space-y-3">
+            <div className="flex items-center justify-between">
+              <label className="label text-sm font-extrabold text-gray-900">
+                {agingSectionNum}. Device Age &amp; Purchase Period
+              </label>
+              <span className="text-[11px] text-[#6A859F] font-bold">How old is your phone?</span>
+            </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            {[
-              {
-                id: 'below_3_months',
-                label: '✨ Below 3 Months',
-                warranty: true,
-                badge: 'Brand New',
-                desc: 'Bought recently, valid GST invoice & full brand warranty',
-              },
-              {
-                id: '3_to_10_months',
-                label: '🛡️ 3 to 10 Months',
-                warranty: true,
-                badge: 'Under Warranty',
-                desc: 'Active manufacturer brand warranty remaining',
-              },
-              {
-                id: '10_to_12_months',
-                label: '⏳ 10 to 12 Months',
-                warranty: false,
-                badge: 'Warranty Ending',
-                desc: 'Almost 1 year old, brand warranty expiring or expired',
-              },
-              {
-                id: 'above_11_months',
-                label: '📅 Above 11 Months / 1+ Year',
-                warranty: false,
-                badge: 'Out of Warranty',
-                desc: 'More than 1 year old, standard out-of-warranty device',
-              },
-            ].map((age) => (
-              <button
-                key={age.id}
-                type="button"
-                onClick={() =>
-                  setForm((f: any) => ({
-                    ...f,
-                    agePeriod: age.id,
-                    underWarranty: age.warranty,
-                  }))
-                }
-                className={`p-4 rounded-2xl border text-left transition-all duration-200 cursor-pointer ${
-                  (form.agePeriod || 'above_11_months') === age.id
-                    ? 'border-[#344257] bg-[#F0F0F5] shadow-md ring-2 ring-[#344257]/20 -translate-y-0.5'
-                    : 'border-gray-200 bg-white hover:border-[#6A859F] hover:bg-[#F7F7FA]'
-                }`}
-              >
-                <div className="flex items-center justify-between gap-2 mb-1">
-                  <p className="font-extrabold text-xs text-gray-900">{age.label}</p>
-                  <span
-                    className={`text-[9px] font-black uppercase px-2 py-0.5 rounded-full ${
-                      age.warranty
-                        ? 'bg-emerald-100 text-emerald-800 border border-emerald-300'
-                        : 'bg-gray-100 text-gray-600'
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              {[
+                {
+                  id: '0_to_3_months',
+                  label: '✨ 0 to 3 Months',
+                  warranty: true,
+                  badge: '30% Deduction',
+                  badgeColor: 'bg-blue-100 text-blue-800 border-blue-300',
+                  desc: 'Recently purchased, under 3 months old with brand warranty — 30% deduction',
+                },
+                {
+                  id: '3_to_6_months',
+                  label: '🛡️ 3 to 6 Months',
+                  warranty: true,
+                  badge: '35% Deduction',
+                  badgeColor: 'bg-indigo-100 text-indigo-800 border-indigo-300',
+                  desc: '3 to 6 months old with manufacturer brand warranty — 35% deduction',
+                },
+                {
+                  id: '6_to_9_months',
+                  label: '⏳ 6 to 9 Months',
+                  warranty: true,
+                  badge: '38% Deduction',
+                  badgeColor: 'bg-amber-100 text-amber-800 border-amber-300',
+                  desc: '6 to 9 months old with brand warranty — 38% deduction',
+                },
+                {
+                  id: 'above_9_months',
+                  label: '📅 Older than 9 Months',
+                  warranty: false,
+                  badge: '40% Deduction',
+                  badgeColor: 'bg-gray-100 text-gray-700 border-gray-300',
+                  desc: 'Older than 9 months or standard device — 40% deduction for all',
+                },
+              ].map((age) => {
+                const isSelected =
+                  (form.agePeriod || 'above_9_months') === age.id ||
+                  (age.id === '0_to_3_months' && form.agePeriod === 'below_3_months') ||
+                  (age.id === 'above_9_months' &&
+                    (form.agePeriod === 'above_11_months' ||
+                      form.agePeriod === '10_to_12_months' ||
+                      form.agePeriod === '3_to_10_months'));
+                return (
+                  <button
+                    key={age.id}
+                    type="button"
+                    onClick={() =>
+                      setForm((f: any) => ({
+                        ...f,
+                        agePeriod: age.id,
+                        underWarranty: age.warranty,
+                      }))
+                    }
+                    className={`p-4 rounded-2xl border text-left transition-all duration-200 cursor-pointer ${
+                      isSelected
+                        ? 'border-[#344257] bg-[#F0F0F5] shadow-md ring-2 ring-[#344257]/20 -translate-y-0.5'
+                        : 'border-gray-200 bg-white hover:border-[#6A859F] hover:bg-[#F7F7FA]'
                     }`}
                   >
-                    {age.badge}
-                  </span>
-                </div>
-                <p className="text-[11px] text-gray-500 leading-snug">{age.desc}</p>
-              </button>
-            ))}
+                    <div className="flex items-center justify-between gap-2 mb-1">
+                      <p className="font-extrabold text-xs text-gray-900">{age.label}</p>
+                      <span
+                        className={`text-[9px] font-black uppercase px-2 py-0.5 rounded-full border ${age.badgeColor}`}
+                      >
+                        {age.badge}
+                      </span>
+                    </div>
+                    <p className="text-[11px] text-gray-500 leading-snug">{age.desc}</p>
+                  </button>
+                );
+              })}
+            </div>
           </div>
-        </div>
+        )}
 
         {/* Included Original Accessories */}
         <div className="space-y-3">
           <div className="flex items-center justify-between">
             <label className="label text-sm font-extrabold text-gray-900">
-              {isApple ? '7.' : '6.'} Included Original Accessories
+              {accessoriesSectionNum}. Included Original Accessories
             </label>
             <span className="text-[11px] text-gray-500 font-medium">Select included items</span>
           </div>
@@ -607,7 +646,7 @@ export default function SellStep2Condition({
                 </div>
                 <div>
                   <h4 className="font-extrabold text-sm text-gray-900 flex items-center gap-1.5 flex-wrap">
-                    {isApple ? '8.' : '7.'} Original Stylus / S-Pen Available?
+                    {stylusSectionNum}. Original Stylus / S-Pen Available?
                     <span className="text-[10px] bg-indigo-100 text-indigo-700 font-extrabold px-2 py-0.5 rounded-full uppercase tracking-wider">
                       Included With Model
                     </span>

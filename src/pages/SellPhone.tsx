@@ -37,7 +37,7 @@ import { useAuth } from '../context/AuthContext';
 import { ALL_INDIAN_PHONES_CATALOG } from '../data/indianPhonesCatalog';
 import { getCleanPhoneImage, getCleanBrandLogo, BRAND_FRONT_FALLBACKS, getGenericDevicePlaceholder } from '../lib/phoneImages';
 import { usePriceSync, applyPriceOverrides, isModelDeleted } from '../lib/priceSync';
-import { getModelHardwareSpecs, calculateHardwareVariantMultiplier, deviceIncludesStylus } from '../lib/deviceSpecs';
+import { getModelHardwareSpecs, calculateHardwareVariantMultiplier, deviceIncludesStylus, getModelReleaseYear } from '../lib/deviceSpecs';
 import {
   getPanIndiaLocation,
   searchPanIndiaLocations,
@@ -187,10 +187,9 @@ export default function SellPhone() {
     liquidDamage: false,
     cosmeticCondition: 'flawless' as 'flawless' | 'good' | 'fair',
     screenCondition: 'flawless' as 'flawless' | 'scratched' | 'cracked' | 'touch_fault' | 'display_lines',
-    bodyCondition: 'flawless' as 'flawless' | 'minor_scratches' | 'dents_bent',
-    batteryHealth: 'healthy' as 'healthy' | 'degraded_service' | 'unknown',
+    batteryHealth: 'above_85' as 'above_85' | '75_to_85' | 'below_75' | 'healthy' | 'degraded_service' | 'unknown',
     canMakeCalls: true,
-    agePeriod: 'above_11_months' as 'below_3_months' | '3_to_10_months' | '10_to_12_months' | 'above_11_months',
+    agePeriod: 'above_9_months' as '0_to_3_months' | '3_to_6_months' | '6_to_9_months' | 'above_9_months' | 'below_3_months' | '3_to_10_months' | '10_to_12_months' | 'above_11_months',
     underWarranty: false,
     stylusAvailable: true,
     defects: [] as string[],
@@ -547,6 +546,9 @@ export default function SellPhone() {
       let changed = false;
       let nextStorage = cur.storage;
       let nextRam = cur.ram;
+      let nextAgePeriod = cur.agePeriod;
+      let nextUnderWarranty = cur.underWarranty;
+      let nextBatteryHealth = cur.batteryHealth;
 
       // 1. Ensure storage is valid for this model
       if (!currentDeviceSpecs.storages.includes(cur.storage)) {
@@ -567,8 +569,32 @@ export default function SellPhone() {
         changed = true;
       }
 
+      // 3. For devices launched before 2024 (< 2024), default aging to above 9 months and out-of-warranty (40% deduction)
+      const releaseYear = getModelReleaseYear(cur.brand, cur.model);
+      if (releaseYear < 2024) {
+        if (cur.agePeriod !== 'above_9_months' || cur.underWarranty !== false) {
+          nextAgePeriod = 'above_9_months';
+          nextUnderWarranty = false;
+          changed = true;
+        }
+      }
+
+      // 4. For non-Apple devices, Android has no battery health metric
+      const isApple = String(cur.brand || '').toLowerCase() === 'apple' || String(cur.model || '').toLowerCase().includes('iphone');
+      if (!isApple && cur.batteryHealth !== 'above_85' && cur.batteryHealth !== 'healthy') {
+        nextBatteryHealth = 'above_85';
+        changed = true;
+      }
+
       if (changed) {
-        return { ...cur, storage: nextStorage, ram: nextRam };
+        return {
+          ...cur,
+          storage: nextStorage,
+          ram: nextRam,
+          agePeriod: nextAgePeriod,
+          underWarranty: nextUnderWarranty,
+          batteryHealth: nextBatteryHealth,
+        };
       }
       return cur;
     });
@@ -741,11 +767,21 @@ export default function SellPhone() {
       else if (form.screenCondition === 'touch_fault' || form.screenCondition === 'display_lines') val *= 0.60;
       if (form.bodyCondition === 'dents_bent') val *= 0.85;
       const isApple = (form.brand?.toLowerCase() === 'apple') || (brandSlug?.toLowerCase() === 'apple') || (form.model?.toLowerCase().includes('iphone'));
-      if (isApple && form.batteryHealth === 'degraded_service') val *= 0.92;
+      if (isApple) {
+        const bHealth = String(form.batteryHealth || '').toLowerCase().trim();
+        const num = parseFloat(bHealth);
+        if (!isNaN(num) && num > 0) {
+          if (num < 75) val *= 0.98; // deduct 2%
+          else if (num <= 85) val *= 0.99; // 1% reduction
+        } else if (bHealth === '75_to_85') {
+          val *= 0.99; // 1% reduction
+        } else if (bHealth === 'below_75' || bHealth === 'degraded_service') {
+          val *= 0.98; // deduct 2%
+        }
+      }
       if (form.powersOn === false) val *= 0.35;
       if (form.liquidDamage) val *= 0.50;
       if (form.canMakeCalls === false) val *= 0.85;
-      if (form.underWarranty) val *= 1.05;
       if (Array.isArray(form.defects)) {
         val -= form.defects.length * (baseModelPrice * 0.08);
       }
