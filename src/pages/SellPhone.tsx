@@ -765,9 +765,9 @@ export default function SellPhone() {
       val *= aging;
 
       const isApple = (form.brand?.toLowerCase() === 'apple') || (brandSlug?.toLowerCase() === 'apple') || (form.model?.toLowerCase().includes('iphone'));
-      const excMult = isApple ? 1.00 : (pricingConfig?.excellent_multiplier ?? 0.82);
-      const goodMult = isApple ? 0.80 : (pricingConfig?.good_multiplier ?? 0.70);
-      const fairMult = isApple ? 0.60 : (pricingConfig?.fair_multiplier ?? 0.55);
+      const excMult = 1.00;
+      const goodMult = 0.80;
+      const fairMult = 0.60;
 
       if (form.cosmeticCondition === 'fair') val *= fairMult;
       else if (form.cosmeticCondition === 'good') val *= goodMult;

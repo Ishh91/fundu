@@ -2309,73 +2309,142 @@ export function isStylusDevice(brand, model) {
 }
 
 /**
+ * Calculates release year for devices across all major Indian recommerce brands
+ */
+export function getModelReleaseYear(brand = '', model = '') {
+  const b = String(brand || '').toLowerCase().trim();
+  const m = String(model || '').toLowerCase().trim();
+  const full = `${b} ${m}`;
+
+  const yrMatch = full.match(/\b(201[5-9]|202[0-9])\b/);
+  if (yrMatch) return parseInt(yrMatch[1], 10);
+
+  // Apple / iPhone
+  if (b.includes('apple') || m.includes('iphone')) {
+    if (/iphone\s*17/i.test(m)) return 2025;
+    if (/iphone\s*16/i.test(m)) return 2024;
+    if (/iphone\s*15/i.test(m)) return 2023;
+    if (/iphone\s*14/i.test(m)) return 2022;
+    if (/iphone\s*13/i.test(m)) return 2021;
+    if (/iphone\s*12/i.test(m)) return 2020;
+    if (/iphone\s*11/i.test(m)) return 2019;
+    return 2020;
+  }
+
+  // Samsung
+  if (b.includes('samsung') || m.includes('galaxy')) {
+    if (/\bs25\b/i.test(m)) return 2025;
+    if (/\bs24\b/i.test(m)) return 2024;
+    if (/\bs23\b/i.test(m)) return 2023;
+    if (/\bs22\b/i.test(m)) return 2022;
+    if (/\bs21\b/i.test(m)) return 2021;
+    if (/z\s*fold\s*6|z\s*flip\s*6/i.test(m)) return 2024;
+    if (/z\s*fold\s*5|z\s*flip\s*5/i.test(m)) return 2023;
+    if (/\ba55|\ba35|\bm55|\bf55/i.test(m)) return 2024;
+    if (/\ba54|\ba34|\bm54/i.test(m)) return 2023;
+    return 2022;
+  }
+
+  // OnePlus
+  if (b.includes('oneplus') || m.includes('oneplus')) {
+    if (/\b13\b/i.test(m)) return 2024;
+    if (/\b12\b|12r\b|nord\s*4|ce\s*4/i.test(m)) return 2024;
+    if (/\b11\b|11r\b|open\b|nord\s*3|ce\s*3/i.test(m)) return 2023;
+    if (/\b10\b|10t\b|10r\b|nord\s*2t|ce\s*2/i.test(m)) return 2022;
+    return 2022;
+  }
+
+  // Vivo / iQOO
+  if (b.includes('vivo') || b.includes('iqoo')) {
+    if (/v50|x200|iqoo\s*13/i.test(m)) return 2025;
+    if (/v40|x100|t3\b|t3x|iqoo\s*12|iqoo\s*z9/i.test(m)) return 2024;
+    if (/v29|v27|x90|t2\b|t2x|iqoo\s*11|iqoo\s*z7/i.test(m)) return 2023;
+    return 2022;
+  }
+
+  // Xiaomi / Redmi / Poco
+  if (b.includes('xiaomi') || b.includes('redmi') || b.includes('poco')) {
+    if (/xiaomi\s*15|redmi\s*note\s*14|poco\s*x7/i.test(m)) return 2025;
+    if (/xiaomi\s*14|redmi\s*note\s*13|poco\s*x6|poco\s*f6/i.test(m)) return 2024;
+    if (/xiaomi\s*13|redmi\s*note\s*12|poco\s*x5|poco\s*f5/i.test(m)) return 2023;
+    return 2022;
+  }
+
+  // Realme
+  if (b.includes('realme')) {
+    if (/gt\s*7|14\s*pro/i.test(m)) return 2025;
+    if (/gt\s*6|13\s*pro|12\s*pro|p1\b|p2\b/i.test(m)) return 2024;
+    if (/gt\s*neo|11\s*pro|10\s*pro/i.test(m)) return 2023;
+    return 2022;
+  }
+
+  // Motorola
+  if (b.includes('motorola') || b.includes('moto')) {
+    if (/edge\s*60|g86/i.test(m)) return 2025;
+    if (/edge\s*50|razr\s*50|g85|g64/i.test(m)) return 2024;
+    if (/edge\s*40|razr\s*40|g84|g54/i.test(m)) return 2023;
+    return 2022;
+  }
+
+  // Google
+  if (b.includes('google') || m.includes('pixel')) {
+    if (/pixel\s*10/i.test(m)) return 2025;
+    if (/pixel\s*9/i.test(m)) return 2024;
+    if (/pixel\s*8/i.test(m)) return 2023;
+    if (/pixel\s*7/i.test(m)) return 2022;
+    return 2022;
+  }
+
+  return 2022;
+}
+
+/**
  * Calculates smartphone age depreciation factor based on purchase period.
- * Business Rules:
- * - Apple:
- *     0 to 3 months: 0% deduction (factor = 1.00) -> 74,910 on 74,910 base
- *     3 to 6 months: 6.55% deduction (factor = 0.9345) -> 70,000 on 74,910 base
- *     6 to 11 months: 9.22% deduction (factor = 0.9078) -> 68,000 on 74,910 base
- *     Out of warranty (>11 months): 17.23% deduction (factor = 0.8277) -> 62,000 on 74,910 base
- * - Android / Other Brands:
- *     0 to 3 months: 10% deduction (factor = 0.90)
- *     3 to 6 months: 15% deduction (factor = 0.85)
- *     6 to 9 months: 20% deduction (factor = 0.80)
- *     Older than 9 months (and pre-2024 models): 25% deduction (factor = 0.75)
+ * Universal Business Rules Across ALL Brands & Models:
+ * - Pre-2024 Models: 0% deduction (factor = 1.00) since aging is already accounted for in catalog resale value
+ * - 2024+ Models:
+ *     0 to 3 months: 0% deduction (factor = 1.00) -> 100% full base price
+ *     3 to 6 months: 6.55% deduction (factor = 0.9345)
+ *     6 to 11 months: 9.22% deduction (factor = 0.9078)
+ *     Out of warranty (>11 months): 17.23% deduction (factor = 0.8277)
  */
 export function calculatePhoneAgingFactor(brand = '', model = '', underWarranty = false, agePeriod = '') {
   const normAge = String(agePeriod || '').toLowerCase().trim();
-  const b = String(brand || '').toLowerCase();
-  const m = String(model || '').toLowerCase();
-  const isApple = b === 'apple' || m.includes('iphone');
+  const releaseYear = getModelReleaseYear(brand, model);
 
-  if (isApple) {
-    if (normAge === '0_to_3_months' || normAge === 'below_3_months') {
-      return 1.00;
-    }
-    if (normAge === '3_to_6_months') {
-      return 0.9345;
-    }
-    if (
-      normAge === '6_to_9_months' ||
-      normAge === '6_to_11_months' ||
-      normAge === '3_to_10_months' ||
-      normAge === '10_to_12_months'
-    ) {
-      return 0.9078;
-    }
-    if (
-      normAge === 'above_9_months' ||
-      normAge === 'older_than_9_months' ||
-      normAge === 'above_11_months' ||
-      normAge === 'out_of_warranty'
-    ) {
-      return 0.8277;
-    }
-    return 0.8277;
+  // If model released before 2024, aging is NOT applicable (already built into baseline resale price):
+  if (releaseYear > 0 && releaseYear < 2024) {
+    return 1.00;
   }
 
-  // Non-Apple models
+  // Universal Aging brackets for ALL brands & models (2024+ launches):
+  // 1. 0 to 3 months: 0% deduction (100% full base price)
   if (normAge === '0_to_3_months' || normAge === 'below_3_months') {
-    return 0.98;
+    return 1.00;
   }
+  // 2. 3 to 6 months: 6.55% deduction (0.9345 multiplier)
   if (normAge === '3_to_6_months') {
-    return 0.85;
+    return 0.9345;
   }
-  if (normAge === '6_to_9_months') {
-    return 0.80;
+  // 3. 6 to 11 months: 9.22% deduction (0.9078 multiplier)
+  if (
+    normAge === '6_to_9_months' ||
+    normAge === '6_to_11_months' ||
+    normAge === '3_to_10_months' ||
+    normAge === '10_to_12_months'
+  ) {
+    return 0.9078;
   }
+  // 4. Out of warranty (>11 months): 17.23% deduction (0.8277 multiplier)
   if (
     normAge === 'above_9_months' ||
     normAge === 'older_than_9_months' ||
     normAge === 'above_11_months' ||
-    normAge === '10_to_12_months' ||
-    normAge === '3_to_10_months'
+    normAge === 'out_of_warranty'
   ) {
-    return 0.75;
+    return 0.8277;
   }
-
-  // Older than 9 months / pre-2024 devices: 25% deduction for all
-  return 0.75;
+  return 0.8277;
 }
 
 /**
@@ -2537,15 +2606,12 @@ export function quotePhone(input = {}, options = {}) {
   const is0to3Months = isApple && (normAge === '0_to_3_months' || normAge === 'below_3_months');
 
   const cosmeticKey = String(cosmetic_condition).toLowerCase();
-  const activeCosmeticMultipliers = isApple ? {
+  const activeCosmeticMultipliers = {
     flawless: 1.00,
     good: 0.80,
     fair: 0.60,
-  } : {
-    ...FUNDU_POLICY.cosmeticMultipliers,
-    ...(options.cosmeticMultipliers || {}),
   };
-  const cosmeticMultiplier = activeCosmeticMultipliers[cosmeticKey] ?? (isApple ? 1.00 : (activeCosmeticMultipliers.good ?? 1.0));
+  const cosmeticMultiplier = activeCosmeticMultipliers[cosmeticKey] ?? 1.00;
 
   // Customer-facing condition explanations
   const conditionReasons = [];
@@ -2696,8 +2762,8 @@ export function quotePhone(input = {}, options = {}) {
     };
   }
 
-  // Clean rounding to nearest ₹50 for professional consumer pricing (preserves exact admin price if flawless/no deductions)
-  const isExactBaseProceeds = options.catalogPrice && Math.abs(rawOffer - options.catalogPrice) < 1;
+  // Clean rounding to nearest ₹50 for professional consumer pricing (preserves exact base price if flawless/no deductions)
+  const isExactBaseProceeds = Math.abs(rawOffer - expectedResaleProceeds) < 1 || (options.catalogPrice && Math.abs(rawOffer - options.catalogPrice) < 1);
   const finalOfferAmount = isExactBaseProceeds
     ? rawOffer
     : Math.min(180000, Math.max(FUNDU_POLICY.minOfferFloor, Math.round(rawOffer / 50) * 50));
