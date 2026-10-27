@@ -36,7 +36,7 @@ import { db, formatINR, formatMaskedPrice, formatDisplayPrice } from '../lib/db'
 import { useAuth } from '../context/AuthContext';
 import { ALL_INDIAN_PHONES_CATALOG } from '../data/indianPhonesCatalog';
 import { getCleanPhoneImage, getCleanBrandLogo, BRAND_FRONT_FALLBACKS, getGenericDevicePlaceholder } from '../lib/phoneImages';
-import { usePriceSync, applyPriceOverrides, isModelDeleted } from '../lib/priceSync';
+import { usePriceSync, applyPriceOverrides, isModelDeleted, savePriceOverride, getEffectivePrice } from '../lib/priceSync';
 import { getModelHardwareSpecs, calculateHardwareVariantMultiplier, deviceIncludesStylus, getModelReleaseYear } from '../lib/deviceSpecs';
 import {
   getPanIndiaLocation,
@@ -611,7 +611,12 @@ export default function SellPhone() {
 
     fetchSellPriceConfig(form.brand, form.model, form.storage)
       .then((config) => {
-        if (active) setPricingConfig(config);
+        if (active) {
+          setPricingConfig(config);
+          if (config?.base_price && config.base_price > 0) {
+            savePriceOverride(form.brand, form.model, config.base_price, form.storage);
+          }
+        }
       })
       .catch(() => {
         if (active) setPricingConfig(null);
@@ -740,8 +745,11 @@ export default function SellPhone() {
     const selectedMult = calculateHardwareVariantMultiplier(form.storage, form.ram, form.brand);
     const variantRatio = selectedMult / (catalogMult || 1.0);
 
+    if (Math.abs(variantRatio - 1.0) < 0.001) {
+      return rawBase;
+    }
     return Math.max(1000, Math.round((rawBase * variantRatio) / 50) * 50);
-  }, [form.brand, form.model, form.storage, form.ram, version, getEffectivePrice, pricingConfig]);
+  }, [form.brand, form.model, form.storage, form.ram, version, pricingConfig]);
 
   // Guaranteed non-zero smartphone valuation estimate
   const estimate = useMemo(() => {
@@ -796,6 +804,9 @@ export default function SellPhone() {
 
       if (deviceIncludesStylus(form.brand, form.model) && form.stylusAvailable === false) {
         val -= 3000;
+      }
+      if (baseModelPrice > 0 && Math.abs(val - baseModelPrice) < 1) {
+        return baseModelPrice;
       }
       return Math.max(800, Math.round(val / 50) * 50);
     }

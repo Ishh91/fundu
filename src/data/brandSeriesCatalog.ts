@@ -456,7 +456,7 @@ export const BRAND_SERIES_DEFINITIONS: Record<string, BrandSeriesDefinition[]> =
       pattern: /\biphone\s*16([a-z0-9]|\b)/i,
       defaultModels: [
         { brand: 'Apple', series: 'iPhone 16 Series', model: 'Apple iPhone 16 Pro Max', storage: '256 GB', price: 88000, image: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-16-pro-max.jpg' },
-        { brand: 'Apple', series: 'iPhone 16 Series', model: 'Apple iPhone 16 Pro', storage: '128 GB', price: 78000, image: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-16-pro.jpg' },
+        { brand: 'Apple', series: 'iPhone 16 Series', model: 'Apple iPhone 16 Pro', storage: '128 GB', price: 74910, image: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-16-pro.jpg' },
         { brand: 'Apple', series: 'iPhone 16 Series', model: 'Apple iPhone 16 Plus', storage: '128 GB', price: 61000, image: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-16.jpg' },
         { brand: 'Apple', series: 'iPhone 16 Series', model: 'Apple iPhone 16', storage: '128 GB', price: 52800, image: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-16.jpg' },
         { brand: 'Apple', series: 'iPhone 16 Series', model: 'Apple iPhone 16e', storage: '128 GB', price: 48000, image: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-16e.jpg' },

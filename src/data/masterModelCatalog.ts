@@ -199,7 +199,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "iPhone 16 Series",
     "model": "Apple iPhone 16 Pro",
     "storage": "128 GB",
-    "price": 78000,
+    "price": 74910,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-16-pro.jpg"
   },
   {

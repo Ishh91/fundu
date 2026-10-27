@@ -274,7 +274,7 @@ export const ALL_INDIAN_PHONES_CATALOG: MasterPhone[] = [
       "512GB"
     ],
     "default_mrp": 119900,
-    "base_resale_value": 80000,
+    "base_resale_value": 74910,
     "image_url": "https://images.unsplash.com/photo-1695048133142-1a20484d2569?w=800&auto=format&fit=crop&q=80",
     "popular_tag": "Pro Camera Control",
     "processor": "Apple A18 Pro (3nm)",
