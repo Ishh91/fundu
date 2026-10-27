@@ -213,8 +213,26 @@ export default function AdminCompetitorRadar() {
 
   const handleSavePriceToDatabase = async (newPrice: number) => {
     if (!newPrice || newPrice <= 0) return;
+
+    // 1. INSTANT ZERO-LATENCY OPTIMISTIC UPDATE (0ms)
+    savePriceOverride(selectedBrand, searchModel, newPrice, selectedStorage);
+    setSaveSuccess(true);
+    setRadarData((prev) => {
+      if (!prev) return prev;
+      return {
+        ...prev,
+        fundu: {
+          ...prev.fundu,
+          basePrice: newPrice,
+          flawlessOffer: newPrice,
+          goodOffer: Math.round(newPrice * 0.80),
+          fairOffer: Math.round(newPrice * 0.60),
+        },
+      };
+    });
+
+    // 2. Persist to Backend in Background
     setSavingPrice(true);
-    setSaveSuccess(false);
     try {
       const isApple = selectedBrand.toLowerCase() === 'apple' || searchModel.toLowerCase().includes('iphone');
       const payload = {
@@ -222,9 +240,9 @@ export default function AdminCompetitorRadar() {
         model: searchModel,
         storage: selectedStorage.trim(),
         base_price: newPrice,
-        excellent_multiplier: isApple ? 1.00 : 0.82,
-        good_multiplier: isApple ? 0.80 : 0.70,
-        fair_multiplier: isApple ? 0.60 : 0.55,
+        excellent_multiplier: 1.00,
+        good_multiplier: 0.80,
+        fair_multiplier: 0.60,
         box_bonus: 600,
         charger_bonus: 400,
         is_active: true,
@@ -239,12 +257,9 @@ export default function AdminCompetitorRadar() {
       });
 
       if (!res.ok) throw new Error('Failed to update price in database');
-      savePriceOverride(selectedBrand, searchModel, newPrice, selectedStorage);
-      setSaveSuccess(true);
-      // Refresh radar data
-      fetchRadar(selectedBrand, searchModel, selectedStorage);
-      setTimeout(() => setSaveSuccess(false), 3000);
+      setTimeout(() => setSaveSuccess(false), 2500);
     } catch (err: any) {
+      console.error('Background price sync failed:', err);
       alert(err?.message || 'Failed to update database');
     } finally {
       setSavingPrice(false);

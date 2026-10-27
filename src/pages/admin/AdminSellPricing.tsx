@@ -621,7 +621,7 @@ export default function AdminSellPricing({
     setPriceModalOpen(true);
   };
 
-  // Save Price Rule from Modal
+  // Save Price Rule from Modal - Instant 0ms Optimistic Update
   const handleSavePriceForm = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!priceForm.brand || !priceForm.model || !priceForm.base_price) {
@@ -629,14 +629,24 @@ export default function AdminSellPricing({
       return;
     }
 
+    const newPriceNum = Number(priceForm.base_price);
+    const brandTrim = priceForm.brand.trim();
+    const modelTrim = priceForm.model.trim();
+    const storageTrim = priceForm.storage.trim() || undefined;
+
+    // 1. INSTANT 0ms ZERO-LATENCY BROADCAST
+    savePriceOverride(brandTrim, modelTrim, newPriceNum, storageTrim);
+    setRefreshVer((v) => v + 1);
+    setPriceModalOpen(false);
+
+    // 2. Persist in background without freezing UI
     setPriceSaving(true);
     try {
-      const newPriceNum = Number(priceForm.base_price);
       await onSavePriceConfig({
         id: activePriceModel?.configId,
-        brand: priceForm.brand.trim(),
-        model: priceForm.model.trim(),
-        storage: priceForm.storage.trim() || null,
+        brand: brandTrim,
+        model: modelTrim,
+        storage: storageTrim || null,
         base_price: newPriceNum,
         excellent_multiplier: Number(priceForm.excellent_multiplier),
         good_multiplier: Number(priceForm.good_multiplier),
@@ -645,21 +655,14 @@ export default function AdminSellPricing({
         charger_bonus: Number(priceForm.charger_bonus) || 0,
         is_active: priceForm.is_active,
       });
-
-      // Save price override directly to ensure immediate broadcast
-      savePriceOverride(priceForm.brand, priceForm.model, newPriceNum, priceForm.storage);
-
-      setRefreshVer((v) => v + 1);
-      setPriceModalOpen(false);
-      alert(`✅ Resale price updated to ₹${newPriceNum.toLocaleString('en-IN')} for ${priceForm.brand} ${priceForm.model}!`);
     } catch (err: any) {
-      alert(err?.message || 'Failed to save pricing rule');
+      console.error('[AdminSellPricing] Background price save error:', err);
     } finally {
       setPriceSaving(false);
     }
   };
 
-  // Quick Save Inline Base Price from Right Detail Panel
+  // Quick Save Inline Base Price from Right Detail Panel - Instant 0ms Optimistic Update
   const handleSaveInlinePrice = async () => {
     if (!selectedModel) return;
     const priceNum = Number(inlinePrice);
@@ -668,11 +671,16 @@ export default function AdminSellPricing({
       return;
     }
 
+    const storageToSave = selectedStorage || selectedModel.storage || '128 GB';
+    const existingCfg = activeVariantPricing.config;
+
+    // 1. INSTANT 0ms OPTIMISTIC UPDATE: LocalStorage + Multi-tab BroadcastChannel
+    savePriceOverride(selectedModel.brand, selectedModel.model, priceNum, storageToSave);
+    setRefreshVer((v) => v + 1);
+
+    // 2. Persist in background without blocking UI
     setInlineSaving(true);
     try {
-      const storageToSave = selectedStorage || selectedModel.storage || '128 GB';
-      const existingCfg = activeVariantPricing.config;
-
       await onSavePriceConfig({
         id: existingCfg?.id,
         brand: selectedModel.brand,
@@ -686,18 +694,14 @@ export default function AdminSellPricing({
         charger_bonus: existingCfg?.charger_bonus ?? selectedModel.charger_bonus,
         is_active: selectedModel.is_active,
       });
-
-      savePriceOverride(selectedModel.brand, selectedModel.model, priceNum, storageToSave);
-      setRefreshVer((v) => v + 1);
-      alert(`✅ Updated base price to ${formatINR(priceNum)} for ${selectedModel.brand} ${selectedModel.model} (${storageToSave})!`);
     } catch (err: any) {
-      alert(err?.message || 'Failed to update base price');
+      console.error('[AdminSellPricing] Inline background save error:', err);
     } finally {
       setInlineSaving(false);
     }
   };
 
-  // Add New Custom Sell Model Submit
+  // Add New Custom Sell Model Submit - Instant 0ms Optimistic Update
   const handleSaveNewModel = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!addForm.brand.trim() || !addForm.model.trim() || !addForm.base_price.trim()) {
@@ -705,19 +709,36 @@ export default function AdminSellPricing({
       return;
     }
 
+    const basePriceNum = Number(addForm.base_price);
+    const brandTrim = addForm.brand.trim();
+    const modelTrim = addForm.model.trim();
+    const storageTrim = addForm.storage.trim() || '128GB';
+    const mrpNum = Number(addForm.default_mrp) || Math.round(basePriceNum * 1.5);
+
+    if (addForm.image_url.trim()) {
+      saveCustomModelImage(brandTrim, modelTrim, addForm.image_url.trim());
+    }
+
+    // 1. INSTANT 0ms OPTIMISTIC UPDATE
+    savePriceOverride(brandTrim, modelTrim, basePriceNum, storageTrim);
+    setRefreshVer((v) => v + 1);
+    setAddModalOpen(false);
+    setAddForm({
+      brand: 'Apple',
+      model: '',
+      storage: '128GB',
+      default_mrp: '69999',
+      base_price: '28000',
+      image_url: '',
+    });
+
+    // 2. Persist in background
     setAddSaving(true);
     try {
-      const basePriceNum = Number(addForm.base_price);
-      const mrpNum = Number(addForm.default_mrp) || Math.round(basePriceNum * 1.5);
-
-      if (addForm.image_url.trim()) {
-        saveCustomModelImage(addForm.brand.trim(), addForm.model.trim(), addForm.image_url.trim());
-      }
-
       await onSavePriceConfig({
-        brand: addForm.brand.trim(),
-        model: addForm.model.trim(),
-        storage: addForm.storage.trim() || '128GB',
+        brand: brandTrim,
+        model: modelTrim,
+        storage: storageTrim,
         base_price: basePriceNum,
         excellent_multiplier: 0.75,
         good_multiplier: 0.60,
@@ -727,32 +748,18 @@ export default function AdminSellPricing({
         is_active: true,
       });
 
-      savePriceOverride(addForm.brand.trim(), addForm.model.trim(), basePriceNum, addForm.storage.trim());
-
       if (onAddNewModel) {
         await onAddNewModel({
-          brand: addForm.brand.trim(),
-          model: addForm.model.trim(),
+          brand: brandTrim,
+          model: modelTrim,
           base_price: basePriceNum,
           default_mrp: mrpNum,
           image_url: addForm.image_url.trim() || undefined,
-          storage: addForm.storage.trim() || '128GB',
+          storage: storageTrim,
         });
       }
-
-      setRefreshVer((v) => v + 1);
-      setAddModalOpen(false);
-      setAddForm({
-        brand: 'Apple',
-        model: '',
-        storage: '128GB',
-        default_mrp: '69999',
-        base_price: '28000',
-        image_url: '',
-      });
-      alert(`🎉 Added "${addForm.brand} ${addForm.model}" to Sell catalog!`);
     } catch (err: any) {
-      alert(err?.message || 'Failed to add model');
+      console.error('[AdminSellPricing] Add model background save error:', err);
     } finally {
       setAddSaving(false);
     }

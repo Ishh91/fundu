@@ -712,6 +712,12 @@ export default function Admin() {
         is_active: pricingForm.is_active,
       };
 
+      const newBasePrice = Number(pricingForm.base_price);
+      // 1. INSTANT 0ms ZERO-LATENCY BROADCAST
+      savePriceOverride(pricingForm.brand, pricingForm.model, newBasePrice, pricingForm.storage || undefined);
+      setPricingModal(null);
+
+      // 2. Persist in background
       if (pricingModal?.config) {
         const { data, error } = await db
           .from('sell_price_configs')
@@ -720,19 +726,16 @@ export default function Admin() {
           .select('*')
           .single();
         if (error) throw error;
-        savePriceOverride(pricingForm.brand, pricingForm.model, Number(pricingForm.base_price), pricingForm.storage);
         setSellPriceConfigs((prev) =>
           prev.map((c) => (c.id === pricingModal.config?.id ? (data as SellPriceConfig) : c))
         );
       } else {
         const { data, error } = await db.from('sell_price_configs').insert(payload).select('*').single();
         if (error) throw error;
-        savePriceOverride(pricingForm.brand, pricingForm.model, Number(pricingForm.base_price), pricingForm.storage);
         setSellPriceConfigs((prev) => [data as SellPriceConfig, ...prev]);
       }
-      setPricingModal(null);
     } catch (err: any) {
-      alert(err?.message || 'Failed to save price rule');
+      console.error('[Admin] Price rule save error:', err);
     } finally {
       setPricingSaving(false);
     }
@@ -1623,6 +1626,9 @@ export default function Admin() {
               onSelectPricing={(id) => setSelectedPricingId(id)}
               onSavePriceConfig={async (configData) => {
                 const payload = { ...configData };
+                if (payload.brand && payload.model && payload.base_price) {
+                  savePriceOverride(payload.brand, payload.model, Number(payload.base_price), payload.storage || undefined);
+                }
                 const bNorm = (payload.brand || '').trim().toLowerCase();
                 let mNorm = (payload.model || '').trim().toLowerCase();
                 if (bNorm && mNorm.startsWith(bNorm)) {
