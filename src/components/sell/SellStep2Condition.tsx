@@ -59,7 +59,7 @@ export default function SellStep2Condition({
                   (form.model?.toLowerCase().includes('iphone'));
 
   const releaseYear = getModelReleaseYear(form.brand, form.model);
-  const showsAging = releaseYear >= 2024;
+  const showsAging = true;
   const hasStylus = deviceIncludesStylus(form.brand, form.model);
 
   let nextSection = 3;

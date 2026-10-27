@@ -570,15 +570,7 @@ export default function SellPhone() {
         changed = true;
       }
 
-      // 3. For devices launched before 2024 (< 2024), default aging to above 9 months and out-of-warranty (25% deduction)
-      const releaseYear = getModelReleaseYear(cur.brand, cur.model);
-      if (releaseYear < 2024) {
-        if (cur.agePeriod !== 'above_9_months' || cur.underWarranty !== false) {
-          nextAgePeriod = 'above_9_months';
-          nextUnderWarranty = false;
-          changed = true;
-        }
-      }
+
 
       // 4. For non-Apple devices, Android has no battery health metric
       const isApple = String(cur.brand || '').toLowerCase() === 'apple' || String(cur.model || '').toLowerCase().includes('iphone');

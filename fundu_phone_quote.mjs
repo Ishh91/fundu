@@ -2410,14 +2410,8 @@ export function getModelReleaseYear(brand = '', model = '') {
  */
 export function calculatePhoneAgingFactor(brand = '', model = '', underWarranty = false, agePeriod = '') {
   const normAge = String(agePeriod || '').toLowerCase().trim();
-  const releaseYear = getModelReleaseYear(brand, model);
 
-  // If model released before 2024, aging is NOT applicable (already built into baseline resale price):
-  if (releaseYear > 0 && releaseYear < 2024) {
-    return 1.00;
-  }
-
-  // Universal Aging brackets for ALL brands & models (2024+ launches):
+  // Universal Aging brackets for ALL brands & models (Apple & Android):
   // 1. 0 to 3 months: 0% deduction (100% full base price)
   if (normAge === '0_to_3_months' || normAge === 'below_3_months') {
     return 1.00;
