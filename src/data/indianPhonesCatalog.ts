@@ -13,7 +13,7 @@ export const ALL_INDIAN_PHONES_CATALOG: MasterPhone[] = [
       "64GB"
     ],
     "default_mrp": 20900,
-    "base_resale_value": 2790,
+    "base_resale_value": 28000,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-j7-pro.jpg",
     "popular_tag": "Samsung Pay Ready Super AMOLED",
     "processor": "Exynos 7870 Octa-core",
@@ -1491,7 +1491,7 @@ export const ALL_INDIAN_PHONES_CATALOG: MasterPhone[] = [
       "512GB"
     ],
     "default_mrp": 69999,
-    "base_resale_value": 36850,
+    "base_resale_value": 52000,
     "image_url": "https://images.unsplash.com/photo-1565849904461-04a58ad377e0?w=800&auto=format&fit=crop&q=80",
     "popular_tag": "Snapdragon 8 Elite Flagship",
     "processor": "Snapdragon 8 Elite (3nm)",
@@ -1515,7 +1515,7 @@ export const ALL_INDIAN_PHONES_CATALOG: MasterPhone[] = [
       "512GB"
     ],
     "default_mrp": 64999,
-    "base_resale_value": 34999,
+    "base_resale_value": 38000,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/oneplus-13.jpg",
     "popular_tag": "Flagship Killer 2025",
     "processor": "Snapdragon 8 Gen 3 / Elite",
@@ -1539,7 +1539,7 @@ export const ALL_INDIAN_PHONES_CATALOG: MasterPhone[] = [
       "512GB"
     ],
     "default_mrp": 64999,
-    "base_resale_value": 27400,
+    "base_resale_value": 44000,
     "image_url": "https://images.unsplash.com/photo-1565849904461-04a58ad377e0?w=800&auto=format&fit=crop&q=80",
     "popular_tag": "Hasselblad 4th Gen Flagship",
     "processor": "Snapdragon 8 Gen 3 (4nm)",
@@ -1563,7 +1563,7 @@ export const ALL_INDIAN_PHONES_CATALOG: MasterPhone[] = [
       "256GB"
     ],
     "default_mrp": 39999,
-    "base_resale_value": 24350,
+    "base_resale_value": 27000,
     "image_url": "https://images.unsplash.com/photo-1565849904461-04a58ad377e0?w=800&auto=format&fit=crop&q=80",
     "popular_tag": "Flagship Killer 2024",
     "processor": "Snapdragon 8 Gen 2 (4nm)",
@@ -1587,7 +1587,7 @@ export const ALL_INDIAN_PHONES_CATALOG: MasterPhone[] = [
       "256GB"
     ],
     "default_mrp": 56999,
-    "base_resale_value": 18850,
+    "base_resale_value": 30000,
     "image_url": "https://images.unsplash.com/photo-1565849904461-04a58ad377e0?w=800&auto=format&fit=crop&q=80",
     "popular_tag": "Snapdragon 8 Gen 2 Power",
     "processor": "Snapdragon 8 Gen 2",
@@ -1611,7 +1611,7 @@ export const ALL_INDIAN_PHONES_CATALOG: MasterPhone[] = [
       "256GB"
     ],
     "default_mrp": 39999,
-    "base_resale_value": 20500,
+    "base_resale_value": 22000,
     "image_url": "https://images.unsplash.com/photo-1565849904461-04a58ad377e0?w=800&auto=format&fit=crop&q=80",
     "popular_tag": "Super Value Flagship Killer",
     "processor": "Snapdragon 8+ Gen 1 (4nm)",
@@ -1635,7 +1635,7 @@ export const ALL_INDIAN_PHONES_CATALOG: MasterPhone[] = [
       "256GB"
     ],
     "default_mrp": 29999,
-    "base_resale_value": 18400,
+    "base_resale_value": 19000,
     "image_url": "https://images.unsplash.com/photo-1565849904461-04a58ad377e0?w=800&auto=format&fit=crop&q=80",
     "popular_tag": "All-Metal Unibody 5G",
     "processor": "Snapdragon 7+ Gen 3 (4nm)",
@@ -1658,7 +1658,7 @@ export const ALL_INDIAN_PHONES_CATALOG: MasterPhone[] = [
       "256GB"
     ],
     "default_mrp": 24999,
-    "base_resale_value": 14900,
+    "base_resale_value": 16000,
     "image_url": "https://images.unsplash.com/photo-1565849904461-04a58ad377e0?w=800&auto=format&fit=crop&q=80",
     "popular_tag": "100W Charging in Mid-Range",
     "processor": "Snapdragon 7 Gen 3 (4nm)",
@@ -1755,7 +1755,7 @@ export const ALL_INDIAN_PHONES_CATALOG: MasterPhone[] = [
       "128GB"
     ],
     "default_mrp": 18999,
-    "base_resale_value": 10040,
+    "base_resale_value": 9000,
     "image_url": "https://api.mobileapi.dev/devices/815/thumb.png",
     "popular_tag": "A Little More Than You Expect",
     "processor": "Snapdragon 695 5G",
@@ -1779,7 +1779,7 @@ export const ALL_INDIAN_PHONES_CATALOG: MasterPhone[] = [
       "256GB"
     ],
     "default_mrp": 64999,
-    "base_resale_value": 14500,
+    "base_resale_value": 18000,
     "image_url": "https://images.unsplash.com/photo-1565849904461-04a58ad377e0?w=800&auto=format&fit=crop&q=80",
     "popular_tag": "Hasselblad Classic Pro",
     "processor": "Snapdragon 888 5G",
@@ -1802,7 +1802,7 @@ export const ALL_INDIAN_PHONES_CATALOG: MasterPhone[] = [
       "256GB"
     ],
     "default_mrp": 37999,
-    "base_resale_value": 8550,
+    "base_resale_value": 7800,
     "image_url": "https://images.unsplash.com/photo-1565849904461-04a58ad377e0?w=800&auto=format&fit=crop&q=80",
     "popular_tag": "90Hz Fluid Screen Legend",
     "processor": "Snapdragon 855+ (7nm)",
@@ -1826,7 +1826,7 @@ export const ALL_INDIAN_PHONES_CATALOG: MasterPhone[] = [
       "256GB"
     ],
     "default_mrp": 37999,
-    "base_resale_value": 18300,
+    "base_resale_value": 5800,
     "image_url": "https://images.unsplash.com/photo-1565849904461-04a58ad377e0?w=800&auto=format&fit=crop&q=80",
     "popular_tag": "First In-Display Fingerprint",
     "processor": "Snapdragon 845",
@@ -1848,7 +1848,7 @@ export const ALL_INDIAN_PHONES_CATALOG: MasterPhone[] = [
       "256GB"
     ],
     "default_mrp": 50999,
-    "base_resale_value": 12500,
+    "base_resale_value": 6500,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/oneplus-6t-mclaren.jpg",
     "popular_tag": "Salute to Speed • 10GB RAM",
     "processor": "Snapdragon 845",
@@ -1870,7 +1870,7 @@ export const ALL_INDIAN_PHONES_CATALOG: MasterPhone[] = [
       "256GB"
     ],
     "default_mrp": 58999,
-    "base_resale_value": 14500,
+    "base_resale_value": 10000,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/oneplus-7t-pro.jpg",
     "popular_tag": "McLaren Papaya Orange Accent",
     "processor": "Snapdragon 855+",
@@ -2152,7 +2152,7 @@ export const ALL_INDIAN_PHONES_CATALOG: MasterPhone[] = [
       "512GB"
     ],
     "default_mrp": 30999,
-    "base_resale_value": 16450,
+    "base_resale_value": 21000,
     "image_url": "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=800&auto=format&fit=crop&q=80",
     "popular_tag": "First SD 7+ Gen 3 + 6000nits Screen",
     "processor": "Snapdragon 7+ Gen 3 (4nm)",
@@ -2176,7 +2176,7 @@ export const ALL_INDIAN_PHONES_CATALOG: MasterPhone[] = [
       "256GB"
     ],
     "default_mrp": 15999,
-    "base_resale_value": 9900,
+    "base_resale_value": 11500,
     "image_url": "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=800&auto=format&fit=crop&q=80",
     "popular_tag": "Phoenix Design + 120Hz AMOLED",
     "processor": "MediaTek Dimensity 7050 (6nm)",
@@ -2200,7 +2200,7 @@ export const ALL_INDIAN_PHONES_CATALOG: MasterPhone[] = [
       "512GB"
     ],
     "default_mrp": 32999,
-    "base_resale_value": 16890,
+    "base_resale_value": 22000,
     "image_url": "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=800&auto=format&fit=crop&q=80",
     "popular_tag": "Monet Art + Dual Sony LYT Sensors",
     "processor": "Snapdragon 7s Gen 2 (4nm)",
@@ -2224,7 +2224,7 @@ export const ALL_INDIAN_PHONES_CATALOG: MasterPhone[] = [
       "256GB"
     ],
     "default_mrp": 29999,
-    "base_resale_value": 14850,
+    "base_resale_value": 18000,
     "image_url": "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=800&auto=format&fit=crop&q=80",
     "popular_tag": "Periscope Portrait Master",
     "processor": "Snapdragon 7s Gen 2 (4nm)",
@@ -2247,7 +2247,7 @@ export const ALL_INDIAN_PHONES_CATALOG: MasterPhone[] = [
       "256GB"
     ],
     "default_mrp": 27999,
-    "base_resale_value": 12900,
+    "base_resale_value": 15000,
     "image_url": "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=800&auto=format&fit=crop&q=80",
     "popular_tag": "200MP SuperZoom + Vegan Leather",
     "processor": "Dimensity 7050 5G (6nm)",
@@ -2270,7 +2270,7 @@ export const ALL_INDIAN_PHONES_CATALOG: MasterPhone[] = [
       "256GB"
     ],
     "default_mrp": 19999,
-    "base_resale_value": 12400,
+    "base_resale_value": 14000,
     "image_url": "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=800&auto=format&fit=crop&q=80",
     "popular_tag": "Air Gestures + Sony IMX890",
     "processor": "MediaTek Dimensity 7050 5G",
@@ -2292,7 +2292,7 @@ export const ALL_INDIAN_PHONES_CATALOG: MasterPhone[] = [
       "512GB"
     ],
     "default_mrp": 94999,
-    "base_resale_value": 49550,
+    "base_resale_value": 15000,
     "image_url": "https://images.unsplash.com/photo-1546054454-aa26e2b734c7?w=800&auto=format&fit=crop&q=80",
     "popular_tag": "ZEISS 200MP APO Telephoto King",
     "processor": "MediaTek Dimensity 9400 (3nm)",
@@ -2362,7 +2362,7 @@ export const ALL_INDIAN_PHONES_CATALOG: MasterPhone[] = [
       "512GB"
     ],
     "default_mrp": 89999,
-    "base_resale_value": 32750,
+    "base_resale_value": 36000,
     "image_url": "https://images.unsplash.com/photo-1546054454-aa26e2b734c7?w=800&auto=format&fit=crop&q=80",
     "popular_tag": "ZEISS APO 1-Inch Camera King",
     "processor": "MediaTek Dimensity 9300 (4nm)",
@@ -2386,7 +2386,7 @@ export const ALL_INDIAN_PHONES_CATALOG: MasterPhone[] = [
       "512GB"
     ],
     "default_mrp": 63999,
-    "base_resale_value": 27300,
+    "base_resale_value": 30000,
     "image_url": "https://images.unsplash.com/photo-1546054454-aa26e2b734c7?w=800&auto=format&fit=crop&q=80",
     "popular_tag": "ZEISS Telephoto Sunshot",
     "processor": "MediaTek Dimensity 9300 (4nm)",
@@ -2729,7 +2729,7 @@ export const ALL_INDIAN_PHONES_CATALOG: MasterPhone[] = [
       "512GB"
     ],
     "default_mrp": 39999,
-    "base_resale_value": 20910,
+    "base_resale_value": 22000,
     "image_url": "https://images.unsplash.com/photo-1546054454-aa26e2b734c7?w=800&auto=format&fit=crop&q=80",
     "popular_tag": "Slim 5500mAh + ZEISS Camera",
     "processor": "Snapdragon 7 Gen 3 (4nm)",
@@ -2753,7 +2753,7 @@ export const ALL_INDIAN_PHONES_CATALOG: MasterPhone[] = [
       "512GB"
     ],
     "default_mrp": 49999,
-    "base_resale_value": 27460,
+    "base_resale_value": 31000,
     "image_url": "https://images.unsplash.com/photo-1546054454-aa26e2b734c7?w=800&auto=format&fit=crop&q=80",
     "popular_tag": "ZEISS All-Round Portrait + 5500mAh",
     "processor": "MediaTek Dimensity 9200+ (4nm)",
@@ -2800,7 +2800,7 @@ export const ALL_INDIAN_PHONES_CATALOG: MasterPhone[] = [
       "512GB"
     ],
     "default_mrp": 41999,
-    "base_resale_value": 22420,
+    "base_resale_value": 24000,
     "image_url": "https://images.unsplash.com/photo-1546054454-aa26e2b734c7?w=800&auto=format&fit=crop&q=80",
     "popular_tag": "Studio Portrait + Aura Light",
     "processor": "MediaTek Dimensity 8200 (4nm)",
@@ -2824,7 +2824,7 @@ export const ALL_INDIAN_PHONES_CATALOG: MasterPhone[] = [
       "256GB"
     ],
     "default_mrp": 33999,
-    "base_resale_value": 19530,
+    "base_resale_value": 19500,
     "image_url": "https://images.unsplash.com/photo-1546054454-aa26e2b734c7?w=800&auto=format&fit=crop&q=80",
     "popular_tag": "Smart Color Temperature Aura Light",
     "processor": "Snapdragon 7 Gen 3 (4nm)",
@@ -2870,7 +2870,7 @@ export const ALL_INDIAN_PHONES_CATALOG: MasterPhone[] = [
       "256GB"
     ],
     "default_mrp": 39999,
-    "base_resale_value": 19860,
+    "base_resale_value": 19500,
     "image_url": "https://images.unsplash.com/photo-1546054454-aa26e2b734c7?w=800&auto=format&fit=crop&q=80",
     "popular_tag": "Smart Aura Light Portrait",
     "processor": "MediaTek Dimensity 8200 (4nm)",
@@ -3129,7 +3129,7 @@ export const ALL_INDIAN_PHONES_CATALOG: MasterPhone[] = [
       "256GB"
     ],
     "default_mrp": 27990,
-    "base_resale_value": 15560,
+    "base_resale_value": 6200,
     "image_url": "https://images.unsplash.com/photo-1546054454-aa26e2b734c7?w=800&auto=format&fit=crop&q=80",
     "popular_tag": "Dual Punch-Hole Super Night Selfie",
     "processor": "Snapdragon 712 (10nm)",
@@ -3467,7 +3467,7 @@ export const ALL_INDIAN_PHONES_CATALOG: MasterPhone[] = [
       "128GB"
     ],
     "default_mrp": 13999,
-    "base_resale_value": 8260,
+    "base_resale_value": 11000,
     "image_url": "https://images.unsplash.com/photo-1546054454-aa26e2b734c7?w=800&auto=format&fit=crop&q=80",
     "popular_tag": "Budget 5G Powerhouse",
     "processor": "MediaTek Dimensity 6020 (7nm)",
@@ -4253,7 +4253,7 @@ export const ALL_INDIAN_PHONES_CATALOG: MasterPhone[] = [
       "512GB"
     ],
     "default_mrp": 36999,
-    "base_resale_value": 23950,
+    "base_resale_value": 26000,
     "image_url": "https://images.unsplash.com/photo-1598327105666-5b89351aff97?w=800&auto=format&fit=crop&q=80",
     "popular_tag": "GenAI Phone + Quad-Curved Screen",
     "processor": "MediaTek Dimensity 7300 Energy (4nm)",
@@ -4276,7 +4276,7 @@ export const ALL_INDIAN_PHONES_CATALOG: MasterPhone[] = [
       "256GB"
     ],
     "default_mrp": 27999,
-    "base_resale_value": 13630,
+    "base_resale_value": 16500,
     "image_url": "https://images.unsplash.com/photo-1598327105666-5b89351aff97?w=800&auto=format&fit=crop&q=80",
     "popular_tag": "India First IP69 Waterproof Rugged",
     "processor": "MediaTek Dimensity 7050 (6nm)",
@@ -4300,7 +4300,7 @@ export const ALL_INDIAN_PHONES_CATALOG: MasterPhone[] = [
       "512GB"
     ],
     "default_mrp": 124999,
-    "base_resale_value": 68500,
+    "base_resale_value": 68000,
     "image_url": "https://images.unsplash.com/photo-1598327105666-5b89351aff97?w=800&auto=format&fit=crop&q=80",
     "popular_tag": "Gemini Pro AI Flagship",
     "processor": "Google Tensor G4 (4nm) + Titan M2",
@@ -4952,7 +4952,7 @@ export const ALL_INDIAN_PHONES_CATALOG: MasterPhone[] = [
       "256GB"
     ],
     "default_mrp": 38999,
-    "base_resale_value": 13450,
+    "base_resale_value": 14000,
     "image_url": "https://api.mobileapi.dev/devices/16344/thumb.png",
     "popular_tag": "150W SUPERVOOC Endurance",
     "processor": "MediaTek Dimensity 8100-MAX",
@@ -4976,7 +4976,7 @@ export const ALL_INDIAN_PHONES_CATALOG: MasterPhone[] = [
       "256GB"
     ],
     "default_mrp": 41999,
-    "base_resale_value": 10450,
+    "base_resale_value": 9800,
     "image_url": "https://api.mobileapi.dev/devices/16348/thumb.png",
     "popular_tag": "Verizon Ultra Wideband mmWave",
     "processor": "Snapdragon 865 5G",
@@ -5045,7 +5045,7 @@ export const ALL_INDIAN_PHONES_CATALOG: MasterPhone[] = [
       "256GB"
     ],
     "default_mrp": 20999,
-    "base_resale_value": 11600,
+    "base_resale_value": 14000,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/realme-12-plus-5g.jpg",
     "popular_tag": "Sony LYT-600 OIS Master Camera",
     "processor": "Dimensity 7050 5G",

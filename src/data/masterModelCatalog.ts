@@ -1823,7 +1823,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "OnePlus 13 & 12 Series",
     "model": "OnePlus 13",
     "storage": "256 GB",
-    "price": 36900,
+    "price": 52000,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/oneplus-13.jpg"
   },
   {
@@ -1831,7 +1831,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "OnePlus 13 & 12 Series",
     "model": "OnePlus 13s",
     "storage": "256 GB",
-    "price": 34500,
+    "price": 38000,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/oneplus-13.jpg"
   },
   {
@@ -1839,7 +1839,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "OnePlus 13 & 12 Series",
     "model": "OnePlus 13R",
     "storage": "128 GB",
-    "price": 32950,
+    "price": 32000,
     "image": "https://api.mobileapi.dev/devices/366/thumb.png"
   },
   {
@@ -1847,7 +1847,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "OnePlus 13 & 12 Series",
     "model": "OnePlus 12",
     "storage": "256 GB",
-    "price": 27350,
+    "price": 44000,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/oneplus-12.jpg"
   },
   {
@@ -1855,7 +1855,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "OnePlus 13 & 12 Series",
     "model": "OnePlus 12R",
     "storage": "128 GB",
-    "price": 24350,
+    "price": 27000,
     "image": "https://api.mobileapi.dev/devices/364/thumb.png"
   },
   {
@@ -1863,7 +1863,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "OnePlus 11 Series",
     "model": "OnePlus 11",
     "storage": "128 GB",
-    "price": 18950,
+    "price": 30000,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/oneplus-11.jpg"
   },
   {
@@ -1871,7 +1871,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "OnePlus 11 Series",
     "model": "OnePlus 11R",
     "storage": "128 GB",
-    "price": 20500,
+    "price": 22000,
     "image": "https://api.mobileapi.dev/devices/362/thumb.png"
   },
   {
@@ -1879,7 +1879,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "OnePlus 10 Series",
     "model": "OnePlus 10 Pro",
     "storage": "128 GB",
-    "price": 18350,
+    "price": 24000,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/oneplus-10-pro.jpg"
   },
   {
@@ -1887,7 +1887,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "OnePlus 10 Series",
     "model": "OnePlus 10T",
     "storage": "128 GB",
-    "price": 16400,
+    "price": 18000,
     "image": "https://api.mobileapi.dev/devices/16342/thumb.png"
   },
   {
@@ -1895,7 +1895,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "OnePlus 10 Series",
     "model": "OnePlus 10R",
     "storage": "128 GB",
-    "price": 13450,
+    "price": 14000,
     "image": "https://api.mobileapi.dev/devices/16344/thumb.png"
   },
   {
@@ -1903,7 +1903,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "OnePlus 9 Series",
     "model": "OnePlus 9 Pro",
     "storage": "128 GB",
-    "price": 14500,
+    "price": 18000,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/oneplus-9-pro-.jpg"
   },
   {
@@ -1911,7 +1911,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "OnePlus 9 Series",
     "model": "OnePlus 9RT",
     "storage": "128 GB",
-    "price": 12450,
+    "price": 14000,
     "image": "https://api.mobileapi.dev/devices/369/thumb.png"
   },
   {
@@ -1919,7 +1919,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "OnePlus 9 Series",
     "model": "OnePlus 9",
     "storage": "128 GB",
-    "price": 14450,
+    "price": 15000,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/oneplus-9-.jpg"
   },
   {
@@ -1927,7 +1927,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "OnePlus 9 Series",
     "model": "OnePlus 9R",
     "storage": "128 GB",
-    "price": 12450,
+    "price": 13000,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/oneplus-9r.jpg"
   },
   {
@@ -1935,7 +1935,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "OnePlus 8 & 7 Series",
     "model": "OnePlus 8 Pro",
     "storage": "128 GB",
-    "price": 10450,
+    "price": 12500,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/oneplus-8-pro.jpg"
   },
   {
@@ -1943,7 +1943,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "OnePlus 8 & 7 Series",
     "model": "OnePlus 8T",
     "storage": "128 GB",
-    "price": 9300,
+    "price": 10500,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/oneplus-8t.jpg"
   },
   {
@@ -1951,7 +1951,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "OnePlus 8 & 7 Series",
     "model": "OnePlus 8",
     "storage": "128 GB",
-    "price": 10450,
+    "price": 9800,
     "image": "https://api.mobileapi.dev/devices/16348/thumb.png"
   },
   {
@@ -1959,7 +1959,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "OnePlus 8 & 7 Series",
     "model": "OnePlus 7T Pro McLaren Edition",
     "storage": "256 GB",
-    "price": 13500,
+    "price": 10000,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/oneplus-7t-pro-mclaren.jpg"
   },
   {
@@ -1967,7 +1967,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "OnePlus 8 & 7 Series",
     "model": "OnePlus 7T Pro",
     "storage": "256 GB",
-    "price": 9980,
+    "price": 9200,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/oneplus-7t-pro.jpg"
   },
   {
@@ -1975,7 +1975,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "OnePlus 8 & 7 Series",
     "model": "OnePlus 7T",
     "storage": "128 GB",
-    "price": 8400,
+    "price": 7800,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/oneplus-7t-.jpg"
   },
   {
@@ -1983,7 +1983,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "OnePlus 8 & 7 Series",
     "model": "OnePlus 7 Pro",
     "storage": "128 GB",
-    "price": 16350,
+    "price": 8800,
     "image": "https://api.mobileapi.dev/devices/16351/thumb.png"
   },
   {
@@ -1991,7 +1991,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "OnePlus 8 & 7 Series",
     "model": "OnePlus 7",
     "storage": "128 GB",
-    "price": 16500,
+    "price": 6800,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/oneplus-7-.jpg"
   },
   {
@@ -1999,7 +1999,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "OnePlus Nord Series",
     "model": "OnePlus Nord 4",
     "storage": "128 GB",
-    "price": 18400,
+    "price": 19000,
     "image": "https://api.mobileapi.dev/devices/809/thumb.png"
   },
   {
@@ -2007,7 +2007,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "OnePlus Nord Series",
     "model": "OnePlus Nord 3",
     "storage": "128 GB",
-    "price": 13950,
+    "price": 15500,
     "image": "https://api.mobileapi.dev/devices/373/thumb.png"
   },
   {
@@ -2015,7 +2015,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "OnePlus Nord Series",
     "model": "OnePlus Nord 2T",
     "storage": "128 GB",
-    "price": 11500,
+    "price": 12500,
     "image": "https://api.mobileapi.dev/devices/811/thumb.png"
   },
   {
@@ -2023,7 +2023,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "OnePlus Nord Series",
     "model": "OnePlus Nord 2",
     "storage": "128 GB",
-    "price": 11400,
+    "price": 11000,
     "image": "https://api.mobileapi.dev/devices/377/thumb.png"
   },
   {
@@ -2031,7 +2031,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "OnePlus Nord Series",
     "model": "OnePlus Nord CE4",
     "storage": "128 GB",
-    "price": 16680,
+    "price": 16000,
     "image": "https://api.mobileapi.dev/devices/385/thumb.png"
   },
   {
@@ -2039,7 +2039,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "OnePlus Nord Series",
     "model": "OnePlus Nord CE4 Lite",
     "storage": "128 GB",
-    "price": 15400,
+    "price": 12500,
     "image": "https://api.mobileapi.dev/devices/16320/thumb.png"
   },
   {
@@ -2047,7 +2047,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "OnePlus Nord Series",
     "model": "OnePlus Nord CE 3",
     "storage": "128 GB",
-    "price": 14750,
+    "price": 14000,
     "image": "https://api.mobileapi.dev/devices/374/thumb.png"
   },
   {
@@ -2055,7 +2055,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "OnePlus Nord Series",
     "model": "OnePlus Nord CE 3 Lite",
     "storage": "128 GB",
-    "price": 10100,
+    "price": 10500,
     "image": "https://api.mobileapi.dev/devices/16320/thumb.png"
   },
   {
@@ -2063,7 +2063,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "OnePlus Nord Series",
     "model": "OnePlus Nord CE 2",
     "storage": "128 GB",
-    "price": 10650,
+    "price": 10000,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/oneplus-nord-ce-2-5g.jpg"
   },
   {
@@ -2071,7 +2071,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "OnePlus Nord Series",
     "model": "OnePlus Nord CE 2 Lite",
     "storage": "128 GB",
-    "price": 9940,
+    "price": 9000,
     "image": "https://api.mobileapi.dev/devices/815/thumb.png"
   },
   {
@@ -2079,7 +2079,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "OnePlus Nord Series",
     "model": "OnePlus Nord CE",
     "storage": "128 GB",
-    "price": 14950,
+    "price": 8000,
     "image": "https://api.mobileapi.dev/devices/810/thumb.png"
   },
   {
@@ -2087,7 +2087,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "OnePlus Nord Series",
     "model": "OnePlus Nord",
     "storage": "128 GB",
-    "price": 18500,
+    "price": 7500,
     "image": "https://api.mobileapi.dev/devices/811/thumb.png"
   },
   {
@@ -2095,7 +2095,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "OnePlus Nord Series",
     "model": "OnePlus Nord N30 5G",
     "storage": "128 GB",
-    "price": 11000,
+    "price": 8500,
     "image": "https://api.mobileapi.dev/devices/387/thumb.png"
   },
   {
@@ -2103,7 +2103,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "OnePlus Open & Foldable Series",
     "model": "OnePlus Open",
     "storage": "512 GB",
-    "price": 68900,
+    "price": 68000,
     "image": "https://api.mobileapi.dev/devices/391/thumb.png"
   },
   {
@@ -2111,7 +2111,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "OnePlus 6 & Classic Series",
     "model": "OnePlus 6T McLaren",
     "storage": "256 GB",
-    "price": 12500,
+    "price": 6500,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/oneplus-6t-mclaren.jpg"
   },
   {
@@ -2119,7 +2119,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "OnePlus 6 & Classic Series",
     "model": "OnePlus 6T",
     "storage": "128 GB",
-    "price": 18400,
+    "price": 5800,
     "image": "https://api.mobileapi.dev/devices/16352/thumb.png"
   },
   {
@@ -2127,7 +2127,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "OnePlus 6 & Classic Series",
     "model": "OnePlus 6",
     "storage": "64 GB",
-    "price": 77300,
+    "price": 4800,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/oneplus-6-.jpg"
   },
   {
@@ -2135,7 +2135,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "OnePlus 6 & Classic Series",
     "model": "OnePlus 5T",
     "storage": "64 GB",
-    "price": 4510,
+    "price": 3800,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/oneplus-5t.jpg"
   },
   {
@@ -2143,7 +2143,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "OnePlus 6 & Classic Series",
     "model": "OnePlus 5",
     "storage": "64 GB",
-    "price": 62350,
+    "price": 3200,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/oneplus-5.jpg"
   },
   {
@@ -2151,7 +2151,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "OnePlus 6 & Classic Series",
     "model": "OnePlus 3T",
     "storage": "64 GB",
-    "price": 3620,
+    "price": 2600,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/oneplus-3t-.jpg"
   },
   {
@@ -2159,23 +2159,15 @@ export const MASTER_MODEL_CATALOG = [
     "series": "OnePlus 6 & Classic Series",
     "model": "OnePlus 3",
     "storage": "64 GB",
-    "price": 36900,
+    "price": 2200,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/oneplus-3.jpg"
   },
-  {
-    "brand": "Oppo",
-    "series": "Oppo Series",
-    "model": "OPPO A15s",
-    "storage": "64 GB",
-    "price": 6880,
-    "image": "https://fdn2.gsmarena.com/vv/bigpic/oppo-a15s.jpg"
-  },
-  {
+    {
     "brand": "Oppo",
     "series": "Oppo Series",
     "model": "OPPO A16",
     "storage": "64 GB",
-    "price": 7190,
+    "price": 4500,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/oppo-a16.jpg"
   },
   {
@@ -2186,20 +2178,12 @@ export const MASTER_MODEL_CATALOG = [
     "price": 7130,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/oppo-a17.jpg"
   },
-  {
-    "brand": "Oppo",
-    "series": "Oppo A & K Series",
-    "model": "Oppo A17k",
-    "storage": "64 GB",
-    "price": 7100,
-    "image": "https://api.mobileapi.dev/devices/1526/thumb.png"
-  },
-  {
+    {
     "brand": "Oppo",
     "series": "Oppo A & K Series",
     "model": "Oppo A18",
     "storage": "64 GB",
-    "price": 7540,
+    "price": 7500,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/oppo-a18.jpg"
   },
   {
@@ -2231,7 +2215,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Oppo A & K Series",
     "model": "Oppo A38",
     "storage": "128 GB",
-    "price": 7740,
+    "price": 8000,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/oppo-a38.jpg"
   },
   {
@@ -2279,7 +2263,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Oppo Series",
     "model": "OPPO A53s 5G",
     "storage": "128 GB",
-    "price": 10210,
+    "price": 7500,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/oppo-a53s-5g.jpg"
   },
   {
@@ -2287,7 +2271,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Oppo Series",
     "model": "OPPO A54",
     "storage": "64 GB",
-    "price": 7580,
+    "price": 6500,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/oppo-a54.jpg"
   },
   {
@@ -2295,7 +2279,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Oppo Series",
     "model": "OPPO A55",
     "storage": "64 GB",
-    "price": 8150,
+    "price": 6800,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/oppo-a55.jpg"
   },
   {
@@ -2311,7 +2295,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Oppo A & K Series",
     "model": "Oppo A58 5G",
     "storage": "128 GB",
-    "price": 8720,
+    "price": 9800,
     "image": "https://api.mobileapi.dev/devices/428/thumb.png"
   },
   {
@@ -2319,7 +2303,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Oppo A & K Series",
     "model": "Oppo A59 5G",
     "storage": "128 GB",
-    "price": 9940,
+    "price": 10500,
     "image": "https://api.mobileapi.dev/devices/14324/thumb.png"
   },
   {
@@ -2370,20 +2354,12 @@ export const MASTER_MODEL_CATALOG = [
     "price": 11090,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/oppo-a6x-5g.jpg"
   },
-  {
-    "brand": "Oppo",
-    "series": "Oppo Series",
-    "model": "OPPO A7",
-    "storage": "64 GB",
-    "price": 6180,
-    "image": "https://fdn2.gsmarena.com/vv/bigpic/oppo-a7.jpg"
-  },
-  {
+    {
     "brand": "Oppo",
     "series": "Oppo Series",
     "model": "OPPO A74 5G",
     "storage": "128 GB",
-    "price": 9810,
+    "price": 8500,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/oppo-a74-5g.jpg"
   },
   {
@@ -2423,7 +2399,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Oppo A & K Series",
     "model": "Oppo A78 5G",
     "storage": "128 GB",
-    "price": 10570,
+    "price": 11000,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/oppo-a78-5g.jpg"
   },
   {
@@ -2431,7 +2407,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Oppo A & K Series",
     "model": "Oppo A79 5G",
     "storage": "128 GB",
-    "price": 10670,
+    "price": 12000,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/oppo-a79.jpg"
   },
   {
@@ -2458,20 +2434,12 @@ export const MASTER_MODEL_CATALOG = [
     "price": 8690,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/oppo-a96.jpg"
   },
-  {
-    "brand": "Oppo",
-    "series": "Oppo Series",
-    "model": "OPPO F1 plus",
-    "storage": "64 GB",
-    "price": 5080,
-    "image": "https://fdn2.gsmarena.com/vv/bigpic/oppo-f1-plus.jpg"
-  },
-  {
+    {
     "brand": "Oppo",
     "series": "Oppo Series",
     "model": "OPPO F11",
     "storage": "128 GB",
-    "price": 7400,
+    "price": 4800,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/oppo-f11.jpg"
   },
   {
@@ -2479,7 +2447,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Oppo Series",
     "model": "OPPO F11 Pro",
     "storage": "64 GB",
-    "price": 7710,
+    "price": 5500,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/oppo-f11-pro.jpg"
   },
   {
@@ -2487,7 +2455,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Oppo Series",
     "model": "OPPO F11 Pro Avenger Edition",
     "storage": "128 GB",
-    "price": 6210,
+    "price": 6200,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/oppo-f11-pro-avenger-edition.jpg"
   },
   {
@@ -2495,7 +2463,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Oppo Series",
     "model": "OPPO F15",
     "storage": "128 GB",
-    "price": 8150,
+    "price": 6500,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/oppo-f15.jpg"
   },
   {
@@ -2503,7 +2471,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Oppo Series",
     "model": "OPPO F17",
     "storage": "128 GB",
-    "price": 8430,
+    "price": 7000,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/oppo-f17.jpg"
   },
   {
@@ -2511,7 +2479,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Oppo F Series",
     "model": "Oppo F17 Pro",
     "storage": "128 GB",
-    "price": 8070,
+    "price": 7800,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/oppo-f17-pro.jpg"
   },
   {
@@ -2519,7 +2487,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Oppo Series",
     "model": "OPPO F19",
     "storage": "128 GB",
-    "price": 8590,
+    "price": 8000,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/oppo-f19.jpg"
   },
   {
@@ -2527,7 +2495,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Oppo Series",
     "model": "OPPO F19 Pro",
     "storage": "128 GB",
-    "price": 9200,
+    "price": 8800,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/oppo-f19-pro.jpg"
   },
   {
@@ -2535,7 +2503,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Oppo F Series",
     "model": "Oppo F19 Pro+ 5G",
     "storage": "128 GB",
-    "price": 9560,
+    "price": 9500,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/oppo-f19-pro-plus-5g.jpg"
   },
   {
@@ -2543,7 +2511,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Oppo F Series",
     "model": "Oppo F19s",
     "storage": "128 GB",
-    "price": 8210,
+    "price": 8000,
     "image": "https://api.mobileapi.dev/devices/1593/thumb.png"
   },
   {
@@ -2551,7 +2519,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Oppo F Series",
     "model": "Oppo F21 Pro 5G",
     "storage": "128 GB",
-    "price": 9890,
+    "price": 10500,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/oppo-f21-pro-5g.jpg"
   },
   {
@@ -2559,7 +2527,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Oppo F Series",
     "model": "Oppo F21s Pro 5G",
     "storage": "128 GB",
-    "price": 10560,
+    "price": 11000,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/oppo-f21s-pro-5g.jpg"
   },
   {
@@ -2567,7 +2535,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Oppo F Series",
     "model": "Oppo F23 5G",
     "storage": "128 GB",
-    "price": 11680,
+    "price": 12000,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/oppo-f23.jpg"
   },
   {
@@ -2575,7 +2543,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Oppo F Series",
     "model": "Oppo F25 Pro 5G",
     "storage": "128 GB",
-    "price": 13030,
+    "price": 15000,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/oppo-f25-pro.jpg"
   },
   {
@@ -2583,7 +2551,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Oppo Series",
     "model": "OPPO F27 5G",
     "storage": "128 GB",
-    "price": 12930,
+    "price": 14000,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/oppo-f27-5g.jpg"
   },
   {
@@ -2591,7 +2559,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Oppo F Series",
     "model": "Oppo F27 Pro+ 5G",
     "storage": "128 GB",
-    "price": 13630,
+    "price": 16500,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/oppo-f27-pro-plus.jpg"
   },
   {
@@ -2610,23 +2578,7 @@ export const MASTER_MODEL_CATALOG = [
     "price": 17860,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/oppo-f29-pro-5g.jpg"
   },
-  {
-    "brand": "Oppo",
-    "series": "Oppo Series",
-    "model": "OPPO F3",
-    "storage": "64 GB",
-    "price": 5020,
-    "image": "https://fdn2.gsmarena.com/vv/bigpic/oppo-f3.jpg"
-  },
-  {
-    "brand": "Oppo",
-    "series": "Oppo Series",
-    "model": "OPPO F3 Plus",
-    "storage": "64 GB",
-    "price": 5960,
-    "image": "https://fdn2.gsmarena.com/vv/bigpic/oppo-f3-plus.jpg"
-  },
-  {
+      {
     "brand": "Oppo",
     "series": "Oppo Series",
     "model": "OPPO F31 5G",
@@ -2671,7 +2623,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Oppo Series",
     "model": "OPPO F7",
     "storage": "64 GB",
-    "price": 6340,
+    "price": 3200,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/oppo-f7.jpg"
   },
   {
@@ -2679,7 +2631,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Oppo Series",
     "model": "OPPO F9",
     "storage": "64 GB",
-    "price": 6280,
+    "price": 3500,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/oppo-f9.jpg"
   },
   {
@@ -2687,7 +2639,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Oppo Series",
     "model": "OPPO F9 Pro",
     "storage": "64 GB",
-    "price": 6760,
+    "price": 4000,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/oppo-f9-pro.jpg"
   },
   {
@@ -2695,7 +2647,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Oppo Find Series",
     "model": "Oppo Find N2 Flip",
     "storage": "256 GB",
-    "price": 19860,
+    "price": 32000,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/oppo-find-n2-flip.jpg"
   },
   {
@@ -2703,7 +2655,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Oppo Find Series",
     "model": "Oppo Find N3 Flip",
     "storage": "256 GB",
-    "price": 25620,
+    "price": 42000,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/oppo-find-n3-flip.jpg"
   },
   {
@@ -2727,7 +2679,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Oppo Find Series",
     "model": "Oppo Find X5 Pro",
     "storage": "256 GB",
-    "price": 28850,
+    "price": 28000,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/oppo-find-x5-pro.jpg"
   },
   {
@@ -2735,7 +2687,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Oppo Find Series",
     "model": "Oppo Find X7 Ultra",
     "storage": "256 GB",
-    "price": 58950,
+    "price": 59000,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/oppo-find-x7-ultra.jpg"
   },
   {
@@ -2783,7 +2735,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Oppo A & K Series",
     "model": "Oppo K10 5G",
     "storage": "128 GB",
-    "price": 9950,
+    "price": 10000,
     "image": "https://api.mobileapi.dev/devices/1553/thumb.png"
   },
   {
@@ -2791,7 +2743,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Oppo A & K Series",
     "model": "Oppo K12x 5G",
     "storage": "128 GB",
-    "price": 10090,
+    "price": 11000,
     "image": "https://api.mobileapi.dev/devices/1497/thumb.png"
   },
   {
@@ -2850,15 +2802,7 @@ export const MASTER_MODEL_CATALOG = [
     "price": 8000,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/oppo-k3.jpg"
   },
-  {
-    "brand": "Oppo",
-    "series": "Oppo Series",
-    "model": "OPPO R11",
-    "storage": "64 GB",
-    "price": 5980,
-    "image": "https://fdn2.gsmarena.com/vv/bigpic/oppo-r11.jpg"
-  },
-  {
+    {
     "brand": "Oppo",
     "series": "Oppo Series",
     "model": "OPPO R17",
@@ -2879,7 +2823,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Oppo Reno Series",
     "model": "Oppo Reno 10 5G",
     "storage": "128 GB",
-    "price": 15450,
+    "price": 17000,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/oppo-reno10.jpg"
   },
   {
@@ -2887,7 +2831,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Oppo Reno Series",
     "model": "Oppo Reno 10 Pro 5G",
     "storage": "256 GB",
-    "price": 18800,
+    "price": 20000,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/oppo-reno10-pro.jpg"
   },
   {
@@ -2895,7 +2839,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Oppo Reno Series",
     "model": "Oppo Reno 10 Pro+ 5G",
     "storage": "256 GB",
-    "price": 23850,
+    "price": 26000,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/oppo-reno10-pro-plus.jpg"
   },
   {
@@ -2903,7 +2847,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Oppo Series",
     "model": "OPPO Reno 10x Zoom",
     "storage": "128 GB",
-    "price": 9600,
+    "price": 8500,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/oppo-reno-10x-zoom.jpg"
   },
   {
@@ -2911,7 +2855,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Oppo Reno Series",
     "model": "Oppo Reno 11 5G",
     "storage": "128 GB",
-    "price": 18350,
+    "price": 18000,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/oppo-reno11.jpg"
   },
   {
@@ -2919,7 +2863,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Oppo Reno Series",
     "model": "Oppo Reno 11 Pro 5G",
     "storage": "256 GB",
-    "price": 22400,
+    "price": 22000,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/oppo-reno11-pro.jpg"
   },
   {
@@ -2927,7 +2871,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Oppo Reno Series",
     "model": "Oppo Reno 12 5G",
     "storage": "256 GB",
-    "price": 22850,
+    "price": 21000,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/oppo-reno12.jpg"
   },
   {
@@ -2935,7 +2879,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Oppo Reno Series",
     "model": "Oppo Reno 12 Pro 5G",
     "storage": "256 GB",
-    "price": 28950,
+    "price": 26000,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/oppo-reno12-pro.jpg"
   },
   {
@@ -2951,7 +2895,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Oppo Series",
     "model": "OPPO Reno 2",
     "storage": "256 GB",
-    "price": 9280,
+    "price": 6500,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/oppo-reno-2.jpg"
   },
   {
@@ -2959,7 +2903,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Oppo Series",
     "model": "OPPO Reno 2Z",
     "storage": "256 GB",
-    "price": 9140,
+    "price": 6500,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/oppo-reno-2z.jpg"
   },
   {
@@ -2967,7 +2911,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Oppo Reno Series",
     "model": "Oppo Reno 6 Pro 5G",
     "storage": "128 GB",
-    "price": 10500,
+    "price": 12000,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/oppo-reno6-pro-5g.jpg"
   },
   {
@@ -2975,7 +2919,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Oppo Reno Series",
     "model": "Oppo Reno 7 Pro 5G",
     "storage": "256 GB",
-    "price": 12450,
+    "price": 13000,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/oppo-reno7-pro-5g.jpg"
   },
   {
@@ -2983,7 +2927,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Oppo Reno Series",
     "model": "Oppo Reno 8 5G",
     "storage": "128 GB",
-    "price": 13450,
+    "price": 12500,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/oppo-reno8.jpg"
   },
   {
@@ -2991,7 +2935,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Oppo Reno Series",
     "model": "Oppo Reno 8 Pro 5G",
     "storage": "256 GB",
-    "price": 16850,
+    "price": 15000,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/oppo-reno8-pro.jpg"
   },
   {
@@ -3071,7 +3015,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Oppo Series",
     "model": "OPPO Reno2 F",
     "storage": "256 GB",
-    "price": 9080,
+    "price": 6500,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/oppo-reno2-f.jpg"
   },
   {
@@ -3079,7 +3023,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Oppo Series",
     "model": "OPPO Reno3 Pro",
     "storage": "128 GB",
-    "price": 9310,
+    "price": 7500,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/oppo-reno3-pro.jpg"
   },
   {
@@ -3087,7 +3031,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Oppo Series",
     "model": "OPPO Reno4 Pro",
     "storage": "128 GB",
-    "price": 10110,
+    "price": 8500,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/oppo-reno4-pro.jpg"
   },
   {
@@ -3095,7 +3039,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Oppo Series",
     "model": "OPPO Reno5 Pro 5G",
     "storage": "128 GB",
-    "price": 10850,
+    "price": 10000,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/oppo-reno5-pro-5g.jpg"
   },
   {
@@ -3103,7 +3047,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Oppo Series",
     "model": "OPPO Reno6 5G",
     "storage": "128 GB",
-    "price": 10630,
+    "price": 10000,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/oppo-reno6-5g.jpg"
   },
   {
@@ -3111,7 +3055,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Oppo Series",
     "model": "OPPO Reno7 5G",
     "storage": "256 GB",
-    "price": 10440,
+    "price": 11000,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/oppo-reno7-5g.jpg"
   },
   {
@@ -3463,7 +3407,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Realme Number & Plus Series",
     "model": "Realme 10 5G",
     "storage": "128 GB",
-    "price": 6000,
+    "price": 9000,
     "image": "https://api.mobileapi.dev/devices/13759/thumb.png"
   },
   {
@@ -3471,7 +3415,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Realme Number Pro Series",
     "model": "Realme 10 Pro 5G",
     "storage": "128 GB",
-    "price": 9200,
+    "price": 10500,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/realme-10-pro.jpg"
   },
   {
@@ -3479,7 +3423,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Realme Number Pro Series",
     "model": "Realme 10 Pro+ 5G",
     "storage": "128 GB",
-    "price": 10500,
+    "price": 12500,
     "image": "https://api.mobileapi.dev/devices/13760/thumb.png"
   },
   {
@@ -3487,7 +3431,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Realme Number & Plus Series",
     "model": "Realme 11 5G",
     "storage": "128 GB",
-    "price": 9600,
+    "price": 11000,
     "image": "https://api.mobileapi.dev/devices/13819/thumb.png"
   },
   {
@@ -3495,7 +3439,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Realme Number Pro Series",
     "model": "Realme 11 Pro 5G",
     "storage": "128 GB",
-    "price": 11400,
+    "price": 13500,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/realme-11-pro.jpg"
   },
   {
@@ -3503,7 +3447,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Realme Number Pro Series",
     "model": "Realme 11 Pro+ 5G",
     "storage": "256 GB",
-    "price": 12900,
+    "price": 15000,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/realme-11-pro-plus.jpg"
   },
   {
@@ -3511,7 +3455,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Realme Number & Plus Series",
     "model": "Realme 11x 5G",
     "storage": "128 GB",
-    "price": 8700,
+    "price": 9800,
     "image": "https://api.mobileapi.dev/devices/13739/thumb.png"
   },
   {
@@ -3519,7 +3463,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Realme Number & Plus Series",
     "model": "Realme 12 5G",
     "storage": "128 GB",
-    "price": 9800,
+    "price": 12000,
     "image": "https://api.mobileapi.dev/devices/13728/thumb.png"
   },
   {
@@ -3527,7 +3471,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Realme Number Pro Series",
     "model": "Realme 12 Pro 5G",
     "storage": "128 GB",
-    "price": 12400,
+    "price": 15500,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/realme-12-pro.jpg"
   },
   {
@@ -3535,7 +3479,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Realme Number Pro Series",
     "model": "Realme 12 Pro+ 5G",
     "storage": "256 GB",
-    "price": 14850,
+    "price": 18000,
     "image": "https://api.mobileapi.dev/devices/13731/thumb.png"
   },
   {
@@ -3543,7 +3487,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Realme Number & Plus Series",
     "model": "Realme 12+ 5G",
     "storage": "128 GB",
-    "price": 11600,
+    "price": 14000,
     "image": "https://api.mobileapi.dev/devices/13729/thumb.png"
   },
   {
@@ -3551,7 +3495,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Realme Number & Plus Series",
     "model": "Realme 12x 5G",
     "storage": "128 GB",
-    "price": 8200,
+    "price": 10500,
     "image": "https://api.mobileapi.dev/devices/13726/thumb.png"
   },
   {
@@ -3559,7 +3503,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Realme Number & Plus Series",
     "model": "Realme 13 5G",
     "storage": "128 GB",
-    "price": 10900,
+    "price": 14000,
     "image": "https://api.mobileapi.dev/devices/13814/thumb.png"
   },
   {
@@ -3567,7 +3511,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Realme Number Pro Series",
     "model": "Realme 13 Pro 5G",
     "storage": "128 GB",
-    "price": 14500,
+    "price": 19000,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/realme-13-pro.jpg"
   },
   {
@@ -3575,7 +3519,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Realme Number Pro Series",
     "model": "Realme 13 Pro+ 5G",
     "storage": "256 GB",
-    "price": 16890,
+    "price": 22000,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/realme-13-pro-plus.jpg"
   },
   {
@@ -3583,7 +3527,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Realme Number & Plus Series",
     "model": "Realme 13+ 5G",
     "storage": "128 GB",
-    "price": 12800,
+    "price": 16000,
     "image": "https://api.mobileapi.dev/devices/13706/thumb.png"
   },
   {
@@ -3687,7 +3631,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Realme Series",
     "model": "Realme 2 Pro",
     "storage": "64 GB",
-    "price": 27400,
+    "price": 2500,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/realme-2-pro.jpg"
   },
   {
@@ -3695,7 +3639,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Realme Series",
     "model": "Realme 3 Pro",
     "storage": "64 GB",
-    "price": 37000,
+    "price": 2800,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/realme-3-pro.jpg"
   },
   {
@@ -3703,7 +3647,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Realme Series",
     "model": "Realme 5 Pro",
     "storage": "64 GB",
-    "price": 3800,
+    "price": 3500,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/realme-5-pro.jpg"
   },
   {
@@ -3711,7 +3655,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Realme Series",
     "model": "Realme 5i",
     "storage": "64 GB",
-    "price": 5820,
+    "price": 2800,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/realme-5i.jpg"
   },
   {
@@ -3719,7 +3663,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Realme Series",
     "model": "Realme 5s",
     "storage": "64 GB",
-    "price": 3800,
+    "price": 3000,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/realme-5s.jpg"
   },
   {
@@ -3727,7 +3671,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Realme Series",
     "model": "Realme 6",
     "storage": "64 GB",
-    "price": 4600,
+    "price": 3800,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/realme-6.jpg"
   },
   {
@@ -3735,7 +3679,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Realme Series",
     "model": "Realme 6 Pro",
     "storage": "64 GB",
-    "price": 4600,
+    "price": 4500,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/realme-6-pro.jpg"
   },
   {
@@ -3743,7 +3687,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Realme Series",
     "model": "Realme 6i",
     "storage": "64 GB",
-    "price": 5920,
+    "price": 3500,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/realme-6i.jpg"
   },
   {
@@ -3751,7 +3695,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Realme Series",
     "model": "Realme 7",
     "storage": "64 GB",
-    "price": 5400,
+    "price": 4500,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/realme-7.jpg"
   },
   {
@@ -3759,7 +3703,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Realme Series",
     "model": "Realme 7 Pro",
     "storage": "128 GB",
-    "price": 6200,
+    "price": 5800,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/realme-7-pro.jpg"
   },
   {
@@ -3767,7 +3711,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Realme Series",
     "model": "Realme 7i",
     "storage": "64 GB",
-    "price": 6050,
+    "price": 4000,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/realme-7i.jpg"
   },
   {
@@ -3775,7 +3719,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Realme Number & Plus Series",
     "model": "Realme 8 5G",
     "storage": "64 GB",
-    "price": 6600,
+    "price": 6200,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/realme-8-5g.jpg"
   },
   {
@@ -3783,7 +3727,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Realme Number Pro Series",
     "model": "Realme 8 Pro",
     "storage": "128 GB",
-    "price": 7400,
+    "price": 7200,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/realme-8-pro.jpg"
   },
   {
@@ -3799,7 +3743,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Realme Series",
     "model": "Realme 8s 5G",
     "storage": "128 GB",
-    "price": 6900,
+    "price": 6500,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/realme-8s-5g.jpg"
   },
   {
@@ -3815,7 +3759,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Realme Series",
     "model": "Realme 9 5G Speed Edition",
     "storage": "128 GB",
-    "price": 8900,
+    "price": 9500,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/realme-9-5g-speed-edition.jpg"
   },
   {
@@ -3823,7 +3767,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Realme Number Pro Series",
     "model": "Realme 9 Pro 5G",
     "storage": "128 GB",
-    "price": 8600,
+    "price": 9500,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/realme-9-pro.jpg"
   },
   {
@@ -3831,7 +3775,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Realme Number Pro Series",
     "model": "Realme 9 Pro+ 5G",
     "storage": "128 GB",
-    "price": 9800,
+    "price": 11000,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/realme-9-pro-plus.jpg"
   },
   {
@@ -3839,7 +3783,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Realme Number & Plus Series",
     "model": "Realme 9i 5G",
     "storage": "64 GB",
-    "price": 6800,
+    "price": 8000,
     "image": "https://api.mobileapi.dev/devices/13763/thumb.png"
   },
   {
@@ -3858,36 +3802,12 @@ export const MASTER_MODEL_CATALOG = [
     "price": 11590,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/realme-c100x.jpg"
   },
-  {
-    "brand": "Realme",
-    "series": "Realme Series",
-    "model": "Realme C25",
-    "storage": "64 GB",
-    "price": 4200,
-    "image": "https://fdn2.gsmarena.com/vv/bigpic/realme-c25.jpg"
-  },
-  {
-    "brand": "Realme",
-    "series": "Realme Series",
-    "model": "Realme C25s",
-    "storage": "64 GB",
-    "price": 4200,
-    "image": "https://fdn2.gsmarena.com/vv/bigpic/realme-c25s.jpg"
-  },
-  {
-    "brand": "Realme",
-    "series": "Realme Series",
-    "model": "Realme C25Y",
-    "storage": "64 GB",
-    "price": 4200,
-    "image": "https://fdn2.gsmarena.com/vv/bigpic/realme-c25y.jpg"
-  },
-  {
+        {
     "brand": "Realme",
     "series": "Realme Series",
     "model": "Realme C33 2023",
     "storage": "64 GB",
-    "price": 6150,
+    "price": 5500,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/realme-c33-2023.jpg"
   },
   {
@@ -3895,7 +3815,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Realme C Series",
     "model": "Realme C35",
     "storage": "64 GB",
-    "price": 4800,
+    "price": 5500,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/realme-c35.jpg"
   },
   {
@@ -3903,7 +3823,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Realme Series",
     "model": "Realme C51",
     "storage": "64 GB",
-    "price": 4600,
+    "price": 5800,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/realme-c51.jpg"
   },
   {
@@ -3911,7 +3831,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Realme C Series",
     "model": "Realme C53",
     "storage": "64 GB",
-    "price": 4600,
+    "price": 6500,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/realme-c53.jpg"
   },
   {
@@ -3919,7 +3839,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Realme C Series",
     "model": "Realme C55",
     "storage": "64 GB",
-    "price": 5900,
+    "price": 7000,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/realme-c55.jpg"
   },
   {
@@ -3927,7 +3847,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Realme Series",
     "model": "Realme C61",
     "storage": "64 GB",
-    "price": 4490,
+    "price": 6500,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/realme-c61.jpg"
   },
   {
@@ -3935,7 +3855,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Realme C Series",
     "model": "Realme C63 5G",
     "storage": "128 GB",
-    "price": 5800,
+    "price": 7500,
     "image": "https://api.mobileapi.dev/devices/13705/thumb.png"
   },
   {
@@ -3943,7 +3863,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Realme C Series",
     "model": "Realme C65 5G",
     "storage": "128 GB",
-    "price": 6800,
+    "price": 8500,
     "image": "https://api.mobileapi.dev/devices/13720/thumb.png"
   },
   {
@@ -3951,7 +3871,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Realme C Series",
     "model": "Realme C67 5G",
     "storage": "128 GB",
-    "price": 8890,
+    "price": 9500,
     "image": "https://api.mobileapi.dev/devices/13733/thumb.png"
   },
   {
@@ -3999,7 +3919,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Realme Series",
     "model": "Realme GT 2",
     "storage": "128 GB",
-    "price": 12400,
+    "price": 14000,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/realme-gt-2.jpg"
   },
   {
@@ -4007,7 +3927,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Realme GT Series",
     "model": "Realme GT 2 Pro",
     "storage": "128 GB",
-    "price": 14800,
+    "price": 18000,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/realme-gt2-pro.jpg"
   },
   {
@@ -4015,7 +3935,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Realme GT Series",
     "model": "Realme GT 5G",
     "storage": "128 GB",
-    "price": 24400,
+    "price": 13500,
     "image": "https://api.mobileapi.dev/devices/13816/thumb.png"
   },
   {
@@ -4023,7 +3943,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Realme GT Series",
     "model": "Realme GT 6",
     "storage": "256 GB",
-    "price": 19240,
+    "price": 28000,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/realme-gt-6.jpg"
   },
   {
@@ -4031,7 +3951,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Realme GT Series",
     "model": "Realme GT 6T",
     "storage": "128 GB",
-    "price": 16450,
+    "price": 21000,
     "image": "https://api.mobileapi.dev/devices/13718/thumb.png"
   },
   {
@@ -4071,7 +3991,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Realme GT Series",
     "model": "Realme GT Master Edition",
     "storage": "128 GB",
-    "price": 9450,
+    "price": 9500,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/realme-gt-master.jpg"
   },
   {
@@ -4079,7 +3999,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Realme GT Series",
     "model": "Realme GT Neo 2",
     "storage": "128 GB",
-    "price": 10490,
+    "price": 12000,
     "image": "https://api.mobileapi.dev/devices/13676/thumb.png"
   },
   {
@@ -4087,7 +4007,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Realme GT Series",
     "model": "Realme GT Neo 3",
     "storage": "128 GB",
-    "price": 13600,
+    "price": 15000,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/realme-gt-neo3.jpg"
   },
   {
@@ -4095,7 +4015,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Realme Series",
     "model": "Realme GT NEO 3T",
     "storage": "128 GB",
-    "price": 11200,
+    "price": 14000,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/realme-gt-neo-3t.jpg"
   },
   {
@@ -4103,7 +4023,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Realme Series",
     "model": "Realme Narzo 10",
     "storage": "128 GB",
-    "price": 5830,
+    "price": 4500,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/realme-narzo-10.jpg"
   },
   {
@@ -4119,7 +4039,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Realme Series",
     "model": "Realme Narzo 20",
     "storage": "64 GB",
-    "price": 4200,
+    "price": 4500,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/realme-narzo-20.jpg"
   },
   {
@@ -4127,7 +4047,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Realme Series",
     "model": "Realme Narzo 20 Pro",
     "storage": "64 GB",
-    "price": 4900,
+    "price": 5500,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/realme-narzo-20-pro.jpg"
   },
   {
@@ -4135,7 +4055,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Realme Series",
     "model": "Realme Narzo 30",
     "storage": "64 GB",
-    "price": 5800,
+    "price": 6000,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/realme-narzo-30.jpg"
   },
   {
@@ -4143,7 +4063,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Realme Series",
     "model": "Realme Narzo 30 Pro 5G",
     "storage": "64 GB",
-    "price": 5800,
+    "price": 7000,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/realme-narzo-30-pro-5g.jpg"
   },
   {
@@ -4151,7 +4071,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Realme Narzo & P Series",
     "model": "Realme Narzo 50",
     "storage": "64 GB",
-    "price": 7100,
+    "price": 7500,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/realme-narzo-50.jpg"
   },
   {
@@ -4159,31 +4079,15 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Realme Narzo & P Series",
     "model": "Realme Narzo 50 Pro 5G",
     "storage": "128 GB",
-    "price": 7100,
+    "price": 9000,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/realme-narzo-50-pro-5g.jpg"
   },
-  {
-    "brand": "Realme",
-    "series": "Realme Series",
-    "model": "Realme Narzo 50A",
-    "storage": "64 GB",
-    "price": 5950,
-    "image": "https://fdn2.gsmarena.com/vv/bigpic/realme-narzo-50a.jpg"
-  },
-  {
-    "brand": "Realme",
-    "series": "Realme Series",
-    "model": "Realme Narzo 50A Prime",
-    "storage": "64 GB",
-    "price": 4800,
-    "image": "https://fdn2.gsmarena.com/vv/bigpic/realme-narzo-50a-prime.jpg"
-  },
-  {
+      {
     "brand": "Realme",
     "series": "Realme Narzo & P Series",
     "model": "Realme Narzo 60 5G",
     "storage": "128 GB",
-    "price": 7800,
+    "price": 10000,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/realme-narzo-60.jpg"
   },
   {
@@ -4191,7 +4095,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Realme Narzo & P Series",
     "model": "Realme Narzo 60 Pro 5G",
     "storage": "128 GB",
-    "price": 11800,
+    "price": 13000,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/realme-narzo-60-pro.jpg"
   },
   {
@@ -4199,7 +4103,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Realme Series",
     "model": "Realme Narzo 60X 5G",
     "storage": "128 GB",
-    "price": 7800,
+    "price": 8800,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/realme-narzo-60x-5g.jpg"
   },
   {
@@ -4207,7 +4111,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Realme Series",
     "model": "Realme Narzo 70 5G",
     "storage": "128 GB",
-    "price": 7900,
+    "price": 10500,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/realme-narzo-70-5g.jpg"
   },
   {
@@ -4215,7 +4119,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Realme Narzo & P Series",
     "model": "Realme Narzo 70 Pro 5G",
     "storage": "128 GB",
-    "price": 12400,
+    "price": 14000,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/realme-narzo-70-pro.jpg"
   },
   {
@@ -4223,7 +4127,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Realme Series",
     "model": "Realme Narzo 70 Turbo 5G",
     "storage": "128 GB",
-    "price": 10800,
+    "price": 12500,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/realme-narzo-70-turbo-5g.jpg"
   },
   {
@@ -4231,7 +4135,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Realme Narzo & P Series",
     "model": "Realme Narzo 70x 5G",
     "storage": "128 GB",
-    "price": 7900,
+    "price": 9000,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/realme-narzo-70x.jpg"
   },
   {
@@ -4255,7 +4159,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Realme Series",
     "model": "Realme Narzo N53",
     "storage": "64 GB",
-    "price": 5600,
+    "price": 6500,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/realme-narzo-n53.jpg"
   },
   {
@@ -4263,7 +4167,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Realme Series",
     "model": "Realme Narzo N55",
     "storage": "64 GB",
-    "price": 5600,
+    "price": 7000,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/realme-narzo-n55.jpg"
   },
   {
@@ -4303,7 +4207,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Realme Narzo & P Series",
     "model": "Realme P1 5G",
     "storage": "128 GB",
-    "price": 9900,
+    "price": 11500,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/realme-p1.jpg"
   },
   {
@@ -4311,7 +4215,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Realme Narzo & P Series",
     "model": "Realme P1 Pro 5G",
     "storage": "128 GB",
-    "price": 11800,
+    "price": 14000,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/realme-p1-pro.jpg"
   },
   {
@@ -4319,7 +4223,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Realme Series",
     "model": "Realme P2 Pro 5G",
     "storage": "128 GB",
-    "price": 13500,
+    "price": 16500,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/realme-p2-pro-5g.jpg"
   },
   {
@@ -4423,7 +4327,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Realme Series",
     "model": "Realme X",
     "storage": "128 GB",
-    "price": 5400,
+    "price": 4500,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/realme-x.jpg"
   },
   {
@@ -4431,7 +4335,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Realme Series",
     "model": "Realme X2",
     "storage": "64 GB",
-    "price": 6400,
+    "price": 5500,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/realme-x2.jpg"
   },
   {
@@ -4439,7 +4343,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Realme Series",
     "model": "Realme X2 Pro",
     "storage": "64 GB",
-    "price": 7800,
+    "price": 7500,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/realme-x2-pro.jpg"
   },
   {
@@ -4447,7 +4351,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Realme Series",
     "model": "Realme X3",
     "storage": "128 GB",
-    "price": 7900,
+    "price": 6500,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/realme-x3.jpg"
   },
   {
@@ -4455,7 +4359,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Realme Series",
     "model": "Realme X3 SuperZoom",
     "storage": "128 GB",
-    "price": 7900,
+    "price": 7800,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/realme-x3-superzoom.jpg"
   },
   {
@@ -4463,7 +4367,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Realme Series",
     "model": "Realme X50 Pro",
     "storage": "128 GB",
-    "price": 9800,
+    "price": 10500,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/realme-x50-pro.jpg"
   },
   {
@@ -4471,7 +4375,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Realme Series",
     "model": "Realme X7",
     "storage": "128 GB",
-    "price": 9170,
+    "price": 6800,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/realme-x7.jpg"
   },
   {
@@ -4479,7 +4383,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Realme Series",
     "model": "Realme X7 Max 5G",
     "storage": "128 GB",
-    "price": 10390,
+    "price": 9500,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/realme-x7-max-5g.jpg"
   },
   {
@@ -4487,7 +4391,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Realme Series",
     "model": "Realme X7 Pro",
     "storage": "128 GB",
-    "price": 9890,
+    "price": 8500,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/realme-x7-pro.jpg"
   },
   {
@@ -4495,7 +4399,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Realme Series",
     "model": "Realme XT",
     "storage": "64 GB",
-    "price": 5800,
+    "price": 4800,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/realme-xt.jpg"
   },
   {
@@ -6015,7 +5919,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Vivo Series",
     "model": "Vivo S2",
     "storage": "128 GB",
-    "price": 64900,
+    "price": 4000,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/vivo-s2.jpg"
   },
   {
@@ -6247,7 +6151,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Vivo Series",
     "model": "Vivo V19",
     "storage": "128 GB",
-    "price": 15560,
+    "price": 6200,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/vivo-v19.jpg"
   },
   {
@@ -6367,7 +6271,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Vivo V Series",
     "model": "Vivo V29 Pro",
     "storage": "256 GB",
-    "price": 18500,
+    "price": 19500,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/vivo-v29-pro.jpg"
   },
   {
@@ -6383,7 +6287,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Vivo V Series",
     "model": "Vivo V30",
     "storage": "128 GB",
-    "price": 22950,
+    "price": 19500,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/vivo-v30.jpg"
   },
   {
@@ -6391,7 +6295,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Vivo V Series",
     "model": "Vivo V30 Pro",
     "storage": "256 GB",
-    "price": 22900,
+    "price": 24000,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/vivo-v30-pro.jpg"
   },
   {
@@ -6407,7 +6311,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Vivo V Series",
     "model": "Vivo V40",
     "storage": "128 GB",
-    "price": 29900,
+    "price": 22000,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/vivo-v40.jpg"
   },
   {
@@ -6415,7 +6319,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Vivo V Series",
     "model": "Vivo V40 Pro",
     "storage": "256 GB",
-    "price": 29850,
+    "price": 31000,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/vivo-v40-pro.jpg"
   },
   {
@@ -6527,7 +6431,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Vivo X Series (Zeiss Flagship)",
     "model": "Vivo X100",
     "storage": "256 GB",
-    "price": 44950,
+    "price": 30000,
     "image": "https://api.mobileapi.dev/devices/355/thumb.png"
   },
   {
@@ -6535,7 +6439,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Vivo X Series (Zeiss Flagship)",
     "model": "Vivo X100 Pro",
     "storage": "512 GB",
-    "price": 44950,
+    "price": 36000,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/vivo-x100-pro.jpg"
   },
   {
@@ -6911,7 +6815,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Vivo Series",
     "model": "Vivo Y21 5G",
     "storage": "128 GB",
-    "price": 14340,
+    "price": 7500,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/vivo-y21-5g.jpg"
   },
   {
@@ -6967,7 +6871,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Vivo Y Series",
     "model": "Vivo Y28 5G",
     "storage": "128 GB",
-    "price": 8260,
+    "price": 11000,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/vivo-y28.jpg"
   },
   {
@@ -6975,7 +6879,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Vivo Series",
     "model": "Vivo Y28e 5G",
     "storage": "64 GB",
-    "price": 9470,
+    "price": 9800,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/vivo-y28e-5g.jpg"
   },
   {
@@ -6983,7 +6887,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Vivo Series",
     "model": "Vivo Y28s 5G",
     "storage": "128 GB",
-    "price": 11390,
+    "price": 11500,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/vivo-y28s-5g.jpg"
   },
   {
@@ -7023,7 +6927,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Vivo Series",
     "model": "Vivo Y31 5G",
     "storage": "128 GB",
-    "price": 12430,
+    "price": 8500,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/vivo-y31-5g.jpg"
   },
   {
@@ -8247,7 +8151,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Realme Number Series",
     "model": "Realme 11 Pro+ 5G",
     "storage": "256 GB",
-    "price": 12900,
+    "price": 15000,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/realme-11-pro-plus.jpg"
   },
   {
@@ -8255,7 +8159,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Realme Number Series",
     "model": "Realme 12 Plus",
     "storage": "128 GB",
-    "price": 11600,
+    "price": 14000,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/realme-12-plus-5g.jpg"
   },
   {
@@ -8455,7 +8359,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Oppo Find Series",
     "model": "Oppo Find N3",
     "storage": "512 GB",
-    "price": 58000,
+    "price": 68000,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/oppo-find-n3.jpg"
   }
 ];
