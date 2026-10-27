@@ -327,6 +327,7 @@ export default function SellPhone() {
 
     const q = debouncedQuery.toLowerCase().trim();
     const cleanQ = q.replace(/[^a-z0-9]/g, '');
+    const queryWords = q.split(/\s+/).filter(Boolean);
 
     // Calculate count of local catalog matches
     const localMatchesCount = MASTER_MODEL_CATALOG.filter((m) => {
@@ -755,9 +756,11 @@ export default function SellPhone() {
       const aging = calculatePhoneAgingFactor(form.brand, form.model, !!form.underWarranty, form.agePeriod);
       val *= aging;
 
-      const excMult = pricingConfig?.excellent_multiplier ?? 0.82; // 18% less than theoretical base (15-20% deduction range)
-      const goodMult = pricingConfig?.good_multiplier ?? 0.70;
-      const fairMult = pricingConfig?.fair_multiplier ?? 0.55;
+      const isApple = (form.brand?.toLowerCase() === 'apple') || (brandSlug?.toLowerCase() === 'apple') || (form.model?.toLowerCase().includes('iphone'));
+
+      const excMult = isApple ? 0.95 : (pricingConfig?.excellent_multiplier ?? 0.82);
+      const goodMult = isApple ? 0.80 : (pricingConfig?.good_multiplier ?? 0.70);
+      const fairMult = isApple ? 0.60 : (pricingConfig?.fair_multiplier ?? 0.55);
 
       if (form.cosmeticCondition === 'fair') val *= fairMult;
       else if (form.cosmeticCondition === 'good') val *= goodMult;
@@ -766,7 +769,6 @@ export default function SellPhone() {
       else if (form.screenCondition === 'cracked') val *= 0.68;
       else if (form.screenCondition === 'touch_fault' || form.screenCondition === 'display_lines') val *= 0.60;
       if (form.bodyCondition === 'dents_bent') val *= 0.85;
-      const isApple = (form.brand?.toLowerCase() === 'apple') || (brandSlug?.toLowerCase() === 'apple') || (form.model?.toLowerCase().includes('iphone'));
       if (isApple) {
         const bHealth = String(form.batteryHealth || '').toLowerCase().trim();
         const num = parseFloat(bHealth);

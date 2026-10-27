@@ -459,15 +459,17 @@ export function getDynamicFallbackConfig(brand: string, model: string, storage: 
   // Apply real-time admin price override if configured
   basePrice = getEffectivePrice(brand, model, basePrice, storage);
 
+  const isApple = String(brand).toLowerCase() === 'apple' || String(model).toLowerCase().includes('iphone');
+
   return {
     id: `fallback-${brand}-${model}`,
     brand,
     model,
     storage: storage || '128GB',
     base_price: basePrice,
-    excellent_multiplier: 0.75,
-    good_multiplier: 0.60,
-    fair_multiplier: 0.45,
+    excellent_multiplier: isApple ? 0.95 : 0.75,
+    good_multiplier: isApple ? 0.80 : 0.60,
+    fair_multiplier: isApple ? 0.60 : 0.45,
     box_bonus: 600,
     charger_bonus: 400,
     is_active: true,

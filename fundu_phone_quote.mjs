@@ -2305,14 +2305,46 @@ export function isStylusDevice(brand, model) {
 /**
  * Calculates smartphone age depreciation factor based on purchase period.
  * Business Rules:
- * - 0 to 3 months: 10% deduction (factor = 0.90)
- * - 3 to 6 months: 15% deduction (factor = 0.85)
- * - 6 to 9 months: 20% deduction (factor = 0.80)
- * - Older than 9 months (and pre-2024 models where aging is skipped): 25% deduction for all (factor = 0.75)
+ * - Apple:
+ *     0 to 3 months: 10% deduction (factor = 0.90)
+ *     3 to 6 months: 20% deduction (factor = 0.80)
+ *     6 to 9 months: 25% deduction (factor = 0.75)
+ *     Older than 9 months (and pre-2024 models): 30% deduction (factor = 0.70)
+ * - Android / Other Brands:
+ *     0 to 3 months: 10% deduction (factor = 0.90)
+ *     3 to 6 months: 15% deduction (factor = 0.85)
+ *     6 to 9 months: 20% deduction (factor = 0.80)
+ *     Older than 9 months (and pre-2024 models): 25% deduction (factor = 0.75)
  */
 export function calculatePhoneAgingFactor(brand = '', model = '', underWarranty = false, agePeriod = '') {
   const normAge = String(agePeriod || '').toLowerCase().trim();
+  const b = String(brand || '').toLowerCase();
+  const m = String(model || '').toLowerCase();
+  const isApple = b === 'apple' || m.includes('iphone');
 
+  if (isApple) {
+    if (normAge === '0_to_3_months' || normAge === 'below_3_months') {
+      return 0.90;
+    }
+    if (normAge === '3_to_6_months') {
+      return 0.80;
+    }
+    if (normAge === '6_to_9_months') {
+      return 0.75;
+    }
+    if (
+      normAge === 'above_9_months' ||
+      normAge === 'older_than_9_months' ||
+      normAge === 'above_11_months' ||
+      normAge === '10_to_12_months' ||
+      normAge === '3_to_10_months'
+    ) {
+      return 0.70;
+    }
+    return 0.70;
+  }
+
+  // Non-Apple models
   if (normAge === '0_to_3_months' || normAge === 'below_3_months') {
     return 0.90;
   }
@@ -2491,11 +2523,15 @@ export function quotePhone(input = {}, options = {}) {
 
   // 5. Compute Deductions & Adjustments according to Business Formula
   const cosmeticKey = String(cosmetic_condition).toLowerCase();
-  const activeCosmeticMultipliers = {
+  const activeCosmeticMultipliers = isApple ? {
+    flawless: 0.95,
+    good: 0.80,
+    fair: 0.60,
+  } : {
     ...FUNDU_POLICY.cosmeticMultipliers,
     ...(options.cosmeticMultipliers || {}),
   };
-  const cosmeticMultiplier = activeCosmeticMultipliers[cosmeticKey] ?? activeCosmeticMultipliers.good ?? 1.0;
+  const cosmeticMultiplier = activeCosmeticMultipliers[cosmeticKey] ?? (isApple ? 0.80 : (activeCosmeticMultipliers.good ?? 1.0));
 
   // Customer-facing condition explanations
   const conditionReasons = [];
