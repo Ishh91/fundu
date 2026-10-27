@@ -559,8 +559,8 @@ export function computeDetailedResaleValuation(
 
   let stylusDeduction = 0;
   if (deviceIncludesStylus(fallbackBrand, fallbackModel) && params.stylusAvailable === false) {
-    stylusDeduction = 3000;
-    defectsBreakdown.push({ name: 'Missing Original S-Pen / Stylus', amount: 3000 });
+    stylusDeduction = 1500;
+    defectsBreakdown.push({ name: 'Missing Original S-Pen / Stylus', amount: 1500 });
   }
 
   const calculatedTotal =
