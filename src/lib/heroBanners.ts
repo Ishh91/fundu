@@ -3,70 +3,33 @@ import type { HeroPoster } from '../types';
 import { db } from './db';
 import { broadcastSync, subscribeToRealtimeSync } from './realtimeSync';
 
-const STORAGE_KEY = 'fundu_hero_posters_v1';
+import { LIVE_HERO_POSTERS } from '../data/liveHeroPosters';
+
+const STORAGE_KEY = 'fundu_hero_posters_v2';
 const EVENT_NAME = 'fundu_hero_posters_updated';
 
-const buildHeroImage = (prompt: string, imageSize = 'portrait_4_3') =>
-  `https://coresg-normal.trae.ai/api/ide/v1/text_to_image?prompt=${encodeURIComponent(prompt)}&image_size=${imageSize}`;
-
-export const DEFAULT_HERO_POSTERS: HeroPoster[] = [
-  {
-    id: 'poster-flagship-buy',
-    eyebrow: 'Exclusive Deals',
-    title: 'Discover Your Next Flagship at your doorstep',
-    description: 'Certified refurbished smartphones with 6 months warranty and doorstep doorstep delivery.',
-    primaryLabel: 'Shop Now',
-    primaryHref: '/buy',
-    secondaryLabel: 'Explore Catalog',
-    secondaryHref: '/store',
-    accent: 'from-[#0a2f32] to-[#86dedd]',
-    image: '/assets/posters/poster_flagship_buy.jpg',
-    bullets: ['32-Pt Audit Passed', '6 Months Warranty', 'Doorstep Delivery Doorstep'],
-    is_active: true,
-    is_full_banner: true,
-    sort_order: 1,
-  },
-  {
-    id: 'poster-sell-cash',
-    eyebrow: 'Instant Cash',
-    title: 'Sell Old Phone Get Instant Cash at your doorstep',
-    description: 'Highest valuation, doorstep pickup, and spot cash/UPI payment at your doorstep.',
-    primaryLabel: 'Sell Now',
-    primaryHref: '/sell',
-    secondaryLabel: 'Check Value',
-    secondaryHref: '/sell',
-    accent: 'from-[#0a2f32] to-[#86dedd]',
-    image: '/assets/posters/poster_sell_cash.jpg',
-    bullets: ['Instant UPI/Cash', 'Free Doorstep Pickup', 'Top Resale Value'],
-    is_active: true,
-    is_full_banner: true,
-    sort_order: 2,
-  },
-  {
-    id: 'poster-repair-doorstep',
-    eyebrow: 'Doorstep Service',
-    title: '30-Minute Doorstep Doorstep Mobile Repair',
-    description: 'Certified technicians repair your phone right at your home or office with genuine parts.',
-    primaryLabel: 'Book Repair',
-    primaryHref: '/repair',
-    secondaryLabel: 'Contact Us',
-    secondaryHref: '/contact',
-    accent: 'from-[#0a2f32] to-[#86dedd]',
-    image: '/assets/posters/poster_repair.jpg',
-    bullets: ['30-Min Fast Repair', 'Tested Genuine Parts', '6M Repair Warranty'],
-    is_active: true,
-    is_full_banner: true,
-    sort_order: 3,
-  },
-];
+export const DEFAULT_HERO_POSTERS: HeroPoster[] = LIVE_HERO_POSTERS;
 
 export const getStoredHeroPosters = (): HeroPoster[] => {
   if (typeof window === 'undefined') return DEFAULT_HERO_POSTERS;
   try {
+    // Purge old v1 key if present
+    if (window.localStorage.getItem('fundu_hero_posters_v1')) {
+      window.localStorage.removeItem('fundu_hero_posters_v1');
+    }
+
     const raw = window.localStorage.getItem(STORAGE_KEY);
     if (!raw) return DEFAULT_HERO_POSTERS;
     const parsed = JSON.parse(raw);
     if (Array.isArray(parsed) && parsed.length > 0) {
+      // If cached data contains obsolete poster image paths, purge and return latest defaults
+      const hasObsoleteImage = parsed.some((p: any) =>
+        typeof p.image === 'string' && p.image.includes('poster_flagship_buy.jpg')
+      );
+      if (hasObsoleteImage) {
+        window.localStorage.removeItem(STORAGE_KEY);
+        return DEFAULT_HERO_POSTERS;
+      }
       return parsed;
     }
   } catch (err) {
@@ -136,7 +99,12 @@ export const useHeroPosters = () => {
         if (!error && data?.items && Array.isArray(data.items) && data.items.length > 0) {
           if (isMounted) {
             const dbPosters = data.items as HeroPoster[];
-            setPosters(dbPosters);
+            setPosters((prev) => {
+              if (JSON.stringify(prev) === JSON.stringify(dbPosters)) {
+                return prev;
+              }
+              return dbPosters;
+            });
             try {
               window.localStorage.setItem(STORAGE_KEY, JSON.stringify(dbPosters));
             } catch {}
