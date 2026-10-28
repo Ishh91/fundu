@@ -31,6 +31,7 @@ import FunduStore from './pages/FunduStore';
 import BrandHub from './pages/BrandHub';
 import Recycle from './pages/Recycle';
 import Articles from './pages/Articles';
+import BuyLaptops from './pages/BuyLaptops';
 import LaptopComingSoon from './pages/LaptopComingSoon';
 import ProductDetail from './pages/ProductDetail';
 import SearchActionPage from './pages/SearchActionPage';
@@ -277,7 +278,8 @@ function MainLayout() {
           <Route path="/brand" element={<BrandHub />} />
           <Route path="/recycle" element={<Recycle />} />
           <Route path="/articles" element={<Articles />} />
-          <Route path="/buy-laptop" element={<LaptopComingSoon />} />
+          <Route path="/buy-laptop" element={<BuyLaptops />} />
+          <Route path="/buy-laptops" element={<BuyLaptops />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </main>

@@ -29,6 +29,7 @@ import { useCart } from '../context/CartContext';
 import { getCleanPhoneImage, pullLiveModelImagesFromDb } from '../lib/phoneImages';
 import type { Product, Review } from '../types';
 import { findSampleProductById, SAMPLE_PRODUCTS_MAP } from '../data/sampleProducts';
+import { findSampleLaptopById } from '../data/sampleLaptops';
 
 // Doorstep PIN code to Area mapping dictionary
 const DOORSTEP_PINCODE_MAP: Record<string, string> = {
@@ -184,16 +185,16 @@ export default function ProductDetail() {
     if (!id) return;
     setLoading(true);
 
-      const sample = findSampleProductById(id);
-      if (sample) {
-        setProduct(sample);
-        setSelectedImage(sample.images[0] || '');
-        setSelectedStorage(sample.storage || '128 GB');
-        setSelectedColor(sample.color || 'Default');
-        setSelectedGrade(sample.condition || 'Superb');
-        setLoading(false);
-        return;
-      }
+    const sample = findSampleProductById(id) || findSampleLaptopById(id);
+    if (sample) {
+      setProduct(sample);
+      setSelectedImage(sample.images[0] || '');
+      setSelectedStorage(sample.storage || '128 GB');
+      setSelectedColor(sample.color || 'Default');
+      setSelectedGrade(sample.condition || 'Superb');
+      setLoading(false);
+      return;
+    }
 
       db.from('products')
         .select('*')
@@ -293,6 +294,10 @@ if (!product) return null;
     };
 
     const availableStorages = useMemo(() => {
+      const isLaptop = product?.category === 'laptop' || !!product?.processor;
+      if (isLaptop) {
+        return ['256 GB', '512 GB', '1 TB'];
+      }
       const base = (product?.storage || '128 GB').trim();
       const isFlagship = (product?.price || 0) > 40000 || /iphone|galaxy s|pixel \d pro|ultra/i.test(product?.model || '');
       if (isFlagship) {
@@ -661,6 +666,53 @@ return (
                   ))}
                 </div>
               </div>
+
+              {/* LAPTOP HARDWARE SPECIFICATIONS HIGHLIGHT */}
+              {(product.processor || product.graphics || product.screen_size || product.accessories_included) && (
+                <div className="rounded-2xl bg-[#F0F0F5] border border-[#C0C8D8] p-4 space-y-2.5 text-xs text-[#344257]">
+                  <div className="font-extrabold flex items-center gap-1.5 text-xs text-[#344257]">
+                    <Cpu className="h-4 w-4 text-[#47576E]" /> Laptop Hardware Specifications
+                  </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-[11px] font-semibold text-gray-700">
+                    {product.processor && (
+                      <div className="bg-white p-2.5 rounded-xl border border-gray-200">
+                        <span className="text-gray-400 block text-[10px] uppercase font-bold">Processor / CPU</span>
+                        <span className="text-[#344257] font-extrabold">{product.processor}</span>
+                      </div>
+                    )}
+                    {product.graphics && (
+                      <div className="bg-white p-2.5 rounded-xl border border-gray-200">
+                        <span className="text-gray-400 block text-[10px] uppercase font-bold">Graphics / GPU</span>
+                        <span className="text-[#344257] font-extrabold">{product.graphics}</span>
+                      </div>
+                    )}
+                    {product.screen_size && (
+                      <div className="bg-white p-2.5 rounded-xl border border-gray-200">
+                        <span className="text-gray-400 block text-[10px] uppercase font-bold">Display & Screen</span>
+                        <span className="text-[#344257] font-extrabold">{product.screen_size}</span>
+                      </div>
+                    )}
+                    {product.battery_health && (
+                      <div className="bg-white p-2.5 rounded-xl border border-gray-200">
+                        <span className="text-gray-400 block text-[10px] uppercase font-bold">Battery Condition</span>
+                        <span className="text-emerald-700 font-extrabold">{product.battery_health}</span>
+                      </div>
+                    )}
+                    {product.operating_system && (
+                      <div className="bg-white p-2.5 rounded-xl border border-gray-200">
+                        <span className="text-gray-400 block text-[10px] uppercase font-bold">Operating System</span>
+                        <span className="text-[#344257] font-extrabold">{product.operating_system}</span>
+                      </div>
+                    )}
+                    {product.accessories_included && (
+                      <div className="bg-white p-2.5 rounded-xl border border-gray-200">
+                        <span className="text-gray-400 block text-[10px] uppercase font-bold">In The Box</span>
+                        <span className="text-[#344257] font-extrabold">{product.accessories_included}</span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
 
               {/* PINCODE & LOCATION AUTO-LOOKUP BOX */}
               <div className="rounded-3xl border border-ink-200 p-5 space-y-3 bg-[#fbfdfd] shadow-xs">

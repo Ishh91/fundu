@@ -6,6 +6,7 @@ import {
   Plus,
   RefreshCw,
   Smartphone,
+  Laptop,
   MapPin,
   Tag,
   Wrench,
@@ -239,11 +240,18 @@ export default function Admin() {
   const [productModal, setProductModal] = useState<{ product: Product | null } | null>(null);
   const [productForm, setProductForm] = useState({
     title: '',
+    category: 'smartphone' as 'smartphone' | 'laptop',
     brand: '',
     model: '',
     ram: '',
     storage: '',
     color: '',
+    processor: '',
+    graphics: '',
+    screen_size: '',
+    battery_health: '',
+    operating_system: '',
+    accessories_included: '',
     condition: 'Excellent' as Product['condition'],
     price: '',
     original_price: '',
@@ -1017,11 +1025,18 @@ export default function Admin() {
     setTab('products');
     setProductForm({
       title: initialData?.title || '',
+      category: (initialData?.category || 'smartphone') as 'smartphone' | 'laptop',
       brand: initialData?.brand || 'Apple',
       model: initialData?.model || '',
       ram: initialData?.ram || '',
       storage: initialData?.storage || '128GB',
       color: initialData?.color || 'Midnight Black',
+      processor: initialData?.processor || '',
+      graphics: initialData?.graphics || '',
+      screen_size: initialData?.screen_size || '',
+      battery_health: initialData?.battery_health || '',
+      operating_system: initialData?.operating_system || '',
+      accessories_included: initialData?.accessories_included || '',
       condition: (initialData?.condition || 'Excellent') as Product['condition'],
       price: initialData?.price || '',
       original_price: initialData?.original_price || '',
@@ -1043,11 +1058,18 @@ export default function Admin() {
     try {
       const payload = {
         title: productForm.title,
+        category: productForm.category || 'smartphone',
         brand: productForm.brand,
         model: productForm.model,
         ram: productForm.ram || null,
         storage: productForm.storage || null,
         color: productForm.color || null,
+        processor: productForm.processor || null,
+        graphics: productForm.graphics || null,
+        screen_size: productForm.screen_size || null,
+        battery_health: productForm.battery_health || null,
+        operating_system: productForm.operating_system || null,
+        accessories_included: productForm.accessories_included || null,
         condition: productForm.condition,
         price: Number(productForm.price),
         original_price: productForm.original_price ? Number(productForm.original_price) : null,
@@ -1838,11 +1860,18 @@ export default function Admin() {
                 if (product) {
                   setProductForm({
                     title: product.title,
+                    category: (product.category || 'smartphone') as 'smartphone' | 'laptop',
                     brand: product.brand,
                     model: product.model,
                     ram: product.ram ?? '',
                     storage: product.storage ?? '',
                     color: product.color ?? '',
+                    processor: product.processor ?? '',
+                    graphics: product.graphics ?? '',
+                    screen_size: product.screen_size ?? '',
+                    battery_health: product.battery_health ?? '',
+                    operating_system: product.operating_system ?? '',
+                    accessories_included: product.accessories_included ?? '',
                     condition: product.condition,
                     price: String(product.price),
                     original_price: product.original_price ? String(product.original_price) : '',
@@ -2287,6 +2316,35 @@ export default function Admin() {
             </div>
 
             <div className="space-y-3">
+              {/* Category: Smartphone vs Laptop */}
+              <div>
+                <label className="label text-xs font-bold mb-1.5 block">Device Category</label>
+                <div className="grid grid-cols-2 gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setProductForm({ ...productForm, category: 'smartphone' })}
+                    className={`flex items-center justify-center gap-2 py-2 px-3 rounded-xl border text-xs font-black transition cursor-pointer ${
+                      productForm.category !== 'laptop'
+                        ? 'border-blue-600 bg-blue-50 text-blue-700 shadow-xs'
+                        : 'border-gray-200 bg-gray-50 text-gray-600 hover:bg-gray-100'
+                    }`}
+                  >
+                    <Smartphone className="h-4 w-4" /> 📱 Smartphone
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setProductForm({ ...productForm, category: 'laptop' })}
+                    className={`flex items-center justify-center gap-2 py-2 px-3 rounded-xl border text-xs font-black transition cursor-pointer ${
+                      productForm.category === 'laptop'
+                        ? 'border-indigo-600 bg-indigo-50 text-indigo-700 shadow-xs'
+                        : 'border-gray-200 bg-gray-50 text-gray-600 hover:bg-gray-100'
+                    }`}
+                  >
+                    <Laptop className="h-4 w-4" /> 💻 Refurbished Laptop
+                  </button>
+                </div>
+              </div>
+
               <div>
                 <div className="flex items-center justify-between mb-1">
                   <label className="label text-xs">Product Title</label>
@@ -2297,6 +2355,8 @@ export default function Admin() {
                         const parts = [
                           productForm.brand,
                           productForm.model,
+                          productForm.category === 'laptop' ? productForm.processor : '',
+                          productForm.ram ? `${productForm.ram} RAM` : '',
                           productForm.storage,
                           productForm.color ? `(${productForm.color})` : '',
                         ].filter(Boolean);
@@ -2315,10 +2375,86 @@ export default function Admin() {
                   type="text"
                   value={productForm.title}
                   onChange={(e) => setProductForm({ ...productForm, title: e.target.value })}
-                  placeholder="e.g. Apple iPhone 14 Pro 128GB Deep Purple"
+                  placeholder={productForm.category === 'laptop' ? 'e.g. Apple MacBook Air M1 8GB 256GB Space Grey' : 'e.g. Apple iPhone 14 Pro 128GB Deep Purple'}
                   className="input text-xs font-bold"
                 />
               </div>
+
+              {/* Laptop Hardware Specs Block */}
+              {productForm.category === 'laptop' && (
+                <div className="p-3.5 rounded-2xl bg-indigo-50/70 border border-indigo-200/80 space-y-3">
+                  <div className="flex items-center gap-2 text-indigo-950 font-black text-xs">
+                    <Laptop className="h-4 w-4 text-indigo-600" /> Laptop Technical Specifications
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                      <label className="label text-[11px] font-bold text-indigo-900">Processor / CPU</label>
+                      <input
+                        type="text"
+                        placeholder="e.g. Intel Core i5 11th Gen / Apple M2"
+                        value={productForm.processor}
+                        onChange={(e) => setProductForm({ ...productForm, processor: e.target.value })}
+                        className="input text-xs bg-white border-indigo-200"
+                      />
+                    </div>
+                    <div>
+                      <label className="label text-[11px] font-bold text-indigo-900">Graphics / GPU</label>
+                      <input
+                        type="text"
+                        placeholder="e.g. Intel Iris Xe / NVIDIA RTX 3050"
+                        value={productForm.graphics}
+                        onChange={(e) => setProductForm({ ...productForm, graphics: e.target.value })}
+                        className="input text-xs bg-white border-indigo-200"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    <div>
+                      <label className="label text-[11px] font-bold text-indigo-900">Display Size & Panel</label>
+                      <input
+                        type="text"
+                        placeholder='e.g. 14.0" FHD IPS Anti-Glare'
+                        value={productForm.screen_size}
+                        onChange={(e) => setProductForm({ ...productForm, screen_size: e.target.value })}
+                        className="input text-xs bg-white border-indigo-200"
+                      />
+                    </div>
+                    <div>
+                      <label className="label text-[11px] font-bold text-indigo-900">Battery Health / Backup</label>
+                      <input
+                        type="text"
+                        placeholder="e.g. 92% Health (7-8 Hrs)"
+                        value={productForm.battery_health}
+                        onChange={(e) => setProductForm({ ...productForm, battery_health: e.target.value })}
+                        className="input text-xs bg-white border-indigo-200"
+                      />
+                    </div>
+                    <div>
+                      <label className="label text-[11px] font-bold text-indigo-900">Operating System</label>
+                      <input
+                        type="text"
+                        placeholder="e.g. Windows 11 Pro / macOS"
+                        value={productForm.operating_system}
+                        onChange={(e) => setProductForm({ ...productForm, operating_system: e.target.value })}
+                        className="input text-xs bg-white border-indigo-200"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="label text-[11px] font-bold text-indigo-900">In-The-Box Accessories Included</label>
+                    <input
+                      type="text"
+                      placeholder="e.g. Original 65W Fast Charger, Power Cable, Fundu Safe Box"
+                      value={productForm.accessories_included}
+                      onChange={(e) => setProductForm({ ...productForm, accessories_included: e.target.value })}
+                      className="input text-xs bg-white border-indigo-200"
+                    />
+                  </div>
+                </div>
+              )}
 
               <div className="grid grid-cols-2 gap-3">
                 <div>

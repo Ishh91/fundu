@@ -194,6 +194,12 @@ const highlightMatch = (text: string, query: string) => {
 
 const BUY_REFURBISHED_HIGHLIGHTS = [
   {
+    title: 'Certified Laptops',
+    desc: 'ThinkPads, MacBooks & Gaming with charger',
+    to: '/buy-laptop',
+    badge: 'New Launch',
+  },
+  {
     title: 'iPhones',
     desc: 'iPhone 11 to 15 Pro Max with 6M warranty',
     to: '/buy?brand=Apple',
@@ -1180,6 +1186,12 @@ export default function Navbar() {
                           </Link>
                         </li>
                         <li>
+                          <Link to="/buy-laptop" className="font-semibold text-gray-800 hover:text-[#344257] flex items-center justify-between">
+                            <span>Refurbished Laptops</span>
+                            <span className="text-[9px] font-black bg-blue-50 text-blue-700 border border-blue-200 px-1.5 py-0.2 rounded-full">New</span>
+                          </Link>
+                        </li>
+                        <li>
                           <Link to="/buy?brand=Samsung" className="font-semibold text-gray-800 hover:text-[#344257] block">
                             Samsung Galaxy Flagships
                           </Link>
@@ -1533,6 +1545,19 @@ export default function Navbar() {
                   </span>
                   <span className="text-[10px] font-bold bg-[#F0F0F5] text-[#344257] border border-[#C0C8D8] px-2 py-0.5 rounded-full">
                     6M Warranty
+                  </span>
+                </Link>
+
+                <Link
+                  to="/buy-laptop"
+                  onClick={() => setMobileOpen(false)}
+                  className="flex items-center justify-between rounded-xl px-3 py-2.5 text-sm font-bold text-gray-800 hover:bg-gray-50"
+                >
+                  <span className="flex items-center gap-2.5">
+                    <Laptop className="h-4 w-4 text-[#47576E]" /> Buy Refurbished Laptops
+                  </span>
+                  <span className="text-[10px] font-bold bg-blue-50 text-blue-800 border border-blue-200 px-2 py-0.5 rounded-full">
+                    With Charger
                   </span>
                 </Link>
 

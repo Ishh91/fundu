@@ -20,6 +20,14 @@ export type Product = {
   sold_count: number;
   seller_id: string | null;
   show_all_grades?: boolean;
+  category?: 'smartphone' | 'laptop' | 'tablet' | string;
+  processor?: string | null;
+  graphics?: string | null;
+  screen_size?: string | null;
+  battery_health?: string | null;
+  operating_system?: string | null;
+  accessories_included?: string | null;
+  use_case?: 'student' | 'business' | 'gaming' | 'macbook' | string | null;
   created_at: string;
 };
 

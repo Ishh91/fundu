@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Store, Search, Plus, Edit2, Trash2, Smartphone, Tag, ExternalLink, ShieldCheck, CheckCircle2 } from 'lucide-react';
+import { Store, Search, Plus, Edit2, Trash2, Smartphone, Laptop, Tag, ExternalLink, ShieldCheck, CheckCircle2, Cpu, Monitor, BatteryCharging } from 'lucide-react';
 import type { Product } from './adminTypes';
 import { formatINR } from '../../lib/db';
 import { getCleanPhoneImage } from '../../lib/phoneImages';
@@ -22,14 +22,20 @@ export default function AdminProducts({
   onDeleteProduct,
 }: AdminProductsProps) {
   const [search, setSearch] = useState('');
+  const [categoryFilter, setCategoryFilter] = useState<'all' | 'smartphone' | 'laptop'>('all');
   const [statusFilter, setStatusFilter] = useState<'all' | 'live' | 'hidden' | 'out_of_stock'>('all');
 
+  const smartphoneCount = products.filter((p) => p.category !== 'laptop').length;
+  const laptopCount = products.filter((p) => p.category === 'laptop').length;
   const liveCount = products.filter((p) => p.is_approved).length;
   const hiddenCount = products.filter((p) => !p.is_approved).length;
   const outOfStockCount = products.filter((p) => (p.stock ?? 0) <= 0).length;
 
   const filteredProducts = products.filter((p) => {
-    const matchesSearch = `${p.title} ${p.brand} ${p.model} ${p.offer_tag || ''}`.toLowerCase().includes(search.toLowerCase());
+    if (categoryFilter === 'smartphone' && p.category === 'laptop') return false;
+    if (categoryFilter === 'laptop' && p.category !== 'laptop') return false;
+
+    const matchesSearch = `${p.title} ${p.brand} ${p.model} ${p.processor || ''} ${p.offer_tag || ''}`.toLowerCase().includes(search.toLowerCase());
     if (!matchesSearch) return false;
 
     if (statusFilter === 'live') return p.is_approved;
@@ -47,8 +53,8 @@ export default function AdminProducts({
           <div className="inline-flex items-center gap-2 rounded-full bg-[#F0F0F5] border border-[#C0C8D8] px-3 py-1 text-xs font-black text-[#344257]">
             <Store className="h-3.5 w-3.5" /> Buy Store Catalog & Listings
           </div>
-          <h2 className="mt-2 font-display text-2xl font-black text-ink-900">Refurbished Phones Inventory</h2>
-          <p className="mt-1 text-xs text-ink-600">Stock levels, pricing, condition grades, offer tags, and marketplace approvals.</p>
+          <h2 className="mt-2 font-display text-2xl font-black text-ink-900">Refurbished Devices Inventory</h2>
+          <p className="mt-1 text-xs text-ink-600">Stock levels, pricing, condition grades, laptops & smartphones, and marketplace approvals.</p>
         </div>
 
         <div className="flex items-center gap-2.5">
@@ -56,9 +62,17 @@ export default function AdminProducts({
             href="/buy"
             target="_blank"
             rel="noopener noreferrer"
-            className="btn-outline text-xs px-3.5 py-2 flex items-center gap-1.5 bg-white hover:bg-gray-50 font-bold border-gray-300 shadow-xs transition"
+            className="btn-outline text-xs px-3 py-2 flex items-center gap-1.5 bg-white hover:bg-gray-50 font-bold border-gray-300 shadow-xs transition"
           >
-            <ExternalLink className="h-3.5 w-3.5" /> View Live Buy Store
+            <Smartphone className="h-3.5 w-3.5" /> Phones Store
+          </a>
+          <a
+            href="/buy-laptop"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="btn-outline text-xs px-3 py-2 flex items-center gap-1.5 bg-white hover:bg-blue-50 font-bold text-blue-700 border-blue-200 shadow-xs transition"
+          >
+            <Laptop className="h-3.5 w-3.5 text-blue-600" /> Laptops Store
           </a>
           <button
             onClick={() => onOpenProductModal(null)}
@@ -73,13 +87,44 @@ export default function AdminProducts({
         {/* Left Column: Products List */}
         <div className="lg:col-span-5 space-y-3">
           <div className="card p-3 rounded-2xl bg-white shadow-xs space-y-2.5">
+            {/* Category Switcher Tab */}
+            <div className="flex items-center gap-1 p-1 bg-gray-100 rounded-xl text-[11px] font-black">
+              <button
+                type="button"
+                onClick={() => setCategoryFilter('all')}
+                className={`flex-1 py-1 px-2 rounded-lg text-center transition cursor-pointer ${
+                  categoryFilter === 'all' ? 'bg-white text-gray-900 shadow-xs font-black' : 'text-gray-600 hover:text-gray-900'
+                }`}
+              >
+                All ({products.length})
+              </button>
+              <button
+                type="button"
+                onClick={() => setCategoryFilter('smartphone')}
+                className={`flex-1 py-1 px-2 rounded-lg text-center transition cursor-pointer flex items-center justify-center gap-1 ${
+                  categoryFilter === 'smartphone' ? 'bg-white text-blue-700 shadow-xs font-black' : 'text-gray-600 hover:text-gray-900'
+                }`}
+              >
+                <Smartphone className="h-3 w-3" /> Phones ({smartphoneCount})
+              </button>
+              <button
+                type="button"
+                onClick={() => setCategoryFilter('laptop')}
+                className={`flex-1 py-1 px-2 rounded-lg text-center transition cursor-pointer flex items-center justify-center gap-1 ${
+                  categoryFilter === 'laptop' ? 'bg-white text-indigo-700 shadow-xs font-black' : 'text-gray-600 hover:text-gray-900'
+                }`}
+              >
+                <Laptop className="h-3 w-3" /> Laptops ({laptopCount})
+              </button>
+            </div>
+
             <div className="flex items-center gap-2 border-b border-gray-100 pb-2">
               <Search className="h-4 w-4 text-ink-400 shrink-0 ml-1" />
               <input
                 type="text"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                placeholder="Search products by title, model..."
+                placeholder="Search products by title, model, processor..."
                 className="w-full text-xs bg-transparent border-none focus:outline-none text-ink-900 font-medium"
               />
             </div>
@@ -87,7 +132,7 @@ export default function AdminProducts({
             {/* Quick Status Filter Tabs */}
             <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-none text-[11px] font-bold">
               {[
-                { id: 'all', label: `All (${products.length})` },
+                { id: 'all', label: `All Status` },
                 { id: 'live', label: `Live (${liveCount})` },
                 { id: 'hidden', label: `Hidden (${hiddenCount})` },
                 { id: 'out_of_stock', label: `No Stock (${outOfStockCount})` },
@@ -252,14 +297,39 @@ export default function AdminProducts({
 
               {/* Specs Snapshot */}
               <div className="flex flex-wrap gap-2 text-xs font-semibold text-gray-700">
-                {selectedProduct.storage && (
-                  <span className="bg-gray-100 px-3 py-1 rounded-xl border border-gray-200">
-                    Storage: <strong>{selectedProduct.storage}</strong>
+                {selectedProduct.category === 'laptop' && (
+                  <span className="bg-indigo-50 text-indigo-800 px-3 py-1 rounded-xl border border-indigo-200 font-bold">
+                    💻 Laptop
+                  </span>
+                )}
+                {selectedProduct.processor && (
+                  <span className="bg-blue-50 text-blue-800 px-3 py-1 rounded-xl border border-blue-200">
+                    CPU: <strong>{selectedProduct.processor}</strong>
+                  </span>
+                )}
+                {selectedProduct.graphics && (
+                  <span className="bg-purple-50 text-purple-800 px-3 py-1 rounded-xl border border-purple-200">
+                    GPU: <strong>{selectedProduct.graphics}</strong>
+                  </span>
+                )}
+                {selectedProduct.screen_size && (
+                  <span className="bg-cyan-50 text-cyan-800 px-3 py-1 rounded-xl border border-cyan-200">
+                    Display: <strong>{selectedProduct.screen_size}</strong>
+                  </span>
+                )}
+                {selectedProduct.battery_health && (
+                  <span className="bg-emerald-50 text-emerald-800 px-3 py-1 rounded-xl border border-emerald-200">
+                    Battery: <strong>{selectedProduct.battery_health}</strong>
                   </span>
                 )}
                 {selectedProduct.ram && (
                   <span className="bg-gray-100 px-3 py-1 rounded-xl border border-gray-200">
                     RAM: <strong>{selectedProduct.ram}</strong>
+                  </span>
+                )}
+                {selectedProduct.storage && (
+                  <span className="bg-gray-100 px-3 py-1 rounded-xl border border-gray-200">
+                    Storage: <strong>{selectedProduct.storage}</strong>
                   </span>
                 )}
                 {selectedProduct.color && (
@@ -273,6 +343,13 @@ export default function AdminProducts({
                   </span>
                 )}
               </div>
+
+              {selectedProduct.accessories_included && (
+                <div className="p-3 rounded-2xl bg-slate-50 border border-slate-200 text-xs text-slate-700">
+                  <p className="font-bold text-slate-900 mb-0.5">📦 In The Box Accessories:</p>
+                  <p>{selectedProduct.accessories_included}</p>
+                </div>
+              )}
 
               {selectedProduct.description && (
                 <div className="p-4 rounded-2xl bg-ink-50 text-xs text-ink-700">
