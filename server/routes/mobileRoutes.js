@@ -650,6 +650,49 @@ router.get('/sell-pricing/config', async (req, res, next) => {
           normDoc.storage = storage;
         }
       }
+
+      // Universal Anti-Inversion Guard: Cross-check against all sibling storage variants
+      if (storage && normDoc.base_price > 0) {
+        try {
+          const parseGB = (s) => {
+            if (!s) return 0;
+            const m = String(s).match(/(\d+)\s*(GB|TB)/i);
+            if (!m) return 0;
+            const val = parseInt(m[1], 10);
+            return m[2].toUpperCase() === 'TB' ? val * 1024 : val;
+          };
+          const targetGB = parseGB(storage);
+          if (targetGB > 0) {
+            const siblings = await SellPriceConfig.find({
+              brand: brandRegex,
+              model: modelRegex,
+              is_active: { $ne: false },
+            }).lean();
+
+            for (const sib of siblings) {
+              const sibGB = parseGB(sib.storage);
+              if (sibGB > 0 && sib.base_price > 0) {
+                if (targetGB > sibGB && normDoc.base_price <= sib.base_price) {
+                  // Target is higher storage, but price is <= lower storage! Auto-enforce premium.
+                  const ratio = calculateHardwareVariantMultiplier(storage, '', rawBrand) /
+                                (calculateHardwareVariantMultiplier(sib.storage, '', rawBrand) || 1.0);
+                  const safeRatio = Math.max(1.05, ratio);
+                  normDoc.base_price = Math.round((sib.base_price * safeRatio) / 50) * 50;
+                } else if (targetGB < sibGB && normDoc.base_price >= sib.base_price) {
+                  // Target is lower storage, but price is >= higher storage! Auto-enforce lower tier.
+                  const ratio = calculateHardwareVariantMultiplier(storage, '', rawBrand) /
+                                (calculateHardwareVariantMultiplier(sib.storage, '', rawBrand) || 1.0);
+                  const safeRatio = Math.min(0.95, ratio);
+                  normDoc.base_price = Math.round((sib.base_price * safeRatio) / 50) * 50;
+                }
+              }
+            }
+          }
+        } catch (_guardErr) {
+          // non-fatal
+        }
+      }
+
       res.json({ data: normDoc, source: 'admin_database' });
       return;
     }

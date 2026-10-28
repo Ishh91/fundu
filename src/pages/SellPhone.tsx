@@ -707,7 +707,39 @@ export default function SellPhone() {
 
     // 1. Authoritative Admin Pricing: Use live pricingConfig from database if available
     if (pricingConfig && pricingConfig.base_price > 0) {
-      return pricingConfig.base_price;
+      let finalPrice = pricingConfig.base_price;
+      const normConfigStorage = (pricingConfig.storage || '').replace(/\s+/g, '').toUpperCase();
+      const normFormStorage = (form.storage || '').replace(/\s+/g, '').toUpperCase();
+      if (normConfigStorage && normConfigStorage !== normFormStorage) {
+        const baseMult = calculateHardwareVariantMultiplier(pricingConfig.storage || '128 GB', '', form.brand);
+        const targetMult = calculateHardwareVariantMultiplier(form.storage, '', form.brand);
+        const ratio = baseMult > 0 ? targetMult / baseMult : 1.0;
+        finalPrice = Math.round((pricingConfig.base_price * ratio) / 50) * 50;
+      }
+
+      // Sibling Storage Inversion Defense:
+      // Ensure higher storage variant is ALWAYS priced higher than lower storage variants
+      const parseGB = (s?: string) => {
+        if (!s) return 0;
+        const m = String(s).match(/(\d+)\s*(GB|TB)/i);
+        if (!m) return 0;
+        const val = parseInt(m[1], 10);
+        return m[2].toUpperCase() === 'TB' ? val * 1024 : val;
+      };
+      const curGB = parseGB(form.storage);
+      if (curGB > 0 && Array.isArray(currentDeviceSpecs?.storages)) {
+        for (const stg of currentDeviceSpecs.storages) {
+          const stgGB = parseGB(stg);
+          if (stgGB > 0 && curGB > stgGB) {
+            const lowerPrice = getEffectivePrice(form.brand, form.model, 0, stg);
+            if (lowerPrice > 0 && finalPrice <= lowerPrice) {
+              finalPrice = Math.round((lowerPrice * 1.08) / 50) * 50;
+            }
+          }
+        }
+      }
+
+      return finalPrice;
     }
 
     // 2. Check dynamic database synced price from priceSync
