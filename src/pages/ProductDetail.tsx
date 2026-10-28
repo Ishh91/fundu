@@ -260,73 +260,73 @@ const handleCheckPincode = async (codeToTest?: string) => {
   }
 };
 
-if (loading) {
-  return (
-    <div className="min-h-screen bg-[#f4f7f8] py-16">
-      <div className="container-page max-w-4xl mx-auto">
-        <div className="card p-12 text-center animate-pulse rounded-[32px] bg-white">
-          <Smartphone className="mx-auto h-12 w-12 text-ink-300 animate-bounce" />
-          <p className="mt-4 text-sm font-bold text-ink-500">Loading Fundu Refurbished Device Details...</p>
+  // Dynamic storage multiplier based on gigabyte ratio
+  const getStorageMultiplier = (targetStorage: string, baseStorage: string = '128 GB') => {
+    const norm = (s: string) => {
+      const num = parseInt(s) || 128;
+      return s.toLowerCase().includes('tb') ? num * 1024 : num;
+    };
+    const targetSize = norm(targetStorage);
+    const baseSize = norm(baseStorage);
+    if (targetSize === baseSize) return 1.0;
+    if (targetSize > baseSize) {
+      const step = Math.log2(targetSize / baseSize);
+      return Math.round((1 + step * 0.15) * 100) / 100;
+    } else {
+      const step = Math.log2(baseSize / targetSize);
+      return Math.round((1 - step * 0.12) * 100) / 100;
+    }
+  };
+
+  const availableStorages = useMemo(() => {
+    const isLaptop = product?.category === 'laptop' || !!product?.processor;
+    if (isLaptop) {
+      return ['256 GB', '512 GB', '1 TB'];
+    }
+    const base = (product?.storage || '128 GB').trim();
+    const isFlagship = (product?.price || 0) > 40000 || /iphone|galaxy s|pixel \d pro|ultra/i.test(product?.model || '');
+    if (isFlagship) {
+      return ['128 GB', '256 GB', '512 GB', '1 TB'].filter((s) => {
+        if (base === '256 GB' && s === '128 GB') return false;
+        return true;
+      });
+    }
+    if (/64\s*gb/i.test(base)) {
+      return ['64 GB', '128 GB', '256 GB'];
+    }
+    return ['128 GB', '256 GB', '512 GB'];
+  }, [product]);
+
+  const availableColors = useMemo(() => {
+    const baseColor = product?.color || 'Default';
+    const brand = (product?.brand || '').toLowerCase();
+    const pool = brand.includes('apple')
+      ? ['Natural Titanium', 'Midnight Blue', 'Starlight', 'Black Titanium', 'Silver']
+      : ['Phantom Black', 'Cream', 'Titanium Gray', 'Emerald Green', 'Glacier White'];
+    const colors = [baseColor];
+    for (const c of pool) {
+      if (!colors.some((existing) => existing.toLowerCase() === c.toLowerCase())) {
+        colors.push(c);
+      }
+      if (colors.length >= 3) break;
+    }
+    return colors;
+  }, [product]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-[#f4f7f8] py-16">
+        <div className="container-page max-w-4xl mx-auto">
+          <div className="card p-12 text-center animate-pulse rounded-[32px] bg-white">
+            <Smartphone className="mx-auto h-12 w-12 text-ink-300 animate-bounce" />
+            <p className="mt-4 text-sm font-bold text-ink-500">Loading Fundu Refurbished Device Details...</p>
+          </div>
         </div>
       </div>
-    </div>
-  );
-}
+    );
+  }
 
-if (!product) return null;
-
-    // Dynamic storage multiplier based on gigabyte ratio
-    const getStorageMultiplier = (targetStorage: string, baseStorage: string = '128 GB') => {
-      const norm = (s: string) => {
-        const num = parseInt(s) || 128;
-        return s.toLowerCase().includes('tb') ? num * 1024 : num;
-      };
-      const targetSize = norm(targetStorage);
-      const baseSize = norm(baseStorage);
-      if (targetSize === baseSize) return 1.0;
-      if (targetSize > baseSize) {
-        const step = Math.log2(targetSize / baseSize);
-        return Math.round((1 + step * 0.15) * 100) / 100;
-      } else {
-        const step = Math.log2(baseSize / targetSize);
-        return Math.round((1 - step * 0.12) * 100) / 100;
-      }
-    };
-
-    const availableStorages = useMemo(() => {
-      const isLaptop = product?.category === 'laptop' || !!product?.processor;
-      if (isLaptop) {
-        return ['256 GB', '512 GB', '1 TB'];
-      }
-      const base = (product?.storage || '128 GB').trim();
-      const isFlagship = (product?.price || 0) > 40000 || /iphone|galaxy s|pixel \d pro|ultra/i.test(product?.model || '');
-      if (isFlagship) {
-        return ['128 GB', '256 GB', '512 GB', '1 TB'].filter((s) => {
-          if (base === '256 GB' && s === '128 GB') return false;
-          return true;
-        });
-      }
-      if (/64\s*gb/i.test(base)) {
-        return ['64 GB', '128 GB', '256 GB'];
-      }
-      return ['128 GB', '256 GB', '512 GB'];
-    }, [product]);
-
-    const availableColors = useMemo(() => {
-      const baseColor = product?.color || 'Default';
-      const brand = (product?.brand || '').toLowerCase();
-      const pool = brand.includes('apple')
-        ? ['Natural Titanium', 'Midnight Blue', 'Starlight', 'Black Titanium', 'Silver']
-        : ['Phantom Black', 'Cream', 'Titanium Gray', 'Emerald Green', 'Glacier White'];
-      const colors = [baseColor];
-      for (const c of pool) {
-        if (!colors.some((existing) => existing.toLowerCase() === c.toLowerCase())) {
-          colors.push(c);
-        }
-        if (colors.length >= 3) break;
-      }
-      return colors;
-    }, [product]);
+  if (!product) return null;
 
     // Proportional Grade Price with percentage savings
     const getGradePrice = (gradeId: string, storage: string = selectedStorage) => {
