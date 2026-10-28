@@ -690,6 +690,7 @@ export default function Admin() {
 
       setProducts((prev) => [newProduct, ...prev]);
       setSelectedProductId(newProduct.id);
+      broadcastSync('PRODUCT_UPDATE', 'products', 'insert', newProduct);
       if (payload.images && payload.images.length > 0 && payload.images[0]) {
         saveCustomModelImage(payload.brand, payload.model, payload.images[0]);
       }
@@ -911,7 +912,10 @@ export default function Admin() {
       alert(error.message);
       return;
     }
-    if (table === 'products') setProducts((prev) => prev.map((p) => (p.id === id ? { ...p, is_approved: !current } : p)));
+    if (table === 'products') {
+      setProducts((prev) => prev.map((p) => (p.id === id ? { ...p, is_approved: !current } : p)));
+      broadcastSync('PRODUCT_UPDATE', 'products', 'update', { id, is_approved: !current });
+    }
     if (table === 'spare_parts') setParts((prev) => prev.map((p) => (p.id === id ? { ...p, is_approved: !current } : p)));
     if (table === 'reviews') setReviews((prev) => prev.map((r) => (r.id === id ? { ...r, is_approved: !current } : r)));
   };
@@ -929,6 +933,7 @@ export default function Admin() {
     }
     setProducts((prev) => prev.filter((p) => p.id !== id));
     if (selectedProductId === id) setSelectedProductId(null);
+    broadcastSync('PRODUCT_UPDATE', 'products', 'delete', { id });
   };
 
   const handleDeleteMasterPhone = async (phone: MasterPhone) => {
@@ -1065,12 +1070,16 @@ export default function Admin() {
           .select('*')
           .single();
         if (error) throw error;
-        setProducts((prev) => prev.map((p) => (p.id === productModal.product?.id ? (data as Product) : p)));
+        const saved = (data as Product) || { ...productModal.product, ...payload };
+        setProducts((prev) => prev.map((p) => (p.id === productModal.product?.id ? saved : p)));
+        broadcastSync('PRODUCT_UPDATE', 'products', 'update', saved);
       } else {
         const { data, error } = await db.from('products').insert(payload).select('*').single();
         if (error) throw error;
-        setProducts((prev) => [data as Product, ...prev]);
-        setSelectedProductId((data as Product).id);
+        const saved = data as Product;
+        setProducts((prev) => [saved, ...prev]);
+        setSelectedProductId(saved.id);
+        broadcastSync('PRODUCT_UPDATE', 'products', 'insert', saved);
       }
       if (payload.images && payload.images.length > 0 && payload.images[0]) {
         saveCustomModelImage(payload.brand, payload.model, payload.images[0]);
@@ -1841,7 +1850,7 @@ export default function Admin() {
                     offer_tag: product.offer_tag ?? '',
                     warranty_months: String(product.warranty_months),
                     description: product.description ?? '',
-                    images: product.images.join('\n'),
+                    images: (product.images || []).join('\n'),
                     is_approved: product.is_approved,
                     is_featured: product.is_featured,
                     show_all_grades: product.show_all_grades !== false,

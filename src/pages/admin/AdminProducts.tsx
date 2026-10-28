@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Store, Search, Plus, Edit2, Trash2, Smartphone, Tag } from 'lucide-react';
+import { Store, Search, Plus, Edit2, Trash2, Smartphone, Tag, ExternalLink, ShieldCheck, CheckCircle2 } from 'lucide-react';
 import type { Product } from './adminTypes';
 import { formatINR } from '../../lib/db';
 import { getCleanPhoneImage } from '../../lib/phoneImages';
@@ -22,10 +22,21 @@ export default function AdminProducts({
   onDeleteProduct,
 }: AdminProductsProps) {
   const [search, setSearch] = useState('');
+  const [statusFilter, setStatusFilter] = useState<'all' | 'live' | 'hidden' | 'out_of_stock'>('all');
 
-  const filteredProducts = products.filter((p) =>
-    `${p.title} ${p.brand} ${p.model} ${p.offer_tag || ''}`.toLowerCase().includes(search.toLowerCase())
-  );
+  const liveCount = products.filter((p) => p.is_approved).length;
+  const hiddenCount = products.filter((p) => !p.is_approved).length;
+  const outOfStockCount = products.filter((p) => (p.stock ?? 0) <= 0).length;
+
+  const filteredProducts = products.filter((p) => {
+    const matchesSearch = `${p.title} ${p.brand} ${p.model} ${p.offer_tag || ''}`.toLowerCase().includes(search.toLowerCase());
+    if (!matchesSearch) return false;
+
+    if (statusFilter === 'live') return p.is_approved;
+    if (statusFilter === 'hidden') return !p.is_approved;
+    if (statusFilter === 'out_of_stock') return (p.stock ?? 0) <= 0;
+    return true;
+  });
 
   const selectedProduct = products.find((p) => p.id === selectedProductId) || filteredProducts[0] || null;
 
@@ -40,19 +51,29 @@ export default function AdminProducts({
           <p className="mt-1 text-xs text-ink-600">Stock levels, pricing, condition grades, offer tags, and marketplace approvals.</p>
         </div>
 
-        <button
-          onClick={() => onOpenProductModal(null)}
-          className="btn-primary text-xs px-4 py-2 flex items-center gap-1.5 bg-blue-600 hover:bg-blue-700 font-extrabold shadow-md cursor-pointer transition"
-        >
-          <Plus className="h-4 w-4" /> Add Product to Stock
-        </button>
+        <div className="flex items-center gap-2.5">
+          <a
+            href="/buy"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="btn-outline text-xs px-3.5 py-2 flex items-center gap-1.5 bg-white hover:bg-gray-50 font-bold border-gray-300 shadow-xs transition"
+          >
+            <ExternalLink className="h-3.5 w-3.5" /> View Live Buy Store
+          </a>
+          <button
+            onClick={() => onOpenProductModal(null)}
+            className="btn-primary text-xs px-4 py-2 flex items-center gap-1.5 bg-blue-600 hover:bg-blue-700 font-extrabold shadow-md cursor-pointer transition"
+          >
+            <Plus className="h-4 w-4" /> Add Product to Stock
+          </button>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
         {/* Left Column: Products List */}
         <div className="lg:col-span-5 space-y-3">
-          <div className="card p-3 rounded-2xl bg-white shadow-xs">
-            <div className="flex items-center gap-2">
+          <div className="card p-3 rounded-2xl bg-white shadow-xs space-y-2.5">
+            <div className="flex items-center gap-2 border-b border-gray-100 pb-2">
               <Search className="h-4 w-4 text-ink-400 shrink-0 ml-1" />
               <input
                 type="text"
@@ -62,9 +83,32 @@ export default function AdminProducts({
                 className="w-full text-xs bg-transparent border-none focus:outline-none text-ink-900 font-medium"
               />
             </div>
+
+            {/* Quick Status Filter Tabs */}
+            <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-none text-[11px] font-bold">
+              {[
+                { id: 'all', label: `All (${products.length})` },
+                { id: 'live', label: `Live (${liveCount})` },
+                { id: 'hidden', label: `Hidden (${hiddenCount})` },
+                { id: 'out_of_stock', label: `No Stock (${outOfStockCount})` },
+              ].map((tab) => (
+                <button
+                  key={tab.id}
+                  type="button"
+                  onClick={() => setStatusFilter(tab.id as any)}
+                  className={`px-2.5 py-1 rounded-lg transition whitespace-nowrap cursor-pointer ${
+                    statusFilter === tab.id
+                      ? 'bg-[#344257] text-white shadow-xs'
+                      : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                  }`}
+                >
+                  {tab.label}
+                </button>
+              ))}
+            </div>
           </div>
 
-          <div className="space-y-2 max-h-[calc(100vh-300px)] overflow-y-auto pr-1">
+          <div className="space-y-2 max-h-[calc(100vh-320px)] overflow-y-auto pr-1">
             {filteredProducts.length === 0 ? (
               <div className="card p-8 text-center bg-white space-y-3">
                 <Store className="h-8 w-8 text-ink-300 mx-auto" />
@@ -80,6 +124,7 @@ export default function AdminProducts({
             ) : (
               filteredProducts.map((p) => {
                 const isSelected = selectedProduct?.id === p.id;
+                const isOutOfStock = (p.stock ?? 0) <= 0;
                 return (
                   <div
                     key={p.id}
@@ -98,13 +143,27 @@ export default function AdminProducts({
                       />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-1.5">
+                      <div className="flex items-center justify-between gap-1.5">
                         <p className="font-bold text-xs text-ink-900 truncate">{p.title}</p>
+                        <span
+                          className={`text-[9px] font-extrabold px-1.5 py-0.5 rounded-full shrink-0 ${
+                            p.is_approved
+                              ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                              : 'bg-amber-50 text-amber-700 border border-amber-200'
+                          }`}
+                        >
+                          {p.is_approved ? 'Live' : 'Hidden'}
+                        </span>
                       </div>
                       <div className="flex items-center gap-2 mt-0.5">
                         <span className="text-[11px] text-ink-500 font-semibold">
-                          {formatINR(p.price)} · Stock: {p.stock}
+                          {formatINR(p.price)} · Stock: <strong className={isOutOfStock ? 'text-rose-600' : 'text-ink-900'}>{p.stock ?? 0}</strong>
                         </span>
+                        {isOutOfStock && (
+                          <span className="text-[9px] font-bold px-1.5 py-0.2 rounded bg-rose-50 text-rose-600 border border-rose-200">
+                            Out of Stock
+                          </span>
+                        )}
                         {p.offer_tag && (
                           <span className="badge bg-amber-50 text-amber-800 text-[9px] py-0 px-1 font-bold">
                             {p.offer_tag}
@@ -136,6 +195,15 @@ export default function AdminProducts({
                 </div>
 
                 <div className="flex items-center gap-2">
+                  <a
+                    href={`/product/${selectedProduct.id}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="btn-outline text-xs px-2.5 py-1.5 flex items-center gap-1 bg-white font-bold text-[#344257]"
+                    title="View how customer sees this product"
+                  >
+                    <ExternalLink className="h-3.5 w-3.5" /> View Live
+                  </a>
                   <button
                     onClick={() => onOpenProductModal(selectedProduct)}
                     className="btn-outline text-xs px-3 py-1.5 flex items-center gap-1 bg-white font-bold"
@@ -144,8 +212,8 @@ export default function AdminProducts({
                   </button>
                   <button
                     onClick={() => onToggleApproval(selectedProduct.id, selectedProduct.is_approved)}
-                    className={`btn text-xs px-3 py-1.5 font-bold rounded-xl ${
-                      selectedProduct.is_approved ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'
+                    className={`btn text-xs px-3 py-1.5 font-bold rounded-xl cursor-pointer ${
+                      selectedProduct.is_approved ? 'bg-emerald-100 text-emerald-800 hover:bg-emerald-200' : 'bg-amber-100 text-amber-800 hover:bg-amber-200'
                     }`}
                   >
                     {selectedProduct.is_approved ? 'Approved (Live)' : 'Pending Review'}
@@ -176,8 +244,34 @@ export default function AdminProducts({
                 </div>
                 <div>
                   <p className="text-ink-500 font-medium">Units in Stock</p>
-                  <p className="font-black text-ink-900 text-sm mt-0.5">{selectedProduct.stock}</p>
+                  <p className={`font-black text-sm mt-0.5 ${(selectedProduct.stock ?? 0) <= 0 ? 'text-rose-600' : 'text-ink-900'}`}>
+                    {selectedProduct.stock ?? 0}
+                  </p>
                 </div>
+              </div>
+
+              {/* Specs Snapshot */}
+              <div className="flex flex-wrap gap-2 text-xs font-semibold text-gray-700">
+                {selectedProduct.storage && (
+                  <span className="bg-gray-100 px-3 py-1 rounded-xl border border-gray-200">
+                    Storage: <strong>{selectedProduct.storage}</strong>
+                  </span>
+                )}
+                {selectedProduct.ram && (
+                  <span className="bg-gray-100 px-3 py-1 rounded-xl border border-gray-200">
+                    RAM: <strong>{selectedProduct.ram}</strong>
+                  </span>
+                )}
+                {selectedProduct.color && (
+                  <span className="bg-gray-100 px-3 py-1 rounded-xl border border-gray-200">
+                    Color: <strong>{selectedProduct.color}</strong>
+                  </span>
+                )}
+                {selectedProduct.warranty_months && (
+                  <span className="bg-gray-100 px-3 py-1 rounded-xl border border-gray-200">
+                    Warranty: <strong>{selectedProduct.warranty_months} Months</strong>
+                  </span>
+                )}
               </div>
 
               {selectedProduct.description && (
@@ -187,13 +281,13 @@ export default function AdminProducts({
                 </div>
               )}
 
-                <div className="rounded-2xl overflow-hidden border border-ink-200 bg-white p-4 flex items-center justify-center">
-                  <img
-                    src={getCleanPhoneImage(selectedProduct.brand, selectedProduct.model || selectedProduct.title, selectedProduct.images?.[0])}
-                    alt=""
-                    className="h-52 w-auto object-contain"
-                  />
-                </div>
+              <div className="rounded-2xl overflow-hidden border border-ink-200 bg-white p-4 flex items-center justify-center">
+                <img
+                  src={getCleanPhoneImage(selectedProduct.brand, selectedProduct.model || selectedProduct.title, selectedProduct.images?.[0])}
+                  alt=""
+                  className="h-52 w-auto object-contain"
+                />
+              </div>
             </div>
           ) : (
             <div className="card p-12 text-center bg-white rounded-[28px] border border-[#dce5e8]">

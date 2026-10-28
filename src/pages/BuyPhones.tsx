@@ -476,18 +476,20 @@ return (
               <button
                 key={p.label}
                 type="button"
-            setPricePreset(idx);
-          if (idx !== 0) setMaxPrice(p.max);
-                  }}
-          className={`rounded-full px-3 py-1 text-xs font-bold whitespace-nowrap transition cursor-pointer ${active
-              ? 'bg-[#344257] text-white shadow-xs'
-              : 'bg-white text-gray-700 hover:bg-gray-100 border border-gray-200'
-            }`}
-                >
-          {p.label}
-        </button>
-        );
-            })}
+                onClick={() => {
+                  setPricePreset(idx);
+                  if (idx !== 0) setMaxPrice(p.max);
+                }}
+                className={`rounded-full px-3 py-1 text-xs font-bold whitespace-nowrap transition cursor-pointer ${
+                  active
+                    ? 'bg-[#344257] text-white shadow-xs'
+                    : 'bg-white text-gray-700 hover:bg-gray-100 border border-gray-200'
+                }`}
+              >
+                {p.label}
+              </button>
+            );
+          })}
       </div>
 
       <button
