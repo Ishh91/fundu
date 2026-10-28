@@ -129,6 +129,19 @@ export default function Payment() {
 
       if (error) throw error;
 
+      // Decrement stock for real inventory products in database
+      for (const ci of cartItems) {
+        if (ci.type === 'product' && ci.item?.id && !ci.item.id.startsWith('sample-')) {
+          try {
+            const currentStock = (ci.item as Product).stock ?? 1;
+            const newStock = Math.max(0, currentStock - (ci.quantity || 1));
+            await db.from('products').update({ stock: newStock }).eq('id', ci.item.id);
+          } catch (stockErr) {
+            console.warn('⚠️ [Payment] Stock update error for product:', ci.item.id, stockErr);
+          }
+        }
+      }
+
       // Dispatch WhatsApp Notification to Admins (9105783553 & 9839122345)
       try {
         const itemsSummary = cartItems.map((c) => `${c.item.title || (c.item as any).model || 'Device'} (x${c.quantity || 1})`).join(', ');

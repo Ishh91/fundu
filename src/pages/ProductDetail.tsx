@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import {
   ShieldCheck,
@@ -28,6 +28,7 @@ import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
 import { getCleanPhoneImage, pullLiveModelImagesFromDb } from '../lib/phoneImages';
 import type { Product, Review } from '../types';
+import { findSampleProductById, SAMPLE_PRODUCTS_MAP } from '../data/sampleProducts';
 
 // Doorstep PIN code to Area mapping dictionary
 const DOORSTEP_PINCODE_MAP: Record<string, string> = {
@@ -75,84 +76,8 @@ const CONDITION_GRADES = [
   },
 ];
 
-const SAMPLE_PRODUCTS: Record<string, Product> = {
-  'sample-1': {
-    id: 'sample-1',
-    title: 'Apple iPhone 13 (128 GB) - Starlight',
-    brand: 'Apple',
-    model: 'iPhone 13',
-    ram: '4 GB',
-    storage: '128 GB',
-    color: 'Starlight',
-    condition: 'Superb',
-    price: 38999,
-    original_price: 59900,
-    discount_percent: 35,
-    warranty_months: 6,
-    description: 'Refurbished Superb condition Apple iPhone 13. Passed 32-point inspection, battery health guaranteed above 88%. Comes with USB-C cable and 6-month Fundu replacement warranty.',
-    images: [
-      'https://images.unsplash.com/photo-1695048133142-1a20484d2569?w=800&auto=format&fit=crop&q=80',
-      'https://images.unsplash.com/photo-1632661674596-df8be070a5c5?w=800&auto=format&fit=crop&q=80',
-      'https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=800&auto=format&fit=crop&q=80',
-    ],
-    is_approved: true,
-    is_featured: true,
-    stock: 5,
-    sold_count: 42,
-    seller_id: null,
-    created_at: new Date().toISOString(),
-  },
-  'sample-2': {
-    id: 'sample-2',
-    title: 'Apple iPhone 14 (128 GB) - Midnight',
-    brand: 'Apple',
-    model: 'iPhone 14',
-    ram: '6 GB',
-    storage: '128 GB',
-    color: 'Midnight',
-    condition: 'Superb',
-    price: 47499,
-    original_price: 69900,
-    discount_percent: 32,
-    warranty_months: 6,
-    description: 'Flawless condition Apple iPhone 14 with A15 Bionic chip, verified screen & camera. Includes charging cable and Fundu 6-month warranty card.',
-    images: [
-      'https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=800&auto=format&fit=crop&q=80',
-      'https://images.unsplash.com/photo-1663499482523-1c0c1bae4ce1?w=800&auto=format&fit=crop&q=80',
-    ],
-    is_approved: true,
-    is_featured: true,
-    stock: 4,
-    sold_count: 29,
-    seller_id: null,
-    created_at: new Date().toISOString(),
-  },
-  'sample-3': {
-    id: 'sample-3',
-    title: 'Samsung Galaxy S23 5G (256 GB) - Phantom Black',
-    brand: 'Samsung',
-    model: 'Galaxy S23',
-    ram: '8 GB',
-    storage: '256 GB',
-    color: 'Phantom Black',
-    condition: 'Superb',
-    price: 42999,
-    original_price: 74999,
-    discount_percent: 42,
-    warranty_months: 6,
-    description: 'Flagship Snapdragon performance. Thoroughly sanitized and tested. Free express delivery across Gomti Nagar, Hazratganj, and all service areas.',
-    images: [
-      'https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?w=800&auto=format&fit=crop&q=80',
-      'https://images.unsplash.com/photo-1678685888221-cda773a3dcdb?w=800&auto=format&fit=crop&q=80',
-    ],
-    is_approved: true,
-    is_featured: true,
-    stock: 3,
-    sold_count: 18,
-    seller_id: null,
-    created_at: new Date().toISOString(),
-  },
-};
+// Universal fallback dictionary mapped from central sample catalog
+const SAMPLE_PRODUCTS: Record<string, Product> = SAMPLE_PRODUCTS_MAP;
 
 const INSPECTION_POINTS = [
   'Display & Touch Response Verified',
@@ -259,405 +184,481 @@ export default function ProductDetail() {
     if (!id) return;
     setLoading(true);
 
-    if (SAMPLE_PRODUCTS[id]) {
-      const p = SAMPLE_PRODUCTS[id];
-      setProduct(p);
-      setSelectedImage(p.images[0] || '');
-      setSelectedStorage(p.storage || '128 GB');
-      setSelectedColor(p.color || 'Default');
-      setSelectedGrade(p.condition || 'Superb');
-      setLoading(false);
-      return;
-    }
-
-    db.from('products')
-      .select('*')
-      .eq('id', id)
-      .single()
-      .then(({ data, error }) => {
-        if (!error && data) {
-          const p = data as Product;
-          setProduct(p);
-          setSelectedImage(p.images[0] || '');
-          setSelectedStorage(p.storage || '128 GB');
-          setSelectedColor(p.color || 'Default');
-          setSelectedGrade(p.condition || 'Superb');
-        } else {
-          // Fallback sample product
-          const fallback = SAMPLE_PRODUCTS['sample-1'];
-          setProduct(fallback);
-          setSelectedImage(fallback.images[0] || '');
-          setSelectedStorage(fallback.storage || '128 GB');
-          setSelectedColor(fallback.color || 'Starlight');
-        }
+      const sample = findSampleProductById(id);
+      if (sample) {
+        setProduct(sample);
+        setSelectedImage(sample.images[0] || '');
+        setSelectedStorage(sample.storage || '128 GB');
+        setSelectedColor(sample.color || 'Default');
+        setSelectedGrade(sample.condition || 'Superb');
         setLoading(false);
-      });
-  }, [id]);
-
-  // Handle PIN Code Auto Location Lookup
-  const handleCheckPincode = async (codeToTest?: string) => {
-    const targetPin = (codeToTest || pincode).trim();
-    if (!/^\d{6}$/.test(targetPin)) {
-      setPincodeError('Please enter a valid 6-digit PIN code.');
-      return;
-    }
-
-    setPincodeLoading(true);
-    setPincodeError(null);
-
-    // 1. Check local service database first
-    if (DOORSTEP_PINCODE_MAP[targetPin]) {
-      setLocationName(DOORSTEP_PINCODE_MAP[targetPin]);
-      setPincodeLoading(false);
-      return;
-    }
-
-    // 2. Fetch from free Indian Postal API
-    try {
-      const res = await fetch(`https://api.postalpincode.in/pincode/${targetPin}`);
-      const data = await res.json();
-
-      if (data && data[0] && data[0].Status === 'Success' && data[0].PostOffice?.[0]) {
-        const po = data[0].PostOffice[0];
-        const derivedLoc = `${po.Name}, ${po.District}, ${po.State}`;
-        setLocationName(derivedLoc);
-      } else {
-        setLocationName(`Area (PIN ${targetPin}), India`);
+        return;
       }
-    } catch {
-      setLocationName(`Area (PIN ${targetPin}), India`);
-    } finally {
-      setPincodeLoading(false);
-    }
-  };
 
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-[#f4f7f8] py-16">
-        <div className="container-page max-w-4xl mx-auto">
-          <div className="card p-12 text-center animate-pulse rounded-[32px] bg-white">
-            <Smartphone className="mx-auto h-12 w-12 text-ink-300 animate-bounce" />
-            <p className="mt-4 text-sm font-bold text-ink-500">Loading Fundu Refurbished Device Details...</p>
+      db.from('products')
+        .select('*')
+        .eq('id', id)
+        .single()
+        .then(({ data, error }) => {
+          if (!error && data) {
+            const p = data as Product;
+            setProduct(p);
+            setSelectedImage(p.images[0] || '');
+            setSelectedStorage(p.storage || '128 GB');
+            setSelectedColor(p.color || 'Default');
+            setSelectedGrade(p.condition || 'Superb');
+          } else {
+            // Fallback sample product
+            const fallback = findSampleProductById('sample-1') || findSampleProductById('sample-apple-13');
+            if (fallback) {
+              setProduct(fallback);
+              setSelectedImage(fallback.images[0] || '');
+              setSelectedStorage(fallback.storage || '128 GB');
+              setSelectedColor(fallback.color || 'Starlight');
+            }
+          }
+          setLoading(false);
+    })
+    .catch(() => setLoading(false));
+}, [id]);
+
+// Handle PIN Code Auto Location Lookup
+const handleCheckPincode = async (codeToTest?: string) => {
+  const targetPin = (codeToTest || pincode).trim();
+  if (!/^\d{6}$/.test(targetPin)) {
+    setPincodeError('Please enter a valid 6-digit PIN code.');
+    return;
+  }
+
+  setPincodeLoading(true);
+  setPincodeError(null);
+
+  // 1. Check local service database first
+  if (DOORSTEP_PINCODE_MAP[targetPin]) {
+    setLocationName(DOORSTEP_PINCODE_MAP[targetPin]);
+    setPincodeLoading(false);
+    return;
+  }
+
+  // 2. Fetch from free Indian Postal API
+  try {
+    const res = await fetch(`https://api.postalpincode.in/pincode/${targetPin}`);
+    const data = await res.json();
+
+    if (data && data[0] && data[0].Status === 'Success' && data[0].PostOffice?.[0]) {
+      const po = data[0].PostOffice[0];
+      const derivedLoc = `${po.Name}, ${po.District}, ${po.State}`;
+      setLocationName(derivedLoc);
+    } else {
+      setLocationName(`Area (PIN ${targetPin}), India`);
+    }
+  } catch {
+    setLocationName(`Area (PIN ${targetPin}), India`);
+  } finally {
+    setPincodeLoading(false);
+  }
+};
+
+if (loading) {
+  return (
+    <div className="min-h-screen bg-[#f4f7f8] py-16">
+      <div className="container-page max-w-4xl mx-auto">
+        <div className="card p-12 text-center animate-pulse rounded-[32px] bg-white">
+          <Smartphone className="mx-auto h-12 w-12 text-ink-300 animate-bounce" />
+          <p className="mt-4 text-sm font-bold text-ink-500">Loading Fundu Refurbished Device Details...</p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+if (!product) return null;
+
+    // Dynamic storage multiplier based on gigabyte ratio
+    const getStorageMultiplier = (targetStorage: string, baseStorage: string = '128 GB') => {
+      const norm = (s: string) => {
+        const num = parseInt(s) || 128;
+        return s.toLowerCase().includes('tb') ? num * 1024 : num;
+      };
+      const targetSize = norm(targetStorage);
+      const baseSize = norm(baseStorage);
+      if (targetSize === baseSize) return 1.0;
+      if (targetSize > baseSize) {
+        const step = Math.log2(targetSize / baseSize);
+        return Math.round((1 + step * 0.15) * 100) / 100;
+      } else {
+        const step = Math.log2(baseSize / targetSize);
+        return Math.round((1 - step * 0.12) * 100) / 100;
+      }
+    };
+
+    const availableStorages = useMemo(() => {
+      const base = (product?.storage || '128 GB').trim();
+      const isFlagship = (product?.price || 0) > 40000 || /iphone|galaxy s|pixel \d pro|ultra/i.test(product?.model || '');
+      if (isFlagship) {
+        return ['128 GB', '256 GB', '512 GB', '1 TB'].filter((s) => {
+          if (base === '256 GB' && s === '128 GB') return false;
+          return true;
+        });
+      }
+      if (/64\s*gb/i.test(base)) {
+        return ['64 GB', '128 GB', '256 GB'];
+      }
+      return ['128 GB', '256 GB', '512 GB'];
+    }, [product]);
+
+    const availableColors = useMemo(() => {
+      const baseColor = product?.color || 'Default';
+      const brand = (product?.brand || '').toLowerCase();
+      const pool = brand.includes('apple')
+        ? ['Natural Titanium', 'Midnight Blue', 'Starlight', 'Black Titanium', 'Silver']
+        : ['Phantom Black', 'Cream', 'Titanium Gray', 'Emerald Green', 'Glacier White'];
+      const colors = [baseColor];
+      for (const c of pool) {
+        if (!colors.some((existing) => existing.toLowerCase() === c.toLowerCase())) {
+          colors.push(c);
+        }
+        if (colors.length >= 3) break;
+      }
+      return colors;
+    }, [product]);
+
+    // Proportional Grade Price with percentage savings
+    const getGradePrice = (gradeId: string, storage: string = selectedStorage) => {
+      const grade = CONDITION_GRADES.find((g) => g.id.toLowerCase() === gradeId.toLowerCase()) || CONDITION_GRADES[2];
+      const base = product.price || 20000;
+      const sMult = getStorageMultiplier(storage, product.storage || '128 GB');
+      const gMult = grade.priceMultiplier || 1.0;
+      return Math.round(base * sMult * gMult);
+    };
+
+    const activeGradeName = (selectedGrade || product.condition || 'Superb').toLowerCase();
+    const gradeObj = CONDITION_GRADES.find((g) => g.id.toLowerCase() === activeGradeName || (activeGradeName.includes('excellent') && g.id === 'Superb')) || CONDITION_GRADES[2];
+
+    const currentPrice = getGradePrice(gradeObj.id, selectedStorage);
+    const currentMrp = product.original_price && product.original_price > product.price
+    ?Math.round(product.original_price * getStorageMultiplier(selectedStorage, product.storage || '128 GB'))
+    : Math.round(currentPrice * 1.35);
+const currentSavings = Math.max(0, currentMrp - currentPrice);
+const currentDiscountPercent = product.discount_percent || Math.round((currentSavings / currentMrp) * 100);
+const emiAmount = Math.round(currentPrice / 24);
+
+const images = product.images && product.images.length > 0
+  ? product.images
+  : ['https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=800&auto=format&fit=crop&q=80'];
+
+const handleAddToCart = () => {
+  if (profile && profile.role !== 'customer') {
+    alert(`Access Restricted: You are logged in as ${profile.role.toUpperCase()}. Vendor, Delivery, and Admin accounts cannot place orders.`);
+    return;
+  }
+  const updatedProduct = {
+    ...product,
+    price: currentPrice,
+    storage: selectedStorage,
+    color: selectedColor || product.color,
+    condition: selectedGrade as any,
+  };
+  addToCart(updatedProduct, quantity);
+  setAddedToast(true);
+  setTimeout(() => setAddedToast(false), 2500);
+};
+
+const handleBuyNow = () => {
+  if (profile && profile.role !== 'customer') {
+    alert(`Access Restricted: You are logged in as ${profile.role.toUpperCase()}. Vendor, Delivery, and Admin accounts cannot place orders.`);
+    return;
+  }
+  const updatedProduct = {
+    ...product,
+    price: currentPrice,
+    storage: selectedStorage,
+    color: selectedColor || product.color,
+    condition: selectedGrade as any,
+  };
+  addToCart(updatedProduct, quantity);
+  if (user) {
+    navigate('/checkout');
+  } else {
+    navigate('/login?redirect=/checkout');
+  }
+};
+
+return (
+  <div className="min-h-screen bg-[#f4f7f8] pb-32">
+    {/* Top Breadcrumb Navigation */}
+    <section className="bg-white border-b border-[#e5ecef] py-3.5 shadow-xs">
+      <div className="container-page">
+        <div className="flex flex-wrap items-center justify-between gap-2 text-xs font-semibold text-ink-500">
+          <div className="flex items-center gap-2">
+            <Link to="/" className="hover:text-[#344257] transition">Home</Link>
+            <ChevronRight className="h-3.5 w-3.5 text-ink-300" />
+            <Link to="/buy" className="hover:text-[#344257] transition">Buy</Link>
+            <ChevronRight className="h-3.5 w-3.5 text-ink-300" />
+            <span className="text-[#344257] font-bold truncate max-w-xs">{product.brand} {product.model}</span>
+          </div>
+          <div className="flex items-center gap-1 text-[11px] font-bold text-[#344257] bg-[#F0F0F5] border border-[#C0C8D8] px-2.5 py-1 rounded-full">
+            <Building2 className="h-3 w-3 text-[#47576E]" /> Certified Warehouse Stock
           </div>
         </div>
       </div>
-    );
-  }
+    </section>
 
-  if (!product) return null;
+    {/* Main Content Area */}
+    <div className="container-page mt-6">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
 
-  // Helper to compute grade price with exact +₹1500 step increments (Fair -> Good -> Superb)
-  const getGradePrice = (gradeId: string) => {
-    const defaultCond = (product.condition || 'Superb').toLowerCase();
-    let fairBasePrice = product.price;
-    if (defaultCond.includes('good')) {
-      fairBasePrice = product.price - 1500;
-    } else if (defaultCond.includes('superb') || defaultCond.includes('excellent')) {
-      fairBasePrice = product.price - 3000;
-    }
+        {/* LEFT COLUMN: Gallery & Inspection Badges (5 cols) */}
+        <div className="lg:col-span-5 space-y-4">
+          {/* Main Image Display Box */}
+          <div className="card p-6 md:p-8 rounded-[32px] bg-white border border-ink-100 relative overflow-hidden flex flex-col justify-center items-center group shadow-soft">
+            <span className={`absolute top-4 left-4 z-10 pointer-events-none badge text-xs font-extrabold px-3 py-1 rounded-full ${gradeObj.color}`}>
+              Grade: {selectedGrade}
+            </span>
 
-    if (gradeId === 'Fair') return Math.max(0, fairBasePrice);
-    if (gradeId === 'Good') return Math.max(0, fairBasePrice + 1500);
-    return Math.max(0, fairBasePrice + 3000);
-  };
-
-  const activeGradeName = (selectedGrade || product.condition || 'Superb').toLowerCase();
-  const gradeObj = CONDITION_GRADES.find((g) => g.id.toLowerCase() === activeGradeName || (activeGradeName.includes('excellent') && g.id === 'Superb')) || CONDITION_GRADES[2];
-
-  const currentPrice = getGradePrice(gradeObj.id);
-  const currentMrp = product.original_price && product.original_price > product.price
-    ? product.original_price
-    : Math.round(product.price * 1.45);
-  const currentSavings = Math.max(0, currentMrp - currentPrice);
-  const currentDiscountPercent = product.discount_percent || Math.round((currentSavings / currentMrp) * 100);
-  const emiAmount = Math.round(currentPrice / 24);
-
-  const images = product.images && product.images.length > 0
-    ? product.images
-    : ['https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=800&auto=format&fit=crop&q=80'];
-
-  const handleAddToCart = () => {
-    if (profile && profile.role !== 'customer') {
-      alert(`Access Restricted: You are logged in as ${profile.role.toUpperCase()}. Vendor, Delivery, and Admin accounts cannot place orders.`);
-      return;
-    }
-    const updatedProduct = { ...product, price: currentPrice, storage: selectedStorage, condition: selectedGrade as any };
-    addToCart(updatedProduct, quantity);
-    setAddedToast(true);
-    setTimeout(() => setAddedToast(false), 2500);
-  };
-
-  const handleBuyNow = () => {
-    if (profile && profile.role !== 'customer') {
-      alert(`Access Restricted: You are logged in as ${profile.role.toUpperCase()}. Vendor, Delivery, and Admin accounts cannot place orders.`);
-      return;
-    }
-    const updatedProduct = { ...product, price: currentPrice, storage: selectedStorage, condition: selectedGrade as any };
-    addToCart(updatedProduct, quantity);
-    if (user) {
-      navigate('/checkout');
-    } else {
-      navigate('/login?redirect=/checkout');
-    }
-  };
-
-  return (
-    <div className="min-h-screen bg-[#f4f7f8] pb-32">
-      {/* Top Breadcrumb Navigation */}
-      <section className="bg-white border-b border-[#e5ecef] py-3.5 shadow-xs">
-        <div className="container-page">
-          <div className="flex flex-wrap items-center justify-between gap-2 text-xs font-semibold text-ink-500">
-            <div className="flex items-center gap-2">
-              <Link to="/" className="hover:text-[#344257] transition">Home</Link>
-              <ChevronRight className="h-3.5 w-3.5 text-ink-300" />
-              <Link to="/buy" className="hover:text-[#344257] transition">Buy</Link>
-              <ChevronRight className="h-3.5 w-3.5 text-ink-300" />
-              <span className="text-[#344257] font-bold truncate max-w-xs">{product.brand} {product.model}</span>
-            </div>
-            <div className="flex items-center gap-1 text-[11px] font-bold text-[#344257] bg-[#F0F0F5] border border-[#C0C8D8] px-2.5 py-1 rounded-full">
-              <Building2 className="h-3 w-3 text-[#47576E]" /> Certified Warehouse Stock
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Main Content Area */}
-      <div className="container-page mt-6">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-          
-          {/* LEFT COLUMN: Gallery & Inspection Badges (5 cols) */}
-          <div className="lg:col-span-5 space-y-4">
-            {/* Main Image Display Box */}
-            <div className="card p-6 md:p-8 rounded-[32px] bg-white border border-ink-100 relative overflow-hidden flex flex-col justify-center items-center group shadow-soft">
-              <span className={`absolute top-4 left-4 z-10 pointer-events-none badge text-xs font-extrabold px-3 py-1 rounded-full ${gradeObj.color}`}>
-                Grade: {selectedGrade}
+            {currentDiscountPercent > 0 && (
+              <span className="absolute top-4 right-4 z-10 pointer-events-none badge bg-accent-500 text-white text-xs font-black px-3 py-1 rounded-full shadow-xs">
+                {currentDiscountPercent}% OFF
               </span>
-
-              {currentDiscountPercent > 0 && (
-                <span className="absolute top-4 right-4 z-10 pointer-events-none badge bg-accent-500 text-white text-xs font-black px-3 py-1 rounded-full shadow-xs">
-                  {currentDiscountPercent}% OFF
-                </span>
-              )}
-
-              <img
-                src={getCleanPhoneImage(product.brand, product.model || product.title, selectedImage || images[0])}
-                alt={product.title}
-                className="h-80 w-auto object-contain transition-transform duration-300 group-hover:scale-105 drop-shadow-md"
-                onError={(e) => {
-                  const target = e.target as HTMLImageElement;
-                  if (!target.dataset.triedFallback) {
-                    target.dataset.triedFallback = '1';
-                    target.src = getCleanPhoneImage(product.brand, product.model || product.title, '');
-                  }
-                }}
-              />
-
-              <div className="mt-4 flex items-center gap-2 text-xs font-bold text-ink-500 bg-ink-50 px-3 py-1 rounded-full">
-                <Sparkles className="h-3.5 w-3.5 text-brand-600" /> 32-Point Fundu Quality Certified
-              </div>
-            </div>
-
-            {/* Gallery Thumbnail Strip */}
-            {images.length > 1 && (
-              <div className="flex items-center gap-3 overflow-x-auto pb-1 scrollbar-hide">
-                {images.map((imgUrl, idx) => (
-                  <button
-                    key={idx}
-                    type="button"
-                    onClick={() => setSelectedImage(imgUrl)}
-                    className={`rounded-2xl border-2 p-2 bg-white transition cursor-pointer shrink-0 ${
-                      (selectedImage || images[0]) === imgUrl
-                        ? 'border-brand-600 ring-2 ring-brand-500/20 scale-105'
-                        : 'border-ink-200 hover:border-brand-300'
-                    }`}
-                  >
-                    <img src={imgUrl} alt={`Thumbnail ${idx}`} className="h-16 w-16 object-contain rounded-lg" />
-                  </button>
-                ))}
-              </div>
             )}
 
-            {/* Certified Quality Highlights Box */}
-            <div className="card p-6 rounded-[28px] bg-gradient-to-br from-white to-[#f0f9f8] border border-emerald-100 shadow-sm space-y-3">
-              <div className="flex items-center justify-between">
-                <h4 className="text-xs font-extrabold text-ink-900 uppercase tracking-wider flex items-center gap-2">
-                  <ShieldCheck className="h-4 w-4 text-[#47576E]" /> 32-Point Quality Inspected
-                </h4>
-                <span className="badge bg-[#E4E7F0] text-[#344257] border border-[#C0C8D8] text-[10px] font-bold">Passed</span>
-              </div>
+            <img
+              src={getCleanPhoneImage(product.brand, product.model || product.title, selectedImage || images[0])}
+              alt={product.title}
+              className="h-80 w-auto object-contain transition-transform duration-300 group-hover:scale-105 drop-shadow-md"
+              onError={(e) => {
+                const target = e.target as HTMLImageElement;
+                if (!target.dataset.triedFallback) {
+                  target.dataset.triedFallback = '1';
+                  target.src = getCleanPhoneImage(product.brand, product.model || product.title, '');
+                }
+              }}
+            />
 
-              <div className="grid grid-cols-2 gap-2.5 text-xs text-ink-700 font-bold pt-1">
-                <span className="flex items-center gap-1.5"><Check className="h-3.5 w-3.5 text-[#47576E] shrink-0" /> Original Display</span>
-                <span className="flex items-center gap-1.5"><Check className="h-3.5 w-3.5 text-[#47576E] shrink-0" /> Battery Health &gt; 88%</span>
-                <span className="flex items-center gap-1.5"><Check className="h-3.5 w-3.5 text-[#47576E] shrink-0" /> 100% Data Wiped</span>
-                <span className="flex items-center gap-1.5"><Check className="h-3.5 w-3.5 text-[#47576E] shrink-0" /> Hardware Verified</span>
-              </div>
-            </div>
-
-            {/* Exchange Old Phone Banner */}
-            <div className="card p-5 rounded-[28px] bg-gradient-to-r from-[#1E2734] via-[#2B3646] to-[#344257] text-white shadow-md flex items-center justify-between gap-4">
-              <div>
-                <span className="badge bg-[#47576E]/40 text-[#C0C8D8] border border-[#6A859F]/40 text-[10px] font-black uppercase tracking-wider">Exchange Offer</span>
-                <h4 className="mt-1 font-display font-extrabold text-sm text-white">Trade in your old phone</h4>
-                <p className="text-[11px] text-gray-300">Get up to ₹18,500 instant trade-in discount</p>
-              </div>
-              <button
-                type="button"
-                onClick={() => setShowExchangeModal(true)}
-                className="btn bg-white text-[#344257] hover:bg-[#F0F0F5] text-xs font-bold px-3 py-2 shrink-0 rounded-xl"
-              >
-                Check Value
-              </button>
+            <div className="mt-4 flex items-center gap-2 text-xs font-bold text-ink-500 bg-ink-50 px-3 py-1 rounded-full">
+              <Sparkles className="h-3.5 w-3.5 text-brand-600" /> 32-Point Fundu Quality Certified
             </div>
           </div>
 
-          {/* RIGHT COLUMN: Device Options, Pricing, Location Checker & Buy CTA (7 cols) */}
-          <div className="lg:col-span-7 space-y-6">
-            <div className="card p-6 md:p-8 rounded-[32px] bg-white border border-ink-100 space-y-6 shadow-soft">
-              
-              {/* Header Info */}
-              <div>
-                <div className="flex items-center gap-2">
-                  <span className="badge bg-brand-50 text-brand-700 font-black">{product.brand}</span>
-                  <span className="text-xs text-ink-400 font-semibold">Verified Refurbished</span>
-                  <div className="ml-auto flex items-center gap-1 text-amber-500 font-bold text-xs">
-                    <Star className="h-4 w-4 fill-amber-400 text-amber-400" /> 4.8 (142 reviews)
-                  </div>
+          {/* Gallery Thumbnail Strip */}
+          {images.length > 1 && (
+            <div className="flex items-center gap-3 overflow-x-auto pb-1 scrollbar-hide">
+              {images.map((imgUrl, idx) => (
+                <button
+                  key={idx}
+                  type="button"
+                  onClick={() => setSelectedImage(imgUrl)}
+                  className={`rounded-2xl border-2 p-2 bg-white transition cursor-pointer shrink-0 ${(selectedImage || images[0]) === imgUrl
+                      ? 'border-brand-600 ring-2 ring-brand-500/20 scale-105'
+                      : 'border-ink-200 hover:border-brand-300'
+                    }`}
+                >
+                  <img src={imgUrl} alt={`Thumbnail ${idx}`} className="h-16 w-16 object-contain rounded-lg" />
+                </button>
+              ))}
+            </div>
+          )}
+
+          {/* Certified Quality Highlights Box */}
+          <div className="card p-6 rounded-[28px] bg-gradient-to-br from-white to-[#f0f9f8] border border-emerald-100 shadow-sm space-y-3">
+            <div className="flex items-center justify-between">
+              <h4 className="text-xs font-extrabold text-ink-900 uppercase tracking-wider flex items-center gap-2">
+                <ShieldCheck className="h-4 w-4 text-[#47576E]" /> 32-Point Quality Inspected
+              </h4>
+              <span className="badge bg-[#E4E7F0] text-[#344257] border border-[#C0C8D8] text-[10px] font-bold">Passed</span>
+            </div>
+
+            <div className="grid grid-cols-2 gap-2.5 text-xs text-ink-700 font-bold pt-1">
+              <span className="flex items-center gap-1.5"><Check className="h-3.5 w-3.5 text-[#47576E] shrink-0" /> Original Display</span>
+              <span className="flex items-center gap-1.5"><Check className="h-3.5 w-3.5 text-[#47576E] shrink-0" /> Battery Health &gt; 88%</span>
+              <span className="flex items-center gap-1.5"><Check className="h-3.5 w-3.5 text-[#47576E] shrink-0" /> 100% Data Wiped</span>
+              <span className="flex items-center gap-1.5"><Check className="h-3.5 w-3.5 text-[#47576E] shrink-0" /> Hardware Verified</span>
+            </div>
+          </div>
+
+          {/* Exchange Old Phone Banner */}
+          <div className="card p-5 rounded-[28px] bg-gradient-to-r from-[#1E2734] via-[#2B3646] to-[#344257] text-white shadow-md flex items-center justify-between gap-4">
+            <div>
+              <span className="badge bg-[#47576E]/40 text-[#C0C8D8] border border-[#6A859F]/40 text-[10px] font-black uppercase tracking-wider">Exchange Offer</span>
+              <h4 className="mt-1 font-display font-extrabold text-sm text-white">Trade in your old phone</h4>
+              <p className="text-[11px] text-gray-300">Get up to ₹18,500 instant trade-in discount</p>
+            </div>
+            <button
+              type="button"
+              onClick={() => setShowExchangeModal(true)}
+              className="btn bg-white text-[#344257] hover:bg-[#F0F0F5] text-xs font-bold px-3 py-2 shrink-0 rounded-xl"
+            >
+              Check Value
+            </button>
+          </div>
+        </div>
+
+        {/* RIGHT COLUMN: Device Options, Pricing, Location Checker & Buy CTA (7 cols) */}
+        <div className="lg:col-span-7 space-y-6">
+          <div className="card p-6 md:p-8 rounded-[32px] bg-white border border-ink-100 space-y-6 shadow-soft">
+
+            {/* Header Info */}
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="badge bg-brand-50 text-brand-700 font-black">{product.brand}</span>
+                <span className="text-xs text-ink-400 font-semibold">Verified Refurbished</span>
+                <div className="ml-auto flex items-center gap-1 text-amber-500 font-bold text-xs">
+                  <Star className="h-4 w-4 fill-amber-400 text-amber-400" /> 4.8 (142 reviews)
                 </div>
-                <h1 className="mt-2 font-display text-2xl md:text-3xl font-black text-ink-900 leading-snug">
-                  {product.brand} {product.model} ({selectedStorage}) - {selectedColor || product.color}
-                </h1>
-                <p className="mt-1 text-xs text-ink-500">
-                  Certified Refurbished · Service Hub Stock · Free 6M Warranty Included
-                </p>
               </div>
+              <h1 className="mt-2 font-display text-2xl md:text-3xl font-black text-ink-900 leading-snug">
+                {product.brand} {product.model} ({selectedStorage}) - {selectedColor || product.color}
+              </h1>
+              <p className="mt-1 text-xs text-ink-500">
+                Certified Refurbished · Service Hub Stock · Free 6M Warranty Included
+              </p>
+            </div>
 
-              {/* PRICE & NO-COST EMI BLOCK */}
-              <div className="rounded-3xl bg-gradient-to-br from-[#f8fafb] to-[#f1f5f7] p-6 border border-ink-100 space-y-4">
-                <div className="flex flex-wrap items-baseline justify-between gap-3">
-                  <div>
-                    <span className="text-[10px] font-extrabold uppercase tracking-widest text-ink-400">Offer Price</span>
-                    <div className="flex items-baseline gap-3 mt-0.5">
-                      <span className="font-display text-3xl sm:text-4xl font-black text-ink-900">
-                        {formatINR(currentPrice)}
+            {/* PRICE & NO-COST EMI BLOCK */}
+            <div className="rounded-3xl bg-gradient-to-br from-[#f8fafb] to-[#f1f5f7] p-6 border border-ink-100 space-y-4">
+              <div className="flex flex-wrap items-baseline justify-between gap-3">
+                <div>
+                  <span className="text-[10px] font-extrabold uppercase tracking-widest text-ink-400">Offer Price</span>
+                  <div className="flex items-baseline gap-3 mt-0.5">
+                    <span className="font-display text-3xl sm:text-4xl font-black text-ink-900">
+                      {formatINR(currentPrice)}
+                    </span>
+                    {currentMrp > currentPrice && (
+                      <span className="text-base text-ink-400 line-through font-semibold">
+                        {formatINR(currentMrp)}
                       </span>
-                      {currentMrp > currentPrice && (
-                        <span className="text-base text-ink-400 line-through font-semibold">
-                          {formatINR(currentMrp)}
-                        </span>
-                      )}
-                    </div>
+                    )}
                   </div>
-
-                  {currentSavings > 0 && (
-                    <div className="rounded-2xl bg-[#344257] text-white px-4 py-2 text-right shadow-xs">
-                      <p className="text-[10px] uppercase font-black tracking-wider text-[#E4E7F0]">Total Instant Savings</p>
-                      <p className="text-lg font-black">{formatINR(currentSavings)} OFF</p>
-                    </div>
-                  )}
                 </div>
 
-                {/* EMI Offer Breakdown Pill */}
-                <div className="pt-3 border-t border-ink-200/60 flex items-center justify-between gap-3 text-xs">
-                  <div className="flex items-center gap-2 font-bold text-ink-700">
-                    <CreditCard className="h-4 w-4 text-brand-600" />
-                    <span>No-Cost EMI starting at <strong className="text-brand-600 font-extrabold">{formatINR(emiAmount)}/month</strong></span>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() => setShowEmiModal(!showEmiModal)}
-                    className="text-brand-600 font-bold hover:underline shrink-0 text-xs"
-                  >
-                    {showEmiModal ? 'Hide Plans' : 'View EMI Plans'}
-                  </button>
-                </div>
-
-                {showEmiModal && (
-                  <div className="p-4 rounded-2xl bg-white border border-brand-200 text-xs space-y-2 animate-fade-in">
-                    <p className="font-bold text-ink-900">Calculated No-Cost EMI Options:</p>
-                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 font-semibold text-ink-700">
-                      <div className="p-2 rounded-xl bg-ink-50">3 Months: {formatINR(Math.round(currentPrice / 3))}/mo</div>
-                      <div className="p-2 rounded-xl bg-ink-50">6 Months: {formatINR(Math.round(currentPrice / 6))}/mo</div>
-                      <div className="p-2 rounded-xl bg-ink-50">12 Months: {formatINR(Math.round(currentPrice / 12))}/mo</div>
-                    </div>
+                {currentSavings > 0 && (
+                  <div className="rounded-2xl bg-[#344257] text-white px-4 py-2 text-right shadow-xs">
+                    <p className="text-[10px] uppercase font-black tracking-wider text-[#E4E7F0]">Total Instant Savings</p>
+                    <p className="text-lg font-black">{formatINR(currentSavings)} OFF</p>
                   </div>
                 )}
               </div>
 
-              {/* CONDITION GRADE SELECTOR CARDS */}
-              <div className="space-y-3">
-                <label className="label text-xs font-extrabold text-ink-900 uppercase tracking-wider flex items-center gap-1.5">
-                  <Sparkles className="h-4 w-4 text-brand-600" /> Refurbished Condition Grade
-                </label>
-                <div className={`grid gap-3 ${product.show_all_grades === false ? 'grid-cols-1 max-w-sm' : 'grid-cols-1 sm:grid-cols-3'}`}>
-                  {(product.show_all_grades === false
-                    ? CONDITION_GRADES.filter((g) => {
-                        const activeGrade = (selectedGrade || product.condition || 'Superb').toLowerCase();
-                        return activeGrade === g.id.toLowerCase() || (activeGrade.includes('excellent') && g.id === 'Superb');
-                      })
-                    : CONDITION_GRADES
-                  ).map((g) => {
-                    const activeGrade = (selectedGrade || product.condition || 'Superb').toLowerCase();
-                    const isSelected = activeGrade === g.id.toLowerCase() || (activeGrade.includes('excellent') && g.id === 'Superb');
-                    const displayPrice = getGradePrice(g.id);
-
-                    return (
-                      <button
-                        key={g.id}
-                        type="button"
-                        onClick={() => setSelectedGrade(g.id)}
-                        className={`p-4 rounded-2xl border-2 text-left transition relative flex flex-col justify-between cursor-pointer ${
-                          isSelected
-                            ? 'border-brand-600 bg-brand-50/70 shadow-md ring-2 ring-brand-500/20'
-                            : 'border-ink-200 bg-white hover:border-brand-300'
-                        }`}
-                      >
-                        <div>
-                          <div className="flex items-center justify-between mb-1">
-                            <span className="font-bold text-xs text-ink-900">{g.label}</span>
-                            {isSelected && <CheckCircle2 className="h-4 w-4 text-brand-600" />}
-                          </div>
-                          <p className="text-[11px] text-ink-500 leading-tight mb-2">{g.desc}</p>
-                        </div>
-                        <div>
-                          <span className="font-display font-black text-sm text-ink-900">{formatINR(displayPrice)}</span>
-                          <span className="ml-1 text-[10px] text-[#344257] font-bold block">{g.badge}</span>
-                        </div>
-                      </button>
-                    );
-                  })}
+              {/* EMI Offer Breakdown Pill */}
+              <div className="pt-3 border-t border-ink-200/60 flex items-center justify-between gap-3 text-xs">
+                <div className="flex items-center gap-2 font-bold text-ink-700">
+                  <CreditCard className="h-4 w-4 text-brand-600" />
+                  <span>No-Cost EMI starting at <strong className="text-brand-600 font-extrabold">{formatINR(emiAmount)}/month</strong></span>
                 </div>
+                <button
+                  type="button"
+                  onClick={() => setShowEmiModal(!showEmiModal)}
+                  className="text-brand-600 font-bold hover:underline shrink-0 text-xs"
+                >
+                  {showEmiModal ? 'Hide Plans' : 'View EMI Plans'}
+                </button>
               </div>
 
-              {/* RAM MEMORY & STORAGE CAPACITY SPECIFICATIONS */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <label className="label text-xs font-bold text-ink-900">RAM (Memory)</label>
-                  <div className="flex flex-wrap gap-2">
-                    <span className="rounded-2xl px-4 py-2.5 text-xs font-extrabold bg-brand-600 text-white shadow-md">
+              {showEmiModal && (
+                <div className="p-4 rounded-2xl bg-white border border-brand-200 text-xs space-y-2 animate-fade-in">
+                  <p className="font-bold text-ink-900">Calculated No-Cost EMI Options:</p>
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 font-semibold text-ink-700">
+                    <div className="p-2 rounded-xl bg-ink-50">3 Months: {formatINR(Math.round(currentPrice / 3))}/mo</div>
+                    <div className="p-2 rounded-xl bg-ink-50">6 Months: {formatINR(Math.round(currentPrice / 6))}/mo</div>
+                    <div className="p-2 rounded-xl bg-ink-50">12 Months: {formatINR(Math.round(currentPrice / 12))}/mo</div>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* CONDITION GRADE SELECTOR CARDS */}
+            <div className="space-y-3">
+              <label className="label text-xs font-extrabold text-ink-900 uppercase tracking-wider flex items-center gap-1.5">
+                <Sparkles className="h-4 w-4 text-brand-600" /> Refurbished Condition Grade
+              </label>
+              <div className={`grid gap-3 ${product.show_all_grades === false ? 'grid-cols-1 max-w-sm' : 'grid-cols-1 sm:grid-cols-3'}`}>
+                {(product.show_all_grades === false
+                  ? CONDITION_GRADES.filter((g) => {
+                    const activeGrade = (selectedGrade || product.condition || 'Superb').toLowerCase();
+                    return activeGrade === g.id.toLowerCase() || (activeGrade.includes('excellent') && g.id === 'Superb');
+                  })
+                  : CONDITION_GRADES
+                ).map((g) => {
+                  const activeGrade = (selectedGrade || product.condition || 'Superb').toLowerCase();
+                  const isSelected = activeGrade === g.id.toLowerCase() || (activeGrade.includes('excellent') && g.id === 'Superb');
+                  const displayPrice = getGradePrice(g.id);
+
+                  return (
+                    <button
+                      key={g.id}
+                      type="button"
+                      onClick={() => setSelectedGrade(g.id)}
+                      className={`p-4 rounded-2xl border-2 text-left transition relative flex flex-col justify-between cursor-pointer ${isSelected
+                          ? 'border-brand-600 bg-brand-50/70 shadow-md ring-2 ring-brand-500/20'
+                          : 'border-ink-200 bg-white hover:border-brand-300'
+                        }`}
+                    >
+                      <div>
+                        <div className="flex items-center justify-between mb-1">
+                          <span className="font-bold text-xs text-ink-900">{g.label}</span>
+                          {isSelected && <CheckCircle2 className="h-4 w-4 text-brand-600" />}
+                        </div>
+                        <p className="text-[11px] text-ink-500 leading-tight mb-2">{g.desc}</p>
+                      </div>
+                      <div>
+                        <span className="font-display font-black text-sm text-ink-900">{formatINR(displayPrice)}</span>
+                        <span className="ml-1 text-[10px] text-[#344257] font-bold block">{g.badge}</span>
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* RAM MEMORY & STORAGE CAPACITY SPECIFICATIONS */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <label className="label text-xs font-bold text-ink-900">RAM (Memory)</label>
+                <div className="flex flex-wrap gap-2">
+                    <span className="rounded-2xl px-4 py-2.5 text-xs font-extrabold bg-[#F0F0F5] text-[#344257] border border-[#C0C8D8]">
                       {product.ram || '8 GB RAM'}
                     </span>
-                  </div>
-                </div>
-
-                <div className="space-y-2">
-                  <label className="label text-xs font-bold text-ink-900">Storage Capacity</label>
-                  <div className="flex flex-wrap gap-2">
-                    <span className="rounded-2xl px-4 py-2.5 text-xs font-extrabold bg-brand-600 text-white shadow-md">
-                      {selectedStorage || product.storage || '128 GB'}
-                    </span>
-                  </div>
                 </div>
               </div>
 
-              {/* DEVICE COLOR SELECTOR */}
               <div className="space-y-2">
-                <label className="label text-xs font-bold text-ink-900">Device Color</label>
-                <div className="flex items-center gap-3">
-                  <span className="rounded-2xl px-4 py-2 text-xs font-bold bg-brand-50 text-brand-700 border border-brand-200 flex items-center gap-2">
-                    <span className="h-3 w-3 rounded-full bg-brand-600 inline-block" />
-                    {selectedColor || product.color || 'Midnight Black'}
-                  </span>
+                <label className="label text-xs font-bold text-ink-900">Storage Capacity</label>
+                <div className="flex flex-wrap gap-2">
+                  {availableStorages.map((stg) => (
+                    <button
+                      key={stg}
+                      type="button"
+                      onClick={() => setSelectedStorage(stg)}
+                      className={`rounded-2xl px-4 py-2 text-xs font-extrabold transition cursor-pointer ${selectedStorage === stg
+                          ? 'bg-[#344257] text-white shadow-md ring-2 ring-[#344257]/20'
+                          : 'bg-gray-100 text-[#344257] hover:bg-gray-200 border border-gray-200'
+                        }`}
+                    >
+                      {stg}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* DEVICE COLOR SELECTOR */}
+            <div className="space-y-2">
+              <label className="label text-xs font-bold text-ink-900">Device Color</label>
+                <div className="flex flex-wrap items-center gap-2">
+                  {availableColors.map((col) => (
+                    <button
+                      key={col}
+                      type="button"
+                      onClick={() => setSelectedColor(col)}
+                      className={`rounded-2xl px-3.5 py-1.5 text-xs font-bold transition flex items-center gap-2 cursor-pointer ${(selectedColor || product.color) === col
+                          ? 'bg-[#344257] text-white shadow-sm ring-2 ring-[#344257]/20'
+                          : 'bg-gray-100 text-[#344257] hover:bg-gray-200 border border-gray-200'
+                        }`}
+                    >
+                      <span className="h-2.5 w-2.5 rounded-full bg-current opacity-70 inline-block" />
+                      {col}
+                    </button>
+                  ))}
                 </div>
               </div>
 
@@ -1026,5 +1027,5 @@ export default function ProductDetail() {
         </div>
       )}
     </div>
-  );
+    );
 }
