@@ -24,7 +24,7 @@ import { API_BASE } from '../../config/apiConfig';
 import { getCleanPhoneImage, BRAND_FRONT_FALLBACKS, getGenericDevicePlaceholder } from '../../lib/phoneImages';
 import { savePriceOverride } from '../../lib/priceSync';
 import { broadcastSync } from '../../lib/realtimeSync';
-import { normalizeStorageString } from '../../lib/deviceSpecs';
+import { normalizeStorageString, calculateHardwareVariantMultiplier } from '../../lib/deviceSpecs';
 import { ALL_INDIAN_PHONES_CATALOG } from '../../data/indianPhonesCatalog';
 import { MASTER_MODEL_CATALOG } from '../../data/masterModelCatalog';
 import { BRAND_SERIES_DEFINITIONS, getDeviceRecencyScore } from '../../data/brandSeriesCatalog';
@@ -331,6 +331,18 @@ export default function AdminCompetitorRadar() {
     // 1. INSTANT ZERO-LATENCY OPTIMISTIC UPDATE (0ms)
     const normStorage = normalizeStorageString(selectedStorage);
     savePriceOverride(selectedBrand, searchModel, newPrice, normStorage);
+
+    // Also update all sibling storage variants proportionally in real-time
+    const currentMult = calculateHardwareVariantMultiplier(normStorage, '', selectedBrand) || 1.0;
+    STORAGES.forEach((stg) => {
+      if (stg !== normStorage) {
+        const sMult = calculateHardwareVariantMultiplier(stg, '', selectedBrand) || 1.0;
+        const sRatio = sMult / currentMult;
+        const sPrice = Math.max(500, Math.round((newPrice * sRatio) / 50) * 50);
+        savePriceOverride(selectedBrand, searchModel, sPrice, stg);
+      }
+    });
+
     setSaveSuccess(true);
     setRadarData((prev) => {
       if (!prev) return prev;
@@ -610,7 +622,7 @@ export default function AdminCompetitorRadar() {
 
                 <div className="flex flex-col sm:flex-row items-baseline justify-between gap-2 border-b border-white/10 pb-3">
                   <div>
-                    <span className="text-xs text-gray-300 font-bold block">Base Resale Value (Flawless)</span>
+                    <span className="text-xs text-gray-300 font-bold block">Fundu Base Valuation (100% Rate)</span>
                     <span className="font-display text-3xl sm:text-4xl font-black text-emerald-400">
                       {formatINR(radarData.fundu.basePrice)}
                     </span>
@@ -624,18 +636,21 @@ export default function AdminCompetitorRadar() {
                 </div>
 
                 {/* Grade breakdown */}
-                <div className="grid grid-cols-3 gap-2 pt-1 text-center">
-                  <div className="bg-white/10 p-2 rounded-xl">
-                    <span className="text-[10px] uppercase font-bold text-gray-300 block">Flawless (82%)</span>
-                    <span className="text-sm font-black text-white">{formatINR(radarData.fundu.flawlessOffer)}</span>
-                  </div>
-                  <div className="bg-white/10 p-2 rounded-xl">
-                    <span className="text-[10px] uppercase font-bold text-gray-300 block">Good (70%)</span>
-                    <span className="text-sm font-black text-white">{formatINR(radarData.fundu.goodOffer)}</span>
-                  </div>
-                  <div className="bg-white/10 p-2 rounded-xl">
-                    <span className="text-[10px] uppercase font-bold text-gray-300 block">Fair (55%)</span>
-                    <span className="text-sm font-black text-white">{formatINR(radarData.fundu.fairOffer)}</span>
+                <div>
+                  <span className="text-[10px] uppercase font-bold text-gray-400 block mb-1">Customer Payouts by Condition:</span>
+                  <div className="grid grid-cols-3 gap-2 text-center">
+                    <div className="bg-white/10 p-2 rounded-xl">
+                      <span className="text-[10px] uppercase font-bold text-gray-300 block">Flawless (82%)</span>
+                      <span className="text-sm font-black text-white">{formatINR(radarData.fundu.flawlessOffer)}</span>
+                    </div>
+                    <div className="bg-white/10 p-2 rounded-xl">
+                      <span className="text-[10px] uppercase font-bold text-gray-300 block">Good (70%)</span>
+                      <span className="text-sm font-black text-white">{formatINR(radarData.fundu.goodOffer)}</span>
+                    </div>
+                    <div className="bg-white/10 p-2 rounded-xl">
+                      <span className="text-[10px] uppercase font-bold text-gray-300 block">Fair (55%)</span>
+                      <span className="text-sm font-black text-white">{formatINR(radarData.fundu.fairOffer)}</span>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -723,11 +738,10 @@ export default function AdminCompetitorRadar() {
                     onClick={() => {
                       const opt = radarData.marketAnalytics.suggestedOptimumPrice;
                       setCustomPriceInput(String(opt));
-                      handleSavePriceToDatabase(opt);
                     }}
                     className="text-[11px] font-bold text-emerald-300 hover:text-white underline flex items-center gap-1 cursor-pointer"
                   >
-                    Match Market + ₹1,000 ({formatINR(radarData.marketAnalytics.suggestedOptimumPrice)})
+                    Fill Market + ₹1,000 ({formatINR(radarData.marketAnalytics.suggestedOptimumPrice)})
                   </button>
                   {radarData.marketAnalytics.diffFromCashify !== undefined && radarData.marketAnalytics.diffFromCashify < 800 && (
                     <span className="text-[10px] font-bold text-amber-300">

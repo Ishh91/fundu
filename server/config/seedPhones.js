@@ -70,44 +70,70 @@ export async function ensureMasterPhonesSeeded(force = true) {
     }
 
     // 2. Bulk Upsert into SellPriceConfig (Admin Pricing Rules)
-    const configBulkOps = currentCatalog.map((phone) => {
-      let cleanModel = (phone.model || '').trim();
-      const b = (phone.brand || '').trim();
-      if (b && cleanModel.toLowerCase().startsWith(b.toLowerCase())) {
-        cleanModel = cleanModel.slice(b.length).trim();
-      }
-      const stg = (phone.storage_options?.[0] || '128GB').replace(/\s+/g, '');
-      const price = phone.price || phone.base_resale_value || 12000;
+    // NEVER overwrite models that an admin has manually set or locked!
+    const lockedConfigs = await SellPriceConfig.find(
+      { $or: [{ manual_override: true }, { is_locked: true }] },
+      { brand: 1, model: 1 }
+    ).lean();
+    const lockedSet = new Set(
+      lockedConfigs.map((c) => `${(c.brand || '').toLowerCase().trim()}:${(c.model || '').toLowerCase().trim()}`)
+    );
 
-      return {
-        updateOne: {
-          filter: { brand: phone.brand, model: cleanModel },
-          update: {
-            $set: {
+    const configBulkOps = currentCatalog
+      .filter((phone) => {
+        let cleanModel = (phone.model || '').trim();
+        const b = (phone.brand || '').trim();
+        if (b && cleanModel.toLowerCase().startsWith(b.toLowerCase())) {
+          cleanModel = cleanModel.slice(b.length).trim();
+        }
+        const key = `${(phone.brand || '').toLowerCase().trim()}:${cleanModel.toLowerCase()}`;
+        return !lockedSet.has(key);
+      })
+      .map((phone) => {
+        let cleanModel = (phone.model || '').trim();
+        const b = (phone.brand || '').trim();
+        if (b && cleanModel.toLowerCase().startsWith(b.toLowerCase())) {
+          cleanModel = cleanModel.slice(b.length).trim();
+        }
+        const stg = (phone.storage_options?.[0] || '128GB').replace(/\s+/g, '');
+        const price = phone.price || phone.base_resale_value || 12000;
+
+        return {
+          updateOne: {
+            filter: {
               brand: phone.brand,
               model: cleanModel,
-              storage: stg,
-              base_price: price,
-              is_active: phone.is_active !== false,
-              updated_at: new Date(),
+              manual_override: { $ne: true },
+              is_locked: { $ne: true },
             },
-            $setOnInsert: {
-              excellent_multiplier: 0.85,
-              good_multiplier: 0.70,
-              fair_multiplier: 0.55,
-              box_bonus: 500,
-              charger_bonus: 400,
-              created_at: new Date(),
+            update: {
+              $set: {
+                brand: phone.brand,
+                model: cleanModel,
+                storage: stg,
+                base_price: price,
+                is_active: phone.is_active !== false,
+                updated_at: new Date(),
+              },
+              $setOnInsert: {
+                excellent_multiplier: 0.85,
+                good_multiplier: 0.70,
+                fair_multiplier: 0.55,
+                box_bonus: 500,
+                charger_bonus: 400,
+                created_at: new Date(),
+              },
             },
+            upsert: true,
           },
-          upsert: true,
-        },
-      };
-    });
+        };
+      });
 
-    for (let i = 0; i < configBulkOps.length; i += 200) {
-      const chunk = configBulkOps.slice(i, i + 200);
-      await SellPriceConfig.bulkWrite(chunk, { ordered: false });
+    if (configBulkOps.length > 0) {
+      for (let i = 0; i < configBulkOps.length; i += 200) {
+        const chunk = configBulkOps.slice(i, i + 200);
+        await SellPriceConfig.bulkWrite(chunk, { ordered: false });
+      }
     }
 
     console.log(`[AutoSync] ✅ Master phones & Admin sell price configs automatically synchronized (${currentCatalog.length} models).`);

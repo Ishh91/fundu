@@ -678,8 +678,8 @@ router.get('/sell-pricing/config', async (req, res, next) => {
                                 (calculateHardwareVariantMultiplier(sib.storage, '', rawBrand) || 1.0);
                   const safeRatio = Math.max(1.05, ratio);
                   normDoc.base_price = Math.round((sib.base_price * safeRatio) / 50) * 50;
-                } else if (targetGB < sibGB && normDoc.base_price >= sib.base_price) {
-                  // Target is lower storage, but price is >= higher storage! Auto-enforce lower tier.
+                } else if (targetGB < sibGB && normDoc.base_price >= sib.base_price && !normDoc.manual_override && !normDoc.is_locked) {
+                  // Target is lower storage, but price is >= higher storage! Auto-enforce lower tier only on non-manual prices.
                   const ratio = calculateHardwareVariantMultiplier(storage, '', rawBrand) /
                                 (calculateHardwareVariantMultiplier(sib.storage, '', rawBrand) || 1.0);
                   const safeRatio = Math.min(0.95, ratio);
@@ -824,6 +824,107 @@ router.post('/sell-pricing/config', async (req, res, next) => {
       upsert: true,
       setDefaultsOnInsert: true,
     });
+
+    // Clean up any stale duplicate variants matching this brand, model, and storage format
+    if (doc?._id && match.storage) {
+      try {
+        await SellPriceConfig.deleteMany({
+          _id: { $ne: doc._id },
+          brand: brandRegex,
+          model: modelRegex,
+          storage: match.storage,
+        });
+      } catch (_delErr) {
+        // non-fatal
+      }
+    }
+
+    // Automatically update all available storage variants of this model accordingly
+    if (cleanStorage && Number(base_price) > 0) {
+      try {
+        // 1. Gather all available storages for this phone
+        const mp = await MasterPhone.findOne({ brand: brandRegex, model: modelRegex }).lean();
+        const existingConfigs = await SellPriceConfig.find({ brand: brandRegex, model: modelRegex }).lean();
+
+        const storageSet = new Set();
+        // From MasterPhone:
+        if (Array.isArray(mp?.storage_options)) {
+          mp.storage_options.forEach((s) => {
+            const clean = String(s).trim().replace(/(\d+)\s*(gb|tb)/i, (_, n, u) => `${n} ${u.toUpperCase()}`);
+            if (clean) storageSet.add(clean);
+          });
+        }
+        // From existing configs:
+        existingConfigs.forEach((c) => {
+          if (c.storage) {
+            const clean = String(c.storage).trim().replace(/(\d+)\s*(gb|tb)/i, (_, n, u) => `${n} ${u.toUpperCase()}`);
+            if (clean) storageSet.add(clean);
+          }
+        });
+        // Standard fallback variants if none:
+        if (storageSet.size === 0) {
+          ['64 GB', '128 GB', '256 GB', '512 GB', '1 TB'].forEach((s) => storageSet.add(s));
+        }
+
+        const currentMult = calculateHardwareVariantMultiplier(cleanStorage, '', rawBrand) || 1.0;
+        const baseNum = Number(base_price);
+
+        for (const varStorage of storageSet) {
+          // Skip the current variant that was just explicitly updated
+          if (varStorage.replace(/\s+/g, '').toLowerCase() === cleanStorage.replace(/\s+/g, '').toLowerCase()) {
+            continue;
+          }
+
+          const targetMult = calculateHardwareVariantMultiplier(varStorage, '', rawBrand) || 1.0;
+          const ratio = targetMult / currentMult;
+          const proportionalPrice = Math.max(500, Math.round((baseNum * ratio) / 50) * 50);
+
+          const varCleanRegex = varStorage.replace(/\s+/g, '\\s*');
+          const varMatch = {
+            brand: brandRegex,
+            model: modelRegex,
+            storage: new RegExp(`^${varCleanRegex}$`, 'i'),
+          };
+
+          const varDoc = await SellPriceConfig.findOneAndUpdate(
+            varMatch,
+            {
+              $set: {
+                brand: rawBrand,
+                model: rawModel,
+                storage: varStorage,
+                base_price: proportionalPrice,
+                excellent_multiplier: Number(excellent_multiplier) || 0.85,
+                good_multiplier: Number(good_multiplier) || 0.70,
+                fair_multiplier: Number(fair_multiplier) || 0.55,
+                box_bonus: Number(box_bonus) || 400,
+                charger_bonus: Number(charger_bonus) || 400,
+                is_active: is_active !== false,
+                is_locked: true,
+                manual_override: true,
+                updated_at: new Date(),
+              },
+              $setOnInsert: {
+                created_at: new Date(),
+              },
+            },
+            { upsert: true, new: true, setDefaultsOnInsert: true }
+          );
+
+          // Clean up any stale duplicates for this variant
+          if (varDoc?._id) {
+            await SellPriceConfig.deleteMany({
+              _id: { $ne: varDoc._id },
+              brand: brandRegex,
+              model: modelRegex,
+              storage: varMatch.storage,
+            });
+          }
+        }
+      } catch (_varErr) {
+        console.error('Error auto-syncing storage variants:', _varErr);
+      }
+    }
 
     // Also sync MasterPhone base_resale_value in database so all queries match instantly
     try {
