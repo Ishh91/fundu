@@ -187,6 +187,24 @@ export default function SellPhone() {
     liquidDamage: false,
     cosmeticCondition: 'flawless' as 'flawless' | 'good' | 'fair',
     screenCondition: 'flawless' as 'flawless' | 'scratched' | 'cracked' | 'touch_fault' | 'display_lines',
+    bodyCondition: 'flawless' as 'flawless' | 'minor_scratches' | 'dents_bent',
+
+    // Granular Phone Condition Filter Questions
+    screenMinorScratches: false,
+    screenMajorScratches: false,
+    screenCracked: false,
+    displayMinorSpotsWhite: false,
+    displayMajorSpots: false,
+    displayMinorLines: false,
+    displayMajorLines: false,
+    displayMinorDiscolouration: false,
+    displayMajorDiscolouration: false,
+    bodyMinorSideScratches: false,
+    bodyMajorSideScratches: false,
+    bodyMinorDents: false,
+    bodyMajorDents: false,
+    bodyCrackedOrBroken: false,
+
     batteryHealth: 'above_85' as 'above_85' | '75_to_85' | 'below_75' | 'healthy' | 'degraded_service' | 'unknown',
     canMakeCalls: true,
     agePeriod: 'above_9_months' as '0_to_3_months' | '3_to_6_months' | '6_to_9_months' | 'above_9_months' | 'below_3_months' | '3_to_10_months' | '10_to_12_months' | 'above_11_months',
@@ -763,16 +781,54 @@ export default function SellPhone() {
       const goodMult = 0.80;
       const fairMult = 0.60;
 
-      if (form.cosmeticCondition === 'fair') val *= fairMult;
-      else if (form.cosmeticCondition === 'good') val *= goodMult;
-      else if (form.cosmeticCondition === 'flawless') val *= excMult;
-      if (form.screenCondition === 'scratched') val *= 0.90;
-      else if (form.screenCondition === 'cracked') {
-        const isAmoled = isAmoledDisplay(form.brand, form.model);
-        val *= isAmoled ? 0.55 : 0.60; // 45% direct deduction for AMOLED, 40% for Normal LCD
+      // 1. Screen Deductions
+      const isAmoled = isAmoledDisplay(form.brand, form.model);
+      const brokenScreenRate = isAmoled ? 0.45 : 0.40;
+
+      if (form.screenCracked) {
+        val -= baseModelPrice * brokenScreenRate;
+      } else if (form.screenMajorScratches) {
+        val -= baseModelPrice * 0.12;
+      } else if (form.screenMinorScratches) {
+        val -= baseModelPrice * 0.05;
+      } else if (form.screenCondition === 'scratched') {
+        val *= 0.90;
+      } else if (form.screenCondition === 'cracked') {
+        val *= isAmoled ? 0.55 : 0.60;
       }
-      else if (form.screenCondition === 'touch_fault' || form.screenCondition === 'display_lines') val *= 0.60;
-      if (form.bodyCondition === 'dents_bent') val *= 0.85;
+
+      // 2. Display Spots & Issues Deductions
+      if (form.displayMajorLines || form.displayMajorSpots) {
+        val -= baseModelPrice * 0.28;
+      } else if (form.displayMinorLines || form.displayMinorSpotsWhite) {
+        val -= baseModelPrice * 0.10;
+      } else if (form.screenCondition === 'touch_fault' || form.screenCondition === 'display_lines') {
+        val *= 0.60;
+      }
+
+      if (form.displayMajorDiscolouration) {
+        val -= baseModelPrice * 0.15;
+      } else if (form.displayMinorDiscolouration) {
+        val -= baseModelPrice * 0.06;
+      }
+
+      // 3. Body / Frame Deductions
+      if (form.bodyCrackedOrBroken) {
+        val -= baseModelPrice * 0.20;
+      } else if (form.bodyMajorDents) {
+        val -= baseModelPrice * 0.12;
+      } else if (form.bodyMinorDents) {
+        val -= baseModelPrice * 0.05;
+      } else if (form.bodyCondition === 'dents_bent') {
+        val *= 0.85;
+      }
+
+      if (form.bodyMajorSideScratches) {
+        val -= baseModelPrice * 0.08;
+      } else if (form.bodyMinorSideScratches) {
+        val -= baseModelPrice * 0.03;
+      }
+
       if (isApple) {
         const bHealth = String(form.batteryHealth || '').toLowerCase().trim();
         const num = parseFloat(bHealth);
@@ -818,6 +874,20 @@ export default function SellPhone() {
     form.cosmeticCondition,
     form.screenCondition,
     form.bodyCondition,
+    form.screenMinorScratches,
+    form.screenMajorScratches,
+    form.screenCracked,
+    form.displayMinorSpotsWhite,
+    form.displayMajorSpots,
+    form.displayMinorLines,
+    form.displayMajorLines,
+    form.displayMinorDiscolouration,
+    form.displayMajorDiscolouration,
+    form.bodyMinorSideScratches,
+    form.bodyMajorSideScratches,
+    form.bodyMinorDents,
+    form.bodyMajorDents,
+    form.bodyCrackedOrBroken,
     form.batteryHealth,
     form.powersOn,
     form.liquidDamage,
