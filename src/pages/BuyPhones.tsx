@@ -33,6 +33,7 @@ import { getCleanPhoneImage, getCleanBrandLogo } from '../lib/phoneImages';
 import { isProductDeleted, useCatalogSync } from '../lib/catalogSync';
 import { subscribeToRealtimeSync } from '../lib/realtimeSync';
 import type { Product } from '../types';
+import { SAMPLE_BEST_SELLING_PHONES } from '../data/sampleProducts';
 
 // Circular brand filters with brand logos
 const BRAND_PILLS = [
@@ -756,16 +757,16 @@ export default function BuyPhones() {
   }, [products, search, selectedBrand, gradeFilter, selectedStorage, pricePreset, maxPrice, sortBy, syncVersion]);
 
   const handleAddToCart = (product: Product) => {
-    if (profile && profile.role !== 'customer') {
-      alert(`Access Restricted: You are logged in as ${profile.role.toUpperCase()}. Vendor, Delivery, and Admin accounts cannot place orders.`);
+    if (profile && profile.role !== 'customer' && profile.role !== 'admin') {
+      alert(`Access Restricted: You are logged in as ${profile.role.toUpperCase()}. Vendor and Delivery accounts cannot place customer orders.`);
       return;
     }
     addToCart(product, 1);
   };
 
   const handleBuyNow = (product: Product) => {
-    if (profile && profile.role !== 'customer') {
-      alert(`Access Restricted: You are logged in as ${profile.role.toUpperCase()}. Vendor, Delivery, and Admin accounts cannot place orders.`);
+    if (profile && profile.role !== 'customer' && profile.role !== 'admin') {
+      alert(`Access Restricted: You are logged in as ${profile.role.toUpperCase()}. Vendor and Delivery accounts cannot place customer orders.`);
       return;
     }
     addToCart(product, 1);

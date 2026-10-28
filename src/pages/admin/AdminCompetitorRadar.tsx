@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import {
   Radar,
   Search,
@@ -17,6 +17,7 @@ import {
   Smartphone,
   Eye,
   Info,
+  ChevronDown,
 } from 'lucide-react';
 import { formatINR } from '../../lib/db';
 import { API_BASE } from '../../config/apiConfig';
@@ -24,6 +25,9 @@ import { getCleanPhoneImage, BRAND_FRONT_FALLBACKS, getGenericDevicePlaceholder 
 import { savePriceOverride } from '../../lib/priceSync';
 import { broadcastSync } from '../../lib/realtimeSync';
 import { normalizeStorageString } from '../../lib/deviceSpecs';
+import { ALL_INDIAN_PHONES_CATALOG } from '../../data/indianPhonesCatalog';
+import { MASTER_MODEL_CATALOG } from '../../data/masterModelCatalog';
+import { BRAND_SERIES_DEFINITIONS, getDeviceRecencyScore } from '../../data/brandSeriesCatalog';
 
 interface CompetitorData {
   id: string;
@@ -121,6 +125,31 @@ const DEFAULT_BRAND_MODELS: Record<string, { model: string; storage: string }> =
 
 const STORAGES = ['64 GB', '128 GB', '256 GB', '512 GB', '1 TB'];
 
+function normalizeModelDisplayName(brand: string, rawModel: string): string {
+  let m = (rawModel || '').trim();
+  const b = (brand || '').trim();
+  const bLower = b.toLowerCase();
+
+  if (bLower === 'apple') {
+    m = m.replace(/^apple\s+/i, '').trim();
+  } else if (bLower === 'motorola') {
+    m = m.replace(/^motorola\s+/i, '').trim();
+    if (!m.toLowerCase().startsWith('moto') && !m.toLowerCase().startsWith('razr')) {
+      m = `Moto ${m}`;
+    }
+  } else if (bLower === 'samsung') {
+    m = m.replace(/^samsung\s+/i, '').trim();
+  } else if (bLower === 'google') {
+    m = m.replace(/^google\s+/i, '').trim();
+  } else if (bLower === 'xiaomi') {
+    m = m.replace(/^xiaomi\s+/i, '').trim();
+  } else if (m.toLowerCase().startsWith(bLower)) {
+    m = m.slice(b.length).trim();
+  }
+
+  return m;
+}
+
 export default function AdminCompetitorRadar() {
   const [selectedBrand, setSelectedBrand] = useState('Apple');
   const [searchModel, setSearchModel] = useState('iPhone 16 Pro');
@@ -128,6 +157,76 @@ export default function AdminCompetitorRadar() {
   const [radarData, setRadarData] = useState<RadarResponse | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isManualMode, setIsManualMode] = useState(false);
+
+  // Dynamic available models for the selected brand
+  const availableModels = useMemo(() => {
+    const brand = selectedBrand;
+    const bLower = brand.toLowerCase().trim();
+    const rawList: string[] = [];
+
+    // 1. Default model for brand
+    if (DEFAULT_BRAND_MODELS[brand]) {
+      rawList.push(DEFAULT_BRAND_MODELS[brand].model);
+    }
+
+    // 2. Watchlist anchor models for brand
+    TOP_WATCHLIST.filter((w) => w.brand.toLowerCase() === bLower).forEach((w) => {
+      rawList.push(w.model);
+    });
+
+    // 3. Brand series definitions
+    const seriesDefs = BRAND_SERIES_DEFINITIONS[bLower] || [];
+    seriesDefs.forEach((s) => {
+      (s.defaultModels || []).forEach((dm) => {
+        rawList.push(dm.model);
+      });
+    });
+
+    // 4. All Indian phones catalog
+    ALL_INDIAN_PHONES_CATALOG.forEach((p) => {
+      if (p.brand.toLowerCase().trim() === bLower) {
+        rawList.push(p.model);
+      }
+    });
+
+    // 5. Master model catalog
+    MASTER_MODEL_CATALOG.forEach((m) => {
+      if (m.brand.toLowerCase().trim() === bLower) {
+        rawList.push(m.model);
+      }
+    });
+
+    // Deduplicate and normalize display names
+    const seen = new Set<string>();
+    const cleaned: string[] = [];
+
+    for (const raw of rawList) {
+      if (!raw) continue;
+      const clean = normalizeModelDisplayName(brand, raw);
+      const key = clean.toLowerCase().replace(/[^a-z0-9]/g, '');
+      if (!seen.has(key)) {
+        seen.add(key);
+        cleaned.push(clean);
+      }
+    }
+
+    // Sort using getDeviceRecencyScore so modern / flagship phones are listed first
+    cleaned.sort((a, b) => {
+      const scoreB = getDeviceRecencyScore(brand, b);
+      const scoreA = getDeviceRecencyScore(brand, a);
+      if (scoreB !== scoreA) return scoreB - scoreA;
+      return a.localeCompare(b);
+    });
+
+    return cleaned;
+  }, [selectedBrand]);
+
+  // Matching option value for <select>
+  const selectedModelOption = useMemo(() => {
+    const match = availableModels.find((m) => m.toLowerCase() === searchModel.toLowerCase());
+    return match || searchModel;
+  }, [availableModels, searchModel]);
 
   // Quick In-Place Price Override State
   const [customPriceInput, setCustomPriceInput] = useState('');
@@ -170,6 +269,19 @@ export default function AdminCompetitorRadar() {
     setSearchModel(def.model);
     setSelectedStorage(def.storage);
     fetchRadar(newBrand, def.model, def.storage);
+  };
+
+  const handleModelSelect = (newModel: string) => {
+    if (!newModel) return;
+    setSearchModel(newModel);
+    fetchRadar(selectedBrand, newModel, selectedStorage);
+  };
+
+  const handleStorageChange = (newStorage: string) => {
+    setSelectedStorage(newStorage);
+    if (searchModel.trim()) {
+      fetchRadar(selectedBrand, searchModel.trim(), newStorage);
+    }
   };
 
   const handleModelInputChange = (val: string) => {
@@ -348,19 +460,55 @@ export default function AdminCompetitorRadar() {
             </select>
           </div>
 
-          {/* Model Search Input */}
+          {/* Model Selector */}
           <div className="md:col-span-5 space-y-1">
-            <label className="text-xs font-bold text-gray-700">Phone Model</label>
-            <div className="relative">
-              <input
-                type="text"
-                value={searchModel}
-                onChange={(e) => handleModelInputChange(e.target.value)}
-                placeholder="e.g. iPhone 16 Pro, Galaxy S24 Ultra, Vivo V40..."
-                className="w-full pl-9 pr-3 py-2.5 bg-gray-50 border border-gray-300 rounded-xl text-xs font-bold text-gray-900 focus:ring-2 focus:ring-[#344257] focus:border-transparent outline-none"
-              />
-              <Search className="h-4 w-4 text-gray-400 absolute left-3 top-3" />
+            <div className="flex items-center justify-between">
+              <label className="text-xs font-bold text-gray-700">Phone Model</label>
+              <button
+                type="button"
+                onClick={() => setIsManualMode(!isManualMode)}
+                className="text-[10px] text-[#344257] hover:text-[#1A222D] font-bold hover:underline cursor-pointer"
+              >
+                {isManualMode ? '📋 Select from list' : '✏️ Type manually'}
+              </button>
             </div>
+
+            {isManualMode ? (
+              <div className="relative">
+                <input
+                  type="text"
+                  value={searchModel}
+                  onChange={(e) => handleModelInputChange(e.target.value)}
+                  placeholder="e.g. iPhone 16 Pro, Moto Edge 50, Vivo V40..."
+                  className="w-full pl-9 pr-3 py-2.5 bg-gray-50 border border-gray-300 rounded-xl text-xs font-bold text-gray-900 focus:ring-2 focus:ring-[#344257] focus:border-transparent outline-none"
+                />
+                <Search className="h-4 w-4 text-gray-400 absolute left-3 top-3" />
+              </div>
+            ) : (
+              <div className="relative">
+                <select
+                  value={selectedModelOption}
+                  onChange={(e) => {
+                    if (e.target.value === '__custom__') {
+                      setIsManualMode(true);
+                    } else {
+                      handleModelSelect(e.target.value);
+                    }
+                  }}
+                  className="w-full px-3 py-2.5 bg-gray-50 border border-gray-300 rounded-xl text-xs font-bold text-gray-900 focus:ring-2 focus:ring-[#344257] focus:border-transparent outline-none cursor-pointer"
+                >
+                  {!availableModels.some((m) => m.toLowerCase() === selectedModelOption.toLowerCase()) && selectedModelOption && (
+                    <option value={selectedModelOption}>{selectedModelOption}</option>
+                  )}
+                  {availableModels.map((m) => (
+                    <option key={m} value={m}>
+                      {m}
+                    </option>
+                  ))}
+                  <option value="__custom__">✏️ Type Custom Model...</option>
+                </select>
+              </div>
+            )}
           </div>
 
           {/* Storage Variant Selector */}
@@ -368,8 +516,8 @@ export default function AdminCompetitorRadar() {
             <label className="text-xs font-bold text-gray-700">Storage Variant</label>
             <select
               value={selectedStorage}
-              onChange={(e) => setSelectedStorage(e.target.value)}
-              className="w-full px-3 py-2.5 bg-gray-50 border border-gray-300 rounded-xl text-xs font-bold text-gray-900 focus:ring-2 focus:ring-[#344257] focus:border-transparent outline-none"
+              onChange={(e) => handleStorageChange(e.target.value)}
+              className="w-full px-3 py-2.5 bg-gray-50 border border-gray-300 rounded-xl text-xs font-bold text-gray-900 focus:ring-2 focus:ring-[#344257] focus:border-transparent outline-none cursor-pointer"
             >
               {STORAGES.map((s) => (
                 <option key={s} value={s}>
