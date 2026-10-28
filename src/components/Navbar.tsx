@@ -17,6 +17,7 @@ import {
   ShoppingBag,
   ShoppingCart,
   Smartphone,
+  Laptop,
   Store,
   Trash2,
   Tv,
@@ -194,25 +195,19 @@ const highlightMatch = (text: string, query: string) => {
 
 const BUY_REFURBISHED_HIGHLIGHTS = [
   {
-    title: 'Certified Laptops',
-    desc: 'ThinkPads, MacBooks & Gaming with charger',
-    to: '/buy-laptop',
-    badge: 'New Launch',
-  },
-  {
-    title: 'iPhones',
+    title: 'Apple iPhones',
     desc: 'iPhone 11 to 15 Pro Max with 6M warranty',
     to: '/buy?brand=Apple',
     badge: '32-Point Inspected',
   },
   {
-    title: 'Samsung',
+    title: 'Samsung Galaxy',
     desc: 'S21, S22, S23, S24 & Fold/Flip series',
     to: '/buy?brand=Samsung',
     badge: 'Best Cameras',
   },
   {
-    title: 'OnePlus',
+    title: 'OnePlus Flagships',
     desc: 'OnePlus 9 to 12R at unbelievable prices',
     to: '/buy?brand=OnePlus',
     badge: 'Fast Charging',
@@ -228,6 +223,45 @@ const BUY_REFURBISHED_HIGHLIGHTS = [
     desc: 'High performance flagships for less',
     to: '/buy?maxPrice=25000',
     badge: 'Hot Seller',
+  },
+];
+
+const BUY_LAPTOP_HIGHLIGHTS = [
+  {
+    title: 'Apple MacBooks',
+    desc: 'MacBook Air M1/M2 & Retina Display Pro',
+    to: '/buy-laptop?brand=Apple',
+    badge: 'M-Series',
+  },
+  {
+    title: 'Lenovo ThinkPad',
+    desc: 'Legendary business reliability (T14 & E14)',
+    to: '/buy-laptop?brand=Lenovo',
+    badge: 'Military Grade',
+  },
+  {
+    title: 'Dell Latitude & XPS',
+    desc: 'Dell 7420 & XPS 13 InfinityEdge ultrabooks',
+    to: '/buy-laptop?brand=Dell',
+    badge: 'FHD IPS',
+  },
+  {
+    title: 'HP EliteBook & Victus',
+    desc: 'Premium sleek design & fast RTX gaming',
+    to: '/buy-laptop?brand=HP',
+    badge: 'Work & Play',
+  },
+  {
+    title: 'Gaming & Creator Laptops',
+    desc: 'High FPS NVIDIA RTX graphics & 144Hz panels',
+    to: '/buy-laptop?useCase=Gaming',
+    badge: 'Dedicated GPU',
+  },
+  {
+    title: 'Budget Laptops Under ₹25,000',
+    desc: 'Fast Core i5 SSD laptops for study & work',
+    to: '/buy-laptop?maxPrice=25000',
+    badge: 'Best Value',
   },
 ];
 
@@ -1349,6 +1383,74 @@ export default function Navbar() {
                         >
                           <div>
                             <p className="text-xs font-bold text-gray-900 group-hover:text-[#344257]">
+                              {item.title}
+                            </p>
+                            <p className="text-[11px] text-gray-500">{item.desc}</p>
+                          </div>
+                          <span className="text-[10px] font-bold bg-[#E4E7F0] text-[#344257] px-2 py-0.5 rounded-md shrink-0">
+                            {item.badge}
+                          </span>
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Buy Refurbished Laptops Dropdown */}
+              <div className="relative flex items-center gap-1 py-2">
+                <Link
+                  to="/buy-laptop"
+                  onClick={() => setActiveDropdown(null)}
+                  className={`transition-colors font-bold flex items-center gap-1.5 ${
+                    activeDropdown === 'buy-laptop' || location.pathname === '/buy-laptop' || location.pathname === '/buy-laptops'
+                      ? 'text-[#344257]'
+                      : 'text-[#344257] hover:text-[#47576E]'
+                  }`}
+                >
+                  <Laptop className="h-4 w-4 text-blue-600 inline-block" />
+                  <span>Buy Laptop</span>
+                  <span className="text-[9px] font-black uppercase px-1.5 py-0.2 rounded-full bg-blue-100 text-blue-800 tracking-wide border border-blue-200">
+                    New
+                  </span>
+                </Link>
+                <button
+                  type="button"
+                  onClick={() => toggleDropdown('buy-laptop')}
+                  className="p-1 text-[#6A859F] hover:text-[#344257] cursor-pointer"
+                  title="Toggle Certified Laptops Menu"
+                >
+                  <ChevronDown
+                    className={`h-3 w-3 transition-transform duration-200 ${
+                      activeDropdown === 'buy-laptop' ? 'rotate-180 text-[#344257]' : 'text-[#6A859F]'
+                    }`}
+                  />
+                </button>
+
+                {activeDropdown === 'buy-laptop' && (
+                  <div className="absolute left-0 top-full mt-1 w-[430px] rounded-2xl border border-gray-200 bg-white p-4 shadow-2xl z-50 animate-fade-in text-[#344257]">
+                    <div className="flex items-center justify-between pb-2 border-b border-gray-100 mb-3">
+                      <span className="text-xs font-bold text-gray-900 flex items-center gap-1.5">
+                        <Laptop className="h-3.5 w-3.5 text-blue-600" /> Certified Laptops (with Charger)
+                      </span>
+                      <Link
+                        to="/buy-laptop"
+                        onClick={() => setActiveDropdown(null)}
+                        className="text-xs font-bold text-blue-600 hover:text-blue-800 hover:underline"
+                      >
+                        All Laptops →
+                      </Link>
+                    </div>
+                    <div className="space-y-1.5">
+                      {BUY_LAPTOP_HIGHLIGHTS.map((item) => (
+                        <Link
+                          key={item.title}
+                          to={item.to}
+                          onClick={() => setActiveDropdown(null)}
+                          className="flex items-center justify-between p-2.5 rounded-xl hover:bg-[#F0F0F5] border border-gray-100 transition group"
+                        >
+                          <div>
+                            <p className="text-xs font-bold text-gray-900 group-hover:text-blue-700">
                               {item.title}
                             </p>
                             <p className="text-[11px] text-gray-500">{item.desc}</p>
