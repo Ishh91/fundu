@@ -20,6 +20,21 @@ export function normalizeStorageString(str: string): string {
   return `${match[1]} ${match[2].toUpperCase()}`;
 }
 
+// Converts any storage string ('128 GB', '1 TB', '512GB') into numerical gigabytes
+export function getStorageInGb(storageStr: string): number {
+  const match = String(storageStr || '').match(/(\d+)\s*(gb|tb)/i);
+  if (!match) return 0;
+  const num = parseInt(match[1], 10);
+  const unit = match[2].toUpperCase();
+  return unit === 'TB' ? num * 1024 : num;
+}
+
+// Validates whether a storage size is an authentic smartphone/tablet hardware tier (16GB - 2TB)
+export function isValidStorageTier(storageStr: string): boolean {
+  const gb = getStorageInGb(storageStr);
+  return [16, 32, 64, 128, 256, 512, 1024, 2048].includes(gb);
+}
+
 // Normalizes RAM strings to standard 'X GB' format
 export function normalizeRamString(str: string): string {
   const match = String(str || '').match(/(\d+)\s*(gb)?/i);
@@ -630,6 +645,7 @@ const MODEL_HARDWARE_RULES: Array<{
   {
     pattern: /iphone\s*7\s*plus\b/i,
     variants: [
+      { storage: '32 GB', rams: [] },
       { storage: '128 GB', rams: [] },
       { storage: '256 GB', rams: [] },
     ],
@@ -637,6 +653,7 @@ const MODEL_HARDWARE_RULES: Array<{
   {
     pattern: /iphone\s*7\b(?!\s*plus)/i,
     variants: [
+      { storage: '32 GB', rams: [] },
       { storage: '128 GB', rams: [] },
       { storage: '256 GB', rams: [] },
     ],
@@ -644,6 +661,8 @@ const MODEL_HARDWARE_RULES: Array<{
   {
     pattern: /iphone\s*6s\s*plus\b/i,
     variants: [
+      { storage: '16 GB', rams: [] },
+      { storage: '32 GB', rams: [] },
       { storage: '64 GB', rams: [] },
       { storage: '128 GB', rams: [] },
     ],
@@ -651,6 +670,8 @@ const MODEL_HARDWARE_RULES: Array<{
   {
     pattern: /iphone\s*6s\b(?!\s*plus)/i,
     variants: [
+      { storage: '16 GB', rams: [] },
+      { storage: '32 GB', rams: [] },
       { storage: '64 GB', rams: [] },
       { storage: '128 GB', rams: [] },
     ],
@@ -659,6 +680,7 @@ const MODEL_HARDWARE_RULES: Array<{
     pattern: /iphone\s*6\s*plus\b/i,
     variants: [
       { storage: '16 GB', rams: [] },
+      { storage: '32 GB', rams: [] },
       { storage: '64 GB', rams: [] },
       { storage: '128 GB', rams: [] },
     ],
@@ -667,6 +689,7 @@ const MODEL_HARDWARE_RULES: Array<{
     pattern: /iphone\s*6\b(?!\s*(s|plus))/i,
     variants: [
       { storage: '16 GB', rams: [] },
+      { storage: '32 GB', rams: [] },
       { storage: '64 GB', rams: [] },
       { storage: '128 GB', rams: [] },
     ],
@@ -2114,8 +2137,12 @@ export function inferTierHardwareSpecs(
       if (/xs/i.test(mLower)) storages = ['64 GB', '256 GB', '512 GB'];
       else if (/x\b/i.test(mLower)) storages = ['64 GB', '256 GB'];
       else storages = ['64 GB', '128 GB', '256 GB'];
-    } else if (/\b(7|6s|6|5s|5c|5)\b/i.test(mLower)) {
-      storages = ['64 GB', '128 GB'];
+    } else if (/\b(7)\b/i.test(mLower)) {
+      storages = ['32 GB', '128 GB', '256 GB'];
+    } else if (/\b(6s|6)\b/i.test(mLower)) {
+      storages = ['16 GB', '32 GB', '64 GB', '128 GB'];
+    } else if (/\b(5s|5c|5)\b/i.test(mLower)) {
+      storages = ['16 GB', '32 GB', '64 GB'];
     } else if (/plus\b/i.test(mLower)) {
       storages = ['128 GB', '256 GB', '512 GB'];
     } else if (/ipad/i.test(mLower)) {
@@ -2169,11 +2196,11 @@ export function inferTierHardwareSpecs(
   ) {
     tierStorages = ['128 GB', '256 GB', '512 GB'];
     tierRamMap = {
-      '128 GB': ['6 GB', '8 GB'],
+      '128 GB': ['6 GB', '8 GB', '12 GB'],
       '256 GB': ['8 GB', '12 GB'],
-      '512 GB': ['12 GB'],
+      '512 GB': ['12 GB', '16 GB'],
     };
-    allRams = ['6 GB', '8 GB', '12 GB'];
+    allRams = ['6 GB', '8 GB', '12 GB', '16 GB'];
   }
   // 3. Itel Budget Series (Accurate 4GB-8GB RAM, 64GB-256GB Storage)
   else if (/itel/i.test(fullText)) {
@@ -2185,27 +2212,29 @@ export function inferTierHardwareSpecs(
     };
     allRams = ['4 GB', '6 GB', '8 GB'];
   }
-  // 4. Budget / Entry-level (A0x, A1x, Redmi C, Realme C, Poco C, Spark, etc.)
+  // 4. Budget / Entry-level (A0x, A1x, Redmi A/C/number A, Realme C, Poco C, Spark, Smart, Narzo 50i, etc.)
   else if (
-    /a0\d|a1\d|m0\d|m1\d|f0\d|f1\d|redmi\s*c|realme\s*c|poco\s*c|vivo\s*y|spark|smart|pova|camon|moto\s*e/i.test(fullText)
+    /a0\d|a1\d|m0\d|m1\d|f0\d|f1\d|redmi\s*([6-9][ac]|10a|12c|13c|a[1-3])|realme\s*c|poco\s*c|vivo\s*y|spark|smart|pova|camon|moto\s*e|narzo\s*([1-5]0i|[1-5]0a)/i.test(fullText)
   ) {
-    tierStorages = ['64 GB', '128 GB'];
+    tierStorages = ['32 GB', '64 GB', '128 GB'];
     tierRamMap = {
-      '64 GB': ['4 GB', '6 GB'],
+      '32 GB': ['2 GB', '3 GB', '4 GB'],
+      '64 GB': ['3 GB', '4 GB', '6 GB'],
       '128 GB': ['4 GB', '6 GB', '8 GB'],
     };
-    allRams = ['4 GB', '6 GB', '8 GB'];
+    allRams = ['2 GB', '3 GB', '4 GB', '6 GB'];
   }
-  // 4. Classic / Vintage J, C, On series
+  // 5. Classic / Vintage J, C, On series
   else if (/galaxy\s*[jcon]\d|\bj\d|\bc\d|\bon\d|galaxy\s*core|galaxy\s*grand/i.test(fullText)) {
-    tierStorages = ['64 GB', '128 GB'];
+    tierStorages = ['16 GB', '32 GB', '64 GB'];
     tierRamMap = {
-      '64 GB': ['4 GB', '6 GB'],
-      '128 GB': ['6 GB'],
+      '16 GB': ['2 GB', '3 GB'],
+      '32 GB': ['3 GB', '4 GB'],
+      '64 GB': ['4 GB'],
     };
-    allRams = ['4 GB', '6 GB'];
+    allRams = ['2 GB', '3 GB', '4 GB'];
   }
-  // 5. Standard Mid-range default (A2x, A3x, M3x, Redmi Note base, Realme number, Moto G, etc.)
+  // 6. Standard Mid-range default (A2x, A3x, M3x, Redmi Note base, Realme number, Moto G, etc.)
   else {
     tierStorages = ['64 GB', '128 GB', '256 GB'];
     tierRamMap = {
@@ -2218,14 +2247,8 @@ export function inferTierHardwareSpecs(
 
   const normSeeds = seedStorages
     .map(normalizeStorageString)
-    .filter((s) => {
-      const m = s.match(/(\d+)\s*(?:gb|tb)/i);
-      return !m || parseInt(m[1], 10) >= 64;
-    });
-  const finalStorages = Array.from(new Set([...normSeeds, ...tierStorages])).filter((s) => {
-    const m = s.match(/(\d+)\s*(?:gb|tb)/i);
-    return !m || parseInt(m[1], 10) >= 64;
-  });
+    .filter(isValidStorageTier);
+  const finalStorages = Array.from(new Set([...normSeeds, ...tierStorages])).filter(isValidStorageTier);
   const normalizedSeedRams = seedRams.map(normalizeRamString).filter(Boolean);
   const finalRams = Array.from(new Set([...normalizedSeedRams, ...allRams]));
 
@@ -2240,12 +2263,16 @@ export function inferTierHardwareSpecs(
     }
     if (normalizedSeedRams.length > 1) {
       // Multiple authentic RAMs exist across storages
+      if (norm.includes('32 GB') || norm.includes('16 GB')) {
+        const match = normalizedSeedRams.filter((r) => parseInt(r, 10) <= 4);
+        return match.length > 0 ? match : [normalizedSeedRams[0]];
+      }
       if (norm.includes('64 GB')) {
         const match = normalizedSeedRams.filter((r) => parseInt(r, 10) <= 6);
         return match.length > 0 ? match : [normalizedSeedRams[0]];
       }
       if (norm.includes('128 GB')) {
-        const match = normalizedSeedRams.filter((r) => parseInt(r, 10) <= 8);
+        const match = normalizedSeedRams.filter((r) => parseInt(r, 10) <= 12);
         return match.length > 0 ? match : [normalizedSeedRams[0]];
       }
       if (norm.includes('256 GB')) {
@@ -2260,7 +2287,7 @@ export function inferTierHardwareSpecs(
     }
 
     if (tierRamMap[norm] && tierRamMap[norm].length > 0) {
-      return tierRamMap[norm].filter((r) => !/^(2|3)\s*gb$/i.test(r));
+      return tierRamMap[norm];
     }
     return [];
   };
@@ -2298,10 +2325,7 @@ export function getModelHardwareSpecs(
     if (rule.pattern.test(fullText) || rule.pattern.test(normModel)) {
       const storages = rule.variants
         .map((v) => normalizeStorageString(v.storage))
-        .filter((s) => {
-          const m = s.match(/(\d+)\s*(?:gb|tb)/i);
-          return !m || parseInt(m[1], 10) >= 64;
-        });
+        .filter(isValidStorageTier);
 
       if (storages.length > 0) {
         const defaultStorage = storages[0] || '128 GB';
@@ -2309,7 +2333,7 @@ export function getModelHardwareSpecs(
         const getRamsForStorage = (stg: string): string[] => {
           const normStg = normalizeStorageString(stg);
           const match = rule.variants.find((v) => normalizeStorageString(v.storage) === normStg);
-          return match ? match.rams.map(normalizeRamString).filter((r) => !/^(2|3)\s*gb$/i.test(r)) : [];
+          return match ? match.rams.map(normalizeRamString) : [];
         };
 
         const defaultRams = getRamsForStorage(defaultStorage);
@@ -2340,10 +2364,7 @@ export function getModelHardwareSpecs(
   if (foundPhone) {
     const dbStorages = Array.isArray(foundPhone.storage_options) && foundPhone.storage_options.length > 0
       ? Array.from(new Set(foundPhone.storage_options.map(normalizeStorageString)))
-          .filter((s) => {
-            const m = s.match(/(\d+)\s*(?:gb|tb)/i);
-            return !m || parseInt(m[1], 10) >= 64;
-          })
+          .filter(isValidStorageTier)
       : [];
     const dbRams = isApple
       ? []
@@ -2360,12 +2381,16 @@ export function getModelHardwareSpecs(
         if (validRams.length === 1) return validRams;
 
         const norm = normalizeStorageString(stg);
+        if (norm.includes('32 GB') || norm.includes('16 GB')) {
+          const match = validRams.filter((r) => parseInt(r, 10) <= 4);
+          return match.length > 0 ? match : [validRams[0]];
+        }
         if (norm.includes('64 GB')) {
           const match = validRams.filter((r) => parseInt(r, 10) <= 6);
           return match.length > 0 ? match : [validRams[0]];
         }
         if (norm.includes('128 GB')) {
-          const match = validRams.filter((r) => parseInt(r, 10) <= 8);
+          const match = validRams.filter((r) => parseInt(r, 10) <= 12);
           return match.length > 0 ? match : [validRams[0]];
         }
         if (norm.includes('256 GB')) {
@@ -2428,10 +2453,7 @@ export function getModelHardwareSpecs(
 
     if (catalogVariants.length > 0) {
       const seedStorages = Array.from(new Set(catalogVariants.map((v) => normalizeStorageString(v.storage))))
-        .filter((s) => {
-          const m = s.match(/(\d+)\s*(?:gb|tb)/i);
-          return !m || parseInt(m[1], 10) >= 64;
-        });
+        .filter(isValidStorageTier);
       return inferTierHardwareSpecs(brand, model, seedStorages, []);
     }
   }

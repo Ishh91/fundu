@@ -28,6 +28,7 @@ import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
 import { getCleanPhoneImage, pullLiveModelImagesFromDb } from '../lib/phoneImages';
 import type { Product, Review } from '../types';
+import { getModelHardwareSpecs, normalizeStorageString } from '../lib/deviceSpecs';
 import { findSampleProductById, SAMPLE_PRODUCTS_MAP } from '../data/sampleProducts';
 import { findSampleLaptopById } from '../data/sampleLaptops';
 
@@ -283,17 +284,17 @@ const handleCheckPincode = async (codeToTest?: string) => {
     if (isLaptop) {
       return ['256 GB', '512 GB', '1 TB'];
     }
+    if (product) {
+      const specs = getModelHardwareSpecs(product.brand, product.model || product.title);
+      if (specs && specs.storages.length > 0) {
+        const current = product.storage ? normalizeStorageString(product.storage) : '';
+        if (current && !specs.storages.includes(current)) {
+          return Array.from(new Set([current, ...specs.storages]));
+        }
+        return specs.storages;
+      }
+    }
     const base = (product?.storage || '128 GB').trim();
-    const isFlagship = (product?.price || 0) > 40000 || /iphone|galaxy s|pixel \d pro|ultra/i.test(product?.model || '');
-    if (isFlagship) {
-      return ['128 GB', '256 GB', '512 GB', '1 TB'].filter((s) => {
-        if (base === '256 GB' && s === '128 GB') return false;
-        return true;
-      });
-    }
-    if (/64\s*gb/i.test(base)) {
-      return ['64 GB', '128 GB', '256 GB'];
-    }
     return ['128 GB', '256 GB', '512 GB'];
   }, [product]);
 
@@ -885,8 +886,14 @@ return (
                 <div className="p-4 rounded-2xl border border-ink-100 bg-[#f8fafb] flex items-center gap-3">
                   <Cpu className="h-5 w-5 text-brand-600 shrink-0" />
                   <div>
-                    <p className="font-bold text-ink-900">Processor & RAM</p>
-                    <p className="text-ink-500">{product.ram || '6 GB'} RAM · High Speed Chipset</p>
+                    <p className="font-bold text-ink-900">Processor & Architecture</p>
+                    <p className="text-ink-500">
+                      {product.brand?.toLowerCase() === 'apple'
+                        ? 'Apple Silicon Bionic / Neural Engine'
+                        : product.category === 'laptop'
+                        ? `${product.ram || '16 GB'} RAM · ${product.processor || 'Core Multi-Processor'}`
+                        : `${product.ram || '8 GB'} RAM · High Speed Octa-Core Chipset`}
+                    </p>
                   </div>
                 </div>
 
