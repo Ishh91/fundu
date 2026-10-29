@@ -141,7 +141,7 @@ export default function BestDeals({ products, loading }: BestDealsProps) {
         </div>
       ) : (
         <div className="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-          {displayProducts.slice(0, 4).map((item) => {
+          {displayProducts.slice(0, 8).map((item) => {
             const gradeText =
               item.condition === 'Excellent'
                 ? 'Superb'
@@ -169,6 +169,12 @@ export default function BestDeals({ products, loading }: BestDealsProps) {
                   >
                     Grade: {gradeText}
                   </span>
+
+                  {item.is_featured && (
+                    <span className="absolute left-3 bottom-3 z-10 pointer-events-none rounded-full bg-amber-400 text-amber-950 px-2 py-0.5 text-[9px] font-black uppercase tracking-wide flex items-center gap-1 shadow-sm">
+                      <Sparkles className="h-2.5 w-2.5" /> Featured
+                    </span>
+                  )}
 
                   {item.discount_percent > 0 && (
                     <span className="absolute right-3 top-3 z-10 pointer-events-none rounded-full bg-orange-500 px-2.5 py-0.5 text-[10px] font-extrabold text-white shadow-sm">

@@ -35,17 +35,17 @@ export default function LaptopShowcase({ customLaptops }: LaptopShowcaseProps) {
   }, [customLaptops]);
 
   const filteredLaptops = useMemo(() => {
-    if (activeTab === 'all') return allLaptops.slice(0, 4);
+    if (activeTab === 'all') return allLaptops.slice(0, 8);
     if (activeTab === 'macbook') {
-      return allLaptops.filter((l) => l.brand.toLowerCase() === 'apple').slice(0, 4);
+      return allLaptops.filter((l) => l.brand.toLowerCase() === 'apple').slice(0, 8);
     }
     if (activeTab === 'business') {
-      return allLaptops.filter((l) => ['dell', 'lenovo', 'hp'].includes(l.brand.toLowerCase())).slice(0, 4);
+      return allLaptops.filter((l) => ['dell', 'lenovo', 'hp'].includes(l.brand.toLowerCase())).slice(0, 8);
     }
     if (activeTab === 'gaming') {
-      return allLaptops.filter((l) => ['asus', 'acer'].includes(l.brand.toLowerCase()) || /rtx|gtx|ryzen 9|rog/i.test(`${l.title} ${l.processor} ${l.graphics}`)).slice(0, 4);
+      return allLaptops.filter((l) => ['asus', 'acer'].includes(l.brand.toLowerCase()) || /rtx|gtx|ryzen 9|rog/i.test(`${l.title} ${l.processor} ${l.graphics}`)).slice(0, 8);
     }
-    return allLaptops.slice(0, 4);
+    return allLaptops.slice(0, 8);
   }, [allLaptops, activeTab]);
 
   const handleQuickAdd = (e: React.MouseEvent, laptop: Product) => {
@@ -117,9 +117,16 @@ export default function LaptopShowcase({ customLaptops }: LaptopShowcaseProps) {
               >
                 {/* Top Badges */}
                 <div className="flex items-center justify-between gap-1 w-full mb-2">
-                  <span className="badge bg-[#344257] text-white text-[10px] font-black px-2.5 py-0.5 rounded-full">
-                    {laptop.condition || 'Superb'} Grade
-                  </span>
+                  <div className="flex items-center gap-1">
+                    <span className="badge bg-[#344257] text-white text-[10px] font-black px-2.5 py-0.5 rounded-full">
+                      {laptop.condition || 'Superb'} Grade
+                    </span>
+                    {laptop.is_featured && (
+                      <span className="badge bg-amber-400 text-amber-950 text-[10px] font-black px-2 py-0.5 rounded-full shadow-xs flex items-center gap-0.5">
+                        ⭐ Featured
+                      </span>
+                    )}
+                  </div>
                   {discountPct > 0 && (
                     <span className="badge bg-emerald-600 text-white text-[10px] font-black px-2 py-0.5 rounded-full shadow-xs">
                       {discountPct}% OFF

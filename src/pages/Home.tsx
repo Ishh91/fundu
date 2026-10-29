@@ -40,10 +40,19 @@ export default function Home() {
       db.from<Product[]>('products')
         .select('*')
         .eq('is_approved', true)
-        .order('is_featured', { ascending: false })
-        .limit(8)
+        .limit(60)
         .then(({ data }) => {
-          setProducts(data ?? []);
+          const list = (data ?? []) as Product[];
+          // Sort with highest priority to featured items, tie-broken by newest update/creation
+          const sorted = [...list].sort((a, b) => {
+            if (a.is_featured && !b.is_featured) return -1;
+            if (!a.is_featured && b.is_featured) return 1;
+
+            const timeA = new Date(a.updated_at || a.created_at || 0).getTime();
+            const timeB = new Date(b.updated_at || b.created_at || 0).getTime();
+            return timeB - timeA;
+          });
+          setProducts(sorted);
           setLoading(false);
         })
         .catch(() => setLoading(false));

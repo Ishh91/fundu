@@ -29,6 +29,7 @@ export type Product = {
   accessories_included?: string | null;
   use_case?: 'student' | 'business' | 'gaming' | 'macbook' | string | null;
   created_at: string;
+  updated_at?: string | null;
 };
 
 export type SellRequest = {

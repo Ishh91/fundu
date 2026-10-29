@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Store, Search, Plus, Edit2, Trash2, Smartphone, Laptop, Tag, ExternalLink, ShieldCheck, CheckCircle2, Cpu, Monitor, BatteryCharging } from 'lucide-react';
+import { Store, Search, Plus, Edit2, Trash2, Smartphone, Laptop, Tag, ExternalLink, ShieldCheck, CheckCircle2, Cpu, Monitor, BatteryCharging, Star } from 'lucide-react';
 import type { Product } from './adminTypes';
 import { formatINR } from '../../lib/db';
 import { getCleanPhoneImage } from '../../lib/phoneImages';
@@ -10,6 +10,7 @@ type AdminProductsProps = {
   onSelectProduct: (id: string) => void;
   onOpenProductModal: (product: Product | null, initialCategory?: 'smartphone' | 'laptop') => void;
   onToggleApproval: (id: string, current: boolean) => void;
+  onToggleFeatured?: (id: string, current: boolean) => void;
   onDeleteProduct: (id: string) => void;
 };
 
@@ -19,14 +20,16 @@ export default function AdminProducts({
   onSelectProduct,
   onOpenProductModal,
   onToggleApproval,
+  onToggleFeatured,
   onDeleteProduct,
 }: AdminProductsProps) {
   const [search, setSearch] = useState('');
   const [categoryFilter, setCategoryFilter] = useState<'all' | 'smartphone' | 'laptop'>('all');
-  const [statusFilter, setStatusFilter] = useState<'all' | 'live' | 'hidden' | 'out_of_stock'>('all');
+  const [statusFilter, setStatusFilter] = useState<'all' | 'featured' | 'live' | 'hidden' | 'out_of_stock'>('all');
 
   const smartphoneCount = products.filter((p) => p.category !== 'laptop').length;
   const laptopCount = products.filter((p) => p.category === 'laptop').length;
+  const featuredCount = products.filter((p) => p.is_featured).length;
   const liveCount = products.filter((p) => p.is_approved).length;
   const hiddenCount = products.filter((p) => !p.is_approved).length;
   const outOfStockCount = products.filter((p) => (p.stock ?? 0) <= 0).length;
@@ -38,6 +41,7 @@ export default function AdminProducts({
     const matchesSearch = `${p.title} ${p.brand} ${p.model} ${p.processor || ''} ${p.offer_tag || ''}`.toLowerCase().includes(search.toLowerCase());
     if (!matchesSearch) return false;
 
+    if (statusFilter === 'featured') return !!p.is_featured;
     if (statusFilter === 'live') return p.is_approved;
     if (statusFilter === 'hidden') return !p.is_approved;
     if (statusFilter === 'out_of_stock') return (p.stock ?? 0) <= 0;
@@ -139,6 +143,7 @@ export default function AdminProducts({
             <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-none text-[11px] font-bold">
               {[
                 { id: 'all', label: `All Status` },
+                { id: 'featured', label: `⭐ Featured (${featuredCount})` },
                 { id: 'live', label: `Live (${liveCount})` },
                 { id: 'hidden', label: `Hidden (${hiddenCount})` },
                 { id: 'out_of_stock', label: `No Stock (${outOfStockCount})` },
@@ -196,15 +201,22 @@ export default function AdminProducts({
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center justify-between gap-1.5">
                         <p className="font-bold text-xs text-ink-900 truncate">{p.title}</p>
-                        <span
-                          className={`text-[9px] font-extrabold px-1.5 py-0.5 rounded-full shrink-0 ${
-                            p.is_approved
-                              ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
-                              : 'bg-amber-50 text-amber-700 border border-amber-200'
-                          }`}
-                        >
-                          {p.is_approved ? 'Live' : 'Hidden'}
-                        </span>
+                        <div className="flex items-center gap-1 shrink-0">
+                          {p.is_featured && (
+                            <span className="text-[9px] font-extrabold px-1.5 py-0.5 rounded-full bg-amber-100 text-amber-900 border border-amber-300">
+                              ⭐ Featured
+                            </span>
+                          )}
+                          <span
+                            className={`text-[9px] font-extrabold px-1.5 py-0.5 rounded-full shrink-0 ${
+                              p.is_approved
+                                ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                                : 'bg-amber-50 text-amber-700 border border-amber-200'
+                            }`}
+                          >
+                            {p.is_approved ? 'Live' : 'Hidden'}
+                          </span>
+                        </div>
                       </div>
                       <div className="flex items-center gap-2 mt-0.5">
                         <span className="text-[11px] text-ink-500 font-semibold">
@@ -261,6 +273,21 @@ export default function AdminProducts({
                   >
                     <Edit2 className="h-3.5 w-3.5" /> Edit
                   </button>
+                  {onToggleFeatured && (
+                    <button
+                      type="button"
+                      onClick={() => onToggleFeatured(selectedProduct.id, !!selectedProduct.is_featured)}
+                      className={`btn text-xs px-3 py-1.5 font-bold rounded-xl flex items-center gap-1 cursor-pointer transition ${
+                        selectedProduct.is_featured
+                          ? 'bg-amber-400 text-amber-950 hover:bg-amber-300 shadow-xs'
+                          : 'bg-gray-100 text-gray-700 hover:bg-amber-100 hover:text-amber-900 border border-gray-200'
+                      }`}
+                      title={selectedProduct.is_featured ? 'Click to remove from Home Featured' : 'Click to feature on Home top'}
+                    >
+                      <Star className={`h-3.5 w-3.5 ${selectedProduct.is_featured ? 'fill-amber-950 text-amber-950' : 'text-gray-500'}`} />
+                      {selectedProduct.is_featured ? 'Featured on Home' : 'Feature on Home'}
+                    </button>
+                  )}
                   <button
                     onClick={() => onToggleApproval(selectedProduct.id, selectedProduct.is_approved)}
                     className={`btn text-xs px-3 py-1.5 font-bold rounded-xl cursor-pointer ${

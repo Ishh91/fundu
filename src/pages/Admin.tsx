@@ -987,6 +987,18 @@ export default function Admin() {
     if (table === 'reviews') setReviews((prev) => prev.map((r) => (r.id === id ? { ...r, is_approved: !current } : r)));
   };
 
+  const toggleFeatured = async (id: string, current: boolean) => {
+    const nextVal = !current;
+    const now = new Date().toISOString();
+    const { error } = await db.from('products').update({ is_featured: nextVal, updated_at: now }).eq('id', id);
+    if (error) {
+      alert(error.message);
+      return;
+    }
+    setProducts((prev) => prev.map((p) => (p.id === id ? { ...p, is_featured: nextVal, updated_at: now } : p)));
+    broadcastSync('PRODUCT_UPDATE', 'products', 'update', { id, is_featured: nextVal, updated_at: now });
+  };
+
   const deleteProduct = async (id: string) => {
     const prod = products.find((p) => p.id === id);
     if (!confirm('Are you sure you want to delete this product?')) return;
@@ -1154,6 +1166,7 @@ export default function Admin() {
         is_featured: productForm.is_featured,
         show_all_grades: productForm.show_all_grades,
         stock: Number(productForm.stock) || 0,
+        updated_at: new Date().toISOString(),
       };
 
       if (productModal?.product) {
@@ -1964,6 +1977,7 @@ export default function Admin() {
                 }
               }}
               onToggleApproval={(id, current) => toggleApproval('products', id, current)}
+              onToggleFeatured={toggleFeatured}
               onDeleteProduct={deleteProduct}
             />
           )}
