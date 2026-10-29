@@ -112,6 +112,9 @@ export default function Admin() {
   // Live Notification alerts
   const [activeNotifications, setActiveNotifications] = useState<LiveNotification[]>([]);
   const isInitialLoad = useRef(true);
+  const lastKnownSellId = useRef<string | null>(null);
+  const lastKnownRepairId = useRef<string | null>(null);
+  const lastKnownOrderId = useRef<string | null>(null);
 
   // Data Stores
   const [products, setProducts] = useState<Product[]>([]);
@@ -346,9 +349,24 @@ export default function Admin() {
       ]);
 
       if (productsRes.data) setProducts(productsRes.data as Product[]);
-      if (sellsRes.data) setSells(sellsRes.data as SellRequest[]);
-      if (repairsRes.data) setRepairs(repairsRes.data as RepairBooking[]);
-      if (ordersRes.data) setOrders(ordersRes.data as Order[]);
+      if (sellsRes.data) {
+        setSells(sellsRes.data as SellRequest[]);
+        if (!lastKnownSellId.current && (sellsRes.data as any[]).length > 0) {
+          lastKnownSellId.current = (sellsRes.data as any[])[0].id;
+        }
+      }
+      if (repairsRes.data) {
+        setRepairs(repairsRes.data as RepairBooking[]);
+        if (!lastKnownRepairId.current && (repairsRes.data as any[]).length > 0) {
+          lastKnownRepairId.current = (repairsRes.data as any[])[0].id;
+        }
+      }
+      if (ordersRes.data) {
+        setOrders(ordersRes.data as Order[]);
+        if (!lastKnownOrderId.current && (ordersRes.data as any[]).length > 0) {
+          lastKnownOrderId.current = (ordersRes.data as any[])[0].id;
+        }
+      }
       if (agentsRes.data) setAgents(agentsRes.data as DeliveryAgent[]);
 
       // INSTANTLY UNBLOCK THE ADMIN DASHBOARD! (< 1 second load time)
@@ -391,15 +409,15 @@ export default function Admin() {
     }
   };
 
-  // Real-time Background Lead Listener with Audio Chimes
+  // Real-time Background Lead Listener with Audio Chimes & Desktop System Notifications
   useEffect(() => {
     const activeRole = profile?.role || user?.role || 'customer';
     if (!user || activeRole !== 'admin') return;
 
-    const pollInterval = setInterval(async () => {
-      // Don't poll if the browser tab is hidden/inactive to save server resources
-      if (typeof document !== 'undefined' && document.hidden) return;
+    // Auto-request desktop system notification permissions on Admin mount
+    soundNotifier.requestPermission().catch(() => {});
 
+    const pollInterval = setInterval(async () => {
       try {
         const [sellsRes, repairsRes, ordersRes] = await Promise.all([
           db.from('sell_requests').select('*').sort({ field: 'created_at', ascending: false }).limit(5),
@@ -407,10 +425,12 @@ export default function Admin() {
           db.from('orders').select('*').sort({ field: 'created_at', ascending: false }).limit(5),
         ]);
 
+        // 1. Sell Requests Live Notification
         if (sellsRes.data && Array.isArray(sellsRes.data) && sellsRes.data.length > 0) {
           const freshSells = sellsRes.data as SellRequest[];
-          if (!isInitialLoad.current && sells.length > 0 && freshSells[0].id !== sells[0]?.id) {
-            const newest = freshSells[0];
+          const newest = freshSells[0];
+          if (!isInitialLoad.current && lastKnownSellId.current && newest.id !== lastKnownSellId.current) {
+            lastKnownSellId.current = newest.id;
             const newNotif: LiveNotification = {
               id: newest.id,
               type: 'sell',
@@ -422,35 +442,57 @@ export default function Admin() {
               tabTarget: 'sells',
             };
             setActiveNotifications((prev) => [newNotif, ...prev.slice(0, 3)]);
-            soundNotifier.playChime('sell');
+            soundNotifier.notify({
+              type: 'sell',
+              title: `💰 New Sell Query: ${newest.brand} ${newest.model}`,
+              body: `${newest.customer_name ? `${newest.customer_name} · ` : ''}${newest.pickup_area || 'Doorstep Pickup'}\nValuation: ₹${newest.estimated_price?.toLocaleString('en-IN') || '—'}\nClick to view details in Admin.`,
+              onClick: () => {
+                setTab('sells');
+              },
+            });
             setSells(freshSells);
+          } else if (!lastKnownSellId.current) {
+            lastKnownSellId.current = newest.id;
           }
         }
 
+        // 2. Repair Bookings Live Notification
         if (repairsRes.data && Array.isArray(repairsRes.data) && repairsRes.data.length > 0) {
           const freshRepairs = repairsRes.data as RepairBooking[];
-          if (!isInitialLoad.current && repairs.length > 0 && freshRepairs[0].id !== repairs[0]?.id) {
-            const newest = freshRepairs[0];
+          const newest = freshRepairs[0];
+          if (!isInitialLoad.current && lastKnownRepairId.current && newest.id !== lastKnownRepairId.current) {
+            lastKnownRepairId.current = newest.id;
             const newNotif: LiveNotification = {
               id: newest.id,
               type: 'repair',
               title: `${newest.brand} ${newest.model}`,
-              subtitle: `Problem: ${newest.problem}`,
+              subtitle: `Problem: ${newest.problem || 'Hardware Service'}`,
               locality: newest.pickup_area || 'Doorstep Service',
               amount: newest.estimated_cost,
               timestamp: new Date(),
               tabTarget: 'repairs',
             };
             setActiveNotifications((prev) => [newNotif, ...prev.slice(0, 3)]);
-            soundNotifier.playChime('repair');
+            soundNotifier.notify({
+              type: 'repair',
+              title: `🔧 New Repair Query: ${newest.brand} ${newest.model}`,
+              body: `Issue: ${newest.problem || 'Doorstep Service'} · Estimated: ₹${newest.estimated_cost?.toLocaleString('en-IN') || '—'}\nClick to view details in Admin.`,
+              onClick: () => {
+                setTab('repairs');
+              },
+            });
             setRepairs(freshRepairs);
+          } else if (!lastKnownRepairId.current) {
+            lastKnownRepairId.current = newest.id;
           }
         }
 
+        // 3. New Orders Live Notification
         if (ordersRes.data && Array.isArray(ordersRes.data) && ordersRes.data.length > 0) {
           const freshOrders = ordersRes.data as Order[];
-          if (!isInitialLoad.current && orders.length > 0 && freshOrders[0].id !== orders[0]?.id) {
-            const newest = freshOrders[0];
+          const newest = freshOrders[0];
+          if (!isInitialLoad.current && lastKnownOrderId.current && newest.id !== lastKnownOrderId.current) {
+            lastKnownOrderId.current = newest.id;
             const newNotif: LiveNotification = {
               id: newest.id,
               type: 'order',
@@ -462,8 +504,17 @@ export default function Admin() {
               tabTarget: 'orders',
             };
             setActiveNotifications((prev) => [newNotif, ...prev.slice(0, 3)]);
-            soundNotifier.playChime('order');
+            soundNotifier.notify({
+              type: 'order',
+              title: `📦 New Store Order: #${newest.id.slice(0, 8).toUpperCase()}`,
+              body: `Amount: ₹${newest.total_amount?.toLocaleString('en-IN')} · ${newest.delivery_area || 'Doorstep Delivery'}\nClick to view details in Admin.`,
+              onClick: () => {
+                setTab('orders');
+              },
+            });
             setOrders(freshOrders);
+          } else if (!lastKnownOrderId.current) {
+            lastKnownOrderId.current = newest.id;
           }
         }
 
@@ -471,10 +522,10 @@ export default function Admin() {
       } catch (err) {
         // silent polling catch
       }
-    }, 20000);
+    }, 15000);
 
     return () => clearInterval(pollInterval);
-  }, [user, profile, sells, repairs, orders]);
+  }, [user, profile]);
 
   // Real-time synchronization across Admin tabs (Competitor Radar <-> Sell Pricing Manager)
   useEffect(() => {
@@ -543,7 +594,14 @@ export default function Admin() {
       tabTarget: 'sells',
     };
     setActiveNotifications((prev) => [mockLead, ...prev.slice(0, 3)]);
-    soundNotifier.playChime('sell');
+    soundNotifier.notify({
+      type: 'sell',
+      title: '💰 New Sell Query: Apple iPhone 14 Pro Max',
+      body: 'Gomti Nagar · Valuation: ₹68,500\nClick to view details in Admin Sells.',
+      onClick: () => {
+        setTab('sells');
+      },
+    });
   };
 
   // Status Updaters

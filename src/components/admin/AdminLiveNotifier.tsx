@@ -40,6 +40,12 @@ export default function AdminLiveNotifier({
   onSimulateTestAlert,
 }: Props) {
   const [muted, setMuted] = useState(soundNotifier.isMuted);
+  const [permission, setPermission] = useState<string>(() => soundNotifier.getPermissionStatus());
+
+  useEffect(() => {
+    // Check permission on mount
+    setPermission(soundNotifier.getPermissionStatus());
+  }, []);
 
   const toggleSound = () => {
     const isNowMuted = soundNotifier.toggleMute();
@@ -49,10 +55,40 @@ export default function AdminLiveNotifier({
     }
   };
 
+  const handleToggleDesktopPermission = async () => {
+    const res = await soundNotifier.requestPermission();
+    setPermission(res);
+    if (res === 'granted') {
+      soundNotifier.showSystemNotification('🔔 System Notifications Active!', {
+        body: 'You will now receive sound & desktop alerts for all new Orders, Sell Queries, and Repair Bookings.',
+      });
+    } else if (res === 'denied') {
+      alert('Desktop notifications were blocked in your browser. Please enable notifications for thefundu.com in your browser site settings.');
+    }
+  };
+
   return (
     <>
       {/* Top Header Sound & Live Alert Controls */}
       <div className="flex items-center gap-2">
+        <button
+          type="button"
+          onClick={handleToggleDesktopPermission}
+          title={
+            permission === 'granted'
+              ? 'Desktop System Notifications are Active'
+              : 'Click to enable native Windows / OS System Notifications'
+          }
+          className={`flex items-center gap-1.5 rounded-xl border px-3 py-1.5 text-xs font-bold transition shadow-sm ${
+            permission === 'granted'
+              ? 'bg-blue-50 border-blue-200 text-blue-700'
+              : 'bg-amber-50 border-amber-300 text-amber-800 hover:bg-amber-100 animate-pulse'
+          }`}
+        >
+          <Bell className="h-3.5 w-3.5" />
+          <span>{permission === 'granted' ? 'System Alerts ON' : 'Enable System Alerts'}</span>
+        </button>
+
         <button
           type="button"
           onClick={toggleSound}
@@ -60,17 +96,17 @@ export default function AdminLiveNotifier({
           className={`flex items-center gap-1.5 rounded-xl border px-3 py-1.5 text-xs font-bold transition shadow-sm ${
             muted
               ? 'bg-gray-100 border-gray-300 text-gray-500 hover:bg-gray-200'
-              : 'bg-emerald-50 border-emerald-300 text-emerald-700 hover:bg-emerald-100 animate-pulse'
+              : 'bg-emerald-50 border-emerald-300 text-emerald-700 hover:bg-emerald-100'
           }`}
         >
           {muted ? <VolumeX className="h-3.5 w-3.5" /> : <Volume2 className="h-3.5 w-3.5 text-emerald-600" />}
-          <span>{muted ? 'Sound Muted' : 'Sound Active'}</span>
+          <span>{muted ? 'Sound Muted' : 'Sound ON'}</span>
         </button>
 
         <button
           type="button"
           onClick={onSimulateTestAlert}
-          title="Trigger a test order audio chime & alert popup"
+          title="Trigger a test order audio chime & desktop alert popup"
           className="hidden sm:flex items-center gap-1 rounded-xl bg-[#F0F0F5] border border-[#C0C8D8] px-2.5 py-1.5 text-xs font-semibold text-[#344257] hover:bg-[#E2E8F0] transition active:scale-95"
         >
           <Sparkles className="h-3.5 w-3.5 text-[#47576E]" />
