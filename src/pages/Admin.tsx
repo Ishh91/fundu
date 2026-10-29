@@ -1886,7 +1886,7 @@ export default function Admin() {
               products={products}
               selectedProductId={selectedProductId}
               onSelectProduct={(id) => setSelectedProductId(id)}
-              onOpenProductModal={(product) => {
+              onOpenProductModal={(product, cat) => {
                 if (product) {
                   setProductForm({
                     title: product.title,

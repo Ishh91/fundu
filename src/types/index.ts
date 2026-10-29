@@ -96,8 +96,9 @@ export type SellPriceConfig = {
   box_bonus: number;
   charger_bonus: number;
   is_active: boolean;
-  created_at: string;
-  updated_at: string;
+  display_spec?: string;
+  created_at?: string;
+  updated_at?: string;
 };
 
 export type RepairProductType = 'smartphone' | 'laptop' | 'tablet' | 'smartwatch' | 'audio' | 'other';
@@ -529,12 +530,4 @@ export const DOORSTEP_AREAS = [
   'Faizabad Road', 'Sitapur Road', 'Telibagh', 'Jankipuram', 'Gomti Nagar Extension',
 ];
 
-export type Review = {
-  id: string;
-  reviewer_name: string;
-  location: string;
-  rating: number;
-  comment: string;
-  is_approved?: boolean;
-  created_at?: string;
-};
+

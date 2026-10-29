@@ -18,7 +18,7 @@ import type { FunduQuoteResponse } from '../../lib/quoteEngine';
 
 interface SellStep2ConditionProps {
   form: any;
-  setForm: any;
+  setForm: React.Dispatch<React.SetStateAction<any>>;
   currentDeviceSpecs: {
     storages: string[];
     rams: string[];
@@ -172,7 +172,7 @@ export default function SellStep2Condition({
                   onClick={() => {
                     const nextRams = currentDeviceSpecs.getRamsForStorage(stg);
                     const nextRam = nextRams.length > 1 ? (nextRams.includes(form.ram) ? form.ram : nextRams[0]) : (nextRams[0] || '');
-                    setForm((f) => ({ ...f, storage: stg, ram: nextRam }));
+                    setForm((f: any) => ({ ...f, storage: stg, ram: nextRam }));
                   }}
                   className={`px-2.5 py-1 rounded-lg text-xs font-bold transition ${form.storage === stg
                     ? 'bg-[#344257] text-white shadow-xs'
@@ -192,7 +192,7 @@ export default function SellStep2Condition({
                   <button
                     key={ramVal}
                     type="button"
-                    onClick={() => setForm((f) => ({ ...f, ram: ramVal }))}
+                    onClick={() => setForm((f: any) => ({ ...f, ram: ramVal }))}
                     className={`px-2.5 py-1 rounded-lg text-xs font-bold transition ${form.ram === ramVal
                       ? 'bg-[#344257] text-white shadow-xs'
                       : 'bg-white text-gray-700 border border-[#C0C8D8] hover:bg-[#F0F0F5] hover:border-[#6A859F]'
@@ -269,7 +269,7 @@ export default function SellStep2Condition({
                 <div className="flex gap-1 shrink-0">
                   <button
                     type="button"
-                    onClick={() => setForm((f) => ({ ...f, powersOn: true }))}
+                    onClick={() => setForm((f: any) => ({ ...f, powersOn: true }))}
                     className={`px-3 py-1.5 rounded-xl text-xs font-bold transition ${form.powersOn ? 'bg-[#344257] text-white shadow-xs' : 'bg-white text-gray-600 border border-gray-200'
                       }`}
                   >
@@ -277,7 +277,7 @@ export default function SellStep2Condition({
                   </button>
                   <button
                     type="button"
-                    onClick={() => setForm((f) => ({ ...f, powersOn: false }))}
+                    onClick={() => setForm((f: any) => ({ ...f, powersOn: false }))}
                     className={`px-3 py-1.5 rounded-xl text-xs font-bold transition ${!form.powersOn ? 'bg-rose-600 text-white shadow-xs' : 'bg-white text-gray-600 border border-gray-200'
                       }`}
                   >
@@ -303,7 +303,7 @@ export default function SellStep2Condition({
                 <div className="flex gap-1 shrink-0">
                   <button
                     type="button"
-                    onClick={() => setForm((f) => ({ ...f, activationLockCleared: true }))}
+                    onClick={() => setForm((f: any) => ({ ...f, activationLockCleared: true }))}
                     className={`px-3 py-1.5 rounded-xl text-xs font-bold transition ${form.activationLockCleared ? 'bg-[#344257] text-white shadow-xs' : 'bg-white text-gray-600 border border-gray-200'
                       }`}
                   >
@@ -311,7 +311,7 @@ export default function SellStep2Condition({
                   </button>
                   <button
                     type="button"
-                    onClick={() => setForm((f) => ({ ...f, activationLockCleared: false }))}
+                    onClick={() => setForm((f: any) => ({ ...f, activationLockCleared: false }))}
                     className={`px-3 py-1.5 rounded-xl text-xs font-bold transition ${!form.activationLockCleared ? 'bg-rose-600 text-white shadow-xs' : 'bg-white text-gray-600 border border-gray-200'
                       }`}
                   >
@@ -335,7 +335,7 @@ export default function SellStep2Condition({
               <div className="flex gap-1 shrink-0">
                 <button
                   type="button"
-                  onClick={() => setForm((f) => ({ ...f, ownershipVerified: true }))}
+                  onClick={() => setForm((f: any) => ({ ...f, ownershipVerified: true }))}
                   className={`px-3 py-1.5 rounded-xl text-xs font-bold transition ${form.ownershipVerified ? 'bg-[#344257] text-white shadow-xs' : 'bg-white text-gray-600 border border-gray-200'
                     }`}
                 >
@@ -343,7 +343,7 @@ export default function SellStep2Condition({
                 </button>
                 <button
                   type="button"
-                  onClick={() => setForm((f) => ({ ...f, ownershipVerified: false }))}
+                  onClick={() => setForm((f: any) => ({ ...f, ownershipVerified: false }))}
                   className={`px-3 py-1.5 rounded-xl text-xs font-bold transition ${!form.ownershipVerified ? 'bg-rose-600 text-white shadow-xs' : 'bg-white text-gray-600 border border-gray-200'
                     }`}
                 >
@@ -363,7 +363,7 @@ export default function SellStep2Condition({
                 <div className="flex gap-1 shrink-0">
                   <button
                     type="button"
-                    onClick={() => setForm((f) => ({ ...f, liquidDamage: false }))}
+                    onClick={() => setForm((f: any) => ({ ...f, liquidDamage: false }))}
                     className={`px-3 py-1.5 rounded-xl text-xs font-bold transition ${!form.liquidDamage ? 'bg-[#344257] text-white shadow-xs' : 'bg-white text-gray-600 border border-gray-200'
                       }`}
                   >
@@ -371,7 +371,7 @@ export default function SellStep2Condition({
                   </button>
                   <button
                     type="button"
-                    onClick={() => setForm((f) => ({ ...f, liquidDamage: true }))}
+                    onClick={() => setForm((f: any) => ({ ...f, liquidDamage: true }))}
                     className={`px-3 py-1.5 rounded-xl text-xs font-bold transition ${form.liquidDamage ? 'bg-rose-600 text-white shadow-xs' : 'bg-white text-gray-600 border border-gray-200'
                       }`}
                   >

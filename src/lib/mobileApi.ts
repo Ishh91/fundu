@@ -58,8 +58,9 @@ export type SellPriceConfig = {
   box_bonus: number;
   charger_bonus: number;
   is_active: boolean;
-  created_at: string;
-  updated_at: string;
+  display_spec?: string;
+  created_at?: string;
+  updated_at?: string;
 };
 
 type ApiEnvelope<T> = {

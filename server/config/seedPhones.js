@@ -158,7 +158,7 @@ export async function ensureMasterPhonesSeeded(force = true) {
                 updated_at: new Date(),
               },
               $setOnInsert: {
-                excellent_multiplier: 0.85,
+                excellent_multiplier: 1.0,
                 good_multiplier: 0.70,
                 fair_multiplier: 0.55,
                 box_bonus: 500,

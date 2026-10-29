@@ -5,6 +5,7 @@ import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
 import { db, formatINR } from '../lib/db';
 import { notifyNewBuyOrder } from '../lib/whatsappNotifyService';
+import type { Product } from '../types';
 
 type RazorpayResponse = {
   razorpay_payment_id: string;

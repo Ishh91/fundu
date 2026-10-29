@@ -187,7 +187,7 @@ export default function SellPhone() {
   // Active Series Filter for Brand Page
   const [selectedSeries, setSelectedSeries] = useState<string>('All');
 
-  const [form, setForm] = useState({
+  const INITIAL_SELL_FORM = {
     brand: '',
     model: '',
     ram: '',
@@ -250,7 +250,9 @@ export default function SellPhone() {
     pickupDate: new Date().toISOString().split('T')[0],
     pickupSlot: '10 AM - 12 PM',
     notes: '',
-  });
+  };
+
+  const [form, setForm] = useState(INITIAL_SELL_FORM);
 
   // Prefill customer contact details from profile when logged in
   useEffect(() => {
@@ -1180,14 +1182,14 @@ export default function SellPhone() {
       try {
         notifyNewSellRequest({
           requestId: bookingId,
-          customerName: form.name || 'Customer',
-          customerPhone: form.phone || '',
+          customerName: form.customerName || 'Customer',
+          customerPhone: form.customerPhone || '',
           brand: form.brand,
           model: form.model,
           storage: form.storage,
-          condition: form.condition,
-          offeredPrice: funduQuote?.offerAmount || form.price || 15000,
-          pickupAddress: [form.address, form.pickupArea || form.locality, form.city].filter(Boolean).join(', '),
+          condition: form.cosmeticCondition,
+          offeredPrice: funduQuote?.offerAmount || 15000,
+          pickupAddress: [form.pickupAddress, form.pickupArea || form.locality, form.pincode].filter(Boolean).join(', '),
           pickupDate: form.pickupDate,
           pickupSlot: form.pickupSlot,
         });
@@ -1243,52 +1245,7 @@ export default function SellPhone() {
         onReset={() => {
           setSuccessData(null);
           setStep(1);
-          setForm({
-            brand: '',
-            model: '',
-            ram: '',
-            storage: '',
-            powersOn: true,
-            activationLockCleared: true,
-            ownershipVerified: true,
-            liquidDamage: false,
-            cosmeticCondition: 'good',
-            screenCondition: 'flawless',
-            bodyCondition: 'flawless',
-            batteryHealth: 'healthy',
-            canMakeCalls: true,
-            underWarranty: false,
-            stylusAvailable: true,
-            defects: [],
-            imei: '',
-            imeiPhoto: '',
-            devicePhotos: {
-              front: '',
-              back: '',
-              edges: '',
-              bill_box: '',
-            },
-            diagnostics: {
-              screen_touch: true,
-              cameras: true,
-              battery_health: '85%+',
-              biometrics: true,
-              speaker_mic: true,
-              charging_port: true,
-            },
-            accessories: ['Original Box', 'Original Charger'],
-            payoutMethod: 'UPI',
-            payoutDetails: '',
-            customerName: '',
-            customerPhone: '',
-            pincode: '',
-            locality: '',
-            pickupAddress: '',
-            pickupArea: getPanIndiaLocation().displayLabel || 'New Delhi (110001)',
-            pickupDate: new Date().toISOString().split('T')[0],
-            pickupSlot: '10 AM - 12 PM',
-            notes: '',
-          });
+          setForm(INITIAL_SELL_FORM);
           navigate('/sell');
         }}
         onViewTracking={() => navigate('/profile')}

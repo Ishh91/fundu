@@ -57,7 +57,7 @@ function getOrderResolvedItems(order: Order, products: Product[] = [], parts: Sp
         condition: prod.condition || 'Grade A (Excellent)',
         price: prod.price || order.total_amount,
         quantity: order.quantity || 1,
-        image: prod.image,
+        image: (prod as any).image || prod.images?.[0] || '',
       }];
     }
   }

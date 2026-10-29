@@ -24,7 +24,9 @@ export default function AdminContactQueries() {
     const { data: contactData } = await db.from<ContactQueryItem>('contact_messages').select('*').order('created_at', { ascending: false });
     const { data: ticketData } = await db.from<ContactQueryItem>('support_tickets').select('*').order('created_at', { ascending: false });
     
-    const combined = [...(contactData || []), ...(ticketData || [])];
+    const contactList = Array.isArray(contactData) ? contactData : (contactData ? [contactData] : []);
+    const ticketList = Array.isArray(ticketData) ? ticketData : (ticketData ? [ticketData] : []);
+    const combined: ContactQueryItem[] = [...contactList, ...ticketList];
     // Deduplicate by ID or email+subject
     const uniqueMap = new Map<string, ContactQueryItem>();
     combined.forEach((item) => {

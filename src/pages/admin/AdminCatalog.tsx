@@ -389,7 +389,7 @@ export default function AdminCatalog({
                     <div className="flex items-center gap-3">
                       <div className="h-11 w-11 shrink-0 rounded-xl bg-white border border-slate-200/90 p-1 grid place-items-center overflow-hidden shadow-xs">
                         <img
-                          src={getCleanPhoneImage(mp.brand, mp.model, mp.image_url)}
+                          src={getCleanPhoneImage(mp.brand, mp.model, mp.image_url || undefined)}
                           alt=""
                           className="h-full w-full object-contain"
                           loading="lazy"
@@ -555,7 +555,7 @@ export default function AdminCatalog({
                 <div className="flex flex-col sm:flex-row items-center gap-5 p-4 rounded-xl bg-ink-50 border border-ink-100">
                   <div className="h-36 w-36 shrink-0 rounded-xl bg-white border border-ink-200 p-2 grid place-items-center shadow-xs">
                     <img
-                      src={getCleanPhoneImage(selectedPhone.brand, selectedPhone.model, selectedPhone.image_url)}
+                      src={getCleanPhoneImage(selectedPhone.brand, selectedPhone.model, selectedPhone.image_url || undefined)}
                       alt={`${selectedPhone.brand} ${selectedPhone.model}`}
                       className="h-full w-full object-contain"
                     />
@@ -564,7 +564,7 @@ export default function AdminCatalog({
                     <div>
                       <p className="text-xs font-bold text-ink-800">Active Live Image Preview</p>
                       <p className="text-[11px] text-ink-400 break-all line-clamp-2 mt-0.5 font-mono">
-                        {getCleanPhoneImage(selectedPhone.brand, selectedPhone.model, selectedPhone.image_url)}
+                        {getCleanPhoneImage(selectedPhone.brand, selectedPhone.model, selectedPhone.image_url || undefined)}
                       </p>
                     </div>
 

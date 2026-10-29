@@ -5178,6 +5178,7 @@ export const ALL_INDIAN_PHONES_CATALOG: MasterPhone[] = [
     "is_active": true
   },
   {
+    "id": "apple-iphone-18-pro-max",
     "brand": "Apple",
     "model": "Apple iPhone 18 Pro Max",
     "release_year": 2026,
@@ -5200,6 +5201,7 @@ export const ALL_INDIAN_PHONES_CATALOG: MasterPhone[] = [
     "is_active": true
   },
   {
+    "id": "apple-iphone-18-pro",
     "brand": "Apple",
     "model": "Apple iPhone 18 Pro",
     "release_year": 2026,
@@ -5223,6 +5225,7 @@ export const ALL_INDIAN_PHONES_CATALOG: MasterPhone[] = [
     "is_active": true
   },
   {
+    "id": "vivo-y15-2019",
     "brand": "Vivo",
     "model": "Vivo Y15",
     "release_year": 2019,
@@ -5246,6 +5249,7 @@ export const ALL_INDIAN_PHONES_CATALOG: MasterPhone[] = [
     "is_active": true
   },
   {
+    "id": "oppo-find-n3",
     "brand": "Oppo",
     "model": "Oppo Find N3",
     "release_year": 2023,
