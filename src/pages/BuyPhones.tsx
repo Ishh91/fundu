@@ -27,6 +27,7 @@ import {
 } from 'lucide-react';
 import { useSearchParams, useNavigate, Link } from 'react-router-dom';
 import { db, formatINR } from '../lib/db';
+import { deduplicateProductsByModel } from '../lib/modelVariants';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
 import { getCleanPhoneImage, getCleanBrandLogo } from '../lib/phoneImages';
@@ -258,7 +259,8 @@ const filteredProducts = useMemo(() => {
   if (sortBy === 'high') list = [...list].sort((a, b) => b.price - a.price);
   if (sortBy === 'discount') list = [...list].sort((a, b) => (b.discount_percent || 0) - (a.discount_percent || 0));
 
-  return list;
+  // Deduplicate by model so identical models do not repeat on the Buy storefront
+  return deduplicateProductsByModel(list);
 }, [products, search, selectedBrand, gradeFilter, selectedStorage, pricePreset, maxPrice, sortBy, syncVersion]);
 
 const handleAddToCart = (product: Product) => {
@@ -759,11 +761,15 @@ return (
                     </Link>
 
                     <div className="mt-1.5 flex flex-wrap items-center gap-1.5 text-[11px] text-gray-500 font-semibold">
-                      {product.storage && (
+                      {product.available_storages && product.available_storages.length > 0 ? (
+                        <span className="bg-blue-50 border border-blue-200/60 px-2 py-0.5 rounded-md text-blue-800 font-bold">
+                          {product.available_storages.join(' • ')}
+                        </span>
+                      ) : product.storage ? (
                         <span className="bg-gray-100 px-2 py-0.5 rounded-md text-gray-700">
                           {product.storage}
                         </span>
-                      )}
+                      ) : null}
                       {product.ram && (
                         <span className="bg-gray-100 px-2 py-0.5 rounded-md text-gray-700">
                           {product.ram} RAM
@@ -787,7 +793,7 @@ return (
                   <div className="flex items-baseline justify-between mb-1">
                     <div className="flex items-baseline gap-2">
                       <span className="font-display text-lg font-black text-[#344257]">
-                        {formatINR(product.price)}
+                        {product.available_storages && product.available_storages.length > 1 ? `From ${formatINR(product.price)}` : formatINR(product.price)}
                       </span>
                       {product.original_price && (
                         <span className="text-xs text-gray-400 line-through">

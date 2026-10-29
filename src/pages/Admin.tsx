@@ -267,6 +267,9 @@ export default function Admin() {
     is_featured: false,
     show_all_grades: true,
     stock: '1',
+    available_storages: [] as string[],
+    available_rams: [] as string[],
+    available_colors: [] as string[],
   });
   const [productSaving, setProductSaving] = useState(false);
 
@@ -1133,6 +1136,9 @@ export default function Admin() {
       is_featured: dataObj.is_featured ?? false,
       show_all_grades: dataObj.show_all_grades ?? true,
       stock: dataObj.stock || '1',
+      available_storages: dataObj.available_storages || (cat === 'laptop' ? ['256 GB SSD', '512 GB SSD'] : ['128 GB', '256 GB']),
+      available_rams: dataObj.available_rams || (cat === 'laptop' ? ['8 GB', '16 GB'] : ['6 GB', '8 GB']),
+      available_colors: dataObj.available_colors || (cat === 'laptop' ? ['Space Grey', 'Silver'] : ['Midnight', 'Starlight']),
     });
     setProductModal({ product: null });
   };
@@ -1166,6 +1172,9 @@ export default function Admin() {
         is_featured: productForm.is_featured,
         show_all_grades: productForm.show_all_grades,
         stock: Number(productForm.stock) || 0,
+        available_storages: productForm.available_storages,
+        available_rams: productForm.available_rams,
+        available_colors: productForm.available_colors,
         updated_at: new Date().toISOString(),
       };
 
@@ -1970,6 +1979,15 @@ export default function Admin() {
                     is_featured: product.is_featured,
                     show_all_grades: product.show_all_grades !== false,
                     stock: String(product.stock),
+                    available_storages: product.available_storages && product.available_storages.length > 0
+                      ? product.available_storages
+                      : (product.storage ? [product.storage] : ['128 GB', '256 GB']),
+                    available_rams: product.available_rams && product.available_rams.length > 0
+                      ? product.available_rams
+                      : (product.ram ? [product.ram] : []),
+                    available_colors: product.available_colors && product.available_colors.length > 0
+                      ? product.available_colors
+                      : (product.color ? [product.color] : []),
                   });
                   setProductModal({ product });
                 } else {
@@ -2607,6 +2625,167 @@ export default function Admin() {
                     <option value="Fair">Fair (Value)</option>
                     <option value="Excellent">Excellent</option>
                   </select>
+                </div>
+              </div>
+
+              {/* AVAILABLE MODEL VARIANTS & OPTIONS MANAGER */}
+              <div className="p-4 rounded-2xl bg-gradient-to-br from-blue-50/80 via-white to-indigo-50/70 border border-blue-200/80 space-y-4 shadow-xs">
+                <div className="flex items-center justify-between border-b border-blue-100 pb-2">
+                  <div className="flex items-center gap-2">
+                    <span className="h-6 w-6 rounded-lg bg-blue-600 text-white flex items-center justify-center text-xs font-black">
+                      ⚡
+                    </span>
+                    <div>
+                      <h4 className="text-xs font-black text-blue-950">
+                        Available Model Variants (Storage, RAM & Colors)
+                      </h4>
+                      <p className="text-[10px] text-blue-700 font-medium">
+                        Select which variants are in stock for this model. Buy page will display ONE card with these options.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* 1. Storage Variants */}
+                <div>
+                  <div className="flex items-center justify-between mb-1.5">
+                    <label className="text-[11px] font-extrabold text-blue-950 flex items-center gap-1">
+                      📦 Available Storage Options ({productForm.available_storages?.length || 0})
+                    </label>
+                    <span className="text-[10px] text-blue-600 font-bold">Click to toggle on/off</span>
+                  </div>
+                  <div className="flex flex-wrap gap-1.5">
+                    {(productForm.category === 'laptop'
+                      ? ['128 GB SSD', '256 GB SSD', '512 GB SSD', '1 TB SSD', '2 TB SSD']
+                      : ['64 GB', '128 GB', '256 GB', '512 GB', '1 TB']
+                    ).map((stg) => {
+                      const isSelected = (productForm.available_storages || []).includes(stg);
+                      return (
+                        <button
+                          key={stg}
+                          type="button"
+                          onClick={() => {
+                            const cur = productForm.available_storages || [];
+                            const next = isSelected ? cur.filter((x) => x !== stg) : [...cur, stg];
+                            setProductForm((prev) => ({
+                              ...prev,
+                              available_storages: next,
+                              storage: prev.storage || stg,
+                            }));
+                          }}
+                          className={`px-3 py-1 rounded-xl text-xs font-black transition cursor-pointer ${
+                            isSelected
+                              ? 'bg-blue-600 text-white shadow-xs'
+                              : 'bg-white text-gray-700 border border-gray-300 hover:border-blue-400'
+                          }`}
+                        >
+                          {isSelected ? '✓ ' : '+ '}
+                          {stg}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* 2. RAM Variants */}
+                <div>
+                  <div className="flex items-center justify-between mb-1.5">
+                    <label className="text-[11px] font-extrabold text-blue-950 flex items-center gap-1">
+                      🧠 Available RAM Options ({productForm.available_rams?.length || 0})
+                    </label>
+                    <span className="text-[10px] text-blue-600 font-bold">Click to toggle on/off</span>
+                  </div>
+                  <div className="flex flex-wrap gap-1.5">
+                    {['4 GB', '6 GB', '8 GB', '12 GB', '16 GB', '32 GB'].map((rm) => {
+                      const isSelected = (productForm.available_rams || []).includes(rm);
+                      return (
+                        <button
+                          key={rm}
+                          type="button"
+                          onClick={() => {
+                            const cur = productForm.available_rams || [];
+                            const next = isSelected ? cur.filter((x) => x !== rm) : [...cur, rm];
+                            setProductForm((prev) => ({
+                              ...prev,
+                              available_rams: next,
+                              ram: prev.ram || rm,
+                            }));
+                          }}
+                          className={`px-3 py-1 rounded-xl text-xs font-black transition cursor-pointer ${
+                            isSelected
+                              ? 'bg-indigo-600 text-white shadow-xs'
+                              : 'bg-white text-gray-700 border border-gray-300 hover:border-indigo-400'
+                          }`}
+                        >
+                          {isSelected ? '✓ ' : '+ '}
+                          {rm}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* 3. Color Variants */}
+                <div>
+                  <div className="flex items-center justify-between mb-1.5">
+                    <label className="text-[11px] font-extrabold text-blue-950 flex items-center gap-1">
+                      🎨 Available Colors ({productForm.available_colors?.length || 0})
+                    </label>
+                    <span className="text-[10px] text-blue-600 font-bold">Click to toggle on/off</span>
+                  </div>
+                  <div className="flex flex-wrap gap-1.5">
+                    {[
+                      'Midnight',
+                      'Starlight',
+                      'Space Grey',
+                      'Silver',
+                      'Deep Purple',
+                      'Natural Titanium',
+                      'Blue',
+                      'Gold',
+                      'Phantom Black',
+                      'Titanium Gray',
+                      'Emerald Green',
+                      'White',
+                    ].map((col) => {
+                      const isSelected = (productForm.available_colors || []).includes(col);
+                      return (
+                        <button
+                          key={col}
+                          type="button"
+                          onClick={() => {
+                            const cur = productForm.available_colors || [];
+                            const next = isSelected ? cur.filter((x) => x !== col) : [...cur, col];
+                            setProductForm((prev) => ({
+                              ...prev,
+                              available_colors: next,
+                              color: prev.color || col,
+                            }));
+                          }}
+                          className={`px-2.5 py-1 rounded-xl text-xs font-bold transition flex items-center gap-1.5 cursor-pointer ${
+                            isSelected
+                              ? 'bg-purple-600 text-white shadow-xs'
+                              : 'bg-white text-gray-700 border border-gray-300 hover:border-purple-400'
+                          }`}
+                        >
+                          <span className={`h-2 w-2 rounded-full ${isSelected ? 'bg-white' : 'bg-gray-400'}`} />
+                          {col}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* Live Customer Preview Pill */}
+                <div className="p-2.5 rounded-xl bg-blue-100/70 border border-blue-200 text-[11px] text-blue-900 font-medium">
+                  <strong>Customer Experience:</strong> On the Buy page, this model appears as <strong>1 unified listing</strong> (no duplicates). On the product page, customers will be able to select from your chosen options:{' '}
+                  <span className="font-bold underline">
+                    {productForm.available_storages?.join(', ') || productForm.storage || 'Standard Storage'}
+                  </span>{' '}
+                  in colors:{' '}
+                  <span className="font-bold underline">
+                    {productForm.available_colors?.join(', ') || productForm.color || 'Standard Color'}
+                  </span>.
                 </div>
               </div>
 

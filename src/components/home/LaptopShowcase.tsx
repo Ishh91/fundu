@@ -16,6 +16,7 @@ import {
 import { formatINR } from '../../lib/db';
 import { useCart } from '../../context/CartContext';
 import { SAMPLE_LAPTOPS } from '../../data/sampleLaptops';
+import { deduplicateProductsByModel } from '../../lib/modelVariants';
 import type { Product } from '../../types';
 
 interface LaptopShowcaseProps {
@@ -28,10 +29,11 @@ export default function LaptopShowcase({ customLaptops }: LaptopShowcaseProps) {
   const [addedId, setAddedId] = useState<string | null>(null);
 
   const allLaptops = useMemo(() => {
+    let list = SAMPLE_LAPTOPS;
     if (customLaptops && customLaptops.length > 0) {
-      return [...customLaptops, ...SAMPLE_LAPTOPS.filter(s => !customLaptops.some(c => c.id === s.id))];
+      list = [...customLaptops, ...SAMPLE_LAPTOPS.filter(s => !customLaptops.some(c => c.id === s.id))];
     }
-    return SAMPLE_LAPTOPS;
+    return deduplicateProductsByModel(list);
   }, [customLaptops]);
 
   const filteredLaptops = useMemo(() => {

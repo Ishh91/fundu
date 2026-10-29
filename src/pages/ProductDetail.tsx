@@ -291,6 +291,9 @@ const handleCheckPincode = async (codeToTest?: string) => {
   };
 
   const availableStorages = useMemo(() => {
+    if (product?.available_storages && product.available_storages.length > 0) {
+      return product.available_storages.map(normalizeStorageString);
+    }
     const isLaptop = product?.category === 'laptop' || !!product?.processor;
     if (isLaptop) {
       return ['256 GB', '512 GB', '1 TB'];
@@ -310,6 +313,9 @@ const handleCheckPincode = async (codeToTest?: string) => {
   }, [product]);
 
   const availableColors = useMemo(() => {
+    if (product?.available_colors && product.available_colors.length > 0) {
+      return product.available_colors;
+    }
     const baseColor = product?.color || 'Default';
     const brand = (product?.brand || '').toLowerCase();
     const pool = brand.includes('apple')
@@ -323,6 +329,13 @@ const handleCheckPincode = async (codeToTest?: string) => {
       if (colors.length >= 3) break;
     }
     return colors;
+  }, [product]);
+
+  const availableRams = useMemo(() => {
+    if (product?.available_rams && product.available_rams.length > 0) {
+      return product.available_rams;
+    }
+    return product?.ram ? [product.ram] : [];
   }, [product]);
 
   if (loading) {

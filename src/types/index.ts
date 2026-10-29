@@ -30,6 +30,9 @@ export type Product = {
   use_case?: 'student' | 'business' | 'gaming' | 'macbook' | string | null;
   created_at: string;
   updated_at?: string | null;
+  available_storages?: string[];
+  available_rams?: string[];
+  available_colors?: string[];
 };
 
 export type SellRequest = {

@@ -377,6 +377,33 @@ export default function AdminProducts({
                 )}
               </div>
 
+              {/* Configured Customer Variants Block */}
+              {(selectedProduct.available_storages?.length || selectedProduct.available_rams?.length || selectedProduct.available_colors?.length) ? (
+                <div className="p-3.5 rounded-2xl bg-blue-50/70 border border-blue-200/80 space-y-2 text-xs">
+                  <div className="flex items-center gap-1.5 font-extrabold text-blue-950">
+                    <span>⚡ Available Customer Variants</span>
+                    <span className="text-[10px] text-blue-600 font-semibold">(unified model on Buy)</span>
+                  </div>
+                  <div className="space-y-1 text-[11px] text-blue-900">
+                    {selectedProduct.available_storages && selectedProduct.available_storages.length > 0 && (
+                      <p>
+                        <strong>Storages in stock:</strong> {selectedProduct.available_storages.join(' • ')}
+                      </p>
+                    )}
+                    {selectedProduct.available_rams && selectedProduct.available_rams.length > 0 && (
+                      <p>
+                        <strong>RAM Options:</strong> {selectedProduct.available_rams.join(' • ')}
+                      </p>
+                    )}
+                    {selectedProduct.available_colors && selectedProduct.available_colors.length > 0 && (
+                      <p>
+                        <strong>Available Colors:</strong> {selectedProduct.available_colors.join(' • ')}
+                      </p>
+                    )}
+                  </div>
+                </div>
+              ) : null}
+
               {selectedProduct.accessories_included && (
                 <div className="p-3 rounded-2xl bg-slate-50 border border-slate-200 text-xs text-slate-700">
                   <p className="font-bold text-slate-900 mb-0.5">📦 In The Box Accessories:</p>

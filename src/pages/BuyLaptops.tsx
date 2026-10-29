@@ -28,6 +28,7 @@ import {
 } from 'lucide-react';
 import { useSearchParams, useNavigate, Link } from 'react-router-dom';
 import { db, formatINR } from '../lib/db';
+import { deduplicateProductsByModel } from '../lib/modelVariants';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
 import { isProductDeleted, useCatalogSync } from '../lib/catalogSync';
@@ -293,7 +294,8 @@ export default function BuyLaptops() {
     if (sortBy === 'high') list = [...list].sort((a, b) => b.price - a.price);
     if (sortBy === 'discount') list = [...list].sort((a, b) => (b.discount_percent || 0) - (a.discount_percent || 0));
 
-    return list;
+    // Deduplicate by laptop model so identical models do not repeat on the Buy storefront
+    return deduplicateProductsByModel(list);
   }, [
     products,
     search,
@@ -853,16 +855,24 @@ export default function BuyLaptops() {
                                 <Cpu className="h-3 w-3 text-[#47576E]" /> {laptop.processor.split('(')[0].trim()}
                               </span>
                             )}
-                            {laptop.ram && (
+                            {laptop.available_rams && laptop.available_rams.length > 0 ? (
+                              <span className="bg-blue-50 border border-blue-200/60 text-blue-800 px-2 py-0.5 rounded-md font-bold">
+                                {laptop.available_rams.join(' • ')} RAM
+                              </span>
+                            ) : laptop.ram ? (
                               <span className="bg-gray-100 text-gray-700 px-2 py-0.5 rounded-md">
                                 {laptop.ram} RAM
                               </span>
-                            )}
-                            {laptop.storage && (
+                            ) : null}
+                            {laptop.available_storages && laptop.available_storages.length > 0 ? (
+                              <span className="bg-blue-50 border border-blue-200/60 text-blue-800 px-2 py-0.5 rounded-md font-bold flex items-center gap-1">
+                                <HardDrive className="h-2.5 w-2.5" /> {laptop.available_storages.join(' • ')}
+                              </span>
+                            ) : laptop.storage ? (
                               <span className="bg-gray-100 text-gray-700 px-2 py-0.5 rounded-md flex items-center gap-1">
                                 <HardDrive className="h-2.5 w-2.5" /> {laptop.storage} SSD
                               </span>
-                            )}
+                            ) : null}
                           </div>
 
                           {/* Secondary Specs Row */}
@@ -884,7 +894,7 @@ export default function BuyLaptops() {
                         <div className="flex items-baseline justify-between mb-1">
                           <div className="flex items-baseline gap-2">
                             <span className="font-display text-lg font-black text-[#344257]">
-                              {formatINR(laptop.price)}
+                              {laptop.available_storages && laptop.available_storages.length > 1 ? `From ${formatINR(laptop.price)}` : formatINR(laptop.price)}
                             </span>
                             {laptop.original_price && (
                               <span className="text-xs text-gray-400 line-through">

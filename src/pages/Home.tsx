@@ -3,6 +3,7 @@ import { useSearchParams } from 'react-router-dom';
 import { Sparkles, CheckCircle2, Mail, X } from 'lucide-react';
 import { db } from '../lib/db';
 import { subscribeToRealtimeSync } from '../lib/realtimeSync';
+import { deduplicateProductsByModel } from '../lib/modelVariants';
 import type { Product } from '../types';
 import {
   HeroSection,
@@ -52,7 +53,9 @@ export default function Home() {
             const timeB = new Date(b.updated_at || b.created_at || 0).getTime();
             return timeB - timeA;
           });
-          setProducts(sorted);
+          // Deduplicate by model so identical models do not repeat on the storefront
+          const uniqueModels = deduplicateProductsByModel(sorted);
+          setProducts(uniqueModels);
           setLoading(false);
         })
         .catch(() => setLoading(false));
