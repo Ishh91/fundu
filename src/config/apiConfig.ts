@@ -2,7 +2,7 @@
  * API Configuration helper for Fundu App
  * Connected to the production Render cloud backend
  */
-export const RENDER_BACKEND_URL = 'https://fundu-wtm4.onrender.com/api';
+export const RENDER_BACKEND_URL = 'https://fundu-o80c.onrender.com/api';
 
 export const getApiBaseUrl = (): string => {
   const envUrl = (typeof import.meta !== 'undefined' && import.meta?.env?.VITE_API_URL)
