@@ -28,6 +28,7 @@ import {
 import { useSearchParams, useNavigate, Link } from 'react-router-dom';
 import { db, formatINR } from '../lib/db';
 import { deduplicateProductsByModel } from '../lib/modelVariants';
+import { getCachedPhones, setCachedPhones } from '../lib/productsCache';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
 import { getCleanPhoneImage, getCleanBrandLogo } from '../lib/phoneImages';
@@ -127,8 +128,8 @@ export default function BuyPhones() {
   const [searchParams] = useSearchParams();
   const { syncVersion } = useCatalogSync();
 
-  const [products, setProducts] = useState<Product[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [products, setProducts] = useState<Product[]>(() => getCachedPhones());
+  const [loading, setLoading] = useState(false);
 
   const [search, setSearch] = useState('');
   const [selectedBrand, setSelectedBrand] = useState<string>('All');
@@ -157,21 +158,31 @@ export default function BuyPhones() {
         .from('products')
         .select('*')
         .eq('is_approved', true)
+        .limit(80)
         .order('is_featured', { ascending: false })
         .then(({ data }) => {
           const fetched = (data as Product[]) ?? [];
           if (fetched.length > 0) {
-            setProducts(fetched);
+            // Priority sort: featured first, then newest updated/created
+            const sorted = [...fetched].sort((a, b) => {
+              if (a.is_featured && !b.is_featured) return -1;
+              if (!a.is_featured && b.is_featured) return 1;
+              const timeA = new Date(a.updated_at || a.created_at || 0).getTime();
+              const timeB = new Date(b.updated_at || b.created_at || 0).getTime();
+              return timeB - timeA;
+            });
+            const deduplicated = deduplicateProductsByModel(sorted);
+            setProducts(deduplicated);
+            setCachedPhones(deduplicated);
           } else {
             setProducts(SAMPLE_BEST_SELLING_PHONES);
           }
           setLoading(false);
         })
-        .catch (() => {
-      setProducts(SAMPLE_BEST_SELLING_PHONES);
-      setLoading(false);
-    });
-};
+        .catch(() => {
+          setLoading(false);
+        });
+    };
 
 loadProducts();
 

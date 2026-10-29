@@ -57,31 +57,39 @@ export default function HeroSection() {
           onTouchStart={() => setIsPaused(true)}
           onTouchEnd={() => setIsPaused(false)}
         >
-          <div className="relative overflow-hidden rounded-[14px] sm:rounded-[22px] bg-white border border-white/60">
-            {/* Main Slide Poster */}
-            <Link
-              key={currentIndex}
-              to={currentSlide.primaryHref || '/sell'}
-              className="block relative w-full overflow-hidden group cursor-pointer bg-white transition-opacity duration-700 ease-in-out animate-fade-in"
-            >
-              <picture className="w-full h-auto block">
-                {currentSlide.image_mobile && (
-                  <source media="(max-width: 639px)" srcSet={currentSlide.image_mobile} />
-                )}
-                {currentSlide.image_tablet && (
-                  <source media="(min-width: 640px) and (max-width: 1023px)" srcSet={currentSlide.image_tablet} />
-                )}
-                <img
-                  src={currentSlide.image}
-                  alt={currentSlide.title || 'Fundu Poster'}
-                  className="w-full h-auto max-h-[550px] object-contain sm:object-cover transition-transform duration-700 group-hover:scale-[1.01] mx-auto block"
-                  onError={(e) => {
-                    (e.target as HTMLImageElement).src =
-                      'https://placehold.co/1400x550?text=Fundu+Poster+Banner';
-                  }}
-                />
-              </picture>
-            </Link>
+          <div className="relative overflow-hidden rounded-[14px] sm:rounded-[22px] bg-[#EAEFF5] border border-white/60 aspect-[16/7] sm:aspect-[21/8] md:aspect-[24/9] min-h-[160px] sm:min-h-[250px] md:min-h-[330px] lg:min-h-[400px] max-h-[500px] w-full">
+            {/* Zero-Layout-Shift Persistent Slides Stack */}
+            {activePosters.map((poster, index) => {
+              const isActive = index === currentIndex;
+              return (
+                <Link
+                  key={poster.id || index}
+                  to={poster.primaryHref || '/sell'}
+                  className={`absolute inset-0 w-full h-full overflow-hidden group cursor-pointer transition-opacity duration-700 ease-in-out ${
+                    isActive ? 'opacity-100 z-10 pointer-events-auto' : 'opacity-0 z-0 pointer-events-none'
+                  }`}
+                >
+                  <picture className="w-full h-full block">
+                    {poster.image_mobile && (
+                      <source media="(max-width: 639px)" srcSet={poster.image_mobile} />
+                    )}
+                    {poster.image_tablet && (
+                      <source media="(min-width: 640px) and (max-width: 1023px)" srcSet={poster.image_tablet} />
+                    )}
+                    <img
+                      src={poster.image}
+                      alt={poster.title || 'Fundu Poster'}
+                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.01] mx-auto block"
+                      loading={index === 0 ? 'eager' : 'lazy'}
+                      onError={(e) => {
+                        (e.target as HTMLImageElement).src =
+                          'https://placehold.co/1400x550?text=Fundu+Poster+Banner';
+                      }}
+                    />
+                  </picture>
+                </Link>
+              );
+            })}
 
             {/* Left Navigation Button */}
             {slidesCount > 1 && (

@@ -29,6 +29,7 @@ import {
 import { useSearchParams, useNavigate, Link } from 'react-router-dom';
 import { db, formatINR } from '../lib/db';
 import { deduplicateProductsByModel } from '../lib/modelVariants';
+import { getCachedLaptops, setCachedLaptops } from '../lib/productsCache';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
 import { isProductDeleted, useCatalogSync } from '../lib/catalogSync';
@@ -125,8 +126,11 @@ export default function BuyLaptops() {
   const [searchParams] = useSearchParams();
   const { syncVersion } = useCatalogSync();
 
-  const [products, setProducts] = useState<Product[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [products, setProducts] = useState<Product[]>(() => {
+    const cached = getCachedLaptops();
+    return cached.length > 0 ? cached : SAMPLE_LAPTOPS;
+  });
+  const [loading, setLoading] = useState(false);
 
   const [search, setSearch] = useState('');
   const [selectedBrand, setSelectedBrand] = useState<string>('All');
@@ -165,6 +169,7 @@ export default function BuyLaptops() {
           );
           if (fetched.length > 0) {
             setProducts(fetched);
+            setCachedLaptops(fetched);
           } else {
             setProducts(SAMPLE_LAPTOPS);
           }

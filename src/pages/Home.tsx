@@ -4,6 +4,7 @@ import { Sparkles, CheckCircle2, Mail, X } from 'lucide-react';
 import { db } from '../lib/db';
 import { subscribeToRealtimeSync } from '../lib/realtimeSync';
 import { deduplicateProductsByModel } from '../lib/modelVariants';
+import { getCachedPhones, setCachedPhones } from '../lib/productsCache';
 import type { Product } from '../types';
 import {
   HeroSection,
@@ -24,8 +25,8 @@ export default function Home() {
   const userName = params.get('name') || 'User';
 
   const [welcomeBannerVisible, setWelcomeBannerVisible] = useState(showWelcome);
-  const [products, setProducts] = useState<Product[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [products, setProducts] = useState<Product[]>(() => getCachedPhones());
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (showWelcome) {
@@ -56,6 +57,7 @@ export default function Home() {
           // Deduplicate by model so identical models do not repeat on the storefront
           const uniqueModels = deduplicateProductsByModel(sorted);
           setProducts(uniqueModels);
+          setCachedPhones(uniqueModels);
           setLoading(false);
         })
         .catch(() => setLoading(false));
