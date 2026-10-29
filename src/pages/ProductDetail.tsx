@@ -205,23 +205,34 @@ export default function ProductDetail() {
           if (!error && data) {
             const p = data as Product;
             setProduct(p);
-            setSelectedImage(p.images[0] || '');
-            setSelectedStorage(p.storage || '128 GB');
+            setSelectedImage(p.images?.[0] || getCleanPhoneImage(p.brand, p.model || p.title));
+            setSelectedStorage(normalizeStorageString(p.storage || '128 GB'));
             setSelectedColor(p.color || 'Default');
-            setSelectedGrade(p.condition || 'Superb');
+            setSelectedGrade(p.condition === 'Excellent' ? 'Superb' : p.condition || 'Superb');
           } else {
-            // Fallback sample product
+            // Fallback sample product if DB not responding or item not found
             const fallback = findSampleProductById('sample-1') || findSampleProductById('sample-apple-13');
             if (fallback) {
               setProduct(fallback);
-              setSelectedImage(fallback.images[0] || '');
-              setSelectedStorage(fallback.storage || '128 GB');
+              setSelectedImage(fallback.images?.[0] || getCleanPhoneImage(fallback.brand, fallback.model || fallback.title));
+              setSelectedStorage(normalizeStorageString(fallback.storage || '128 GB'));
               setSelectedColor(fallback.color || 'Starlight');
+              setSelectedGrade(fallback.condition || 'Superb');
             }
           }
           setLoading(false);
     })
-    .catch(() => setLoading(false));
+    .catch(() => {
+      const fallback = findSampleProductById('sample-1') || findSampleProductById('sample-apple-13');
+      if (fallback) {
+        setProduct(fallback);
+        setSelectedImage(fallback.images?.[0] || getCleanPhoneImage(fallback.brand, fallback.model || fallback.title));
+        setSelectedStorage(normalizeStorageString(fallback.storage || '128 GB'));
+        setSelectedColor(fallback.color || 'Starlight');
+        setSelectedGrade(fallback.condition || 'Superb');
+      }
+      setLoading(false);
+    });
 }, [id]);
 
 // Handle PIN Code Auto Location Lookup
@@ -373,9 +384,10 @@ const currentSavings = Math.max(0, currentMrp - currentPrice);
 const currentDiscountPercent = product.discount_percent || Math.round((currentSavings / currentMrp) * 100);
 const emiAmount = Math.round(currentPrice / 24);
 
+const modelFallbackImage = getCleanPhoneImage(product.brand, product.model || product.title);
 const images = product.images && product.images.length > 0
   ? product.images
-  : ['https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=800&auto=format&fit=crop&q=80'];
+  : [modelFallbackImage || 'https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=800&auto=format&fit=crop&q=80'];
 
 const handleAddToCart = () => {
   if (profile && profile.role !== 'customer') {

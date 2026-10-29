@@ -7,3 +7,4 @@ declare module '*/fundu_phone_quote.mjs' {
   export const FUNDU_SERVICE_LOCALITIES: any;
   export const lookupResaleBenchmark: any;
 }
+

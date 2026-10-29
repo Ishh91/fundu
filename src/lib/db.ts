@@ -67,7 +67,7 @@ const notifyAuthChange = (event: 'SIGNED_IN' | 'SIGNED_OUT' | 'TOKEN_REFRESHED',
 
 const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
-const apiRequest = async <T>(path: string, init: RequestInit = {}, useAuth = true, retryCount = 2): Promise<QueryResponse<T>> => {
+const apiRequest = async <T>(path: string, init: RequestInit = {}, useAuth = true, retryCount = 1): Promise<QueryResponse<T>> => {
   const session = readSession();
   const headers = new Headers(init.headers || {});
 
@@ -90,7 +90,7 @@ const apiRequest = async <T>(path: string, init: RequestInit = {}, useAuth = tru
       // If server returned 502/503/504 (Render cold-start wake-up response), retry
       if ([502, 503, 504].includes(response.status) && attempt < retryCount) {
         attempt++;
-        await wait(1200 * attempt);
+        await wait(800 * attempt);
         continue;
       }
 
@@ -108,7 +108,7 @@ const apiRequest = async <T>(path: string, init: RequestInit = {}, useAuth = tru
     } catch (error: any) {
       if (attempt < retryCount) {
         attempt++;
-        await wait(1200 * attempt);
+        await wait(800 * attempt);
         continue;
       }
       return {
