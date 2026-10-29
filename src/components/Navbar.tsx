@@ -1222,7 +1222,6 @@ export default function Navbar() {
                         <li>
                           <Link to="/buy-laptop" className="font-semibold text-gray-800 hover:text-[#344257] flex items-center justify-between">
                             <span>Refurbished Laptops</span>
-                            <span className="text-[9px] font-black bg-blue-50 text-blue-700 border border-blue-200 px-1.5 py-0.2 rounded-full">New</span>
                           </Link>
                         </li>
                         <li>
@@ -1410,9 +1409,6 @@ export default function Navbar() {
                 >
                   <Laptop className="h-4 w-4 text-blue-600 inline-block" />
                   <span>Buy Laptop</span>
-                  <span className="text-[9px] font-black uppercase px-1.5 py-0.2 rounded-full bg-blue-100 text-blue-800 tracking-wide border border-blue-200">
-                    New
-                  </span>
                 </Link>
                 <button
                   type="button"

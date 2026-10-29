@@ -19,6 +19,7 @@ import {
   Building2,
   LogOut,
   Radar,
+  Plus,
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import type { AdminTab } from './adminTypes';
@@ -26,6 +27,7 @@ import type { AdminTab } from './adminTypes';
 type AdminSidebarProps = {
   activeTab: AdminTab;
   onSelectTab: (tab: AdminTab) => void;
+  onOpenAddProduct?: (initialCategory?: 'smartphone' | 'laptop') => void;
   counts: {
     sells: number;
     repairs: number;
@@ -41,6 +43,7 @@ type AdminSidebarProps = {
 export default function AdminSidebar({
   activeTab,
   onSelectTab,
+  onOpenAddProduct,
   counts,
   mobileOpen,
   onCloseMobile,
@@ -194,6 +197,22 @@ export default function AdminSidebar({
               <X className="h-5 w-5" />
             </button>
           )}
+        </div>
+
+        {/* Dedicated Add Inventory Quick Action */}
+        <div className="pt-0.5">
+          <button
+            type="button"
+            onClick={() => {
+              onSelectTab('products');
+              onOpenAddProduct?.();
+              onCloseMobile();
+            }}
+            className="w-full flex items-center justify-center gap-2 py-2.5 px-3 rounded-2xl bg-gradient-to-r from-blue-600 via-indigo-600 to-blue-700 hover:from-blue-500 hover:to-indigo-500 text-white font-black text-xs shadow-md shadow-blue-500/20 hover:shadow-lg transition-all active:scale-[0.98] cursor-pointer"
+          >
+            <Plus className="h-4 w-4 shrink-0" />
+            <span>+ Add Inventory (Stock)</span>
+          </button>
         </div>
 
         {/* Categorized Menu Groups */}

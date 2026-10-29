@@ -351,9 +351,9 @@ export default function AdminCompetitorRadar() {
         fundu: {
           ...prev.fundu,
           basePrice: newPrice,
-          flawlessOffer: Math.round(newPrice * 0.82),
-          goodOffer: Math.round(newPrice * 0.70),
-          fairOffer: Math.round(newPrice * 0.55),
+          flawlessOffer: newPrice,
+          goodOffer: Math.round(newPrice * 0.85),
+          fairOffer: Math.round(newPrice * 0.70),
         },
       };
     });
@@ -366,9 +366,9 @@ export default function AdminCompetitorRadar() {
         model: searchModel,
         storage: normStorage,
         base_price: newPrice,
-        excellent_multiplier: 0.85,
-        good_multiplier: 0.70,
-        fair_multiplier: 0.55,
+        excellent_multiplier: 1.0,
+        good_multiplier: 0.85,
+        fair_multiplier: 0.70,
         box_bonus: 600,
         charger_bonus: 400,
         is_active: true,

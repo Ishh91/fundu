@@ -843,8 +843,21 @@ router.post('/sell-pricing/config', async (req, res, next) => {
     if (cleanStorage && Number(base_price) > 0) {
       try {
         // 1. Gather all available storages for this phone
-        const mp = await MasterPhone.findOne({ brand: brandRegex, model: modelRegex }).lean();
-        const existingConfigs = await SellPriceConfig.find({ brand: brandRegex, model: modelRegex }).lean();
+        const cleanEscaped = rawModel.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        const mp = await MasterPhone.findOne({
+          brand: brandRegex,
+          $or: [
+            { model: modelRegex },
+            { model: new RegExp(cleanEscaped, 'i') },
+          ],
+        }).lean();
+        const existingConfigs = await SellPriceConfig.find({
+          brand: brandRegex,
+          $or: [
+            { model: modelRegex },
+            { model: new RegExp(cleanEscaped, 'i') },
+          ],
+        }).lean();
 
         const storageSet = new Set();
         // From MasterPhone:
@@ -928,8 +941,15 @@ router.post('/sell-pricing/config', async (req, res, next) => {
 
     // Also sync MasterPhone base_resale_value in database so all queries match instantly
     try {
+      const cleanEscaped = rawModel.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
       await MasterPhone.updateMany(
-        { brand: brandRegex, model: modelRegex },
+        {
+          brand: brandRegex,
+          $or: [
+            { model: modelRegex },
+            { model: new RegExp(cleanEscaped, 'i') },
+          ],
+        },
         { $set: { base_resale_value: Number(base_price) } }
       );
     } catch (_mErr) {

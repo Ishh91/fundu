@@ -800,6 +800,22 @@ export default function Admin() {
         if (error) throw error;
         setSellPriceConfigs((prev) => [data as SellPriceConfig, ...prev]);
       }
+
+      // Also trigger backend variant calculation so sibling storages & MasterPhone sync automatically
+      try {
+        const apiBase = import.meta.env.VITE_API_URL || '/api';
+        await fetch(`${apiBase}/sell-pricing/config`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            ...payload,
+            is_locked: true,
+            manual_override: true,
+          }),
+        });
+      } catch (_apiErr) {
+        // Fallback already saved in DB above
+      }
     } catch (err: any) {
       console.error('[Admin] Price rule save error:', err);
     } finally {
@@ -1030,34 +1046,38 @@ export default function Admin() {
     }
   };
 
-  const openAddProductModal = (initialData?: Partial<typeof productForm>) => {
+  const openAddProductModal = (initialData?: Partial<typeof productForm> | 'smartphone' | 'laptop') => {
     setTab('products');
+    const cat = typeof initialData === 'string'
+      ? initialData
+      : (initialData?.category || 'smartphone');
+    const dataObj = typeof initialData === 'object' && initialData !== null ? initialData : {};
     setProductForm({
-      title: initialData?.title || '',
-      category: (initialData?.category || 'smartphone') as 'smartphone' | 'laptop',
-      brand: initialData?.brand || 'Apple',
-      model: initialData?.model || '',
-      ram: initialData?.ram || '',
-      storage: initialData?.storage || '128GB',
-      color: initialData?.color || 'Midnight Black',
-      processor: initialData?.processor || '',
-      graphics: initialData?.graphics || '',
-      screen_size: initialData?.screen_size || '',
-      battery_health: initialData?.battery_health || '',
-      operating_system: initialData?.operating_system || '',
-      accessories_included: initialData?.accessories_included || '',
-      condition: (initialData?.condition || 'Excellent') as Product['condition'],
-      price: initialData?.price || '',
-      original_price: initialData?.original_price || '',
-      discount_percent: initialData?.discount_percent || '0',
-      offer_tag: initialData?.offer_tag || '🔥 Hot Deal',
-      warranty_months: initialData?.warranty_months || '6',
-      description: initialData?.description || '',
-      images: initialData?.images || '',
-      is_approved: initialData?.is_approved ?? true,
-      is_featured: initialData?.is_featured ?? false,
-      show_all_grades: initialData?.show_all_grades ?? true,
-      stock: initialData?.stock || '1',
+      title: dataObj.title || '',
+      category: cat as 'smartphone' | 'laptop',
+      brand: dataObj.brand || 'Apple',
+      model: dataObj.model || '',
+      ram: dataObj.ram || (cat === 'laptop' ? '8 GB' : ''),
+      storage: dataObj.storage || (cat === 'laptop' ? '256 GB' : '128 GB'),
+      color: dataObj.color || (cat === 'laptop' ? 'Space Grey' : 'Midnight Black'),
+      processor: dataObj.processor || '',
+      graphics: dataObj.graphics || '',
+      screen_size: dataObj.screen_size || '',
+      battery_health: dataObj.battery_health || '',
+      operating_system: dataObj.operating_system || '',
+      accessories_included: dataObj.accessories_included || '',
+      condition: (dataObj.condition || 'Excellent') as Product['condition'],
+      price: dataObj.price || (cat === 'laptop' ? '48999' : ''),
+      original_price: dataObj.original_price || (cat === 'laptop' ? '89900' : ''),
+      discount_percent: dataObj.discount_percent || (cat === 'laptop' ? '45' : '0'),
+      offer_tag: dataObj.offer_tag || '🔥 Hot Deal',
+      warranty_months: dataObj.warranty_months || '6',
+      description: dataObj.description || '',
+      images: dataObj.images || '',
+      is_approved: dataObj.is_approved ?? true,
+      is_featured: dataObj.is_featured ?? false,
+      show_all_grades: dataObj.show_all_grades ?? true,
+      stock: dataObj.stock || '1',
     });
     setProductModal({ product: null });
   };
@@ -1465,6 +1485,7 @@ export default function Admin() {
       <AdminSidebar
         activeTab={tab}
         onSelectTab={(newTab) => setTab(newTab)}
+        onOpenAddProduct={(cat) => openAddProductModal(cat)}
         counts={{
           sells: sells.filter((s) => s.status === 'pending' || s.status === 'assigned').length,
           repairs: repairs.filter((r) => r.status !== 'delivered' && r.status !== 'cancelled').length,
@@ -1557,9 +1578,9 @@ export default function Admin() {
             <button
               type="button"
               onClick={() => openAddProductModal()}
-              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-black shadow-md transition cursor-pointer"
+              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white text-xs font-black shadow-md transition cursor-pointer"
             >
-              <Plus className="h-3.5 w-3.5" /> Add Product to Stock
+              <Plus className="h-3.5 w-3.5" /> + Add Inventory (Phone / Laptop)
             </button>
 
             <button
@@ -1896,7 +1917,7 @@ export default function Admin() {
                   });
                   setProductModal({ product });
                 } else {
-                  openAddProductModal();
+                  openAddProductModal(cat);
                 }
               }}
               onToggleApproval={(id, current) => toggleApproval('products', id, current)}

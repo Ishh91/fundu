@@ -28,7 +28,8 @@ import { removeImageBackground, compressImage } from '../../lib/imageUtils';
 
 const QUICK_LINKS = [
   { label: '📱 Sell Old Phone (/sell)', value: '/sell' },
-  { label: '🛍️ Buy Refurbished (/buy)', value: '/buy' },
+  { label: '🛍️ Buy Refurbished Phones (/buy)', value: '/buy' },
+  { label: '💻 Buy Refurbished Laptops (/buy-laptops)', value: '/buy-laptops' },
   { label: '🔧 Phone Repair (/repair)', value: '/repair' },
   { label: '🏬 Spare Parts Store (/store)', value: '/store' },
   { label: '🤝 Partner with Fundu (/partner)', value: '/partner' },

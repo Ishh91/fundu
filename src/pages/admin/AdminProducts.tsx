@@ -8,7 +8,7 @@ type AdminProductsProps = {
   products: Product[];
   selectedProductId: string | null;
   onSelectProduct: (id: string) => void;
-  onOpenProductModal: (product: Product | null) => void;
+  onOpenProductModal: (product: Product | null, initialCategory?: 'smartphone' | 'laptop') => void;
   onToggleApproval: (id: string, current: boolean) => void;
   onDeleteProduct: (id: string) => void;
 };
@@ -75,10 +75,16 @@ export default function AdminProducts({
             <Laptop className="h-3.5 w-3.5 text-blue-600" /> Laptops Store
           </a>
           <button
-            onClick={() => onOpenProductModal(null)}
-            className="btn-primary text-xs px-4 py-2 flex items-center gap-1.5 bg-blue-600 hover:bg-blue-700 font-extrabold shadow-md cursor-pointer transition"
+            onClick={() => onOpenProductModal(null, 'smartphone')}
+            className="btn-primary text-xs px-3.5 py-2 flex items-center gap-1.5 bg-blue-600 hover:bg-blue-700 font-extrabold shadow-md cursor-pointer transition text-white"
           >
-            <Plus className="h-4 w-4" /> Add Product to Stock
+            <Plus className="h-4 w-4" /> Add Phone
+          </button>
+          <button
+            onClick={() => onOpenProductModal(null, 'laptop')}
+            className="btn-primary text-xs px-3.5 py-2 flex items-center gap-1.5 bg-indigo-600 hover:bg-indigo-700 font-extrabold shadow-md cursor-pointer transition text-white"
+          >
+            <Laptop className="h-4 w-4" /> Add Laptop
           </button>
         </div>
       </div>
