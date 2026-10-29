@@ -10,6 +10,7 @@ const masterPhoneSchema = createSchema({
   default_mrp: { type: Number, default: 29999 },
   base_resale_value: { type: Number, default: 12999 },
   image_url: { type: String, default: null },
+  custom_image: { type: Boolean, default: false, index: true },
   popular_tag: { type: String, default: null },
   processor: { type: String, default: null },
   camera_spec: { type: String, default: null },

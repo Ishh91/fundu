@@ -449,6 +449,20 @@ export function generateModelLookupKeys(brand?: string, model?: string): string[
   return Array.from(keys);
 }
 
+export function isStockImageUrl(url?: string): boolean {
+  if (!url) return false;
+  const u = url.toLowerCase().trim();
+  if (u.startsWith('data:image/') || u.startsWith('blob:')) return false;
+  return (
+    u.includes('gsmarena.com/vv/bigpic/') ||
+    u.includes('api.mobileapi.dev') ||
+    u.includes('777/thumb') ||
+    u.includes('unsplash.com') ||
+    u.includes('pexels.com') ||
+    u.includes('pixabay.com')
+  );
+}
+
 // Self-healing boot check: free up browser quota immediately if previous sessions bloated localStorage
 function cleanOversizedStorageOnBoot() {
   if (typeof window === 'undefined') return;
@@ -456,19 +470,18 @@ function cleanOversizedStorageOnBoot() {
     const raw = localStorage.getItem(CUSTOM_MODEL_IMAGES_KEY);
     if (!raw) return;
 
-    if (raw.length > 500_000) {
+    if (raw.length > 1_500_000) {
       console.warn('[phoneImages] Pruning bloated custom model images from localStorage (size:', raw.length, 'bytes)');
       const parsed = JSON.parse(raw);
       const cleaned: Record<string, string> = {};
       for (const [k, v] of Object.entries(parsed)) {
         if (typeof v === 'string') {
           // Keep URLs and lightweight base64
-          if (v.startsWith('data:') && v.length > 150_000) continue;
+          if (v.startsWith('data:') && v.length > 250_000) continue;
           cleaned[k] = v;
         }
       }
-      const limited = Object.fromEntries(Object.entries(cleaned).slice(-80));
-      localStorage.setItem(CUSTOM_MODEL_IMAGES_KEY, JSON.stringify(limited));
+      localStorage.setItem(CUSTOM_MODEL_IMAGES_KEY, JSON.stringify(cleaned));
     }
   } catch (err) {
     try {
@@ -482,18 +495,13 @@ cleanOversizedStorageOnBoot();
 function safeSetLocalStorage(key: string, data: Record<string, string>) {
   if (typeof window === 'undefined') return;
 
-  const entries = Object.entries(data);
-  const boundedData = entries.length > 100
-    ? Object.fromEntries(entries.slice(-100))
-    : data;
-
   try {
-    localStorage.setItem(key, JSON.stringify(boundedData));
+    localStorage.setItem(key, JSON.stringify(data));
   } catch (err: any) {
     console.warn('[phoneImages] localStorage.setItem quota reached, executing emergency prune:', err?.message);
 
     const pruned: Record<string, string> = {};
-    for (const [k, v] of Object.entries(boundedData)) {
+    for (const [k, v] of Object.entries(data)) {
       if (typeof v === 'string' && v.startsWith('data:') && v.length > 80_000) {
         continue;
       }
@@ -503,12 +511,7 @@ function safeSetLocalStorage(key: string, data: Record<string, string>) {
     try {
       localStorage.setItem(key, JSON.stringify(pruned));
     } catch {
-      const smallEntries = Object.entries(pruned).slice(-30);
-      try {
-        localStorage.setItem(key, JSON.stringify(Object.fromEntries(smallEntries)));
-      } catch {
-        console.warn('[phoneImages] localStorage origin quota exhausted. Retaining images in memory & DB.');
-      }
+      console.warn('[phoneImages] localStorage origin quota exhausted. Retaining images in memory & DB.');
     }
   }
 }
@@ -529,23 +532,57 @@ export function getCustomModelImages(): Record<string, string> {
 /**
  * Ingests live master_phones from the database into client cache & memory
  */
-export function syncCustomImagesFromDatabase(phones: Array<{ brand: string; model: string; image_url?: string }>): boolean {
+export function syncCustomImagesFromDatabase(
+  phones: Array<{ brand: string; model: string; image_url?: string; custom_image?: boolean }>
+): boolean {
   if (!Array.isArray(phones) || phones.length === 0) return false;
   let changed = false;
 
+  const trueCustomEntries: Array<{ brand: string; model: string; url: string }> = [];
+
   phones.forEach((p) => {
-    if (p.brand && p.model && p.image_url) {
-      const url = String(p.image_url).trim();
-      if (url && !url.includes('unsplash.com') && !url.includes('777/thumb')) {
-        const keys = generateModelLookupKeys(p.brand, p.model);
-        keys.forEach((k) => {
-          if (memoryCustomCache[k] !== url) {
+    if (!p.brand || !p.model || !p.image_url) return;
+    const url = String(p.image_url).trim();
+    if (!url || url.includes('777/thumb')) return;
+
+    const isCustom = Boolean(p.custom_image) || !isStockImageUrl(url);
+    if (isCustom) {
+      trueCustomEntries.push({ brand: p.brand, model: p.model, url });
+    }
+  });
+
+  // 1. Process all stock phone images: never overwrite a key if already occupied by a custom image
+  phones.forEach((p) => {
+    if (!p.brand || !p.model || !p.image_url) return;
+    const url = String(p.image_url).trim();
+    if (!url || url.includes('777/thumb')) return;
+
+    const isCustom = Boolean(p.custom_image) || !isStockImageUrl(url);
+    if (!isCustom) {
+      const keys = generateModelLookupKeys(p.brand, p.model);
+      keys.forEach((k) => {
+        const existing = memoryCustomCache[k];
+        if (!existing || isStockImageUrl(existing)) {
+          if (existing !== url) {
             memoryCustomCache[k] = url;
             changed = true;
           }
-        });
-      }
+        }
+      });
     }
+  });
+
+  // 2. Process true custom entries: they take absolute priority in memory and get persisted
+  const customToPersist: Record<string, string> = {};
+  trueCustomEntries.forEach(({ brand, model, url }) => {
+    const keys = generateModelLookupKeys(brand, model);
+    keys.forEach((k) => {
+      if (memoryCustomCache[k] !== url) {
+        memoryCustomCache[k] = url;
+        changed = true;
+      }
+      customToPersist[k] = url;
+    });
   });
 
   if (changed && typeof window !== 'undefined') {
@@ -557,11 +594,7 @@ export function syncCustomImagesFromDatabase(phones: Array<{ brand: string; mode
       } catch {
         current = {};
       }
-      Object.entries(memoryCustomCache).forEach(([k, v]) => {
-        if (v && !v.includes('unsplash.com') && !v.includes('777/thumb')) {
-          current[k] = v;
-        }
-      });
+      Object.assign(current, customToPersist);
       safeSetLocalStorage(CUSTOM_MODEL_IMAGES_KEY, current);
     } catch (e) {
       console.warn('[phoneImages] Failed to write db sync to localStorage:', e);
@@ -793,7 +826,7 @@ export function getCleanPhoneImage(brand?: string, model?: string, fallbackUrl?:
     }
   }
 
-  // 1. If explicit valid image (uploaded by admin, data URI, CDN, or direct http/https link), use it immediately!
+  // 1. If explicit custom image (uploaded by admin, data URI, blob, or custom host), use it immediately!
   const isInvalidUrl =
     !rawUrl ||
     rawUrl.includes('unsplash.com') ||
@@ -804,10 +837,8 @@ export function getCleanPhoneImage(brand?: string, model?: string, fallbackUrl?:
   if (
     !isInvalidUrl &&
     (rawUrl.startsWith('data:image/') ||
-      rawUrl.startsWith('http://') ||
-      rawUrl.startsWith('https://') ||
-      rawUrl.startsWith('/') ||
-      rawUrl.startsWith('blob:'))
+      rawUrl.startsWith('blob:') ||
+      !isStockImageUrl(rawUrl))
   ) {
     return rawUrl;
   }

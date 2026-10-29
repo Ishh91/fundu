@@ -966,8 +966,8 @@ export default function Admin() {
     // Check if an ID is a valid 24-character hexadecimal MongoDB ObjectId
     const isMongoId = (id?: string) => Boolean(id && /^[0-9a-fA-F]{24}$/.test(id));
 
-    // Search for existing database phone record (ignoring synthetic client IDs like 'master-...')
-    const existing = masterPhones.find((p) => {
+    // Find ALL matching records in masterPhones (both full model name and stripped variant, e.g. "OnePlus 12R" & "12R")
+    const matchingPhones = masterPhones.filter((p) => {
       if (phone.id && isMongoId(phone.id) && p.id === phone.id) return true;
       const pb = (p.brand || '').toLowerCase().trim();
       const pm = (p.model || '').toLowerCase().trim();
@@ -980,16 +980,24 @@ export default function Admin() {
       );
     });
 
-    const targetId = isMongoId(phone.id) ? phone.id : (isMongoId(existing?.id) ? existing?.id : undefined);
+    const targetIds = matchingPhones
+      .map((p) => p.id)
+      .filter((id): id is string => Boolean(id && isMongoId(id)));
 
-    if (targetId) {
-      const res = await db.from('master_phones').update({ image_url: url || null }).eq('id', targetId);
-      if (res.error) {
-        console.error('[Admin] Failed to update phone image in database:', res.error);
-        throw new Error(`Database error: ${res.error.message}`);
-      }
+    if (phone.id && isMongoId(phone.id) && !targetIds.includes(phone.id)) {
+      targetIds.push(phone.id);
+    }
+
+    if (targetIds.length > 0) {
+      // Update all matching variant records in database
+      await Promise.all(
+        targetIds.map((id) =>
+          db.from('master_phones').update({ image_url: url || null, custom_image: Boolean(url) }).eq('id', id)
+        )
+      );
+
       setMasterPhones((prev) =>
-        prev.map((p) => (p.id === targetId ? { ...p, image_url: url } : p))
+        prev.map((p) => (targetIds.includes(p.id) ? { ...p, image_url: url, custom_image: Boolean(url) } : p))
       );
     } else {
       // Create new record in master_phones so it persists in the database for all visitors
@@ -999,6 +1007,7 @@ export default function Admin() {
           brand,
           model,
           image_url: url || null,
+          custom_image: Boolean(url),
           base_resale_value: phone.base_resale_value || 12000,
           default_mrp: phone.default_mrp || 18000,
           release_year: phone.release_year || new Date().getFullYear(),

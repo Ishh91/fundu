@@ -22,7 +22,7 @@ import {
   Layers,
 } from 'lucide-react';
 import { formatINR } from '../lib/db';
-import { getCleanPhoneImage, getCleanBrandLogo, BRAND_FRONT_FALLBACKS, getGenericDevicePlaceholder } from '../lib/phoneImages';
+import { getCleanPhoneImage, getCleanBrandLogo, BRAND_FRONT_FALLBACKS, getGenericDevicePlaceholder, pullLiveModelImagesFromDb } from '../lib/phoneImages';
 import { usePriceSync, applyPriceOverrides, isModelDeleted, getEffectivePrice } from '../lib/priceSync';
 import { MASTER_MODEL_CATALOG } from '../data/masterModelCatalog';
 import { fetchBrandCatalogFromApi, getDynamicFallbackConfig, calculateMarketPriceComparison, type CatalogModelItem } from '../lib/mobileApi';
@@ -233,6 +233,17 @@ export default function SellBrandPage() {
   // Dynamic API Models Catalog State
   const [apiModels, setApiModels] = useState<CatalogModelItem[]>([]);
   const [isLoadingApi, setIsLoadingApi] = useState<boolean>(true);
+  const [imageVersion, setImageVersion] = useState<number>(0);
+
+  // Sync custom images live from database on mount & listen for admin updates
+  useEffect(() => {
+    pullLiveModelImagesFromDb();
+    const handleModelImageUpdate = () => {
+      setImageVersion((v) => v + 1);
+    };
+    window.addEventListener('fundu_model_image_updated', handleModelImageUpdate);
+    return () => window.removeEventListener('fundu_model_image_updated', handleModelImageUpdate);
+  }, []);
 
   // Fetch models dynamically from API when brand changes
   useEffect(() => {
@@ -313,7 +324,7 @@ export default function SellBrandPage() {
     const list = Array.from(combinedMap.values());
     const activeList = list.filter((m) => !isModelDeleted(m.brand || brandDisplayName, m.model));
     return applyPriceOverrides(activeList);
-  }, [apiModels, brandCleanKey, brandCanonicalKey, version, brandDisplayName]);
+  }, [apiModels, brandCleanKey, brandCanonicalKey, version, brandDisplayName, imageVersion]);
 
   // Series Groups (iPhone 16 Series down to iPhone 1 / Classic)
   const seriesGroups = useMemo(() => {

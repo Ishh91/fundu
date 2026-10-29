@@ -32,32 +32,74 @@ export async function ensureMasterPhonesSeeded(force = true) {
 
     console.log(`[AutoSync] Synchronizing ${currentCatalog.length} models into database masterphones & sellpriceconfigs...`);
 
+    // Fetch any phones where an admin set a custom image so we NEVER wipe custom uploads
+    const customPhones = await MasterPhone.find(
+      {
+        $or: [
+          { custom_image: true },
+          { image_url: /^data:image\//i },
+          { image_url: /^blob:/i },
+        ],
+      },
+      { brand: 1, model: 1, image_url: 1 }
+    ).lean();
+
+    const customPhoneImageMap = new Map();
+    customPhones.forEach((p) => {
+      const b = (p.brand || '').toLowerCase().trim();
+      const m = (p.model || '').toLowerCase().trim();
+      let strippedM = m;
+      if (b && strippedM.startsWith(b)) {
+        strippedM = strippedM.slice(b.length).trim();
+      }
+      customPhoneImageMap.set(`${b}:${m}`, p.image_url);
+      if (strippedM) {
+        customPhoneImageMap.set(`${b}:${strippedM}`, p.image_url);
+      }
+    });
+
     // 1. Bulk Upsert into MasterPhone
     const masterBulkOps = currentCatalog.map((phone) => {
       const price = phone.price || phone.base_resale_value || 12000;
+      const b = (phone.brand || '').toLowerCase().trim();
+      const m = (phone.model || '').toLowerCase().trim();
+      let strippedM = m;
+      if (b && strippedM.startsWith(b)) {
+        strippedM = strippedM.slice(b.length).trim();
+      }
+      const existingCustomImg = customPhoneImageMap.get(`${b}:${m}`) || customPhoneImageMap.get(`${b}:${strippedM}`);
+
+      const updateFields = {
+        brand: phone.brand,
+        model: phone.model,
+        release_year: phone.release_year || 2024,
+        ram_options: phone.ram_options || ['6GB', '8GB', '12GB'],
+        storage_options: phone.storage_options || ['128GB', '256GB'],
+        default_mrp: phone.default_mrp || Math.round(price * 1.5),
+        base_resale_value: price,
+        price: price,
+        popular_tag: phone.popular_tag || `${phone.brand} Official Model`,
+        processor: phone.processor || 'High-Performance Processor',
+        camera_spec: phone.camera_spec || '50MP OIS Camera',
+        battery_spec: phone.battery_spec || '5000 mAh Fast Charging',
+        display_spec: phone.display_spec || 'AMOLED Display',
+        is_5g: phone.is_5g !== false,
+        is_active: phone.is_active !== false,
+        updated_at: new Date(),
+      };
+
+      if (existingCustomImg) {
+        updateFields.image_url = existingCustomImg;
+        updateFields.custom_image = true;
+      } else {
+        updateFields.image_url = phone.image_url || null;
+      }
+
       return {
         updateOne: {
           filter: { brand: phone.brand, model: phone.model },
           update: {
-            $set: {
-              brand: phone.brand,
-              model: phone.model,
-              release_year: phone.release_year || 2024,
-              ram_options: phone.ram_options || ['6GB', '8GB', '12GB'],
-              storage_options: phone.storage_options || ['128GB', '256GB'],
-              default_mrp: phone.default_mrp || Math.round(price * 1.5),
-              base_resale_value: price,
-              price: price,
-              image_url: phone.image_url || null,
-              popular_tag: phone.popular_tag || `${phone.brand} Official Model`,
-              processor: phone.processor || 'High-Performance Processor',
-              camera_spec: phone.camera_spec || '50MP OIS Camera',
-              battery_spec: phone.battery_spec || '5000 mAh Fast Charging',
-              display_spec: phone.display_spec || 'AMOLED Display',
-              is_5g: phone.is_5g !== false,
-              is_active: phone.is_active !== false,
-              updated_at: new Date(),
-            },
+            $set: updateFields,
           },
           upsert: true,
         },

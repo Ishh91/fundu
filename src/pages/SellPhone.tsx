@@ -35,7 +35,7 @@ import { getFunduPhoneQuote, calculatePhoneAgingFactor, type FunduQuoteResponse 
 import { db, formatINR, formatMaskedPrice, formatDisplayPrice } from '../lib/db';
 import { useAuth } from '../context/AuthContext';
 import { ALL_INDIAN_PHONES_CATALOG } from '../data/indianPhonesCatalog';
-import { getCleanPhoneImage, getCleanBrandLogo, BRAND_FRONT_FALLBACKS, getGenericDevicePlaceholder } from '../lib/phoneImages';
+import { getCleanPhoneImage, getCleanBrandLogo, BRAND_FRONT_FALLBACKS, getGenericDevicePlaceholder, pullLiveModelImagesFromDb } from '../lib/phoneImages';
 import { usePriceSync, applyPriceOverrides, isModelDeleted, savePriceOverride, getEffectivePrice } from '../lib/priceSync';
 import { getModelHardwareSpecs, calculateHardwareVariantMultiplier, deviceIncludesStylus, getModelReleaseYear, isAmoledDisplay } from '../lib/deviceSpecs';
 import {
@@ -84,6 +84,17 @@ export default function SellPhone() {
   const stepParam = parseInt(searchParams.get('step') || '', 10);
   const initialStep = !isNaN(stepParam) && stepParam >= 1 && stepParam <= 4 ? stepParam : (modelSlug ? 2 : 1);
   const [step, setStep] = useState(initialStep);
+  const [, setImageVersion] = useState<number>(0);
+
+  // Sync custom images live from database on mount & listen for admin updates
+  useEffect(() => {
+    pullLiveModelImagesFromDb();
+    const handleModelImageUpdate = () => {
+      setImageVersion((v) => v + 1);
+    };
+    window.addEventListener('fundu_model_image_updated', handleModelImageUpdate);
+    return () => window.removeEventListener('fundu_model_image_updated', handleModelImageUpdate);
+  }, []);
 
   // When visiting /sell or /sell-old-mobile-phone with no brand/model params, ensure All Brands is shown
   useEffect(() => {
