@@ -58,3 +58,4 @@ export function setCachedLaptops(products: Product[]): void {
     // ignore
   }
 }
+
