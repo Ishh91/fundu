@@ -310,14 +310,14 @@ export const queryTable = async (table, { auth, filters, sort, select, single, l
   const sortConfig = parseSort(sort);
   const selectConfig = parseSelect(select);
 
-  let query = Model.find(scope);
+  let query = Model.find(scope).lean();
   if (sortConfig) query = query.sort(sortConfig);
   if (selectConfig) query = query.select(selectConfig);
   if (typeof limit === 'number' && limit > 0) query = query.limit(limit);
 
   if (single) {
     try {
-      const doc = await Model.findOne(scope).sort(sortConfig).select(selectConfig);
+      const doc = await Model.findOne(scope).sort(sortConfig).select(selectConfig).lean();
       return normalizeDoc(doc);
     } catch (e) {
       console.warn(`Notice querying single ${table}:`, e?.message || e);

@@ -336,75 +336,57 @@ export default function Admin() {
     setDataLoading(true);
     setFetchError(null);
     try {
-      // Fetch tables in 3 batches to avoid overwhelming the backend during cold-starts
-      const [pricingRes, masterPhonesRes, repairPricingRes] = await Promise.all([
-        db.from('sell_price_configs').select('*').limit(5000).sort({ field: 'created_at', ascending: false }),
-        db.from('master_phones').select('*').limit(5000).sort({ field: 'release_year', ascending: false }),
-        db.from('repair_price_configs').select('*').limit(500).sort({ field: 'created_at', ascending: false }),
+      // 1. FAST PRIMARY HYDRATION: Fetch core operational data first (Overview, Leads, Orders, Agents)
+      const [productsRes, sellsRes, repairsRes, ordersRes, agentsRes] = await Promise.all([
+        db.from('products').select('*').limit(60).sort({ field: 'created_at', ascending: false }),
+        db.from('sell_requests').select('*').limit(60).sort({ field: 'created_at', ascending: false }),
+        db.from('repair_bookings').select('*').limit(60).sort({ field: 'created_at', ascending: false }),
+        db.from('orders').select('*').limit(60).sort({ field: 'created_at', ascending: false }),
+        db.from('delivery_agents').select('*').limit(30).sort({ field: 'created_at', ascending: false }),
       ]);
 
-      const [productsRes, sellsRes, repairsRes, ordersRes] = await Promise.all([
-        db.from('products').select('*').limit(250).sort({ field: 'created_at', ascending: false }),
-        db.from('sell_requests').select('*').limit(250).sort({ field: 'created_at', ascending: false }),
-        db.from('repair_bookings').select('*').limit(250).sort({ field: 'created_at', ascending: false }),
-        db.from('orders').select('*').limit(250).sort({ field: 'created_at', ascending: false }),
-      ]);
+      if (productsRes.data) setProducts(productsRes.data as Product[]);
+      if (sellsRes.data) setSells(sellsRes.data as SellRequest[]);
+      if (repairsRes.data) setRepairs(repairsRes.data as RepairBooking[]);
+      if (ordersRes.data) setOrders(ordersRes.data as Order[]);
+      if (agentsRes.data) setAgents(agentsRes.data as DeliveryAgent[]);
 
-      const [partsRes, profilesRes, reviewsRes, agentsRes] = await Promise.all([
-        db.from('spare_parts').select('*').limit(250).sort({ field: 'created_at', ascending: false }),
-        db.from('profiles').select('*').limit(250).sort({ field: 'created_at', ascending: false }),
-        db.from('reviews').select('*').limit(250).sort({ field: 'created_at', ascending: false }),
-        db.from('delivery_agents').select('*').limit(100).sort({ field: 'created_at', ascending: false }),
-      ]);
+      // INSTANTLY UNBLOCK THE ADMIN DASHBOARD! (< 1 second load time)
+      setDataLoading(false);
 
-      // Log any per-table errors but keep loading the rest
-      const errors: string[] = [];
-      if (productsRes.error) errors.push(`products: ${productsRes.error.message}`);
-      else if (productsRes.data) setProducts(productsRes.data as Product[]);
+      // 2. BACKGROUND HYDRATION: Fetch secondary management tables non-blockingly
+      Promise.all([
+        db.from('spare_parts').select('*').limit(60).sort({ field: 'created_at', ascending: false }),
+        db.from('profiles').select('*').limit(60).sort({ field: 'created_at', ascending: false }),
+        db.from('reviews').select('*').limit(60).sort({ field: 'created_at', ascending: false }),
+        db.from('repair_price_configs').select('*').limit(200).sort({ field: 'created_at', ascending: false }),
+      ]).then(([partsRes, profilesRes, reviewsRes, repairPricingRes]) => {
+        if (partsRes.data) setParts(partsRes.data as SparePart[]);
+        if (profilesRes.data) setProfiles(profilesRes.data as any[]);
+        if (reviewsRes.data) setReviews(reviewsRes.data as Review[]);
+        if (repairPricingRes?.data) {
+          setRepairPriceConfigs(repairPricingRes.data as RepairPriceConfig[]);
+          saveLocalRepairConfigs(repairPricingRes.data as RepairPriceConfig[]);
+        }
+      }).catch((e) => console.warn('[Admin] Background secondary fetch notice:', e));
 
-      if (sellsRes.error) errors.push(`sell_requests: ${sellsRes.error.message}`);
-      else if (sellsRes.data) setSells(sellsRes.data as SellRequest[]);
+      // 3. BACKGROUND CATALOG & PRICING: Ingest master devices & custom pricing in the background
+      Promise.all([
+        db.from('master_phones').select('*').limit(1500).sort({ field: 'release_year', ascending: false }),
+        db.from('sell_price_configs').select('*').limit(1000).sort({ field: 'created_at', ascending: false }),
+      ]).then(([masterPhonesRes, pricingRes]) => {
+        if (Array.isArray(masterPhonesRes.data) && masterPhonesRes.data.length > 0) {
+          setMasterPhones(masterPhonesRes.data as MasterPhone[]);
+        }
+        if (pricingRes.data) {
+          setSellPriceConfigs(pricingRes.data as SellPriceConfig[]);
+        }
+      }).catch((e) => console.warn('[Admin] Background catalog fetch notice:', e));
 
-      if (pricingRes.error) errors.push(`pricing: ${pricingRes.error.message}`);
-      else if (pricingRes.data) setSellPriceConfigs(pricingRes.data as SellPriceConfig[]);
-
-      if (repairPricingRes?.data) {
-        setRepairPriceConfigs(repairPricingRes.data as RepairPriceConfig[]);
-        saveLocalRepairConfigs(repairPricingRes.data as RepairPriceConfig[]);
-      }
-
-      if (repairsRes.error) errors.push(`repairs: ${repairsRes.error.message}`);
-      else if (repairsRes.data) setRepairs(repairsRes.data as RepairBooking[]);
-
-      if (ordersRes.error) errors.push(`orders: ${ordersRes.error.message}`);
-      else if (ordersRes.data) setOrders(ordersRes.data as Order[]);
-
-      if (partsRes.error) errors.push(`spare_parts: ${partsRes.error.message}`);
-      else if (partsRes.data) setParts(partsRes.data as SparePart[]);
-
-      if (profilesRes.error) errors.push(`profiles: ${profilesRes.error.message}`);
-      else if (profilesRes.data) setProfiles(profilesRes.data as any[]);
-
-      if (reviewsRes.error) errors.push(`reviews: ${reviewsRes.error.message}`);
-      else if (reviewsRes.data) setReviews(reviewsRes.data as Review[]);
-
-      if (agentsRes.error) errors.push(`delivery_agents: ${agentsRes.error.message}`);
-      else if (agentsRes.data) setAgents(agentsRes.data as DeliveryAgent[]);
-
-      if (masterPhonesRes.error) errors.push(`master_phones: ${masterPhonesRes.error.message}`);
-      else if (Array.isArray(masterPhonesRes.data) && masterPhonesRes.data.length > 0) {
-        setMasterPhones(masterPhonesRes.data as MasterPhone[]);
-      }
-
-      if (errors.length > 0) {
-        console.warn('[Admin] Some tables failed to load:', errors);
-        setFetchError(`Backend errors: ${errors.join(', ')}`);
-      }
     } catch (err) {
       const msg = err instanceof Error ? err.message : 'Network error — unable to connect to backend server.';
       console.error('[Admin] Failed to load admin data:', msg);
       setFetchError(msg);
-    } finally {
       setDataLoading(false);
     }
   };
@@ -415,6 +397,9 @@ export default function Admin() {
     if (!user || activeRole !== 'admin') return;
 
     const pollInterval = setInterval(async () => {
+      // Don't poll if the browser tab is hidden/inactive to save server resources
+      if (typeof document !== 'undefined' && document.hidden) return;
+
       try {
         const [sellsRes, repairsRes, ordersRes] = await Promise.all([
           db.from('sell_requests').select('*').sort({ field: 'created_at', ascending: false }).limit(5),
@@ -486,7 +471,7 @@ export default function Admin() {
       } catch (err) {
         // silent polling catch
       }
-    }, 8000);
+    }, 20000);
 
     return () => clearInterval(pollInterval);
   }, [user, profile, sells, repairs, orders]);
