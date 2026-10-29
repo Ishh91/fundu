@@ -326,7 +326,31 @@ const handleCheckPincode = async (codeToTest?: string) => {
     );
   }
 
-  if (!product) return null;
+  if (!product) {
+    return (
+      <div className="min-h-screen bg-[#f4f7f8] py-20">
+        <div className="container-page max-w-lg mx-auto text-center px-4">
+          <div className="card p-8 md:p-10 rounded-[32px] bg-white border border-ink-100 shadow-soft space-y-4">
+            <div className="h-16 w-16 mx-auto rounded-full bg-amber-50 text-amber-600 flex items-center justify-center">
+              <Smartphone className="h-8 w-8" />
+            </div>
+            <h2 className="text-xl font-black text-ink-900">Device Not Found or Out of Stock</h2>
+            <p className="text-xs font-semibold text-ink-500">
+              The refurbished phone or laptop you are looking for may have been sold out or the link is invalid.
+            </p>
+            <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-3">
+              <Link to="/buy" className="btn btn-primary text-xs font-bold w-full sm:w-auto px-6 py-2.5 rounded-full">
+                Browse Refurbished Phones
+              </Link>
+              <Link to="/buy-laptops" className="btn btn-secondary text-xs font-bold w-full sm:w-auto px-6 py-2.5 rounded-full">
+                Browse Refurbished Laptops
+              </Link>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
     // Proportional Grade Price with percentage savings
     const getGradePrice = (gradeId: string, storage: string = selectedStorage) => {

@@ -41,6 +41,7 @@ import WholesalerLogin from './pages/WholesalerLogin';
 import DeliveryLogin from './pages/DeliveryLogin';
 import DemoConditionFilter from './pages/DemoConditionFilter';
 import SEO from './components/SEO';
+import ErrorBoundary from './components/ErrorBoundary';
 
 // Security Guard for Role-based Protected Routes
 function ProtectedRoute({
@@ -127,7 +128,8 @@ function MainLayout() {
       <SEO />
       {!isStandaloneApp && <Navbar />}
       <main className="flex-1">
-        <Routes>
+        <ErrorBoundary>
+          <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/buy" element={<BuyPhones />} />
           <Route path="/search" element={<SearchActionPage />} />
@@ -282,6 +284,7 @@ function MainLayout() {
           <Route path="/buy-laptops" element={<BuyLaptops />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
+        </ErrorBoundary>
       </main>
       {!hideFooter && <Footer />}
     </div>
