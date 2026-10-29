@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { Smartphone, ShoppingCart, Wrench, RefreshCw } from 'lucide-react';
+import { Smartphone, ShoppingCart, Wrench, RefreshCw, Laptop } from 'lucide-react';
 
 const FUNDU_SERVICES = [
   {
@@ -17,6 +17,14 @@ const FUNDU_SERVICES = [
     icon: ShoppingCart,
     color: 'bg-emerald-50 text-emerald-700 border-emerald-200',
     image: 'https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?w=150&auto=format&fit=crop&q=80',
+  },
+  {
+    title: 'Buy Laptop',
+    subtitle: 'Mac & Windows (6M Wty)',
+    href: '/buy-laptops',
+    icon: Laptop,
+    color: 'bg-blue-50 text-blue-700 border-blue-200',
+    image: 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=150&auto=format&fit=crop&q=80',
   },
   {
     title: 'Doorstep Repair',
@@ -41,7 +49,7 @@ export default function OurServices() {
     <section className="py-4">
       <div className="container-page space-y-4">
         <h2 className="font-display font-black text-xl text-[#344257]">Our Services</h2>
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3 sm:gap-4">
           {FUNDU_SERVICES.map((s) => {
             return (
               <Link

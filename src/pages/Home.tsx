@@ -8,6 +8,7 @@ import {
   HeroSection,
   PopularBrands,
   BestDeals,
+  LaptopShowcase,
   RepairShowcase,
   SellFlow,
   WhyChooseFundu,
@@ -117,7 +118,10 @@ export default function Home() {
       <PopularBrands />
 
       {/* 3. Refurbished Mobiles Best Deals */}
-      <BestDeals products={products} loading={loading} />
+      <BestDeals products={products.filter((p) => p.category !== 'laptop')} loading={loading} />
+
+      {/* 3.5. Certified Refurbished Laptops */}
+      <LaptopShowcase customLaptops={products.filter((p) => p.category === 'laptop')} />
 
       {/* 4. Doorstep Mobile Repair Hub at your doorstep */}
       <RepairShowcase />
