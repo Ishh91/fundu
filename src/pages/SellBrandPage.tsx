@@ -143,12 +143,6 @@ const BRAND_DETAILS: Record<
     desc: 'Sell used Infinix GT, Zero, Note & Hot series phones online at your doorstep for top guaranteed cash.',
     count: '30+ Infinix Models',
   },
-  honor: {
-    logo: getCleanBrandLogo('honor'),
-    tagline: 'Sell Old Honor Smartphone Online at Highest Market Value',
-    desc: 'Sell used Honor 200, 90, X9b & Magic series smartphones online at your doorstep for instant spot payment.',
-    count: '15+ Honor Models',
-  },
   lenovo: {
     logo: getCleanBrandLogo('lenovo'),
     tagline: 'Sell Old Lenovo Mobile Phone Online for Instant Cash at Doorstep',

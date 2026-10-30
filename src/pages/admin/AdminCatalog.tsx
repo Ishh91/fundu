@@ -284,7 +284,6 @@ export default function AdminCatalog({
     'Infinix',
     'Tecno',
     'Itel',
-    'Honor',
     'Lenovo',
   ];
 

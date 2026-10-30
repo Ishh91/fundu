@@ -112,7 +112,6 @@ const POPULAR_BRANDS = [
   'Infinix',
   'Tecno',
   'Itel',
-  'Honor',
   'Lenovo',
 ];
 

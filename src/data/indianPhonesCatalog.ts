@@ -4586,52 +4586,6 @@ export const ALL_INDIAN_PHONES_CATALOG: MasterPhone[] = [
     "is_active": true
   },
   {
-    "id": "honor-200p",
-    "brand": "Honor",
-    "model": "Honor 200 Pro 5G",
-    "release_year": 2024,
-    "ram_options": [
-      "12GB"
-    ],
-    "storage_options": [
-      "512GB"
-    ],
-    "default_mrp": 57999,
-    "base_resale_value": 20890,
-    "image_url": "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=800&auto=format&fit=crop&q=80",
-    "popular_tag": "Studio Harcourt Portrait Master",
-    "processor": "Snapdragon 8s Gen 3 (4nm)",
-    "camera_spec": "50MP H9000 OIS + 50MP Sony IMX856 2.5x Telephoto + 12MP UW",
-    "battery_spec": "5200 mAh Silicon-Carbon 100W + 66W Wireless",
-    "display_spec": "6.78\" Quad-Curved 120Hz OLED 4000nits",
-    "is_5g": true,
-    "is_active": true
-  },
-  {
-    "id": "honor-200",
-    "brand": "Honor",
-    "model": "Honor 200 5G",
-    "release_year": 2024,
-    "ram_options": [
-      "8GB",
-      "12GB"
-    ],
-    "storage_options": [
-      "256GB",
-      "512GB"
-    ],
-    "default_mrp": 34999,
-    "base_resale_value": 13400,
-    "image_url": "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=800&auto=format&fit=crop&q=80",
-    "popular_tag": "Studio Harcourt Camera",
-    "processor": "Snapdragon 7 Gen 3 (4nm)",
-    "camera_spec": "50MP Sony IMX906 OIS + 50MP Telephoto + 12MP UW",
-    "battery_spec": "5200 mAh 100W SuperCharge",
-    "display_spec": "6.7\" Quad-Curved 120Hz Eye-Comfort OLED",
-    "is_5g": true,
-    "is_active": true
-  },
-  {
     "id": "apple-ipad-pro-13",
     "brand": "Apple",
     "model": "iPad Pro 13",

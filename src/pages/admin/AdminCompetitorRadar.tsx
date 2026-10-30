@@ -100,7 +100,6 @@ const TOP_WATCHLIST = [
   { brand: 'Motorola', model: 'Moto Edge 50 Pro', storage: '256 GB' },
   { brand: 'Tecno', model: 'Tecno Camon 30 5G', storage: '256 GB' },
   { brand: 'Infinix', model: 'Infinix GT 20 Pro 5G', storage: '256 GB' },
-  { brand: 'Honor', model: 'Honor 200 5G', storage: '256 GB' },
   { brand: 'Itel', model: 'Itel Color Pro 5G', storage: '128 GB' },
 ];
 
@@ -120,7 +119,6 @@ const BRANDS = [
   'Tecno',
   'Infinix',
   'Lenovo',
-  'Honor',
   'Itel',
   'Asus',
   'Nokia',
@@ -143,7 +141,6 @@ const DEFAULT_BRAND_MODELS: Record<string, { model: string; storage: string }> =
   Tecno: { model: 'Tecno Camon 30 5G', storage: '256 GB' },
   Infinix: { model: 'Infinix GT 20 Pro 5G', storage: '256 GB' },
   Lenovo: { model: 'Lenovo Legion Y90', storage: '256 GB' },
-  Honor: { model: 'Honor 200 5G', storage: '256 GB' },
   Itel: { model: 'Itel Color Pro 5G', storage: '128 GB' },
   Asus: { model: 'ROG Phone 8', storage: '256 GB' },
   Nokia: { model: 'Nokia G42 5G', storage: '128 GB' },
@@ -476,8 +473,6 @@ export default function AdminCompetitorRadar() {
       detectedBrand = 'Infinix';
     } else if (low.includes('lenovo') || low.includes('legion')) {
       detectedBrand = 'Lenovo';
-    } else if (low.includes('honor')) {
-      detectedBrand = 'Honor';
     } else if (low.includes('itel')) {
       detectedBrand = 'Itel';
     } else if (low.includes('asus') || low.includes('rog phone') || low.includes('zenfone')) {

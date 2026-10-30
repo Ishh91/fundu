@@ -1987,40 +1987,6 @@ export const BRAND_SERIES_DEFINITIONS: Record<string, BrandSeriesDefinition[]> =
     },
   ],
 
-  honor: [
-    {
-      id: 'honor-200',
-      slug: 'honor-200-series',
-      name: 'Honor 200 & Number Series',
-      brand: 'Honor',
-      image: 'https://fdn2.gsmarena.com/vv/bigpic/honor-200-pro.jpg',
-      description: 'Honor 200 Pro, 200, 200 Lite, 90, 70 flagship devices',
-      pattern: /\b(200|90|70|50|magic)\b/i,
-      defaultModels: [
-        { brand: 'Honor', series: 'Honor 200 & Number Series', model: 'Honor 200 Pro 5G', storage: '512 GB', price: 32500, image: 'https://fdn2.gsmarena.com/vv/bigpic/honor-200-pro.jpg' },
-        { brand: 'Honor', series: 'Honor 200 & Number Series', model: 'Honor 200 5G', storage: '256 GB', price: 24000, image: 'https://fdn2.gsmarena.com/vv/bigpic/honor-200.jpg' },
-        { brand: 'Honor', series: 'Honor 200 & Number Series', model: 'Honor 200 Lite 5G', storage: '256 GB', price: 14500, image: 'https://fdn2.gsmarena.com/vv/bigpic/honor-200-lite.jpg' },
-        { brand: 'Honor', series: 'Honor 200 & Number Series', model: 'Honor 90 5G', storage: '256 GB', price: 18200, image: 'https://fdn2.gsmarena.com/vv/bigpic/honor-90.jpg' },
-        { brand: 'Honor', series: 'Honor 200 & Number Series', model: 'Honor 70 5G', storage: '128 GB', price: 14000, image: 'https://fdn2.gsmarena.com/vv/bigpic/honor-70.jpg' },
-      ],
-    },
-    {
-      id: 'honor-x',
-      slug: 'honor-x-series',
-      name: 'Honor X Series',
-      brand: 'Honor',
-      image: 'https://fdn2.gsmarena.com/vv/bigpic/honor-x9b.jpg',
-      description: 'Honor X9b 5G, X9a, X8b, 9X, 8X ultra-tough devices',
-      pattern: /\b(x\d|8x|9x|7x)\b/i,
-      defaultModels: [
-        { brand: 'Honor', series: 'Honor X Series', model: 'Honor X9b 5G', storage: '256 GB', price: 15800, image: 'https://fdn2.gsmarena.com/vv/bigpic/honor-x9b.jpg' },
-        { brand: 'Honor', series: 'Honor X Series', model: 'Honor X9a 5G', storage: '128 GB', price: 12200, image: 'https://fdn2.gsmarena.com/vv/bigpic/honor-x9a.jpg' },
-        { brand: 'Honor', series: 'Honor X Series', model: 'Honor 9X', storage: '128 GB', price: 5400, image: 'https://fdn2.gsmarena.com/vv/bigpic/honor-9x.jpg' },
-        { brand: 'Honor', series: 'Honor X Series', model: 'Honor 8X', storage: '64 GB', price: 4100, image: 'https://fdn2.gsmarena.com/vv/bigpic/honor-8x.jpg' },
-      ],
-    },
-  ],
-
   asus: [
     {
       id: 'asus-rog',
