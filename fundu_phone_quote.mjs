@@ -2202,7 +2202,7 @@ export function lookupResaleBenchmark(brand, model, storage, options = {}) {
         if (r >= 8) {
           adjustedProceeds += (r >= 12 ? 2000 : 1000);
         } else if (r <= 4) {
-          adjustedProceeds = Math.max(500, adjustedProceeds - 800);
+          adjustedProceeds = Math.max(500, adjustedProceeds - 1000);
         }
       }
     }
@@ -2808,6 +2808,7 @@ export function quotePhone(input = {}, options = {}) {
     if (ramMatch) {
       const r = parseInt(ramMatch[1], 10);
       if (r >= 8) ramOffsetAmount = r >= 12 ? 2000 : 1000;
+      else if (r <= 4) ramOffsetAmount = -1000;
     }
   }
 

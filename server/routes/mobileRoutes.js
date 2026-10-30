@@ -1036,7 +1036,7 @@ router.get('/sell-pricing/competitor-radar', async (req, res, next) => {
         if (r >= 8) {
           funduBasePrice += (r >= 12 ? 2000 : 1000);
         } else if (r <= 4) {
-          funduBasePrice = Math.max(500, funduBasePrice - 800);
+          funduBasePrice = Math.max(500, funduBasePrice - 1000);
         }
       }
     }

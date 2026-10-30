@@ -1049,6 +1049,13 @@ const MODEL_HARDWARE_RULES: Array<{
     ],
   },
   {
+    pattern: /iqoo\s*neo\s*9\s*pro/i,
+    variants: [
+      { storage: '128 GB', rams: ['8 GB'] },
+      { storage: '256 GB', rams: ['8 GB', '12 GB'] },
+    ],
+  },
+  {
     pattern: /iqoo\s*z11/i,
     variants: [
       { storage: '128 GB', rams: ['8 GB'] },
@@ -1063,10 +1070,134 @@ const MODEL_HARDWARE_RULES: Array<{
     ],
   },
   {
-    pattern: /iqoo\s*neo\s*9\s*pro/i,
+    pattern: /(?:iqoo\s*z6\s*pro|(?<!lenovo.*)\bz6\s*pro)(?:\s*5g)?\b/i,
+    variants: [
+      { storage: '128 GB', rams: ['6 GB', '8 GB'] },
+      { storage: '256 GB', rams: ['8 GB', '12 GB'] },
+    ],
+  },
+  {
+    pattern: /(?:iqoo\s*z6\s*lite|(?<!lenovo.*)\bz6\s*lite)(?:\s*5g)?\b/i,
+    variants: [
+      { storage: '64 GB', rams: ['4 GB'] },
+      { storage: '128 GB', rams: ['6 GB'] },
+    ],
+  },
+  {
+    pattern: /(?:iqoo\s*z6|(?<!lenovo.*)\bz6\s*(?:5g|44w)?\b)(?!\s*(?:pro|lite))/i,
+    variants: [
+      { storage: '128 GB', rams: ['4 GB', '6 GB', '8 GB'] },
+    ],
+  },
+  {
+    pattern: /(?:iqoo\s*)?z7s?(\s*5g)?\b(?!\s*pro)/i,
+    variants: [
+      { storage: '128 GB', rams: ['6 GB', '8 GB'] },
+    ],
+  },
+  {
+    pattern: /(?:iqoo\s*)?z7\s*pro(\s*5g)?\b/i,
+    variants: [
+      { storage: '128 GB', rams: ['8 GB'] },
+      { storage: '256 GB', rams: ['8 GB'] },
+    ],
+  },
+  {
+    pattern: /(?:iqoo\s*)?z9x(\s*5g)?\b/i,
+    variants: [
+      { storage: '128 GB', rams: ['4 GB', '6 GB', '8 GB'] },
+    ],
+  },
+  {
+    pattern: /(?:iqoo\s*)?z9\s*lite(\s*5g)?\b/i,
+    variants: [
+      { storage: '128 GB', rams: ['4 GB', '6 GB'] },
+    ],
+  },
+  {
+    pattern: /(?:iqoo\s*)?z9s\s*pro(\s*5g)?\b/i,
     variants: [
       { storage: '128 GB', rams: ['8 GB'] },
       { storage: '256 GB', rams: ['8 GB', '12 GB'] },
+    ],
+  },
+  {
+    pattern: /(?:iqoo\s*)?z9s(\s*5g)?\b(?!\s*pro)/i,
+    variants: [
+      { storage: '128 GB', rams: ['8 GB'] },
+      { storage: '256 GB', rams: ['8 GB', '12 GB'] },
+    ],
+  },
+  {
+    pattern: /(?:iqoo\s*)?z9(\s*5g)?\b(?!\s*(?:x|lite|s|pro|turbo))/i,
+    variants: [
+      { storage: '128 GB', rams: ['8 GB'] },
+      { storage: '256 GB', rams: ['8 GB'] },
+    ],
+  },
+  {
+    pattern: /(?:vivo\s*)?t1\s*(?:5g|44w)?\b(?!\s*(?:pro|x))/i,
+    variants: [
+      { storage: '128 GB', rams: ['4 GB', '6 GB', '8 GB'] },
+    ],
+  },
+  {
+    pattern: /(?:vivo\s*)?t1x\b/i,
+    variants: [
+      { storage: '64 GB', rams: ['4 GB'] },
+      { storage: '128 GB', rams: ['4 GB', '6 GB'] },
+    ],
+  },
+  {
+    pattern: /(?:vivo\s*)?t1\s*pro(\s*5g)?\b/i,
+    variants: [
+      { storage: '128 GB', rams: ['6 GB', '8 GB'] },
+      { storage: '256 GB', rams: ['8 GB'] },
+    ],
+  },
+  {
+    pattern: /(?:vivo\s*)?t2x(\s*5g)?\b/i,
+    variants: [
+      { storage: '128 GB', rams: ['4 GB', '6 GB', '8 GB'] },
+    ],
+  },
+  {
+    pattern: /(?:vivo\s*)?t2(\s*5g)?\b(?!\s*(?:pro|x))/i,
+    variants: [
+      { storage: '128 GB', rams: ['6 GB', '8 GB'] },
+    ],
+  },
+  {
+    pattern: /(?:vivo\s*)?t2\s*pro(\s*5g)?\b/i,
+    variants: [
+      { storage: '128 GB', rams: ['8 GB'] },
+      { storage: '256 GB', rams: ['8 GB'] },
+    ],
+  },
+  {
+    pattern: /(?:vivo\s*)?t3x(\s*5g)?\b/i,
+    variants: [
+      { storage: '128 GB', rams: ['4 GB', '6 GB', '8 GB'] },
+    ],
+  },
+  {
+    pattern: /(?:vivo\s*)?t3\s*lite(\s*5g)?\b/i,
+    variants: [
+      { storage: '128 GB', rams: ['4 GB', '6 GB'] },
+    ],
+  },
+  {
+    pattern: /(?:vivo\s*)?t3\s*ultra\b/i,
+    variants: [
+      { storage: '128 GB', rams: ['8 GB'] },
+      { storage: '256 GB', rams: ['8 GB', '12 GB'] },
+    ],
+  },
+  {
+    pattern: /(?:vivo\s*)?t3(\s*pro)?(\s*5g)?\b(?!\s*(?:x|lite|ultra))/i,
+    variants: [
+      { storage: '128 GB', rams: ['8 GB'] },
+      { storage: '256 GB', rams: ['8 GB'] },
     ],
   },
 
@@ -2298,7 +2429,7 @@ export function inferTierHardwareSpecs(
   }
   // 2. Upper Mid-Range / Pro / Performance / Neo / GT / Edge / Reno / V series (Indian market caps out at 256 GB)
   else if (
-    /pro\+|pro\s*plus|\bpro\b|neo|turbo|gt|plus|\+|fe|nord|reno|iqoo\s*z|poco\s*(f|x)|note.*pro|a5\d|a7\d|m5\d|f5\d|edge|v\d+/i.test(fullText)
+    /pro\+|pro\s*plus|\bpro\b|neo|turbo|gt|plus|\+|fe|nord|reno|iqoo\s*z\s*(?:pro|s|turbo|\d{2})|poco\s*(f|x)|note.*pro|a5\d|a7\d|m5\d|f5\d|edge|v\d+/i.test(fullText)
   ) {
     tierStorages = ['128 GB', '256 GB'];
     tierRamMap = {

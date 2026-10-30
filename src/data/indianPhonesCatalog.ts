@@ -3869,6 +3869,79 @@ export const ALL_INDIAN_PHONES_CATALOG: MasterPhone[] = [
     "is_active": true
   },
   {
+    "id": "iqoo-z6-5g",
+    "brand": "iQOO",
+    "model": "iQOO Z6 5G",
+    "release_year": 2022,
+    "ram_options": [
+      "4GB",
+      "6GB",
+      "8GB"
+    ],
+    "storage_options": [
+      "128GB"
+    ],
+    "default_mrp": 15499,
+    "base_resale_value": 7290,
+    "image_url": "https://fdn2.gsmarena.com/vv/bigpic/vivo-iqoo-z6-5g.jpg",
+    "popular_tag": "Snapdragon 695 5G Value King",
+    "processor": "Qualcomm Snapdragon 695 5G (6nm)",
+    "camera_spec": "50MP Triple Camera + 16MP Front",
+    "battery_spec": "5000 mAh 18W Fast Charging",
+    "display_spec": "6.58\" FHD+ 120Hz Display",
+    "is_5g": true,
+    "is_active": true
+  },
+  {
+    "id": "iqoo-z6-lite-5g",
+    "brand": "iQOO",
+    "model": "iQOO Z6 Lite 5G",
+    "release_year": 2022,
+    "ram_options": [
+      "4GB",
+      "6GB"
+    ],
+    "storage_options": [
+      "64GB",
+      "128GB"
+    ],
+    "default_mrp": 13999,
+    "base_resale_value": 6800,
+    "image_url": "https://fdn2.gsmarena.com/vv/bigpic/vivo-iqoo-z6-lite-5g.jpg",
+    "popular_tag": "Snapdragon 4 Gen 1 120Hz",
+    "processor": "Qualcomm Snapdragon 4 Gen 1",
+    "camera_spec": "50MP Dual Camera",
+    "battery_spec": "5000 mAh 18W",
+    "display_spec": "6.58\" FHD+ 120Hz",
+    "is_5g": true,
+    "is_active": true
+  },
+  {
+    "id": "iqoo-z6-pro-5g",
+    "brand": "iQOO",
+    "model": "iQOO Z6 Pro 5G",
+    "release_year": 2022,
+    "ram_options": [
+      "6GB",
+      "8GB",
+      "12GB"
+    ],
+    "storage_options": [
+      "128GB",
+      "256GB"
+    ],
+    "default_mrp": 23999,
+    "base_resale_value": 9650,
+    "image_url": "https://fdn2.gsmarena.com/vv/bigpic/vivo-iqoo-z6-pro-5g.jpg",
+    "popular_tag": "Snapdragon 778G 66W FlashCharge",
+    "processor": "Qualcomm Snapdragon 778G 5G",
+    "camera_spec": "64MP Triple Camera",
+    "battery_spec": "4700 mAh 66W FlashCharge",
+    "display_spec": "6.44\" AMOLED 90Hz HDR10+",
+    "is_5g": true,
+    "is_active": true
+  },
+  {
     "id": "oppo-findx7u",
     "brand": "Oppo",
     "model": "Find X7 Ultra 5G",
