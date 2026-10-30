@@ -129,8 +129,23 @@ export default function AdminSellPricing({
   generatingRules,
   onAddNewModel,
 }: AdminSellPricingProps) {
-  const [search, setSearch] = useState('');
-  const [selectedBrand, setSelectedBrand] = useState('All');
+  const [search, setSearch] = useState(() => {
+    try { return localStorage.getItem('fundu_admin_sell_pricing_search') || ''; } catch (_e) { return ''; }
+  });
+  const [selectedBrand, setSelectedBrand] = useState(() => {
+    try { return localStorage.getItem('fundu_admin_sell_pricing_brand') || 'All'; } catch (_e) { return 'All'; }
+  });
+
+  React.useEffect(() => {
+    try {
+      localStorage.setItem('fundu_admin_sell_pricing_brand', selectedBrand);
+      if (search) {
+        localStorage.setItem('fundu_admin_sell_pricing_search', search);
+      } else {
+        localStorage.removeItem('fundu_admin_sell_pricing_search');
+      }
+    } catch (_e) {}
+  }, [selectedBrand, search]);
   const [filterType, setFilterType] = useState<'all' | 'custom_price' | 'custom_image' | 'active' | 'disabled'>('all');
   const [sortBy, setSortBy] = useState<'default' | 'price_high' | 'price_low' | 'name_asc'>('default');
 

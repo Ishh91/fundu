@@ -1,3 +1,4 @@
+import React, { useEffect } from 'react';
 import { BrowserRouter, Routes, Route, useLocation, Navigate, useParams } from 'react-router-dom';
 import { isSeriesSlug } from './data/brandSeriesCatalog';
 
@@ -104,6 +105,12 @@ function RepairModelOrSeriesRoute() {
 
 function MainLayout() {
   const location = useLocation();
+
+  useEffect(() => {
+    if ('scrollRestoration' in window.history) {
+      window.history.scrollRestoration = 'auto';
+    }
+  }, []);
   const isAdminPath = location.pathname.startsWith('/admin') || location.pathname.startsWith('/admin-login');
   const isDeliveryPath =
     location.pathname.startsWith('/delivery') ||

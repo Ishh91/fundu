@@ -171,7 +171,10 @@ export default function AdminSidebar({
   const handleItemClick = (item: { id: AdminTab; path: string }) => {
     onSelectTab(item.id);
     onCloseMobile();
-    if (item.path.startsWith('/admin/')) {
+    try {
+      localStorage.setItem('fundu_admin_last_tab', item.id);
+    } catch (_e) {}
+    if (item.path) {
       navigate(item.path);
     }
   };

@@ -179,15 +179,79 @@ function normalizeModelDisplayName(brand: string, rawModel: string): string {
   return m;
 }
 
+function getInitialRadarDevice() {
+  try {
+    const urlParams = new URLSearchParams(window.location.search);
+    const urlBrand = urlParams.get('brand');
+    const urlModel = urlParams.get('model');
+    const urlStorage = urlParams.get('storage');
+    const urlRam = urlParams.get('ram');
+
+    if (urlBrand && urlModel) {
+      return {
+        brand: urlBrand,
+        model: urlModel,
+        storage: urlStorage || '128 GB',
+        ram: urlRam || '',
+      };
+    }
+
+    const saved = localStorage.getItem('fundu_admin_radar_device');
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      if (parsed.brand && parsed.model) {
+        return {
+          brand: parsed.brand,
+          model: parsed.model,
+          storage: parsed.storage || '128 GB',
+          ram: parsed.ram || '',
+        };
+      }
+    }
+  } catch (_e) {}
+
+  return {
+    brand: 'Apple',
+    model: 'iPhone 16 Pro',
+    storage: '128 GB',
+    ram: '',
+  };
+}
+
 export default function AdminCompetitorRadar() {
-  const [selectedBrand, setSelectedBrand] = useState('Apple');
-  const [searchModel, setSearchModel] = useState('iPhone 16 Pro');
-  const [selectedStorage, setSelectedStorage] = useState('128 GB');
-  const [selectedRam, setSelectedRam] = useState<string>('');
+  const initialDev = useMemo(() => getInitialRadarDevice(), []);
+  const [selectedBrand, setSelectedBrand] = useState(initialDev.brand);
+  const [searchModel, setSearchModel] = useState(initialDev.model);
+  const [selectedStorage, setSelectedStorage] = useState(initialDev.storage);
+  const [selectedRam, setSelectedRam] = useState<string>(initialDev.ram);
   const [radarData, setRadarData] = useState<RadarResponse | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isManualMode, setIsManualMode] = useState(false);
+
+  // Persist radar device state to localStorage and URL query params
+  useEffect(() => {
+    try {
+      const stateObj = {
+        brand: selectedBrand,
+        model: searchModel,
+        storage: selectedStorage,
+        ram: selectedRam,
+      };
+      localStorage.setItem('fundu_admin_radar_device', JSON.stringify(stateObj));
+
+      const url = new URL(window.location.href);
+      url.searchParams.set('brand', selectedBrand);
+      url.searchParams.set('model', searchModel);
+      url.searchParams.set('storage', selectedStorage);
+      if (selectedRam) {
+        url.searchParams.set('ram', selectedRam);
+      } else {
+        url.searchParams.delete('ram');
+      }
+      window.history.replaceState(null, '', url.pathname + url.search);
+    } catch (_e) {}
+  }, [selectedBrand, searchModel, selectedStorage, selectedRam]);
 
   // 1. Hardware Specs (Authentic Storages & RAMs for THIS exact model)
   const currentDeviceSpecs = useMemo(() => {

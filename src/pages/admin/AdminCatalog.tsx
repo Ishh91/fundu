@@ -58,8 +58,23 @@ export default function AdminCatalog({
   onDeletePhone,
   onUpdatePhoneImage,
 }: AdminCatalogProps) {
-  const [search, setSearch] = useState('');
-  const [brandFilter, setBrandFilter] = useState('All');
+  const [search, setSearch] = useState(() => {
+    try { return localStorage.getItem('fundu_admin_catalog_search') || ''; } catch (_e) { return ''; }
+  });
+  const [brandFilter, setBrandFilter] = useState(() => {
+    try { return localStorage.getItem('fundu_admin_catalog_brand') || 'All'; } catch (_e) { return 'All'; }
+  });
+
+  React.useEffect(() => {
+    try {
+      localStorage.setItem('fundu_admin_catalog_brand', brandFilter);
+      if (search) {
+        localStorage.setItem('fundu_admin_catalog_search', search);
+      } else {
+        localStorage.removeItem('fundu_admin_catalog_search');
+      }
+    } catch (_e) {}
+  }, [brandFilter, search]);
 
   // MobileAPI.dev Live Search State
   const [mobileApiModalOpen, setMobileApiModalOpen] = useState(false);

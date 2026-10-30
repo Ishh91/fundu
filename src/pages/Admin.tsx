@@ -106,9 +106,54 @@ export default function Admin() {
     }
   };
 
-  // Tab state derived from URL or params
-  const [tab, setTab] = useState<AdminTab>('overview');
+  const getInitialAdminTab = (): AdminTab => {
+    if (subtab) {
+      if (subtab === 'repair-pricing' || subtab === 'repair_pricing') return 'repair_pricing';
+      if (subtab === 'competitor-radar' || subtab === 'competitor_radar') return 'competitor_radar';
+      const validTabs: AdminTab[] = [
+        'overview', 'catalog', 'sells', 'orders', 'repairs', 'repair_pricing',
+        'wholesalers', 'agents', 'products', 'pricing', 'competitor_radar',
+        'banners', 'parts', 'users', 'reviews', 'contact'
+      ];
+      if (validTabs.includes(subtab as AdminTab)) return subtab as AdminTab;
+    }
+    const queryTab = searchParams.get('tab');
+    if (queryTab) {
+      if (queryTab === 'repair-pricing' || queryTab === 'repair_pricing') return 'repair_pricing';
+      if (queryTab === 'competitor-radar' || queryTab === 'competitor_radar') return 'competitor_radar';
+      return queryTab as AdminTab;
+    }
+    try {
+      const saved = localStorage.getItem('fundu_admin_last_tab');
+      if (saved) {
+        if (saved === 'competitor-radar' || saved === 'competitor_radar') return 'competitor_radar';
+        if (saved === 'repair-pricing' || saved === 'repair_pricing') return 'repair_pricing';
+        return saved as AdminTab;
+      }
+    } catch (_e) {}
+    return 'overview';
+  };
+
+  // Tab state derived from URL or params or saved session
+  const [tab, setTab] = useState<AdminTab>(getInitialAdminTab);
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
+
+  const handleTabChange = (newTab: AdminTab) => {
+    setTab(newTab);
+    try {
+      localStorage.setItem('fundu_admin_last_tab', newTab);
+    } catch (_e) {}
+    const slugMap: Partial<Record<AdminTab, string>> = {
+      overview: '',
+      competitor_radar: 'competitor-radar',
+      repair_pricing: 'repair-pricing',
+    };
+    const slug = slugMap[newTab] !== undefined ? slugMap[newTab] : newTab;
+    const targetPath = slug ? `/admin/${slug}` : '/admin';
+    if (window.location.pathname !== targetPath) {
+      navigate(targetPath);
+    }
+  };
 
   // Live Notification alerts
   const [activeNotifications, setActiveNotifications] = useState<LiveNotification[]>([]);
@@ -156,50 +201,45 @@ export default function Admin() {
   const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
   const [selectedReviewId, setSelectedReviewId] = useState<string | null>(null);
 
-  // Sync tab with URL parameter
+  // Sync tab with URL parameter and preserve last active tab
   useEffect(() => {
     if (subtab) {
-      if (subtab === 'repair-pricing' || subtab === 'repair_pricing') {
-        setTab('repair_pricing');
-        return;
+      let t: AdminTab | null = null;
+      if (subtab === 'repair-pricing' || subtab === 'repair_pricing') t = 'repair_pricing';
+      else if (subtab === 'competitor-radar' || subtab === 'competitor_radar') t = 'competitor_radar';
+      else {
+        const validTabs: AdminTab[] = [
+          'overview', 'catalog', 'sells', 'orders', 'repairs', 'repair_pricing',
+          'wholesalers', 'agents', 'products', 'pricing', 'competitor_radar',
+          'banners', 'parts', 'users', 'reviews', 'contact',
+        ];
+        if (validTabs.includes(subtab as AdminTab)) t = subtab as AdminTab;
       }
-      if (subtab === 'competitor-radar' || subtab === 'competitor_radar') {
-        setTab('competitor_radar');
-        return;
-      }
-      const validTabs: AdminTab[] = [
-        'overview',
-        'catalog',
-        'sells',
-        'orders',
-        'repairs',
-        'repair_pricing',
-        'wholesalers',
-        'agents',
-        'products',
-        'pricing',
-        'competitor_radar',
-        'banners',
-        'parts',
-        'users',
-        'reviews',
-        'contact',
-      ];
-      if (validTabs.includes(subtab as AdminTab)) {
-        setTab(subtab as AdminTab);
+      if (t) {
+        setTab(t);
+        try { localStorage.setItem('fundu_admin_last_tab', t); } catch (_e) {}
         return;
       }
     }
+
     const queryTab = searchParams.get('tab');
     if (queryTab) {
-      if (queryTab === 'repair-pricing' || queryTab === 'repair_pricing') {
-        setTab('repair_pricing');
-      } else if (queryTab === 'competitor-radar' || queryTab === 'competitor_radar') {
-        setTab('competitor_radar');
-      } else {
-        setTab(queryTab as AdminTab);
-      }
+      let t: AdminTab = queryTab as AdminTab;
+      if (queryTab === 'repair-pricing' || queryTab === 'repair_pricing') t = 'repair_pricing';
+      else if (queryTab === 'competitor-radar' || queryTab === 'competitor_radar') t = 'competitor_radar';
+      setTab(t);
+      try { localStorage.setItem('fundu_admin_last_tab', t); } catch (_e) {}
+      return;
     }
+
+    // If on /admin root without subtab/queryTab, restore previous tab if saved
+    try {
+      const saved = localStorage.getItem('fundu_admin_last_tab');
+      if (saved && saved !== 'overview') {
+        const slug = saved === 'competitor_radar' ? 'competitor-radar' : saved === 'repair_pricing' ? 'repair-pricing' : saved;
+        navigate(`/admin/${slug}`, { replace: true });
+      }
+    } catch (_e) {}
   }, [subtab, searchParams]);
 
   // Modals state
@@ -1553,7 +1593,7 @@ export default function Admin() {
       {/* 1. Persistent Sidebar Navigation */}
       <AdminSidebar
         activeTab={tab}
-        onSelectTab={(newTab) => setTab(newTab)}
+        onSelectTab={handleTabChange}
         onOpenAddProduct={(cat) => openAddProductModal(cat)}
         counts={{
           sells: sells.filter((s) => s.status === 'pending' || s.status === 'assigned').length,
@@ -1719,7 +1759,7 @@ export default function Admin() {
               products={products}
               agents={agents}
               masterPhones={masterPhones}
-              onNavigateTab={(t) => setTab(t)}
+              onNavigateTab={handleTabChange}
               onOpenAddProduct={() => openAddProductModal()}
             />
           )}
