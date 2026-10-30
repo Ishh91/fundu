@@ -28,7 +28,7 @@ import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
 import { getCleanPhoneImage, pullLiveModelImagesFromDb } from '../lib/phoneImages';
 import type { Product, Review } from '../types';
-import { getModelHardwareSpecs, normalizeStorageString, is512GBValidForModel } from '../lib/deviceSpecs';
+import { getModelHardwareSpecs, normalizeStorageString, isStorageAllowedForModel } from '../lib/deviceSpecs';
 import { findSampleProductById, SAMPLE_PRODUCTS_MAP } from '../data/sampleProducts';
 import { findSampleLaptopById } from '../data/sampleLaptops';
 
@@ -296,17 +296,12 @@ const handleCheckPincode = async (codeToTest?: string) => {
       return ['256 GB', '512 GB', '1 TB'];
     }
 
-    const is512Allowed = is512GBValidForModel(product?.brand, product?.model || product?.title);
-    const filter512 = (list: string[]) => list.filter((s) => {
-      const norm = normalizeStorageString(s);
-      if (norm.includes('512 GB') || norm.includes('1 TB') || norm.includes('2 TB')) {
-        return is512Allowed;
-      }
-      return true;
+    const filterAllowed = (list: string[]) => list.filter((s) => {
+      return isStorageAllowedForModel(product?.brand, product?.model || product?.title, s);
     });
 
     if (product?.available_storages && product.available_storages.length > 0) {
-      const filtered = filter512(product.available_storages.map(normalizeStorageString));
+      const filtered = filterAllowed(product.available_storages.map(normalizeStorageString));
       if (filtered.length > 0) return filtered;
     }
 
@@ -317,12 +312,13 @@ const handleCheckPincode = async (codeToTest?: string) => {
         const baseList = (current && !specs.storages.includes(current))
           ? Array.from(new Set([current, ...specs.storages]))
           : specs.storages;
-        const filtered = filter512(baseList);
+        const filtered = filterAllowed(baseList);
         if (filtered.length > 0) return filtered;
       }
     }
     const base = product?.storage ? normalizeStorageString(product.storage) : '128 GB';
-    return filter512([base, '256 GB']);
+    const fallbackList = filterAllowed([base, '256 GB']);
+    return fallbackList.length > 0 ? fallbackList : [base];
   }, [product]);
 
   const availableColors = useMemo(() => {

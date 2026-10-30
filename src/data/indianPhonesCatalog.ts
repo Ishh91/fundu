@@ -1383,8 +1383,7 @@ export const ALL_INDIAN_PHONES_CATALOG: MasterPhone[] = [
     ],
     "storage_options": [
       "128GB",
-      "256GB",
-      "512GB"
+      "256GB"
     ],
     "default_mrp": 36999,
     "base_resale_value": 24500,
@@ -2381,8 +2380,7 @@ export const ALL_INDIAN_PHONES_CATALOG: MasterPhone[] = [
     ],
     "storage_options": [
       "128GB",
-      "256GB",
-      "512GB"
+      "256GB"
     ],
     "default_mrp": 39999,
     "base_resale_value": 22000,
@@ -2983,8 +2981,7 @@ export const ALL_INDIAN_PHONES_CATALOG: MasterPhone[] = [
     ],
     "storage_options": [
       "128GB",
-      "256GB",
-      "512GB"
+      "256GB"
     ],
     "default_mrp": 23999,
     "base_resale_value": 16500,

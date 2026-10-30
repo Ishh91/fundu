@@ -2351,6 +2351,148 @@ export function is512GBValidForModel(brand = '', model = ''): boolean {
   return false;
 }
 
+/**
+ * Master Authenticity Validator:
+ * Ensures NO phone model in the system can ever display or select a fake/impossible storage tier.
+ * Validates real-world Indian retail availability for every tier (16GB - 2TB).
+ */
+export function isStorageAllowedForModel(brand = '', model = '', storageStr = ''): boolean {
+  const normStorage = normalizeStorageString(storageStr);
+  const gb = getStorageInGb(normStorage);
+  if (![16, 32, 64, 128, 256, 512, 1024, 2048].includes(gb)) {
+    return false;
+  }
+
+  const b = String(brand || '').toLowerCase().trim();
+  const m = String(model || '').toLowerCase().trim();
+  const full = `${b} ${m}`;
+
+  // 1. Tier: 512 GB / 1 TB / 2 TB (Strict Flagships Only)
+  if (gb >= 512) {
+    return is512GBValidForModel(brand, model);
+  }
+
+  // 2. Tier: 256 GB
+  if (gb === 256) {
+    // Google Pixel: In India retail, strictly Pixel 8/8a/8 Pro, Pixel 9 series. (7 Pro, 7, 7a, 6, 6a, 5a, 4a, 3a NEVER had 256GB in India)
+    if (b.includes('google') || b.includes('pixel')) {
+      if (/pixel\s*(?:8|9|10)/i.test(m)) return true;
+      return false;
+    }
+
+    // Apple: Max 128GB on iPhone 6s/6, max 64GB on iPhone 5s/5/4
+    if (b.includes('apple') || m.includes('iphone')) {
+      if (/iphone\s*([456]s?|se\b(?!\s*(2|3|202[02])))\b/i.test(m)) return false;
+      return true;
+    }
+
+    // iQOO & Vivo: Budget/Mid-range capped at 128GB in India
+    if (b.includes('iqoo') || b.includes('vivo')) {
+      if (/(?:iqoo\s*z6|z6\s*5g|z6\s*44w|z6\s*lite)\b(?!\s*pro)/i.test(m)) return false;
+      if (/(?:iqoo\s*z7|z7\s*5g|z7s)\b(?!\s*pro)/i.test(m)) return false;
+      if (/(?:iqoo\s*z9x|z9\s*lite)\b/i.test(m)) return false;
+      if (/(?:vivo\s*t1|t1\s*5g|t1\s*44w|t1x)\b(?!\s*pro)/i.test(m)) return false;
+      if (/(?:vivo\s*t2x|t3x|t3\s*lite)\b/i.test(m)) return false;
+      if (/vivo\s*y0[1-9]|vivo\s*y1[0-9]|vivo\s*y2[0-2]\b/i.test(m)) return false;
+      return true;
+    }
+
+    // Samsung: Budget lines (A0x, A1x, M0x, M1x, F0x, F1x, J, On, Core, Grand) NEVER had 256GB
+    if (b.includes('samsung') || m.includes('galaxy')) {
+      if (/\b(a0[1-9]|m0[1-9]|f0[1-9]|a1[0-4]|m1[0-4]|f1[0-4])\b/i.test(m)) return false;
+      if (/galaxy\s*[jcon]\d|\bj\d|\bc\d|\bon\d|galaxy\s*core|galaxy\s*grand/i.test(m)) return false;
+      return true;
+    }
+
+    // Xiaomi / Redmi / Poco: Budget lines NEVER had 256GB
+    if (b.includes('xiaomi') || b.includes('redmi') || b.includes('poco')) {
+      if (/redmi\s*([1-9][ac]|10a|12c|a[1-3]|go)\b/i.test(m)) return false;
+      if (/poco\s*c[3-6]\d\b/i.test(m)) return false;
+      if (/poco\s*m[2-4]\b(?!\s*pro)/i.test(m)) return false;
+      return true;
+    }
+
+    // Realme: Budget C and Narzo lines NEVER had 256GB
+    if (b.includes('realme')) {
+      if (/realme\s*c(1|2|3|11|12|15|20|21|25|30|31|33|35)\b/i.test(m)) return false;
+      if (/narzo\s*([1-5]0i|[1-5]0a)\b/i.test(m)) return false;
+      return true;
+    }
+
+    // Motorola: E series and lower G series NEVER had 256GB
+    if (b.includes('motorola') || b.includes('moto')) {
+      if (/moto\s*e\d+\b/i.test(m)) return false;
+      if (/moto\s*g(10|13|14|22|31|32|34|42|52)\b/i.test(m)) return false;
+      return true;
+    }
+
+    // OnePlus: Nord CE 2 Lite & older flagships never had 256GB in India
+    if (b.includes('oneplus')) {
+      if (/nord\s*ce\s*2\s*lite/i.test(m)) return false;
+      if (/oneplus\s*(?:[123]|3t|x)\b/i.test(m)) return false;
+      return true;
+    }
+
+    return true;
+  }
+
+  // 3. Tier: 128 GB
+  if (gb === 128) {
+    // Ultra / Fold flagships that START at 256 GB (128 GB never launched / does not exist)
+    if (/s2[3-6]\s*ultra|15\s*pro\s*max|16\s*pro\s*max|z\s*fold\s*[2-6]|pixel\s*9\s*pro\s*fold|oneplus\s*open|iqoo\s*(12|13)|x100\s*pro|x90\s*pro|note\s*20\s*ultra/i.test(full)) {
+      return false;
+    }
+    // Antique phones that only had up to 32GB or 64GB
+    if (/iphone\s*[45]s?\b|galaxy\s*[jcon][1-3]\b/i.test(m)) {
+      return false;
+    }
+    return true;
+  }
+
+  // 4. Tier: 64 GB
+  if (gb === 64) {
+    // Modern phones starting in 2021+ that START at 128 GB (64 GB is completely fake)
+    if (
+      /iphone\s*(13|14|15|16)/i.test(m) ||
+      /galaxy\s*s2[0-6]/i.test(m) ||
+      /galaxy\s*note\s*20/i.test(m) ||
+      /z\s*(fold|flip)/i.test(m) ||
+      /pixel\s*([4-9]|1[0-9])/i.test(m) ||
+      /oneplus\s*([7-9]|1[0-3]|nord\s*[2-4]|nord\s*ce\s*[2-4])/i.test(m) ||
+      /vivo\s*x(50|60|70|80|90|100|200)/i.test(m) ||
+      /vivo\s*v(2[1-9]|3[0-9]|4[0-9])/i.test(m) ||
+      /iqoo\s*(3|7|9|11|12|13|neo|z[6-9]\s*5g|z[6-9]\s*pro|z9s)/i.test(m) ||
+      /nothing\s*phone|cmf\s*phone/i.test(full)
+    ) {
+      return false;
+    }
+    return true;
+  }
+
+  // 5. Tier: 16 GB & 32 GB
+  if (gb <= 32) {
+    // Allowed ONLY on legacy/vintage devices (iPhone <= 7, Galaxy S <= 7, Galaxy J, Redmi <= 6A, A1, C11)
+    if (
+      /iphone\s*(?:[89]|1[0-9]|x|se\s*(?:2|3|202[02]))/i.test(m) ||
+      /galaxy\s*s([89]|1[0-9]|2[0-9])/i.test(m) ||
+      /galaxy\s*note\s*([89]|1[0-9]|2[0-9])/i.test(m) ||
+      /oneplus\b/i.test(b) ||
+      /pixel\s*([2-9]|1[0-9])/i.test(m) ||
+      /nord\b/i.test(m) ||
+      /iqoo\b/i.test(b) ||
+      /vivo\s*[xv]\d+/i.test(m) ||
+      /oppo\s*(find|reno)/i.test(m) ||
+      /redmi\s*note/i.test(m) ||
+      /realme\s*(gt|number|\d+)/i.test(m)
+    ) {
+      return false;
+    }
+    return true;
+  }
+
+  return true;
+}
+
 export function inferTierHardwareSpecs(
   brand = '',
   model = '',
@@ -2485,13 +2627,8 @@ export function inferTierHardwareSpecs(
     .map(normalizeStorageString)
     .filter(isValidStorageTier);
   const rawStorages = normSeeds.length > 0 ? normSeeds : tierStorages;
-  const is512Allowed = is512GBValidForModel(brand, model);
   const finalStorages = rawStorages.filter((stg) => {
-    const norm = normalizeStorageString(stg);
-    if (norm.includes('512 GB') || norm.includes('1 TB') || norm.includes('2 TB')) {
-      return is512Allowed;
-    }
-    return true;
+    return isStorageAllowedForModel(brand, model, stg);
   });
   const normalizedSeedRams = seedRams.map(normalizeRamString).filter(Boolean);
   const finalRams = Array.from(new Set([...normalizedSeedRams, ...allRams]));
@@ -2564,14 +2701,9 @@ export function getModelHardwareSpecs(
   const fullText = `${normBrand} ${normModel}`;
   const isApple = normBrand.includes('apple') || normModel.includes('iphone') || normModel.includes('ipad');
 
-  const is512Allowed = is512GBValidForModel(brand, model);
   const sanitizeSpecs = (specs: DeviceHardwareSpecs): DeviceHardwareSpecs => {
     const storages = specs.storages.filter((stg) => {
-      const norm = normalizeStorageString(stg);
-      if (norm.includes('512 GB') || norm.includes('1 TB') || norm.includes('2 TB')) {
-        return is512Allowed;
-      }
-      return true;
+      return isValidStorageTier(stg) && isStorageAllowedForModel(brand, model, stg);
     });
     const safeStorages = storages.length > 0 ? storages : (specs.storages[0] ? [specs.storages[0]] : ['128 GB']);
     const defaultStorage = safeStorages.includes(specs.defaultStorage) ? specs.defaultStorage : safeStorages[0];

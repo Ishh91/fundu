@@ -29,6 +29,7 @@ import {
   calculateHardwareVariantMultiplier,
   getModelHardwareSpecs,
   calculateRamPriceOffset,
+  isStorageAllowedForModel,
 } from '../../lib/deviceSpecs';
 import { ALL_INDIAN_PHONES_CATALOG } from '../../data/indianPhonesCatalog';
 import { MASTER_MODEL_CATALOG } from '../../data/masterModelCatalog';
@@ -171,8 +172,10 @@ export default function AdminCompetitorRadar() {
 
   // Authentic Storages that realistically exist for this phone (e.g. S24 Ultra -> 256GB, 512GB, 1TB)
   const availableStorages = useMemo(() => {
-    return currentDeviceSpecs.storages.length > 0 ? currentDeviceSpecs.storages : ['128 GB', '256 GB'];
-  }, [currentDeviceSpecs]);
+    const list = currentDeviceSpecs.storages.length > 0 ? currentDeviceSpecs.storages : ['128 GB', '256 GB'];
+    const filtered = list.filter((s) => isStorageAllowedForModel(selectedBrand, searchModel, s));
+    return filtered.length > 0 ? filtered : list;
+  }, [currentDeviceSpecs, selectedBrand, searchModel]);
 
   // Authentic RAM options for the currently selected storage
   const availableRams = useMemo(() => {

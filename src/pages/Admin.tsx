@@ -48,7 +48,7 @@ import {
 import { soundNotifier } from '../lib/soundAlert';
 import AdminLiveNotifier, { LiveNotification } from '../components/admin/AdminLiveNotifier';
 import { saveCustomModelImage } from '../lib/phoneImages';
-import { is512GBValidForModel } from '../lib/deviceSpecs';
+import { isStorageAllowedForModel } from '../lib/deviceSpecs';
 
 // Sub-page modular components
 import AdminSidebar from './admin/AdminSidebar';
@@ -2665,9 +2665,9 @@ export default function Admin() {
                   <div className="flex flex-wrap gap-1.5">
                     {(productForm.category === 'laptop'
                       ? ['128 GB SSD', '256 GB SSD', '512 GB SSD', '1 TB SSD', '2 TB SSD']
-                      : is512GBValidForModel(productForm.brand, productForm.model || productForm.title)
-                        ? ['64 GB', '128 GB', '256 GB', '512 GB', '1 TB']
-                        : ['64 GB', '128 GB', '256 GB']
+                      : ['64 GB', '128 GB', '256 GB', '512 GB', '1 TB'].filter((stg) =>
+                          isStorageAllowedForModel(productForm.brand, productForm.model || productForm.title, stg)
+                        )
                     ).map((stg) => {
                       const isSelected = (productForm.available_storages || []).includes(stg);
                       return (
