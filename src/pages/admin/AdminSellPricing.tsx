@@ -385,7 +385,7 @@ export default function AdminSellPricing({
           storage: normStorage,
           base_price: cfgPrice,
           default_mrp: Math.round(cfgPrice * 1.5),
-          excellent_multiplier: Number(cfg.excellent_multiplier) || 0.85,
+          excellent_multiplier: Number(cfg.excellent_multiplier) || 1.0,
           good_multiplier: Number(cfg.good_multiplier) || 0.70,
           fair_multiplier: Number(cfg.fair_multiplier) || 0.55,
           box_bonus: Number(cfg.box_bonus) || 500,
@@ -692,12 +692,14 @@ export default function AdminSellPricing({
         model: modelTrim,
         storage: storageTrim || null,
         base_price: newPriceNum,
-        excellent_multiplier: Number(priceForm.excellent_multiplier),
+        excellent_multiplier: Number(priceForm.excellent_multiplier) || 1.0,
         good_multiplier: Number(priceForm.good_multiplier),
         fair_multiplier: Number(priceForm.fair_multiplier),
         box_bonus: Number(priceForm.box_bonus) || 0,
         charger_bonus: Number(priceForm.charger_bonus) || 0,
         is_active: priceForm.is_active,
+        is_locked: true,
+        manual_override: true,
       });
     } catch (err: any) {
       console.error('[AdminSellPricing] Background price save error:', err);
@@ -731,12 +733,14 @@ export default function AdminSellPricing({
         model: selectedModel.model,
         storage: storageToSave,
         base_price: priceNum,
-        excellent_multiplier: existingCfg?.excellent_multiplier ?? selectedModel.excellent_multiplier,
+        excellent_multiplier: 1.0,
         good_multiplier: existingCfg?.good_multiplier ?? selectedModel.good_multiplier,
         fair_multiplier: existingCfg?.fair_multiplier ?? selectedModel.fair_multiplier,
         box_bonus: existingCfg?.box_bonus ?? selectedModel.box_bonus,
         charger_bonus: existingCfg?.charger_bonus ?? selectedModel.charger_bonus,
         is_active: selectedModel.is_active,
+        is_locked: true,
+        manual_override: true,
       });
     } catch (err: any) {
       console.error('[AdminSellPricing] Inline background save error:', err);
@@ -784,12 +788,14 @@ export default function AdminSellPricing({
         model: modelTrim,
         storage: storageTrim,
         base_price: basePriceNum,
-        excellent_multiplier: 0.75,
-        good_multiplier: 0.60,
-        fair_multiplier: 0.45,
+        excellent_multiplier: 1.0,
+        good_multiplier: 0.85,
+        fair_multiplier: 0.70,
         box_bonus: 600,
         charger_bonus: 400,
         is_active: true,
+        is_locked: true,
+        manual_override: true,
       });
 
       if (onAddNewModel) {

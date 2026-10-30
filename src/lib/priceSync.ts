@@ -130,7 +130,7 @@ export function getEffectivePrice(brand: string, model: string, defaultPrice: nu
     const storageKeys = getPriceStorageKeys(brand, model, storage);
     for (const k of storageKeys) {
       const val = overrides[k];
-      if (typeof val === 'number' && val > 0 && val <= 250000) {
+      if (typeof val === 'number' && val > 0 && val <= 500000) {
         return val;
       }
     }
@@ -140,7 +140,7 @@ export function getEffectivePrice(brand: string, model: string, defaultPrice: nu
   const modelKeys = getPriceModelKeys(brand, model);
   for (const k of modelKeys) {
     const val = overrides[k];
-    if (typeof val === 'number' && val > 0 && val <= 250000) {
+    if (typeof val === 'number' && val > 0 && val <= 500000) {
       if (storage) {
         const baseMult = calculateHardwareVariantMultiplier('128 GB', '', brand);
         const targetMult = calculateHardwareVariantMultiplier(storage, '', brand);
@@ -149,10 +149,6 @@ export function getEffectivePrice(brand: string, model: string, defaultPrice: nu
       }
       return val;
     }
-  }
-
-  if (typeof defaultPrice === 'number' && defaultPrice > 250000) {
-    return 50000;
   }
 
   return defaultPrice;

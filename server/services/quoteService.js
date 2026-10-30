@@ -133,9 +133,9 @@ export async function createPhoneQuote(input, options = {}) {
       enrichedOptions.isDirectBuybackPrice = true;
       enrichedOptions.cleanedModel = dbConfig.model;
       enrichedOptions.cosmeticMultipliers = {
-        flawless: dbConfig.excellent_multiplier ?? 0.85,
-        good: dbConfig.good_multiplier ?? 0.70,
-        fair: dbConfig.fair_multiplier ?? 0.55,
+        flawless: dbConfig.excellent_multiplier != null ? Number(dbConfig.excellent_multiplier) : 1.0,
+        good: dbConfig.good_multiplier != null ? Number(dbConfig.good_multiplier) : 0.85,
+        fair: dbConfig.fair_multiplier != null ? Number(dbConfig.fair_multiplier) : 0.70,
       };
     }
   } catch (_dbErr) {

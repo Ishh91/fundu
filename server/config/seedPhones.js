@@ -58,9 +58,26 @@ export async function ensureMasterPhonesSeeded(force = true) {
       }
     });
 
+    // 0. Pre-fetch all Admin Locked / Custom Prices so seed NEVER overwrites them!
+    const lockedConfigs = await SellPriceConfig.find(
+      { $or: [{ manual_override: true }, { is_locked: true }, { updated_at: { $exists: true } }] },
+      { brand: 1, model: 1, base_price: 1 }
+    ).lean();
+
+    const lockedSet = new Set();
+    const lockedPriceMap = new Map();
+    lockedConfigs.forEach((c) => {
+      const b = (c.brand || '').toLowerCase().trim();
+      const m = (c.model || '').toLowerCase().trim();
+      const key = `${b}:${m}`;
+      lockedSet.add(key);
+      if (c.base_price > 0) {
+        lockedPriceMap.set(key, c.base_price);
+      }
+    });
+
     // 1. Bulk Upsert into MasterPhone
     const masterBulkOps = currentCatalog.map((phone) => {
-      const price = phone.price || phone.base_resale_value || 12000;
       const b = (phone.brand || '').toLowerCase().trim();
       const m = (phone.model || '').toLowerCase().trim();
       let strippedM = m;
@@ -68,6 +85,10 @@ export async function ensureMasterPhonesSeeded(force = true) {
         strippedM = strippedM.slice(b.length).trim();
       }
       const existingCustomImg = customPhoneImageMap.get(`${b}:${m}`) || customPhoneImageMap.get(`${b}:${strippedM}`);
+      const key = `${b}:${m}`;
+      const strippedKey = `${b}:${strippedM}`;
+      const lockedPrice = lockedPriceMap.get(key) || lockedPriceMap.get(strippedKey);
+      const price = lockedPrice || phone.price || phone.base_resale_value || 12000;
 
       const updateFields = {
         brand: phone.brand,
@@ -76,8 +97,6 @@ export async function ensureMasterPhonesSeeded(force = true) {
         ram_options: phone.ram_options || ['6GB', '8GB', '12GB'],
         storage_options: phone.storage_options || ['128GB', '256GB'],
         default_mrp: phone.default_mrp || Math.round(price * 1.5),
-        base_resale_value: price,
-        price: price,
         popular_tag: phone.popular_tag || `${phone.brand} Official Model`,
         processor: phone.processor || 'High-Performance Processor',
         camera_spec: phone.camera_spec || '50MP OIS Camera',
@@ -88,6 +107,17 @@ export async function ensureMasterPhonesSeeded(force = true) {
         updated_at: new Date(),
       };
 
+      // Only update base_resale_value and price if not locked or if using locked price
+      if (lockedPrice) {
+        updateFields.base_resale_value = lockedPrice;
+        updateFields.price = lockedPrice;
+      } else {
+        updateFields.$setOnInsert = {
+          base_resale_value: price,
+          price: price,
+        };
+      }
+
       if (existingCustomImg) {
         updateFields.image_url = existingCustomImg;
         updateFields.custom_image = true;
@@ -95,12 +125,18 @@ export async function ensureMasterPhonesSeeded(force = true) {
         updateFields.image_url = phone.image_url || null;
       }
 
+      const setPayload = { ...updateFields };
+      delete setPayload.$setOnInsert;
+
+      const updateOp = { $set: setPayload };
+      if (updateFields.$setOnInsert) {
+        updateOp.$setOnInsert = updateFields.$setOnInsert;
+      }
+
       return {
         updateOne: {
           filter: { brand: phone.brand, model: phone.model },
-          update: {
-            $set: updateFields,
-          },
+          update: updateOp,
           upsert: true,
         },
       };
@@ -113,13 +149,6 @@ export async function ensureMasterPhonesSeeded(force = true) {
 
     // 2. Bulk Upsert into SellPriceConfig (Admin Pricing Rules)
     // NEVER overwrite models that an admin has manually set or locked!
-    const lockedConfigs = await SellPriceConfig.find(
-      { $or: [{ manual_override: true }, { is_locked: true }] },
-      { brand: 1, model: 1 }
-    ).lean();
-    const lockedSet = new Set(
-      lockedConfigs.map((c) => `${(c.brand || '').toLowerCase().trim()}:${(c.model || '').toLowerCase().trim()}`)
-    );
 
     const configBulkOps = currentCatalog
       .filter((phone) => {

@@ -2782,18 +2782,23 @@ export function quotePhone(input = {}, options = {}) {
   // Exact Business Formula:
   // Base proceeds equals catalog/benchmark buyback value.
   // 1. Natural Aging & Generation factor
-  const agingFactor = calculatePhoneAgingFactor(brand, model, under_warranty, agePeriod);
+  // When options.isDirectBuybackPrice is true (admin/database set base price), the admin has already set the exact buyback value.
+  // DO NOT apply secondary aging discount on top of the admin's fixed price!
+  const isDirectPrice = !!options.isDirectBuybackPrice;
+  const agingFactor = isDirectPrice ? 1.0 : calculatePhoneAgingFactor(brand, model, under_warranty, agePeriod);
   const baseP = Math.round(expectedResaleProceeds * agingFactor);
   const condP = Math.round(baseP * cosmeticMultiplier);
 
   // Missing accessories deductions if not included (box: -300, charger: -300, bill: -200)
   let accessoriesAdjustment = 0;
-  const hasBox = Array.isArray(accessories) && (accessories.includes('Original Box') || accessories.includes('Box'));
-  const hasCharger = Array.isArray(accessories) && (accessories.includes('Original Charger') || accessories.includes('Charger'));
-  const hasBill = Array.isArray(accessories) && (accessories.includes('Valid Bill') || accessories.includes('Bill'));
-  if (!hasBox) accessoriesAdjustment -= (FUNDU_POLICY.accessoriesBonus['Original Box'] || 300);
-  if (!hasCharger) accessoriesAdjustment -= (FUNDU_POLICY.accessoriesBonus['Original Charger'] || 300);
-  if (!hasBill) accessoriesAdjustment -= (FUNDU_POLICY.accessoriesBonus['Valid Bill'] || 200);
+  if (Array.isArray(accessories) && accessories.length > 0) {
+    const hasBox = accessories.includes('Original Box') || accessories.includes('Box');
+    const hasCharger = accessories.includes('Original Charger') || accessories.includes('Charger');
+    const hasBill = accessories.includes('Valid Bill') || accessories.includes('Bill');
+    if (!hasBox) accessoriesAdjustment -= (FUNDU_POLICY.accessoriesBonus['Original Box'] || 300);
+    if (!hasCharger) accessoriesAdjustment -= (FUNDU_POLICY.accessoriesBonus['Original Charger'] || 300);
+    if (!hasBill) accessoriesAdjustment -= (FUNDU_POLICY.accessoriesBonus['Valid Bill'] || 200);
+  }
 
   const proceedsAdjustedForCondition = condP + accessoriesAdjustment;
   const rawOffer = proceedsAdjustedForCondition - configuredRepairsTotal - missingStylusDeduction;

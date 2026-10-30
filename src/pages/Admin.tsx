@@ -816,12 +816,15 @@ export default function Admin() {
         model: pricingForm.model,
         storage: pricingForm.storage || null,
         base_price: Number(pricingForm.base_price),
-        excellent_multiplier: Number(pricingForm.excellent_multiplier),
-        good_multiplier: Number(pricingForm.good_multiplier),
-        fair_multiplier: Number(pricingForm.fair_multiplier),
+        excellent_multiplier: Number(pricingForm.excellent_multiplier) || 1.0,
+        good_multiplier: Number(pricingForm.good_multiplier) || 0.70,
+        fair_multiplier: Number(pricingForm.fair_multiplier) || 0.55,
         box_bonus: Number(pricingForm.box_bonus) || 0,
         charger_bonus: Number(pricingForm.charger_bonus) || 0,
         is_active: pricingForm.is_active,
+        is_locked: true,
+        manual_override: true,
+        updated_at: new Date().toISOString(),
       };
 
       const newBasePrice = Number(pricingForm.base_price);
@@ -1833,6 +1836,10 @@ export default function Admin() {
                       model: rawModel,
                       storage: cleanStorage,
                       base_price: priceNum,
+                      excellent_multiplier: Number(payload.excellent_multiplier) || 1.0,
+                      is_locked: true,
+                      manual_override: true,
+                      updated_at: new Date().toISOString(),
                     }),
                   });
                   if (!res.ok) throw new Error('Failed to update price in database');

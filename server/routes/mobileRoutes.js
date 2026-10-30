@@ -636,7 +636,16 @@ router.get('/sell-pricing/config', async (req, res, next) => {
 
     if (config) {
       const normDoc = normalizeDoc(config);
-      // If requested storage differs from configured storage, scale dynamically
+      const isExplicitMatch = !storage || (normDoc.storage && normDoc.storage.replace(/\s+/g, '').toLowerCase() === storage.replace(/\s+/g, '').toLowerCase());
+
+      // If document was explicitly set/locked by admin OR exact storage matched, PRESERVE exact price without any mutation!
+      if (isExplicitMatch || normDoc.manual_override || normDoc.is_locked) {
+        if (storage) normDoc.storage = storage;
+        res.json({ data: normDoc, source: 'admin_database' });
+        return;
+      }
+
+      // Only if requested storage differs from an unlocked default config, scale dynamically
       if (storage && normDoc.base_price > 0) {
         const baseStorage = normDoc.storage || '128 GB';
         const normBaseStorage = baseStorage.replace(/\s+/g, '').toLowerCase();
@@ -648,48 +657,6 @@ router.get('/sell-pricing/config', async (req, res, next) => {
           const ratio = baseMult > 0 ? targetMult / baseMult : 1.0;
           normDoc.base_price = Math.max(500, Math.round((normDoc.base_price * ratio) / 50) * 50);
           normDoc.storage = storage;
-        }
-      }
-
-      // Universal Anti-Inversion Guard: Cross-check against all sibling storage variants
-      if (storage && normDoc.base_price > 0) {
-        try {
-          const parseGB = (s) => {
-            if (!s) return 0;
-            const m = String(s).match(/(\d+)\s*(GB|TB)/i);
-            if (!m) return 0;
-            const val = parseInt(m[1], 10);
-            return m[2].toUpperCase() === 'TB' ? val * 1024 : val;
-          };
-          const targetGB = parseGB(storage);
-          if (targetGB > 0) {
-            const siblings = await SellPriceConfig.find({
-              brand: brandRegex,
-              model: modelRegex,
-              is_active: { $ne: false },
-            }).lean();
-
-            for (const sib of siblings) {
-              const sibGB = parseGB(sib.storage);
-              if (sibGB > 0 && sib.base_price > 0) {
-                if (targetGB > sibGB && normDoc.base_price <= sib.base_price) {
-                  // Target is higher storage, but price is <= lower storage! Auto-enforce premium.
-                  const ratio = calculateHardwareVariantMultiplier(storage, '', rawBrand) /
-                                (calculateHardwareVariantMultiplier(sib.storage, '', rawBrand) || 1.0);
-                  const safeRatio = Math.max(1.05, ratio);
-                  normDoc.base_price = Math.round((sib.base_price * safeRatio) / 50) * 50;
-                } else if (targetGB < sibGB && normDoc.base_price >= sib.base_price && !normDoc.manual_override && !normDoc.is_locked) {
-                  // Target is lower storage, but price is >= higher storage! Auto-enforce lower tier only on non-manual prices.
-                  const ratio = calculateHardwareVariantMultiplier(storage, '', rawBrand) /
-                                (calculateHardwareVariantMultiplier(sib.storage, '', rawBrand) || 1.0);
-                  const safeRatio = Math.min(0.95, ratio);
-                  normDoc.base_price = Math.round((sib.base_price * safeRatio) / 50) * 50;
-                }
-              }
-            }
-          }
-        } catch (_guardErr) {
-          // non-fatal
         }
       }
 
@@ -799,7 +766,7 @@ router.post('/sell-pricing/config', async (req, res, next) => {
       model: rawModel,
       storage: cleanStorage,
       base_price: Number(base_price),
-      excellent_multiplier: Number(excellent_multiplier) || 0.85,
+      excellent_multiplier: Number(excellent_multiplier) || 1.0,
       good_multiplier: Number(good_multiplier) || 0.70,
       fair_multiplier: Number(fair_multiplier) || 0.55,
       box_bonus: Number(box_bonus) || 400,
@@ -888,10 +855,6 @@ router.post('/sell-pricing/config', async (req, res, next) => {
             continue;
           }
 
-          const targetMult = calculateHardwareVariantMultiplier(varStorage, '', rawBrand) || 1.0;
-          const ratio = targetMult / currentMult;
-          const proportionalPrice = Math.max(500, Math.round((baseNum * ratio) / 50) * 50);
-
           const varCleanRegex = varStorage.replace(/\s+/g, '\\s*');
           const varMatch = {
             brand: brandRegex,
@@ -899,26 +862,34 @@ router.post('/sell-pricing/config', async (req, res, next) => {
             storage: new RegExp(`^${varCleanRegex}$`, 'i'),
           };
 
+          // NEVER OVERWRITE AN EXISTING VARIANT! If an admin has fixed or edited this sibling variant, PRESERVE IT 100%!
+          const existingVar = await SellPriceConfig.findOne(varMatch).lean();
+          if (existingVar && (existingVar.manual_override || existingVar.is_locked || (existingVar.base_price > 0 && existingVar.updated_at))) {
+            continue;
+          }
+
+          const targetMult = calculateHardwareVariantMultiplier(varStorage, '', rawBrand) || 1.0;
+          const ratio = targetMult / currentMult;
+          const proportionalPrice = Math.max(500, Math.round((baseNum * ratio) / 50) * 50);
+
           const varDoc = await SellPriceConfig.findOneAndUpdate(
             varMatch,
             {
-              $set: {
+              $setOnInsert: {
                 brand: rawBrand,
                 model: rawModel,
                 storage: varStorage,
                 base_price: proportionalPrice,
-                excellent_multiplier: Number(excellent_multiplier) || 0.85,
-                good_multiplier: Number(good_multiplier) || 0.70,
-                fair_multiplier: Number(fair_multiplier) || 0.55,
-                box_bonus: Number(box_bonus) || 400,
-                charger_bonus: Number(charger_bonus) || 400,
-                is_active: is_active !== false,
-                is_locked: true,
-                manual_override: true,
-                updated_at: new Date(),
-              },
-              $setOnInsert: {
+                excellent_multiplier: 1.0,
+                good_multiplier: 0.70,
+                fair_multiplier: 0.55,
+                box_bonus: 400,
+                charger_bonus: 400,
+                is_active: true,
+                is_locked: false,
+                manual_override: false,
                 created_at: new Date(),
+                updated_at: new Date(),
               },
             },
             { upsert: true, new: true, setDefaultsOnInsert: true }

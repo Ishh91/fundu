@@ -100,6 +100,8 @@ export type SellPriceConfig = {
   box_bonus: number;
   charger_bonus: number;
   is_active: boolean;
+  is_locked?: boolean;
+  manual_override?: boolean;
   display_spec?: string;
   created_at?: string;
   updated_at?: string;
