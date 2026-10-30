@@ -99,8 +99,8 @@ export async function createPhoneQuote(input, options = {}) {
     cleanModel = cleanModel.slice(bNorm.length).trim();
   }
 
-  const enrichedOptions = { ...options };
-  const enrichedInput = { ...input, model: cleanModel };
+  const enrichedOptions = { ...options, ram: input.ram || options.ram || '' };
+  const enrichedInput = { ...input, model: cleanModel, ram: input.ram || options.ram || '' };
 
   // 1. Authoritative Admin Pricing: Check MongoDB SellPriceConfig first
   try {

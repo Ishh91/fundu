@@ -109,7 +109,10 @@ export async function getFunduPhoneQuote(params: FunduQuoteRequest): Promise<Fun
     catalogPrice: dbPrice,
     catalogStorage: params.storage || '128 GB',
     isDirectBuybackPrice: true,
-  } : {};
+    ram: params.ram || '',
+  } : {
+    ram: params.ram || '',
+  };
   const localResult = quotePhone(params, quoteOptions);
   const { _internalAudit, ...publicQuote } = localResult as any;
   return publicQuote as FunduQuoteResponse;

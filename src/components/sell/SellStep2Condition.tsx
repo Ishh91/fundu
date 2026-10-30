@@ -13,7 +13,7 @@ import {
 import { getCleanPhoneImage, BRAND_FRONT_FALLBACKS, getGenericDevicePlaceholder } from '../../lib/phoneImages';
 import { formatINR, formatMaskedPrice } from '../../lib/db';
 import { HARDWARE_DEFECTS, ACCESSORIES_LIST } from '../../data/masterModelCatalog';
-import { deviceIncludesStylus, getModelReleaseYear, isAmoledDisplay } from '../../lib/deviceSpecs';
+import { deviceIncludesStylus, getModelReleaseYear, isAmoledDisplay, calculateRamPriceOffset } from '../../lib/deviceSpecs';
 import type { FunduQuoteResponse } from '../../lib/quoteEngine';
 
 interface SellStep2ConditionProps {
@@ -117,9 +117,11 @@ export default function SellStep2Condition({
     ? currentDeviceSpecs.getRamsForStorage(form.storage)
     : (currentDeviceSpecs?.rams || []);
 
+  const ramOffset = calculateRamPriceOffset(form.ram, availableRams, form.brand);
+
   const effectiveBasePrice = (baseModelPrice && baseModelPrice > 0)
     ? baseModelPrice
-    : (pricingConfig?.base_price || 0);
+    : ((pricingConfig?.base_price || 0) > 0 ? (pricingConfig?.base_price || 0) + ramOffset : 0);
 
   const rawOffer = funduQuote?.offerAmount ?? estimate;
   const currentLiveOffer = Math.min(effectiveBasePrice > 0 ? effectiveBasePrice : 180000, Math.max(500, rawOffer));

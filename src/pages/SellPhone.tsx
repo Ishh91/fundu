@@ -778,18 +778,15 @@ export default function SellPhone() {
     // Apply dynamic admin overrides in real-time
     rawBase = getEffectivePrice(form.brand, form.model, rawBase, form.storage);
 
-    // Dynamic variant multiplier based on exact RAM + Storage combination:
+    // Dynamic variant multiplier based on storage + authentic guaranteed RAM tier offset:
     const catalogMult = calculateHardwareVariantMultiplier(catalogStorage, '', form.brand);
-    // Only pass RAM to multiplier if this model actually has multiple RAM choices:
-    const effectiveRam = availableRams.length > 1 ? form.ram : '';
-    const selectedMult = calculateHardwareVariantMultiplier(form.storage, effectiveRam, form.brand);
-    const variantRatio = selectedMult / (catalogMult || 1.0);
+    const storageMult = calculateHardwareVariantMultiplier(form.storage, '', form.brand);
+    const ratio = catalogMult > 0 ? storageMult / catalogMult : 1.0;
+    const scaled = Math.round((rawBase * ratio) / 50) * 50;
+    const ramOffset = calculateRamPriceOffset(form.ram, availableRams, form.brand);
 
-    if (Math.abs(variantRatio - 1.0) < 0.001) {
-      return rawBase;
-    }
-    return Math.max(1000, Math.round((rawBase * variantRatio) / 50) * 50);
-  }, [form.brand, form.model, form.storage, form.ram, version, pricingConfig]);
+    return Math.max(1000, scaled + ramOffset);
+  }, [form.brand, form.model, form.storage, form.ram, availableRams, version, pricingConfig]);
 
   // Guaranteed non-zero smartphone valuation estimate
   const estimate = useMemo(() => {

@@ -2244,7 +2244,7 @@ export function lookupResaleBenchmark(brand, model, storage, options = {}) {
 
     if (sibling) {
       const siblingMult = calculateHardwareVariantMultiplier(sibling.storage, '', sibling.brand);
-      const targetMult = calculateHardwareVariantMultiplier(normStorage, ram, brand);
+      const targetMult = calculateHardwareVariantMultiplier(normStorage, '', brand);
       const ratio = targetMult / (siblingMult || 1.0);
 
       benchmark = {
@@ -2259,7 +2259,7 @@ export function lookupResaleBenchmark(brand, model, storage, options = {}) {
 
   // 3. Guaranteed comprehensive catalog valuation fallback
   if (!benchmark) {
-    const fallbackProceeds = computeDynamicBenchmarkProceeds(brand, model, storage, ram);
+    const fallbackProceeds = computeDynamicBenchmarkProceeds(brand, model, storage, '');
     benchmark = {
       brand: brand || 'Smartphone',
       model: model || 'Smartphone',
@@ -2269,11 +2269,16 @@ export function lookupResaleBenchmark(brand, model, storage, options = {}) {
     };
   }
 
-  // 4. Variant adjustments for RAM on direct matches (where benchmark storage matched, but RAM differs)
-  if (matchedDirectly && ram && benchmark && benchmark.proceeds) {
-    const ramRatio = calculateHardwareVariantMultiplier(normStorage, ram, brand) / calculateHardwareVariantMultiplier(normStorage, '', brand);
-    if (Math.abs(ramRatio - 1.0) > 0.001) {
-      benchmark.proceeds = Math.round((benchmark.proceeds * ramRatio) / 50) * 50;
+  // 4. Variant adjustments for RAM (ensure authentic minimum ₹1,000 difference for 8GB over 6GB on Android)
+  if (ram && !normBrand.includes('apple') && benchmark && benchmark.proceeds) {
+    const ramMatch = String(ram).match(/(\d+)/);
+    if (ramMatch) {
+      const r = parseInt(ramMatch[1], 10);
+      if (r >= 8) {
+        benchmark.proceeds += (r >= 12 ? 2000 : 1000);
+      } else if (r <= 4) {
+        benchmark.proceeds = Math.max(500, benchmark.proceeds - 800);
+      }
     }
   }
 
@@ -2797,9 +2802,22 @@ export function quotePhone(input = {}, options = {}) {
   // 1. Natural Aging & Generation factor
   // When options.isDirectBuybackPrice is true (admin/database set base price), the admin has already set the exact buyback value.
   // DO NOT apply secondary aging discount on top of the admin's fixed price!
+  let ramOffsetAmount = 0;
+  if (ram && !String(brand || '').toLowerCase().includes('apple')) {
+    const ramMatch = String(ram).match(/(\d+)/);
+    if (ramMatch) {
+      const r = parseInt(ramMatch[1], 10);
+      if (r >= 8) ramOffsetAmount = r >= 12 ? 2000 : 1000;
+    }
+  }
+
   const isDirectPrice = !!options.isDirectBuybackPrice;
   const agingFactor = isDirectPrice ? 1.0 : calculatePhoneAgingFactor(brand, model, under_warranty, agePeriod);
-  const baseP = Math.round(expectedResaleProceeds * agingFactor);
+  let baseP = Math.round(expectedResaleProceeds * agingFactor);
+  if (!isDirectPrice && ramOffsetAmount > 0 && agingFactor < 1.0) {
+    const baselineWithoutRam = Math.max(500, expectedResaleProceeds - ramOffsetAmount);
+    baseP = Math.round(baselineWithoutRam * agingFactor) + ramOffsetAmount;
+  }
   const condP = Math.round(baseP * cosmeticMultiplier);
 
   // Missing accessories deductions if not included (box: -300, charger: -300, bill: -200)

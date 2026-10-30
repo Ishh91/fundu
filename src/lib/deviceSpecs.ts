@@ -468,26 +468,45 @@ export function calculateHardwareVariantMultiplier(storage = '128 GB', ram = '',
 /**
  * Calculates authentic RAM tier price offset for devices with multiple RAM options on the same storage.
  * e.g. 6GB RAM -> +0 (baseline), 8GB RAM -> +1,000, 12GB RAM -> +2,000
+ * Guaranteed minimum +₹1,000 difference for 8GB over 6GB on Android devices.
  */
 export function calculateRamPriceOffset(selectedRam = '', availableRams: string[] = [], brand = ''): number {
   const isApple = String(brand || '').toLowerCase().includes('apple');
-  if (isApple || !selectedRam || !Array.isArray(availableRams) || availableRams.length <= 1) {
+  if (isApple || !selectedRam) {
     return 0;
   }
   const norm = (r: string) => parseInt(String(r || '').replace(/\D/g, ''), 10) || 0;
   const targetGb = norm(selectedRam);
-  const baseGb = norm(availableRams[0]);
+  if (targetGb <= 0) return 0;
 
-  if (targetGb <= 0 || baseGb <= 0 || targetGb === baseGb) {
-    return 0;
+  // Determine baseline RAM for this model/storage
+  let baseGb = 6; // Standard modern Android baseline RAM for 64GB/128GB phones
+  if (Array.isArray(availableRams) && availableRams.length > 0) {
+    const validRams = availableRams.map(norm).filter((g) => g > 0).sort((a, b) => a - b);
+    if (validRams.length > 0) {
+      baseGb = validRams[0];
+      if (validRams.length > 1) {
+        const stepIdx = validRams.indexOf(targetGb);
+        if (stepIdx > 0) {
+          // Exactly step * 1000 (e.g. 6GB -> 0, 8GB -> +1000, 12GB -> +2000)
+          return stepIdx * 1000;
+        }
+        if (stepIdx === 0) {
+          return 0;
+        }
+      }
+    }
   }
 
-  const index = availableRams.findIndex((r) => norm(r) === targetGb);
-  if (index > 0) {
-    return index * 1000;
-  } else if (targetGb > baseGb) {
+  // Fallback if availableRams is empty or only 1 item or targetGb not in array:
+  if (targetGb === baseGb) return 0;
+  if (targetGb > baseGb) {
     const gbDiff = targetGb - baseGb;
+    // Guaranteed minimum 1,000 for any higher RAM tier (e.g. 8GB over 6GB)
     return Math.max(1000, Math.round(gbDiff / 2) * 1000);
+  }
+  if (targetGb < baseGb) {
+    return -1000;
   }
   return 0;
 }
