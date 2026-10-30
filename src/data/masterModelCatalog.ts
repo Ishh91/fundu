@@ -22,6 +22,10 @@ export const BRAND_TILES = [
   { name: 'iQOO', logo: getCleanBrandLogo('iQOO'), count: '20+ Models' },
   { name: 'Infinix', logo: getCleanBrandLogo('Infinix'), count: '25+ Models' },
   { name: 'Lenovo', logo: getCleanBrandLogo('Lenovo'), count: '18+ Models' },
+  { name: 'Honor', logo: getCleanBrandLogo('Honor'), count: '25+ Models' },
+  { name: 'Asus', logo: getCleanBrandLogo('Asus'), count: '20+ Models' },
+  { name: 'Nokia', logo: getCleanBrandLogo('Nokia'), count: '20+ Models' },
+  { name: 'Lava', logo: getCleanBrandLogo('Lava'), count: '15+ Models' },
 ];
 
 // Master Model Catalog Database (Easily Updatable JSON/Array)
@@ -8185,6 +8189,710 @@ export const MASTER_MODEL_CATALOG = [
     "storage": "512 GB",
     "price": 68000,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/oppo-find-n3.jpg"
+  },
+  {
+    "brand": "Honor",
+    "series": "Honor 200 & Number Series",
+    "model": "Honor 200 Pro 5G",
+    "storage": "512 GB",
+    "price": 32500,
+    "image": "https://fdn2.gsmarena.com/vv/bigpic/honor-200-pro.jpg"
+  },
+  {
+    "brand": "Honor",
+    "series": "Honor 200 & Number Series",
+    "model": "Honor 200 5G",
+    "storage": "256 GB",
+    "price": 24000,
+    "image": "https://fdn2.gsmarena.com/vv/bigpic/honor-200.jpg"
+  },
+  {
+    "brand": "Honor",
+    "series": "Honor 200 & Number Series",
+    "model": "Honor 200 5G",
+    "storage": "512 GB",
+    "price": 26500,
+    "image": "https://fdn2.gsmarena.com/vv/bigpic/honor-200.jpg"
+  },
+  {
+    "brand": "Honor",
+    "series": "Honor 200 & Number Series",
+    "model": "Honor 200 Lite 5G",
+    "storage": "256 GB",
+    "price": 14500,
+    "image": "https://fdn2.gsmarena.com/vv/bigpic/honor-200-lite.jpg"
+  },
+  {
+    "brand": "Honor",
+    "series": "Honor 200 & Number Series",
+    "model": "Honor 90 5G",
+    "storage": "256 GB",
+    "price": 18200,
+    "image": "https://fdn2.gsmarena.com/vv/bigpic/honor-90.jpg"
+  },
+  {
+    "brand": "Honor",
+    "series": "Honor 200 & Number Series",
+    "model": "Honor 90 5G",
+    "storage": "512 GB",
+    "price": 20500,
+    "image": "https://fdn2.gsmarena.com/vv/bigpic/honor-90.jpg"
+  },
+  {
+    "brand": "Honor",
+    "series": "Honor 200 & Number Series",
+    "model": "Honor 70 5G",
+    "storage": "128 GB",
+    "price": 14000,
+    "image": "https://fdn2.gsmarena.com/vv/bigpic/honor-70.jpg"
+  },
+  {
+    "brand": "Honor",
+    "series": "Honor 200 & Number Series",
+    "model": "Honor 70 5G",
+    "storage": "256 GB",
+    "price": 15500,
+    "image": "https://fdn2.gsmarena.com/vv/bigpic/honor-70.jpg"
+  },
+  {
+    "brand": "Honor",
+    "series": "Honor 200 & Number Series",
+    "model": "Honor 50 5G",
+    "storage": "128 GB",
+    "price": 11500,
+    "image": "https://fdn2.gsmarena.com/vv/bigpic/honor-50.jpg"
+  },
+  {
+    "brand": "Honor",
+    "series": "Honor 200 & Number Series",
+    "model": "Honor Magic 6 Pro",
+    "storage": "512 GB",
+    "price": 48000,
+    "image": "https://fdn2.gsmarena.com/vv/bigpic/honor-magic6-pro.jpg"
+  },
+  {
+    "brand": "Honor",
+    "series": "Honor X Series",
+    "model": "Honor X9b 5G",
+    "storage": "256 GB",
+    "price": 15800,
+    "image": "https://fdn2.gsmarena.com/vv/bigpic/honor-x9b.jpg"
+  },
+  {
+    "brand": "Honor",
+    "series": "Honor X Series",
+    "model": "Honor X9a 5G",
+    "storage": "128 GB",
+    "price": 12200,
+    "image": "https://fdn2.gsmarena.com/vv/bigpic/honor-x9a.jpg"
+  },
+  {
+    "brand": "Honor",
+    "series": "Honor X Series",
+    "model": "Honor X8b",
+    "storage": "128 GB",
+    "price": 9800,
+    "image": "https://fdn2.gsmarena.com/vv/bigpic/honor-x8b.jpg"
+  },
+  {
+    "brand": "Honor",
+    "series": "Honor X Series",
+    "model": "Honor X7b",
+    "storage": "128 GB",
+    "price": 8200,
+    "image": "https://fdn2.gsmarena.com/vv/bigpic/honor-x7b.jpg"
+  },
+  {
+    "brand": "Honor",
+    "series": "Honor X Series",
+    "model": "Honor 9X Pro",
+    "storage": "256 GB",
+    "price": 6200,
+    "image": "https://fdn2.gsmarena.com/vv/bigpic/honor-9x-pro.jpg"
+  },
+  {
+    "brand": "Honor",
+    "series": "Honor X Series",
+    "model": "Honor 9X",
+    "storage": "128 GB",
+    "price": 5400,
+    "image": "https://fdn2.gsmarena.com/vv/bigpic/honor-9x.jpg"
+  },
+  {
+    "brand": "Honor",
+    "series": "Honor X Series",
+    "model": "Honor 8X",
+    "storage": "64 GB",
+    "price": 4100,
+    "image": "https://fdn2.gsmarena.com/vv/bigpic/honor-8x.jpg"
+  },
+  {
+    "brand": "Honor",
+    "series": "Honor X Series",
+    "model": "Honor 7X",
+    "storage": "32 GB",
+    "price": 2800,
+    "image": "https://fdn2.gsmarena.com/vv/bigpic/honor-7x.jpg"
+  },
+  {
+    "brand": "Honor",
+    "series": "Honor Play & Classic Series",
+    "model": "Honor Play",
+    "storage": "64 GB",
+    "price": 3900,
+    "image": "https://fdn2.gsmarena.com/vv/bigpic/honor-play.jpg"
+  },
+  {
+    "brand": "Honor",
+    "series": "Honor Play & Classic Series",
+    "model": "Honor 20",
+    "storage": "128 GB",
+    "price": 6800,
+    "image": "https://fdn2.gsmarena.com/vv/bigpic/honor-20.jpg"
+  },
+  {
+    "brand": "Honor",
+    "series": "Honor Play & Classic Series",
+    "model": "Honor 20i",
+    "storage": "128 GB",
+    "price": 4500,
+    "image": "https://fdn2.gsmarena.com/vv/bigpic/honor-20i.jpg"
+  },
+  {
+    "brand": "Honor",
+    "series": "Honor Play & Classic Series",
+    "model": "Honor 10",
+    "storage": "128 GB",
+    "price": 4200,
+    "image": "https://fdn2.gsmarena.com/vv/bigpic/honor-10.jpg"
+  },
+  {
+    "brand": "Honor",
+    "series": "Honor Play & Classic Series",
+    "model": "Honor 10 Lite",
+    "storage": "64 GB",
+    "price": 3100,
+    "image": "https://fdn2.gsmarena.com/vv/bigpic/honor-10-lite.jpg"
+  },
+  {
+    "brand": "Asus",
+    "series": "ROG Gaming Series",
+    "model": "ROG Phone 8 Pro",
+    "storage": "512 GB",
+    "price": 48000,
+    "image": "https://fdn2.gsmarena.com/vv/bigpic/asus-rog-phone-8-pro.jpg"
+  },
+  {
+    "brand": "Asus",
+    "series": "ROG Gaming Series",
+    "model": "ROG Phone 8",
+    "storage": "256 GB",
+    "price": 40000,
+    "image": "https://fdn2.gsmarena.com/vv/bigpic/asus-rog-phone-8.jpg"
+  },
+  {
+    "brand": "Asus",
+    "series": "ROG Gaming Series",
+    "model": "ROG Phone 7 Ultimate",
+    "storage": "512 GB",
+    "price": 38000,
+    "image": "https://fdn2.gsmarena.com/vv/bigpic/asus-rog-phone-7-ultimate.jpg"
+  },
+  {
+    "brand": "Asus",
+    "series": "ROG Gaming Series",
+    "model": "ROG Phone 7",
+    "storage": "256 GB",
+    "price": 32000,
+    "image": "https://fdn2.gsmarena.com/vv/bigpic/asus-rog-phone-7.jpg"
+  },
+  {
+    "brand": "Asus",
+    "series": "ROG Gaming Series",
+    "model": "ROG Phone 6 Pro",
+    "storage": "512 GB",
+    "price": 26000,
+    "image": "https://fdn2.gsmarena.com/vv/bigpic/asus-rog-phone-6-pro.jpg"
+  },
+  {
+    "brand": "Asus",
+    "series": "ROG Gaming Series",
+    "model": "ROG Phone 6",
+    "storage": "128 GB",
+    "price": 22000,
+    "image": "https://fdn2.gsmarena.com/vv/bigpic/asus-rog-phone-6.jpg"
+  },
+  {
+    "brand": "Asus",
+    "series": "ROG Gaming Series",
+    "model": "ROG Phone 5s Pro",
+    "storage": "512 GB",
+    "price": 18000,
+    "image": "https://fdn2.gsmarena.com/vv/bigpic/asus-rog-phone-5s-pro.jpg"
+  },
+  {
+    "brand": "Asus",
+    "series": "ROG Gaming Series",
+    "model": "ROG Phone 5",
+    "storage": "128 GB",
+    "price": 15000,
+    "image": "https://fdn2.gsmarena.com/vv/bigpic/asus-rog-phone-5.jpg"
+  },
+  {
+    "brand": "Asus",
+    "series": "ROG Gaming Series",
+    "model": "ROG Phone 3",
+    "storage": "128 GB",
+    "price": 11000,
+    "image": "https://fdn2.gsmarena.com/vv/bigpic/asus-rog-phone-3.jpg"
+  },
+  {
+    "brand": "Asus",
+    "series": "Zenfone Series",
+    "model": "Asus Zenfone 10",
+    "storage": "256 GB",
+    "price": 28000,
+    "image": "https://fdn2.gsmarena.com/vv/bigpic/asus-zenfone-10.jpg"
+  },
+  {
+    "brand": "Asus",
+    "series": "Zenfone Series",
+    "model": "Asus Zenfone 9",
+    "storage": "128 GB",
+    "price": 21000,
+    "image": "https://fdn2.gsmarena.com/vv/bigpic/asus-zenfone-9.jpg"
+  },
+  {
+    "brand": "Asus",
+    "series": "Zenfone Series",
+    "model": "Asus 8z",
+    "storage": "128 GB",
+    "price": 14000,
+    "image": "https://fdn2.gsmarena.com/vv/bigpic/asus-8z.jpg"
+  },
+  {
+    "brand": "Asus",
+    "series": "Zenfone Series",
+    "model": "Asus 6z",
+    "storage": "128 GB",
+    "price": 7500,
+    "image": "https://fdn2.gsmarena.com/vv/bigpic/asus-6z.jpg"
+  },
+  {
+    "brand": "Asus",
+    "series": "Zenfone Series",
+    "model": "Asus 5z",
+    "storage": "64 GB",
+    "price": 4800,
+    "image": "https://fdn2.gsmarena.com/vv/bigpic/asus-5z.jpg"
+  },
+  {
+    "brand": "Asus",
+    "series": "Max Pro Series",
+    "model": "Asus Zenfone Max Pro M2",
+    "storage": "64 GB",
+    "price": 2700,
+    "image": "https://fdn2.gsmarena.com/vv/bigpic/asus-zenfone-max-pro-m2.jpg"
+  },
+  {
+    "brand": "Asus",
+    "series": "Max Pro Series",
+    "model": "Asus Zenfone Max Pro M1",
+    "storage": "64 GB",
+    "price": 2100,
+    "image": "https://fdn2.gsmarena.com/vv/bigpic/asus-zenfone-max-pro-m1.jpg"
+  },
+  {
+    "brand": "Asus",
+    "series": "Max Pro Series",
+    "model": "Asus Zenfone Max M2",
+    "storage": "32 GB",
+    "price": 1900,
+    "image": "https://fdn2.gsmarena.com/vv/bigpic/asus-zenfone-max-m2.jpg"
+  },
+  {
+    "brand": "Nokia",
+    "series": "Nokia G & X Series",
+    "model": "Nokia G42 5G",
+    "storage": "128 GB",
+    "price": 7800,
+    "image": "https://fdn2.gsmarena.com/vv/bigpic/nokia-g42.jpg"
+  },
+  {
+    "brand": "Nokia",
+    "series": "Nokia G & X Series",
+    "model": "Nokia G42 5G",
+    "storage": "256 GB",
+    "price": 9200,
+    "image": "https://fdn2.gsmarena.com/vv/bigpic/nokia-g42.jpg"
+  },
+  {
+    "brand": "Nokia",
+    "series": "Nokia G & X Series",
+    "model": "Nokia X30 5G",
+    "storage": "256 GB",
+    "price": 14000,
+    "image": "https://fdn2.gsmarena.com/vv/bigpic/nokia-x30-5g.jpg"
+  },
+  {
+    "brand": "Nokia",
+    "series": "Nokia G & X Series",
+    "model": "Nokia G21",
+    "storage": "64 GB",
+    "price": 4200,
+    "image": "https://fdn2.gsmarena.com/vv/bigpic/nokia-g21.jpg"
+  },
+  {
+    "brand": "Nokia",
+    "series": "Nokia G & X Series",
+    "model": "Nokia G21",
+    "storage": "128 GB",
+    "price": 4800,
+    "image": "https://fdn2.gsmarena.com/vv/bigpic/nokia-g21.jpg"
+  },
+  {
+    "brand": "Nokia",
+    "series": "Nokia G & X Series",
+    "model": "Nokia G20",
+    "storage": "64 GB",
+    "price": 4100,
+    "image": "https://fdn2.gsmarena.com/vv/bigpic/nokia-g20.jpg"
+  },
+  {
+    "brand": "Nokia",
+    "series": "Nokia G & X Series",
+    "model": "Nokia G11 Plus",
+    "storage": "64 GB",
+    "price": 3700,
+    "image": "https://fdn2.gsmarena.com/vv/bigpic/nokia-g11-plus.jpg"
+  },
+  {
+    "brand": "Nokia",
+    "series": "Nokia G & X Series",
+    "model": "Nokia 8.3 5G",
+    "storage": "128 GB",
+    "price": 8500,
+    "image": "https://fdn2.gsmarena.com/vv/bigpic/nokia-83-5g.jpg"
+  },
+  {
+    "brand": "Nokia",
+    "series": "Nokia G & X Series",
+    "model": "Nokia 7.2",
+    "storage": "64 GB",
+    "price": 4500,
+    "image": "https://fdn2.gsmarena.com/vv/bigpic/nokia-7-2.jpg"
+  },
+  {
+    "brand": "Nokia",
+    "series": "Nokia G & X Series",
+    "model": "Nokia 6.1 Plus",
+    "storage": "64 GB",
+    "price": 2800,
+    "image": "https://fdn2.gsmarena.com/vv/bigpic/nokia-6-1-plus.jpg"
+  },
+  {
+    "brand": "Nokia",
+    "series": "Nokia G & X Series",
+    "model": "Nokia 5.4",
+    "storage": "64 GB",
+    "price": 3500,
+    "image": "https://fdn2.gsmarena.com/vv/bigpic/nokia-54.jpg"
+  },
+  {
+    "brand": "Nokia",
+    "series": "Nokia G & X Series",
+    "model": "Nokia 5.3",
+    "storage": "64 GB",
+    "price": 2900,
+    "image": "https://fdn2.gsmarena.com/vv/bigpic/nokia-53.jpg"
+  },
+  {
+    "brand": "Nokia",
+    "series": "Nokia C Series",
+    "model": "Nokia C32",
+    "storage": "64 GB",
+    "price": 3800,
+    "image": "https://fdn2.gsmarena.com/vv/bigpic/nokia-c32.jpg"
+  },
+  {
+    "brand": "Nokia",
+    "series": "Nokia C Series",
+    "model": "Nokia C32",
+    "storage": "128 GB",
+    "price": 4200,
+    "image": "https://fdn2.gsmarena.com/vv/bigpic/nokia-c32.jpg"
+  },
+  {
+    "brand": "Nokia",
+    "series": "Nokia C Series",
+    "model": "Nokia C31",
+    "storage": "64 GB",
+    "price": 3600,
+    "image": "https://fdn2.gsmarena.com/vv/bigpic/nokia-c31.jpg"
+  },
+  {
+    "brand": "Nokia",
+    "series": "Nokia C Series",
+    "model": "Nokia C22",
+    "storage": "64 GB",
+    "price": 3100,
+    "image": "https://fdn2.gsmarena.com/vv/bigpic/nokia-c22.jpg"
+  },
+  {
+    "brand": "Nokia",
+    "series": "Nokia C Series",
+    "model": "Nokia C21 Plus",
+    "storage": "32 GB",
+    "price": 2400,
+    "image": "https://fdn2.gsmarena.com/vv/bigpic/nokia-c21-plus.jpg"
+  },
+  {
+    "brand": "Nokia",
+    "series": "Nokia C Series",
+    "model": "Nokia C21 Plus",
+    "storage": "64 GB",
+    "price": 2700,
+    "image": "https://fdn2.gsmarena.com/vv/bigpic/nokia-c21-plus.jpg"
+  },
+  {
+    "brand": "Nokia",
+    "series": "Nokia C Series",
+    "model": "Nokia C12 Pro",
+    "storage": "64 GB",
+    "price": 2500,
+    "image": "https://fdn2.gsmarena.com/vv/bigpic/nokia-c12-pro.jpg"
+  },
+  {
+    "brand": "Lava",
+    "series": "Agni & Blaze Series",
+    "model": "Lava Agni 3 5G",
+    "storage": "128 GB",
+    "price": 15200,
+    "image": "https://fdn2.gsmarena.com/vv/bigpic/lava-agni-3.jpg"
+  },
+  {
+    "brand": "Lava",
+    "series": "Agni & Blaze Series",
+    "model": "Lava Agni 3 5G",
+    "storage": "256 GB",
+    "price": 16500,
+    "image": "https://fdn2.gsmarena.com/vv/bigpic/lava-agni-3.jpg"
+  },
+  {
+    "brand": "Lava",
+    "series": "Agni & Blaze Series",
+    "model": "Lava Agni 2 5G",
+    "storage": "256 GB",
+    "price": 11800,
+    "image": "https://fdn2.gsmarena.com/vv/bigpic/lava-agni-2-5g.jpg"
+  },
+  {
+    "brand": "Lava",
+    "series": "Agni & Blaze Series",
+    "model": "Lava Blaze Curve 5G",
+    "storage": "128 GB",
+    "price": 9500,
+    "image": "https://fdn2.gsmarena.com/vv/bigpic/lava-blaze-curve-5g.jpg"
+  },
+  {
+    "brand": "Lava",
+    "series": "Agni & Blaze Series",
+    "model": "Lava Blaze Curve 5G",
+    "storage": "256 GB",
+    "price": 10800,
+    "image": "https://fdn2.gsmarena.com/vv/bigpic/lava-blaze-curve-5g.jpg"
+  },
+  {
+    "brand": "Lava",
+    "series": "Agni & Blaze Series",
+    "model": "Lava Storm 5G",
+    "storage": "128 GB",
+    "price": 7500,
+    "image": "https://fdn2.gsmarena.com/vv/bigpic/lava-storm-5g.jpg"
+  },
+  {
+    "brand": "Lava",
+    "series": "Agni & Blaze Series",
+    "model": "Lava Blaze 2 5G",
+    "storage": "64 GB",
+    "price": 5900,
+    "image": "https://fdn2.gsmarena.com/vv/bigpic/lava-blaze-2-5g.jpg"
+  },
+  {
+    "brand": "Lava",
+    "series": "Agni & Blaze Series",
+    "model": "Lava Blaze 2 5G",
+    "storage": "128 GB",
+    "price": 6800,
+    "image": "https://fdn2.gsmarena.com/vv/bigpic/lava-blaze-2-5g.jpg"
+  },
+  {
+    "brand": "Lava",
+    "series": "Yuva Series",
+    "model": "Lava Yuva 3 Pro",
+    "storage": "128 GB",
+    "price": 4800,
+    "image": "https://fdn2.gsmarena.com/vv/bigpic/lava-yuva-3-pro.jpg"
+  },
+  {
+    "brand": "Lava",
+    "series": "Yuva Series",
+    "model": "Lava Yuva 2 Pro",
+    "storage": "64 GB",
+    "price": 3700,
+    "image": "https://fdn2.gsmarena.com/vv/bigpic/lava-yuva-2-pro.jpg"
+  },
+  {
+    "brand": "Lava",
+    "series": "Yuva Series",
+    "model": "Lava Yuva 3",
+    "storage": "64 GB",
+    "price": 3900,
+    "image": "https://fdn2.gsmarena.com/vv/bigpic/lava-yuva-3.jpg"
+  },
+  {
+    "brand": "Tecno",
+    "series": "Camon Imaging Series",
+    "model": "Tecno Camon 20",
+    "storage": "128 GB",
+    "price": 9400,
+    "image": "https://fdn2.gsmarena.com/vv/bigpic/tecno-camon-20.jpg"
+  },
+  {
+    "brand": "Tecno",
+    "series": "Camon Imaging Series",
+    "model": "Tecno Camon 20 Premier 5G",
+    "storage": "512 GB",
+    "price": 15500,
+    "image": "https://fdn2.gsmarena.com/vv/bigpic/tecno-camon-20-premier.jpg"
+  },
+  {
+    "brand": "Tecno",
+    "series": "Pova Power Gaming Series",
+    "model": "Tecno Pova 4 Pro",
+    "storage": "128 GB",
+    "price": 8700,
+    "image": "https://fdn2.gsmarena.com/vv/bigpic/tecno-pova-4-pro.jpg"
+  },
+  {
+    "brand": "Tecno",
+    "series": "Pova Power Gaming Series",
+    "model": "Tecno Pova 3",
+    "storage": "128 GB",
+    "price": 6900,
+    "image": "https://fdn2.gsmarena.com/vv/bigpic/tecno-pova-3.jpg"
+  },
+  {
+    "brand": "Tecno",
+    "series": "Spark Series",
+    "model": "Tecno Spark 10 Pro",
+    "storage": "128 GB",
+    "price": 7100,
+    "image": "https://fdn2.gsmarena.com/vv/bigpic/tecno-spark-10-pro.jpg"
+  },
+  {
+    "brand": "Tecno",
+    "series": "Spark Series",
+    "model": "Tecno Spark 10 5G",
+    "storage": "64 GB",
+    "price": 6500,
+    "image": "https://fdn2.gsmarena.com/vv/bigpic/tecno-spark-10-5g.jpg"
+  },
+  {
+    "brand": "Tecno",
+    "series": "Spark Series",
+    "model": "Tecno Spark 9",
+    "storage": "64 GB",
+    "price": 4600,
+    "image": "https://fdn2.gsmarena.com/vv/bigpic/tecno-spark-9.jpg"
+  },
+  {
+    "brand": "Infinix",
+    "series": "Note Pro Series",
+    "model": "Infinix Note 40 5G",
+    "storage": "256 GB",
+    "price": 11800,
+    "image": "https://fdn2.gsmarena.com/vv/bigpic/infinix-note-40-5g.jpg"
+  },
+  {
+    "brand": "Infinix",
+    "series": "Note Pro Series",
+    "model": "Infinix Note 12 Pro 5G",
+    "storage": "128 GB",
+    "price": 8900,
+    "image": "https://fdn2.gsmarena.com/vv/bigpic/infinix-note-12-pro-5g.jpg"
+  },
+  {
+    "brand": "Infinix",
+    "series": "Zero Flagship Series",
+    "model": "Infinix Zero Ultra 5G",
+    "storage": "256 GB",
+    "price": 16500,
+    "image": "https://fdn2.gsmarena.com/vv/bigpic/infinix-zero-ultra.jpg"
+  },
+  {
+    "brand": "Infinix",
+    "series": "Hot Performance Series",
+    "model": "Infinix Hot 30i",
+    "storage": "64 GB",
+    "price": 5100,
+    "image": "https://fdn2.gsmarena.com/vv/bigpic/infinix-hot-30i.jpg"
+  },
+  {
+    "brand": "Infinix",
+    "series": "Hot Performance Series",
+    "model": "Infinix Hot 20 5G",
+    "storage": "64 GB",
+    "price": 5900,
+    "image": "https://fdn2.gsmarena.com/vv/bigpic/infinix-hot-20-5g.jpg"
+  },
+  {
+    "brand": "Infinix",
+    "series": "Smart Series",
+    "model": "Infinix Smart 8",
+    "storage": "64 GB",
+    "price": 4300,
+    "image": "https://fdn2.gsmarena.com/vv/bigpic/infinix-smart-8.jpg"
+  },
+  {
+    "brand": "Infinix",
+    "series": "Smart Series",
+    "model": "Infinix Smart 7",
+    "storage": "64 GB",
+    "price": 3500,
+    "image": "https://fdn2.gsmarena.com/vv/bigpic/infinix-smart-7.jpg"
+  },
+  {
+    "brand": "Lenovo",
+    "series": "Legion Gaming Series",
+    "model": "Lenovo Legion Y70",
+    "storage": "256 GB",
+    "price": 21500,
+    "image": "https://fdn2.gsmarena.com/vv/bigpic/lenovo-legion-y70.jpg"
+  },
+  {
+    "brand": "Lenovo",
+    "series": "K Note Series",
+    "model": "Lenovo K8 Note",
+    "storage": "64 GB",
+    "price": 1500,
+    "image": "https://fdn2.gsmarena.com/vv/bigpic/lenovo-k8-note.jpg"
+  },
+  {
+    "brand": "Lenovo",
+    "series": "K Note Series",
+    "model": "Lenovo K6 Power",
+    "storage": "32 GB",
+    "price": 1100,
+    "image": "https://fdn2.gsmarena.com/vv/bigpic/lenovo-k6-power.jpg"
+  },
+  {
+    "brand": "Lenovo",
+    "series": "K Note Series",
+    "model": "Lenovo K5 Note",
+    "storage": "32 GB",
+    "price": 1000,
+    "image": "https://fdn2.gsmarena.com/vv/bigpic/lenovo-k5-note.jpg"
   }
 ];
 export const STORAGE_OPTIONS = ['64 GB', '128 GB', '256 GB', '512 GB', '1 TB'];

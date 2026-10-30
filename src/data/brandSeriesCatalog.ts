@@ -1973,6 +1973,125 @@ export const BRAND_SERIES_DEFINITIONS: Record<string, BrandSeriesDefinition[]> =
       ],
     },
   ],
+
+  honor: [
+    {
+      id: 'honor-200',
+      slug: 'honor-200-series',
+      name: 'Honor 200 & Number Series',
+      brand: 'Honor',
+      image: 'https://fdn2.gsmarena.com/vv/bigpic/honor-200-pro.jpg',
+      description: 'Honor 200 Pro, 200, 200 Lite, 90, 70 flagship devices',
+      pattern: /\b(200|90|70|50|magic)\b/i,
+      defaultModels: [
+        { brand: 'Honor', series: 'Honor 200 & Number Series', model: 'Honor 200 Pro 5G', storage: '512 GB', price: 32500, image: 'https://fdn2.gsmarena.com/vv/bigpic/honor-200-pro.jpg' },
+        { brand: 'Honor', series: 'Honor 200 & Number Series', model: 'Honor 200 5G', storage: '256 GB', price: 24000, image: 'https://fdn2.gsmarena.com/vv/bigpic/honor-200.jpg' },
+        { brand: 'Honor', series: 'Honor 200 & Number Series', model: 'Honor 200 Lite 5G', storage: '256 GB', price: 14500, image: 'https://fdn2.gsmarena.com/vv/bigpic/honor-200-lite.jpg' },
+        { brand: 'Honor', series: 'Honor 200 & Number Series', model: 'Honor 90 5G', storage: '256 GB', price: 18200, image: 'https://fdn2.gsmarena.com/vv/bigpic/honor-90.jpg' },
+        { brand: 'Honor', series: 'Honor 200 & Number Series', model: 'Honor 70 5G', storage: '128 GB', price: 14000, image: 'https://fdn2.gsmarena.com/vv/bigpic/honor-70.jpg' },
+      ],
+    },
+    {
+      id: 'honor-x',
+      slug: 'honor-x-series',
+      name: 'Honor X Series',
+      brand: 'Honor',
+      image: 'https://fdn2.gsmarena.com/vv/bigpic/honor-x9b.jpg',
+      description: 'Honor X9b 5G, X9a, X8b, 9X, 8X ultra-tough devices',
+      pattern: /\b(x\d|8x|9x|7x)\b/i,
+      defaultModels: [
+        { brand: 'Honor', series: 'Honor X Series', model: 'Honor X9b 5G', storage: '256 GB', price: 15800, image: 'https://fdn2.gsmarena.com/vv/bigpic/honor-x9b.jpg' },
+        { brand: 'Honor', series: 'Honor X Series', model: 'Honor X9a 5G', storage: '128 GB', price: 12200, image: 'https://fdn2.gsmarena.com/vv/bigpic/honor-x9a.jpg' },
+        { brand: 'Honor', series: 'Honor X Series', model: 'Honor 9X', storage: '128 GB', price: 5400, image: 'https://fdn2.gsmarena.com/vv/bigpic/honor-9x.jpg' },
+        { brand: 'Honor', series: 'Honor X Series', model: 'Honor 8X', storage: '64 GB', price: 4100, image: 'https://fdn2.gsmarena.com/vv/bigpic/honor-8x.jpg' },
+      ],
+    },
+  ],
+
+  asus: [
+    {
+      id: 'asus-rog',
+      slug: 'asus-rog-series',
+      name: 'ROG Gaming Series',
+      brand: 'Asus',
+      image: 'https://fdn2.gsmarena.com/vv/bigpic/asus-rog-phone-8-pro.jpg',
+      description: 'ROG Phone 8 Pro, 8, 7 Ultimate, 7, 6, 5 hardcore gaming phones',
+      pattern: /\brog\b/i,
+      defaultModels: [
+        { brand: 'Asus', series: 'ROG Gaming Series', model: 'ROG Phone 8 Pro', storage: '512 GB', price: 48000, image: 'https://fdn2.gsmarena.com/vv/bigpic/asus-rog-phone-8-pro.jpg' },
+        { brand: 'Asus', series: 'ROG Gaming Series', model: 'ROG Phone 8', storage: '256 GB', price: 40000, image: 'https://fdn2.gsmarena.com/vv/bigpic/asus-rog-phone-8.jpg' },
+        { brand: 'Asus', series: 'ROG Gaming Series', model: 'ROG Phone 7 Ultimate', storage: '512 GB', price: 38000, image: 'https://fdn2.gsmarena.com/vv/bigpic/asus-rog-phone-7-ultimate.jpg' },
+        { brand: 'Asus', series: 'ROG Gaming Series', model: 'ROG Phone 7', storage: '256 GB', price: 32000, image: 'https://fdn2.gsmarena.com/vv/bigpic/asus-rog-phone-7.jpg' },
+        { brand: 'Asus', series: 'ROG Gaming Series', model: 'ROG Phone 6', storage: '128 GB', price: 22000, image: 'https://fdn2.gsmarena.com/vv/bigpic/asus-rog-phone-6.jpg' },
+        { brand: 'Asus', series: 'ROG Gaming Series', model: 'ROG Phone 5', storage: '128 GB', price: 15000, image: 'https://fdn2.gsmarena.com/vv/bigpic/asus-rog-phone-5.jpg' },
+      ],
+    },
+    {
+      id: 'asus-zenfone',
+      slug: 'asus-zenfone-series',
+      name: 'Zenfone & Max Pro Series',
+      brand: 'Asus',
+      image: 'https://fdn2.gsmarena.com/vv/bigpic/asus-zenfone-10.jpg',
+      description: 'Zenfone 10, Zenfone 9, 8z, Max Pro M2, Max Pro M1 compact performance',
+      pattern: /\b(zenfone|max\s*pro|8z|6z|5z)\b/i,
+      defaultModels: [
+        { brand: 'Asus', series: 'Zenfone & Max Pro Series', model: 'Asus Zenfone 10', storage: '256 GB', price: 28000, image: 'https://fdn2.gsmarena.com/vv/bigpic/asus-zenfone-10.jpg' },
+        { brand: 'Asus', series: 'Zenfone & Max Pro Series', model: 'Asus 8z', storage: '128 GB', price: 14000, image: 'https://fdn2.gsmarena.com/vv/bigpic/asus-8z.jpg' },
+        { brand: 'Asus', series: 'Zenfone & Max Pro Series', model: 'Asus Zenfone Max Pro M2', storage: '64 GB', price: 2700, image: 'https://fdn2.gsmarena.com/vv/bigpic/asus-zenfone-max-pro-m2.jpg' },
+        { brand: 'Asus', series: 'Zenfone & Max Pro Series', model: 'Asus Zenfone Max Pro M1', storage: '64 GB', price: 2100, image: 'https://fdn2.gsmarena.com/vv/bigpic/asus-zenfone-max-pro-m1.jpg' },
+      ],
+    },
+  ],
+
+  nokia: [
+    {
+      id: 'nokia-g-x',
+      slug: 'nokia-g-x-series',
+      name: 'Nokia G & X 5G Series',
+      brand: 'Nokia',
+      image: 'https://fdn2.gsmarena.com/vv/bigpic/nokia-g42.jpg',
+      description: 'Nokia G42 5G, X30 5G, G21, G20, 8.3 5G clean Android phones',
+      pattern: /\b(g\d+|x\d+|8\.3|7\.2|6\.1|5\.4)\b/i,
+      defaultModels: [
+        { brand: 'Nokia', series: 'Nokia G & X 5G Series', model: 'Nokia G42 5G', storage: '128 GB', price: 7800, image: 'https://fdn2.gsmarena.com/vv/bigpic/nokia-g42.jpg' },
+        { brand: 'Nokia', series: 'Nokia G & X 5G Series', model: 'Nokia X30 5G', storage: '256 GB', price: 14000, image: 'https://fdn2.gsmarena.com/vv/bigpic/nokia-x30-5g.jpg' },
+        { brand: 'Nokia', series: 'Nokia G & X 5G Series', model: 'Nokia G21', storage: '128 GB', price: 4800, image: 'https://fdn2.gsmarena.com/vv/bigpic/nokia-g21.jpg' },
+        { brand: 'Nokia', series: 'Nokia G & X 5G Series', model: 'Nokia 7.2', storage: '64 GB', price: 4500, image: 'https://fdn2.gsmarena.com/vv/bigpic/nokia-7-2.jpg' },
+      ],
+    },
+    {
+      id: 'nokia-c-series',
+      slug: 'nokia-c-series',
+      name: 'Nokia C Series',
+      brand: 'Nokia',
+      image: 'https://fdn2.gsmarena.com/vv/bigpic/nokia-c32.jpg',
+      description: 'Nokia C32, C31, C22 budget daily drivers',
+      pattern: /\bc\d+/i,
+      defaultModels: [
+        { brand: 'Nokia', series: 'Nokia C Series', model: 'Nokia C32', storage: '64 GB', price: 4200, image: 'https://fdn2.gsmarena.com/vv/bigpic/nokia-c32.jpg' },
+        { brand: 'Nokia', series: 'Nokia C Series', model: 'Nokia C31', storage: '64 GB', price: 3600, image: 'https://fdn2.gsmarena.com/vv/bigpic/nokia-c31.jpg' },
+        { brand: 'Nokia', series: 'Nokia C Series', model: 'Nokia C22', storage: '64 GB', price: 3100, image: 'https://fdn2.gsmarena.com/vv/bigpic/nokia-c22.jpg' },
+      ],
+    },
+  ],
+
+  lava: [
+    {
+      id: 'lava-agni-blaze',
+      slug: 'lava-agni-blaze-series',
+      name: 'Agni & Blaze 5G Series',
+      brand: 'Lava',
+      image: 'https://fdn2.gsmarena.com/vv/bigpic/lava-agni-2-5g.jpg',
+      description: 'Lava Agni 3, Agni 2 5G, Blaze Curve 5G, Storm 5G proud Indian devices',
+      pattern: /\b(agni|blaze|storm|yuva)\b/i,
+      defaultModels: [
+        { brand: 'Lava', series: 'Agni & Blaze 5G Series', model: 'Lava Agni 3 5G', storage: '256 GB', price: 16500, image: 'https://fdn2.gsmarena.com/vv/bigpic/lava-agni-3.jpg' },
+        { brand: 'Lava', series: 'Agni & Blaze 5G Series', model: 'Lava Agni 2 5G', storage: '256 GB', price: 11800, image: 'https://fdn2.gsmarena.com/vv/bigpic/lava-agni-2-5g.jpg' },
+        { brand: 'Lava', series: 'Agni & Blaze 5G Series', model: 'Lava Blaze Curve 5G', storage: '128 GB', price: 9500, image: 'https://fdn2.gsmarena.com/vv/bigpic/lava-blaze-curve-5g.jpg' },
+        { brand: 'Lava', series: 'Agni & Blaze 5G Series', model: 'Lava Storm 5G', storage: '128 GB', price: 7500, image: 'https://fdn2.gsmarena.com/vv/bigpic/lava-storm-5g.jpg' },
+      ],
+    },
+  ],
 };
 
 export function groupModelsBySeries(brand: string, allModels: CatalogModelItem[]): SeriesGroup[] {

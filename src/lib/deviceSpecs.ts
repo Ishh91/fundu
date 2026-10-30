@@ -2341,6 +2341,15 @@ export function is512GBValidForModel(brand = '', model = ''): boolean {
     return false;
   }
 
+  // 9. Asus: ROG Phone 8 Pro, 7 Ultimate, 6 Pro
+  if (b.includes('asus') && /rog\s*phone\s*[6-8]/i.test(m)) return true;
+
+  // 10. Honor: Honor 200 Pro & Magic 6 Pro
+  if (b.includes('honor') && /(200\s*pro|magic\s*6\s*pro)/i.test(m)) return true;
+
+  // 11. Tecno: Phantom V Fold & Camon 30 Premier
+  if (b.includes('tecno') && /(phantom\s*v|camon\s*30\s*premier)/i.test(m)) return true;
+
   return false;
 }
 
@@ -2811,7 +2820,7 @@ export function getModelHardwareSpecs(
 
   // 3. Check customCatalog variants if provided (e.g. MASTER_MODEL_CATALOG)
   if (Array.isArray(customCatalog) && customCatalog.length > 0) {
-    const brandPrefixRegex = /^(apple|samsung|oneplus|xiaomi|vivo|oppo|realme|motorola|moto|google|pixel|nothing|cmf|tecno|techno|itel|infinix|poco|iqoo|honor|lenovo)\s+/i;
+    const brandPrefixRegex = /^(apple|samsung|oneplus|xiaomi|vivo|oppo|realme|motorola|moto|google|pixel|nothing|cmf|tecno|techno|itel|infinix|poco|iqoo|honor|lenovo|asus|nokia|lava)\s+/i;
     const cleanTarget = normModel
       .replace(brandPrefixRegex, '')
       .replace(/[\s-]+/g, ' ')

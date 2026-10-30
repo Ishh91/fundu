@@ -29,6 +29,10 @@ export const BRAND_OFFICIAL_LOGOS: Record<string, string> = {
   tecno: '/tecno-logo.svg',
   itel: '/itel-logo.svg',
   lenovo: 'https://cdn.simpleicons.org/lenovo/e2231a',
+  honor: 'https://cdn.simpleicons.org/honor/000000',
+  asus: 'https://cdn.simpleicons.org/asus/00539b',
+  nokia: 'https://cdn.simpleicons.org/nokia/124191',
+  lava: 'https://cdn.simpleicons.org/google/ea4335',
 };
 
 // Model-Specific Official Studio Renders (sorted longest keyword first)

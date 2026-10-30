@@ -978,6 +978,22 @@ router.get('/sell-pricing/competitor-radar', async (req, res, next) => {
       rawBrand = 'Realme';
     } else if (mLower.includes('moto') || mLower.includes('motorola') || mLower.includes('edge 50') || mLower.includes('edge 40')) {
       rawBrand = 'Motorola';
+    } else if (mLower.includes('tecno') || (inputBrand && inputBrand.toLowerCase() === 'tecno')) {
+      rawBrand = 'Tecno';
+    } else if (mLower.includes('infinix') || (inputBrand && inputBrand.toLowerCase() === 'infinix')) {
+      rawBrand = 'Infinix';
+    } else if (mLower.includes('lenovo') || (inputBrand && inputBrand.toLowerCase() === 'lenovo')) {
+      rawBrand = 'Lenovo';
+    } else if (mLower.includes('honor') || (inputBrand && inputBrand.toLowerCase() === 'honor')) {
+      rawBrand = 'Honor';
+    } else if (mLower.includes('itel') || (inputBrand && inputBrand.toLowerCase() === 'itel')) {
+      rawBrand = 'Itel';
+    } else if (mLower.includes('asus') || (inputBrand && inputBrand.toLowerCase() === 'asus')) {
+      rawBrand = 'Asus';
+    } else if (mLower.includes('nokia') || (inputBrand && inputBrand.toLowerCase() === 'nokia')) {
+      rawBrand = 'Nokia';
+    } else if (mLower.includes('lava') || (inputBrand && inputBrand.toLowerCase() === 'lava')) {
+      rawBrand = 'Lava';
     }
 
     // Sanitize model
