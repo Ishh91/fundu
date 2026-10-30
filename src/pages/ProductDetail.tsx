@@ -28,7 +28,7 @@ import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
 import { getCleanPhoneImage, pullLiveModelImagesFromDb } from '../lib/phoneImages';
 import type { Product, Review } from '../types';
-import { getModelHardwareSpecs, normalizeStorageString } from '../lib/deviceSpecs';
+import { getModelHardwareSpecs, normalizeStorageString, is512GBValidForModel } from '../lib/deviceSpecs';
 import { findSampleProductById, SAMPLE_PRODUCTS_MAP } from '../data/sampleProducts';
 import { findSampleLaptopById } from '../data/sampleLaptops';
 
@@ -291,25 +291,38 @@ const handleCheckPincode = async (codeToTest?: string) => {
   };
 
   const availableStorages = useMemo(() => {
-    if (product?.available_storages && product.available_storages.length > 0) {
-      return product.available_storages.map(normalizeStorageString);
-    }
     const isLaptop = product?.category === 'laptop' || !!product?.processor;
     if (isLaptop) {
       return ['256 GB', '512 GB', '1 TB'];
     }
+
+    const is512Allowed = is512GBValidForModel(product?.brand, product?.model || product?.title);
+    const filter512 = (list: string[]) => list.filter((s) => {
+      const norm = normalizeStorageString(s);
+      if (norm.includes('512 GB') || norm.includes('1 TB') || norm.includes('2 TB')) {
+        return is512Allowed;
+      }
+      return true;
+    });
+
+    if (product?.available_storages && product.available_storages.length > 0) {
+      const filtered = filter512(product.available_storages.map(normalizeStorageString));
+      if (filtered.length > 0) return filtered;
+    }
+
     if (product) {
       const specs = getModelHardwareSpecs(product.brand, product.model || product.title);
       if (specs && specs.storages.length > 0) {
         const current = product.storage ? normalizeStorageString(product.storage) : '';
-        if (current && !specs.storages.includes(current)) {
-          return Array.from(new Set([current, ...specs.storages]));
-        }
-        return specs.storages;
+        const baseList = (current && !specs.storages.includes(current))
+          ? Array.from(new Set([current, ...specs.storages]))
+          : specs.storages;
+        const filtered = filter512(baseList);
+        if (filtered.length > 0) return filtered;
       }
     }
-    const base = (product?.storage || '128 GB').trim();
-    return ['128 GB', '256 GB', '512 GB'];
+    const base = product?.storage ? normalizeStorageString(product.storage) : '128 GB';
+    return filter512([base, '256 GB']);
   }, [product]);
 
   const availableColors = useMemo(() => {

@@ -2160,6 +2160,68 @@ const MODEL_HARDWARE_RULES: Array<{
  * Infers authentic, tier-accurate storage and RAM hardware options
  * for any smartphone based on brand, model series, and market release tier.
  */
+/**
+ * Checks whether a smartphone model realistically exists with 512 GB (or 1 TB) in the Indian retail market.
+ * In India, mainstream and mid-range devices (Vivo V series, OnePlus Nord/CE/R, Redmi Note, Realme Pro,
+ * Samsung A/M/F series, Moto G series, Poco X/M) NEVER shipped with 512 GB.
+ */
+export function is512GBValidForModel(brand = '', model = ''): boolean {
+  const b = String(brand || '').toLowerCase().trim();
+  const m = String(model || '').toLowerCase().trim();
+
+  // 1. Apple: Only iPhone 11 Pro / Pro Max and newer, XS / XS Max, or iPhone 13/14/15/16 standard/plus/pro
+  if (b.includes('apple') || m.includes('iphone') || m.includes('ipad')) {
+    if (/ipad/i.test(m)) return true;
+    if (/iphone\s*(17|16|15|14|13|12\s*pro|11\s*pro|xs)/i.test(m)) return true;
+    // iPhone 12/11 base, XR, X, 8, 7, 6, SE max out at 256GB or lower
+    return false;
+  }
+
+  // 2. Samsung: Strictly Ultra, Fold, Flip 5/6/7, S24+, S25+, S26+, Note 20 Ultra
+  if (b.includes('samsung') || m.includes('galaxy')) {
+    if (/ultra|fold|flip\s*[5-7]|s2[4-6]\s*\+|note\s*20\s*ultra/i.test(m)) return true;
+    return false; // All other Samsung (A, M, F, base S20/S21/S22/S23, FE) max out at 256GB
+  }
+
+  // 3. OnePlus: Strictly OnePlus 12, 13, Open (Nord series, 11R, 12R never had 512GB in India)
+  if (b.includes('oneplus')) {
+    if (/\b(12|13|open)\b/i.test(m) && !/12r|nord/i.test(m)) return true;
+    return false;
+  }
+
+  // 4. Xiaomi / Redmi / Poco: Strictly Xiaomi 13 Pro, 14, 14 Ultra, Redmi Note 13 Pro+
+  if (b.includes('xiaomi') || b.includes('redmi') || b.includes('poco')) {
+    if (/xiaomi\s*(13\s*pro|14\b|14\s*ultra)|note\s*13\s*pro\+|poco\s*f6/i.test(m)) return true;
+    return false;
+  }
+
+  // 5. Vivo / iQOO: Strictly Vivo X series flagships (X100, X200, X90 Pro) & iQOO 12/13
+  if (b.includes('vivo') || b.includes('iqoo')) {
+    if (/vivo\s*x(100|200|90)|iqoo\s*(12|13)/i.test(m)) return true;
+    return false; // Vivo V series (V20, V29, V30, V40) and Y series never had 512GB in India
+  }
+
+  // 6. Realme: Strictly GT 6 / GT 7
+  if (b.includes('realme')) {
+    if (/gt\s*[67]/i.test(m)) return true;
+    return false;
+  }
+
+  // 7. Motorola: Strictly Razr Ultra & Edge 50 Ultra
+  if (b.includes('motorola') || b.includes('moto')) {
+    if (/razr\s*(40|50|60)\s*ultra|edge\s*50\s*ultra/i.test(m)) return true;
+    return false;
+  }
+
+  // 8. Google Pixel: Strictly Pixel 7 Pro, 8 Pro, 9 Pro, Fold
+  if (b.includes('google') || b.includes('pixel')) {
+    if (/pixel.*(pro|fold)/i.test(m)) return true;
+    return false;
+  }
+
+  return false;
+}
+
 export function inferTierHardwareSpecs(
   brand = '',
   model = '',
@@ -2236,17 +2298,16 @@ export function inferTierHardwareSpecs(
       allRams = ['8 GB', '12 GB', '16 GB'];
     }
   }
-  // 2. Upper Mid-Range / Pro / Performance / Neo / GT / Edge / Reno / V series
+  // 2. Upper Mid-Range / Pro / Performance / Neo / GT / Edge / Reno / V series (Indian market caps out at 256 GB)
   else if (
     /pro\+|pro\s*plus|\bpro\b|neo|turbo|gt|plus|\+|fe|nord|reno|iqoo\s*z|poco\s*(f|x)|note.*pro|a5\d|a7\d|m5\d|f5\d|edge|v\d+/i.test(fullText)
   ) {
-    tierStorages = ['128 GB', '256 GB', '512 GB'];
+    tierStorages = ['128 GB', '256 GB'];
     tierRamMap = {
-      '128 GB': ['6 GB', '8 GB', '12 GB'],
+      '128 GB': ['6 GB', '8 GB'],
       '256 GB': ['8 GB', '12 GB'],
-      '512 GB': ['12 GB', '16 GB'],
     };
-    allRams = ['6 GB', '8 GB', '12 GB', '16 GB'];
+    allRams = ['6 GB', '8 GB', '12 GB'];
   }
   // 3. Itel Budget Series (Accurate 4GB-8GB RAM, 64GB-256GB Storage)
   else if (/itel/i.test(fullText)) {
@@ -2294,7 +2355,15 @@ export function inferTierHardwareSpecs(
   const normSeeds = seedStorages
     .map(normalizeStorageString)
     .filter(isValidStorageTier);
-  const finalStorages = Array.from(new Set([...normSeeds, ...tierStorages])).filter(isValidStorageTier);
+  const rawStorages = normSeeds.length > 0 ? normSeeds : tierStorages;
+  const is512Allowed = is512GBValidForModel(brand, model);
+  const finalStorages = rawStorages.filter((stg) => {
+    const norm = normalizeStorageString(stg);
+    if (norm.includes('512 GB') || norm.includes('1 TB') || norm.includes('2 TB')) {
+      return is512Allowed;
+    }
+    return true;
+  });
   const normalizedSeedRams = seedRams.map(normalizeRamString).filter(Boolean);
   const finalRams = Array.from(new Set([...normalizedSeedRams, ...allRams]));
 
@@ -2366,6 +2435,27 @@ export function getModelHardwareSpecs(
   const fullText = `${normBrand} ${normModel}`;
   const isApple = normBrand.includes('apple') || normModel.includes('iphone') || normModel.includes('ipad');
 
+  const is512Allowed = is512GBValidForModel(brand, model);
+  const sanitizeSpecs = (specs: DeviceHardwareSpecs): DeviceHardwareSpecs => {
+    const storages = specs.storages.filter((stg) => {
+      const norm = normalizeStorageString(stg);
+      if (norm.includes('512 GB') || norm.includes('1 TB') || norm.includes('2 TB')) {
+        return is512Allowed;
+      }
+      return true;
+    });
+    const safeStorages = storages.length > 0 ? storages : (specs.storages[0] ? [specs.storages[0]] : ['128 GB']);
+    const defaultStorage = safeStorages.includes(specs.defaultStorage) ? specs.defaultStorage : safeStorages[0];
+    const defaultRams = specs.getRamsForStorage(defaultStorage);
+    return {
+      ...specs,
+      storages: safeStorages,
+      defaultStorage,
+      rams: defaultRams,
+      defaultRam: defaultRams[0] || '',
+    };
+  };
+
   // 1. Check Explicit Hardware Rules with Exact Storage <-> RAM Pairing
   for (const rule of MODEL_HARDWARE_RULES) {
     if (rule.pattern.test(fullText) || rule.pattern.test(normModel)) {
@@ -2384,13 +2474,13 @@ export function getModelHardwareSpecs(
 
         const defaultRams = getRamsForStorage(defaultStorage);
 
-        return {
+        return sanitizeSpecs({
           storages,
           rams: defaultRams,
           defaultStorage,
           defaultRam: defaultRams[0] || '',
           getRamsForStorage,
-        };
+        });
       }
     }
   }
@@ -2452,17 +2542,17 @@ export function getModelHardwareSpecs(
 
       const defaultRams = getRamsForStorage(defaultStorage);
 
-      return {
+      return sanitizeSpecs({
         storages: dbStorages,
         rams: defaultRams,
         defaultStorage,
         defaultRam: defaultRams[0] || '',
         getRamsForStorage,
-      };
+      });
     }
 
     // If database has incomplete options (e.g. only 1 storage or empty RAM), enhance with tier specs
-    return inferTierHardwareSpecs(brand, model, dbStorages, dbRams);
+    return sanitizeSpecs(inferTierHardwareSpecs(brand, model, dbStorages, dbRams));
   }
 
   // 3. Check customCatalog variants if provided (e.g. MASTER_MODEL_CATALOG)
@@ -2500,10 +2590,10 @@ export function getModelHardwareSpecs(
     if (catalogVariants.length > 0) {
       const seedStorages = Array.from(new Set(catalogVariants.map((v) => normalizeStorageString(v.storage))))
         .filter(isValidStorageTier);
-      return inferTierHardwareSpecs(brand, model, seedStorages, []);
+      return sanitizeSpecs(inferTierHardwareSpecs(brand, model, seedStorages, []));
     }
   }
 
   // 4. Intelligent Fallback by Brand & Generation Tier
-  return inferTierHardwareSpecs(brand, model);
+  return sanitizeSpecs(inferTierHardwareSpecs(brand, model));
 }
