@@ -116,7 +116,7 @@ export async function createPhoneQuote(input, options = {}) {
         model: modelRegex,
         storage: new RegExp(`^${storageClean}$`, 'i'),
         is_active: { $ne: false },
-      }).sort({ updated_at: -1, _id: -1 }).lean();
+      }).sort({ manual_override: -1, is_locked: -1, updated_at: -1, _id: -1 }).lean();
     }
 
     if (!dbConfig) {
@@ -124,7 +124,7 @@ export async function createPhoneQuote(input, options = {}) {
         brand: brandRegex,
         model: modelRegex,
         is_active: { $ne: false },
-      }).sort({ updated_at: -1, _id: -1 }).lean();
+      }).sort({ manual_override: -1, is_locked: -1, updated_at: -1, _id: -1 }).lean();
     }
 
     if (dbConfig && dbConfig.base_price > 0) {

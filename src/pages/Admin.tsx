@@ -393,8 +393,8 @@ export default function Admin() {
 
       // 3. BACKGROUND CATALOG & PRICING: Ingest master devices & custom pricing in the background
       Promise.all([
-        db.from('master_phones').select('*').limit(1500).sort({ field: 'release_year', ascending: false }),
-        db.from('sell_price_configs').select('*').limit(1000).sort({ field: 'created_at', ascending: false }),
+        db.from('master_phones').select('*').limit(5000).sort({ field: 'release_year', ascending: false }),
+        db.from('sell_price_configs').select('*').limit(5000).sort({ field: 'updated_at', ascending: false }),
       ]).then(([masterPhonesRes, pricingRes]) => {
         if (Array.isArray(masterPhonesRes.data) && masterPhonesRes.data.length > 0) {
           setMasterPhones(masterPhonesRes.data as MasterPhone[]);

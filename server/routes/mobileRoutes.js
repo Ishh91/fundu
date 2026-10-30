@@ -622,7 +622,7 @@ router.get('/sell-pricing/config', async (req, res, next) => {
         model: modelRegex,
         storage: new RegExp(`^${storageClean}$`, 'i'),
         is_active: { $ne: false },
-      }).sort({ updated_at: -1, _id: -1 }).lean();
+      }).sort({ manual_override: -1, is_locked: -1, updated_at: -1, _id: -1 }).lean();
     }
 
     // 2. Try any active config for this model in SellPriceConfig
@@ -631,7 +631,7 @@ router.get('/sell-pricing/config', async (req, res, next) => {
         brand: brandRegex,
         model: modelRegex,
         is_active: { $ne: false },
-      }).sort({ updated_at: -1, _id: -1 }).lean();
+      }).sort({ manual_override: -1, is_locked: -1, updated_at: -1, _id: -1 }).lean();
     }
 
     if (config) {
@@ -985,7 +985,7 @@ router.get('/sell-pricing/competitor-radar', async (req, res, next) => {
         model: modelRegex,
         storage: new RegExp(`^${storageClean}$`, 'i'),
         is_active: { $ne: false },
-      }).sort({ updated_at: -1, _id: -1 }).lean();
+      }).sort({ manual_override: -1, is_locked: -1, updated_at: -1, _id: -1 }).lean();
     }
 
     if (!funduConfig) {
@@ -993,7 +993,7 @@ router.get('/sell-pricing/competitor-radar', async (req, res, next) => {
         brand: brandRegex,
         model: modelRegex,
         is_active: { $ne: false },
-      }).sort({ updated_at: -1, _id: -1 }).lean();
+      }).sort({ manual_override: -1, is_locked: -1, updated_at: -1, _id: -1 }).lean();
     }
 
     let funduBasePrice = 0;

@@ -147,67 +147,18 @@ export async function ensureMasterPhonesSeeded(force = true) {
       await MasterPhone.bulkWrite(chunk, { ordered: false });
     }
 
-    // 2. Bulk Upsert into SellPriceConfig (Admin Pricing Rules)
-    // NEVER overwrite models that an admin has manually set or locked!
-
-    const configBulkOps = currentCatalog
-      .filter((phone) => {
-        let cleanModel = (phone.model || '').trim();
-        const b = (phone.brand || '').trim();
-        if (b && cleanModel.toLowerCase().startsWith(b.toLowerCase())) {
-          cleanModel = cleanModel.slice(b.length).trim();
-        }
-        const key = `${(phone.brand || '').toLowerCase().trim()}:${cleanModel.toLowerCase()}`;
-        return !lockedSet.has(key);
-      })
-      .map((phone) => {
-        let cleanModel = (phone.model || '').trim();
-        const b = (phone.brand || '').trim();
-        if (b && cleanModel.toLowerCase().startsWith(b.toLowerCase())) {
-          cleanModel = cleanModel.slice(b.length).trim();
-        }
-        const stg = (phone.storage_options?.[0] || '128GB').replace(/\s+/g, '');
-        const price = phone.price || phone.base_resale_value || 12000;
-
-        return {
-          updateOne: {
-            filter: {
-              brand: phone.brand,
-              model: cleanModel,
-              manual_override: { $ne: true },
-              is_locked: { $ne: true },
-            },
-            update: {
-              $set: {
-                brand: phone.brand,
-                model: cleanModel,
-                storage: stg,
-                base_price: price,
-                is_active: phone.is_active !== false,
-                updated_at: new Date(),
-              },
-              $setOnInsert: {
-                excellent_multiplier: 1.0,
-                good_multiplier: 0.70,
-                fair_multiplier: 0.55,
-                box_bonus: 500,
-                charger_bonus: 400,
-                created_at: new Date(),
-              },
-            },
-            upsert: true,
-          },
-        };
-      });
-
-    if (configBulkOps.length > 0) {
-      for (let i = 0; i < configBulkOps.length; i += 200) {
-        const chunk = configBulkOps.slice(i, i + 200);
-        await SellPriceConfig.bulkWrite(chunk, { ordered: false });
-      }
+    // 2. Clean up any un-locked dummy seed records from SellPriceConfig
+    // SellPriceConfig is ONLY for real Admin-configured/locked price overrides.
+    // phonesCatalog.json must NEVER seed or overwrite SellPriceConfig.
+    const cleanupResult = await SellPriceConfig.deleteMany({
+      manual_override: { $ne: true },
+      is_locked: { $ne: true },
+    });
+    if (cleanupResult.deletedCount > 0) {
+      console.log(`[AutoSync] 🧹 Cleaned up ${cleanupResult.deletedCount} un-locked/dummy seed configs from SellPriceConfig to protect Admin fixed prices.`);
     }
 
-    console.log(`[AutoSync] ✅ Master phones & Admin sell price configs automatically synchronized (${currentCatalog.length} models).`);
+    console.log(`[AutoSync] ✅ Master phones catalog automatically synchronized (${currentCatalog.length} models) with Admin price locks strictly preserved.`);
   } catch (err) {
     console.error(`[AutoSync] Error during catalog auto-sync:`, err.message);
   }
