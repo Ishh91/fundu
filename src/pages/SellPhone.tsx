@@ -997,7 +997,15 @@ export default function SellPhone() {
   // Available Series List for Selected Brand (in exact defined chronological order)
   const brandSeriesList = useMemo(() => {
     if (!form.brand) return [];
-    const models = MASTER_MODEL_CATALOG.filter((m) => m.brand === form.brand && !isModelDeleted(m.brand, m.model));
+    const isPoco = (form.brand || '').toLowerCase() === 'poco';
+    const models = MASTER_MODEL_CATALOG.filter((m) => {
+      if (isModelDeleted(m.brand, m.model)) return false;
+      const bLower = (m.brand || '').toLowerCase();
+      if (isPoco) {
+        return bLower === 'poco' || (bLower === 'xiaomi' && /poco/i.test(m.model));
+      }
+      return bLower === form.brand.toLowerCase();
+    });
     const groups = groupModelsBySeries(form.brand, models);
     const names = groups.filter((g) => g.models.length > 0).map((g) => g.name);
     return ['All', ...names];

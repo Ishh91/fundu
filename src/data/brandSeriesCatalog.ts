@@ -357,9 +357,17 @@ export function inferModelSeries(
     return { seriesName: 'OnePlus Nord Series', seriesSlug: 'oneplus-nord-series' };
   }
 
-  // 4. Xiaomi / Redmi / Poco
-  if (bLower === 'xiaomi' || bLower === 'redmi' || bLower === 'poco') {
-    if (/\bpoco\b/i.test(mLower)) return { seriesName: 'POCO Series', seriesSlug: 'poco-series' };
+  // 4. POCO Series Classification
+  if (bLower === 'poco' || (bLower === 'xiaomi' && /\bpoco\b/i.test(mLower))) {
+    if (/\b(f[1-7]|poco\s*f)\b/i.test(mLower)) return { seriesName: 'POCO F Series', seriesSlug: 'poco-f-series' };
+    if (/\b(c[3-9]\d?[a-z]?|poco\s*c)\b/i.test(mLower)) return { seriesName: 'POCO C Series', seriesSlug: 'poco-c-series' };
+    if (/\b(m[2-8]|poco\s*m)\b/i.test(mLower)) return { seriesName: 'POCO M Series', seriesSlug: 'poco-m-series' };
+    if (/\b(x[2-9]|poco\s*x)\b/i.test(mLower) || /x\s*speed/i.test(mLower)) return { seriesName: 'POCO X Series', seriesSlug: 'poco-x-series' };
+    return { seriesName: 'POCO X Series', seriesSlug: 'poco-x-series' };
+  }
+
+  // 4b. Xiaomi / Redmi
+  if (bLower === 'xiaomi' || bLower === 'redmi') {
     if (/\bnote\b/i.test(mLower)) return { seriesName: 'Redmi Note Series', seriesSlug: 'redmi-note-series' };
     if (/\b(15|14|13|12|11|10|mi)\b/i.test(mLower) && !/\bredmi\b/i.test(mLower)) return { seriesName: 'Xiaomi Flagship & Mi Series', seriesSlug: 'xiaomi-mi-series' };
     return { seriesName: 'Redmi Number Series', seriesSlug: 'redmi-number-series' };
@@ -1705,19 +1713,24 @@ export const BRAND_SERIES_DEFINITIONS: Record<string, BrandSeriesDefinition[]> =
       id: 'poco-x-series',
       slug: 'poco-x-series',
       name: 'POCO X Series',
-      brand: 'POCO',
+      brand: 'Poco',
       image: 'https://fdn2.gsmarena.com/vv/bigpic/xiaomi-poco-x6-pro.jpg',
-      description: 'POCO X6 Pro 5G, X6 5G, X6 Neo 5G, X5 Pro 5G, X5 5G, X4 Pro 5G',
-      pattern: /poco\s*x\b|\bx[3-6]\b/i,
+      description: 'POCO X7 Pro 5G, X7 5G, X6 Pro 5G, X6 5G, X6 Neo, X5 Pro, X5, X4 Pro, X4 GT, X3 Pro, X3, X2',
+      pattern: /poco\s*x|\bx[2-9]\b|x\s*speed/i,
       defaultModels: [
-        { brand: 'POCO', series: 'POCO X Series', model: 'POCO X6 Pro 5G', storage: '256 GB', price: 18300, image: 'https://fdn2.gsmarena.com/vv/bigpic/xiaomi-poco-x6-pro.jpg' },
-        { brand: 'POCO', series: 'POCO X Series', model: 'POCO X6 5G', storage: '128 GB', price: 16450, image: 'https://fdn2.gsmarena.com/vv/bigpic/xiaomi-poco-x6.jpg' },
-        { brand: 'POCO', series: 'POCO X Series', model: 'POCO X6 Neo 5G', storage: '128 GB', price: 10700, image: 'https://fdn2.gsmarena.com/vv/bigpic/xiaomi-poco-x6-neo.jpg' },
-        { brand: 'POCO', series: 'POCO X Series', model: 'POCO X5 Pro 5G', storage: '128 GB', price: 12800, image: 'https://fdn2.gsmarena.com/vv/bigpic/xiaomi-poco-x5-pro.jpg' },
-        { brand: 'POCO', series: 'POCO X Series', model: 'POCO X5 5G', storage: '128 GB', price: 11950, image: 'https://fdn2.gsmarena.com/vv/bigpic/xiaomi-poco-x5.jpg' },
-        { brand: 'POCO', series: 'POCO X Series', model: 'POCO X4 Pro 5G', storage: '128 GB', price: 8500, image: 'https://fdn2.gsmarena.com/vv/bigpic/xiaomi-poco-x4-pro-5g.jpg' },
-        { brand: 'POCO', series: 'POCO X Series', model: 'POCO X3 Pro', storage: '128 GB', price: 7150, image: 'https://fdn2.gsmarena.com/vv/bigpic/xiaomi-poco-x3-pro.jpg' },
-        { brand: 'POCO', series: 'POCO X Series', model: 'POCO X3', storage: '64 GB', price: 5700, image: 'https://fdn2.gsmarena.com/vv/bigpic/xiaomi-poco-x3.jpg' },
+        { brand: 'Poco', series: 'POCO X Series', model: 'POCO X7 Pro 5G', storage: '256 GB', price: 19500, image: 'https://fdn2.gsmarena.com/vv/bigpic/poco-poco-x7-pro-5g.jpg' },
+        { brand: 'Poco', series: 'POCO X Series', model: 'POCO X7 5G', storage: '128 GB', price: 15200, image: 'https://fdn2.gsmarena.com/vv/bigpic/poco-poco-x7-5g.jpg' },
+        { brand: 'Poco', series: 'POCO X Series', model: 'POCO X6 Pro 5G', storage: '256 GB', price: 18300, image: 'https://fdn2.gsmarena.com/vv/bigpic/xiaomi-poco-x6-pro.jpg' },
+        { brand: 'Poco', series: 'POCO X Series', model: 'POCO X6 5G', storage: '128 GB', price: 16450, image: 'https://fdn2.gsmarena.com/vv/bigpic/xiaomi-poco-x6.jpg' },
+        { brand: 'Poco', series: 'POCO X Series', model: 'POCO X6 Neo 5G', storage: '128 GB', price: 10700, image: 'https://fdn2.gsmarena.com/vv/bigpic/xiaomi-poco-x6-neo.jpg' },
+        { brand: 'Poco', series: 'POCO X Series', model: 'POCO X5 Pro 5G', storage: '128 GB', price: 12800, image: 'https://fdn2.gsmarena.com/vv/bigpic/xiaomi-poco-x5-pro.jpg' },
+        { brand: 'Poco', series: 'POCO X Series', model: 'POCO X5 5G', storage: '128 GB', price: 11950, image: 'https://fdn2.gsmarena.com/vv/bigpic/xiaomi-poco-x5.jpg' },
+        { brand: 'Poco', series: 'POCO X Series', model: 'POCO X4 Pro 5G', storage: '128 GB', price: 8500, image: 'https://fdn2.gsmarena.com/vv/bigpic/xiaomi-poco-x4-pro-5g.jpg' },
+        { brand: 'Poco', series: 'POCO X Series', model: 'POCO X4 GT', storage: '128 GB', price: 9200, image: 'https://fdn2.gsmarena.com/vv/bigpic/xiaomi-poco-x4-gt.jpg' },
+        { brand: 'Poco', series: 'POCO X Series', model: 'POCO X3 Pro', storage: '128 GB', price: 7150, image: 'https://fdn2.gsmarena.com/vv/bigpic/xiaomi-poco-x3-pro.jpg' },
+        { brand: 'Poco', series: 'POCO X Series', model: 'POCO X3 GT', storage: '128 GB', price: 6800, image: 'https://fdn2.gsmarena.com/vv/bigpic/xiaomi-poco-x3-gt.jpg' },
+        { brand: 'Poco', series: 'POCO X Series', model: 'POCO X3', storage: '64 GB', price: 5700, image: 'https://fdn2.gsmarena.com/vv/bigpic/xiaomi-poco-x3.jpg' },
+        { brand: 'Poco', series: 'POCO X Series', model: 'POCO X2', storage: '64 GB', price: 4900, image: 'https://fdn2.gsmarena.com/vv/bigpic/xiaomi-poco-x2.jpg' },
       ],
     },
     {

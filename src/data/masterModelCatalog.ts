@@ -3088,7 +3088,7 @@ export const MASTER_MODEL_CATALOG = [
   },
   {
     "brand": "Poco",
-    "series": "Poco Series",
+    "series": "POCO C Series",
     "model": "POCO C51",
     "storage": "64 GB",
     "price": 6480,
@@ -3096,7 +3096,7 @@ export const MASTER_MODEL_CATALOG = [
   },
   {
     "brand": "Poco",
-    "series": "Poco Series",
+    "series": "POCO C Series",
     "model": "POCO C55",
     "storage": "64 GB",
     "price": 6830,
@@ -3104,7 +3104,7 @@ export const MASTER_MODEL_CATALOG = [
   },
   {
     "brand": "Poco",
-    "series": "Poco Series",
+    "series": "POCO C Series",
     "model": "POCO C61",
     "storage": "64 GB",
     "price": 6900,
@@ -3112,7 +3112,7 @@ export const MASTER_MODEL_CATALOG = [
   },
   {
     "brand": "Poco",
-    "series": "C Budget Series",
+    "series": "POCO C Series",
     "model": "Poco C65",
     "storage": "128 GB",
     "price": 7050,
@@ -3120,7 +3120,7 @@ export const MASTER_MODEL_CATALOG = [
   },
   {
     "brand": "Poco",
-    "series": "Poco Series",
+    "series": "POCO C Series",
     "model": "POCO C71",
     "storage": "64 GB",
     "price": 6090,
@@ -3128,7 +3128,7 @@ export const MASTER_MODEL_CATALOG = [
   },
   {
     "brand": "Poco",
-    "series": "Poco Series",
+    "series": "POCO C Series",
     "model": "POCO C75 5G",
     "storage": "64 GB",
     "price": 7810,
@@ -3136,7 +3136,7 @@ export const MASTER_MODEL_CATALOG = [
   },
   {
     "brand": "Poco",
-    "series": "Poco Series",
+    "series": "POCO C Series",
     "model": "POCO C81",
     "storage": "64 GB",
     "price": 9530,
@@ -3144,7 +3144,7 @@ export const MASTER_MODEL_CATALOG = [
   },
   {
     "brand": "Poco",
-    "series": "Poco Series",
+    "series": "POCO C Series",
     "model": "POCO C81X",
     "storage": "64 GB",
     "price": 8620,
@@ -3152,7 +3152,7 @@ export const MASTER_MODEL_CATALOG = [
   },
   {
     "brand": "Poco",
-    "series": "Poco Series",
+    "series": "POCO C Series",
     "model": "POCO C85 5G",
     "storage": "128 GB",
     "price": 10030,
@@ -3160,7 +3160,7 @@ export const MASTER_MODEL_CATALOG = [
   },
   {
     "brand": "Poco",
-    "series": "Poco Series",
+    "series": "POCO C Series",
     "model": "POCO C85x",
     "storage": "64 GB",
     "price": 10080,
@@ -3168,7 +3168,7 @@ export const MASTER_MODEL_CATALOG = [
   },
   {
     "brand": "Poco",
-    "series": "Poco Series",
+    "series": "POCO F Series",
     "model": "POCO F3 GT",
     "storage": "128 GB",
     "price": 9900,
@@ -3176,7 +3176,7 @@ export const MASTER_MODEL_CATALOG = [
   },
   {
     "brand": "Poco",
-    "series": "Poco Series",
+    "series": "POCO F Series",
     "model": "POCO F4 5G",
     "storage": "128 GB",
     "price": 8960,
@@ -3184,7 +3184,7 @@ export const MASTER_MODEL_CATALOG = [
   },
   {
     "brand": "Poco",
-    "series": "F Flagship Series",
+    "series": "POCO F Series",
     "model": "Poco F5 5G",
     "storage": "256 GB",
     "price": 14450,
@@ -3192,7 +3192,7 @@ export const MASTER_MODEL_CATALOG = [
   },
   {
     "brand": "Poco",
-    "series": "F Flagship Series",
+    "series": "POCO F Series",
     "model": "Poco F6 5G",
     "storage": "256 GB",
     "price": 18450,
@@ -3200,7 +3200,7 @@ export const MASTER_MODEL_CATALOG = [
   },
   {
     "brand": "Poco",
-    "series": "Poco Series",
+    "series": "POCO F Series",
     "model": "POCO F7 5G",
     "storage": "256 GB",
     "price": 22520,
@@ -3208,7 +3208,7 @@ export const MASTER_MODEL_CATALOG = [
   },
   {
     "brand": "Poco",
-    "series": "Poco Series",
+    "series": "POCO M Series",
     "model": "POCO M2",
     "storage": "64 GB",
     "price": 5670,
@@ -3216,7 +3216,7 @@ export const MASTER_MODEL_CATALOG = [
   },
   {
     "brand": "Poco",
-    "series": "Poco Series",
+    "series": "POCO M Series",
     "model": "POCO M2 Pro",
     "storage": "64 GB",
     "price": 6250,
@@ -3224,7 +3224,7 @@ export const MASTER_MODEL_CATALOG = [
   },
   {
     "brand": "Poco",
-    "series": "Poco Series",
+    "series": "POCO M Series",
     "model": "POCO M2 Reloaded",
     "storage": "64 GB",
     "price": 4960,
@@ -3232,7 +3232,7 @@ export const MASTER_MODEL_CATALOG = [
   },
   {
     "brand": "Poco",
-    "series": "Poco Series",
+    "series": "POCO M Series",
     "model": "POCO M3",
     "storage": "64 GB",
     "price": 6150,
@@ -3240,7 +3240,7 @@ export const MASTER_MODEL_CATALOG = [
   },
   {
     "brand": "Poco",
-    "series": "Poco Series",
+    "series": "POCO M Series",
     "model": "POCO M3 Pro 5G",
     "storage": "64 GB",
     "price": 7880,
@@ -3248,7 +3248,7 @@ export const MASTER_MODEL_CATALOG = [
   },
   {
     "brand": "Poco",
-    "series": "Poco Series",
+    "series": "POCO M Series",
     "model": "POCO M4 5G",
     "storage": "64 GB",
     "price": 7860,
@@ -3256,7 +3256,7 @@ export const MASTER_MODEL_CATALOG = [
   },
   {
     "brand": "Poco",
-    "series": "Poco Series",
+    "series": "POCO M Series",
     "model": "POCO M4 Pro 5G",
     "storage": "64 GB",
     "price": 6700,
@@ -3264,7 +3264,7 @@ export const MASTER_MODEL_CATALOG = [
   },
   {
     "brand": "Poco",
-    "series": "Poco Series",
+    "series": "POCO M Series",
     "model": "POCO M5",
     "storage": "64 GB",
     "price": 5800,
@@ -3272,7 +3272,7 @@ export const MASTER_MODEL_CATALOG = [
   },
   {
     "brand": "Poco",
-    "series": "M Power Series",
+    "series": "POCO M Series",
     "model": "Poco M6 5G",
     "storage": "128 GB",
     "price": 7690,
@@ -3280,7 +3280,7 @@ export const MASTER_MODEL_CATALOG = [
   },
   {
     "brand": "Poco",
-    "series": "Poco Series",
+    "series": "POCO M Series",
     "model": "POCO M6 Plus 5G",
     "storage": "128 GB",
     "price": 8410,
@@ -3288,7 +3288,7 @@ export const MASTER_MODEL_CATALOG = [
   },
   {
     "brand": "Poco",
-    "series": "M Power Series",
+    "series": "POCO M Series",
     "model": "Poco M6 Pro 5G",
     "storage": "128 GB",
     "price": 8580,
@@ -3296,7 +3296,7 @@ export const MASTER_MODEL_CATALOG = [
   },
   {
     "brand": "Poco",
-    "series": "Poco Series",
+    "series": "POCO M Series",
     "model": "POCO M7 5G",
     "storage": "128 GB",
     "price": 8010,
@@ -3304,7 +3304,7 @@ export const MASTER_MODEL_CATALOG = [
   },
   {
     "brand": "Poco",
-    "series": "Poco Series",
+    "series": "POCO M Series",
     "model": "POCO M7 Plus 5G",
     "storage": "128 GB",
     "price": 9640,
@@ -3312,7 +3312,7 @@ export const MASTER_MODEL_CATALOG = [
   },
   {
     "brand": "Poco",
-    "series": "Poco Series",
+    "series": "POCO M Series",
     "model": "POCO M7 Pro 5G",
     "storage": "128 GB",
     "price": 11040,
@@ -3320,7 +3320,7 @@ export const MASTER_MODEL_CATALOG = [
   },
   {
     "brand": "Poco",
-    "series": "Poco Series",
+    "series": "POCO M Series",
     "model": "POCO M8 5G",
     "storage": "128 GB",
     "price": 15890,
@@ -3328,7 +3328,7 @@ export const MASTER_MODEL_CATALOG = [
   },
   {
     "brand": "Poco",
-    "series": "Poco Series",
+    "series": "POCO X Series",
     "model": "POCO X3",
     "storage": "64 GB",
     "price": 6500,
@@ -3336,7 +3336,7 @@ export const MASTER_MODEL_CATALOG = [
   },
   {
     "brand": "Poco",
-    "series": "Poco Series",
+    "series": "POCO X Series",
     "model": "POCO X3 Pro",
     "storage": "128 GB",
     "price": 7150,
@@ -3344,7 +3344,7 @@ export const MASTER_MODEL_CATALOG = [
   },
   {
     "brand": "Poco",
-    "series": "Poco Series",
+    "series": "POCO X Series",
     "model": "POCO X4 Pro 5G",
     "storage": "64 GB",
     "price": 8490,
@@ -3352,7 +3352,7 @@ export const MASTER_MODEL_CATALOG = [
   },
   {
     "brand": "Poco",
-    "series": "Poco Series",
+    "series": "POCO X Series",
     "model": "POCO X5 5G",
     "storage": "128 GB",
     "price": 11950,
@@ -3360,7 +3360,7 @@ export const MASTER_MODEL_CATALOG = [
   },
   {
     "brand": "Poco",
-    "series": "Poco Series",
+    "series": "POCO X Series",
     "model": "POCO X5 Pro 5G",
     "storage": "128 GB",
     "price": 12790,
@@ -3368,7 +3368,7 @@ export const MASTER_MODEL_CATALOG = [
   },
   {
     "brand": "Poco",
-    "series": "X Speed Series",
+    "series": "POCO X Series",
     "model": "Poco X6 5G",
     "storage": "128 GB",
     "price": 16450,
@@ -3376,7 +3376,7 @@ export const MASTER_MODEL_CATALOG = [
   },
   {
     "brand": "Poco",
-    "series": "Poco Series",
+    "series": "POCO X Series",
     "model": "POCO X6 Neo 5G",
     "storage": "128 GB",
     "price": 10710,
@@ -3384,7 +3384,7 @@ export const MASTER_MODEL_CATALOG = [
   },
   {
     "brand": "Poco",
-    "series": "X Speed Series",
+    "series": "POCO X Series",
     "model": "Poco X6 Pro 5G",
     "storage": "256 GB",
     "price": 16450,
@@ -3392,7 +3392,7 @@ export const MASTER_MODEL_CATALOG = [
   },
   {
     "brand": "Poco",
-    "series": "Poco Series",
+    "series": "POCO X Series",
     "model": "POCO X7 5G",
     "storage": "128 GB",
     "price": 13130,
@@ -3400,7 +3400,7 @@ export const MASTER_MODEL_CATALOG = [
   },
   {
     "brand": "Poco",
-    "series": "Poco Series",
+    "series": "POCO X Series",
     "model": "POCO X7 Pro 5G",
     "storage": "256 GB",
     "price": 16150,
@@ -3408,7 +3408,7 @@ export const MASTER_MODEL_CATALOG = [
   },
   {
     "brand": "Poco",
-    "series": "Poco Series",
+    "series": "POCO X Series",
     "model": "POCO X8 Pro",
     "storage": "256 GB",
     "price": 23670,
@@ -3416,7 +3416,7 @@ export const MASTER_MODEL_CATALOG = [
   },
   {
     "brand": "Poco",
-    "series": "Poco Series",
+    "series": "POCO X Series",
     "model": "POCO X8 Pro Max 5G",
     "storage": "256 GB",
     "price": 30200,
@@ -7079,168 +7079,168 @@ export const MASTER_MODEL_CATALOG = [
     "image": "https://fdn2.gsmarena.com/vv/bigpic/vivo-z1x.jpg"
   },
   {
-    "brand": "Xiaomi",
-    "series": "POCO M & C Series",
+    "brand": "Poco",
+    "series": "POCO C Series",
     "model": "POCO C51",
     "storage": "64 GB",
     "price": 4800,
     "image": "https://api.mobileapi.dev/devices/15702/thumb.png"
   },
   {
-    "brand": "Xiaomi",
-    "series": "POCO M & C Series",
+    "brand": "Poco",
+    "series": "POCO C Series",
     "model": "POCO C55",
     "storage": "64 GB",
     "price": 5750,
     "image": "https://api.mobileapi.dev/devices/15703/thumb.png"
   },
   {
-    "brand": "Xiaomi",
-    "series": "POCO M & C Series",
+    "brand": "Poco",
+    "series": "POCO C Series",
     "model": "POCO C65",
     "storage": "128 GB",
     "price": 7200,
     "image": "https://api.mobileapi.dev/devices/15697/thumb.png"
   },
   {
-    "brand": "Xiaomi",
-    "series": "Xiaomi Series",
+    "brand": "Poco",
+    "series": "POCO F Series",
     "model": "POCO F1",
     "storage": "64 GB",
     "price": 5070,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-poco-f1.jpg"
   },
   {
-    "brand": "Xiaomi",
-    "series": "POCO X & F Series",
+    "brand": "Poco",
+    "series": "POCO F Series",
     "model": "POCO F3 GT",
     "storage": "128 GB",
     "price": 12300,
     "image": "https://api.mobileapi.dev/devices/15719/thumb.png"
   },
   {
-    "brand": "Xiaomi",
-    "series": "POCO X & F Series",
+    "brand": "Poco",
+    "series": "POCO F Series",
     "model": "POCO F4 5G",
     "storage": "128 GB",
     "price": 13900,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-poco-f4.jpg"
   },
   {
-    "brand": "Xiaomi",
-    "series": "POCO X & F Series",
+    "brand": "Poco",
+    "series": "POCO F Series",
     "model": "POCO F4 GT",
     "storage": "128 GB",
     "price": 16000,
     "image": "https://api.mobileapi.dev/devices/15706/thumb.png"
   },
   {
-    "brand": "Xiaomi",
-    "series": "POCO X & F Series",
+    "brand": "Poco",
+    "series": "POCO F Series",
     "model": "POCO F5",
     "storage": "256 GB",
     "price": 14400,
     "image": "https://api.mobileapi.dev/devices/15700/thumb.png"
   },
   {
-    "brand": "Xiaomi",
-    "series": "POCO X & F Series",
+    "brand": "Poco",
+    "series": "POCO F Series",
     "model": "POCO F6",
     "storage": "256 GB",
     "price": 18450,
     "image": "https://api.mobileapi.dev/devices/15693/thumb.png"
   },
   {
-    "brand": "Xiaomi",
-    "series": "POCO M & C Series",
+    "brand": "Poco",
+    "series": "POCO M Series",
     "model": "POCO M4 Pro 5G",
     "storage": "128 GB",
     "price": 7700,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-poco-m4-pro-5g.jpg"
   },
   {
-    "brand": "Xiaomi",
-    "series": "POCO M & C Series",
+    "brand": "Poco",
+    "series": "POCO M Series",
     "model": "POCO M5",
     "storage": "64 GB",
     "price": 6700,
     "image": "https://api.mobileapi.dev/devices/15711/thumb.png"
   },
   {
-    "brand": "Xiaomi",
-    "series": "POCO M & C Series",
+    "brand": "Poco",
+    "series": "POCO M Series",
     "model": "POCO M6 5G",
     "storage": "128 GB",
     "price": 8150,
     "image": "https://api.mobileapi.dev/devices/15691/thumb.png"
   },
   {
-    "brand": "Xiaomi",
-    "series": "POCO M & C Series",
+    "brand": "Poco",
+    "series": "POCO M Series",
     "model": "POCO M6 Pro 5G",
     "storage": "128 GB",
     "price": 9450,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-poco-m6-pro-5g.jpg"
   },
   {
-    "brand": "Xiaomi",
-    "series": "Xiaomi Series",
+    "brand": "Poco",
+    "series": "POCO X Series",
     "model": "POCO X2",
     "storage": "64 GB",
     "price": 6340,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-poco-x2.jpg"
   },
   {
-    "brand": "Xiaomi",
-    "series": "POCO X & F Series",
+    "brand": "Poco",
+    "series": "POCO X Series",
     "model": "POCO X3 Pro",
     "storage": "128 GB",
     "price": 8800,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-poco-x3-pro.jpg"
   },
   {
-    "brand": "Xiaomi",
-    "series": "POCO X & F Series",
+    "brand": "Poco",
+    "series": "POCO X Series",
     "model": "POCO X4 Pro 5G",
     "storage": "128 GB",
     "price": 9400,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-poco-x4-pro-5g.jpg"
   },
   {
-    "brand": "Xiaomi",
-    "series": "POCO X & F Series",
+    "brand": "Poco",
+    "series": "POCO X Series",
     "model": "POCO X5 5G",
     "storage": "128 GB",
     "price": 10350,
     "image": "https://api.mobileapi.dev/devices/15708/thumb.png"
   },
   {
-    "brand": "Xiaomi",
-    "series": "POCO X & F Series",
+    "brand": "Poco",
+    "series": "POCO X Series",
     "model": "POCO X5 Pro 5G",
     "storage": "128 GB",
     "price": 13000,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-poco-x5-pro.jpg"
   },
   {
-    "brand": "Xiaomi",
-    "series": "POCO X & F Series",
+    "brand": "Poco",
+    "series": "POCO X Series",
     "model": "POCO X6 5G",
     "storage": "128 GB",
     "price": 16300,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-poco-x6.jpg"
   },
   {
-    "brand": "Xiaomi",
-    "series": "POCO X & F Series",
+    "brand": "Poco",
+    "series": "POCO X Series",
     "model": "POCO X6 Neo",
     "storage": "128 GB",
     "price": 12300,
     "image": "https://api.mobileapi.dev/devices/15695/thumb.png"
   },
   {
-    "brand": "Xiaomi",
-    "series": "POCO X & F Series",
+    "brand": "Poco",
+    "series": "POCO X Series",
     "model": "POCO X6 Pro 5G",
     "storage": "256 GB",
     "price": 16450,
@@ -8031,49 +8031,49 @@ export const MASTER_MODEL_CATALOG = [
     "image": "https://fdn2.gsmarena.com/vv/bigpic/realme-c15.jpg"
   },
   {
-    "brand": "Xiaomi",
-    "series": "Xiaomi Poco Series",
-    "model": "Xiaomi Poco F7",
+    "brand": "Poco",
+    "series": "POCO F Series",
+    "model": "POCO F7",
     "storage": "256 GB",
     "price": 26500,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-poco-f6.jpg"
   },
   {
-    "brand": "Xiaomi",
-    "series": "Xiaomi Poco Series",
-    "model": "Xiaomi Poco X7",
+    "brand": "Poco",
+    "series": "POCO X Series",
+    "model": "POCO X7",
     "storage": "128 GB",
     "price": 16500,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-poco-x6.jpg"
   },
   {
-    "brand": "Xiaomi",
-    "series": "Xiaomi Poco Series",
-    "model": "Xiaomi Poco M7 Plus",
+    "brand": "Poco",
+    "series": "POCO M Series",
+    "model": "POCO M7 Plus",
     "storage": "128 GB",
     "price": 11200,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-poco-m6-plus.jpg"
   },
   {
-    "brand": "Xiaomi",
-    "series": "Xiaomi Poco Series",
-    "model": "Xiaomi Poco M8",
+    "brand": "Poco",
+    "series": "POCO M Series",
+    "model": "POCO M8",
     "storage": "128 GB",
     "price": 12500,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-poco-m6-pro.jpg"
   },
   {
-    "brand": "Xiaomi",
-    "series": "Xiaomi Poco Series",
-    "model": "Xiaomi Poco C75",
+    "brand": "Poco",
+    "series": "POCO C Series",
+    "model": "POCO C75",
     "storage": "128 GB",
     "price": 7800,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-poco-c65.jpg"
   },
   {
-    "brand": "Xiaomi",
-    "series": "Xiaomi Poco Series",
-    "model": "Xiaomi Poco M2",
+    "brand": "Poco",
+    "series": "POCO M Series",
+    "model": "POCO M2",
     "storage": "64 GB",
     "price": 4900,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-poco-m2.jpg"
