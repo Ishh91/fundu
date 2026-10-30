@@ -938,13 +938,6 @@ const MODEL_HARDWARE_RULES: Array<{
     ],
   },
   {
-    pattern: /poco\s*(x6\s*pro|f6)/i,
-    variants: [
-      { storage: '256 GB', rams: ['8 GB'] },
-      { storage: '512 GB', rams: ['12 GB'] },
-    ],
-  },
-  {
     pattern: /poco\s*m6/i,
     variants: [
       { storage: '64 GB', rams: ['4 GB'] },
@@ -2318,9 +2311,9 @@ export function is512GBValidForModel(brand = '', model = ''): boolean {
     return false;
   }
 
-  // 4. Xiaomi / Redmi / Poco: Strictly Xiaomi 13 Pro, 14, 14 Ultra, Redmi Note 13 Pro+
+  // 4. Xiaomi / Redmi / Poco: Strictly Xiaomi 13 Pro, 14, 14 Ultra, Redmi Note 13 Pro+, Poco F6, Poco X6 Pro
   if (b.includes('xiaomi') || b.includes('redmi') || b.includes('poco')) {
-    if (/xiaomi\s*(13\s*pro|14\b|14\s*ultra)|note\s*13\s*pro\+|poco\s*f6/i.test(m)) return true;
+    if (/xiaomi\s*(13\s*pro|14\b|14\s*ultra)|note\s*13\s*pro\+|poco\s*(f6|x6\s*pro)/i.test(m)) return true;
     return false;
   }
 

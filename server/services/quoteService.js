@@ -104,9 +104,17 @@ export async function createPhoneQuote(input, options = {}) {
 
   // 1. Authoritative Admin Pricing: Check MongoDB SellPriceConfig first
   try {
-    const brandRegex = new RegExp(`^${(input.brand || '').trim()}$`, 'i');
+    const inputBrandStr = (input.brand || '').trim();
+    const isPoco = inputBrandStr.toLowerCase() === 'poco';
+    const isXiaomi = inputBrandStr.toLowerCase() === 'xiaomi';
+    const brandRegex = (isPoco || isXiaomi)
+      ? /^(poco|xiaomi)$/i
+      : new RegExp(`^${inputBrandStr}$`, 'i');
+
+    const cleanModelName = cleanModel.replace(/^(poco|xiaomi)\s+/i, '').trim();
     const modelEscaped = cleanModel.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-    const modelRegex = new RegExp(`^(${modelEscaped}|${(input.brand || '').trim()}\\s+${modelEscaped})$`, 'i');
+    const cleanEscaped = cleanModelName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const modelRegex = new RegExp(`^(${modelEscaped}|${inputBrandStr}\\s+${modelEscaped}|${cleanEscaped}|poco\\s+${cleanEscaped}|xiaomi\\s+${cleanEscaped})$`, 'i');
 
     let dbConfig = null;
     if (input.storage) {

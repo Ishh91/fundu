@@ -38,17 +38,21 @@ export function getPriceStorageKeys(brand: string, model: string, storage: strin
   if (b && cleanM.startsWith(b)) {
     cleanM = cleanM.slice(b.length).trim();
   }
+  const cleanPoco = m.replace(/^(poco|xiaomi)\s+/i, '').trim();
 
-  const models = Array.from(new Set([cleanM, m])).filter(Boolean);
+  const models = Array.from(new Set([cleanM, m, cleanPoco, `poco ${cleanPoco}`, `xiaomi ${cleanPoco}`])).filter(Boolean);
   const s = storage.trim().toLowerCase();
   const sNorm = s.replace(/\s+/g, '');
   const storageVariants = Array.from(new Set([sNorm, s])).filter(Boolean);
+  const brands = Array.from(new Set([b, b === 'poco' ? 'xiaomi' : b === 'xiaomi' ? 'poco' : b])).filter(Boolean);
   const keys: string[] = [];
 
-  models.forEach((mod) => {
-    storageVariants.forEach((stg) => {
-      if (b) keys.push(`${b}:${mod}:${stg}`);
-      keys.push(`${mod}:${stg}`);
+  brands.forEach((br) => {
+    models.forEach((mod) => {
+      storageVariants.forEach((stg) => {
+        if (br) keys.push(`${br}:${mod}:${stg}`);
+        keys.push(`${mod}:${stg}`);
+      });
     });
   });
 
@@ -65,13 +69,17 @@ export function getPriceModelKeys(brand: string, model: string): string[] {
   if (b && cleanM.startsWith(b)) {
     cleanM = cleanM.slice(b.length).trim();
   }
+  const cleanPoco = m.replace(/^(poco|xiaomi)\s+/i, '').trim();
 
-  const models = Array.from(new Set([cleanM, m])).filter(Boolean);
+  const models = Array.from(new Set([cleanM, m, cleanPoco, `poco ${cleanPoco}`, `xiaomi ${cleanPoco}`])).filter(Boolean);
+  const brands = Array.from(new Set([b, b === 'poco' ? 'xiaomi' : b === 'xiaomi' ? 'poco' : b])).filter(Boolean);
   const keys: string[] = [];
 
-  models.forEach((mod) => {
-    if (b) keys.push(`${b}:${mod}`);
-    keys.push(mod);
+  brands.forEach((br) => {
+    models.forEach((mod) => {
+      if (br) keys.push(`${br}:${mod}`);
+      keys.push(mod);
+    });
   });
 
   return keys;

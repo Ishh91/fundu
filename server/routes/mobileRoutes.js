@@ -608,9 +608,16 @@ router.get('/sell-pricing/config', async (req, res, next) => {
       rawModel = rawModel.slice(rawBrand.length).trim();
     }
 
-    const brandRegex = new RegExp(`^${rawBrand}$`, 'i');
+    const isPoco = rawBrand.toLowerCase() === 'poco';
+    const isXiaomi = rawBrand.toLowerCase() === 'xiaomi';
+    const brandRegex = (isPoco || isXiaomi)
+      ? /^(poco|xiaomi)$/i
+      : new RegExp(`^${rawBrand}$`, 'i');
+
+    const cleanModelName = rawModel.replace(/^(poco|xiaomi)\s+/i, '').trim();
     const modelEscaped = rawModel.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-    const modelRegex = new RegExp(`^(${modelEscaped}|${rawBrand}\\s+${modelEscaped})$`, 'i');
+    const cleanEscaped = cleanModelName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const modelRegex = new RegExp(`^(${modelEscaped}|${rawBrand}\\s+${modelEscaped}|${cleanEscaped}|poco\\s+${cleanEscaped}|xiaomi\\s+${cleanEscaped})$`, 'i');
 
     let config = null;
 
@@ -753,9 +760,16 @@ router.post('/sell-pricing/config', async (req, res, next) => {
     if (rawBrand && rawModel.toLowerCase().startsWith(rawBrand.toLowerCase())) {
       rawModel = rawModel.slice(rawBrand.length).trim();
     }
-    const brandRegex = new RegExp(`^${rawBrand}$`, 'i');
+    const isPoco = rawBrand.toLowerCase() === 'poco';
+    const isXiaomi = rawBrand.toLowerCase() === 'xiaomi';
+    const brandRegex = (isPoco || isXiaomi)
+      ? /^(poco|xiaomi)$/i
+      : new RegExp(`^${rawBrand}$`, 'i');
+
+    const cleanModelName = rawModel.replace(/^(poco|xiaomi)\s+/i, '').trim();
     const modelEscaped = rawModel.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-    const modelRegex = new RegExp(`^(${modelEscaped}|${rawBrand}\\s+${modelEscaped})$`, 'i');
+    const cleanEscaped = cleanModelName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const modelRegex = new RegExp(`^(${modelEscaped}|${rawBrand}\\s+${modelEscaped}|${cleanEscaped}|poco\\s+${cleanEscaped}|xiaomi\\s+${cleanEscaped})$`, 'i');
 
     const cleanStorage = storage
       ? String(storage).trim().replace(/(\d+)\s*(gb|tb)/i, (_, n, u) => `${n} ${u.toUpperCase()}`)
@@ -954,7 +968,9 @@ router.get('/sell-pricing/competitor-radar', async (req, res, next) => {
       rawBrand = 'OnePlus';
     } else if (mLower.includes('pixel')) {
       rawBrand = 'Google';
-    } else if (mLower.includes('redmi') || mLower.includes('poco') || mLower.includes('xiaomi')) {
+    } else if (mLower.includes('poco') || (inputBrand && inputBrand.toLowerCase() === 'poco')) {
+      rawBrand = 'Poco';
+    } else if (mLower.includes('redmi') || mLower.includes('xiaomi')) {
       rawBrand = 'Xiaomi';
     } else if (mLower.includes('iqoo')) {
       rawBrand = 'iQOO';
@@ -973,9 +989,16 @@ router.get('/sell-pricing/competitor-radar', async (req, res, next) => {
       rawModel = rawModel.slice(rawBrand.length).trim();
     }
 
-    const brandRegex = new RegExp(`^${rawBrand}$`, 'i');
+    const isPoco = rawBrand.toLowerCase() === 'poco';
+    const isXiaomi = rawBrand.toLowerCase() === 'xiaomi';
+    const brandRegex = (isPoco || isXiaomi)
+      ? /^(poco|xiaomi)$/i
+      : new RegExp(`^${rawBrand}$`, 'i');
+
+    const cleanModelName = rawModel.replace(/^(poco|xiaomi)\s+/i, '').trim();
     const modelEscaped = rawModel.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-    const modelRegex = new RegExp(`^(${modelEscaped}|${rawBrand}\\s+${modelEscaped})$`, 'i');
+    const cleanEscaped = cleanModelName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const modelRegex = new RegExp(`^(${modelEscaped}|${rawBrand}\\s+${modelEscaped}|${cleanEscaped}|poco\\s+${cleanEscaped}|xiaomi\\s+${cleanEscaped})$`, 'i');
 
     // 1. Fetch Fundu Base Price from MongoDB (Exact storage match first)
     let funduConfig = null;

@@ -148,6 +148,10 @@ function normalizeModelDisplayName(brand: string, rawModel: string): string {
     m = m.replace(/^google\s+/i, '').trim();
   } else if (bLower === 'xiaomi') {
     m = m.replace(/^xiaomi\s+/i, '').trim();
+  } else if (bLower === 'poco') {
+    if (!m.toLowerCase().startsWith('poco')) {
+      m = `Poco ${m}`;
+    }
   } else if (m.toLowerCase().startsWith(bLower)) {
     m = m.slice(b.length).trim();
   }
@@ -289,10 +293,10 @@ export default function AdminCompetitorRadar() {
       if (json.data) {
         setRadarData(json.data);
         setCustomPriceInput(String(json.data.fundu.basePrice));
-        if (json.data.device.brand) {
+        if (json.data.device.brand && !selectedBrand) {
           setSelectedBrand(json.data.device.brand);
         }
-        if (json.data.device.model) {
+        if (json.data.device.model && !searchModel) {
           setSearchModel(json.data.device.model);
         }
       }
@@ -365,7 +369,9 @@ export default function AdminCompetitorRadar() {
       detectedBrand = 'OnePlus';
     } else if (low.includes('pixel')) {
       detectedBrand = 'Google';
-    } else if (low.includes('redmi') || low.includes('poco') || low.includes('xiaomi')) {
+    } else if (low.includes('poco')) {
+      detectedBrand = 'Poco';
+    } else if (low.includes('redmi') || low.includes('xiaomi')) {
       detectedBrand = 'Xiaomi';
     } else if (low.includes('iqoo')) {
       detectedBrand = 'iQOO';
