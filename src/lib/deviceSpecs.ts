@@ -465,6 +465,33 @@ export function calculateHardwareVariantMultiplier(storage = '128 GB', ram = '',
   return Number((storageMult * ramMult).toFixed(4));
 }
 
+/**
+ * Calculates authentic RAM tier price offset for devices with multiple RAM options on the same storage.
+ * e.g. 6GB RAM -> +0 (baseline), 8GB RAM -> +1,000, 12GB RAM -> +2,000
+ */
+export function calculateRamPriceOffset(selectedRam = '', availableRams: string[] = [], brand = ''): number {
+  const isApple = String(brand || '').toLowerCase().includes('apple');
+  if (isApple || !selectedRam || !Array.isArray(availableRams) || availableRams.length <= 1) {
+    return 0;
+  }
+  const norm = (r: string) => parseInt(String(r || '').replace(/\D/g, ''), 10) || 0;
+  const targetGb = norm(selectedRam);
+  const baseGb = norm(availableRams[0]);
+
+  if (targetGb <= 0 || baseGb <= 0 || targetGb === baseGb) {
+    return 0;
+  }
+
+  const index = availableRams.findIndex((r) => norm(r) === targetGb);
+  if (index > 0) {
+    return index * 1000;
+  } else if (targetGb > baseGb) {
+    const gbDiff = targetGb - baseGb;
+    return Math.max(1000, Math.round(gbDiff / 2) * 1000);
+  }
+  return 0;
+}
+
 // Explicit Authentic Hardware Variant Rules with Exact Storage <-> RAM Pairing
 const MODEL_HARDWARE_RULES: Array<{
   pattern: RegExp;

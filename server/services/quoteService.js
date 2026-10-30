@@ -132,6 +132,7 @@ export async function createPhoneQuote(input, options = {}) {
       enrichedOptions.catalogStorage = dbConfig.storage || '128 GB';
       enrichedOptions.isDirectBuybackPrice = true;
       enrichedOptions.cleanedModel = dbConfig.model;
+      enrichedOptions.ram = input.ram || '';
       enrichedOptions.cosmeticMultipliers = {
         flawless: dbConfig.excellent_multiplier != null ? Number(dbConfig.excellent_multiplier) : 1.0,
         good: dbConfig.good_multiplier != null ? Number(dbConfig.good_multiplier) : 0.85,

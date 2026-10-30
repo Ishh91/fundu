@@ -24,7 +24,12 @@ import { API_BASE } from '../../config/apiConfig';
 import { getCleanPhoneImage, BRAND_FRONT_FALLBACKS, getGenericDevicePlaceholder } from '../../lib/phoneImages';
 import { savePriceOverride } from '../../lib/priceSync';
 import { broadcastSync } from '../../lib/realtimeSync';
-import { normalizeStorageString, calculateHardwareVariantMultiplier } from '../../lib/deviceSpecs';
+import {
+  normalizeStorageString,
+  calculateHardwareVariantMultiplier,
+  getModelHardwareSpecs,
+  calculateRamPriceOffset,
+} from '../../lib/deviceSpecs';
 import { ALL_INDIAN_PHONES_CATALOG } from '../../data/indianPhonesCatalog';
 import { MASTER_MODEL_CATALOG } from '../../data/masterModelCatalog';
 import { BRAND_SERIES_DEFINITIONS, getDeviceRecencyScore } from '../../data/brandSeriesCatalog';
@@ -50,6 +55,7 @@ interface RadarResponse {
     brand: string;
     model: string;
     storage: string;
+    ram?: string;
     image: string;
     configId: string | null;
   };
@@ -123,8 +129,6 @@ const DEFAULT_BRAND_MODELS: Record<string, { model: string; storage: string }> =
   Poco: { model: 'Poco X6 Pro', storage: '256 GB' },
 };
 
-const STORAGES = ['64 GB', '128 GB', '256 GB', '512 GB', '1 TB'];
-
 function normalizeModelDisplayName(brand: string, rawModel: string): string {
   let m = (rawModel || '').trim();
   const b = (brand || '').trim();
@@ -154,10 +158,45 @@ export default function AdminCompetitorRadar() {
   const [selectedBrand, setSelectedBrand] = useState('Apple');
   const [searchModel, setSearchModel] = useState('iPhone 16 Pro');
   const [selectedStorage, setSelectedStorage] = useState('128 GB');
+  const [selectedRam, setSelectedRam] = useState<string>('');
   const [radarData, setRadarData] = useState<RadarResponse | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isManualMode, setIsManualMode] = useState(false);
+
+  // 1. Hardware Specs (Authentic Storages & RAMs for THIS exact model)
+  const currentDeviceSpecs = useMemo(() => {
+    return getModelHardwareSpecs(selectedBrand, searchModel, MASTER_MODEL_CATALOG);
+  }, [selectedBrand, searchModel]);
+
+  // Authentic Storages that realistically exist for this phone (e.g. S24 Ultra -> 256GB, 512GB, 1TB)
+  const availableStorages = useMemo(() => {
+    return currentDeviceSpecs.storages.length > 0 ? currentDeviceSpecs.storages : ['128 GB', '256 GB'];
+  }, [currentDeviceSpecs]);
+
+  // Authentic RAM options for the currently selected storage
+  const availableRams = useMemo(() => {
+    return currentDeviceSpecs.getRamsForStorage(selectedStorage);
+  }, [currentDeviceSpecs, selectedStorage]);
+
+  // Synchronize storage if current selection does not exist for this model
+  useEffect(() => {
+    if (!availableStorages.includes(selectedStorage)) {
+      const nextStorage = currentDeviceSpecs.defaultStorage || availableStorages[0];
+      setSelectedStorage(nextStorage);
+    }
+  }, [availableStorages, selectedStorage, currentDeviceSpecs]);
+
+  // Synchronize RAM when storage or model changes
+  useEffect(() => {
+    if (availableRams.length > 1) {
+      if (!availableRams.includes(selectedRam)) {
+        setSelectedRam(availableRams[0]);
+      }
+    } else {
+      setSelectedRam('');
+    }
+  }, [availableRams, selectedRam]);
 
   // Dynamic available models for the selected brand
   const availableModels = useMemo(() => {
@@ -233,12 +272,14 @@ export default function AdminCompetitorRadar() {
   const [savingPrice, setSavingPrice] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
 
-  const fetchRadar = async (brand: string, model: string, storage: string) => {
+  const fetchRadar = async (brand: string, model: string, storage: string, ram = selectedRam) => {
     setLoading(true);
     setError(null);
     setSaveSuccess(false);
     try {
-      const q = new URLSearchParams({ brand, model, storage });
+      const params: Record<string, string> = { brand, model, storage };
+      if (ram) params.ram = ram;
+      const q = new URLSearchParams(params);
       const res = await fetch(`${API_BASE}/sell-pricing/competitor-radar?${q.toString()}`);
       if (!res.ok) throw new Error('Failed to fetch competitor radar data');
       const json = await res.json();
@@ -260,27 +301,52 @@ export default function AdminCompetitorRadar() {
   };
 
   useEffect(() => {
-    fetchRadar(selectedBrand, searchModel, selectedStorage);
+    fetchRadar(selectedBrand, searchModel, selectedStorage, selectedRam);
   }, []);
 
   const handleBrandChange = (newBrand: string) => {
     setSelectedBrand(newBrand);
     const def = DEFAULT_BRAND_MODELS[newBrand] || { model: `${newBrand} Phone`, storage: '128 GB' };
     setSearchModel(def.model);
-    setSelectedStorage(def.storage);
-    fetchRadar(newBrand, def.model, def.storage);
+    const specs = getModelHardwareSpecs(newBrand, def.model, MASTER_MODEL_CATALOG);
+    const targetStorage = specs.storages.length > 0
+      ? (specs.storages.includes(def.storage) ? def.storage : specs.defaultStorage || specs.storages[0])
+      : def.storage;
+    const rams = specs.getRamsForStorage(targetStorage);
+    const targetRam = rams.length > 1 ? rams[0] : '';
+    setSelectedStorage(targetStorage);
+    setSelectedRam(targetRam);
+    fetchRadar(newBrand, def.model, targetStorage, targetRam);
   };
 
   const handleModelSelect = (newModel: string) => {
     if (!newModel) return;
     setSearchModel(newModel);
-    fetchRadar(selectedBrand, newModel, selectedStorage);
+    const specs = getModelHardwareSpecs(selectedBrand, newModel, MASTER_MODEL_CATALOG);
+    const targetStorage = specs.storages.length > 0
+      ? (specs.storages.includes(selectedStorage) ? selectedStorage : specs.defaultStorage || specs.storages[0])
+      : selectedStorage;
+    const rams = specs.getRamsForStorage(targetStorage);
+    const targetRam = rams.length > 1 ? rams[0] : '';
+    setSelectedStorage(targetStorage);
+    setSelectedRam(targetRam);
+    fetchRadar(selectedBrand, newModel, targetStorage, targetRam);
   };
 
   const handleStorageChange = (newStorage: string) => {
     setSelectedStorage(newStorage);
+    const rams = currentDeviceSpecs.getRamsForStorage(newStorage);
+    const nextRam = rams.length > 1 ? (rams.includes(selectedRam) ? selectedRam : rams[0]) : '';
+    setSelectedRam(nextRam);
     if (searchModel.trim()) {
-      fetchRadar(selectedBrand, searchModel.trim(), newStorage);
+      fetchRadar(selectedBrand, searchModel.trim(), newStorage, nextRam);
+    }
+  };
+
+  const handleRamChange = (newRam: string) => {
+    setSelectedRam(newRam);
+    if (searchModel.trim()) {
+      fetchRadar(selectedBrand, searchModel.trim(), selectedStorage, newRam);
     }
   };
 
@@ -314,15 +380,22 @@ export default function AdminCompetitorRadar() {
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchModel.trim()) {
-      fetchRadar(selectedBrand, searchModel.trim(), selectedStorage);
+      fetchRadar(selectedBrand, searchModel.trim(), selectedStorage, selectedRam);
     }
   };
 
   const handleApplyWatchlistItem = (item: typeof TOP_WATCHLIST[0]) => {
     setSelectedBrand(item.brand);
     setSearchModel(item.model);
-    setSelectedStorage(item.storage);
-    fetchRadar(item.brand, item.model, item.storage);
+    const specs = getModelHardwareSpecs(item.brand, item.model, MASTER_MODEL_CATALOG);
+    const targetStorage = specs.storages.length > 0
+      ? (specs.storages.includes(item.storage) ? item.storage : specs.defaultStorage || specs.storages[0])
+      : item.storage;
+    const rams = specs.getRamsForStorage(targetStorage);
+    const targetRam = rams.length > 1 ? rams[0] : '';
+    setSelectedStorage(targetStorage);
+    setSelectedRam(targetRam);
+    fetchRadar(item.brand, item.model, targetStorage, targetRam);
   };
 
   const handleSavePriceToDatabase = async (newPrice: number) => {
@@ -332,9 +405,9 @@ export default function AdminCompetitorRadar() {
     const normStorage = normalizeStorageString(selectedStorage);
     savePriceOverride(selectedBrand, searchModel, newPrice, normStorage);
 
-    // Also update all sibling storage variants proportionally in real-time
+    // Also update all REAL sibling storage variants proportionally in real-time
     const currentMult = calculateHardwareVariantMultiplier(normStorage, '', selectedBrand) || 1.0;
-    STORAGES.forEach((stg) => {
+    availableStorages.forEach((stg) => {
       if (stg !== normStorage) {
         const sMult = calculateHardwareVariantMultiplier(stg, '', selectedBrand) || 1.0;
         const sRatio = sMult / currentMult;
@@ -473,7 +546,7 @@ export default function AdminCompetitorRadar() {
           </div>
 
           {/* Model Selector */}
-          <div className="md:col-span-5 space-y-1">
+          <div className={`${availableRams.length > 1 ? 'md:col-span-3' : 'md:col-span-5'} space-y-1`}>
             <div className="flex items-center justify-between">
               <label className="text-xs font-bold text-gray-700">Phone Model</label>
               <button
@@ -523,7 +596,7 @@ export default function AdminCompetitorRadar() {
             )}
           </div>
 
-          {/* Storage Variant Selector */}
+          {/* Storage Variant Selector (Shows ONLY storages that realistically exist for this phone) */}
           <div className="md:col-span-2 space-y-1">
             <label className="text-xs font-bold text-gray-700">Storage Variant</label>
             <select
@@ -531,13 +604,31 @@ export default function AdminCompetitorRadar() {
               onChange={(e) => handleStorageChange(e.target.value)}
               className="w-full px-3 py-2.5 bg-gray-50 border border-gray-300 rounded-xl text-xs font-bold text-gray-900 focus:ring-2 focus:ring-[#344257] focus:border-transparent outline-none cursor-pointer"
             >
-              {STORAGES.map((s) => (
+              {availableStorages.map((s) => (
                 <option key={s} value={s}>
                   {s}
                 </option>
               ))}
             </select>
           </div>
+
+          {/* Authentic RAM Variant Selector (e.g. 6 GB vs 8 GB -> +₹1,000) */}
+          {availableRams.length > 1 && (
+            <div className="md:col-span-2 space-y-1">
+              <label className="text-xs font-bold text-gray-700">RAM Variant</label>
+              <select
+                value={selectedRam}
+                onChange={(e) => handleRamChange(e.target.value)}
+                className="w-full px-3 py-2.5 bg-gray-50 border border-gray-300 rounded-xl text-xs font-bold text-gray-900 focus:ring-2 focus:ring-[#344257] focus:border-transparent outline-none cursor-pointer"
+              >
+                {availableRams.map((r, idx) => (
+                  <option key={r} value={r}>
+                    {r} {idx > 0 ? `(+₹${idx * 1000})` : '(Base)'}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
 
           {/* Search Button */}
           <div className="md:col-span-2">
@@ -590,6 +681,11 @@ export default function AdminCompetitorRadar() {
                     <span className="badge bg-gray-100 text-gray-700 font-bold text-[10px] px-2 py-0.5">
                       {radarData.device.storage}
                     </span>
+                    {(radarData.device.ram || selectedRam) && (
+                      <span className="badge bg-indigo-50 text-indigo-800 border border-indigo-200 font-bold text-[10px] px-2 py-0.5">
+                        {radarData.device.ram || selectedRam} RAM
+                      </span>
+                    )}
                     {radarData.marketAnalytics.isWinning ? (
                       <span className="badge bg-emerald-100 text-emerald-800 border border-emerald-300 font-black text-[10px] px-2.5 py-0.5 inline-flex items-center gap-1">
                         👑 Fundu Wins Deal

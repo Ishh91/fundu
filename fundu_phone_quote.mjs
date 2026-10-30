@@ -2189,9 +2189,22 @@ export function lookupResaleBenchmark(brand, model, storage, options = {}) {
       adjustedProceeds = options.catalogPrice; // Preserve exact fixed base price
     } else {
       const baseMult = calculateHardwareVariantMultiplier(baseStorage, '', brand);
-      const targetMult = calculateHardwareVariantMultiplier(normStorage, ram, brand);
+      const targetMult = calculateHardwareVariantMultiplier(normStorage, '', brand);
       const ratio = (baseMult > 0) ? (targetMult / baseMult) : 1.0;
       adjustedProceeds = Math.max(500, Math.round((options.catalogPrice * ratio) / 50) * 50);
+    }
+
+    // Apply RAM tier offset for Android devices (e.g. 6/128 vs 8/128 -> +1,000, 12GB -> +2,000)
+    if (ram && !normBrand.includes('apple')) {
+      const ramMatch = String(ram).match(/(\d+)/);
+      if (ramMatch) {
+        const r = parseInt(ramMatch[1], 10);
+        if (r >= 8) {
+          adjustedProceeds += (r >= 12 ? 2000 : 1000);
+        } else if (r <= 4) {
+          adjustedProceeds = Math.max(500, adjustedProceeds - 800);
+        }
+      }
     }
 
     return {

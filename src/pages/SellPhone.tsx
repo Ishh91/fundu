@@ -37,7 +37,7 @@ import { useAuth } from '../context/AuthContext';
 import { ALL_INDIAN_PHONES_CATALOG } from '../data/indianPhonesCatalog';
 import { getCleanPhoneImage, getCleanBrandLogo, BRAND_FRONT_FALLBACKS, getGenericDevicePlaceholder, pullLiveModelImagesFromDb } from '../lib/phoneImages';
 import { usePriceSync, applyPriceOverrides, isModelDeleted, savePriceOverride, getEffectivePrice } from '../lib/priceSync';
-import { getModelHardwareSpecs, calculateHardwareVariantMultiplier, deviceIncludesStylus, getModelReleaseYear, isAmoledDisplay } from '../lib/deviceSpecs';
+import { getModelHardwareSpecs, calculateHardwareVariantMultiplier, calculateRamPriceOffset, deviceIncludesStylus, getModelReleaseYear, isAmoledDisplay } from '../lib/deviceSpecs';
 import {
   getPanIndiaLocation,
   searchPanIndiaLocations,
@@ -722,23 +722,26 @@ export default function SellPhone() {
     if (pricingConfig && pricingConfig.base_price > 0) {
       const normConfigStorage = (pricingConfig.storage || '').replace(/\s+/g, '').toUpperCase();
       const normFormStorage = (form.storage || '').replace(/\s+/g, '').toUpperCase();
+      const ramOffset = calculateRamPriceOffset(form.ram, availableRams, form.brand);
 
-      // If exact storage matches OR was explicitly locked by admin, preserve exact price 100%!
+      // If exact storage matches OR was explicitly locked by admin, preserve exact price + authentic RAM offset!
       if (!normConfigStorage || normConfigStorage === normFormStorage || pricingConfig.is_locked || pricingConfig.manual_override) {
-        return pricingConfig.base_price;
+        return pricingConfig.base_price + ramOffset;
       }
 
       // Only scale if the admin configured a different baseline storage and this variant has no explicit record
       const baseMult = calculateHardwareVariantMultiplier(pricingConfig.storage || '128 GB', '', form.brand);
       const targetMult = calculateHardwareVariantMultiplier(form.storage, '', form.brand);
       const ratio = baseMult > 0 ? targetMult / baseMult : 1.0;
-      return Math.round((pricingConfig.base_price * ratio) / 50) * 50;
+      const scaled = Math.round((pricingConfig.base_price * ratio) / 50) * 50;
+      return scaled + ramOffset;
     }
 
     // 2. Check dynamic database synced price from priceSync
     const directEffective = getEffectivePrice(form.brand, form.model, 0, form.storage);
     if (directEffective > 0) {
-      return directEffective;
+      const ramOffset = calculateRamPriceOffset(form.ram, availableRams, form.brand);
+      return directEffective + ramOffset;
     }
 
     const master = MASTER_MODEL_CATALOG.find((m) =>

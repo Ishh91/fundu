@@ -941,6 +941,7 @@ router.get('/sell-pricing/competitor-radar', async (req, res, next) => {
     const inputBrand = typeof req.query.brand === 'string' && req.query.brand.trim() ? req.query.brand.trim() : 'Apple';
     let rawModel = typeof req.query.model === 'string' && req.query.model.trim() ? req.query.model.trim() : 'iPhone 15';
     const storage = typeof req.query.storage === 'string' && req.query.storage.trim() ? req.query.storage.trim() : '128 GB';
+    const ram = typeof req.query.ram === 'string' && req.query.ram.trim() ? req.query.ram.trim() : '';
 
     // Smart brand auto-correction to prevent mismatched queries like Samsung iPhone 16 Pro
     let rawBrand = inputBrand;
@@ -1024,6 +1025,19 @@ router.get('/sell-pricing/competitor-radar', async (req, res, next) => {
         funduBasePrice = Math.max(500, Math.round((baseVal * ratio) / 50) * 50);
       } else {
         funduBasePrice = 25000;
+      }
+    }
+
+    // Apply RAM tier offset for Android devices (e.g. 6/128 vs 8/128 -> +1,000, 12GB -> +2,000)
+    if (ram && !rawBrand.toLowerCase().includes('apple')) {
+      const ramMatch = String(ram).match(/(\d+)/);
+      if (ramMatch) {
+        const r = parseInt(ramMatch[1], 10);
+        if (r >= 8) {
+          funduBasePrice += (r >= 12 ? 2000 : 1000);
+        } else if (r <= 4) {
+          funduBasePrice = Math.max(500, funduBasePrice - 800);
+        }
       }
     }
 
@@ -1153,6 +1167,7 @@ router.get('/sell-pricing/competitor-radar', async (req, res, next) => {
           brand: rawBrand,
           model: rawModel,
           storage,
+          ram: ram || undefined,
           image,
           configId,
         },
