@@ -55,8 +55,8 @@ export default function SellStep2Condition({
   goToStep,
 }: SellStep2ConditionProps) {
   const isApple = (form.brand?.toLowerCase() === 'apple') ||
-                  (brandSlug?.toLowerCase() === 'apple') ||
-                  (form.model?.toLowerCase().includes('iphone'));
+    (brandSlug?.toLowerCase() === 'apple') ||
+    (form.model?.toLowerCase().includes('iphone'));
 
   const isAmoled = isAmoledDisplay(form.brand, form.model, pricingConfig?.display_spec);
   const releaseYear = getModelReleaseYear(form.brand, form.model);
@@ -429,16 +429,16 @@ export default function SellStep2Condition({
               value={!!form.screenCracked}
               onChange={(val) => toggleQuestion('screenCracked', val)}
               highlightDanger
-              customBadge={
-                isAmoled
-                  ? 'AMOLED Screen (45% Direct Deduction)'
-                  : 'Normal LCD Screen (40% Direct Deduction)'
-              }
-              customBadgeColor={
-                isAmoled
-                  ? 'bg-purple-100 text-purple-800 border-purple-300'
-                  : 'bg-teal-100 text-teal-800 border-teal-300'
-              }
+            // customBadge={
+            //   isAmoled
+            //     ? 'AMOLED Screen (45% Direct Deduction)'
+            //     : 'Normal LCD Screen (40% Direct Deduction)'
+            // }
+            // customBadgeColor={
+            //   isAmoled
+            //     ? 'bg-purple-100 text-purple-800 border-purple-300'
+            //     : 'bg-teal-100 text-teal-800 border-teal-300'
+            // }
             />
           </div>
         </div>
@@ -632,11 +632,10 @@ export default function SellStep2Condition({
                     key={bat.id}
                     type="button"
                     onClick={() => setForm((f: any) => ({ ...f, batteryHealth: bat.id as any }))}
-                    className={`p-4 rounded-2xl border text-left transition-all duration-200 cursor-pointer ${
-                      isSelected
+                    className={`p-4 rounded-2xl border text-left transition-all duration-200 cursor-pointer ${isSelected
                         ? 'border-[#344257] bg-[#F0F0F5] shadow-md ring-2 ring-[#344257]/20 -translate-y-1'
                         : 'border-gray-200 bg-white hover:border-[#6A859F] hover:bg-[#F7F7FA]'
-                    }`}
+                      }`}
                   >
                     <div className="flex items-center justify-between gap-2 mb-1">
                       <p className="font-extrabold text-xs text-gray-900">{bat.label}</p>
@@ -749,11 +748,10 @@ export default function SellStep2Condition({
                         underWarranty: age.warranty,
                       }))
                     }
-                    className={`p-4 rounded-2xl border text-left transition-all duration-200 cursor-pointer ${
-                      isSelected
+                    className={`p-4 rounded-2xl border text-left transition-all duration-200 cursor-pointer ${isSelected
                         ? 'border-[#344257] bg-[#F0F0F5] shadow-md ring-2 ring-[#344257]/20 -translate-y-0.5'
                         : 'border-gray-200 bg-white hover:border-[#6A859F] hover:bg-[#F7F7FA]'
-                    }`}
+                      }`}
                   >
                     <div className="flex items-center justify-between gap-2 mb-1">
                       <p className="font-extrabold text-xs text-gray-900">{age.label}</p>
@@ -903,13 +901,12 @@ function QuestionToggleRow({
 }) {
   return (
     <div
-      className={`p-3.5 sm:p-4 rounded-2xl border transition-all ${
-        value
+      className={`p-3.5 sm:p-4 rounded-2xl border transition-all ${value
           ? highlightDanger
             ? 'bg-rose-50/70 border-rose-300 ring-1 ring-rose-300/40'
             : 'bg-amber-50/60 border-amber-300 ring-1 ring-amber-300/40'
           : 'bg-white border-gray-200 hover:border-gray-300'
-      }`}
+        }`}
     >
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div className="space-y-1">
@@ -917,20 +914,18 @@ function QuestionToggleRow({
             <span className="text-xs font-bold text-gray-900">{title}</span>
             {customBadge && (
               <span
-                className={`text-[10px] font-extrabold px-2 py-0.5 rounded-full border ${
-                  customBadgeColor || 'bg-purple-100 text-purple-800 border-purple-300'
-                }`}
+                className={`text-[10px] font-extrabold px-2 py-0.5 rounded-full border ${customBadgeColor || 'bg-purple-100 text-purple-800 border-purple-300'
+                  }`}
               >
                 {customBadge}
               </span>
             )}
             {value && (
               <span
-                className={`text-[10px] font-extrabold px-2 py-0.5 rounded-full ${
-                  highlightDanger
+                className={`text-[10px] font-extrabold px-2 py-0.5 rounded-full ${highlightDanger
                     ? 'bg-rose-100 text-rose-800 border border-rose-300'
                     : 'bg-amber-100 text-amber-800 border border-amber-300'
-                }`}
+                  }`}
               >
                 Issue Declared
               </span>
@@ -943,24 +938,22 @@ function QuestionToggleRow({
           <button
             type="button"
             onClick={() => onChange(true)}
-            className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition cursor-pointer ${
-              value
+            className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition cursor-pointer ${value
                 ? highlightDanger
                   ? 'bg-rose-600 text-white shadow-xs'
                   : 'bg-amber-600 text-white shadow-xs'
                 : 'bg-gray-100 hover:bg-gray-200 text-gray-700 border border-gray-200'
-            }`}
+              }`}
           >
             Yes
           </button>
           <button
             type="button"
             onClick={() => onChange(false)}
-            className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition cursor-pointer ${
-              !value
+            className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition cursor-pointer ${!value
                 ? 'bg-[#344257] text-white shadow-xs'
                 : 'bg-gray-100 hover:bg-gray-200 text-gray-700 border border-gray-200'
-            }`}
+              }`}
           >
             No
           </button>
