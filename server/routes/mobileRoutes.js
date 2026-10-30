@@ -760,7 +760,7 @@ router.post('/sell-pricing/config', async (req, res, next) => {
     if (rawBrand && rawModel.toLowerCase().startsWith(rawBrand.toLowerCase())) {
       rawModel = rawModel.slice(rawBrand.length).trim();
     }
-    const isPoco = rawBrand.toLowerCase() === 'poco';
+    const isPoco = rawBrand.toLowerCase() === 'poco' || rawModel.toLowerCase().startsWith('poco');
     const isXiaomi = rawBrand.toLowerCase() === 'xiaomi';
     const brandRegex = (isPoco || isXiaomi)
       ? /^(poco|xiaomi)$/i
@@ -775,8 +775,9 @@ router.post('/sell-pricing/config', async (req, res, next) => {
       ? String(storage).trim().replace(/(\d+)\s*(gb|tb)/i, (_, n, u) => `${n} ${u.toUpperCase()}`)
       : null;
 
+    const canonicalBrand = isPoco ? 'Poco' : rawBrand;
     const updateDoc = {
-      brand: rawBrand,
+      brand: canonicalBrand,
       model: rawModel,
       storage: cleanStorage,
       base_price: Number(base_price),
@@ -1067,18 +1068,48 @@ router.get('/sell-pricing/competitor-radar', async (req, res, next) => {
       }
     }
 
-    // Apply RAM tier offset for Android devices (e.g. 6/128 vs 8/128 -> +1,000, 12GB -> +2,000)
+    // Calculate authentic RAM tier offset for Android devices
+    let ramOffset = 0;
     if (ram && !rawBrand.toLowerCase().includes('apple')) {
-      const ramMatch = String(ram).match(/(\d+)/);
-      if (ramMatch) {
-        const r = parseInt(ramMatch[1], 10);
-        if (r >= 8) {
-          funduBasePrice += (r >= 12 ? 2000 : 1000);
-        } else if (r <= 4) {
-          funduBasePrice = Math.max(500, funduBasePrice - 1000);
+      const availableRamsList = req.query.availableRams
+        ? String(req.query.availableRams).split(',').map((s) => s.trim())
+        : [];
+      const baseRamQuery = req.query.baseRam ? String(req.query.baseRam).trim() : '';
+
+      const norm = (r) => parseInt(String(r || '').replace(/\D/g, ''), 10) || 0;
+      const targetGb = norm(ram);
+
+      if (targetGb > 0) {
+        let baseGb = 0;
+        if (baseRamQuery) {
+          baseGb = norm(baseRamQuery);
+        } else if (availableRamsList.length > 0) {
+          const valid = availableRamsList.map(norm).filter((g) => g > 0).sort((a, b) => a - b);
+          if (valid.length > 0) baseGb = valid[0];
+        }
+
+        if (baseGb > 0) {
+          if (targetGb > baseGb) {
+            const step = Math.max(1, Math.round((targetGb - baseGb) / 2));
+            ramOffset = step * 1000;
+          } else if (targetGb < baseGb) {
+            ramOffset = -1000;
+          } else {
+            ramOffset = 0; // Target is base RAM -> 0 offset
+          }
+        } else {
+          // Fallback if no base RAM info:
+          // Do NOT apply blind offsets if this config has an exact manual admin lock/override!
+          const isLockedConfig = funduConfig && (funduConfig.is_locked || funduConfig.manual_override);
+          if (!isLockedConfig) {
+            if (targetGb >= 12) ramOffset = 2000;
+            else if (targetGb >= 8) ramOffset = 1000;
+            else if (targetGb <= 4) ramOffset = -1000;
+          }
         }
       }
     }
+    funduBasePrice += ramOffset;
 
     // 2. Fetch or compute Cashify Rate
     let cashifyBase = 0;

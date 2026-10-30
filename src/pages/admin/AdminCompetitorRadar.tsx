@@ -299,13 +299,20 @@ export default function AdminCompetitorRadar() {
   const [savingPrice, setSavingPrice] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
 
-  const fetchRadar = async (brand: string, model: string, storage: string, ram = selectedRam) => {
+  const fetchRadar = async (brand: string, model: string, storage: string, ram = selectedRam, ramsList?: string[]) => {
     setLoading(true);
     setError(null);
     setSaveSuccess(false);
     try {
       const params: Record<string, string> = { brand, model, storage };
-      if (ram) params.ram = ram;
+      const currentRams = (ramsList && ramsList.length > 0) ? ramsList : availableRams;
+      if (ram) {
+        params.ram = ram;
+        if (currentRams && currentRams.length > 0) {
+          params.baseRam = currentRams[0];
+          params.availableRams = currentRams.join(',');
+        }
+      }
       const q = new URLSearchParams(params);
       const res = await fetch(`${API_BASE}/sell-pricing/competitor-radar?${q.toString()}`);
       if (!res.ok) throw new Error('Failed to fetch competitor radar data');
@@ -343,7 +350,7 @@ export default function AdminCompetitorRadar() {
     const targetRam = rams.length > 1 ? rams[0] : '';
     setSelectedStorage(targetStorage);
     setSelectedRam(targetRam);
-    fetchRadar(newBrand, def.model, targetStorage, targetRam);
+    fetchRadar(newBrand, def.model, targetStorage, targetRam, rams);
   };
 
   const handleModelSelect = (newModel: string) => {
@@ -357,7 +364,7 @@ export default function AdminCompetitorRadar() {
     const targetRam = rams.length > 1 ? rams[0] : '';
     setSelectedStorage(targetStorage);
     setSelectedRam(targetRam);
-    fetchRadar(selectedBrand, newModel, targetStorage, targetRam);
+    fetchRadar(selectedBrand, newModel, targetStorage, targetRam, rams);
   };
 
   const handleStorageChange = (newStorage: string) => {
@@ -366,14 +373,14 @@ export default function AdminCompetitorRadar() {
     const nextRam = rams.length > 1 ? (rams.includes(selectedRam) ? selectedRam : rams[0]) : '';
     setSelectedRam(nextRam);
     if (searchModel.trim()) {
-      fetchRadar(selectedBrand, searchModel.trim(), newStorage, nextRam);
+      fetchRadar(selectedBrand, searchModel.trim(), newStorage, nextRam, rams);
     }
   };
 
   const handleRamChange = (newRam: string) => {
     setSelectedRam(newRam);
     if (searchModel.trim()) {
-      fetchRadar(selectedBrand, searchModel.trim(), selectedStorage, newRam);
+      fetchRadar(selectedBrand, searchModel.trim(), selectedStorage, newRam, availableRams);
     }
   };
 
@@ -440,7 +447,7 @@ export default function AdminCompetitorRadar() {
     const targetRam = rams.length > 1 ? rams[0] : '';
     setSelectedStorage(targetStorage);
     setSelectedRam(targetRam);
-    fetchRadar(item.brand, item.model, targetStorage, targetRam);
+    fetchRadar(item.brand, item.model, targetStorage, targetRam, rams);
   };
 
   const handleSavePriceToDatabase = async (newPrice: number) => {
@@ -450,13 +457,22 @@ export default function AdminCompetitorRadar() {
     const normStorage = normalizeStorageString(selectedStorage);
     savePriceOverride(selectedBrand, searchModel, newPrice, normStorage);
 
+    // Determine clean base price without upgraded RAM offset if setting while on an upgraded RAM tier
+    let cleanBasePrice = newPrice;
+    if (availableRams.length > 1 && selectedRam) {
+      const ramOffset = calculateRamPriceOffset(selectedRam, availableRams, selectedBrand);
+      if (ramOffset > 0) {
+        cleanBasePrice = Math.max(500, newPrice - ramOffset);
+      }
+    }
+
     // Also update all REAL sibling storage variants proportionally in real-time
     const currentMult = calculateHardwareVariantMultiplier(normStorage, '', selectedBrand) || 1.0;
     availableStorages.forEach((stg) => {
       if (stg !== normStorage) {
         const sMult = calculateHardwareVariantMultiplier(stg, '', selectedBrand) || 1.0;
         const sRatio = sMult / currentMult;
-        const sPrice = Math.max(500, Math.round((newPrice * sRatio) / 50) * 50);
+        const sPrice = Math.max(500, Math.round((cleanBasePrice * sRatio) / 50) * 50);
         savePriceOverride(selectedBrand, searchModel, sPrice, stg);
       }
     });
@@ -483,7 +499,7 @@ export default function AdminCompetitorRadar() {
         brand: selectedBrand,
         model: searchModel,
         storage: normStorage,
-        base_price: newPrice,
+        base_price: cleanBasePrice,
         excellent_multiplier: 1.0,
         good_multiplier: 0.85,
         fair_multiplier: 0.70,

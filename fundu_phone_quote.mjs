@@ -2194,8 +2194,8 @@ export function lookupResaleBenchmark(brand, model, storage, options = {}) {
       adjustedProceeds = Math.max(500, Math.round((options.catalogPrice * ratio) / 50) * 50);
     }
 
-    // Apply RAM tier offset for Android devices (e.g. 6/128 vs 8/128 -> +1,000, 12GB -> +2,000)
-    if (ram && !normBrand.includes('apple')) {
+    // Apply RAM tier offset for Android devices (only when not an exact direct buyback price, or if explicitly upgrading)
+    if (ram && !normBrand.includes('apple') && !options.isDirectBuybackPrice) {
       const ramMatch = String(ram).match(/(\d+)/);
       if (ramMatch) {
         const r = parseInt(ramMatch[1], 10);
