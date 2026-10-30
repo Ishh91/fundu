@@ -1559,6 +1559,14 @@ const MODEL_HARDWARE_RULES: Array<{
     ],
   },
   {
+    pattern: /pixel\s*9\s*pro\s*xl/i,
+    variants: [
+      { storage: '128 GB', rams: ['16 GB'] },
+      { storage: '256 GB', rams: ['16 GB'] },
+      { storage: '512 GB', rams: ['16 GB'] },
+    ],
+  },
+  {
     pattern: /pixel\s*9\s*pro\s*fold/i,
     variants: [
       { storage: '256 GB', rams: ['16 GB'] },
@@ -1566,16 +1574,14 @@ const MODEL_HARDWARE_RULES: Array<{
     ],
   },
   {
-    pattern: /pixel\s*9\s*pro/i,
+    pattern: /pixel\s*9\s*pro\b(?!\s*(xl|fold))/i,
     variants: [
       { storage: '128 GB', rams: ['16 GB'] },
       { storage: '256 GB', rams: ['16 GB'] },
-      { storage: '512 GB', rams: ['16 GB'] },
-      { storage: '1 TB', rams: ['16 GB'] },
     ],
   },
   {
-    pattern: /pixel\s*9\b/i,
+    pattern: /pixel\s*9\b(?!\s*pro)/i,
     variants: [
       { storage: '128 GB', rams: ['12 GB'] },
       { storage: '256 GB', rams: ['12 GB'] },
@@ -1586,8 +1592,6 @@ const MODEL_HARDWARE_RULES: Array<{
     variants: [
       { storage: '128 GB', rams: ['12 GB'] },
       { storage: '256 GB', rams: ['12 GB'] },
-      { storage: '512 GB', rams: ['12 GB'] },
-      { storage: '1 TB', rams: ['12 GB'] },
     ],
   },
   {
@@ -1598,7 +1602,7 @@ const MODEL_HARDWARE_RULES: Array<{
     ],
   },
   {
-    pattern: /pixel\s*8\b/i,
+    pattern: /pixel\s*8\b(?!\s*(pro|a))/i,
     variants: [
       { storage: '128 GB', rams: ['8 GB'] },
       { storage: '256 GB', rams: ['8 GB'] },
@@ -1608,15 +1612,12 @@ const MODEL_HARDWARE_RULES: Array<{
     pattern: /pixel\s*fold\b/i,
     variants: [
       { storage: '256 GB', rams: ['12 GB'] },
-      { storage: '512 GB', rams: ['12 GB'] },
     ],
   },
   {
     pattern: /pixel\s*7\s*pro/i,
     variants: [
       { storage: '128 GB', rams: ['12 GB'] },
-      { storage: '256 GB', rams: ['12 GB'] },
-      { storage: '512 GB', rams: ['12 GB'] },
     ],
   },
   {
@@ -1626,10 +1627,9 @@ const MODEL_HARDWARE_RULES: Array<{
     ],
   },
   {
-    pattern: /pixel\s*7\b/i,
+    pattern: /pixel\s*7\b(?!\s*(pro|a))/i,
     variants: [
       { storage: '128 GB', rams: ['8 GB'] },
-      { storage: '256 GB', rams: ['8 GB'] },
     ],
   },
   {
@@ -1637,7 +1637,6 @@ const MODEL_HARDWARE_RULES: Array<{
     variants: [
       { storage: '128 GB', rams: ['12 GB'] },
       { storage: '256 GB', rams: ['12 GB'] },
-      { storage: '512 GB', rams: ['12 GB'] },
     ],
   },
   {
@@ -1647,10 +1646,9 @@ const MODEL_HARDWARE_RULES: Array<{
     ],
   },
   {
-    pattern: /pixel\s*6\b/i,
+    pattern: /pixel\s*6\b(?!\s*(pro|a))/i,
     variants: [
       { storage: '128 GB', rams: ['8 GB'] },
-      { storage: '256 GB', rams: ['8 GB'] },
     ],
   },
   {
@@ -2213,9 +2211,9 @@ export function is512GBValidForModel(brand = '', model = ''): boolean {
     return false;
   }
 
-  // 8. Google Pixel: Strictly Pixel 7 Pro, 8 Pro, 9 Pro, Fold
+  // 8. Google Pixel: Strictly Pixel 9 Pro XL & Pixel 9 Pro Fold (older Pixels: 8 Pro, 7 Pro, 6 Pro NEVER launched 512GB in India)
   if (b.includes('google') || b.includes('pixel')) {
-    if (/pixel.*(pro|fold)/i.test(m)) return true;
+    if (/pixel\s*(9|10)\s*pro\s*(xl|fold)/i.test(m)) return true;
     return false;
   }
 

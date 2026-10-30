@@ -3993,8 +3993,7 @@ export const ALL_INDIAN_PHONES_CATALOG: MasterPhone[] = [
     ],
     "storage_options": [
       "128GB",
-      "256GB",
-      "512GB"
+      "256GB"
     ],
     "default_mrp": 106999,
     "base_resale_value": 32880,
@@ -4031,6 +4030,28 @@ export const ALL_INDIAN_PHONES_CATALOG: MasterPhone[] = [
     "is_active": true
   },
   {
+    "id": "google-p7p",
+    "brand": "Google",
+    "model": "Pixel 7 Pro 5G",
+    "release_year": 2022,
+    "ram_options": [
+      "12GB"
+    ],
+    "storage_options": [
+      "128GB"
+    ],
+    "default_mrp": 84999,
+    "base_resale_value": 20800,
+    "image_url": "https://fdn2.gsmarena.com/vv/bigpic/google-pixel-7-pro.jpg",
+    "popular_tag": "Flagship 5x Telephoto Legend",
+    "processor": "Google Tensor G2 (5nm)",
+    "camera_spec": "50MP Main OIS + 48MP 5x Telephoto + 12MP UW",
+    "battery_spec": "5000 mAh 23W Charging",
+    "display_spec": "6.7\" LTPO AMOLED 120Hz QHD+",
+    "is_5g": true,
+    "is_active": true
+  },
+  {
     "id": "google-p7",
     "brand": "Google",
     "model": "Pixel 7 5G",
@@ -4039,8 +4060,7 @@ export const ALL_INDIAN_PHONES_CATALOG: MasterPhone[] = [
       "8GB"
     ],
     "storage_options": [
-      "128GB",
-      "256GB"
+      "128GB"
     ],
     "default_mrp": 59999,
     "base_resale_value": 15400,
