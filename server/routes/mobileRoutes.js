@@ -235,6 +235,29 @@ function getFallbackModels(brand, query) {
   return list.filter((m) => m.name.toLowerCase().includes(qLower));
 }
 
+function deduplicateExact5GTwins(models, brand) {
+  const b = String(brand || '').trim().toLowerCase();
+  const with5G = models.filter((m) => /\b5g\b/i.test(m.name));
+  const without5G = models.filter((m) => !/\b5g\b/i.test(m.name));
+
+  const clean = (str) => {
+    let s = String(str || '').toLowerCase().trim();
+    if (s.startsWith(b)) s = s.slice(b.length).trim();
+    return s.replace(/\+/g, ' plus ').replace(/\b5g\b/gi, '').replace(/[\s\-_]+/g, ' ').trim();
+  };
+
+  const toRemove = new Set();
+  for (const no5g of without5G) {
+    const cleanNo5g = clean(no5g.name);
+    const hasTwin = with5G.some((w5g) => clean(w5g.name) === cleanNo5g);
+    if (hasTwin) {
+      toRemove.add(no5g);
+    }
+  }
+
+  return models.filter((m) => !toRemove.has(m));
+}
+
 /**
  * Smart sorting prioritizing popular modern smartphone series
  */
@@ -266,7 +289,9 @@ function sortModernModels(models, brand) {
     return score;
   };
 
-  return models.sort((a, b) => {
+  const dedupedModels = deduplicateExact5GTwins(models, brand);
+
+  return dedupedModels.sort((a, b) => {
     const scoreA = scoreModel(a.name);
     const scoreB = scoreModel(b.name);
     if (scoreA !== scoreB) return scoreB - scoreA;

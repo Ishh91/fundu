@@ -788,14 +788,6 @@ export const MASTER_MODEL_CATALOG = [
   {
     "brand": "Itel",
     "series": "P Series",
-    "model": "Itel P55",
-    "storage": "128 GB",
-    "price": 5500,
-    "image": "https://fdn2.gsmarena.com/vv/bigpic/itel-p55.jpg"
-  },
-  {
-    "brand": "Itel",
-    "series": "P Series",
     "model": "Itel P55+",
     "storage": "256 GB",
     "price": 6800,
@@ -1796,7 +1788,7 @@ export const MASTER_MODEL_CATALOG = [
   {
     "brand": "OnePlus",
     "series": "OnePlus 11 Series",
-    "model": "OnePlus 11",
+    "model": "OnePlus 11 5G",
     "storage": "128 GB",
     "price": 30000,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/oneplus-11.jpg"
@@ -1804,7 +1796,7 @@ export const MASTER_MODEL_CATALOG = [
   {
     "brand": "OnePlus",
     "series": "OnePlus 11 Series",
-    "model": "OnePlus 11R",
+    "model": "OnePlus 11R 5G",
     "storage": "128 GB",
     "price": 22000,
     "image": "https://api.mobileapi.dev/devices/362/thumb.png"
@@ -1824,14 +1816,6 @@ export const MASTER_MODEL_CATALOG = [
     "storage": "128 GB",
     "price": 18000,
     "image": "https://api.mobileapi.dev/devices/16342/thumb.png"
-  },
-  {
-    "brand": "OnePlus",
-    "series": "OnePlus 10 Series",
-    "model": "OnePlus 10R",
-    "storage": "128 GB",
-    "price": 14000,
-    "image": "https://api.mobileapi.dev/devices/16344/thumb.png"
   },
   {
     "brand": "OnePlus",
@@ -1932,7 +1916,7 @@ export const MASTER_MODEL_CATALOG = [
   {
     "brand": "OnePlus",
     "series": "OnePlus Nord Series",
-    "model": "OnePlus Nord 4",
+    "model": "OnePlus Nord 4 5G",
     "storage": "128 GB",
     "price": 19000,
     "image": "https://api.mobileapi.dev/devices/809/thumb.png"
@@ -1940,7 +1924,7 @@ export const MASTER_MODEL_CATALOG = [
   {
     "brand": "OnePlus",
     "series": "OnePlus Nord Series",
-    "model": "OnePlus Nord 3",
+    "model": "OnePlus Nord 3 5G",
     "storage": "128 GB",
     "price": 15500,
     "image": "https://api.mobileapi.dev/devices/373/thumb.png"
@@ -1948,7 +1932,7 @@ export const MASTER_MODEL_CATALOG = [
   {
     "brand": "OnePlus",
     "series": "OnePlus Nord Series",
-    "model": "OnePlus Nord 2T",
+    "model": "OnePlus Nord 2T 5G",
     "storage": "128 GB",
     "price": 12500,
     "image": "https://api.mobileapi.dev/devices/811/thumb.png"
@@ -1956,7 +1940,7 @@ export const MASTER_MODEL_CATALOG = [
   {
     "brand": "OnePlus",
     "series": "OnePlus Nord Series",
-    "model": "OnePlus Nord 2",
+    "model": "OnePlus Nord 2 5G",
     "storage": "128 GB",
     "price": 11000,
     "image": "https://api.mobileapi.dev/devices/377/thumb.png"
@@ -1980,7 +1964,7 @@ export const MASTER_MODEL_CATALOG = [
   {
     "brand": "OnePlus",
     "series": "OnePlus Nord Series",
-    "model": "OnePlus Nord CE 3",
+    "model": "OnePlus Nord CE 3 5G",
     "storage": "128 GB",
     "price": 14000,
     "image": "https://api.mobileapi.dev/devices/374/thumb.png"
@@ -1988,7 +1972,7 @@ export const MASTER_MODEL_CATALOG = [
   {
     "brand": "OnePlus",
     "series": "OnePlus Nord Series",
-    "model": "OnePlus Nord CE 3 Lite",
+    "model": "OnePlus Nord CE 3 Lite 5G",
     "storage": "128 GB",
     "price": 10500,
     "image": "https://api.mobileapi.dev/devices/16320/thumb.png"
@@ -1996,7 +1980,7 @@ export const MASTER_MODEL_CATALOG = [
   {
     "brand": "OnePlus",
     "series": "OnePlus Nord Series",
-    "model": "OnePlus Nord CE 2",
+    "model": "OnePlus Nord CE 2 5G",
     "storage": "128 GB",
     "price": 10000,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/oneplus-nord-ce-2-5g.jpg"
@@ -2004,7 +1988,7 @@ export const MASTER_MODEL_CATALOG = [
   {
     "brand": "OnePlus",
     "series": "OnePlus Nord Series",
-    "model": "OnePlus Nord CE 2 Lite",
+    "model": "OnePlus Nord CE 2 Lite 5G",
     "storage": "128 GB",
     "price": 9000,
     "image": "https://api.mobileapi.dev/devices/815/thumb.png"
@@ -3876,7 +3860,7 @@ export const MASTER_MODEL_CATALOG = [
   {
     "brand": "Realme",
     "series": "Realme GT Series",
-    "model": "Realme GT 6",
+    "model": "Realme GT 6 5G",
     "storage": "256 GB",
     "price": 28000,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/realme-gt-6.jpg"
@@ -3884,7 +3868,7 @@ export const MASTER_MODEL_CATALOG = [
   {
     "brand": "Realme",
     "series": "Realme GT Series",
-    "model": "Realme GT 6T",
+    "model": "Realme GT 6T 5G",
     "storage": "128 GB",
     "price": 21000,
     "image": "https://api.mobileapi.dev/devices/13718/thumb.png"
@@ -5876,7 +5860,7 @@ export const MASTER_MODEL_CATALOG = [
   {
     "brand": "Vivo",
     "series": "Vivo T Series (Turbo Speed)",
-    "model": "Vivo T3 Ultra",
+    "model": "Vivo T3 Ultra 5G",
     "storage": "128 GB",
     "price": 19330,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/vivo-t3-ultra.jpg"
@@ -6092,7 +6076,7 @@ export const MASTER_MODEL_CATALOG = [
   {
     "brand": "Vivo",
     "series": "Vivo V Series",
-    "model": "Vivo V23 Pro",
+    "model": "Vivo V23 Pro 5G",
     "storage": "128 GB",
     "price": 12070,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/vivo-v23-pro.jpg"
@@ -6116,7 +6100,7 @@ export const MASTER_MODEL_CATALOG = [
   {
     "brand": "Vivo",
     "series": "Vivo V Series",
-    "model": "Vivo V25 Pro",
+    "model": "Vivo V25 Pro 5G",
     "storage": "128 GB",
     "price": 13790,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/vivo-v25-pro.jpg"
@@ -6124,7 +6108,7 @@ export const MASTER_MODEL_CATALOG = [
   {
     "brand": "Vivo",
     "series": "Vivo V Series",
-    "model": "Vivo V27",
+    "model": "Vivo V27 5G",
     "storage": "128 GB",
     "price": 17550,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/vivo-v27.jpg"
@@ -6132,7 +6116,7 @@ export const MASTER_MODEL_CATALOG = [
   {
     "brand": "Vivo",
     "series": "Vivo V Series",
-    "model": "Vivo V27 Pro",
+    "model": "Vivo V27 Pro 5G",
     "storage": "128 GB",
     "price": 19790,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/vivo-v27-pro.jpg"
@@ -6140,7 +6124,7 @@ export const MASTER_MODEL_CATALOG = [
   {
     "brand": "Vivo",
     "series": "Vivo V Series",
-    "model": "Vivo V29",
+    "model": "Vivo V29 5G",
     "storage": "128 GB",
     "price": 18500,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/vivo-v29.jpg"
@@ -6148,7 +6132,7 @@ export const MASTER_MODEL_CATALOG = [
   {
     "brand": "Vivo",
     "series": "Vivo V Series",
-    "model": "Vivo V29 Pro",
+    "model": "Vivo V29 Pro 5G",
     "storage": "256 GB",
     "price": 19500,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/vivo-v29-pro.jpg"
@@ -6164,7 +6148,7 @@ export const MASTER_MODEL_CATALOG = [
   {
     "brand": "Vivo",
     "series": "Vivo V Series",
-    "model": "Vivo V30",
+    "model": "Vivo V30 5G",
     "storage": "128 GB",
     "price": 19500,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/vivo-v30.jpg"
@@ -6172,7 +6156,7 @@ export const MASTER_MODEL_CATALOG = [
   {
     "brand": "Vivo",
     "series": "Vivo V Series",
-    "model": "Vivo V30 Pro",
+    "model": "Vivo V30 Pro 5G",
     "storage": "256 GB",
     "price": 24000,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/vivo-v30-pro.jpg"
@@ -6180,7 +6164,7 @@ export const MASTER_MODEL_CATALOG = [
   {
     "brand": "Vivo",
     "series": "Vivo V Series",
-    "model": "Vivo V30e",
+    "model": "Vivo V30e 5G",
     "storage": "128 GB",
     "price": 19270,
     "image": "https://api.mobileapi.dev/devices/4909/thumb.png"
@@ -6188,7 +6172,7 @@ export const MASTER_MODEL_CATALOG = [
   {
     "brand": "Vivo",
     "series": "Vivo V Series",
-    "model": "Vivo V40",
+    "model": "Vivo V40 5G",
     "storage": "128 GB",
     "price": 22000,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/vivo-v40.jpg"
@@ -6196,7 +6180,7 @@ export const MASTER_MODEL_CATALOG = [
   {
     "brand": "Vivo",
     "series": "Vivo V Series",
-    "model": "Vivo V40 Pro",
+    "model": "Vivo V40 Pro 5G",
     "storage": "256 GB",
     "price": 31000,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/vivo-v40-pro.jpg"
@@ -6204,7 +6188,7 @@ export const MASTER_MODEL_CATALOG = [
   {
     "brand": "Vivo",
     "series": "Vivo V Series",
-    "model": "Vivo V40e",
+    "model": "Vivo V40e 5G",
     "storage": "128 GB",
     "price": 20120,
     "image": "https://api.mobileapi.dev/devices/4871/thumb.png"
@@ -6308,7 +6292,7 @@ export const MASTER_MODEL_CATALOG = [
   {
     "brand": "Vivo",
     "series": "Vivo X Series (Zeiss Flagship)",
-    "model": "Vivo X100",
+    "model": "Vivo X100 5G",
     "storage": "256 GB",
     "price": 30000,
     "image": "https://api.mobileapi.dev/devices/355/thumb.png"
@@ -6316,7 +6300,7 @@ export const MASTER_MODEL_CATALOG = [
   {
     "brand": "Vivo",
     "series": "Vivo X Series (Zeiss Flagship)",
-    "model": "Vivo X100 Pro",
+    "model": "Vivo X100 Pro 5G",
     "storage": "512 GB",
     "price": 36000,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/vivo-x100-pro.jpg"
@@ -6420,7 +6404,7 @@ export const MASTER_MODEL_CATALOG = [
   {
     "brand": "Vivo",
     "series": "Vivo X Series (Zeiss Flagship)",
-    "model": "Vivo X70 Pro",
+    "model": "Vivo X70 Pro 5G",
     "storage": "128 GB",
     "price": 16090,
     "image": "https://api.mobileapi.dev/devices/13983/thumb.png"
@@ -6428,7 +6412,7 @@ export const MASTER_MODEL_CATALOG = [
   {
     "brand": "Vivo",
     "series": "Vivo X Series (Zeiss Flagship)",
-    "model": "Vivo X70 Pro+",
+    "model": "Vivo X70 Pro+ 5G",
     "storage": "256 GB",
     "price": 17850,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/vivo-x70-pro-plus.jpg"
@@ -6436,7 +6420,7 @@ export const MASTER_MODEL_CATALOG = [
   {
     "brand": "Vivo",
     "series": "Vivo X Series (Zeiss Flagship)",
-    "model": "Vivo X80",
+    "model": "Vivo X80 5G",
     "storage": "128 GB",
     "price": 17090,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/vivo-x80.jpg"
@@ -6444,7 +6428,7 @@ export const MASTER_MODEL_CATALOG = [
   {
     "brand": "Vivo",
     "series": "Vivo X Series (Zeiss Flagship)",
-    "model": "Vivo X80 Pro",
+    "model": "Vivo X80 Pro 5G",
     "storage": "256 GB",
     "price": 22090,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/vivo-x80-pro.jpg"
@@ -6460,7 +6444,7 @@ export const MASTER_MODEL_CATALOG = [
   {
     "brand": "Vivo",
     "series": "Vivo X Series (Zeiss Flagship)",
-    "model": "Vivo X90",
+    "model": "Vivo X90 5G",
     "storage": "256 GB",
     "price": 28950,
     "image": "https://api.mobileapi.dev/devices/4965/thumb.png"
@@ -6468,7 +6452,7 @@ export const MASTER_MODEL_CATALOG = [
   {
     "brand": "Vivo",
     "series": "Vivo X Series (Zeiss Flagship)",
-    "model": "Vivo X90 Pro",
+    "model": "Vivo X90 Pro 5G",
     "storage": "256 GB",
     "price": 28850,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/vivo-x90-pro.jpg"
@@ -7051,22 +7035,6 @@ export const MASTER_MODEL_CATALOG = [
   },
   {
     "brand": "Poco",
-    "series": "POCO F Series",
-    "model": "POCO F5",
-    "storage": "256 GB",
-    "price": 14400,
-    "image": "https://api.mobileapi.dev/devices/15700/thumb.png"
-  },
-  {
-    "brand": "Poco",
-    "series": "POCO F Series",
-    "model": "POCO F6",
-    "storage": "256 GB",
-    "price": 18450,
-    "image": "https://api.mobileapi.dev/devices/15693/thumb.png"
-  },
-  {
-    "brand": "Poco",
     "series": "POCO M Series",
     "model": "POCO M4 Pro 5G",
     "storage": "128 GB",
@@ -7144,14 +7112,6 @@ export const MASTER_MODEL_CATALOG = [
     "storage": "128 GB",
     "price": 16300,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-poco-x6.jpg"
-  },
-  {
-    "brand": "Poco",
-    "series": "POCO X Series",
-    "model": "POCO X6 Neo",
-    "storage": "128 GB",
-    "price": 12300,
-    "image": "https://api.mobileapi.dev/devices/15695/thumb.png"
   },
   {
     "brand": "Poco",
@@ -7915,14 +7875,6 @@ export const MASTER_MODEL_CATALOG = [
   },
   {
     "brand": "Realme",
-    "series": "Realme Number Series",
-    "model": "Realme 12 Plus",
-    "storage": "128 GB",
-    "price": 14000,
-    "image": "https://fdn2.gsmarena.com/vv/bigpic/realme-12-plus-5g.jpg"
-  },
-  {
-    "brand": "Realme",
     "series": "Realme Narzo Series",
     "model": "Realme Narzo 80 Lite 5G",
     "storage": "128 GB",
@@ -7944,46 +7896,6 @@ export const MASTER_MODEL_CATALOG = [
     "storage": "64 GB",
     "price": 5500,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/realme-c15.jpg"
-  },
-  {
-    "brand": "Poco",
-    "series": "POCO F Series",
-    "model": "POCO F7",
-    "storage": "256 GB",
-    "price": 26500,
-    "image": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-poco-f6.jpg"
-  },
-  {
-    "brand": "Poco",
-    "series": "POCO X Series",
-    "model": "POCO X7",
-    "storage": "128 GB",
-    "price": 16500,
-    "image": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-poco-x6.jpg"
-  },
-  {
-    "brand": "Poco",
-    "series": "POCO M Series",
-    "model": "POCO M7 Plus",
-    "storage": "128 GB",
-    "price": 11200,
-    "image": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-poco-m6-plus.jpg"
-  },
-  {
-    "brand": "Poco",
-    "series": "POCO M Series",
-    "model": "POCO M8",
-    "storage": "128 GB",
-    "price": 12500,
-    "image": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-poco-m6-pro.jpg"
-  },
-  {
-    "brand": "Poco",
-    "series": "POCO C Series",
-    "model": "POCO C75",
-    "storage": "128 GB",
-    "price": 7800,
-    "image": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-poco-c65.jpg"
   },
   {
     "brand": "Poco",

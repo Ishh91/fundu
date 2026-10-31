@@ -2023,28 +2023,6 @@
   },
   {
     "brand": "Itel",
-    "model": "P55",
-    "release_year": 2024,
-    "ram_options": [
-      "4GB",
-      "8GB"
-    ],
-    "storage_options": [
-      "128GB"
-    ],
-    "default_mrp": 8250,
-    "base_resale_value": 5500,
-    "image_url": "https://fdn2.gsmarena.com/vv/bigpic/itel-p55.jpg",
-    "popular_tag": "Itel Official Model",
-    "processor": "Unisoc T606 Octa-core",
-    "camera_spec": "50MP AI Dual Camera",
-    "battery_spec": "5000 mAh 18W Fast Charging",
-    "display_spec": "6.6\" HD+ 90Hz Punch-Hole Display",
-    "is_5g": false,
-    "is_active": true
-  },
-  {
-    "brand": "Itel",
     "model": "P55+",
     "release_year": 2024,
     "ram_options": [
@@ -4385,56 +4363,6 @@
   },
   {
     "brand": "OnePlus",
-    "model": "11",
-    "release_year": 2023,
-    "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
-    ],
-    "storage_options": [
-      "128 GB",
-      "256GB"
-    ],
-    "default_mrp": 56999,
-    "base_resale_value": 30000,
-    "image_url": "https://fdn2.gsmarena.com/vv/bigpic/oneplus-11.jpg",
-    "popular_tag": "OnePlus Official Model",
-    "processor": "High-Efficiency Processor",
-    "camera_spec": "50MP OIS Camera",
-    "battery_spec": "5000 mAh Fast Charging",
-    "display_spec": "6.7\" AMOLED 120Hz",
-    "is_5g": false,
-    "is_active": true,
-    "price": 30000
-  },
-  {
-    "brand": "OnePlus",
-    "model": "11R",
-    "release_year": 2023,
-    "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
-    ],
-    "storage_options": [
-      "128 GB",
-      "256GB"
-    ],
-    "default_mrp": 39999,
-    "base_resale_value": 22000,
-    "image_url": "https://api.mobileapi.dev/devices/362/thumb.png",
-    "popular_tag": "OnePlus Official Model",
-    "processor": "High-Efficiency Processor",
-    "camera_spec": "50MP OIS Camera",
-    "battery_spec": "5000 mAh Fast Charging",
-    "display_spec": "6.7\" AMOLED 120Hz",
-    "is_5g": false,
-    "is_active": true,
-    "price": 22000
-  },
-  {
-    "brand": "OnePlus",
     "model": "10 Pro",
     "release_year": 2022,
     "ram_options": [
@@ -4482,31 +4410,6 @@
     "is_5g": false,
     "is_active": true,
     "price": 18000
-  },
-  {
-    "brand": "OnePlus",
-    "model": "10R",
-    "release_year": 2022,
-    "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
-    ],
-    "storage_options": [
-      "128 GB",
-      "256GB"
-    ],
-    "default_mrp": 38999,
-    "base_resale_value": 14000,
-    "image_url": "https://api.mobileapi.dev/devices/16344/thumb.png",
-    "popular_tag": "OnePlus Official Model",
-    "processor": "High-Efficiency Processor",
-    "camera_spec": "50MP OIS Camera",
-    "battery_spec": "5000 mAh Fast Charging",
-    "display_spec": "6.7\" AMOLED 120Hz",
-    "is_5g": false,
-    "is_active": true,
-    "price": 14000
   },
   {
     "brand": "OnePlus",
@@ -4785,106 +4688,6 @@
   },
   {
     "brand": "OnePlus",
-    "model": "Nord 4",
-    "release_year": 2024,
-    "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
-    ],
-    "storage_options": [
-      "128 GB",
-      "256GB"
-    ],
-    "default_mrp": 29999,
-    "base_resale_value": 19000,
-    "image_url": "https://api.mobileapi.dev/devices/809/thumb.png",
-    "popular_tag": "OnePlus Official Model",
-    "processor": "High-Efficiency Processor",
-    "camera_spec": "50MP OIS Camera",
-    "battery_spec": "5000 mAh Fast Charging",
-    "display_spec": "6.7\" AMOLED 120Hz",
-    "is_5g": false,
-    "is_active": true,
-    "price": 19000
-  },
-  {
-    "brand": "OnePlus",
-    "model": "Nord 3",
-    "release_year": 2023,
-    "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
-    ],
-    "storage_options": [
-      "128 GB",
-      "256GB"
-    ],
-    "default_mrp": 33999,
-    "base_resale_value": 15500,
-    "image_url": "https://api.mobileapi.dev/devices/373/thumb.png",
-    "popular_tag": "OnePlus Official Model",
-    "processor": "High-Efficiency Processor",
-    "camera_spec": "50MP OIS Camera",
-    "battery_spec": "5000 mAh Fast Charging",
-    "display_spec": "6.7\" AMOLED 120Hz",
-    "is_5g": false,
-    "is_active": true,
-    "price": 15500
-  },
-  {
-    "brand": "OnePlus",
-    "model": "Nord 2T",
-    "release_year": 2022,
-    "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
-    ],
-    "storage_options": [
-      "128 GB",
-      "256GB"
-    ],
-    "default_mrp": 28999,
-    "base_resale_value": 12500,
-    "image_url": "https://api.mobileapi.dev/devices/811/thumb.png",
-    "popular_tag": "OnePlus Official Model",
-    "processor": "High-Efficiency Processor",
-    "camera_spec": "50MP OIS Camera",
-    "battery_spec": "5000 mAh Fast Charging",
-    "display_spec": "6.7\" AMOLED 120Hz",
-    "is_5g": false,
-    "is_active": true,
-    "price": 12500
-  },
-  {
-    "brand": "OnePlus",
-    "model": "Nord 2",
-    "release_year": 2021,
-    "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
-    ],
-    "storage_options": [
-      "128 GB",
-      "256GB"
-    ],
-    "default_mrp": 27999,
-    "base_resale_value": 11000,
-    "image_url": "https://api.mobileapi.dev/devices/377/thumb.png",
-    "popular_tag": "OnePlus Official Model",
-    "processor": "High-Efficiency Processor",
-    "camera_spec": "50MP OIS Camera",
-    "battery_spec": "5000 mAh Fast Charging",
-    "display_spec": "6.7\" AMOLED 120Hz",
-    "is_5g": false,
-    "is_active": true,
-    "price": 11000
-  },
-  {
-    "brand": "OnePlus",
     "model": "Nord CE4",
     "release_year": 2024,
     "ram_options": [
@@ -4932,78 +4735,6 @@
     "is_5g": false,
     "is_active": true,
     "price": 12500
-  },
-  {
-    "brand": "OnePlus",
-    "model": "Nord CE 3",
-    "release_year": 2023,
-    "ram_options": [
-      "8GB",
-      "12GB"
-    ],
-    "storage_options": [
-      "128GB",
-      "256GB"
-    ],
-    "default_mrp": 26999,
-    "base_resale_value": 14000,
-    "image_url": "https://api.mobileapi.dev/devices/374/thumb.png",
-    "popular_tag": "Never Settle",
-    "processor": "Snapdragon 782G 5G",
-    "camera_spec": "50MP Sony IMX890 OIS + 8MP Ultra-wide + 2MP Macro",
-    "battery_spec": "5000 mAh 80W SUPERVOOC",
-    "display_spec": "6.7\" 120Hz Fluid AMOLED FHD+",
-    "is_5g": true,
-    "is_active": true,
-    "price": 14000
-  },
-  {
-    "brand": "OnePlus",
-    "model": "Nord CE 3 Lite",
-    "release_year": 2023,
-    "ram_options": [
-      "8GB"
-    ],
-    "storage_options": [
-      "128GB",
-      "256GB"
-    ],
-    "default_mrp": 19999,
-    "base_resale_value": 10500,
-    "image_url": "https://api.mobileapi.dev/devices/16320/thumb.png",
-    "popular_tag": "Larger Than Life",
-    "processor": "Snapdragon 695 5G",
-    "camera_spec": "108MP Main Camera + 3x Lossless Zoom",
-    "battery_spec": "5000 mAh 67W SUPERVOOC",
-    "display_spec": "6.72\" 120Hz FHD+ LCD",
-    "is_5g": true,
-    "is_active": true,
-    "price": 10500
-  },
-  {
-    "brand": "OnePlus",
-    "model": "Nord CE 2",
-    "release_year": 2022,
-    "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
-    ],
-    "storage_options": [
-      "128 GB",
-      "256GB"
-    ],
-    "default_mrp": 23999,
-    "base_resale_value": 10000,
-    "image_url": "https://fdn2.gsmarena.com/vv/bigpic/oneplus-nord-ce-2-5g.jpg",
-    "popular_tag": "OnePlus Official Model",
-    "processor": "High-Efficiency Processor",
-    "camera_spec": "50MP OIS Camera",
-    "battery_spec": "5000 mAh Fast Charging",
-    "display_spec": "6.7\" AMOLED 120Hz",
-    "is_5g": false,
-    "is_active": true,
-    "price": 10000
   },
   {
     "brand": "OnePlus",
@@ -5454,31 +5185,6 @@
   },
   {
     "brand": "Oppo",
-    "model": "A3x",
-    "release_year": 2018,
-    "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
-    ],
-    "storage_options": [
-      "64 GB",
-      "256GB"
-    ],
-    "default_mrp": 10080,
-    "base_resale_value": 9570,
-    "image_url": "https://fdn2.gsmarena.com/vv/bigpic/oppo-a3x.jpg",
-    "popular_tag": "Oppo Official Model",
-    "processor": "High-Efficiency Processor",
-    "camera_spec": "50MP OIS Camera",
-    "battery_spec": "5000 mAh Fast Charging",
-    "display_spec": "6.7\" AMOLED 120Hz",
-    "is_5g": false,
-    "is_active": true,
-    "price": 9570
-  },
-  {
-    "brand": "Oppo",
     "model": "A5 2020",
     "release_year": 2022,
     "ram_options": [
@@ -5919,31 +5625,6 @@
     "is_5g": false,
     "is_active": true,
     "price": 7870
-  },
-  {
-    "brand": "Oppo",
-    "model": "A77",
-    "release_year": 2017,
-    "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
-    ],
-    "storage_options": [
-      "64 GB",
-      "256GB"
-    ],
-    "default_mrp": 4995,
-    "base_resale_value": 7740,
-    "image_url": "https://fdn2.gsmarena.com/vv/bigpic/oppo-a77.jpg",
-    "popular_tag": "Oppo Official Model",
-    "processor": "High-Efficiency Processor",
-    "camera_spec": "50MP OIS Camera",
-    "battery_spec": "5000 mAh Fast Charging",
-    "display_spec": "6.7\" AMOLED 120Hz",
-    "is_5g": false,
-    "is_active": true,
-    "price": 7740
   },
   {
     "brand": "Oppo",
@@ -6765,56 +6446,6 @@
   },
   {
     "brand": "Oppo",
-    "model": "Find N2 Flip",
-    "release_year": 2022,
-    "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
-    ],
-    "storage_options": [
-      "256 GB",
-      "256GB"
-    ],
-    "default_mrp": 89999,
-    "base_resale_value": 32000,
-    "image_url": "https://fdn2.gsmarena.com/vv/bigpic/oppo-find-n2-flip.jpg",
-    "popular_tag": "Oppo Official Model",
-    "processor": "5G Octa-core Processor",
-    "camera_spec": "50MP OIS Camera",
-    "battery_spec": "5000 mAh Fast Charging",
-    "display_spec": "6.7\" AMOLED 120Hz",
-    "is_5g": true,
-    "is_active": true,
-    "price": 32000
-  },
-  {
-    "brand": "Oppo",
-    "model": "Find N3 Flip",
-    "release_year": 2022,
-    "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
-    ],
-    "storage_options": [
-      "256 GB",
-      "256GB"
-    ],
-    "default_mrp": 94999,
-    "base_resale_value": 42000,
-    "image_url": "https://fdn2.gsmarena.com/vv/bigpic/oppo-find-n3-flip.jpg",
-    "popular_tag": "Oppo Official Model",
-    "processor": "5G Octa-core Processor",
-    "camera_spec": "50MP OIS Camera",
-    "battery_spec": "5000 mAh Fast Charging",
-    "display_spec": "6.7\" AMOLED 120Hz",
-    "is_5g": true,
-    "is_active": true,
-    "price": 42000
-  },
-  {
-    "brand": "Oppo",
     "model": "Find X",
     "release_year": 2018,
     "ram_options": [
@@ -6887,31 +6518,6 @@
     "is_5g": true,
     "is_active": true,
     "price": 28000
-  },
-  {
-    "brand": "Oppo",
-    "model": "Find X7 Ultra",
-    "release_year": 2017,
-    "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
-    ],
-    "storage_options": [
-      "256 GB",
-      "256GB"
-    ],
-    "default_mrp": 84999,
-    "base_resale_value": 59000,
-    "image_url": "https://fdn2.gsmarena.com/vv/bigpic/oppo-find-x7-ultra.jpg",
-    "popular_tag": "Oppo Official Model",
-    "processor": "5G Octa-core Processor",
-    "camera_spec": "50MP OIS Camera",
-    "battery_spec": "5000 mAh Fast Charging",
-    "display_spec": "6.7\" AMOLED 120Hz",
-    "is_5g": true,
-    "is_active": true,
-    "price": 59000
   },
   {
     "brand": "Oppo",
@@ -10345,56 +9951,6 @@
     "is_5g": true,
     "is_active": true,
     "price": 13500
-  },
-  {
-    "brand": "Realme",
-    "model": "GT 6",
-    "release_year": 2016,
-    "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
-    ],
-    "storage_options": [
-      "256 GB",
-      "256GB"
-    ],
-    "default_mrp": 40999,
-    "base_resale_value": 28000,
-    "image_url": "https://fdn2.gsmarena.com/vv/bigpic/realme-gt-6.jpg",
-    "popular_tag": "Realme Official Model",
-    "processor": "High-Efficiency Processor",
-    "camera_spec": "50MP OIS Camera",
-    "battery_spec": "5000 mAh Fast Charging",
-    "display_spec": "6.7\" AMOLED 120Hz",
-    "is_5g": false,
-    "is_active": true,
-    "price": 28000
-  },
-  {
-    "brand": "Realme",
-    "model": "GT 6T",
-    "release_year": 2022,
-    "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
-    ],
-    "storage_options": [
-      "128 GB",
-      "256GB"
-    ],
-    "default_mrp": 30999,
-    "base_resale_value": 21000,
-    "image_url": "https://api.mobileapi.dev/devices/13718/thumb.png",
-    "popular_tag": "Realme Official Model",
-    "processor": "High-Efficiency Processor",
-    "camera_spec": "50MP OIS Camera",
-    "battery_spec": "5000 mAh Fast Charging",
-    "display_spec": "6.7\" AMOLED 120Hz",
-    "is_5g": false,
-    "is_active": true,
-    "price": 21000
   },
   {
     "brand": "Realme",
@@ -16478,31 +16034,6 @@
   },
   {
     "brand": "Vivo",
-    "model": "T3 Ultra",
-    "release_year": 2022,
-    "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
-    ],
-    "storage_options": [
-      "128 GB",
-      "256GB"
-    ],
-    "default_mrp": 28995,
-    "base_resale_value": 20120,
-    "image_url": "https://fdn2.gsmarena.com/vv/bigpic/vivo-t3-ultra.jpg",
-    "popular_tag": "Vivo Official Model",
-    "processor": "5G Octa-core Processor",
-    "camera_spec": "50MP OIS Camera",
-    "battery_spec": "5000 mAh Fast Charging",
-    "display_spec": "6.7\" AMOLED 120Hz",
-    "is_5g": true,
-    "is_active": true,
-    "price": 20120
-  },
-  {
-    "brand": "Vivo",
     "model": "T3x 5G",
     "release_year": 2024,
     "ram_options": [
@@ -17018,31 +16549,6 @@
   },
   {
     "brand": "Vivo",
-    "model": "V20 Pro",
-    "release_year": 2022,
-    "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
-    ],
-    "storage_options": [
-      "128 GB",
-      "256GB"
-    ],
-    "default_mrp": 14940,
-    "base_resale_value": 6940,
-    "image_url": "https://fdn2.gsmarena.com/vv/bigpic/vivo-v20-pro.jpg",
-    "popular_tag": "Vivo Official Model",
-    "processor": "5G Octa-core Processor",
-    "camera_spec": "50MP OIS Camera",
-    "battery_spec": "5000 mAh Fast Charging",
-    "display_spec": "6.7\" AMOLED 120Hz",
-    "is_5g": true,
-    "is_active": true,
-    "price": 6940
-  },
-  {
-    "brand": "Vivo",
     "model": "V20 SE",
     "release_year": 2022,
     "ram_options": [
@@ -17143,31 +16649,6 @@
   },
   {
     "brand": "Vivo",
-    "model": "V23 Pro",
-    "release_year": 2022,
-    "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
-    ],
-    "storage_options": [
-      "128 GB",
-      "256GB"
-    ],
-    "default_mrp": 18105,
-    "base_resale_value": 12700,
-    "image_url": "https://fdn2.gsmarena.com/vv/bigpic/vivo-v23-pro.jpg",
-    "popular_tag": "Vivo Official Model",
-    "processor": "5G Octa-core Processor",
-    "camera_spec": "50MP OIS Camera",
-    "battery_spec": "5000 mAh Fast Charging",
-    "display_spec": "6.7\" AMOLED 120Hz",
-    "is_5g": true,
-    "is_active": true,
-    "price": 12700
-  },
-  {
-    "brand": "Vivo",
     "model": "V23e 5G",
     "release_year": 2022,
     "ram_options": [
@@ -17218,131 +16699,6 @@
   },
   {
     "brand": "Vivo",
-    "model": "V25 Pro",
-    "release_year": 2022,
-    "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
-    ],
-    "storage_options": [
-      "128 GB",
-      "256GB"
-    ],
-    "default_mrp": 20685,
-    "base_resale_value": 12950,
-    "image_url": "https://fdn2.gsmarena.com/vv/bigpic/vivo-v25-pro.jpg",
-    "popular_tag": "Vivo Official Model",
-    "processor": "5G Octa-core Processor",
-    "camera_spec": "50MP OIS Camera",
-    "battery_spec": "5000 mAh Fast Charging",
-    "display_spec": "6.7\" AMOLED 120Hz",
-    "is_5g": true,
-    "is_active": true,
-    "price": 12950
-  },
-  {
-    "brand": "Vivo",
-    "model": "V27",
-    "release_year": 2017,
-    "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
-    ],
-    "storage_options": [
-      "128 GB",
-      "256GB"
-    ],
-    "default_mrp": 26325,
-    "base_resale_value": 16750,
-    "image_url": "https://fdn2.gsmarena.com/vv/bigpic/vivo-v27.jpg",
-    "popular_tag": "Vivo Official Model",
-    "processor": "High-Efficiency Processor",
-    "camera_spec": "50MP OIS Camera",
-    "battery_spec": "5000 mAh Fast Charging",
-    "display_spec": "6.7\" AMOLED 120Hz",
-    "is_5g": false,
-    "is_active": true,
-    "price": 16750
-  },
-  {
-    "brand": "Vivo",
-    "model": "V27 Pro",
-    "release_year": 2017,
-    "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
-    ],
-    "storage_options": [
-      "128 GB",
-      "256GB"
-    ],
-    "default_mrp": 29685,
-    "base_resale_value": 18910,
-    "image_url": "https://fdn2.gsmarena.com/vv/bigpic/vivo-v27-pro.jpg",
-    "popular_tag": "Vivo Official Model",
-    "processor": "5G Octa-core Processor",
-    "camera_spec": "50MP OIS Camera",
-    "battery_spec": "5000 mAh Fast Charging",
-    "display_spec": "6.7\" AMOLED 120Hz",
-    "is_5g": true,
-    "is_active": true,
-    "price": 18910
-  },
-  {
-    "brand": "Vivo",
-    "model": "V29",
-    "release_year": 2022,
-    "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
-    ],
-    "storage_options": [
-      "128 GB",
-      "256GB"
-    ],
-    "default_mrp": 27750,
-    "base_resale_value": 17680,
-    "image_url": "https://fdn2.gsmarena.com/vv/bigpic/vivo-v29.jpg",
-    "popular_tag": "Vivo Official Model",
-    "processor": "High-Efficiency Processor",
-    "camera_spec": "50MP OIS Camera",
-    "battery_spec": "5000 mAh Fast Charging",
-    "display_spec": "6.7\" AMOLED 120Hz",
-    "is_5g": false,
-    "is_active": true,
-    "price": 17680
-  },
-  {
-    "brand": "Vivo",
-    "model": "V29 Pro",
-    "release_year": 2022,
-    "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
-    ],
-    "storage_options": [
-      "256 GB",
-      "256GB"
-    ],
-    "default_mrp": 42999,
-    "base_resale_value": 19500,
-    "image_url": "https://fdn2.gsmarena.com/vv/bigpic/vivo-v29-pro.jpg",
-    "popular_tag": "Vivo Official Model",
-    "processor": "5G Octa-core Processor",
-    "camera_spec": "50MP OIS Camera",
-    "battery_spec": "5000 mAh Fast Charging",
-    "display_spec": "6.7\" AMOLED 120Hz",
-    "is_5g": true,
-    "is_active": true,
-    "price": 19500
-  },
-  {
-    "brand": "Vivo",
     "model": "V29e",
     "release_year": 2022,
     "ram_options": [
@@ -17365,156 +16721,6 @@
     "is_5g": false,
     "is_active": true,
     "price": 12940
-  },
-  {
-    "brand": "Vivo",
-    "model": "V30",
-    "release_year": 2022,
-    "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
-    ],
-    "storage_options": [
-      "128 GB",
-      "256GB"
-    ],
-    "default_mrp": 35999,
-    "base_resale_value": 19500,
-    "image_url": "https://fdn2.gsmarena.com/vv/bigpic/vivo-v30.jpg",
-    "popular_tag": "Vivo Official Model",
-    "processor": "High-Efficiency Processor",
-    "camera_spec": "50MP OIS Camera",
-    "battery_spec": "5000 mAh Fast Charging",
-    "display_spec": "6.7\" AMOLED 120Hz",
-    "is_5g": false,
-    "is_active": true,
-    "price": 19500
-  },
-  {
-    "brand": "Vivo",
-    "model": "V30 Pro",
-    "release_year": 2022,
-    "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
-    ],
-    "storage_options": [
-      "256 GB",
-      "256GB"
-    ],
-    "default_mrp": 46999,
-    "base_resale_value": 24000,
-    "image_url": "https://fdn2.gsmarena.com/vv/bigpic/vivo-v30-pro.jpg",
-    "popular_tag": "Vivo Official Model",
-    "processor": "5G Octa-core Processor",
-    "camera_spec": "50MP OIS Camera",
-    "battery_spec": "5000 mAh Fast Charging",
-    "display_spec": "6.7\" AMOLED 120Hz",
-    "is_5g": true,
-    "is_active": true,
-    "price": 24000
-  },
-  {
-    "brand": "Vivo",
-    "model": "V30e",
-    "release_year": 2022,
-    "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
-    ],
-    "storage_options": [
-      "128 GB",
-      "256GB"
-    ],
-    "default_mrp": 28905,
-    "base_resale_value": 15170,
-    "image_url": "https://api.mobileapi.dev/devices/4909/thumb.png",
-    "popular_tag": "Vivo Official Model",
-    "processor": "High-Efficiency Processor",
-    "camera_spec": "50MP OIS Camera",
-    "battery_spec": "5000 mAh Fast Charging",
-    "display_spec": "6.7\" AMOLED 120Hz",
-    "is_5g": false,
-    "is_active": true,
-    "price": 15170
-  },
-  {
-    "brand": "Vivo",
-    "model": "V40",
-    "release_year": 2022,
-    "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
-    ],
-    "storage_options": [
-      "128 GB",
-      "256GB"
-    ],
-    "default_mrp": 39999,
-    "base_resale_value": 22000,
-    "image_url": "https://fdn2.gsmarena.com/vv/bigpic/vivo-v40.jpg",
-    "popular_tag": "Vivo Official Model",
-    "processor": "High-Efficiency Processor",
-    "camera_spec": "50MP OIS Camera",
-    "battery_spec": "5000 mAh Fast Charging",
-    "display_spec": "6.7\" AMOLED 120Hz",
-    "is_5g": false,
-    "is_active": true,
-    "price": 22000
-  },
-  {
-    "brand": "Vivo",
-    "model": "V40 Pro",
-    "release_year": 2022,
-    "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
-    ],
-    "storage_options": [
-      "256 GB",
-      "256GB"
-    ],
-    "default_mrp": 54999,
-    "base_resale_value": 31000,
-    "image_url": "https://fdn2.gsmarena.com/vv/bigpic/vivo-v40-pro.jpg",
-    "popular_tag": "Vivo Official Model",
-    "processor": "5G Octa-core Processor",
-    "camera_spec": "50MP OIS Camera",
-    "battery_spec": "5000 mAh Fast Charging",
-    "display_spec": "6.7\" AMOLED 120Hz",
-    "is_5g": true,
-    "is_active": true,
-    "price": 31000
-  },
-  {
-    "brand": "Vivo",
-    "model": "V40e",
-    "release_year": 2022,
-    "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
-    ],
-    "storage_options": [
-      "128 GB",
-      "256GB"
-    ],
-    "default_mrp": 30180,
-    "base_resale_value": 16080,
-    "image_url": "https://api.mobileapi.dev/devices/4871/thumb.png",
-    "popular_tag": "Vivo Official Model",
-    "processor": "High-Efficiency Processor",
-    "camera_spec": "50MP OIS Camera",
-    "battery_spec": "5000 mAh Fast Charging",
-    "display_spec": "6.7\" AMOLED 120Hz",
-    "is_5g": false,
-    "is_active": true,
-    "price": 16080
   },
   {
     "brand": "Vivo",
@@ -17817,56 +17023,6 @@
   },
   {
     "brand": "Vivo",
-    "model": "X100",
-    "release_year": 2022,
-    "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
-    ],
-    "storage_options": [
-      "256 GB",
-      "256GB"
-    ],
-    "default_mrp": 58999,
-    "base_resale_value": 30000,
-    "image_url": "https://api.mobileapi.dev/devices/355/thumb.png",
-    "popular_tag": "Vivo Official Model",
-    "processor": "High-Efficiency Processor",
-    "camera_spec": "50MP OIS Camera",
-    "battery_spec": "5000 mAh Fast Charging",
-    "display_spec": "6.7\" AMOLED 120Hz",
-    "is_5g": false,
-    "is_active": true,
-    "price": 30000
-  },
-  {
-    "brand": "Vivo",
-    "model": "X100 Pro",
-    "release_year": 2022,
-    "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
-    ],
-    "storage_options": [
-      "512 GB",
-      "256GB"
-    ],
-    "default_mrp": 69999,
-    "base_resale_value": 36000,
-    "image_url": "https://fdn2.gsmarena.com/vv/bigpic/vivo-x100-pro.jpg",
-    "popular_tag": "Vivo Official Model",
-    "processor": "5G Octa-core Processor",
-    "camera_spec": "50MP OIS Camera",
-    "battery_spec": "5000 mAh Fast Charging",
-    "display_spec": "6.7\" AMOLED 120Hz",
-    "is_5g": true,
-    "is_active": true,
-    "price": 36000
-  },
-  {
-    "brand": "Vivo",
     "model": "X200 FE",
     "release_year": 2022,
     "ram_options": [
@@ -18066,81 +17222,6 @@
   },
   {
     "brand": "Vivo",
-    "model": "X50 Pro",
-    "release_year": 2022,
-    "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
-    ],
-    "storage_options": [
-      "256 GB",
-      "256GB"
-    ],
-    "default_mrp": 16455,
-    "base_resale_value": 7560,
-    "image_url": "https://fdn2.gsmarena.com/vv/bigpic/vivo-x50-pro.jpg",
-    "popular_tag": "Vivo Official Model",
-    "processor": "5G Octa-core Processor",
-    "camera_spec": "50MP OIS Camera",
-    "battery_spec": "5000 mAh Fast Charging",
-    "display_spec": "6.7\" AMOLED 120Hz",
-    "is_5g": true,
-    "is_active": true,
-    "price": 7560
-  },
-  {
-    "brand": "Vivo",
-    "model": "X60",
-    "release_year": 2022,
-    "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
-    ],
-    "storage_options": [
-      "128 GB",
-      "256GB"
-    ],
-    "default_mrp": 16860,
-    "base_resale_value": 10100,
-    "image_url": "https://fdn2.gsmarena.com/vv/bigpic/vivo-x60.jpg",
-    "popular_tag": "Vivo Official Model",
-    "processor": "High-Efficiency Processor",
-    "camera_spec": "50MP OIS Camera",
-    "battery_spec": "5000 mAh Fast Charging",
-    "display_spec": "6.7\" AMOLED 120Hz",
-    "is_5g": false,
-    "is_active": true,
-    "price": 10100
-  },
-  {
-    "brand": "Vivo",
-    "model": "X60 Pro",
-    "release_year": 2022,
-    "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
-    ],
-    "storage_options": [
-      "256 GB",
-      "256GB"
-    ],
-    "default_mrp": 20415,
-    "base_resale_value": 9890,
-    "image_url": "https://fdn2.gsmarena.com/vv/bigpic/vivo-x60-pro.jpg",
-    "popular_tag": "Vivo Official Model",
-    "processor": "5G Octa-core Processor",
-    "camera_spec": "50MP OIS Camera",
-    "battery_spec": "5000 mAh Fast Charging",
-    "display_spec": "6.7\" AMOLED 120Hz",
-    "is_5g": true,
-    "is_active": true,
-    "price": 9890
-  },
-  {
-    "brand": "Vivo",
     "model": "X60 Pro Plus",
     "release_year": 2022,
     "ram_options": [
@@ -18166,106 +17247,6 @@
   },
   {
     "brand": "Vivo",
-    "model": "X70 Pro",
-    "release_year": 2022,
-    "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
-    ],
-    "storage_options": [
-      "128 GB",
-      "256GB"
-    ],
-    "default_mrp": 24135,
-    "base_resale_value": 13300,
-    "image_url": "https://api.mobileapi.dev/devices/13983/thumb.png",
-    "popular_tag": "Vivo Official Model",
-    "processor": "5G Octa-core Processor",
-    "camera_spec": "50MP OIS Camera",
-    "battery_spec": "5000 mAh Fast Charging",
-    "display_spec": "6.7\" AMOLED 120Hz",
-    "is_5g": true,
-    "is_active": true,
-    "price": 13300
-  },
-  {
-    "brand": "Vivo",
-    "model": "X70 Pro+",
-    "release_year": 2022,
-    "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
-    ],
-    "storage_options": [
-      "256 GB",
-      "256GB"
-    ],
-    "default_mrp": 26775,
-    "base_resale_value": 13300,
-    "image_url": "https://fdn2.gsmarena.com/vv/bigpic/vivo-x70-pro-plus.jpg",
-    "popular_tag": "Vivo Official Model",
-    "processor": "5G Octa-core Processor",
-    "camera_spec": "50MP OIS Camera",
-    "battery_spec": "5000 mAh Fast Charging",
-    "display_spec": "6.7\" AMOLED 120Hz",
-    "is_5g": true,
-    "is_active": true,
-    "price": 13300
-  },
-  {
-    "brand": "Vivo",
-    "model": "X80",
-    "release_year": 2022,
-    "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
-    ],
-    "storage_options": [
-      "128 GB",
-      "256GB"
-    ],
-    "default_mrp": 25635,
-    "base_resale_value": 17290,
-    "image_url": "https://fdn2.gsmarena.com/vv/bigpic/vivo-x80.jpg",
-    "popular_tag": "Vivo Official Model",
-    "processor": "High-Efficiency Processor",
-    "camera_spec": "50MP OIS Camera",
-    "battery_spec": "5000 mAh Fast Charging",
-    "display_spec": "6.7\" AMOLED 120Hz",
-    "is_5g": false,
-    "is_active": true,
-    "price": 17290
-  },
-  {
-    "brand": "Vivo",
-    "model": "X80 Pro",
-    "release_year": 2022,
-    "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
-    ],
-    "storage_options": [
-      "256 GB",
-      "256GB"
-    ],
-    "default_mrp": 33135,
-    "base_resale_value": 22540,
-    "image_url": "https://fdn2.gsmarena.com/vv/bigpic/vivo-x80-pro.jpg",
-    "popular_tag": "Vivo Official Model",
-    "processor": "5G Octa-core Processor",
-    "camera_spec": "50MP OIS Camera",
-    "battery_spec": "5000 mAh Fast Charging",
-    "display_spec": "6.7\" AMOLED 120Hz",
-    "is_5g": true,
-    "is_active": true,
-    "price": 22540
-  },
-  {
-    "brand": "Vivo",
     "model": "X9",
     "release_year": 2022,
     "ram_options": [
@@ -18286,56 +17267,6 @@
     "battery_spec": "5000 mAh Fast Charging",
     "display_spec": "6.7\" AMOLED 120Hz",
     "is_5g": false,
-    "is_active": true,
-    "price": 30540
-  },
-  {
-    "brand": "Vivo",
-    "model": "X90",
-    "release_year": 2022,
-    "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
-    ],
-    "storage_options": [
-      "256 GB",
-      "256GB"
-    ],
-    "default_mrp": 43425,
-    "base_resale_value": 23150,
-    "image_url": "https://api.mobileapi.dev/devices/4965/thumb.png",
-    "popular_tag": "Vivo Official Model",
-    "processor": "High-Efficiency Processor",
-    "camera_spec": "50MP OIS Camera",
-    "battery_spec": "5000 mAh Fast Charging",
-    "display_spec": "6.7\" AMOLED 120Hz",
-    "is_5g": false,
-    "is_active": true,
-    "price": 23150
-  },
-  {
-    "brand": "Vivo",
-    "model": "X90 Pro",
-    "release_year": 2022,
-    "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
-    ],
-    "storage_options": [
-      "256 GB",
-      "256GB"
-    ],
-    "default_mrp": 43275,
-    "base_resale_value": 30540,
-    "image_url": "https://fdn2.gsmarena.com/vv/bigpic/vivo-x90-pro.jpg",
-    "popular_tag": "Vivo Official Model",
-    "processor": "5G Octa-core Processor",
-    "camera_spec": "50MP OIS Camera",
-    "battery_spec": "5000 mAh Fast Charging",
-    "display_spec": "6.7\" AMOLED 120Hz",
-    "is_5g": true,
     "is_active": true,
     "price": 30540
   },
@@ -20451,31 +19382,6 @@
   },
   {
     "brand": "Xiaomi",
-    "model": "Redmi 10",
-    "release_year": 2022,
-    "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
-    ],
-    "storage_options": [
-      "64 GB",
-      "256GB"
-    ],
-    "default_mrp": 9405,
-    "base_resale_value": 5100,
-    "image_url": "https://api.mobileapi.dev/devices/31570/thumb.png",
-    "popular_tag": "Xiaomi Official Model",
-    "processor": "High-Efficiency Processor",
-    "camera_spec": "50MP OIS Camera",
-    "battery_spec": "5000 mAh Fast Charging",
-    "display_spec": "6.7\" AMOLED 120Hz",
-    "is_5g": false,
-    "is_active": true,
-    "price": 5100
-  },
-  {
-    "brand": "Xiaomi",
     "model": "Redmi 10A",
     "release_year": 2022,
     "ram_options": [
@@ -20522,56 +19428,6 @@
     "is_5g": true,
     "is_active": true,
     "price": 6900
-  },
-  {
-    "brand": "Xiaomi",
-    "model": "Redmi 12",
-    "release_year": 2020,
-    "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
-    ],
-    "storage_options": [
-      "128 GB",
-      "256GB"
-    ],
-    "default_mrp": 12060,
-    "base_resale_value": 7320,
-    "image_url": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-redmi-12.jpg",
-    "popular_tag": "Xiaomi Official Model",
-    "processor": "5G Octa-core Processor",
-    "camera_spec": "50MP OIS Camera",
-    "battery_spec": "5000 mAh Fast Charging",
-    "display_spec": "6.7\" AMOLED 120Hz",
-    "is_5g": true,
-    "is_active": true,
-    "price": 7320
-  },
-  {
-    "brand": "Xiaomi",
-    "model": "Redmi 13C",
-    "release_year": 2021,
-    "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
-    ],
-    "storage_options": [
-      "128 GB",
-      "256GB"
-    ],
-    "default_mrp": 11820,
-    "base_resale_value": 6800,
-    "image_url": "https://api.mobileapi.dev/devices/31508/thumb.png",
-    "popular_tag": "Xiaomi Official Model",
-    "processor": "5G Octa-core Processor",
-    "camera_spec": "50MP OIS Camera",
-    "battery_spec": "5000 mAh Fast Charging",
-    "display_spec": "6.7\" AMOLED 120Hz",
-    "is_5g": true,
-    "is_active": true,
-    "price": 6800
   },
   {
     "brand": "Xiaomi",
@@ -20750,31 +19606,6 @@
   },
   {
     "brand": "Xiaomi",
-    "model": "Redmi Note 11 Pro",
-    "release_year": 2019,
-    "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
-    ],
-    "storage_options": [
-      "128 GB",
-      "256GB"
-    ],
-    "default_mrp": 13950,
-    "base_resale_value": 7250,
-    "image_url": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-redmi-note-11-pro-global.jpg",
-    "popular_tag": "Xiaomi Official Model",
-    "processor": "5G Octa-core Processor",
-    "camera_spec": "50MP OIS Camera",
-    "battery_spec": "5000 mAh Fast Charging",
-    "display_spec": "6.7\" AMOLED 120Hz",
-    "is_5g": true,
-    "is_active": true,
-    "price": 7250
-  },
-  {
-    "brand": "Xiaomi",
     "model": "Redmi Note 11 Pro+ 5G",
     "release_year": 2019,
     "ram_options": [
@@ -20797,31 +19628,6 @@
     "is_5g": true,
     "is_active": true,
     "price": 8900
-  },
-  {
-    "brand": "Xiaomi",
-    "model": "Redmi Note 11S",
-    "release_year": 2019,
-    "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
-    ],
-    "storage_options": [
-      "128 GB",
-      "256GB"
-    ],
-    "default_mrp": 9825,
-    "base_resale_value": 6600,
-    "image_url": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-redmi-note-11s.jpg",
-    "popular_tag": "Xiaomi Official Model",
-    "processor": "High-Efficiency Processor",
-    "camera_spec": "50MP OIS Camera",
-    "battery_spec": "5000 mAh Fast Charging",
-    "display_spec": "6.7\" AMOLED 120Hz",
-    "is_5g": false,
-    "is_active": true,
-    "price": 6600
   },
   {
     "brand": "Xiaomi",
@@ -21235,31 +20041,6 @@
   },
   {
     "brand": "Xiaomi",
-    "model": "11T Pro",
-    "release_year": 2019,
-    "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
-    ],
-    "storage_options": [
-      "128 GB",
-      "256GB"
-    ],
-    "default_mrp": 17775,
-    "base_resale_value": 12400,
-    "image_url": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-11t-pro.jpg",
-    "popular_tag": "Xiaomi Official Model",
-    "processor": "5G Octa-core Processor",
-    "camera_spec": "50MP OIS Camera",
-    "battery_spec": "5000 mAh Fast Charging",
-    "display_spec": "6.7\" AMOLED 120Hz",
-    "is_5g": true,
-    "is_active": true,
-    "price": 12400
-  },
-  {
-    "brand": "Xiaomi",
     "model": "12 Lite",
     "release_year": 2020,
     "ram_options": [
@@ -21281,33 +20062,6 @@
     "display_spec": "6.7\" AMOLED 120Hz",
     "is_5g": true,
     "is_active": true
-  },
-  {
-    "brand": "Xiaomi",
-    "model": "12 Pro",
-    "release_year": 2020,
-    "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
-    ],
-    "storage_options": [
-      "256 GB",
-      "256GB"
-    ],
-    "default_mrp": 41175,
-    "base_resale_value": 15920,
-    "image_url": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-12-pro.jpg",
-    "popular_tag": "Xiaomi Official Model",
-    "processor": "5G Octa-core Processor",
-    "camera_spec": "50MP OIS Camera",
-    "battery_spec": "5000 mAh Fast Charging",
-    "display_spec": "6.7\" AMOLED 120Hz",
-    "is_5g": true,
-    "is_active": true,
-    "price": 19000,
-    "basePrice": 19000,
-    "mrp": 62999
   },
   {
     "brand": "Xiaomi",
@@ -21360,33 +20114,6 @@
   },
   {
     "brand": "Xiaomi",
-    "model": "13 Pro",
-    "release_year": 2022,
-    "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
-    ],
-    "storage_options": [
-      "256 GB",
-      "256GB"
-    ],
-    "default_mrp": 55425,
-    "base_resale_value": 26460,
-    "image_url": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-13-pro.jpg",
-    "popular_tag": "Xiaomi Official Model",
-    "processor": "5G Octa-core Processor",
-    "camera_spec": "50MP OIS Camera",
-    "battery_spec": "5000 mAh Fast Charging",
-    "display_spec": "6.7\" AMOLED 120Hz",
-    "is_5g": true,
-    "is_active": true,
-    "price": 31000,
-    "basePrice": 31000,
-    "mrp": 79999
-  },
-  {
-    "brand": "Xiaomi",
     "model": "14",
     "release_year": 2024,
     "ram_options": [
@@ -21436,33 +20163,6 @@
     "is_5g": true,
     "is_active": true,
     "price": 19620
-  },
-  {
-    "brand": "Xiaomi",
-    "model": "14 Ultra",
-    "release_year": 2024,
-    "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
-    ],
-    "storage_options": [
-      "512 GB",
-      "256GB"
-    ],
-    "default_mrp": 99999,
-    "base_resale_value": 38980,
-    "image_url": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-14-ultra.jpg",
-    "popular_tag": "Xiaomi Official Model",
-    "processor": "5G Octa-core Processor",
-    "camera_spec": "50MP OIS Camera",
-    "battery_spec": "5000 mAh Fast Charging",
-    "display_spec": "6.7\" AMOLED 120Hz",
-    "is_5g": true,
-    "is_active": true,
-    "price": 56000,
-    "basePrice": 56000,
-    "mrp": 99999
   },
   {
     "brand": "Xiaomi",
@@ -21540,31 +20240,6 @@
   },
   {
     "brand": "Xiaomi",
-    "model": "17 Ultra",
-    "release_year": 2017,
-    "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
-    ],
-    "storage_options": [
-      "512 GB",
-      "256GB"
-    ],
-    "default_mrp": 116205,
-    "base_resale_value": 59500,
-    "image_url": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-17-ultra.jpg",
-    "popular_tag": "Xiaomi Official Model",
-    "processor": "5G Octa-core Processor",
-    "camera_spec": "50MP OIS Camera",
-    "battery_spec": "5000 mAh Fast Charging",
-    "display_spec": "6.7\" AMOLED 120Hz",
-    "is_5g": true,
-    "is_active": true,
-    "price": 59500
-  },
-  {
-    "brand": "Xiaomi",
     "model": "17T",
     "release_year": 2022,
     "ram_options": [
@@ -21635,81 +20310,6 @@
     "is_5g": false,
     "is_active": true,
     "price": 5100
-  },
-  {
-    "brand": "Xiaomi",
-    "model": "Mi 10i",
-    "release_year": 2022,
-    "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
-    ],
-    "storage_options": [
-      "128 GB",
-      "256GB"
-    ],
-    "default_mrp": 12915,
-    "base_resale_value": 8100,
-    "image_url": "https://api.mobileapi.dev/devices/29024/thumb.png",
-    "popular_tag": "Xiaomi Official Model",
-    "processor": "High-Efficiency Processor",
-    "camera_spec": "50MP OIS Camera",
-    "battery_spec": "5000 mAh Fast Charging",
-    "display_spec": "6.7\" AMOLED 120Hz",
-    "is_5g": false,
-    "is_active": true,
-    "price": 8100
-  },
-  {
-    "brand": "Xiaomi",
-    "model": "Mi 10T",
-    "release_year": 2022,
-    "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
-    ],
-    "storage_options": [
-      "128 GB",
-      "256GB"
-    ],
-    "default_mrp": 13860,
-    "base_resale_value": 8600,
-    "image_url": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-mi-10t.jpg",
-    "popular_tag": "Xiaomi Official Model",
-    "processor": "High-Efficiency Processor",
-    "camera_spec": "50MP OIS Camera",
-    "battery_spec": "5000 mAh Fast Charging",
-    "display_spec": "6.7\" AMOLED 120Hz",
-    "is_5g": false,
-    "is_active": true,
-    "price": 8600
-  },
-  {
-    "brand": "Xiaomi",
-    "model": "Mi 10T Pro",
-    "release_year": 2022,
-    "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
-    ],
-    "storage_options": [
-      "128 GB",
-      "256GB"
-    ],
-    "default_mrp": 14700,
-    "base_resale_value": 9900,
-    "image_url": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-mi-10t-pro-5g.jpg",
-    "popular_tag": "Xiaomi Official Model",
-    "processor": "5G Octa-core Processor",
-    "camera_spec": "50MP OIS Camera",
-    "battery_spec": "5000 mAh Fast Charging",
-    "display_spec": "6.7\" AMOLED 120Hz",
-    "is_5g": true,
-    "is_active": true,
-    "price": 9900
   },
   {
     "brand": "Xiaomi",
@@ -24662,30 +23262,6 @@
   },
   {
     "brand": "OnePlus",
-    "model": "OnePlus Nord CE 3",
-    "release_year": 2023,
-    "ram_options": [
-      "8GB",
-      "12GB"
-    ],
-    "storage_options": [
-      "128GB",
-      "256GB"
-    ],
-    "default_mrp": 26999,
-    "base_resale_value": 14000,
-    "image_url": "https://api.mobileapi.dev/devices/374/thumb.png",
-    "popular_tag": "Never Settle",
-    "processor": "Snapdragon 782G 5G",
-    "camera_spec": "50MP Sony IMX890 OIS + 8MP Ultra-wide + 2MP Macro",
-    "battery_spec": "5000 mAh 80W SUPERVOOC",
-    "display_spec": "6.7\" 120Hz Fluid AMOLED FHD+",
-    "is_5g": true,
-    "is_active": true,
-    "price": 14000
-  },
-  {
-    "brand": "OnePlus",
     "model": "OnePlus Nord CE 3 5G",
     "release_year": 2023,
     "ram_options": [
@@ -24707,29 +23283,6 @@
     "is_5g": true,
     "is_active": true,
     "price": 14000
-  },
-  {
-    "brand": "OnePlus",
-    "model": "OnePlus Nord CE 3 Lite",
-    "release_year": 2023,
-    "ram_options": [
-      "8GB"
-    ],
-    "storage_options": [
-      "128GB",
-      "256GB"
-    ],
-    "default_mrp": 19999,
-    "base_resale_value": 10500,
-    "image_url": "https://api.mobileapi.dev/devices/16320/thumb.png",
-    "popular_tag": "Larger Than Life",
-    "processor": "Snapdragon 695 5G",
-    "camera_spec": "108MP Main Camera + 3x Lossless Zoom",
-    "battery_spec": "5000 mAh 67W SUPERVOOC",
-    "display_spec": "6.72\" 120Hz FHD+ LCD",
-    "is_5g": true,
-    "is_active": true,
-    "price": 10500
   },
   {
     "brand": "OnePlus",
@@ -25162,58 +23715,6 @@
     "camera_spec": "200MP Samsung ISOCELL HP3 OIS",
     "battery_spec": "5000 mAh 100W SUPERVOOC",
     "display_spec": "6.7\" 120Hz Curved Vision AMOLED",
-    "is_5g": true,
-    "is_active": true
-  },
-  {
-    "brand": "Realme",
-    "series": "Realme Number Series",
-    "model": "Realme 12 Plus",
-    "release_year": 2024,
-    "storage": "128 GB",
-    "storage_options": [
-      "128GB",
-      "256GB"
-    ],
-    "ram_options": [
-      "8GB"
-    ],
-    "default_mrp": 20999,
-    "base_resale_value": 14000,
-    "price": 14000,
-    "image": "https://fdn2.gsmarena.com/vv/bigpic/realme-12-plus-5g.jpg",
-    "image_url": "https://fdn2.gsmarena.com/vv/bigpic/realme-12-plus-5g.jpg",
-    "popular_tag": "Sony LYT-600 OIS Master Camera",
-    "processor": "Dimensity 7050 5G",
-    "camera_spec": "50MP Sony LYT-600 OIS + 8MP UW",
-    "battery_spec": "5000 mAh 67W SUPERVOOC",
-    "display_spec": "6.67\" 120Hz AMOLED Rainwater Touch",
-    "is_5g": true,
-    "is_active": true
-  },
-  {
-    "brand": "Realme",
-    "series": "Realme Number Series",
-    "model": "12 Plus",
-    "release_year": 2024,
-    "storage": "128 GB",
-    "storage_options": [
-      "128GB",
-      "256GB"
-    ],
-    "ram_options": [
-      "8GB"
-    ],
-    "default_mrp": 20999,
-    "base_resale_value": 14000,
-    "price": 14000,
-    "image": "https://fdn2.gsmarena.com/vv/bigpic/realme-12-plus-5g.jpg",
-    "image_url": "https://fdn2.gsmarena.com/vv/bigpic/realme-12-plus-5g.jpg",
-    "popular_tag": "Sony LYT-600 OIS Master Camera",
-    "processor": "Dimensity 7050 5G",
-    "camera_spec": "50MP Sony LYT-600 OIS + 8MP UW",
-    "battery_spec": "5000 mAh 67W SUPERVOOC",
-    "display_spec": "6.67\" 120Hz AMOLED Rainwater Touch",
     "is_5g": true,
     "is_active": true
   },
@@ -27532,81 +26033,6 @@
   },
   {
     "brand": "Xiaomi",
-    "model": "Redmi Note 13",
-    "release_year": 2024,
-    "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
-    ],
-    "storage_options": [
-      "128 GB",
-      "256GB"
-    ],
-    "default_mrp": null,
-    "image_url": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-14.jpg",
-    "popular_tag": "Xiaomi Official Model",
-    "processor": "Snapdragon / MediaTek Dimensity",
-    "camera_spec": "50MP OIS Camera",
-    "battery_spec": "5000 mAh Fast Charging",
-    "display_spec": "AMOLED 120Hz Display",
-    "is_5g": false,
-    "is_active": true,
-    "base_resale_value": 9100,
-    "price": 9100
-  },
-  {
-    "brand": "Xiaomi",
-    "model": "Redmi Note 12",
-    "release_year": 2024,
-    "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
-    ],
-    "storage_options": [
-      "64 GB",
-      "256GB"
-    ],
-    "default_mrp": null,
-    "image_url": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-14.jpg",
-    "popular_tag": "Xiaomi Official Model",
-    "processor": "Snapdragon / MediaTek Dimensity",
-    "camera_spec": "50MP OIS Camera",
-    "battery_spec": "5000 mAh Fast Charging",
-    "display_spec": "AMOLED 120Hz Display",
-    "is_5g": false,
-    "is_active": true,
-    "base_resale_value": 7900,
-    "price": 7900
-  },
-  {
-    "brand": "Xiaomi",
-    "model": "Redmi Note 12T Pro",
-    "release_year": 2024,
-    "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
-    ],
-    "storage_options": [
-      "128 GB",
-      "256GB"
-    ],
-    "default_mrp": null,
-    "image_url": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-14.jpg",
-    "popular_tag": "Xiaomi Official Model",
-    "processor": "Snapdragon / MediaTek Dimensity",
-    "camera_spec": "50MP OIS Camera",
-    "battery_spec": "5000 mAh Fast Charging",
-    "display_spec": "AMOLED 120Hz Display",
-    "is_5g": true,
-    "is_active": true,
-    "base_resale_value": 11500,
-    "price": 11500
-  },
-  {
-    "brand": "Xiaomi",
     "model": "Redmi Note 11S 5G",
     "release_year": 2024,
     "ram_options": [
@@ -27651,56 +26077,6 @@
     "battery_spec": "5000 mAh Fast Charging",
     "display_spec": "AMOLED 120Hz Display",
     "is_5g": true,
-    "is_active": true,
-    "base_resale_value": 7800,
-    "price": 7800
-  },
-  {
-    "brand": "Xiaomi",
-    "model": "Redmi K50i",
-    "release_year": 2024,
-    "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
-    ],
-    "storage_options": [
-      "128 GB",
-      "256GB"
-    ],
-    "default_mrp": null,
-    "image_url": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-14.jpg",
-    "popular_tag": "Xiaomi Official Model",
-    "processor": "Snapdragon / MediaTek Dimensity",
-    "camera_spec": "50MP OIS Camera",
-    "battery_spec": "5000 mAh Fast Charging",
-    "display_spec": "AMOLED 120Hz Display",
-    "is_5g": false,
-    "is_active": true,
-    "base_resale_value": 9510,
-    "price": 9510
-  },
-  {
-    "brand": "Xiaomi",
-    "model": "Redmi K30",
-    "release_year": 2024,
-    "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
-    ],
-    "storage_options": [
-      "128 GB",
-      "256GB"
-    ],
-    "default_mrp": null,
-    "image_url": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-14.jpg",
-    "popular_tag": "Xiaomi Official Model",
-    "processor": "Snapdragon / MediaTek Dimensity",
-    "camera_spec": "50MP OIS Camera",
-    "battery_spec": "5000 mAh Fast Charging",
-    "display_spec": "AMOLED 120Hz Display",
-    "is_5g": false,
     "is_active": true,
     "base_resale_value": 7800,
     "price": 7800
@@ -27758,31 +26134,6 @@
     "price": 8800,
     "basePrice": 8800,
     "mrp": 15999
-  },
-  {
-    "brand": "Xiaomi",
-    "model": "Redmi 11 Prime",
-    "release_year": 2024,
-    "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
-    ],
-    "storage_options": [
-      "64 GB",
-      "256GB"
-    ],
-    "default_mrp": null,
-    "image_url": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-14.jpg",
-    "popular_tag": "Xiaomi Official Model",
-    "processor": "Snapdragon / MediaTek Dimensity",
-    "camera_spec": "50MP OIS Camera",
-    "battery_spec": "5000 mAh Fast Charging",
-    "display_spec": "AMOLED 120Hz Display",
-    "is_5g": false,
-    "is_active": true,
-    "base_resale_value": 6900,
-    "price": 6900
   },
   {
     "brand": "Xiaomi",
@@ -28161,31 +26512,6 @@
   },
   {
     "brand": "Oppo",
-    "model": "OPPO Reno7",
-    "release_year": 2024,
-    "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
-    ],
-    "storage_options": [
-      "256 GB",
-      "256GB"
-    ],
-    "default_mrp": null,
-    "image_url": "https://fdn2.gsmarena.com/vv/bigpic/oppo-reno12-pro.jpg",
-    "popular_tag": "Oppo Official Model",
-    "processor": "MediaTek Dimensity / Snapdragon",
-    "camera_spec": "50MP OIS Camera",
-    "battery_spec": "5000 mAh SUPERVOOC",
-    "display_spec": "AMOLED 120Hz Display",
-    "is_5g": true,
-    "is_active": true,
-    "base_resale_value": 10430,
-    "price": 10430
-  },
-  {
-    "brand": "Oppo",
     "model": "OPPO Reno6 Pro",
     "release_year": 2024,
     "ram_options": [
@@ -28208,56 +26534,6 @@
     "is_active": true,
     "base_resale_value": 11910,
     "price": 11910
-  },
-  {
-    "brand": "Oppo",
-    "model": "OPPO Reno6",
-    "release_year": 2024,
-    "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
-    ],
-    "storage_options": [
-      "128 GB",
-      "256GB"
-    ],
-    "default_mrp": null,
-    "image_url": "https://fdn2.gsmarena.com/vv/bigpic/oppo-reno12-pro.jpg",
-    "popular_tag": "Oppo Official Model",
-    "processor": "MediaTek Dimensity / Snapdragon",
-    "camera_spec": "50MP OIS Camera",
-    "battery_spec": "5000 mAh SUPERVOOC",
-    "display_spec": "AMOLED 120Hz Display",
-    "is_5g": true,
-    "is_active": true,
-    "base_resale_value": 10630,
-    "price": 10630
-  },
-  {
-    "brand": "Oppo",
-    "model": "OPPO Reno5 Pro",
-    "release_year": 2024,
-    "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
-    ],
-    "storage_options": [
-      "128 GB",
-      "256GB"
-    ],
-    "default_mrp": null,
-    "image_url": "https://fdn2.gsmarena.com/vv/bigpic/oppo-reno12-pro.jpg",
-    "popular_tag": "Oppo Official Model",
-    "processor": "MediaTek Dimensity / Snapdragon",
-    "camera_spec": "50MP OIS Camera",
-    "battery_spec": "5000 mAh SUPERVOOC",
-    "display_spec": "AMOLED 120Hz Display",
-    "is_5g": true,
-    "is_active": true,
-    "base_resale_value": 10740,
-    "price": 10740
   },
   {
     "brand": "Oppo",
@@ -28336,31 +26612,6 @@
   },
   {
     "brand": "Oppo",
-    "model": "OPPO F27",
-    "release_year": 2024,
-    "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
-    ],
-    "storage_options": [
-      "128 GB",
-      "256GB"
-    ],
-    "default_mrp": 22999,
-    "image_url": "https://fdn2.gsmarena.com/vv/bigpic/oppo-reno12-pro.jpg",
-    "popular_tag": "Oppo Official Model",
-    "processor": "MediaTek Dimensity / Snapdragon",
-    "camera_spec": "50MP OIS Camera",
-    "battery_spec": "5000 mAh SUPERVOOC",
-    "display_spec": "AMOLED 120Hz Display",
-    "is_5g": true,
-    "is_active": true,
-    "base_resale_value": 14000,
-    "price": 14000
-  },
-  {
-    "brand": "Oppo",
     "model": "OPPO F25 Pro 5G (256GB)",
     "release_year": 2024,
     "ram_options": [
@@ -28386,106 +26637,6 @@
   },
   {
     "brand": "Oppo",
-    "model": "OPPO F25 Pro",
-    "release_year": 2024,
-    "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
-    ],
-    "storage_options": [
-      "128 GB",
-      "256GB"
-    ],
-    "default_mrp": 23999,
-    "image_url": "https://fdn2.gsmarena.com/vv/bigpic/oppo-reno12-pro.jpg",
-    "popular_tag": "Oppo Official Model",
-    "processor": "MediaTek Dimensity / Snapdragon",
-    "camera_spec": "50MP OIS Camera",
-    "battery_spec": "5000 mAh SUPERVOOC",
-    "display_spec": "AMOLED 120Hz Display",
-    "is_5g": true,
-    "is_active": true,
-    "base_resale_value": 15000,
-    "price": 15000
-  },
-  {
-    "brand": "Oppo",
-    "model": "OPPO F23",
-    "release_year": 2024,
-    "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
-    ],
-    "storage_options": [
-      "256 GB",
-      "256GB"
-    ],
-    "default_mrp": 19999,
-    "image_url": "https://fdn2.gsmarena.com/vv/bigpic/oppo-reno12-pro.jpg",
-    "popular_tag": "Oppo Official Model",
-    "processor": "MediaTek Dimensity / Snapdragon",
-    "camera_spec": "50MP OIS Camera",
-    "battery_spec": "5000 mAh SUPERVOOC",
-    "display_spec": "AMOLED 120Hz Display",
-    "is_5g": true,
-    "is_active": true,
-    "base_resale_value": 12000,
-    "price": 12000
-  },
-  {
-    "brand": "Oppo",
-    "model": "OPPO F21s Pro",
-    "release_year": 2024,
-    "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
-    ],
-    "storage_options": [
-      "128 GB",
-      "256GB"
-    ],
-    "default_mrp": 22999,
-    "image_url": "https://fdn2.gsmarena.com/vv/bigpic/oppo-reno12-pro.jpg",
-    "popular_tag": "Oppo Official Model",
-    "processor": "MediaTek Dimensity / Snapdragon",
-    "camera_spec": "50MP OIS Camera",
-    "battery_spec": "5000 mAh SUPERVOOC",
-    "display_spec": "AMOLED 120Hz Display",
-    "is_5g": false,
-    "is_active": true,
-    "base_resale_value": 10000,
-    "price": 10000
-  },
-  {
-    "brand": "Oppo",
-    "model": "OPPO F21 Pro",
-    "release_year": 2024,
-    "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
-    ],
-    "storage_options": [
-      "128 GB",
-      "256GB"
-    ],
-    "default_mrp": 22999,
-    "image_url": "https://fdn2.gsmarena.com/vv/bigpic/oppo-reno12-pro.jpg",
-    "popular_tag": "Oppo Official Model",
-    "processor": "MediaTek Dimensity / Snapdragon",
-    "camera_spec": "50MP OIS Camera",
-    "battery_spec": "5000 mAh SUPERVOOC",
-    "display_spec": "AMOLED 120Hz Display",
-    "is_5g": false,
-    "is_active": true,
-    "base_resale_value": 9500,
-    "price": 9500
-  },
-  {
-    "brand": "Oppo",
     "model": "OPPO F15 (4GB)",
     "release_year": 2024,
     "ram_options": [
@@ -28508,56 +26659,6 @@
     "is_active": true,
     "base_resale_value": 5800,
     "price": 5800
-  },
-  {
-    "brand": "Oppo",
-    "model": "OPPO K12x",
-    "release_year": 2024,
-    "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
-    ],
-    "storage_options": [
-      "128 GB",
-      "256GB"
-    ],
-    "default_mrp": 12999,
-    "image_url": "https://fdn2.gsmarena.com/vv/bigpic/oppo-reno12-pro.jpg",
-    "popular_tag": "Oppo Official Model",
-    "processor": "MediaTek Dimensity / Snapdragon",
-    "camera_spec": "50MP OIS Camera",
-    "battery_spec": "5000 mAh SUPERVOOC",
-    "display_spec": "AMOLED 120Hz Display",
-    "is_5g": true,
-    "is_active": true,
-    "base_resale_value": 11000,
-    "price": 11000
-  },
-  {
-    "brand": "Oppo",
-    "model": "OPPO K10",
-    "release_year": 2024,
-    "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
-    ],
-    "storage_options": [
-      "128 GB",
-      "256GB"
-    ],
-    "default_mrp": 14999,
-    "image_url": "https://fdn2.gsmarena.com/vv/bigpic/oppo-reno12-pro.jpg",
-    "popular_tag": "Oppo Official Model",
-    "processor": "MediaTek Dimensity / Snapdragon",
-    "camera_spec": "50MP OIS Camera",
-    "battery_spec": "5000 mAh SUPERVOOC",
-    "display_spec": "AMOLED 120Hz Display",
-    "is_5g": false,
-    "is_active": true,
-    "base_resale_value": 8500,
-    "price": 8500
   },
   {
     "brand": "Oppo",
@@ -28611,31 +26712,6 @@
   },
   {
     "brand": "Oppo",
-    "model": "OPPO A3 Pro",
-    "release_year": 2024,
-    "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
-    ],
-    "storage_options": [
-      "128 GB",
-      "256GB"
-    ],
-    "default_mrp": null,
-    "image_url": "https://fdn2.gsmarena.com/vv/bigpic/oppo-reno12-pro.jpg",
-    "popular_tag": "Oppo Official Model",
-    "processor": "MediaTek Dimensity / Snapdragon",
-    "camera_spec": "50MP OIS Camera",
-    "battery_spec": "5000 mAh SUPERVOOC",
-    "display_spec": "AMOLED 120Hz Display",
-    "is_5g": true,
-    "is_active": true,
-    "base_resale_value": 11190,
-    "price": 11190
-  },
-  {
-    "brand": "Oppo",
     "model": "OPPO A3x 5G",
     "release_year": 2024,
     "ram_options": [
@@ -28658,31 +26734,6 @@
     "is_active": true,
     "base_resale_value": 9550,
     "price": 9550
-  },
-  {
-    "brand": "Oppo",
-    "model": "OPPO A79",
-    "release_year": 2024,
-    "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
-    ],
-    "storage_options": [
-      "128 GB",
-      "256GB"
-    ],
-    "default_mrp": 19999,
-    "image_url": "https://fdn2.gsmarena.com/vv/bigpic/oppo-reno12-pro.jpg",
-    "popular_tag": "Oppo Official Model",
-    "processor": "MediaTek Dimensity / Snapdragon",
-    "camera_spec": "50MP OIS Camera",
-    "battery_spec": "5000 mAh SUPERVOOC",
-    "display_spec": "AMOLED 120Hz Display",
-    "is_5g": true,
-    "is_active": true,
-    "base_resale_value": 12000,
-    "price": 12000
   },
   {
     "brand": "Oppo",
@@ -28733,56 +26784,6 @@
     "is_active": true,
     "base_resale_value": 9780,
     "price": 9780
-  },
-  {
-    "brand": "Oppo",
-    "model": "OPPO A78",
-    "release_year": 2024,
-    "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
-    ],
-    "storage_options": [
-      "128 GB",
-      "256GB"
-    ],
-    "default_mrp": 17499,
-    "image_url": "https://fdn2.gsmarena.com/vv/bigpic/oppo-reno12-pro.jpg",
-    "popular_tag": "Oppo Official Model",
-    "processor": "MediaTek Dimensity / Snapdragon",
-    "camera_spec": "50MP OIS Camera",
-    "battery_spec": "5000 mAh SUPERVOOC",
-    "display_spec": "AMOLED 120Hz Display",
-    "is_5g": false,
-    "is_active": true,
-    "base_resale_value": 9500,
-    "price": 9500
-  },
-  {
-    "brand": "Oppo",
-    "model": "OPPO A58",
-    "release_year": 2024,
-    "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
-    ],
-    "storage_options": [
-      "128 GB",
-      "256GB"
-    ],
-    "default_mrp": 14999,
-    "image_url": "https://fdn2.gsmarena.com/vv/bigpic/oppo-reno12-pro.jpg",
-    "popular_tag": "Oppo Official Model",
-    "processor": "MediaTek Dimensity / Snapdragon",
-    "camera_spec": "50MP OIS Camera",
-    "battery_spec": "5000 mAh SUPERVOOC",
-    "display_spec": "AMOLED 120Hz Display",
-    "is_5g": false,
-    "is_active": true,
-    "base_resale_value": 9000,
-    "price": 9000
   },
   {
     "brand": "Itel",

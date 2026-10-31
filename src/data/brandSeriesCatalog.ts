@@ -968,8 +968,8 @@ export const BRAND_SERIES_DEFINITIONS: Record<string, BrandSeriesDefinition[]> =
       description: 'OnePlus 11 5G, 11R',
       pattern: /\b(11|11r)\b/i,
       defaultModels: [
-        { brand: 'OnePlus', series: 'OnePlus 11 Series', model: 'OnePlus 11', storage: '128 GB', price: 24000, image: 'https://fdn2.gsmarena.com/vv/bigpic/oneplus-11.jpg' },
-        { brand: 'OnePlus', series: 'OnePlus 11 Series', model: 'OnePlus 11R', storage: '128 GB', price: 19500, image: 'https://api.mobileapi.dev/devices/362/thumb.png' },
+        { brand: 'OnePlus', series: 'OnePlus 11 Series', model: 'OnePlus 11 5G', storage: '128 GB', price: 24000, image: 'https://fdn2.gsmarena.com/vv/bigpic/oneplus-11.jpg' },
+        { brand: 'OnePlus', series: 'OnePlus 11 Series', model: 'OnePlus 11R 5G', storage: '128 GB', price: 19500, image: 'https://api.mobileapi.dev/devices/362/thumb.png' },
       ],
     },
     {
@@ -1032,16 +1032,16 @@ export const BRAND_SERIES_DEFINITIONS: Record<string, BrandSeriesDefinition[]> =
         { brand: 'OnePlus', series: 'OnePlus Nord Series', model: 'OnePlus Nord 6', storage: '128 GB', price: 24500, image: 'https://api.mobileapi.dev/devices/809/thumb.png' },
         { brand: 'OnePlus', series: 'OnePlus Nord Series', model: 'OnePlus Nord 5', storage: '128 GB', price: 21500, image: 'https://api.mobileapi.dev/devices/809/thumb.png' },
         { brand: 'OnePlus', series: 'OnePlus Nord Series', model: 'OnePlus Nord CE 5', storage: '128 GB', price: 18500, image: 'https://api.mobileapi.dev/devices/809/thumb.png' },
-        { brand: 'OnePlus', series: 'OnePlus Nord Series', model: 'OnePlus Nord 4', storage: '128 GB', price: 19000, image: 'https://api.mobileapi.dev/devices/809/thumb.png' },
-        { brand: 'OnePlus', series: 'OnePlus Nord Series', model: 'OnePlus Nord 3', storage: '128 GB', price: 15500, image: 'https://api.mobileapi.dev/devices/373/thumb.png' },
-        { brand: 'OnePlus', series: 'OnePlus Nord Series', model: 'OnePlus Nord 2T', storage: '128 GB', price: 12500, image: 'https://api.mobileapi.dev/devices/811/thumb.png' },
-        { brand: 'OnePlus', series: 'OnePlus Nord Series', model: 'OnePlus Nord 2', storage: '128 GB', price: 11000, image: 'https://api.mobileapi.dev/devices/377/thumb.png' },
+        { brand: 'OnePlus', series: 'OnePlus Nord Series', model: 'OnePlus Nord 4 5G', storage: '128 GB', price: 19000, image: 'https://api.mobileapi.dev/devices/809/thumb.png' },
+        { brand: 'OnePlus', series: 'OnePlus Nord Series', model: 'OnePlus Nord 3 5G', storage: '128 GB', price: 15500, image: 'https://api.mobileapi.dev/devices/373/thumb.png' },
+        { brand: 'OnePlus', series: 'OnePlus Nord Series', model: 'OnePlus Nord 2T 5G', storage: '128 GB', price: 12500, image: 'https://api.mobileapi.dev/devices/811/thumb.png' },
+        { brand: 'OnePlus', series: 'OnePlus Nord Series', model: 'OnePlus Nord 2 5G', storage: '128 GB', price: 11000, image: 'https://api.mobileapi.dev/devices/377/thumb.png' },
         { brand: 'OnePlus', series: 'OnePlus Nord Series', model: 'OnePlus Nord CE4', storage: '128 GB', price: 16000, image: 'https://api.mobileapi.dev/devices/385/thumb.png' },
         { brand: 'OnePlus', series: 'OnePlus Nord Series', model: 'OnePlus Nord CE4 Lite', storage: '128 GB', price: 12500, image: 'https://api.mobileapi.dev/devices/16320/thumb.png' },
-        { brand: 'OnePlus', series: 'OnePlus Nord Series', model: 'OnePlus Nord CE 3', storage: '128 GB', price: 14000, image: 'https://api.mobileapi.dev/devices/374/thumb.png' },
-        { brand: 'OnePlus', series: 'OnePlus Nord Series', model: 'OnePlus Nord CE 3 Lite', storage: '128 GB', price: 10500, image: 'https://api.mobileapi.dev/devices/16320/thumb.png' },
-        { brand: 'OnePlus', series: 'OnePlus Nord Series', model: 'OnePlus Nord CE 2', storage: '128 GB', price: 10000, image: 'https://fdn2.gsmarena.com/vv/bigpic/oneplus-nord-ce-2-5g.jpg' },
-        { brand: 'OnePlus', series: 'OnePlus Nord Series', model: 'OnePlus Nord CE 2 Lite', storage: '128 GB', price: 9000, image: 'https://api.mobileapi.dev/devices/815/thumb.png' },
+        { brand: 'OnePlus', series: 'OnePlus Nord Series', model: 'OnePlus Nord CE 3 5G', storage: '128 GB', price: 14000, image: 'https://api.mobileapi.dev/devices/374/thumb.png' },
+        { brand: 'OnePlus', series: 'OnePlus Nord Series', model: 'OnePlus Nord CE 3 Lite 5G', storage: '128 GB', price: 10500, image: 'https://api.mobileapi.dev/devices/16320/thumb.png' },
+        { brand: 'OnePlus', series: 'OnePlus Nord Series', model: 'OnePlus Nord CE 2 5G', storage: '128 GB', price: 10000, image: 'https://fdn2.gsmarena.com/vv/bigpic/oneplus-nord-ce-2-5g.jpg' },
+        { brand: 'OnePlus', series: 'OnePlus Nord Series', model: 'OnePlus Nord CE 2 Lite 5G', storage: '128 GB', price: 9000, image: 'https://api.mobileapi.dev/devices/815/thumb.png' },
         { brand: 'OnePlus', series: 'OnePlus Nord Series', model: 'OnePlus Nord CE', storage: '128 GB', price: 8000, image: 'https://api.mobileapi.dev/devices/810/thumb.png' },
         { brand: 'OnePlus', series: 'OnePlus Nord Series', model: 'OnePlus Nord', storage: '128 GB', price: 7500, image: 'https://api.mobileapi.dev/devices/811/thumb.png' },
         { brand: 'OnePlus', series: 'OnePlus Nord Series', model: 'OnePlus Nord N30 5G', storage: '128 GB', price: 8500, image: 'https://api.mobileapi.dev/devices/387/thumb.png' },
@@ -1203,8 +1203,8 @@ export const BRAND_SERIES_DEFINITIONS: Record<string, BrandSeriesDefinition[]> =
       description: 'Realme GT 6, GT 6T, GT 2 Pro, GT Neo 3, GT Neo 2',
       pattern: /\bgt\b/i,
       defaultModels: [
-        { brand: 'Realme', series: 'Realme GT Series', model: 'Realme GT 6', storage: '256 GB', price: 31350, image: 'https://fdn2.gsmarena.com/vv/bigpic/realme-gt-6.jpg' },
-        { brand: 'Realme', series: 'Realme GT Series', model: 'Realme GT 6T', storage: '128 GB', price: 21000, image: 'https://api.mobileapi.dev/devices/13718/thumb.png' },
+        { brand: 'Realme', series: 'Realme GT Series', model: 'Realme GT 6 5G', storage: '256 GB', price: 31350, image: 'https://fdn2.gsmarena.com/vv/bigpic/realme-gt-6.jpg' },
+        { brand: 'Realme', series: 'Realme GT Series', model: 'Realme GT 6T 5G', storage: '128 GB', price: 21000, image: 'https://api.mobileapi.dev/devices/13718/thumb.png' },
         { brand: 'Realme', series: 'Realme GT Series', model: 'Realme GT 2 Pro', storage: '128 GB', price: 18000, image: 'https://fdn2.gsmarena.com/vv/bigpic/realme-gt2-pro.jpg' },
         { brand: 'Realme', series: 'Realme GT Series', model: 'Realme GT Neo 3', storage: '128 GB', price: 15000, image: 'https://fdn2.gsmarena.com/vv/bigpic/realme-gt-neo3.jpg' },
         { brand: 'Realme', series: 'Realme GT Series', model: 'Realme GT Neo 2', storage: '128 GB', price: 12000, image: 'https://api.mobileapi.dev/devices/13676/thumb.png' },
@@ -1383,14 +1383,14 @@ export const BRAND_SERIES_DEFINITIONS: Record<string, BrandSeriesDefinition[]> =
       description: 'Vivo X100 Pro, X100, X90 Pro, X90, X80 Pro, X70 Pro+',
       pattern: /\bx\d+/i,
       defaultModels: [
-        { brand: 'Vivo', series: 'Vivo X Series (Zeiss Flagship)', model: 'Vivo X100 Pro', storage: '512 GB', price: 60500, image: 'https://fdn2.gsmarena.com/vv/bigpic/vivo-x100-pro.jpg' },
-        { brand: 'Vivo', series: 'Vivo X Series (Zeiss Flagship)', model: 'Vivo X100', storage: '256 GB', price: 47050, image: 'https://api.mobileapi.dev/devices/355/thumb.png' },
-        { brand: 'Vivo', series: 'Vivo X Series (Zeiss Flagship)', model: 'Vivo X90 Pro', storage: '256 GB', price: 35850, image: 'https://fdn2.gsmarena.com/vv/bigpic/vivo-x90-pro.jpg' },
-        { brand: 'Vivo', series: 'Vivo X Series (Zeiss Flagship)', model: 'Vivo X90', storage: '256 GB', price: 31350, image: 'https://api.mobileapi.dev/devices/4965/thumb.png' },
-        { brand: 'Vivo', series: 'Vivo X Series (Zeiss Flagship)', model: 'Vivo X80 Pro', storage: '256 GB', price: 25250, image: 'https://fdn2.gsmarena.com/vv/bigpic/vivo-x80-pro.jpg' },
-        { brand: 'Vivo', series: 'Vivo X Series (Zeiss Flagship)', model: 'Vivo X80', storage: '128 GB', price: 17300, image: 'https://fdn2.gsmarena.com/vv/bigpic/vivo-x80.jpg' },
+        { brand: 'Vivo', series: 'Vivo X Series (Zeiss Flagship)', model: 'Vivo X100 Pro 5G', storage: '512 GB', price: 60500, image: 'https://fdn2.gsmarena.com/vv/bigpic/vivo-x100-pro.jpg' },
+        { brand: 'Vivo', series: 'Vivo X Series (Zeiss Flagship)', model: 'Vivo X100 5G', storage: '256 GB', price: 47050, image: 'https://api.mobileapi.dev/devices/355/thumb.png' },
+        { brand: 'Vivo', series: 'Vivo X Series (Zeiss Flagship)', model: 'Vivo X90 Pro 5G', storage: '256 GB', price: 35850, image: 'https://fdn2.gsmarena.com/vv/bigpic/vivo-x90-pro.jpg' },
+        { brand: 'Vivo', series: 'Vivo X Series (Zeiss Flagship)', model: 'Vivo X90 5G', storage: '256 GB', price: 31350, image: 'https://api.mobileapi.dev/devices/4965/thumb.png' },
+        { brand: 'Vivo', series: 'Vivo X Series (Zeiss Flagship)', model: 'Vivo X80 Pro 5G', storage: '256 GB', price: 25250, image: 'https://fdn2.gsmarena.com/vv/bigpic/vivo-x80-pro.jpg' },
+        { brand: 'Vivo', series: 'Vivo X Series (Zeiss Flagship)', model: 'Vivo X80 5G', storage: '128 GB', price: 17300, image: 'https://fdn2.gsmarena.com/vv/bigpic/vivo-x80.jpg' },
         { brand: 'Vivo', series: 'Vivo X Series (Zeiss Flagship)', model: 'Vivo X70 Pro+', storage: '256 GB', price: 14900, image: 'https://fdn2.gsmarena.com/vv/bigpic/vivo-x70-pro-plus.jpg' },
-        { brand: 'Vivo', series: 'Vivo X Series (Zeiss Flagship)', model: 'Vivo X70 Pro', storage: '128 GB', price: 13300, image: 'https://api.mobileapi.dev/devices/13983/thumb.png' },
+        { brand: 'Vivo', series: 'Vivo X Series (Zeiss Flagship)', model: 'Vivo X70 Pro+ 5G', storage: '128 GB', price: 13300, image: 'https://api.mobileapi.dev/devices/13983/thumb.png' },
       ],
     },
     {
@@ -1402,19 +1402,19 @@ export const BRAND_SERIES_DEFINITIONS: Record<string, BrandSeriesDefinition[]> =
       description: 'Vivo V40 Pro, V40, V40e, V30 Pro, V30, V29 Pro, V27 Pro',
       pattern: /\bv\d+/i,
       defaultModels: [
-        { brand: 'Vivo', series: 'Vivo V Series', model: 'Vivo V40 Pro', storage: '256 GB', price: 34700, image: 'https://fdn2.gsmarena.com/vv/bigpic/vivo-v40-pro.jpg' },
-        { brand: 'Vivo', series: 'Vivo V Series', model: 'Vivo V40', storage: '128 GB', price: 22000, image: 'https://fdn2.gsmarena.com/vv/bigpic/vivo-v40.jpg' },
-        { brand: 'Vivo', series: 'Vivo V Series', model: 'Vivo V40e', storage: '128 GB', price: 16100, image: 'https://api.mobileapi.dev/devices/4871/thumb.png' },
-        { brand: 'Vivo', series: 'Vivo V Series', model: 'Vivo V30 Pro', storage: '256 GB', price: 26900, image: 'https://fdn2.gsmarena.com/vv/bigpic/vivo-v30-pro.jpg' },
-        { brand: 'Vivo', series: 'Vivo V Series', model: 'Vivo V30', storage: '128 GB', price: 19500, image: 'https://fdn2.gsmarena.com/vv/bigpic/vivo-v30.jpg' },
-        { brand: 'Vivo', series: 'Vivo V Series', model: 'Vivo V30e', storage: '128 GB', price: 15150, image: 'https://api.mobileapi.dev/devices/4909/thumb.png' },
-        { brand: 'Vivo', series: 'Vivo V Series', model: 'Vivo V29 Pro', storage: '256 GB', price: 19600, image: 'https://fdn2.gsmarena.com/vv/bigpic/vivo-v29-pro.jpg' },
-        { brand: 'Vivo', series: 'Vivo V Series', model: 'Vivo V29', storage: '128 GB', price: 15500, image: 'https://fdn2.gsmarena.com/vv/bigpic/vivo-v29.jpg' },
+        { brand: 'Vivo', series: 'Vivo V Series', model: 'Vivo V40 Pro 5G', storage: '256 GB', price: 34700, image: 'https://fdn2.gsmarena.com/vv/bigpic/vivo-v40-pro.jpg' },
+        { brand: 'Vivo', series: 'Vivo V Series', model: 'Vivo V40 5G', storage: '128 GB', price: 22000, image: 'https://fdn2.gsmarena.com/vv/bigpic/vivo-v40.jpg' },
+        { brand: 'Vivo', series: 'Vivo V Series', model: 'Vivo V40e 5G', storage: '128 GB', price: 16100, image: 'https://api.mobileapi.dev/devices/4871/thumb.png' },
+        { brand: 'Vivo', series: 'Vivo V Series', model: 'Vivo V30 Pro 5G', storage: '256 GB', price: 26900, image: 'https://fdn2.gsmarena.com/vv/bigpic/vivo-v30-pro.jpg' },
+        { brand: 'Vivo', series: 'Vivo V Series', model: 'Vivo V30 5G', storage: '128 GB', price: 19500, image: 'https://fdn2.gsmarena.com/vv/bigpic/vivo-v30.jpg' },
+        { brand: 'Vivo', series: 'Vivo V Series', model: 'Vivo V30e 5G', storage: '128 GB', price: 15150, image: 'https://api.mobileapi.dev/devices/4909/thumb.png' },
+        { brand: 'Vivo', series: 'Vivo V Series', model: 'Vivo V29 Pro 5G', storage: '256 GB', price: 19600, image: 'https://fdn2.gsmarena.com/vv/bigpic/vivo-v29-pro.jpg' },
+        { brand: 'Vivo', series: 'Vivo V Series', model: 'Vivo V29 5G', storage: '128 GB', price: 15500, image: 'https://fdn2.gsmarena.com/vv/bigpic/vivo-v29.jpg' },
         { brand: 'Vivo', series: 'Vivo V Series', model: 'Vivo V29e', storage: '128 GB', price: 12500, image: 'https://api.mobileapi.dev/devices/4948/thumb.png' },
-        { brand: 'Vivo', series: 'Vivo V Series', model: 'Vivo V27 Pro', storage: '128 GB', price: 18900, image: 'https://fdn2.gsmarena.com/vv/bigpic/vivo-v27-pro.jpg' },
-        { brand: 'Vivo', series: 'Vivo V Series', model: 'Vivo V27', storage: '128 GB', price: 16750, image: 'https://fdn2.gsmarena.com/vv/bigpic/vivo-v27.jpg' },
-        { brand: 'Vivo', series: 'Vivo V Series', model: 'Vivo V25 Pro', storage: '128 GB', price: 12950, image: 'https://fdn2.gsmarena.com/vv/bigpic/vivo-v25-pro.jpg' },
-        { brand: 'Vivo', series: 'Vivo V Series', model: 'Vivo V23 Pro', storage: '128 GB', price: 12700, image: 'https://fdn2.gsmarena.com/vv/bigpic/vivo-v23-pro.jpg' },
+        { brand: 'Vivo', series: 'Vivo V Series', model: 'Vivo V27 Pro 5G', storage: '128 GB', price: 18900, image: 'https://fdn2.gsmarena.com/vv/bigpic/vivo-v27-pro.jpg' },
+        { brand: 'Vivo', series: 'Vivo V Series', model: 'Vivo V27 5G', storage: '128 GB', price: 16750, image: 'https://fdn2.gsmarena.com/vv/bigpic/vivo-v27.jpg' },
+        { brand: 'Vivo', series: 'Vivo V Series', model: 'Vivo V25 Pro 5G', storage: '128 GB', price: 12950, image: 'https://fdn2.gsmarena.com/vv/bigpic/vivo-v25-pro.jpg' },
+        { brand: 'Vivo', series: 'Vivo V Series', model: 'Vivo V23 Pro 5G', storage: '128 GB', price: 12700, image: 'https://fdn2.gsmarena.com/vv/bigpic/vivo-v23-pro.jpg' },
       ],
     },
     {
@@ -1426,7 +1426,7 @@ export const BRAND_SERIES_DEFINITIONS: Record<string, BrandSeriesDefinition[]> =
       description: 'Vivo T3 Ultra, T3 Pro 5G, T3 5G, T3x, T2 Pro 5G, T2x',
       pattern: /\bt\d+/i,
       defaultModels: [
-        { brand: 'Vivo', series: 'Vivo T Series (Turbo Speed)', model: 'Vivo T3 Ultra', storage: '128 GB', price: 20100, image: 'https://fdn2.gsmarena.com/vv/bigpic/vivo-t3-ultra.jpg' },
+        { brand: 'Vivo', series: 'Vivo T Series (Turbo Speed)', model: 'Vivo T3 Ultra 5G', storage: '128 GB', price: 20100, image: 'https://fdn2.gsmarena.com/vv/bigpic/vivo-t3-ultra.jpg' },
         { brand: 'Vivo', series: 'Vivo T Series (Turbo Speed)', model: 'Vivo T3 Pro 5G', storage: '128 GB', price: 17700, image: 'https://fdn2.gsmarena.com/vv/bigpic/vivo-t3-pro.jpg' },
         { brand: 'Vivo', series: 'Vivo T Series (Turbo Speed)', model: 'Vivo T3 5G', storage: '128 GB', price: 12800, image: 'https://fdn2.gsmarena.com/vv/bigpic/vivo-t3.jpg' },
         { brand: 'Vivo', series: 'Vivo T Series (Turbo Speed)', model: 'Vivo T3x 5G', storage: '128 GB', price: 9150, image: 'https://fdn2.gsmarena.com/vv/bigpic/vivo-t3x.jpg' },
@@ -1466,10 +1466,10 @@ export const BRAND_SERIES_DEFINITIONS: Record<string, BrandSeriesDefinition[]> =
       defaultModels: [
         { brand: 'Vivo', series: 'iQOO Flagship & Neo Series', model: 'iQOO 12 5G', storage: '256 GB', price: 35650, image: 'https://fdn2.gsmarena.com/vv/bigpic/vivo-iqoo12.jpg' },
         { brand: 'Vivo', series: 'iQOO Flagship & Neo Series', model: 'iQOO 11 5G', storage: '256 GB', price: 32350, image: 'https://fdn2.gsmarena.com/vv/bigpic/vivo-iqoo-11.jpg' },
-        { brand: 'Vivo', series: 'iQOO Flagship & Neo Series', model: 'iQOO Neo 9 Pro', storage: '128 GB', price: 21400, image: 'https://fdn2.gsmarena.com/vv/bigpic/vivo-iqoo-neo9-pro.jpg' },
+        { brand: 'Vivo', series: 'iQOO Flagship & Neo Series', model: 'iQOO Neo 9 Pro 5G', storage: '128 GB', price: 21400, image: 'https://fdn2.gsmarena.com/vv/bigpic/vivo-iqoo-neo9-pro.jpg' },
         { brand: 'Vivo', series: 'iQOO Flagship & Neo Series', model: 'iQOO Neo 7 Pro', storage: '128 GB', price: 16400, image: 'https://fdn2.gsmarena.com/vv/bigpic/vivo-iqoo-neo-7-pro.jpg' },
         { brand: 'Vivo', series: 'iQOO Flagship & Neo Series', model: 'iQOO Neo 6', storage: '128 GB', price: 13900, image: 'https://fdn2.gsmarena.com/vv/bigpic/vivo-iqoo-neo-6.jpg' },
-        { brand: 'Vivo', series: 'iQOO Flagship & Neo Series', model: 'iQOO Z9 Turbo', storage: '256 GB', price: 20650, image: 'https://fdn2.gsmarena.com/vv/bigpic/vivo-iqoo-z9-turbo.jpg' },
+        { brand: 'Vivo', series: 'iQOO Flagship & Neo Series', model: 'iQOO Z9 Turbo 5G', storage: '256 GB', price: 20650, image: 'https://fdn2.gsmarena.com/vv/bigpic/vivo-iqoo-z9-turbo.jpg' },
         { brand: 'Vivo', series: 'iQOO Flagship & Neo Series', model: 'iQOO Z9 5G', storage: '128 GB', price: 13850, image: 'https://fdn2.gsmarena.com/vv/bigpic/vivo-iqoo-z9.jpg' },
         { brand: 'Vivo', series: 'iQOO Flagship & Neo Series', model: 'iQOO Z7 Pro 5G', storage: '128 GB', price: 14950, image: 'https://fdn2.gsmarena.com/vv/bigpic/vivo-iqoo-z7-pro.jpg' },
       ],
@@ -1748,7 +1748,7 @@ export const BRAND_SERIES_DEFINITIONS: Record<string, BrandSeriesDefinition[]> =
       defaultModels: [
         { brand: 'iQOO', series: 'iQOO Flagship & Neo Series', model: 'iQOO 12 5G', storage: '256 GB', price: 35650, image: 'https://fdn2.gsmarena.com/vv/bigpic/vivo-iqoo12.jpg' },
         { brand: 'iQOO', series: 'iQOO Flagship & Neo Series', model: 'iQOO 11 5G', storage: '256 GB', price: 32350, image: 'https://fdn2.gsmarena.com/vv/bigpic/vivo-iqoo-11.jpg' },
-        { brand: 'iQOO', series: 'iQOO Flagship & Neo Series', model: 'iQOO Neo 9 Pro', storage: '128 GB', price: 21400, image: 'https://fdn2.gsmarena.com/vv/bigpic/vivo-iqoo-neo9-pro.jpg' },
+        { brand: 'iQOO', series: 'iQOO Flagship & Neo Series', model: 'iQOO Neo 9 Pro 5G', storage: '128 GB', price: 21400, image: 'https://fdn2.gsmarena.com/vv/bigpic/vivo-iqoo-neo9-pro.jpg' },
         { brand: 'iQOO', series: 'iQOO Flagship & Neo Series', model: 'iQOO Neo 7 Pro', storage: '128 GB', price: 16400, image: 'https://fdn2.gsmarena.com/vv/bigpic/vivo-iqoo-neo-7-pro.jpg' },
         { brand: 'iQOO', series: 'iQOO Flagship & Neo Series', model: 'iQOO Neo 6', storage: '128 GB', price: 13900, image: 'https://fdn2.gsmarena.com/vv/bigpic/vivo-iqoo-neo-6.jpg' },
       ],
@@ -2035,6 +2035,12 @@ export function groupModelsBySeries(brand: string, allModels: CatalogModelItem[]
         seenInGroup.add(dKey);
         dedupeMatched.push({ ...m, series: def.name });
         assignedModels.add(dKey);
+      } else if (/\b5g\b/i.test(m.model)) {
+        // Upgrade existing non-5G model to 5G twin
+        const idx = dedupeMatched.findIndex((x) => getModelDedupeKey(x.brand || brand, x.model) === dKey);
+        if (idx !== -1 && !/\b5g\b/i.test(dedupeMatched[idx].model)) {
+          dedupeMatched[idx] = { ...m, series: def.name };
+        }
       }
     });
 
@@ -2048,6 +2054,12 @@ export function groupModelsBySeries(brand: string, allModels: CatalogModelItem[]
           seenInGroup.add(dKey);
           combinedModels.push({ ...defModel, series: def.name });
           assignedModels.add(dKey);
+        } else if (/\b5g\b/i.test(defModel.model)) {
+          // Upgrade existing non-5G model to 5G defaultModel
+          const idx = combinedModels.findIndex((x) => getModelDedupeKey(x.brand || brand, x.model) === dKey);
+          if (idx !== -1 && !/\b5g\b/i.test(combinedModels[idx].model)) {
+            combinedModels[idx] = { ...defModel, series: def.name };
+          }
         }
       }
     }

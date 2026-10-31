@@ -266,15 +266,21 @@ export default function SellBrandPage() {
     });
     const combinedMap = new Map<string, CatalogModelItem>();
 
-    // 1. Add all master catalog items first (deduplicated)
-    masterList.forEach((m) => {
-      const key = getModelDedupeKey(m.brand || brandDisplayName, m.model);
-      if (!combinedMap.has(key)) {
-        combinedMap.set(key, m);
+    const upsertModel = (item: CatalogModelItem) => {
+      const key = getModelDedupeKey(item.brand || brandDisplayName, item.model);
+      const existing = combinedMap.get(key);
+      if (!existing) {
+        combinedMap.set(key, item);
+      } else if (!/\b5g\b/i.test(existing.model) && /\b5g\b/i.test(item.model)) {
+        // Favor official 5G model naming over non-5G duplicate
+        combinedMap.set(key, { ...item, price: existing.price || item.price });
       }
-    });
+    };
 
-    // 2. Add all Indian phones catalog items (adds unique models like Nord 2, Nord 2T, Nord 3, Galaxy J7, etc.)
+    // 1. Add all master catalog items first (deduplicated)
+    masterList.forEach(upsertModel);
+
+    // 2. Add all Indian phones catalog items (adds unique models like Nord 2 5G, Nord 2T 5G, Nord 3 5G, Galaxy J7, etc.)
     const indianList = ALL_INDIAN_PHONES_CATALOG.filter((p) => {
       const b = p.brand.toLowerCase();
       if (brandCleanKey === 'poco') return b === 'poco';
@@ -286,27 +292,19 @@ export default function SellBrandPage() {
     });
 
     indianList.forEach((p) => {
-      const key = getModelDedupeKey(p.brand || brandDisplayName, p.model);
-      if (!combinedMap.has(key)) {
-        combinedMap.set(key, {
-          brand: p.brand,
-          model: p.model,
-          series: p.series || inferModelSeries(p.brand, p.model).seriesName,
-          storage: p.storage_options?.[0] || '128 GB',
-          price: p.base_resale_value || 12000,
-          image: p.image_url || getCleanPhoneImage(p.brand, p.model),
-          base_resale_value: p.base_resale_value || 12000,
-        });
-      }
+      upsertModel({
+        brand: p.brand,
+        model: p.model,
+        series: p.series || inferModelSeries(p.brand, p.model).seriesName,
+        storage: p.storage_options?.[0] || '128 GB',
+        price: p.base_resale_value || 12000,
+        image: p.image_url || getCleanPhoneImage(p.brand, p.model),
+        base_resale_value: p.base_resale_value || 12000,
+      });
     });
 
     // 3. Merge any live API models (deduplicated)
-    apiModels.forEach((m) => {
-      const key = getModelDedupeKey(m.brand || brandDisplayName, m.model);
-      if (!combinedMap.has(key)) {
-        combinedMap.set(key, m);
-      }
-    });
+    apiModels.forEach(upsertModel);
 
     const list = Array.from(combinedMap.values());
     const activeList = list.filter((m) => !isModelDeleted(m.brand || brandDisplayName, m.model));
