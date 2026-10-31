@@ -18,6 +18,7 @@ import {
   Eye,
   Info,
   ChevronDown,
+  Layers,
 } from 'lucide-react';
 import { formatINR } from '../../lib/db';
 import { API_BASE } from '../../config/apiConfig';
@@ -51,6 +52,19 @@ interface CompetitorData {
   marketShare: string;
 }
 
+export interface StorageVariantSummary {
+  storage: string;
+  basePrice: number;
+  flawlessOffer: number;
+  goodOffer: number;
+  cashifyPrice: number;
+  diffFromCashify: number;
+  isWinning: boolean;
+  isCustom: boolean;
+  configId: string | null;
+  isCurrent: boolean;
+}
+
 interface RadarResponse {
   device: {
     brand: string;
@@ -70,6 +84,7 @@ interface RadarResponse {
     guaranteeText: string;
   };
   competitors: CompetitorData[];
+  allVariants?: StorageVariantSummary[];
   marketAnalytics: {
     marketHighest: number;
     marketLowest: number;
@@ -811,6 +826,51 @@ export default function AdminCompetitorRadar() {
                 </div>
               </div>
 
+              {/* Storage Variant Quick Switcher Pills */}
+              {radarData.allVariants && radarData.allVariants.length > 0 && (
+                <div className="bg-gray-50/90 border border-gray-200 rounded-2xl p-3.5 space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[11px] font-black uppercase tracking-wider text-gray-600 flex items-center gap-1.5">
+                      <Layers className="h-3.5 w-3.5 text-indigo-600" /> Authentic Storage Variants ({radarData.allVariants.length})
+                    </span>
+                    <span className="text-[10px] text-gray-400 font-medium">Click to inspect on Live Radar</span>
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    {radarData.allVariants.map((v) => {
+                      const isActive = v.storage.replace(/\s+/g, '').toLowerCase() === selectedStorage.replace(/\s+/g, '').toLowerCase();
+                      return (
+                        <button
+                          key={v.storage}
+                          type="button"
+                          onClick={() => handleStorageChange(v.storage)}
+                          className={`group px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-2 cursor-pointer border ${
+                            isActive
+                              ? 'bg-gray-900 text-white border-gray-900 shadow-sm ring-2 ring-emerald-400/40'
+                              : 'bg-white text-gray-700 border-gray-200 hover:border-gray-400 hover:bg-gray-100'
+                          }`}
+                        >
+                          <span className="font-extrabold">{v.storage}</span>
+                          <span
+                            className={`text-[11px] font-black px-1.5 py-0.5 rounded-md ${
+                              isActive
+                                ? 'bg-emerald-500 text-slate-950'
+                                : 'bg-emerald-50 text-emerald-700'
+                            }`}
+                          >
+                            {formatINR(v.basePrice)}
+                          </span>
+                          {v.isCustom && (
+                            <span className="text-[9px] px-1 py-0.5 rounded bg-amber-400/20 text-amber-600 font-black" title="Admin Custom Locked Price">
+                              🔒
+                            </span>
+                          )}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+
               {/* Fundu Price Display & Condition Matrix */}
               <div className="rounded-2xl bg-gradient-to-r from-emerald-950 via-[#1E2734] to-[#344257] p-5 text-white shadow-lg space-y-3">
                 <div className="flex flex-wrap items-center justify-between gap-2">
@@ -954,6 +1014,117 @@ export default function AdminCompetitorRadar() {
               </div>
             </div>
           </div>
+
+          {/* ALL STORAGE VARIANTS LIVE PRICE MATRIX */}
+          {radarData.allVariants && radarData.allVariants.length > 0 && (
+            <div className="bg-white rounded-3xl border border-gray-200 shadow-sm overflow-hidden p-6 space-y-4">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pb-3 border-b border-gray-100">
+                <div>
+                  <h4 className="font-display text-lg font-black text-gray-900 flex items-center gap-2">
+                    <Layers className="h-5 w-5 text-indigo-600" /> All Storage Variants — Live Buyback & Competitor Benchmarks
+                  </h4>
+                  <p className="text-xs text-gray-500">
+                    Side-by-side pricing matrix across every authentic storage tier for {radarData.device.brand} {radarData.device.model}.
+                  </p>
+                </div>
+                <span className="badge bg-indigo-50 text-indigo-800 border border-indigo-200 text-xs font-bold px-3 py-1">
+                  {radarData.allVariants.length} Active Storage Tiers
+                </span>
+              </div>
+
+              <div className="overflow-x-auto -mx-6 px-6">
+                <table className="w-full text-left text-xs text-gray-700 border-collapse min-w-[700px]">
+                  <thead>
+                    <tr className="border-b border-gray-200 bg-gray-50/70 text-gray-500 uppercase text-[10px] font-black tracking-wider">
+                      <th className="py-3 px-4">Storage Variant</th>
+                      <th className="py-3 px-4">Fundu Base (100%)</th>
+                      <th className="py-3 px-4">Flawless (82%)</th>
+                      <th className="py-3 px-4">Good (70%)</th>
+                      <th className="py-3 px-4">Cashify Benchmark</th>
+                      <th className="py-3 px-4">Fundu Advantage</th>
+                      <th className="py-3 px-4">Status</th>
+                      <th className="py-3 px-4 text-right">Action</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-100 font-medium">
+                    {radarData.allVariants.map((v) => {
+                      const isCurrent = v.storage.replace(/\s+/g, '').toLowerCase() === selectedStorage.replace(/\s+/g, '').toLowerCase();
+                      const isBetter = v.diffFromCashify >= 0;
+
+                      return (
+                        <tr
+                          key={v.storage}
+                          className={`transition hover:bg-gray-50/80 ${
+                            isCurrent ? 'bg-indigo-50/40 font-bold' : ''
+                          }`}
+                        >
+                          <td className="py-3.5 px-4">
+                            <div className="flex items-center gap-2">
+                              <span className="font-black text-sm text-gray-900">{v.storage}</span>
+                              {isCurrent && (
+                                <span className="bg-indigo-600 text-white text-[9px] font-black px-2 py-0.5 rounded-full uppercase tracking-wider">
+                                  Viewing
+                                </span>
+                              )}
+                            </div>
+                          </td>
+                          <td className="py-3.5 px-4 font-black text-emerald-600 text-sm">
+                            {formatINR(v.basePrice)}
+                          </td>
+                          <td className="py-3.5 px-4 font-bold text-gray-800">
+                            {formatINR(v.flawlessOffer)}
+                          </td>
+                          <td className="py-3.5 px-4 font-bold text-gray-600">
+                            {formatINR(v.goodOffer)}
+                          </td>
+                          <td className="py-3.5 px-4 font-bold text-gray-500">
+                            {formatINR(v.cashifyPrice)}
+                          </td>
+                          <td className="py-3.5 px-4">
+                            <span
+                              className={`inline-flex items-center gap-1 font-black text-xs px-2.5 py-0.5 rounded-full ${
+                                isBetter
+                                  ? 'bg-emerald-100 text-emerald-800'
+                                  : 'bg-red-100 text-red-800'
+                              }`}
+                            >
+                              {isBetter ? '+' : ''}{formatINR(v.diffFromCashify)}
+                            </span>
+                          </td>
+                          <td className="py-3.5 px-4">
+                            {v.isCustom ? (
+                              <span className="inline-flex items-center gap-1 text-[10px] font-black px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 border border-amber-300">
+                                🔒 Custom Locked
+                              </span>
+                            ) : (
+                              <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-gray-100 text-gray-600">
+                                ⚡ Auto-Scaled
+                              </span>
+                            )}
+                          </td>
+                          <td className="py-3.5 px-4 text-right">
+                            {isCurrent ? (
+                              <span className="text-[11px] text-gray-400 font-bold px-3 py-1.5">
+                                Active on Radar
+                              </span>
+                            ) : (
+                              <button
+                                type="button"
+                                onClick={() => handleStorageChange(v.storage)}
+                                className="btn text-xs font-black bg-white hover:bg-gray-100 text-gray-900 border border-gray-300 px-3 py-1.5 rounded-xl cursor-pointer shadow-2xs hover:border-gray-400 transition"
+                              >
+                                Compare Live →
+                              </button>
+                            )}
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
 
           {/* MULTI-PLATFORM SIDE-BY-SIDE COMPETITOR TABLE */}
           <div className="bg-white rounded-3xl border border-gray-200 shadow-sm overflow-hidden space-y-4 p-6">

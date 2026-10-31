@@ -1259,6 +1259,87 @@ router.get('/sell-pricing/competitor-radar', async (req, res, next) => {
       image = '';
     }
 
+    // Multi-Variant Intelligence Matrix: Compute live comparisons across all authentic storages for this model
+    let allVariants = [];
+    try {
+      const allModelConfigs = await SellPriceConfig.find({
+        brand: brandRegex,
+        model: modelRegex,
+        is_active: { $ne: false },
+      }).lean();
+
+      const mpPhone = await MasterPhone.findOne({ brand: brandRegex, model: modelRegex }).lean();
+
+      const storagesSet = new Set();
+      if (Array.isArray(mpPhone?.storage_options)) {
+        mpPhone.storage_options.forEach((s) => {
+          const clean = String(s).trim().replace(/(\d+)\s*(gb|tb)/i, (_, n, u) => `${n} ${u.toUpperCase()}`);
+          if (clean) storagesSet.add(clean);
+        });
+      }
+      allModelConfigs.forEach((c) => {
+        if (c.storage) {
+          const clean = String(c.storage).trim().replace(/(\d+)\s*(gb|tb)/i, (_, n, u) => `${n} ${u.toUpperCase()}`);
+          if (clean) storagesSet.add(clean);
+        }
+      });
+
+      if (storage) {
+        storagesSet.add(storage);
+      }
+
+      if (storagesSet.size === 0) {
+        ['128 GB', '256 GB'].forEach((s) => storagesSet.add(s));
+      }
+
+      const baseMult = calculateHardwareVariantMultiplier(storage, '', rawBrand) || 1.0;
+
+      allVariants = Array.from(storagesSet).map((stg) => {
+        const cfg = allModelConfigs.find((c) => c.storage && c.storage.replace(/\s+/g, '').toLowerCase() === stg.replace(/\s+/g, '').toLowerCase());
+        const stgMult = calculateHardwareVariantMultiplier(stg, '', rawBrand) || 1.0;
+        const ratio = baseMult > 0 ? stgMult / baseMult : 1.0;
+
+        let variantFunduPrice = 0;
+        let isCustom = false;
+        let varConfigId = null;
+
+        if (cfg && cfg.base_price > 0) {
+          variantFunduPrice = cfg.base_price;
+          isCustom = Boolean(cfg.manual_override || cfg.is_locked);
+          varConfigId = cfg._id;
+        } else {
+          variantFunduPrice = Math.max(500, Math.round((funduBasePrice * ratio) / 50) * 50);
+        }
+
+        const variantCashifyPrice = Math.max(500, Math.round((cashifyBase * ratio) / 50) * 50);
+        const diff = variantFunduPrice - variantCashifyPrice;
+        const isCurrent = stg.replace(/\s+/g, '').toLowerCase() === storage.replace(/\s+/g, '').toLowerCase();
+
+        return {
+          storage: stg,
+          basePrice: variantFunduPrice,
+          flawlessOffer: Math.round(variantFunduPrice * 0.82),
+          goodOffer: Math.round(variantFunduPrice * 0.70),
+          cashifyPrice: variantCashifyPrice,
+          diffFromCashify: diff,
+          isWinning: diff >= minAdvantage,
+          isCustom,
+          configId: varConfigId,
+          isCurrent,
+        };
+      });
+
+      const getGb = (s) => {
+        const match = String(s).match(/(\d+)\s*(gb|tb)/i);
+        if (!match) return 0;
+        const n = parseInt(match[1], 10);
+        return match[2].toLowerCase() === 'tb' ? n * 1024 : n;
+      };
+      allVariants.sort((a, b) => getGb(a.storage) - getGb(b.storage));
+    } catch (_vErr) {
+      allVariants = [];
+    }
+
     res.json({
       success: true,
       data: {
@@ -1280,6 +1361,7 @@ router.get('/sell-pricing/competitor-radar', async (req, res, next) => {
           guaranteeText: 'Fundu Best Price Guarantee (+₹1,000 Cash)',
         },
         competitors,
+        allVariants,
         marketAnalytics: {
           marketHighest,
           marketLowest,
