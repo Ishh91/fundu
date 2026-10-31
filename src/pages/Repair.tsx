@@ -4,7 +4,7 @@ import { getCleanPhoneImage, getCleanBrandLogo, BRAND_FRONT_FALLBACKS } from '..
 import { ALL_INDIAN_PHONES_CATALOG } from '../data/indianPhonesCatalog';
 import { MASTER_MODEL_CATALOG } from '../data/masterModelCatalog';
 import { getModelDedupeKey, groupModelsBySeries, inferModelSeries, sortDeviceModelsLatestFirst } from '../data/brandSeriesCatalog';
-import { notifyNewRepairBooking } from '../lib/whatsappNotifyService';
+import { notifyNewRepairBooking, sendCustomerDeliveryOtp } from '../lib/whatsappNotifyService';
 import {
   Wrench,
   Truck,
@@ -483,6 +483,7 @@ export default function Repair() {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [trackingId, setTrackingId] = useState<string>('');
+  const [createdDeliveryOtp, setCreatedDeliveryOtp] = useState<string>('');
   const [openFaq, setOpenFaq] = useState<number | null>(0);
 
   const selectedIssue = selectedIssues[0];
@@ -900,6 +901,9 @@ export default function Repair() {
 
     const combinedDetail = [form.problemDetail, inspectionNotes].filter(Boolean).join(' | ');
 
+    const deliveryOtp = String(Math.floor(1000 + Math.random() * 9000));
+    setCreatedDeliveryOtp(deliveryOtp);
+
     const { data, error: reqErr } = await db
       .from<{ tracking_id: string }>('repair_bookings')
       .insert({
@@ -917,6 +921,8 @@ export default function Repair() {
         pickup_date: form.pickupDate || null,
         pickup_slot: form.pickupSlot || null,
         status: 'pending',
+        delivery_otp: deliveryOtp,
+        delivery_otp_created_at: new Date().toISOString(),
       })
       .select()
       .single();
@@ -943,11 +949,24 @@ export default function Repair() {
         pickupDate: form.pickupDate,
         pickupSlot: form.pickupSlot,
       });
+
+      // Dispatch Handover OTP to customer WhatsApp immediately
+      if (profile?.phone) {
+        sendCustomerDeliveryOtp({
+          phone: profile.phone,
+          customerName: profile?.full_name || 'Customer',
+          otp: deliveryOtp,
+          taskType: 'repair',
+          itemTitle: `${form.brand} ${form.model} (${combinedProblemLabel || 'Repair'})`,
+          amount: totalRepairCost || 1499,
+          riderName: 'Assigned Repair Technician',
+        });
+      }
     } catch (notifyErr) {
       console.warn('⚠️ [Repair] WhatsApp notification error:', notifyErr);
     }
 
-    goToStep(5, { trackingId: trackingIdVal }); // Confirmation Step
+    goToStep(5, { trackingId: trackingIdVal, otp: deliveryOtp }); // Confirmation Step
   };
 
   if (step === 5) {
@@ -981,6 +1000,21 @@ export default function Repair() {
                   }}
                   className="max-h-full max-w-full w-auto h-auto object-contain mix-blend-multiply"
                 />
+              </div>
+            )}
+
+            {/* Handover OTP Badge */}
+            {createdDeliveryOtp && (
+              <div className="mt-4 p-4 rounded-2xl bg-gradient-to-r from-emerald-50 to-teal-50 border-2 border-emerald-400 text-center space-y-1 shadow-xs">
+                <span className="badge bg-emerald-700 text-white text-[10px] font-black uppercase tracking-wider inline-flex items-center gap-1">
+                  🔑 Your Doorstep Handover OTP
+                </span>
+                <div className="font-mono font-black text-3xl text-emerald-800 tracking-[0.25em] py-1">
+                  {createdDeliveryOtp}
+                </div>
+                <p className="text-[11px] text-emerald-800 font-semibold">
+                  Share this 4-digit code with your Fundu Repair Executive only after inspecting the repaired device.
+                </p>
               </div>
             )}
 

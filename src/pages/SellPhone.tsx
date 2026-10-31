@@ -47,7 +47,7 @@ import {
 } from '../lib/locationService';
 import { checkPincodeServiceability } from '../lib/pincodeService';
 import { getModelDedupeKey, groupModelsBySeries } from '../data/brandSeriesCatalog';
-import { notifyNewSellRequest } from '../lib/whatsappNotifyService';
+import { notifyNewSellRequest, sendCustomerDeliveryOtp } from '../lib/whatsappNotifyService';
 
 import {
   DOORSTEP_LOCALITIES,
@@ -1144,6 +1144,7 @@ export default function SellPhone() {
       .join(', ');
 
     try {
+      const deliveryOtp = String(Math.floor(1000 + Math.random() * 9000));
       const payload = {
         user_id: user?.id || null,
         customer_name: customerFullName,
@@ -1192,6 +1193,8 @@ export default function SellPhone() {
         pickup_slot: form.pickupSlot,
         notes: form.notes || (funduQuote?.status === 'requires_manual_review' ? `Manual Inspection: ${funduQuote.reviewReason || funduQuote.reason || 'Manual review required'}` : ''),
         status: funduQuote?.status === 'requires_manual_review' ? 'manual_review' : 'pending',
+        delivery_otp: deliveryOtp,
+        delivery_otp_created_at: new Date().toISOString(),
       };
 
       const { data, error: insertErr } = await db.from('sell_requests').insert([payload]).select().single();
@@ -1215,6 +1218,19 @@ export default function SellPhone() {
           pickupDate: form.pickupDate,
           pickupSlot: form.pickupSlot,
         });
+
+        // Instant WhatsApp delivery of Handover OTP to customer
+        if (form.customerPhone) {
+          sendCustomerDeliveryOtp({
+            phone: form.customerPhone,
+            customerName: form.customerName || 'Customer',
+            otp: deliveryOtp,
+            taskType: 'sell',
+            itemTitle: `${form.brand} ${form.model} (${form.storage})`,
+            amount: estimate,
+            riderName: 'Assigned Fundu Rider',
+          });
+        }
       } catch (notifyErr) {
         console.warn('⚠️ [SellPhone] WhatsApp notification error:', notifyErr);
       }
@@ -1224,6 +1240,7 @@ export default function SellPhone() {
         pickup_person_name: 'Rajesh Kumar (Fundu Rider)',
         pickup_person_phone: '+91-9839122345',
         estimated_arrival_time: `${form.pickupDate} (${form.pickupSlot})`,
+        delivery_otp: deliveryOtp,
       });
     } catch (err: any) {
       console.error('Submission error:', err);

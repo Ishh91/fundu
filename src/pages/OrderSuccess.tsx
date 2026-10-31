@@ -16,9 +16,19 @@ export default function OrderSuccess() {
           Order Confirmed
         </span>
         <h1 className="font-display font-bold text-3xl text-ink-900 mb-2">Order Placed Successfully!</h1>
-        <p className="text-ink-500 mb-6">
+        <p className="text-ink-500 mb-4">
           Thank you for your order! Our doorstep delivery team is preparing your package.
         </p>
+
+        {/* OTP Security Notice */}
+        <div className="mb-6 p-3.5 rounded-2xl bg-gradient-to-r from-emerald-50 to-teal-50 border border-emerald-300 text-xs text-emerald-900 space-y-1 text-center">
+          <p className="font-bold flex items-center justify-center gap-1">
+            🔒 Secure Handover OTP Active
+          </p>
+          <p className="text-[11px] text-emerald-700">
+            A 4-digit Delivery PIN is ready in your Dashboard & WhatsApp. Share it with your rider at doorstep to confirm receipt.
+          </p>
+        </div>
 
         {/* Review Prompt Banner */}
         <div className="mb-8 p-5 rounded-2xl bg-brand-50 border border-brand-100 text-center">

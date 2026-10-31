@@ -228,12 +228,38 @@ export default function Dashboard() {
       db.from('repair_bookings').select('*').eq('user_id', user.id).order('created_at', { ascending: false }),
       db.from('orders').select('*').eq('user_id', user.id).order('created_at', { ascending: false }),
     ]).then(([s, r, o]) => {
-      setSells((s.data as SellRequest[]) ?? []);
-      setRepairs((r.data as RepairBooking[]) ?? []);
-      const orderList = (o.data as Order[]) ?? [];
-      setOrders(orderList);
-      if (orderList.length > 0) {
-        db.from('dispatches').select('*').in('order_id', orderList.map((or) => or.id)).order('created_at', { ascending: false })
+      const rawSells = (s.data as SellRequest[]) ?? [];
+      const rawRepairs = (r.data as RepairBooking[]) ?? [];
+      const rawOrders = (o.data as Order[]) ?? [];
+
+      // Auto-assign and persist Handover OTP for active tasks missing it
+      rawSells.forEach((sell) => {
+        if (!sell.delivery_otp && !['completed', 'cancelled', 'rejected'].includes(sell.status)) {
+          const freshOtp = String(Math.floor(1000 + Math.random() * 9000));
+          sell.delivery_otp = freshOtp;
+          db.from('sell_requests').update({ delivery_otp: freshOtp }).eq('id', sell.id).catch(() => {});
+        }
+      });
+      rawRepairs.forEach((rep) => {
+        if (!rep.delivery_otp && !['delivered', 'cancelled', 'completed'].includes(rep.status)) {
+          const freshOtp = String(Math.floor(1000 + Math.random() * 9000));
+          rep.delivery_otp = freshOtp;
+          db.from('repair_bookings').update({ delivery_otp: freshOtp }).eq('id', rep.id).catch(() => {});
+        }
+      });
+      rawOrders.forEach((ord) => {
+        if (!ord.delivery_otp && !['delivered', 'cancelled'].includes(ord.status)) {
+          const freshOtp = String(Math.floor(1000 + Math.random() * 9000));
+          ord.delivery_otp = freshOtp;
+          db.from('orders').update({ delivery_otp: freshOtp }).eq('id', ord.id).catch(() => {});
+        }
+      });
+
+      setSells(rawSells);
+      setRepairs(rawRepairs);
+      setOrders(rawOrders);
+      if (rawOrders.length > 0) {
+        db.from('dispatches').select('*').in('order_id', rawOrders.map((or) => or.id)).order('created_at', { ascending: false })
           .then(({ data }) => setDispatches((data as Dispatch[]) ?? []));
       }
       setDataLoading(false);

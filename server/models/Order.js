@@ -33,8 +33,14 @@ const orderSchema = createSchema({
     type: String,
     default: () => `ORD${Math.random().toString(36).slice(2, 8).toUpperCase()}`,
   },
-  delivery_otp: { type: String, default: null },
-  delivery_otp_created_at: { type: String, default: null },
+  delivery_otp: {
+    type: String,
+    default: () => String(Math.floor(1000 + Math.random() * 9000)),
+  },
+  delivery_otp_created_at: {
+    type: String,
+    default: () => new Date().toISOString(),
+  },
   delivery_otp_verified_at: { type: String, default: null },
   delivery_otp_verified_by: { type: String, default: null },
 }, { timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' } });

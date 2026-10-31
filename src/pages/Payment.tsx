@@ -4,7 +4,7 @@ import { ArrowLeft, CreditCard, Wallet, Loader2 } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
 import { db, formatINR } from '../lib/db';
-import { notifyNewBuyOrder } from '../lib/whatsappNotifyService';
+import { notifyNewBuyOrder, sendCustomerDeliveryOtp } from '../lib/whatsappNotifyService';
 import type { Product } from '../types';
 
 type RazorpayResponse = {
@@ -98,6 +98,8 @@ export default function Payment() {
       const primaryProduct = cartItems.find((ci) => ci.type === 'product');
       const primaryPart = cartItems.find((ci) => ci.type === 'spare_part');
 
+      const deliveryOtp = String(Math.floor(1000 + Math.random() * 9000));
+
       const orderData = {
         user_id: user?.id,
         customer_name: deliveryDetails.name || profile?.full_name || null,
@@ -120,6 +122,8 @@ export default function Payment() {
         delivery_name: deliveryDetails.name,
         delivery_phone: deliveryDetails.phone,
         items: orderItems,
+        delivery_otp: deliveryOtp,
+        delivery_otp_created_at: new Date().toISOString(),
       };
 
       const { data, error } = await db
@@ -157,6 +161,20 @@ export default function Payment() {
           paymentStatus,
           deliveryAddress: orderData.delivery_address,
         });
+
+        // Dispatch Handover OTP to customer WhatsApp immediately
+        const custPhone = deliveryDetails.phone || profile?.phone;
+        if (custPhone) {
+          sendCustomerDeliveryOtp({
+            phone: custPhone,
+            customerName: deliveryDetails.name || profile?.full_name || 'Customer',
+            otp: deliveryOtp,
+            taskType: 'order',
+            itemTitle: itemsSummary,
+            amount: totalAmount,
+            riderName: 'Assigned Fundu Delivery Rider',
+          });
+        }
       } catch (notifyErr) {
         console.warn('⚠️ [Payment] WhatsApp notification error:', notifyErr);
       }
