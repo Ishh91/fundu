@@ -4,13 +4,12 @@
     "model": "iPhone 11",
     "release_year": 2019,
     "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
+      "4GB"
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "128 GB",
+      "256 GB"
     ],
     "default_mrp": 49900,
     "base_resale_value": 12490,
@@ -30,13 +29,12 @@
     "model": "iPhone 11 Pro",
     "release_year": 2019,
     "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
+      "4GB"
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "256 GB",
+      "512 GB"
     ],
     "default_mrp": 28275,
     "base_resale_value": 18500,
@@ -56,13 +54,12 @@
     "model": "iPhone 11 Pro Max",
     "release_year": 2019,
     "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
+      "4GB"
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "256 GB",
+      "512 GB"
     ],
     "default_mrp": 28275,
     "base_resale_value": 22000,
@@ -82,13 +79,12 @@
     "model": "iPhone 12",
     "release_year": 2020,
     "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
+      "4GB"
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "128 GB",
+      "256 GB"
     ],
     "default_mrp": 54900,
     "base_resale_value": 16490,
@@ -108,13 +104,12 @@
     "model": "iPhone 12 mini",
     "release_year": 2020,
     "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
+      "4GB"
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "128 GB",
+      "256 GB"
     ],
     "default_mrp": 27405,
     "base_resale_value": 13500,
@@ -134,13 +129,12 @@
     "model": "iPhone 12 Pro",
     "release_year": 2020,
     "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
+      "6GB"
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB",
+      "512 GB"
     ],
     "default_mrp": 41100,
     "base_resale_value": 25500,
@@ -160,13 +154,12 @@
     "model": "iPhone 12 Pro Max",
     "release_year": 2020,
     "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
+      "6GB"
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB",
+      "512 GB"
     ],
     "default_mrp": 40950,
     "base_resale_value": 30000,
@@ -186,13 +179,12 @@
     "model": "iPhone 13",
     "release_year": 2021,
     "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
+      "4GB"
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB",
+      "512 GB"
     ],
     "default_mrp": 59900,
     "base_resale_value": 24260,
@@ -212,13 +204,12 @@
     "model": "iPhone 13 mini",
     "release_year": 2021,
     "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
+      "4GB"
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB",
+      "512 GB"
     ],
     "default_mrp": 37890,
     "base_resale_value": 20500,
@@ -238,13 +229,13 @@
     "model": "iPhone 13 Pro",
     "release_year": 2022,
     "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
+      "6GB"
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB",
+      "512 GB",
+      "1 TB"
     ],
     "default_mrp": 55275,
     "base_resale_value": 35000,
@@ -264,13 +255,13 @@
     "model": "iPhone 13 Pro Max",
     "release_year": 2021,
     "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
+      "6GB"
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB",
+      "512 GB",
+      "1 TB"
     ],
     "default_mrp": 129900,
     "base_resale_value": 40000,
@@ -290,13 +281,12 @@
     "model": "iPhone 14",
     "release_year": 2022,
     "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
+      "6GB"
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB",
+      "512 GB"
     ],
     "default_mrp": 69900,
     "base_resale_value": 28030,
@@ -316,13 +306,12 @@
     "model": "iPhone 14 Plus",
     "release_year": 2022,
     "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
+      "6GB"
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB",
+      "512 GB"
     ],
     "default_mrp": 47175,
     "base_resale_value": 33500,
@@ -342,13 +331,13 @@
     "model": "iPhone 14 Pro",
     "release_year": 2022,
     "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
+      "6GB"
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB",
+      "512 GB",
+      "1 TB"
     ],
     "default_mrp": 129900,
     "base_resale_value": 42690,
@@ -368,13 +357,13 @@
     "model": "iPhone 14 Pro Max",
     "release_year": 2022,
     "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
+      "6GB"
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB",
+      "512 GB",
+      "1 TB"
     ],
     "default_mrp": 139900,
     "base_resale_value": 51000,
@@ -394,13 +383,12 @@
     "model": "iPhone 15",
     "release_year": 2023,
     "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
+      "6GB"
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB",
+      "512 GB"
     ],
     "default_mrp": 79900,
     "base_resale_value": 42220,
@@ -420,13 +408,12 @@
     "model": "iPhone 15 Plus",
     "release_year": 2023,
     "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
+      "6GB"
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB",
+      "512 GB"
     ],
     "default_mrp": 89900,
     "base_resale_value": 48000,
@@ -446,13 +433,13 @@
     "model": "iPhone 15 Pro",
     "release_year": 2023,
     "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
+      "8GB"
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB",
+      "512 GB",
+      "1 TB"
     ],
     "default_mrp": 134900,
     "base_resale_value": 62000,
@@ -472,13 +459,12 @@
     "model": "iPhone 15 Pro Max",
     "release_year": 2023,
     "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
+      "8GB"
     ],
     "storage_options": [
       "256 GB",
-      "256GB"
+      "512 GB",
+      "1 TB"
     ],
     "default_mrp": 159900,
     "base_resale_value": 70000,
@@ -498,13 +484,12 @@
     "model": "iPhone 16",
     "release_year": 2024,
     "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
+      "8GB"
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB",
+      "512 GB"
     ],
     "default_mrp": 79900,
     "base_resale_value": 52800,
@@ -524,13 +509,12 @@
     "model": "iPhone 16 Plus",
     "release_year": 2024,
     "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
+      "8GB"
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB",
+      "512 GB"
     ],
     "default_mrp": 89900,
     "base_resale_value": 61000,
@@ -550,13 +534,13 @@
     "model": "iPhone 16 Pro",
     "release_year": 2024,
     "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
+      "8GB"
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB",
+      "512 GB",
+      "1 TB"
     ],
     "default_mrp": 119900,
     "base_resale_value": 78000,
@@ -576,13 +560,12 @@
     "model": "iPhone 16 Pro Max",
     "release_year": 2024,
     "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
+      "8GB"
     ],
     "storage_options": [
       "256 GB",
-      "256GB"
+      "512 GB",
+      "1 TB"
     ],
     "default_mrp": 144900,
     "base_resale_value": 88000,
@@ -602,13 +585,11 @@
     "model": "iPhone 16e",
     "release_year": 2024,
     "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
+      "8GB"
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 72450,
     "base_resale_value": 48000,
@@ -632,8 +613,7 @@
       "12GB"
     ],
     "storage_options": [
-      "256 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 106275,
     "base_resale_value": 82000,
@@ -658,7 +638,7 @@
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 11700,
     "base_resale_value": 8200,
@@ -684,7 +664,7 @@
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 18525,
     "base_resale_value": 13500,
@@ -704,13 +684,11 @@
     "model": "iPhone X",
     "release_year": 2017,
     "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
+      "3GB"
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 89000,
     "base_resale_value": 9500,
@@ -729,13 +707,12 @@
     "model": "iPhone XR",
     "release_year": 2018,
     "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
+      "3GB"
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "128 GB",
+      "256 GB"
     ],
     "default_mrp": 49900,
     "base_resale_value": 10200,
@@ -755,13 +732,12 @@
     "model": "iPhone XS",
     "release_year": 2018,
     "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
+      "4GB"
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "256 GB",
+      "512 GB"
     ],
     "default_mrp": 17850,
     "base_resale_value": 11000,
@@ -781,13 +757,12 @@
     "model": "iPhone XS Max",
     "release_year": 2018,
     "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
+      "4GB"
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "256 GB",
+      "512 GB"
     ],
     "default_mrp": 17850,
     "base_resale_value": 13500,
@@ -810,8 +785,8 @@
       "4GB"
     ],
     "storage_options": [
-      "64GB",
-      "128GB"
+      "64 GB",
+      "128 GB"
     ],
     "default_mrp": 7425,
     "base_resale_value": 4950,
@@ -832,8 +807,8 @@
       "4GB"
     ],
     "storage_options": [
-      "64GB",
-      "128GB"
+      "64 GB",
+      "128 GB"
     ],
     "default_mrp": 8925,
     "base_resale_value": 1950,
@@ -855,7 +830,7 @@
       "4GB"
     ],
     "storage_options": [
-      "64GB"
+      "64 GB"
     ],
     "default_mrp": 9525,
     "base_resale_value": 1850,
@@ -877,7 +852,7 @@
       "4GB"
     ],
     "storage_options": [
-      "64GB"
+      "64 GB"
     ],
     "default_mrp": 10275,
     "base_resale_value": 2150,
@@ -899,8 +874,8 @@
       "6GB"
     ],
     "storage_options": [
-      "64GB",
-      "128GB"
+      "64 GB",
+      "128 GB"
     ],
     "default_mrp": 13425,
     "base_resale_value": 3100,
@@ -922,7 +897,7 @@
       "6GB"
     ],
     "storage_options": [
-      "128GB"
+      "128 GB"
     ],
     "default_mrp": 9210,
     "base_resale_value": 4240,
@@ -944,7 +919,7 @@
       "8GB"
     ],
     "storage_options": [
-      "128GB"
+      "128 GB"
     ],
     "default_mrp": 17775,
     "base_resale_value": 6400,
@@ -966,8 +941,8 @@
       "8GB"
     ],
     "storage_options": [
-      "128GB",
-      "256GB"
+      "128 GB",
+      "256 GB"
     ],
     "default_mrp": 20850,
     "base_resale_value": 11400,
@@ -989,9 +964,9 @@
       "12GB"
     ],
     "storage_options": [
-      "128GB",
-      "256GB",
-      "512GB"
+      "128 GB",
+      "256 GB",
+      "512 GB"
     ],
     "default_mrp": 20850,
     "base_resale_value": 11500,
@@ -1013,7 +988,7 @@
       "6GB"
     ],
     "storage_options": [
-      "128GB"
+      "128 GB"
     ],
     "default_mrp": 43999,
     "base_resale_value": 9810,
@@ -1035,8 +1010,8 @@
       "8GB"
     ],
     "storage_options": [
-      "128GB",
-      "256GB"
+      "128 GB",
+      "256 GB"
     ],
     "default_mrp": 33525,
     "base_resale_value": 15400,
@@ -1058,9 +1033,9 @@
       "12GB"
     ],
     "storage_options": [
-      "128GB",
-      "256GB",
-      "512GB"
+      "128 GB",
+      "256 GB",
+      "512 GB"
     ],
     "default_mrp": 33525,
     "base_resale_value": 19800,
@@ -1082,7 +1057,7 @@
       "8GB"
     ],
     "storage_options": [
-      "128GB"
+      "128 GB"
     ],
     "default_mrp": 43999,
     "base_resale_value": 11850,
@@ -1104,8 +1079,8 @@
       "8GB"
     ],
     "storage_options": [
-      "128GB",
-      "256GB"
+      "128 GB",
+      "256 GB"
     ],
     "default_mrp": 55350,
     "base_resale_value": 18500,
@@ -1127,10 +1102,10 @@
       "12GB"
     ],
     "storage_options": [
-      "128GB",
-      "256GB",
-      "512GB",
-      "1TB"
+      "128 GB",
+      "256 GB",
+      "512 GB",
+      "1 TB"
     ],
     "default_mrp": 106999,
     "base_resale_value": 32880,
@@ -1152,8 +1127,8 @@
       "8GB"
     ],
     "storage_options": [
-      "128GB",
-      "256GB"
+      "128 GB",
+      "256 GB"
     ],
     "default_mrp": 52999,
     "base_resale_value": 15800,
@@ -1175,8 +1150,8 @@
       "12GB"
     ],
     "storage_options": [
-      "128GB",
-      "256GB"
+      "128 GB",
+      "256 GB"
     ],
     "default_mrp": 79999,
     "base_resale_value": 37440,
@@ -1198,10 +1173,9 @@
       "16GB"
     ],
     "storage_options": [
-      "128GB",
-      "256GB",
-      "512GB",
-      "1TB"
+      "128 GB",
+      "256 GB",
+      "512 GB"
     ],
     "default_mrp": 85425,
     "base_resale_value": 52800,
@@ -1223,8 +1197,8 @@
       "16GB"
     ],
     "storage_options": [
-      "256GB",
-      "512GB"
+      "256 GB",
+      "512 GB"
     ],
     "default_mrp": 62700,
     "base_resale_value": 72500,
@@ -1246,10 +1220,9 @@
       "16GB"
     ],
     "storage_options": [
-      "128GB",
-      "256GB",
-      "512GB",
-      "1TB"
+      "128 GB",
+      "256 GB",
+      "512 GB"
     ],
     "default_mrp": 124999,
     "base_resale_value": 68500,
@@ -1271,8 +1244,8 @@
       "12GB"
     ],
     "storage_options": [
-      "256GB",
-      "512GB"
+      "256 GB",
+      "512 GB"
     ],
     "default_mrp": 83775,
     "base_resale_value": 42000,
@@ -1296,8 +1269,7 @@
       "12GB"
     ],
     "storage_options": [
-      "256 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 29235,
     "base_resale_value": 19490,
@@ -1320,8 +1292,7 @@
       "12GB"
     ],
     "storage_options": [
-      "256 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 47925,
     "base_resale_value": 31950,
@@ -1344,8 +1315,7 @@
       "12GB"
     ],
     "storage_options": [
-      "256 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 54999,
     "base_resale_value": 30980,
@@ -1369,7 +1339,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 11880,
     "base_resale_value": 7920,
@@ -1393,7 +1363,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 17070,
     "base_resale_value": 11380,
@@ -1417,7 +1387,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 19365,
     "base_resale_value": 12910,
@@ -1441,7 +1411,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 19365,
     "base_resale_value": 12910,
@@ -1464,8 +1434,7 @@
       "12GB"
     ],
     "storage_options": [
-      "256 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 25800,
     "base_resale_value": 17200,
@@ -1489,7 +1458,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 19665,
     "base_resale_value": 13110,
@@ -1513,7 +1482,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 24150,
     "base_resale_value": 16100,
@@ -1537,7 +1506,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 19035,
     "base_resale_value": 12690,
@@ -1561,7 +1530,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 24675,
     "base_resale_value": 16450,
@@ -1585,7 +1554,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 24750,
     "base_resale_value": 16500,
@@ -1609,7 +1578,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 35999,
     "base_resale_value": 21450,
@@ -1633,7 +1602,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 14250,
     "base_resale_value": 9500,
@@ -1657,7 +1626,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 15105,
     "base_resale_value": 10070,
@@ -1681,7 +1650,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 10935,
     "base_resale_value": 7290,
@@ -1705,7 +1674,7 @@
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 11730,
     "base_resale_value": 7820,
@@ -1729,7 +1698,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 14475,
     "base_resale_value": 9650,
@@ -1753,7 +1722,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 15960,
     "base_resale_value": 10640,
@@ -1777,7 +1746,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 22200,
     "base_resale_value": 14800,
@@ -1801,7 +1770,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 14880,
     "base_resale_value": 9920,
@@ -1825,7 +1794,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 14640,
     "base_resale_value": 9760,
@@ -1849,7 +1818,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 13725,
     "base_resale_value": 9150,
@@ -1873,7 +1842,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 22215,
     "base_resale_value": 14810,
@@ -1897,7 +1866,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 22425,
     "base_resale_value": 14950,
@@ -1921,7 +1890,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 14385,
     "base_resale_value": 9590,
@@ -1942,7 +1911,7 @@
       "4GB"
     ],
     "storage_options": [
-      "64GB"
+      "64 GB"
     ],
     "default_mrp": 5700,
     "base_resale_value": 3800,
@@ -1963,8 +1932,8 @@
       "4GB"
     ],
     "storage_options": [
-      "64GB",
-      "128GB"
+      "64 GB",
+      "128 GB"
     ],
     "default_mrp": 6075,
     "base_resale_value": 4050,
@@ -1985,9 +1954,9 @@
       "4GB"
     ],
     "storage_options": [
-      "64GB",
-      "128GB",
-      "256GB"
+      "64 GB",
+      "128 GB",
+      "256 GB"
     ],
     "default_mrp": 7050,
     "base_resale_value": 4700,
@@ -2008,7 +1977,7 @@
       "6GB"
     ],
     "storage_options": [
-      "128GB"
+      "128 GB"
     ],
     "default_mrp": 10575,
     "base_resale_value": 7050,
@@ -2029,8 +1998,8 @@
       "8GB"
     ],
     "storage_options": [
-      "128GB",
-      "256GB"
+      "128 GB",
+      "256 GB"
     ],
     "default_mrp": 10200,
     "base_resale_value": 6800,
@@ -2051,7 +2020,7 @@
       "4GB"
     ],
     "storage_options": [
-      "128GB"
+      "128 GB"
     ],
     "default_mrp": 8400,
     "base_resale_value": 5600,
@@ -2072,8 +2041,8 @@
       "8GB"
     ],
     "storage_options": [
-      "128GB",
-      "256GB"
+      "128 GB",
+      "256 GB"
     ],
     "default_mrp": 13125,
     "base_resale_value": 8750,
@@ -2094,7 +2063,7 @@
       "8GB"
     ],
     "storage_options": [
-      "128GB"
+      "128 GB"
     ],
     "default_mrp": 11250,
     "base_resale_value": 7500,
@@ -2117,8 +2086,8 @@
       "8GB"
     ],
     "storage_options": [
-      "64GB",
-      "128GB"
+      "64 GB",
+      "128 GB"
     ],
     "default_mrp": 8640,
     "base_resale_value": 5760,
@@ -2139,7 +2108,7 @@
       "4GB"
     ],
     "storage_options": [
-      "64GB"
+      "64 GB"
     ],
     "default_mrp": 7395,
     "base_resale_value": 4930,
@@ -2162,8 +2131,8 @@
       "12GB"
     ],
     "storage_options": [
-      "64GB",
-      "256GB"
+      "64 GB",
+      "256 GB"
     ],
     "default_mrp": 7530,
     "base_resale_value": 3900,
@@ -2187,8 +2156,8 @@
       "12GB"
     ],
     "storage_options": [
-      "64GB",
-      "256GB"
+      "64 GB",
+      "256 GB"
     ],
     "default_mrp": 8310,
     "base_resale_value": 4200,
@@ -2212,8 +2181,8 @@
       "12GB"
     ],
     "storage_options": [
-      "64GB",
-      "256GB"
+      "64 GB",
+      "256 GB"
     ],
     "default_mrp": 5835,
     "base_resale_value": 2600,
@@ -2237,8 +2206,8 @@
       "12GB"
     ],
     "storage_options": [
-      "64GB",
-      "256GB"
+      "64 GB",
+      "256 GB"
     ],
     "default_mrp": 6540,
     "base_resale_value": 3400,
@@ -2262,8 +2231,8 @@
       "12GB"
     ],
     "storage_options": [
-      "128GB",
-      "256GB"
+      "128 GB",
+      "256 GB"
     ],
     "default_mrp": 13215,
     "base_resale_value": 8400,
@@ -2287,8 +2256,8 @@
       "12GB"
     ],
     "storage_options": [
-      "128GB",
-      "256GB"
+      "128 GB",
+      "256 GB"
     ],
     "default_mrp": 12735,
     "base_resale_value": 7900,
@@ -2312,8 +2281,8 @@
       "12GB"
     ],
     "storage_options": [
-      "128GB",
-      "256GB"
+      "128 GB",
+      "256 GB"
     ],
     "default_mrp": 14415,
     "base_resale_value": 9800,
@@ -2336,7 +2305,7 @@
       "8GB"
     ],
     "storage_options": [
-      "128GB"
+      "128 GB"
     ],
     "default_mrp": 15420,
     "base_resale_value": 9600,
@@ -2358,7 +2327,7 @@
       "8GB"
     ],
     "storage_options": [
-      "128GB"
+      "128 GB"
     ],
     "default_mrp": 17880,
     "base_resale_value": 11800,
@@ -2381,7 +2350,7 @@
       "8GB"
     ],
     "storage_options": [
-      "128GB"
+      "128 GB"
     ],
     "default_mrp": 16050,
     "base_resale_value": 12450,
@@ -2404,8 +2373,8 @@
       "12GB"
     ],
     "storage_options": [
-      "128GB",
-      "256GB"
+      "128 GB",
+      "256 GB"
     ],
     "default_mrp": 21405,
     "base_resale_value": 15800,
@@ -2427,7 +2396,7 @@
       "8GB"
     ],
     "storage_options": [
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 25605,
     "base_resale_value": 13200,
@@ -2450,8 +2419,8 @@
       "12GB"
     ],
     "storage_options": [
-      "128GB",
-      "256GB"
+      "128 GB",
+      "256 GB"
     ],
     "default_mrp": 23670,
     "base_resale_value": 11600,
@@ -2473,7 +2442,7 @@
       "8GB"
     ],
     "storage_options": [
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 25965,
     "base_resale_value": 17310,
@@ -2495,8 +2464,8 @@
       "12GB"
     ],
     "storage_options": [
-      "128GB",
-      "256GB"
+      "128 GB",
+      "256 GB"
     ],
     "default_mrp": 23820,
     "base_resale_value": 15500,
@@ -2518,7 +2487,7 @@
       "8GB"
     ],
     "storage_options": [
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 26310,
     "base_resale_value": 14900,
@@ -2541,7 +2510,9 @@
       "12GB"
     ],
     "storage_options": [
-      "256GB"
+      "128 GB",
+      "256 GB",
+      "512 GB"
     ],
     "default_mrp": 28725,
     "base_resale_value": 18900,
@@ -2564,7 +2535,8 @@
       "16GB"
     ],
     "storage_options": [
-      "512GB"
+      "512 GB",
+      "1 TB"
     ],
     "default_mrp": 41115,
     "base_resale_value": 28640,
@@ -2588,7 +2560,7 @@
       "12GB"
     ],
     "storage_options": [
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 29625,
     "base_resale_value": 19750,
@@ -2611,8 +2583,8 @@
       "12GB"
     ],
     "storage_options": [
-      "128GB",
-      "256GB"
+      "128 GB",
+      "256 GB"
     ],
     "default_mrp": 25770,
     "base_resale_value": 17180,
@@ -2635,7 +2607,7 @@
       "12GB"
     ],
     "storage_options": [
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 31575,
     "base_resale_value": 21050,
@@ -2658,7 +2630,7 @@
       "12GB"
     ],
     "storage_options": [
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 26145,
     "base_resale_value": 17430,
@@ -2681,7 +2653,7 @@
       "12GB"
     ],
     "storage_options": [
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 30750,
     "base_resale_value": 20500,
@@ -2704,8 +2676,8 @@
       "12GB"
     ],
     "storage_options": [
-      "128GB",
-      "256GB"
+      "128 GB",
+      "256 GB"
     ],
     "default_mrp": 29925,
     "base_resale_value": 19950,
@@ -2728,7 +2700,7 @@
       "12GB"
     ],
     "storage_options": [
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 41850,
     "base_resale_value": 27900,
@@ -2751,7 +2723,7 @@
       "12GB"
     ],
     "storage_options": [
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 50475,
     "base_resale_value": 33650,
@@ -2774,7 +2746,7 @@
       "12GB"
     ],
     "storage_options": [
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 14715,
     "base_resale_value": 14200,
@@ -2798,8 +2770,8 @@
       "12GB"
     ],
     "storage_options": [
-      "128GB",
-      "256GB"
+      "128 GB",
+      "256 GB"
     ],
     "default_mrp": 17175,
     "base_resale_value": 5900,
@@ -2822,8 +2794,8 @@
       "8GB"
     ],
     "storage_options": [
-      "64GB",
-      "128GB"
+      "64 GB",
+      "128 GB"
     ],
     "default_mrp": 8265,
     "base_resale_value": 5510,
@@ -2845,8 +2817,8 @@
       "8GB"
     ],
     "storage_options": [
-      "64GB",
-      "128GB"
+      "64 GB",
+      "128 GB"
     ],
     "default_mrp": 8640,
     "base_resale_value": 5760,
@@ -2869,8 +2841,8 @@
       "12GB"
     ],
     "storage_options": [
-      "64GB",
-      "256GB"
+      "64 GB",
+      "256 GB"
     ],
     "default_mrp": 10380,
     "base_resale_value": 6920,
@@ -2893,8 +2865,8 @@
       "12GB"
     ],
     "storage_options": [
-      "64GB",
-      "256GB"
+      "64 GB",
+      "256 GB"
     ],
     "default_mrp": 10695,
     "base_resale_value": 7130,
@@ -2917,8 +2889,8 @@
       "12GB"
     ],
     "storage_options": [
-      "64GB",
-      "256GB"
+      "64 GB",
+      "256 GB"
     ],
     "default_mrp": 7575,
     "base_resale_value": 4400,
@@ -2942,8 +2914,8 @@
       "12GB"
     ],
     "storage_options": [
-      "64GB",
-      "256GB"
+      "64 GB",
+      "256 GB"
     ],
     "default_mrp": 6360,
     "base_resale_value": 4240,
@@ -2964,7 +2936,8 @@
       "4GB"
     ],
     "storage_options": [
-      "128GB"
+      "64 GB",
+      "128 GB"
     ],
     "default_mrp": 9945,
     "base_resale_value": 6630,
@@ -2985,7 +2958,7 @@
       "4GB"
     ],
     "storage_options": [
-      "64GB"
+      "64 GB"
     ],
     "default_mrp": 8520,
     "base_resale_value": 4800,
@@ -3008,7 +2981,7 @@
       "8GB"
     ],
     "storage_options": [
-      "128GB"
+      "128 GB"
     ],
     "default_mrp": 7455,
     "base_resale_value": 5800,
@@ -3032,8 +3005,8 @@
       "12GB"
     ],
     "storage_options": [
-      "64GB",
-      "256GB"
+      "64 GB",
+      "256 GB"
     ],
     "default_mrp": 7665,
     "base_resale_value": 4600,
@@ -3057,8 +3030,8 @@
       "12GB"
     ],
     "storage_options": [
-      "64GB",
-      "256GB"
+      "64 GB",
+      "256 GB"
     ],
     "default_mrp": 8565,
     "base_resale_value": 4900,
@@ -3081,8 +3054,8 @@
       "8GB"
     ],
     "storage_options": [
-      "64GB",
-      "128GB"
+      "64 GB",
+      "128 GB"
     ],
     "default_mrp": 9105,
     "base_resale_value": 5200,
@@ -3105,7 +3078,7 @@
       "8GB"
     ],
     "storage_options": [
-      "128GB"
+      "128 GB"
     ],
     "default_mrp": 13515,
     "base_resale_value": 7200,
@@ -3128,7 +3101,7 @@
       "8GB"
     ],
     "storage_options": [
-      "128GB"
+      "128 GB"
     ],
     "default_mrp": 16050,
     "base_resale_value": 10700,
@@ -3151,8 +3124,8 @@
       "12GB"
     ],
     "storage_options": [
-      "64GB",
-      "256GB"
+      "64 GB",
+      "256 GB"
     ],
     "default_mrp": 17325,
     "base_resale_value": 11550,
@@ -3175,8 +3148,8 @@
       "12GB"
     ],
     "storage_options": [
-      "128GB",
-      "256GB"
+      "128 GB",
+      "256 GB"
     ],
     "default_mrp": 20040,
     "base_resale_value": 13360,
@@ -3199,8 +3172,8 @@
       "12GB"
     ],
     "storage_options": [
-      "64GB",
-      "256GB"
+      "64 GB",
+      "256 GB"
     ],
     "default_mrp": 8955,
     "base_resale_value": 5400,
@@ -3222,7 +3195,7 @@
       "4GB"
     ],
     "storage_options": [
-      "64GB"
+      "64 GB"
     ],
     "default_mrp": 8055,
     "base_resale_value": 5500,
@@ -3245,7 +3218,7 @@
       "8GB"
     ],
     "storage_options": [
-      "128GB"
+      "128 GB"
     ],
     "default_mrp": 13305,
     "base_resale_value": 7600,
@@ -3269,8 +3242,8 @@
       "12GB"
     ],
     "storage_options": [
-      "64GB",
-      "256GB"
+      "64 GB",
+      "256 GB"
     ],
     "default_mrp": 10740,
     "base_resale_value": 5900,
@@ -3293,8 +3266,8 @@
       "6GB"
     ],
     "storage_options": [
-      "64GB",
-      "128GB"
+      "64 GB",
+      "128 GB"
     ],
     "default_mrp": 8595,
     "base_resale_value": 6400,
@@ -3317,8 +3290,8 @@
       "12GB"
     ],
     "storage_options": [
-      "128GB",
-      "256GB"
+      "128 GB",
+      "256 GB"
     ],
     "default_mrp": 18510,
     "base_resale_value": 8820,
@@ -3342,8 +3315,8 @@
       "12GB"
     ],
     "storage_options": [
-      "128GB",
-      "256GB"
+      "128 GB",
+      "256 GB"
     ],
     "default_mrp": 16860,
     "base_resale_value": 11240,
@@ -3366,8 +3339,8 @@
       "12GB"
     ],
     "storage_options": [
-      "64GB",
-      "256GB"
+      "64 GB",
+      "256 GB"
     ],
     "default_mrp": 5745,
     "base_resale_value": 3830,
@@ -3390,8 +3363,8 @@
       "12GB"
     ],
     "storage_options": [
-      "128GB",
-      "256GB"
+      "128 GB",
+      "256 GB"
     ],
     "default_mrp": 11055,
     "base_resale_value": 6120,
@@ -3414,7 +3387,7 @@
       "8GB"
     ],
     "storage_options": [
-      "128GB"
+      "128 GB"
     ],
     "default_mrp": 13050,
     "base_resale_value": 7200,
@@ -3437,8 +3410,8 @@
       "12GB"
     ],
     "storage_options": [
-      "128GB",
-      "256GB"
+      "128 GB",
+      "256 GB"
     ],
     "default_mrp": 16785,
     "base_resale_value": 10340,
@@ -3462,8 +3435,8 @@
       "12GB"
     ],
     "storage_options": [
-      "128GB",
-      "256GB"
+      "128 GB",
+      "256 GB"
     ],
     "default_mrp": 18750,
     "base_resale_value": 12500,
@@ -3486,8 +3459,8 @@
       "12GB"
     ],
     "storage_options": [
-      "64GB",
-      "256GB"
+      "64 GB",
+      "256 GB"
     ],
     "default_mrp": 5295,
     "base_resale_value": 3530,
@@ -3510,8 +3483,8 @@
       "12GB"
     ],
     "storage_options": [
-      "64GB",
-      "256GB"
+      "64 GB",
+      "256 GB"
     ],
     "default_mrp": 5775,
     "base_resale_value": 3850,
@@ -3534,8 +3507,8 @@
       "12GB"
     ],
     "storage_options": [
-      "128GB",
-      "256GB"
+      "128 GB",
+      "256 GB"
     ],
     "default_mrp": 13515,
     "base_resale_value": 7400,
@@ -3557,7 +3530,7 @@
       "6GB"
     ],
     "storage_options": [
-      "128GB"
+      "128 GB"
     ],
     "default_mrp": 10110,
     "base_resale_value": 7800,
@@ -3579,7 +3552,7 @@
       "8GB"
     ],
     "storage_options": [
-      "128GB"
+      "128 GB"
     ],
     "default_mrp": 14820,
     "base_resale_value": 8150,
@@ -3603,8 +3576,8 @@
       "12GB"
     ],
     "storage_options": [
-      "64GB",
-      "256GB"
+      "64 GB",
+      "256 GB"
     ],
     "default_mrp": 6855,
     "base_resale_value": 4570,
@@ -3627,8 +3600,8 @@
       "12GB"
     ],
     "storage_options": [
-      "64GB",
-      "256GB"
+      "64 GB",
+      "256 GB"
     ],
     "default_mrp": 6855,
     "base_resale_value": 3400,
@@ -3651,7 +3624,7 @@
       "8GB"
     ],
     "storage_options": [
-      "128GB"
+      "128 GB"
     ],
     "default_mrp": 13590,
     "base_resale_value": 9200,
@@ -3673,7 +3646,7 @@
       "12GB"
     ],
     "storage_options": [
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 19999,
     "base_resale_value": 11800,
@@ -3696,8 +3669,8 @@
       "12GB"
     ],
     "storage_options": [
-      "128GB",
-      "256GB"
+      "128 GB",
+      "256 GB"
     ],
     "default_mrp": 17250,
     "base_resale_value": 14210,
@@ -3721,8 +3694,8 @@
       "12GB"
     ],
     "storage_options": [
-      "128GB",
-      "256GB"
+      "128 GB",
+      "256 GB"
     ],
     "default_mrp": 21480,
     "base_resale_value": 14320,
@@ -3745,8 +3718,8 @@
       "12GB"
     ],
     "storage_options": [
-      "64GB",
-      "256GB"
+      "64 GB",
+      "256 GB"
     ],
     "default_mrp": 7050,
     "base_resale_value": 4100,
@@ -3770,8 +3743,8 @@
       "12GB"
     ],
     "storage_options": [
-      "64GB",
-      "256GB"
+      "64 GB",
+      "256 GB"
     ],
     "default_mrp": 7005,
     "base_resale_value": 4500,
@@ -3795,8 +3768,8 @@
       "12GB"
     ],
     "storage_options": [
-      "128GB",
-      "256GB"
+      "128 GB",
+      "256 GB"
     ],
     "default_mrp": 21555,
     "base_resale_value": 14370,
@@ -3819,8 +3792,8 @@
       "12GB"
     ],
     "storage_options": [
-      "64GB",
-      "256GB"
+      "64 GB",
+      "256 GB"
     ],
     "default_mrp": 5850,
     "base_resale_value": 3900,
@@ -3843,8 +3816,8 @@
       "12GB"
     ],
     "storage_options": [
-      "128GB",
-      "256GB"
+      "128 GB",
+      "256 GB"
     ],
     "default_mrp": 17100,
     "base_resale_value": 14900,
@@ -3866,7 +3839,7 @@
       "8GB"
     ],
     "storage_options": [
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 30690,
     "base_resale_value": 18200,
@@ -3889,7 +3862,8 @@
       "12GB"
     ],
     "storage_options": [
-      "256GB"
+      "256 GB",
+      "512 GB"
     ],
     "default_mrp": 36870,
     "base_resale_value": 24500,
@@ -3911,7 +3885,7 @@
       "8GB"
     ],
     "storage_options": [
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 37920,
     "base_resale_value": 29500,
@@ -3933,7 +3907,7 @@
       "12GB"
     ],
     "storage_options": [
-      "512GB"
+      "512 GB"
     ],
     "default_mrp": 49950,
     "base_resale_value": 39800,
@@ -3956,8 +3930,8 @@
       "12GB"
     ],
     "storage_options": [
-      "256GB",
-      "512GB"
+      "256 GB",
+      "512 GB"
     ],
     "default_mrp": 42720,
     "base_resale_value": 28480,
@@ -3979,8 +3953,8 @@
       "16GB"
     ],
     "storage_options": [
-      "256GB",
-      "512GB"
+      "256 GB",
+      "512 GB"
     ],
     "default_mrp": 71565,
     "base_resale_value": 47710,
@@ -4003,7 +3977,7 @@
       "12GB"
     ],
     "storage_options": [
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 56355,
     "base_resale_value": 37570,
@@ -4026,8 +4000,8 @@
       "12GB"
     ],
     "storage_options": [
-      "64GB",
-      "256GB"
+      "64 GB",
+      "256 GB"
     ],
     "default_mrp": 5340,
     "base_resale_value": 2900,
@@ -4051,8 +4025,8 @@
       "12GB"
     ],
     "storage_options": [
-      "128GB",
-      "256GB"
+      "128 GB",
+      "256 GB"
     ],
     "default_mrp": 6555,
     "base_resale_value": 3600,
@@ -4076,8 +4050,8 @@
       "12GB"
     ],
     "storage_options": [
-      "128GB",
-      "256GB"
+      "128 GB",
+      "256 GB"
     ],
     "default_mrp": 9990,
     "base_resale_value": 4890,
@@ -4101,8 +4075,8 @@
       "12GB"
     ],
     "storage_options": [
-      "64GB",
-      "256GB"
+      "64 GB",
+      "256 GB"
     ],
     "default_mrp": 5775,
     "base_resale_value": 3850,
@@ -4125,8 +4099,8 @@
       "12GB"
     ],
     "storage_options": [
-      "64GB",
-      "256GB"
+      "64 GB",
+      "256 GB"
     ],
     "default_mrp": 6165,
     "base_resale_value": 2800,
@@ -4150,8 +4124,8 @@
       "12GB"
     ],
     "storage_options": [
-      "128GB",
-      "256GB"
+      "128 GB",
+      "256 GB"
     ],
     "default_mrp": 6195,
     "base_resale_value": 3700,
@@ -4174,8 +4148,8 @@
       "12GB"
     ],
     "storage_options": [
-      "128GB",
-      "256GB"
+      "128 GB",
+      "256 GB"
     ],
     "default_mrp": 25950,
     "base_resale_value": 17300,
@@ -4198,9 +4172,9 @@
       "12GB"
     ],
     "storage_options": [
-      "128GB",
-      "256GB",
-      "512GB"
+      "128 GB",
+      "256 GB",
+      "512 GB"
     ],
     "default_mrp": 44999,
     "base_resale_value": 25450,
@@ -4223,8 +4197,8 @@
       "12GB"
     ],
     "storage_options": [
-      "128GB",
-      "256GB"
+      "128 GB",
+      "256 GB"
     ],
     "default_mrp": 23999,
     "base_resale_value": 16450,
@@ -4247,7 +4221,7 @@
       "12GB"
     ],
     "storage_options": [
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 32700,
     "base_resale_value": 21800,
@@ -4266,13 +4240,13 @@
     "model": "13",
     "release_year": 2025,
     "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
+      "12GB",
+      "16GB",
+      "24GB"
     ],
     "storage_options": [
       "256 GB",
-      "256GB"
+      "512 GB"
     ],
     "default_mrp": 69999,
     "base_resale_value": 52000,
@@ -4297,7 +4271,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 42999,
     "base_resale_value": 32000,
@@ -4316,13 +4290,12 @@
     "model": "12",
     "release_year": 2024,
     "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
+      "12GB",
+      "16GB"
     ],
     "storage_options": [
       "256 GB",
-      "256GB"
+      "512 GB"
     ],
     "default_mrp": 64999,
     "base_resale_value": 44000,
@@ -4341,13 +4314,12 @@
     "model": "12R",
     "release_year": 2024,
     "ram_options": [
-      "6GB",
       "8GB",
-      "12GB"
+      "16GB"
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 39999,
     "base_resale_value": 27000,
@@ -4366,13 +4338,12 @@
     "model": "10 Pro",
     "release_year": 2022,
     "ram_options": [
-      "6GB",
       "8GB",
       "12GB"
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 66999,
     "base_resale_value": 24000,
@@ -4391,13 +4362,13 @@
     "model": "10T",
     "release_year": 2022,
     "ram_options": [
-      "6GB",
       "8GB",
-      "12GB"
+      "12GB",
+      "16GB"
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 49999,
     "base_resale_value": 18000,
@@ -4416,13 +4387,12 @@
     "model": "9 Pro",
     "release_year": 2021,
     "ram_options": [
-      "6GB",
       "8GB",
       "12GB"
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 64999,
     "base_resale_value": 18000,
@@ -4441,13 +4411,12 @@
     "model": "9RT",
     "release_year": 2021,
     "ram_options": [
-      "6GB",
       "8GB",
       "12GB"
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 42999,
     "base_resale_value": 14000,
@@ -4466,13 +4435,12 @@
     "model": "9",
     "release_year": 2021,
     "ram_options": [
-      "6GB",
       "8GB",
       "12GB"
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 49999,
     "base_resale_value": 15000,
@@ -4497,7 +4465,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 39999,
     "base_resale_value": 13000,
@@ -4516,13 +4484,12 @@
     "model": "8 Pro",
     "release_year": 2020,
     "ram_options": [
-      "6GB",
       "8GB",
       "12GB"
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 54999,
     "base_resale_value": 12500,
@@ -4541,13 +4508,12 @@
     "model": "8T",
     "release_year": 2020,
     "ram_options": [
-      "6GB",
       "8GB",
       "12GB"
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 42999,
     "base_resale_value": 10500,
@@ -4572,7 +4538,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 41999,
     "base_resale_value": 9800,
@@ -4596,8 +4562,7 @@
       "12GB"
     ],
     "storage_options": [
-      "256 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 53999,
     "base_resale_value": 9200,
@@ -4622,7 +4587,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 37999,
     "base_resale_value": 7800,
@@ -4647,7 +4612,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 48999,
     "base_resale_value": 8800,
@@ -4672,7 +4637,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 32999,
     "base_resale_value": 6800,
@@ -4697,7 +4662,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 24999,
     "base_resale_value": 16000,
@@ -4722,7 +4687,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 19999,
     "base_resale_value": 12500,
@@ -4745,7 +4710,7 @@
       "8GB"
     ],
     "storage_options": [
-      "128GB"
+      "128 GB"
     ],
     "default_mrp": 18999,
     "base_resale_value": 9000,
@@ -4770,7 +4735,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 22999,
     "base_resale_value": 8000,
@@ -4795,7 +4760,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 24999,
     "base_resale_value": 7500,
@@ -4820,7 +4785,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 19999,
     "base_resale_value": 8500,
@@ -4839,13 +4804,10 @@
     "model": "Open",
     "release_year": 2023,
     "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
+      "16GB"
     ],
     "storage_options": [
-      "512 GB",
-      "256GB"
+      "512 GB"
     ],
     "default_mrp": 139999,
     "base_resale_value": 68000,
@@ -4870,7 +4832,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 37999,
     "base_resale_value": 5800,
@@ -4895,7 +4857,7 @@
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 34999,
     "base_resale_value": 4800,
@@ -4920,7 +4882,7 @@
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 32999,
     "base_resale_value": 3800,
@@ -4945,7 +4907,7 @@
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 32999,
     "base_resale_value": 3200,
@@ -4970,7 +4932,7 @@
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 29999,
     "base_resale_value": 2600,
@@ -4995,7 +4957,7 @@
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 27999,
     "base_resale_value": 2200,
@@ -5014,13 +4976,12 @@
     "model": "A16",
     "release_year": 2024,
     "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
+      "3GB",
+      "4GB"
     ],
     "storage_options": [
-      "64 GB",
-      "256GB"
+      "32 GB",
+      "64 GB"
     ],
     "default_mrp": 13999,
     "base_resale_value": 4500,
@@ -5039,13 +5000,10 @@
     "model": "A17",
     "release_year": 2017,
     "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
+      "4GB"
     ],
     "storage_options": [
-      "64 GB",
-      "256GB"
+      "64 GB"
     ],
     "default_mrp": 8595,
     "base_resale_value": 7130,
@@ -5070,7 +5028,7 @@
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 9999,
     "base_resale_value": 7500,
@@ -5095,7 +5053,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 18285,
     "base_resale_value": 12190,
@@ -5119,7 +5077,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 20520,
     "base_resale_value": 11020,
@@ -5144,7 +5102,7 @@
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 8610,
     "base_resale_value": 7260,
@@ -5169,7 +5127,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 12999,
     "base_resale_value": 8000,
@@ -5194,7 +5152,7 @@
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 7635,
     "base_resale_value": 6510,
@@ -5219,7 +5177,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 22245,
     "base_resale_value": 14830,
@@ -5243,7 +5201,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 9390,
     "base_resale_value": 7910,
@@ -5262,13 +5220,12 @@
     "model": "A53",
     "release_year": 2022,
     "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
+      "4GB",
+      "6GB"
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "128 GB"
     ],
     "default_mrp": 9465,
     "base_resale_value": 7940,
@@ -5293,7 +5250,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 14999,
     "base_resale_value": 7500,
@@ -5312,13 +5269,12 @@
     "model": "A54",
     "release_year": 2022,
     "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
+      "4GB",
+      "6GB"
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "128 GB"
     ],
     "default_mrp": 13999,
     "base_resale_value": 6500,
@@ -5343,7 +5299,7 @@
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 15499,
     "base_resale_value": 6800,
@@ -5368,7 +5324,7 @@
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 9540,
     "base_resale_value": 7430,
@@ -5393,7 +5349,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 15999,
     "base_resale_value": 9800,
@@ -5418,7 +5374,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 14999,
     "base_resale_value": 10500,
@@ -5443,7 +5399,7 @@
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 11790,
     "base_resale_value": 7860,
@@ -5467,7 +5423,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 23835,
     "base_resale_value": 15890,
@@ -5491,7 +5447,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 25425,
     "base_resale_value": 16950,
@@ -5515,7 +5471,7 @@
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 17160,
     "base_resale_value": 11440,
@@ -5539,7 +5495,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 21330,
     "base_resale_value": 14220,
@@ -5563,7 +5519,7 @@
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 16635,
     "base_resale_value": 11090,
@@ -5587,7 +5543,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 17999,
     "base_resale_value": 8500,
@@ -5612,7 +5568,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 11235,
     "base_resale_value": 7870,
@@ -5637,7 +5593,7 @@
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 7605,
     "base_resale_value": 7740,
@@ -5662,7 +5618,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 10995,
     "base_resale_value": 8780,
@@ -5681,13 +5637,10 @@
     "model": "A78 5G",
     "release_year": 2017,
     "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
+      "8GB"
     ],
     "storage_options": [
-      "128 GB",
-      "256GB"
+      "128 GB"
     ],
     "default_mrp": 18999,
     "base_resale_value": 11000,
@@ -5712,7 +5665,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 19999,
     "base_resale_value": 12000,
@@ -5737,7 +5690,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 8955,
     "base_resale_value": 6730,
@@ -5762,7 +5715,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 8895,
     "base_resale_value": 6730,
@@ -5787,7 +5740,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 11250,
     "base_resale_value": 8690,
@@ -5812,7 +5765,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 19999,
     "base_resale_value": 4800,
@@ -5837,7 +5790,7 @@
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 24999,
     "base_resale_value": 5500,
@@ -5862,7 +5815,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 27999,
     "base_resale_value": 6200,
@@ -5887,7 +5840,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 19999,
     "base_resale_value": 6500,
@@ -5912,7 +5865,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 17999,
     "base_resale_value": 7000,
@@ -5937,7 +5890,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 22999,
     "base_resale_value": 7800,
@@ -5962,7 +5915,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 18999,
     "base_resale_value": 8000,
@@ -5987,7 +5940,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 21499,
     "base_resale_value": 8800,
@@ -6012,7 +5965,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 25999,
     "base_resale_value": 9500,
@@ -6037,7 +5990,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 19999,
     "base_resale_value": 8000,
@@ -6062,7 +6015,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 26999,
     "base_resale_value": 10500,
@@ -6087,7 +6040,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 25999,
     "base_resale_value": 11000,
@@ -6112,7 +6065,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 19999,
     "base_resale_value": 12000,
@@ -6137,7 +6090,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 23999,
     "base_resale_value": 15000,
@@ -6162,7 +6115,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 22999,
     "base_resale_value": 14000,
@@ -6187,7 +6140,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 27999,
     "base_resale_value": 16500,
@@ -6212,7 +6165,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 26175,
     "base_resale_value": 17450,
@@ -6236,7 +6189,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 26790,
     "base_resale_value": 17860,
@@ -6260,7 +6213,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 28680,
     "base_resale_value": 19120,
@@ -6284,7 +6237,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 30885,
     "base_resale_value": 20590,
@@ -6307,8 +6260,7 @@
       "12GB"
     ],
     "storage_options": [
-      "256 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 35655,
     "base_resale_value": 23770,
@@ -6332,7 +6284,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 32775,
     "base_resale_value": 21850,
@@ -6356,7 +6308,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 36330,
     "base_resale_value": 24220,
@@ -6380,7 +6332,7 @@
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 21999,
     "base_resale_value": 3200,
@@ -6405,7 +6357,7 @@
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 19999,
     "base_resale_value": 3500,
@@ -6430,7 +6382,7 @@
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 23999,
     "base_resale_value": 4000,
@@ -6454,8 +6406,7 @@
       "12GB"
     ],
     "storage_options": [
-      "256 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 13215,
     "base_resale_value": 15780,
@@ -6479,8 +6430,7 @@
       "12GB"
     ],
     "storage_options": [
-      "256 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 19065,
     "base_resale_value": 13000,
@@ -6504,8 +6454,7 @@
       "12GB"
     ],
     "storage_options": [
-      "256 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 74999,
     "base_resale_value": 28000,
@@ -6529,8 +6478,7 @@
       "12GB"
     ],
     "storage_options": [
-      "256 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 66765,
     "base_resale_value": 44510,
@@ -6554,7 +6502,7 @@
     ],
     "storage_options": [
       "512 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 93975,
     "base_resale_value": 62650,
@@ -6578,7 +6526,7 @@
     ],
     "storage_options": [
       "512 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 118875,
     "base_resale_value": 79250,
@@ -6601,8 +6549,7 @@
       "12GB"
     ],
     "storage_options": [
-      "256 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 63825,
     "base_resale_value": 42550,
@@ -6626,7 +6573,7 @@
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 7365,
     "base_resale_value": 7030,
@@ -6651,7 +6598,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 17499,
     "base_resale_value": 10000,
@@ -6676,7 +6623,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 12999,
     "base_resale_value": 11000,
@@ -6701,7 +6648,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 22395,
     "base_resale_value": 14930,
@@ -6725,7 +6672,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 27750,
     "base_resale_value": 18500,
@@ -6748,8 +6695,7 @@
       "12GB"
     ],
     "storage_options": [
-      "256 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 33120,
     "base_resale_value": 22080,
@@ -6773,7 +6719,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 14970,
     "base_resale_value": 9980,
@@ -6797,7 +6743,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 20805,
     "base_resale_value": 13870,
@@ -6821,7 +6767,7 @@
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 17325,
     "base_resale_value": 11550,
@@ -6845,7 +6791,7 @@
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 8670,
     "base_resale_value": 8000,
@@ -6870,7 +6816,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 9045,
     "base_resale_value": 6940,
@@ -6895,7 +6841,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 10185,
     "base_resale_value": 8600,
@@ -6920,7 +6866,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 32999,
     "base_resale_value": 17000,
@@ -6944,8 +6890,7 @@
       "12GB"
     ],
     "storage_options": [
-      "256 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 39999,
     "base_resale_value": 20000,
@@ -6969,8 +6914,7 @@
       "12GB"
     ],
     "storage_options": [
-      "256 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 54999,
     "base_resale_value": 26000,
@@ -6995,7 +6939,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 49999,
     "base_resale_value": 8500,
@@ -7014,13 +6958,11 @@
     "model": "Reno 11 5G",
     "release_year": 2019,
     "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
+      "8GB"
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 29999,
     "base_resale_value": 18000,
@@ -7039,13 +6981,10 @@
     "model": "Reno 11 Pro 5G",
     "release_year": 2019,
     "ram_options": [
-      "6GB",
-      "8GB",
       "12GB"
     ],
     "storage_options": [
-      "256 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 39999,
     "base_resale_value": 22000,
@@ -7064,13 +7003,10 @@
     "model": "Reno 12 5G",
     "release_year": 2020,
     "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
+      "8GB"
     ],
     "storage_options": [
-      "256 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 32999,
     "base_resale_value": 21000,
@@ -7089,13 +7025,11 @@
     "model": "Reno 12 Pro 5G",
     "release_year": 2024,
     "ram_options": [
-      "6GB",
-      "8GB",
       "12GB"
     ],
     "storage_options": [
       "256 GB",
-      "256GB"
+      "512 GB"
     ],
     "default_mrp": 36999,
     "base_resale_value": 26000,
@@ -7119,8 +7053,7 @@
       "12GB"
     ],
     "storage_options": [
-      "256 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 37020,
     "base_resale_value": 24680,
@@ -7143,8 +7076,7 @@
       "12GB"
     ],
     "storage_options": [
-      "256 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 36999,
     "base_resale_value": 6500,
@@ -7168,8 +7100,7 @@
       "12GB"
     ],
     "storage_options": [
-      "256 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 29999,
     "base_resale_value": 6500,
@@ -7194,7 +7125,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 39999,
     "base_resale_value": 12000,
@@ -7218,8 +7149,7 @@
       "12GB"
     ],
     "storage_options": [
-      "256 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 39999,
     "base_resale_value": 13000,
@@ -7244,7 +7174,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 29999,
     "base_resale_value": 12500,
@@ -7268,8 +7198,7 @@
       "12GB"
     ],
     "storage_options": [
-      "256 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 45999,
     "base_resale_value": 15000,
@@ -7294,7 +7223,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 32850,
     "base_resale_value": 21900,
@@ -7317,8 +7246,7 @@
       "12GB"
     ],
     "storage_options": [
-      "256 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 37545,
     "base_resale_value": 25030,
@@ -7341,8 +7269,7 @@
       "12GB"
     ],
     "storage_options": [
-      "256 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 38070,
     "base_resale_value": 25380,
@@ -7365,8 +7292,7 @@
       "12GB"
     ],
     "storage_options": [
-      "256 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 47250,
     "base_resale_value": 31500,
@@ -7389,8 +7315,7 @@
       "12GB"
     ],
     "storage_options": [
-      "256 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 46575,
     "base_resale_value": 31050,
@@ -7413,8 +7338,7 @@
       "12GB"
     ],
     "storage_options": [
-      "256 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 64725,
     "base_resale_value": 43150,
@@ -7437,8 +7361,7 @@
       "12GB"
     ],
     "storage_options": [
-      "256 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 54825,
     "base_resale_value": 36550,
@@ -7461,8 +7384,7 @@
       "12GB"
     ],
     "storage_options": [
-      "256 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 58800,
     "base_resale_value": 39200,
@@ -7486,7 +7408,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 46800,
     "base_resale_value": 31200,
@@ -7509,8 +7431,7 @@
       "12GB"
     ],
     "storage_options": [
-      "256 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 25999,
     "base_resale_value": 6500,
@@ -7535,7 +7456,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 29999,
     "base_resale_value": 7500,
@@ -7560,7 +7481,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 34999,
     "base_resale_value": 8500,
@@ -7585,7 +7506,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 35999,
     "base_resale_value": 10000,
@@ -7610,7 +7531,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 29999,
     "base_resale_value": 10000,
@@ -7634,8 +7555,7 @@
       "12GB"
     ],
     "storage_options": [
-      "256 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 28999,
     "base_resale_value": 11000,
@@ -7660,7 +7580,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 20265,
     "base_resale_value": 13210,
@@ -7682,7 +7602,7 @@
       "4GB"
     ],
     "storage_options": [
-      "64GB"
+      "64 GB"
     ],
     "default_mrp": 9720,
     "base_resale_value": 6480,
@@ -7705,8 +7625,8 @@
       "8GB"
     ],
     "storage_options": [
-      "64GB",
-      "128GB"
+      "64 GB",
+      "128 GB"
     ],
     "default_mrp": 10245,
     "base_resale_value": 6830,
@@ -7728,8 +7648,8 @@
       "6GB"
     ],
     "storage_options": [
-      "64GB",
-      "128GB"
+      "64 GB",
+      "128 GB"
     ],
     "default_mrp": 10350,
     "base_resale_value": 6900,
@@ -7752,8 +7672,8 @@
       "8GB"
     ],
     "storage_options": [
-      "128GB",
-      "256GB"
+      "128 GB",
+      "256 GB"
     ],
     "default_mrp": 10575,
     "base_resale_value": 7050,
@@ -7775,8 +7695,8 @@
       "8GB"
     ],
     "storage_options": [
-      "128GB",
-      "256GB"
+      "128 GB",
+      "256 GB"
     ],
     "default_mrp": 14850,
     "base_resale_value": 9900,
@@ -7799,8 +7719,8 @@
       "12GB"
     ],
     "storage_options": [
-      "128GB",
-      "256GB"
+      "128 GB",
+      "256 GB"
     ],
     "default_mrp": 13440,
     "base_resale_value": 8960,
@@ -7822,7 +7742,7 @@
       "12GB"
     ],
     "storage_options": [
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 21675,
     "base_resale_value": 14450,
@@ -7844,8 +7764,8 @@
       "12GB"
     ],
     "storage_options": [
-      "256GB",
-      "512GB"
+      "256 GB",
+      "512 GB"
     ],
     "default_mrp": 29999,
     "base_resale_value": 18450,
@@ -7866,8 +7786,8 @@
       "6GB"
     ],
     "storage_options": [
-      "64GB",
-      "128GB"
+      "64 GB",
+      "128 GB"
     ],
     "default_mrp": 8505,
     "base_resale_value": 5670,
@@ -7889,8 +7809,8 @@
       "6GB"
     ],
     "storage_options": [
-      "64GB",
-      "128GB"
+      "64 GB",
+      "128 GB"
     ],
     "default_mrp": 9375,
     "base_resale_value": 6250,
@@ -7911,7 +7831,7 @@
       "4GB"
     ],
     "storage_options": [
-      "64GB"
+      "64 GB"
     ],
     "default_mrp": 7440,
     "base_resale_value": 4960,
@@ -7932,8 +7852,8 @@
       "6GB"
     ],
     "storage_options": [
-      "64GB",
-      "128GB"
+      "64 GB",
+      "128 GB"
     ],
     "default_mrp": 9225,
     "base_resale_value": 6150,
@@ -7955,8 +7875,8 @@
       "6GB"
     ],
     "storage_options": [
-      "64GB",
-      "128GB"
+      "64 GB",
+      "128 GB"
     ],
     "default_mrp": 11820,
     "base_resale_value": 7880,
@@ -7978,8 +7898,8 @@
       "6GB"
     ],
     "storage_options": [
-      "64GB",
-      "128GB"
+      "64 GB",
+      "128 GB"
     ],
     "default_mrp": 11790,
     "base_resale_value": 7860,
@@ -8002,8 +7922,8 @@
       "8GB"
     ],
     "storage_options": [
-      "64GB",
-      "128GB"
+      "64 GB",
+      "128 GB"
     ],
     "default_mrp": 10050,
     "base_resale_value": 6700,
@@ -8025,8 +7945,8 @@
       "6GB"
     ],
     "storage_options": [
-      "64GB",
-      "128GB"
+      "64 GB",
+      "128 GB"
     ],
     "default_mrp": 8700,
     "base_resale_value": 5800,
@@ -8049,9 +7969,9 @@
       "8GB"
     ],
     "storage_options": [
-      "64GB",
-      "128GB",
-      "256GB"
+      "64 GB",
+      "128 GB",
+      "256 GB"
     ],
     "default_mrp": 11535,
     "base_resale_value": 7690,
@@ -8073,7 +7993,7 @@
       "8GB"
     ],
     "storage_options": [
-      "128GB"
+      "128 GB"
     ],
     "default_mrp": 12615,
     "base_resale_value": 8410,
@@ -8096,9 +8016,9 @@
       "8GB"
     ],
     "storage_options": [
-      "64GB",
-      "128GB",
-      "256GB"
+      "64 GB",
+      "128 GB",
+      "256 GB"
     ],
     "default_mrp": 12999,
     "base_resale_value": 8580,
@@ -8120,8 +8040,8 @@
       "8GB"
     ],
     "storage_options": [
-      "64GB",
-      "128GB"
+      "64 GB",
+      "128 GB"
     ],
     "default_mrp": 9750,
     "base_resale_value": 6500,
@@ -8143,7 +8063,7 @@
       "8GB"
     ],
     "storage_options": [
-      "128GB"
+      "128 GB"
     ],
     "default_mrp": 10725,
     "base_resale_value": 7150,
@@ -8165,8 +8085,8 @@
       "8GB"
     ],
     "storage_options": [
-      "64GB",
-      "128GB"
+      "64 GB",
+      "128 GB"
     ],
     "default_mrp": 12735,
     "base_resale_value": 8490,
@@ -8188,8 +8108,8 @@
       "8GB"
     ],
     "storage_options": [
-      "128GB",
-      "256GB"
+      "128 GB",
+      "256 GB"
     ],
     "default_mrp": 17925,
     "base_resale_value": 11950,
@@ -8211,8 +8131,8 @@
       "8GB"
     ],
     "storage_options": [
-      "128GB",
-      "256GB"
+      "128 GB",
+      "256 GB"
     ],
     "default_mrp": 19185,
     "base_resale_value": 12790,
@@ -8234,9 +8154,9 @@
       "12GB"
     ],
     "storage_options": [
-      "128GB",
-      "256GB",
-      "512GB"
+      "128 GB",
+      "256 GB",
+      "512 GB"
     ],
     "default_mrp": 24675,
     "base_resale_value": 16450,
@@ -8258,8 +8178,8 @@
       "12GB"
     ],
     "storage_options": [
-      "128GB",
-      "256GB"
+      "128 GB",
+      "256 GB"
     ],
     "default_mrp": 16065,
     "base_resale_value": 10710,
@@ -8281,8 +8201,8 @@
       "12GB"
     ],
     "storage_options": [
-      "256GB",
-      "512GB"
+      "256 GB",
+      "512 GB"
     ],
     "default_mrp": 26999,
     "base_resale_value": 16350,
@@ -8306,7 +8226,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 14999,
     "base_resale_value": 9000,
@@ -8331,7 +8251,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 18999,
     "base_resale_value": 10500,
@@ -8356,7 +8276,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 24999,
     "base_resale_value": 12500,
@@ -8381,7 +8301,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 18999,
     "base_resale_value": 11000,
@@ -8400,13 +8320,12 @@
     "model": "11 Pro 5G",
     "release_year": 2019,
     "ram_options": [
-      "6GB",
       "8GB",
       "12GB"
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 23999,
     "base_resale_value": 13500,
@@ -8429,7 +8348,7 @@
       "12GB"
     ],
     "storage_options": [
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 27999,
     "base_resale_value": 15000,
@@ -8457,7 +8376,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 14999,
     "base_resale_value": 9800,
@@ -8482,7 +8401,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 16999,
     "base_resale_value": 12000,
@@ -8501,13 +8420,11 @@
     "model": "12 Pro 5G",
     "release_year": 2020,
     "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
+      "8GB"
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 25999,
     "base_resale_value": 15500,
@@ -8526,13 +8443,12 @@
     "model": "12 Pro+ 5G",
     "release_year": 2024,
     "ram_options": [
-      "6GB",
       "8GB",
       "12GB"
     ],
     "storage_options": [
-      "256 GB",
-      "256GB"
+      "128 GB",
+      "256 GB"
     ],
     "default_mrp": 29999,
     "base_resale_value": 18000,
@@ -8557,7 +8473,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 20999,
     "base_resale_value": 14000,
@@ -8582,7 +8498,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 13999,
     "base_resale_value": 10500,
@@ -8607,7 +8523,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 17999,
     "base_resale_value": 14000,
@@ -8632,7 +8548,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 26999,
     "base_resale_value": 19000,
@@ -8656,8 +8572,7 @@
       "12GB"
     ],
     "storage_options": [
-      "256 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 32999,
     "base_resale_value": 22000,
@@ -8682,7 +8597,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 22999,
     "base_resale_value": 16000,
@@ -8707,7 +8622,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 72750,
     "base_resale_value": 48500,
@@ -8731,7 +8646,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 22695,
     "base_resale_value": 15130,
@@ -8755,7 +8670,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 29745,
     "base_resale_value": 19830,
@@ -8779,7 +8694,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 20355,
     "base_resale_value": 13570,
@@ -8803,7 +8718,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 93675,
     "base_resale_value": 62450,
@@ -8827,7 +8742,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 93675,
     "base_resale_value": 62450,
@@ -8851,7 +8766,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 21030,
     "base_resale_value": 14020,
@@ -8875,7 +8790,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 116175,
     "base_resale_value": 77450,
@@ -8899,7 +8814,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 115950,
     "base_resale_value": 77300,
@@ -8923,7 +8838,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 43800,
     "base_resale_value": 29200,
@@ -8947,7 +8862,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 31560,
     "base_resale_value": 21040,
@@ -8971,7 +8886,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 27600,
     "base_resale_value": 18400,
@@ -8995,7 +8910,7 @@
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 13990,
     "base_resale_value": 2500,
@@ -9020,7 +8935,7 @@
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 13999,
     "base_resale_value": 2800,
@@ -9045,7 +8960,7 @@
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 13999,
     "base_resale_value": 3500,
@@ -9070,7 +8985,7 @@
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 9999,
     "base_resale_value": 2800,
@@ -9095,7 +9010,7 @@
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 10999,
     "base_resale_value": 3000,
@@ -9120,7 +9035,7 @@
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 12999,
     "base_resale_value": 3800,
@@ -9145,7 +9060,7 @@
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 16999,
     "base_resale_value": 4500,
@@ -9170,7 +9085,7 @@
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 11999,
     "base_resale_value": 3500,
@@ -9195,7 +9110,7 @@
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 14999,
     "base_resale_value": 4500,
@@ -9220,7 +9135,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 19999,
     "base_resale_value": 5800,
@@ -9245,7 +9160,7 @@
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 11999,
     "base_resale_value": 4000,
@@ -9270,7 +9185,7 @@
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 15999,
     "base_resale_value": 6200,
@@ -9295,7 +9210,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 17999,
     "base_resale_value": 7200,
@@ -9320,7 +9235,7 @@
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 13999,
     "base_resale_value": 5800,
@@ -9345,7 +9260,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 17999,
     "base_resale_value": 6500,
@@ -9370,7 +9285,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 21675,
     "base_resale_value": 7200,
@@ -9395,7 +9310,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 19999,
     "base_resale_value": 9500,
@@ -9420,7 +9335,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 17999,
     "base_resale_value": 9500,
@@ -9445,7 +9360,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 24999,
     "base_resale_value": 11000,
@@ -9470,7 +9385,7 @@
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 14999,
     "base_resale_value": 8000,
@@ -9495,7 +9410,7 @@
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 17025,
     "base_resale_value": 11350,
@@ -9519,7 +9434,7 @@
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 17385,
     "base_resale_value": 11590,
@@ -9543,7 +9458,7 @@
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 9999,
     "base_resale_value": 5500,
@@ -9562,13 +9477,11 @@
     "model": "C35",
     "release_year": 2022,
     "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
+      "4GB"
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "128 GB"
     ],
     "default_mrp": 11999,
     "base_resale_value": 5500,
@@ -9593,7 +9506,7 @@
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 8999,
     "base_resale_value": 5800,
@@ -9612,13 +9525,12 @@
     "model": "C53",
     "release_year": 2022,
     "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
+      "4GB",
+      "6GB"
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "128 GB"
     ],
     "default_mrp": 9999,
     "base_resale_value": 6500,
@@ -9637,13 +9549,13 @@
     "model": "C55",
     "release_year": 2022,
     "ram_options": [
+      "4GB",
       "6GB",
-      "8GB",
-      "12GB"
+      "8GB"
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "128 GB"
     ],
     "default_mrp": 11999,
     "base_resale_value": 7000,
@@ -9668,7 +9580,7 @@
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 7699,
     "base_resale_value": 6500,
@@ -9693,7 +9605,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 8999,
     "base_resale_value": 7500,
@@ -9718,7 +9630,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 10499,
     "base_resale_value": 8500,
@@ -9743,7 +9655,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 13999,
     "base_resale_value": 9500,
@@ -9768,7 +9680,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 10680,
     "base_resale_value": 7120,
@@ -9792,7 +9704,7 @@
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 14445,
     "base_resale_value": 9630,
@@ -9816,7 +9728,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 15960,
     "base_resale_value": 10640,
@@ -9840,7 +9752,7 @@
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 17475,
     "base_resale_value": 11650,
@@ -9864,7 +9776,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 18000,
     "base_resale_value": 12000,
@@ -9888,7 +9800,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 34999,
     "base_resale_value": 14000,
@@ -9913,7 +9825,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 49999,
     "base_resale_value": 18000,
@@ -9938,7 +9850,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 37999,
     "base_resale_value": 13500,
@@ -9962,8 +9874,7 @@
       "12GB"
     ],
     "storage_options": [
-      "256 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 38190,
     "base_resale_value": 25460,
@@ -9986,8 +9897,7 @@
       "12GB"
     ],
     "storage_options": [
-      "256 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 47805,
     "base_resale_value": 31870,
@@ -10010,8 +9920,7 @@
       "12GB"
     ],
     "storage_options": [
-      "256 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 31620,
     "base_resale_value": 21080,
@@ -10034,8 +9943,7 @@
       "12GB"
     ],
     "storage_options": [
-      "256 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 61860,
     "base_resale_value": 41240,
@@ -10059,7 +9967,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 25999,
     "base_resale_value": 9500,
@@ -10084,7 +9992,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 31999,
     "base_resale_value": 12000,
@@ -10109,7 +10017,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 36999,
     "base_resale_value": 15000,
@@ -10134,7 +10042,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 29999,
     "base_resale_value": 14000,
@@ -10159,7 +10067,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 11999,
     "base_resale_value": 4500,
@@ -10184,7 +10092,7 @@
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 16635,
     "base_resale_value": 11090,
@@ -10208,7 +10116,7 @@
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 10499,
     "base_resale_value": 4500,
@@ -10233,7 +10141,7 @@
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 14999,
     "base_resale_value": 5500,
@@ -10258,7 +10166,7 @@
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 12499,
     "base_resale_value": 6000,
@@ -10283,7 +10191,7 @@
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 16999,
     "base_resale_value": 7000,
@@ -10308,7 +10216,7 @@
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 12999,
     "base_resale_value": 7500,
@@ -10333,7 +10241,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 21999,
     "base_resale_value": 9000,
@@ -10358,7 +10266,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 17999,
     "base_resale_value": 10000,
@@ -10383,7 +10291,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 23999,
     "base_resale_value": 13000,
@@ -10408,7 +10316,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 12999,
     "base_resale_value": 8800,
@@ -10433,7 +10341,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 14999,
     "base_resale_value": 10500,
@@ -10458,7 +10366,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 19999,
     "base_resale_value": 14000,
@@ -10483,7 +10391,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 16999,
     "base_resale_value": 12500,
@@ -10508,7 +10416,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 11999,
     "base_resale_value": 9000,
@@ -10533,7 +10441,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 20655,
     "base_resale_value": 13770,
@@ -10557,7 +10465,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 17400,
     "base_resale_value": 11600,
@@ -10581,7 +10489,7 @@
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 8999,
     "base_resale_value": 6500,
@@ -10606,7 +10514,7 @@
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 10999,
     "base_resale_value": 7000,
@@ -10631,7 +10539,7 @@
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 8715,
     "base_resale_value": 5810,
@@ -10655,7 +10563,7 @@
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 9210,
     "base_resale_value": 5400,
@@ -10680,7 +10588,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 11685,
     "base_resale_value": 5400,
@@ -10705,7 +10613,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 29370,
     "base_resale_value": 19580,
@@ -10729,7 +10637,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 15999,
     "base_resale_value": 11500,
@@ -10754,7 +10662,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 21999,
     "base_resale_value": 14000,
@@ -10779,7 +10687,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 24999,
     "base_resale_value": 16500,
@@ -10804,7 +10712,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 18840,
     "base_resale_value": 12560,
@@ -10828,7 +10736,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 13785,
     "base_resale_value": 9190,
@@ -10852,7 +10760,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 22395,
     "base_resale_value": 14930,
@@ -10876,7 +10784,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 24285,
     "base_resale_value": 16190,
@@ -10900,7 +10808,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 16035,
     "base_resale_value": 10690,
@@ -10924,7 +10832,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 23610,
     "base_resale_value": 15740,
@@ -10948,7 +10856,7 @@
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 14295,
     "base_resale_value": 9530,
@@ -10972,7 +10880,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 29520,
     "base_resale_value": 19680,
@@ -10996,7 +10904,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 27240,
     "base_resale_value": 18160,
@@ -11020,7 +10928,7 @@
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 21675,
     "base_resale_value": 14450,
@@ -11044,7 +10952,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 36600,
     "base_resale_value": 24400,
@@ -11068,7 +10976,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 18450,
     "base_resale_value": 12300,
@@ -11092,7 +11000,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 16999,
     "base_resale_value": 4500,
@@ -11117,7 +11025,7 @@
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 19999,
     "base_resale_value": 5500,
@@ -11142,7 +11050,7 @@
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 29999,
     "base_resale_value": 7500,
@@ -11167,7 +11075,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 24999,
     "base_resale_value": 6500,
@@ -11192,7 +11100,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 27999,
     "base_resale_value": 7800,
@@ -11217,7 +11125,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 37999,
     "base_resale_value": 10500,
@@ -11242,7 +11150,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 19999,
     "base_resale_value": 6800,
@@ -11267,7 +11175,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 26999,
     "base_resale_value": 9500,
@@ -11292,7 +11200,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 29999,
     "base_resale_value": 8500,
@@ -11317,7 +11225,7 @@
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 15999,
     "base_resale_value": 4800,
@@ -15182,8 +15090,8 @@
       "8GB"
     ],
     "storage_options": [
-      "128GB",
-      "256GB"
+      "128 GB",
+      "256 GB"
     ],
     "default_mrp": 19999,
     "base_resale_value": 11900,
@@ -15204,7 +15112,7 @@
       "8GB"
     ],
     "storage_options": [
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 22999,
     "base_resale_value": 14950,
@@ -15225,7 +15133,7 @@
       "12GB"
     ],
     "storage_options": [
-      "512GB"
+      "512 GB"
     ],
     "default_mrp": 39999,
     "base_resale_value": 24850,
@@ -15246,7 +15154,7 @@
       "8GB"
     ],
     "storage_options": [
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 54999,
     "base_resale_value": 32900,
@@ -15267,8 +15175,8 @@
       "12GB"
     ],
     "storage_options": [
-      "256GB",
-      "512GB"
+      "256 GB",
+      "512 GB"
     ],
     "default_mrp": 88888,
     "base_resale_value": 47000,
@@ -15289,7 +15197,7 @@
       "12GB"
     ],
     "storage_options": [
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 49999,
     "base_resale_value": 24950,
@@ -15310,8 +15218,8 @@
       "8GB"
     ],
     "storage_options": [
-      "128GB",
-      "256GB"
+      "128 GB",
+      "256 GB"
     ],
     "default_mrp": 14999,
     "base_resale_value": 10800,
@@ -15333,8 +15241,8 @@
       "12GB"
     ],
     "storage_options": [
-      "128GB",
-      "256GB"
+      "128 GB",
+      "256 GB"
     ],
     "default_mrp": 19999,
     "base_resale_value": 13450,
@@ -15355,7 +15263,7 @@
       "8GB"
     ],
     "storage_options": [
-      "128GB"
+      "128 GB"
     ],
     "default_mrp": 10499,
     "base_resale_value": 7700,
@@ -15376,7 +15284,7 @@
       "8GB"
     ],
     "storage_options": [
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 16999,
     "base_resale_value": 11400,
@@ -15397,8 +15305,8 @@
       "4GB"
     ],
     "storage_options": [
-      "64GB",
-      "128GB"
+      "64 GB",
+      "128 GB"
     ],
     "default_mrp": 7299,
     "base_resale_value": 5350,
@@ -15421,8 +15329,7 @@
       "12GB"
     ],
     "storage_options": [
-      "256 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 43350,
     "base_resale_value": 28900,
@@ -15445,8 +15352,7 @@
       "12GB"
     ],
     "storage_options": [
-      "256 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 47775,
     "base_resale_value": 31850,
@@ -15470,7 +15376,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 20850,
     "base_resale_value": 13900,
@@ -15494,7 +15400,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 24600,
     "base_resale_value": 16400,
@@ -15518,7 +15424,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 32100,
     "base_resale_value": 21400,
@@ -15542,7 +15448,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 22425,
     "base_resale_value": 14950,
@@ -15566,7 +15472,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 20775,
     "base_resale_value": 13850,
@@ -15589,8 +15495,7 @@
       "12GB"
     ],
     "storage_options": [
-      "256 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 27675,
     "base_resale_value": 18450,
@@ -15614,7 +15519,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 9510,
     "base_resale_value": 10150,
@@ -15639,7 +15544,7 @@
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 8865,
     "base_resale_value": 4790,
@@ -15664,7 +15569,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 10050,
     "base_resale_value": 5200,
@@ -15689,7 +15594,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 19999,
     "base_resale_value": 4000,
@@ -15714,7 +15619,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 11220,
     "base_resale_value": 6760,
@@ -15739,7 +15644,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 15540,
     "base_resale_value": 8570,
@@ -15764,7 +15669,7 @@
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 9630,
     "base_resale_value": 5460,
@@ -15789,7 +15694,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 18960,
     "base_resale_value": 9480,
@@ -15814,7 +15719,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 23999,
     "base_resale_value": 13260,
@@ -15833,13 +15738,12 @@
     "model": "T2x 5G",
     "release_year": 2018,
     "ram_options": [
+      "4GB",
       "6GB",
-      "8GB",
-      "12GB"
+      "8GB"
     ],
     "storage_options": [
-      "128 GB",
-      "256GB"
+      "128 GB"
     ],
     "default_mrp": 17040,
     "base_resale_value": 7240,
@@ -15858,13 +15762,11 @@
     "model": "T3 5G",
     "release_year": 2024,
     "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
+      "8GB"
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 19999,
     "base_resale_value": 12780,
@@ -15889,7 +15791,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 12405,
     "base_resale_value": 7410,
@@ -15908,13 +15810,11 @@
     "model": "T3 Pro 5G",
     "release_year": 2024,
     "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
+      "8GB"
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 24999,
     "base_resale_value": 17680,
@@ -15933,13 +15833,12 @@
     "model": "T3x 5G",
     "release_year": 2024,
     "ram_options": [
+      "4GB",
       "6GB",
-      "8GB",
-      "12GB"
+      "8GB"
     ],
     "storage_options": [
-      "128 GB",
-      "256GB"
+      "128 GB"
     ],
     "default_mrp": 13499,
     "base_resale_value": 9130,
@@ -15964,7 +15863,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 26700,
     "base_resale_value": 17800,
@@ -15988,7 +15887,7 @@
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 12855,
     "base_resale_value": 8570,
@@ -16012,7 +15911,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 29910,
     "base_resale_value": 19940,
@@ -16035,8 +15934,7 @@
       "12GB"
     ],
     "storage_options": [
-      "256 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 37950,
     "base_resale_value": 25300,
@@ -16060,7 +15958,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 23385,
     "base_resale_value": 15590,
@@ -16084,7 +15982,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 18690,
     "base_resale_value": 12460,
@@ -16108,7 +16006,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 37500,
     "base_resale_value": 25000,
@@ -16132,7 +16030,7 @@
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 20775,
     "base_resale_value": 13850,
@@ -16156,7 +16054,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 30525,
     "base_resale_value": 20350,
@@ -16180,7 +16078,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 24060,
     "base_resale_value": 16040,
@@ -16204,7 +16102,7 @@
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 8205,
     "base_resale_value": 3910,
@@ -16229,7 +16127,7 @@
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 7815,
     "base_resale_value": 3190,
@@ -16254,7 +16152,7 @@
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 25990,
     "base_resale_value": 3720,
@@ -16279,7 +16177,7 @@
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 23990,
     "base_resale_value": 4420,
@@ -16304,7 +16202,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 28990,
     "base_resale_value": 5390,
@@ -16329,7 +16227,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 22990,
     "base_resale_value": 5240,
@@ -16354,7 +16252,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 29990,
     "base_resale_value": 6050,
@@ -16379,7 +16277,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 27990,
     "base_resale_value": 6200,
@@ -16404,7 +16302,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 24990,
     "base_resale_value": 6770,
@@ -16429,7 +16327,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 11010,
     "base_resale_value": 16520,
@@ -16454,7 +16352,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 11355,
     "base_resale_value": 5330,
@@ -16479,7 +16377,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 29990,
     "base_resale_value": 8850,
@@ -16504,7 +16402,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 14280,
     "base_resale_value": 7410,
@@ -16529,7 +16427,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 29990,
     "base_resale_value": 10810,
@@ -16554,7 +16452,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 16020,
     "base_resale_value": 8970,
@@ -16579,7 +16477,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 27999,
     "base_resale_value": 11280,
@@ -16604,7 +16502,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 25980,
     "base_resale_value": 12940,
@@ -16629,7 +16527,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 33225,
     "base_resale_value": 23120,
@@ -16654,7 +16552,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 31560,
     "base_resale_value": 17870,
@@ -16679,7 +16577,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 36390,
     "base_resale_value": 26880,
@@ -16704,7 +16602,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 32670,
     "base_resale_value": 21000,
@@ -16729,7 +16627,7 @@
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 5985,
     "base_resale_value": 2440,
@@ -16753,8 +16651,7 @@
       "12GB"
     ],
     "storage_options": [
-      "256 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 50475,
     "base_resale_value": 32490,
@@ -16778,8 +16675,7 @@
       "12GB"
     ],
     "storage_options": [
-      "256 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 55425,
     "base_resale_value": 38870,
@@ -16804,7 +16700,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 38145,
     "base_resale_value": 24070,
@@ -16829,7 +16725,7 @@
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 7050,
     "base_resale_value": 3200,
@@ -16854,7 +16750,7 @@
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 7290,
     "base_resale_value": 3140,
@@ -16879,7 +16775,7 @@
     ],
     "storage_options": [
       "512 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 91170,
     "base_resale_value": 68880,
@@ -16904,7 +16800,7 @@
     ],
     "storage_options": [
       "512 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 121155,
     "base_resale_value": 80770,
@@ -16927,8 +16823,7 @@
       "12GB"
     ],
     "storage_options": [
-      "256 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 54435,
     "base_resale_value": 37330,
@@ -16952,8 +16847,7 @@
       "12GB"
     ],
     "storage_options": [
-      "256 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 58950,
     "base_resale_value": 37310,
@@ -16978,7 +16872,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 8205,
     "base_resale_value": 5470,
@@ -17001,8 +16895,7 @@
       "12GB"
     ],
     "storage_options": [
-      "256 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 70680,
     "base_resale_value": 46120,
@@ -17026,8 +16919,7 @@
       "12GB"
     ],
     "storage_options": [
-      "256 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 71775,
     "base_resale_value": 52310,
@@ -17052,7 +16944,7 @@
     ],
     "storage_options": [
       "512 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 95625,
     "base_resale_value": 62650,
@@ -17077,7 +16969,7 @@
     ],
     "storage_options": [
       "512 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 119910,
     "base_resale_value": 78610,
@@ -17102,7 +16994,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 34990,
     "base_resale_value": 7630,
@@ -17126,8 +17018,7 @@
       "12GB"
     ],
     "storage_options": [
-      "256 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 22605,
     "base_resale_value": 9890,
@@ -17152,7 +17043,7 @@
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 43350,
     "base_resale_value": 30540,
@@ -17177,7 +17068,7 @@
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 6240,
     "base_resale_value": 4160,
@@ -17201,7 +17092,7 @@
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 6510,
     "base_resale_value": 4340,
@@ -17225,7 +17116,7 @@
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 10200,
     "base_resale_value": 3620,
@@ -17250,7 +17141,7 @@
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 15660,
     "base_resale_value": 10440,
@@ -17274,7 +17165,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 24999,
     "base_resale_value": 11750,
@@ -17299,7 +17190,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 18825,
     "base_resale_value": 12520,
@@ -17324,7 +17215,7 @@
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 17400,
     "base_resale_value": 3010,
@@ -17343,13 +17234,11 @@
     "model": "Y12",
     "release_year": 2020,
     "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
+      "3GB"
     ],
     "storage_options": [
-      "64 GB",
-      "256GB"
+      "32 GB",
+      "64 GB"
     ],
     "default_mrp": 8310,
     "base_resale_value": 3590,
@@ -17374,7 +17263,7 @@
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 8325,
     "base_resale_value": 5550,
@@ -17392,13 +17281,13 @@
     "model": "Y16",
     "release_year": 2024,
     "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
+      "3GB",
+      "4GB"
     ],
     "storage_options": [
+      "32 GB",
       "64 GB",
-      "256GB"
+      "128 GB"
     ],
     "default_mrp": 8385,
     "base_resale_value": 4650,
@@ -17423,7 +17312,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 17990,
     "base_resale_value": 5110,
@@ -17448,7 +17337,7 @@
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 11415,
     "base_resale_value": 4910,
@@ -17473,7 +17362,7 @@
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 10410,
     "base_resale_value": 5930,
@@ -17498,7 +17387,7 @@
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 10185,
     "base_resale_value": 5780,
@@ -17523,7 +17412,7 @@
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 10485,
     "base_resale_value": 6990,
@@ -17547,7 +17436,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 13990,
     "base_resale_value": 4190,
@@ -17572,7 +17461,7 @@
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 10905,
     "base_resale_value": 7270,
@@ -17596,7 +17485,7 @@
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 14670,
     "base_resale_value": 9780,
@@ -17614,13 +17503,11 @@
     "model": "Y20",
     "release_year": 2022,
     "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
+      "4GB",
+      "6GB"
     ],
     "storage_options": [
-      "64 GB",
-      "256GB"
+      "64 GB"
     ],
     "default_mrp": 9405,
     "base_resale_value": 3640,
@@ -17639,13 +17526,11 @@
     "model": "Y200 5G",
     "release_year": 2023,
     "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
+      "8GB"
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 21999,
     "base_resale_value": 12850,
@@ -17670,7 +17555,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 24999,
     "base_resale_value": 14930,
@@ -17690,12 +17575,10 @@
     "release_year": 2024,
     "ram_options": [
       "6GB",
-      "8GB",
-      "12GB"
+      "8GB"
     ],
     "storage_options": [
-      "128 GB",
-      "256GB"
+      "128 GB"
     ],
     "default_mrp": 19999,
     "base_resale_value": 11420,
@@ -17720,7 +17603,7 @@
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 8460,
     "base_resale_value": 4070,
@@ -17745,7 +17628,7 @@
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 9360,
     "base_resale_value": 4730,
@@ -17770,7 +17653,7 @@
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 8175,
     "base_resale_value": 4330,
@@ -17795,7 +17678,7 @@
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 10275,
     "base_resale_value": 4590,
@@ -17820,7 +17703,7 @@
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 9315,
     "base_resale_value": 4730,
@@ -17845,7 +17728,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 14990,
     "base_resale_value": 7500,
@@ -17870,7 +17753,7 @@
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 9135,
     "base_resale_value": 6090,
@@ -17894,7 +17777,7 @@
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 8925,
     "base_resale_value": 4760,
@@ -17919,7 +17802,7 @@
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 9720,
     "base_resale_value": 4760,
@@ -17944,7 +17827,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 10245,
     "base_resale_value": 5090,
@@ -17969,7 +17852,7 @@
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 9735,
     "base_resale_value": 6490,
@@ -17993,7 +17876,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 13545,
     "base_resale_value": 6690,
@@ -18012,13 +17895,12 @@
     "model": "Y28 5G",
     "release_year": 2024,
     "ram_options": [
+      "4GB",
       "6GB",
-      "8GB",
-      "12GB"
+      "8GB"
     ],
     "storage_options": [
-      "128 GB",
-      "256GB"
+      "128 GB"
     ],
     "default_mrp": 15999,
     "base_resale_value": 11000,
@@ -18043,7 +17925,7 @@
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 14999,
     "base_resale_value": 9800,
@@ -18068,7 +17950,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 16999,
     "base_resale_value": 11500,
@@ -18093,7 +17975,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 18525,
     "base_resale_value": 12350,
@@ -18117,7 +17999,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 14990,
     "base_resale_value": 4500,
@@ -18142,7 +18024,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 26625,
     "base_resale_value": 13180,
@@ -18167,7 +18049,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 10230,
     "base_resale_value": 5320,
@@ -18192,7 +18074,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 16490,
     "base_resale_value": 8500,
@@ -18217,7 +18099,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 22680,
     "base_resale_value": 15120,
@@ -18241,7 +18123,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 27600,
     "base_resale_value": 18400,
@@ -18265,7 +18147,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 11220,
     "base_resale_value": 6430,
@@ -18290,7 +18172,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 11010,
     "base_resale_value": 6020,
@@ -18315,7 +18197,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 18499,
     "base_resale_value": 7020,
@@ -18340,7 +18222,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 15150,
     "base_resale_value": 7820,
@@ -18365,7 +18247,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 21750,
     "base_resale_value": 14500,
@@ -18389,7 +18271,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 27015,
     "base_resale_value": 18010,
@@ -18413,7 +18295,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 28200,
     "base_resale_value": 18800,
@@ -18437,7 +18319,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 17990,
     "base_resale_value": 7020,
@@ -18461,7 +18343,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 10755,
     "base_resale_value": 7170,
@@ -18485,7 +18367,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 27675,
     "base_resale_value": 18450,
@@ -18509,7 +18391,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 10005,
     "base_resale_value": 4800,
@@ -18534,7 +18416,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 11070,
     "base_resale_value": 7380,
@@ -18552,13 +18434,11 @@
     "model": "Y56 5G",
     "release_year": 2023,
     "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
+      "4GB",
+      "8GB"
     ],
     "storage_options": [
-      "128 GB",
-      "256GB"
+      "128 GB"
     ],
     "default_mrp": 19999,
     "base_resale_value": 9170,
@@ -18583,7 +18463,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 19499,
     "base_resale_value": 10860,
@@ -18608,7 +18488,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 14490,
     "base_resale_value": 7440,
@@ -18633,7 +18513,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 20990,
     "base_resale_value": 7370,
@@ -18658,7 +18538,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 11895,
     "base_resale_value": 6960,
@@ -18683,7 +18563,7 @@
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 6735,
     "base_resale_value": 2740,
@@ -18708,7 +18588,7 @@
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 7545,
     "base_resale_value": 3240,
@@ -18733,7 +18613,7 @@
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 7815,
     "base_resale_value": 4600,
@@ -18758,7 +18638,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 8370,
     "base_resale_value": 5160,
@@ -18783,7 +18663,7 @@
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 7200,
     "base_resale_value": 4800,
@@ -18807,7 +18687,7 @@
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 8625,
     "base_resale_value": 5750,
@@ -18831,7 +18711,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 10800,
     "base_resale_value": 7200,
@@ -18855,7 +18735,7 @@
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 7605,
     "base_resale_value": 5070,
@@ -18879,7 +18759,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 18450,
     "base_resale_value": 12300,
@@ -18903,7 +18783,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 20850,
     "base_resale_value": 13900,
@@ -18927,7 +18807,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 24000,
     "base_resale_value": 16000,
@@ -18950,8 +18830,7 @@
       "12GB"
     ],
     "storage_options": [
-      "256 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 21600,
     "base_resale_value": 14400,
@@ -18974,8 +18853,7 @@
       "12GB"
     ],
     "storage_options": [
-      "256 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 27675,
     "base_resale_value": 18450,
@@ -18999,7 +18877,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 11550,
     "base_resale_value": 7700,
@@ -19023,7 +18901,7 @@
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 10050,
     "base_resale_value": 6700,
@@ -19047,7 +18925,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 12225,
     "base_resale_value": 8150,
@@ -19071,7 +18949,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 14175,
     "base_resale_value": 9450,
@@ -19095,7 +18973,7 @@
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 9510,
     "base_resale_value": 6340,
@@ -19119,7 +18997,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 13200,
     "base_resale_value": 8800,
@@ -19143,7 +19021,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 14100,
     "base_resale_value": 9400,
@@ -19167,7 +19045,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 15525,
     "base_resale_value": 10350,
@@ -19191,7 +19069,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 19500,
     "base_resale_value": 13000,
@@ -19215,7 +19093,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 24450,
     "base_resale_value": 16300,
@@ -19239,7 +19117,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 18450,
     "base_resale_value": 12300,
@@ -19262,8 +19140,7 @@
       "12GB"
     ],
     "storage_options": [
-      "256 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 24675,
     "base_resale_value": 16450,
@@ -19281,13 +19158,12 @@
     "model": "Redmi 10A",
     "release_year": 2022,
     "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
+      "3GB",
+      "4GB"
     ],
     "storage_options": [
-      "64 GB",
-      "256GB"
+      "32 GB",
+      "64 GB"
     ],
     "default_mrp": 7290,
     "base_resale_value": 4860,
@@ -19311,7 +19187,7 @@
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 9675,
     "base_resale_value": 6900,
@@ -19336,7 +19212,7 @@
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 7665,
     "base_resale_value": 4100,
@@ -19361,7 +19237,7 @@
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 9150,
     "base_resale_value": 3500,
@@ -19386,7 +19262,7 @@
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 9525,
     "base_resale_value": 5200,
@@ -19411,7 +19287,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 9765,
     "base_resale_value": 6800,
@@ -19436,7 +19312,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 19999,
     "base_resale_value": 13170,
@@ -19461,7 +19337,7 @@
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 9780,
     "base_resale_value": 5700,
@@ -19486,7 +19362,7 @@
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 14250,
     "base_resale_value": 5800,
@@ -19511,7 +19387,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 14025,
     "base_resale_value": 8900,
@@ -19536,7 +19412,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 13575,
     "base_resale_value": 7900,
@@ -19555,13 +19431,13 @@
     "model": "Redmi Note 12 5G",
     "release_year": 2020,
     "ram_options": [
+      "4GB",
       "6GB",
-      "8GB",
-      "12GB"
+      "8GB"
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 21450,
     "base_resale_value": 9400,
@@ -19583,12 +19459,11 @@
     "release_year": 2023,
     "ram_options": [
       "6GB",
-      "8GB",
-      "12GB"
+      "8GB"
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 24999,
     "base_resale_value": 13130,
@@ -19609,13 +19484,11 @@
     "model": "Redmi Note 12 Pro+ 5G",
     "release_year": 2020,
     "ram_options": [
-      "6GB",
       "8GB",
       "12GB"
     ],
     "storage_options": [
-      "256 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 21675,
     "base_resale_value": 15500,
@@ -19642,7 +19515,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 17025,
     "base_resale_value": 9100,
@@ -19667,7 +19540,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 29175,
     "base_resale_value": 11200,
@@ -19688,13 +19561,12 @@
     "model": "Redmi Note 13 Pro 5G",
     "release_year": 2024,
     "ram_options": [
-      "6GB",
       "8GB",
       "12GB"
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 25999,
     "base_resale_value": 14690,
@@ -19715,13 +19587,12 @@
     "model": "Redmi Note 13 Pro+ 5G",
     "release_year": 2024,
     "ram_options": [
-      "6GB",
       "8GB",
       "12GB"
     ],
     "storage_options": [
       "256 GB",
-      "256GB"
+      "512 GB"
     ],
     "default_mrp": 31999,
     "base_resale_value": 17800,
@@ -19748,7 +19619,7 @@
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 8250,
     "base_resale_value": 4100,
@@ -19773,7 +19644,7 @@
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 9660,
     "base_resale_value": 4900,
@@ -19798,7 +19669,7 @@
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 9075,
     "base_resale_value": 4600,
@@ -19823,7 +19694,7 @@
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 9645,
     "base_resale_value": 5200,
@@ -19848,7 +19719,7 @@
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 10095,
     "base_resale_value": 13740,
@@ -19873,7 +19744,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 15735,
     "base_resale_value": 10800,
@@ -19898,7 +19769,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 14940,
     "base_resale_value": 9960,
@@ -19922,7 +19793,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 14595,
     "base_resale_value": 9730,
@@ -19946,7 +19817,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 23850,
     "base_resale_value": 15900,
@@ -19969,8 +19840,7 @@
       "12GB"
     ],
     "storage_options": [
-      "256 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 55425,
     "base_resale_value": 9880,
@@ -19995,7 +19865,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 29925,
     "base_resale_value": 19950,
@@ -20018,8 +19888,7 @@
       "12GB"
     ],
     "storage_options": [
-      "256 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 69999,
     "base_resale_value": 28740,
@@ -20046,7 +19915,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 31125,
     "base_resale_value": 19620,
@@ -20071,7 +19940,7 @@
     ],
     "storage_options": [
       "512 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 93450,
     "base_resale_value": 35500,
@@ -20096,7 +19965,7 @@
     ],
     "storage_options": [
       "512 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 92670,
     "base_resale_value": 61780,
@@ -20119,8 +19988,7 @@
       "12GB"
     ],
     "storage_options": [
-      "256 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 83895,
     "base_resale_value": 40800,
@@ -20144,8 +20012,7 @@
       "12GB"
     ],
     "storage_options": [
-      "256 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 58725,
     "base_resale_value": 39150,
@@ -20169,7 +20036,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 10455,
     "base_resale_value": 6970,
@@ -20193,7 +20060,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 18375,
     "base_resale_value": 5100,
@@ -20218,7 +20085,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 10800,
     "base_resale_value": 6400,
@@ -20243,7 +20110,7 @@
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 9405,
     "base_resale_value": 5600,
@@ -20268,7 +20135,7 @@
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 9390,
     "base_resale_value": 5600,
@@ -20287,13 +20154,12 @@
     "model": "Redmi 12C",
     "release_year": 2020,
     "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
+      "4GB",
+      "6GB"
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "128 GB"
     ],
     "default_mrp": 11190,
     "base_resale_value": 5900,
@@ -20318,7 +20184,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 13999,
     "base_resale_value": 9880,
@@ -20345,7 +20211,7 @@
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 13830,
     "base_resale_value": 19460,
@@ -20372,7 +20238,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 19515,
     "base_resale_value": 35500,
@@ -20399,7 +20265,7 @@
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 16860,
     "base_resale_value": 11240,
@@ -20423,7 +20289,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 16710,
     "base_resale_value": 11140,
@@ -20447,7 +20313,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 26100,
     "base_resale_value": 40800,
@@ -20472,7 +20338,7 @@
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 7695,
     "base_resale_value": 4070,
@@ -20497,7 +20363,7 @@
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 8340,
     "base_resale_value": 4700,
@@ -20522,7 +20388,7 @@
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 8580,
     "base_resale_value": 4300,
@@ -20547,7 +20413,7 @@
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 9180,
     "base_resale_value": 6120,
@@ -20571,7 +20437,7 @@
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 12180,
     "base_resale_value": 8120,
@@ -20595,7 +20461,7 @@
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 10050,
     "base_resale_value": 6700,
@@ -20619,7 +20485,7 @@
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 13230,
     "base_resale_value": 8820,
@@ -20643,7 +20509,7 @@
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 14445,
     "base_resale_value": 9630,
@@ -20667,7 +20533,7 @@
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 10005,
     "base_resale_value": 5600,
@@ -20692,7 +20558,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 11655,
     "base_resale_value": 7200,
@@ -20717,7 +20583,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 15945,
     "base_resale_value": 9510,
@@ -20742,7 +20608,7 @@
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 9150,
     "base_resale_value": 5100,
@@ -20767,7 +20633,7 @@
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 12180,
     "base_resale_value": 5900,
@@ -20792,7 +20658,7 @@
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 9900,
     "base_resale_value": 6100,
@@ -20817,7 +20683,7 @@
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 9675,
     "base_resale_value": 6800,
@@ -20842,7 +20708,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 16860,
     "base_resale_value": 11240,
@@ -20866,7 +20732,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 27930,
     "base_resale_value": 18620,
@@ -20890,7 +20756,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 35655,
     "base_resale_value": 23770,
@@ -20913,8 +20779,7 @@
       "12GB"
     ],
     "storage_options": [
-      "256 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 41325,
     "base_resale_value": 27550,
@@ -20938,7 +20803,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 26265,
     "base_resale_value": 17510,
@@ -20962,7 +20827,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 30525,
     "base_resale_value": 20350,
@@ -20986,7 +20851,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 39600,
     "base_resale_value": 26400,
@@ -21009,8 +20874,7 @@
       "12GB"
     ],
     "storage_options": [
-      "256 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 51675,
     "base_resale_value": 34450,
@@ -21033,8 +20897,7 @@
       "12GB"
     ],
     "storage_options": [
-      "256 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 39825,
     "base_resale_value": 26550,
@@ -21056,8 +20919,8 @@
       "8GB"
     ],
     "storage_options": [
-      "128GB",
-      "256GB"
+      "128 GB",
+      "256 GB"
     ],
     "default_mrp": 27999,
     "base_resale_value": 11000,
@@ -21080,8 +20943,8 @@
       "8GB"
     ],
     "storage_options": [
-      "128GB",
-      "256GB"
+      "128 GB",
+      "256 GB"
     ],
     "default_mrp": 28999,
     "base_resale_value": 12500,
@@ -21100,12 +20963,12 @@
     "model": "Nord 3 5G",
     "release_year": 2023,
     "ram_options": [
-      "6GB",
-      "8GB"
+      "8GB",
+      "16GB"
     ],
     "storage_options": [
-      "128GB",
-      "256GB"
+      "128 GB",
+      "256 GB"
     ],
     "default_mrp": 33999,
     "base_resale_value": 15500,
@@ -21128,8 +20991,8 @@
       "8GB"
     ],
     "storage_options": [
-      "128GB",
-      "256GB"
+      "128 GB",
+      "256 GB"
     ],
     "default_mrp": 23999,
     "base_resale_value": 10000,
@@ -21152,8 +21015,8 @@
       "8GB"
     ],
     "storage_options": [
-      "128GB",
-      "256GB"
+      "128 GB",
+      "256 GB"
     ],
     "default_mrp": 19999,
     "base_resale_value": 10500,
@@ -21176,8 +21039,8 @@
       "8GB"
     ],
     "storage_options": [
-      "128GB",
-      "256GB"
+      "128 GB",
+      "256 GB"
     ],
     "default_mrp": 159900,
     "base_resale_value": 126000,
@@ -21200,8 +21063,8 @@
       "8GB"
     ],
     "storage_options": [
-      "128GB",
-      "256GB"
+      "128 GB",
+      "256 GB"
     ],
     "default_mrp": 134900,
     "base_resale_value": 104000,
@@ -21224,8 +21087,8 @@
       "8GB"
     ],
     "storage_options": [
-      "128GB",
-      "256GB"
+      "128 GB",
+      "256 GB"
     ],
     "default_mrp": 99900,
     "base_resale_value": 82000,
@@ -21248,8 +21111,8 @@
       "8GB"
     ],
     "storage_options": [
-      "128GB",
-      "256GB"
+      "128 GB",
+      "256 GB"
     ],
     "default_mrp": 84900,
     "base_resale_value": 74500,
@@ -21292,12 +21155,12 @@
     "model": "11 5G",
     "release_year": 2023,
     "ram_options": [
-      "6GB",
-      "8GB"
+      "8GB",
+      "16GB"
     ],
     "storage_options": [
-      "128GB",
-      "256GB"
+      "128 GB",
+      "256 GB"
     ],
     "default_mrp": 56999,
     "base_resale_value": 30000,
@@ -21320,8 +21183,8 @@
       "8GB"
     ],
     "storage_options": [
-      "128GB",
-      "256GB"
+      "128 GB",
+      "256 GB"
     ],
     "default_mrp": 39999,
     "base_resale_value": 22000,
@@ -21344,8 +21207,8 @@
       "8GB"
     ],
     "storage_options": [
-      "128GB",
-      "256GB"
+      "128 GB",
+      "256 GB"
     ],
     "default_mrp": 29999,
     "base_resale_value": 19000,
@@ -21368,8 +21231,8 @@
       "8GB"
     ],
     "storage_options": [
-      "128GB",
-      "256GB"
+      "128 GB",
+      "256 GB"
     ],
     "default_mrp": 24999,
     "base_resale_value": 16000,
@@ -21388,12 +21251,13 @@
     "model": "GT 6 5G",
     "release_year": 2024,
     "ram_options": [
-      "6GB",
-      "8GB"
+      "8GB",
+      "12GB",
+      "16GB"
     ],
     "storage_options": [
-      "128GB",
-      "256GB"
+      "256 GB",
+      "512 GB"
     ],
     "default_mrp": 40999,
     "base_resale_value": 28000,
@@ -21412,12 +21276,13 @@
     "model": "GT 6T 5G",
     "release_year": 2024,
     "ram_options": [
-      "6GB",
-      "8GB"
+      "8GB",
+      "12GB"
     ],
     "storage_options": [
-      "128GB",
-      "256GB"
+      "128 GB",
+      "256 GB",
+      "512 GB"
     ],
     "default_mrp": 30999,
     "base_resale_value": 21000,
@@ -21440,8 +21305,8 @@
       "8GB"
     ],
     "storage_options": [
-      "128GB",
-      "256GB"
+      "128 GB",
+      "256 GB"
     ],
     "default_mrp": 94999,
     "base_resale_value": 49550,
@@ -21464,8 +21329,8 @@
       "8GB"
     ],
     "storage_options": [
-      "128GB",
-      "256GB"
+      "128 GB",
+      "256 GB"
     ],
     "default_mrp": 65999,
     "base_resale_value": 37310,
@@ -21484,12 +21349,12 @@
     "model": "X100 Ultra 5G",
     "release_year": 2024,
     "ram_options": [
-      "6GB",
-      "8GB"
+      "12GB",
+      "16GB"
     ],
     "storage_options": [
-      "128GB",
-      "256GB"
+      "256 GB",
+      "512 GB"
     ],
     "default_mrp": 99999,
     "base_resale_value": 46500,
@@ -21508,12 +21373,11 @@
     "model": "X100 Pro 5G",
     "release_year": 2024,
     "ram_options": [
-      "6GB",
-      "8GB"
+      "16GB"
     ],
     "storage_options": [
-      "128GB",
-      "256GB"
+      "256 GB",
+      "512 GB"
     ],
     "default_mrp": 69999,
     "base_resale_value": 36000,
@@ -21532,12 +21396,12 @@
     "model": "X100 5G",
     "release_year": 2024,
     "ram_options": [
-      "6GB",
-      "8GB"
+      "12GB",
+      "16GB"
     ],
     "storage_options": [
-      "128GB",
-      "256GB"
+      "256 GB",
+      "512 GB"
     ],
     "default_mrp": 58999,
     "base_resale_value": 30000,
@@ -21560,8 +21424,8 @@
       "8GB"
     ],
     "storage_options": [
-      "128GB",
-      "256GB"
+      "128 GB",
+      "256 GB"
     ],
     "default_mrp": 159999,
     "base_resale_value": 68880,
@@ -21580,12 +21444,10 @@
     "model": "X90 Pro 5G",
     "release_year": 2023,
     "ram_options": [
-      "6GB",
-      "8GB"
+      "12GB"
     ],
     "storage_options": [
-      "128GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 84999,
     "base_resale_value": 30540,
@@ -21604,12 +21466,12 @@
     "model": "X90 5G",
     "release_year": 2023,
     "ram_options": [
-      "6GB",
-      "8GB"
+      "8GB",
+      "12GB"
     ],
     "storage_options": [
-      "128GB",
-      "256GB"
+      "128 GB",
+      "256 GB"
     ],
     "default_mrp": 59999,
     "base_resale_value": 23150,
@@ -21628,12 +21490,10 @@
     "model": "X80 Pro 5G",
     "release_year": 2022,
     "ram_options": [
-      "6GB",
-      "8GB"
+      "12GB"
     ],
     "storage_options": [
-      "128GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 79999,
     "base_resale_value": 22540,
@@ -21652,12 +21512,12 @@
     "model": "X80 5G",
     "release_year": 2022,
     "ram_options": [
-      "6GB",
-      "8GB"
+      "8GB",
+      "12GB"
     ],
     "storage_options": [
-      "128GB",
-      "256GB"
+      "128 GB",
+      "256 GB"
     ],
     "default_mrp": 54999,
     "base_resale_value": 17290,
@@ -21676,12 +21536,10 @@
     "model": "X70 Pro+ 5G",
     "release_year": 2021,
     "ram_options": [
-      "6GB",
-      "8GB"
+      "12GB"
     ],
     "storage_options": [
-      "128GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 79990,
     "base_resale_value": 13300,
@@ -21704,8 +21562,8 @@
       "8GB"
     ],
     "storage_options": [
-      "128GB",
-      "256GB"
+      "128 GB",
+      "256 GB"
     ],
     "default_mrp": 46990,
     "base_resale_value": 13300,
@@ -21728,8 +21586,8 @@
       "8GB"
     ],
     "storage_options": [
-      "128GB",
-      "256GB"
+      "128 GB",
+      "256 GB"
     ],
     "default_mrp": 49990,
     "base_resale_value": 9890,
@@ -21752,8 +21610,8 @@
       "8GB"
     ],
     "storage_options": [
-      "128GB",
-      "256GB"
+      "128 GB",
+      "256 GB"
     ],
     "default_mrp": 37990,
     "base_resale_value": 10100,
@@ -21776,8 +21634,8 @@
       "8GB"
     ],
     "storage_options": [
-      "128GB",
-      "256GB"
+      "128 GB",
+      "256 GB"
     ],
     "default_mrp": 49990,
     "base_resale_value": 7560,
@@ -21800,8 +21658,8 @@
       "8GB"
     ],
     "storage_options": [
-      "128GB",
-      "256GB"
+      "128 GB",
+      "256 GB"
     ],
     "default_mrp": 39990,
     "base_resale_value": 7450,
@@ -21823,8 +21681,8 @@
       "8GB"
     ],
     "storage_options": [
-      "128GB",
-      "256GB"
+      "128 GB",
+      "256 GB"
     ],
     "default_mrp": 35990,
     "base_resale_value": 5750,
@@ -21846,8 +21704,8 @@
       "8GB"
     ],
     "storage_options": [
-      "128GB",
-      "256GB"
+      "128 GB",
+      "256 GB"
     ],
     "default_mrp": 29990,
     "base_resale_value": 4150,
@@ -21869,8 +21727,8 @@
       "8GB"
     ],
     "storage_options": [
-      "128GB",
-      "256GB"
+      "128 GB",
+      "256 GB"
     ],
     "default_mrp": 32980,
     "base_resale_value": 2850,
@@ -21892,8 +21750,8 @@
       "8GB"
     ],
     "storage_options": [
-      "128GB",
-      "256GB"
+      "128 GB",
+      "256 GB"
     ],
     "default_mrp": 24990,
     "base_resale_value": 2200,
@@ -21911,12 +21769,13 @@
     "model": "V40 5G",
     "release_year": 2024,
     "ram_options": [
-      "6GB",
-      "8GB"
+      "8GB",
+      "12GB"
     ],
     "storage_options": [
-      "128GB",
-      "256GB"
+      "128 GB",
+      "256 GB",
+      "512 GB"
     ],
     "default_mrp": 39999,
     "base_resale_value": 22000,
@@ -21935,12 +21794,12 @@
     "model": "V40 Pro 5G",
     "release_year": 2024,
     "ram_options": [
-      "6GB",
-      "8GB"
+      "8GB",
+      "12GB"
     ],
     "storage_options": [
-      "128GB",
-      "256GB"
+      "256 GB",
+      "512 GB"
     ],
     "default_mrp": 54999,
     "base_resale_value": 31000,
@@ -21963,8 +21822,8 @@
       "8GB"
     ],
     "storage_options": [
-      "128GB",
-      "256GB"
+      "128 GB",
+      "256 GB"
     ],
     "default_mrp": 28999,
     "base_resale_value": 16080,
@@ -21983,12 +21842,12 @@
     "model": "V30 Pro 5G",
     "release_year": 2024,
     "ram_options": [
-      "6GB",
-      "8GB"
+      "8GB",
+      "12GB"
     ],
     "storage_options": [
-      "128GB",
-      "256GB"
+      "256 GB",
+      "512 GB"
     ],
     "default_mrp": 46999,
     "base_resale_value": 24000,
@@ -22007,12 +21866,12 @@
     "model": "V30 5G",
     "release_year": 2024,
     "ram_options": [
-      "6GB",
-      "8GB"
+      "8GB",
+      "12GB"
     ],
     "storage_options": [
-      "128GB",
-      "256GB"
+      "128 GB",
+      "256 GB"
     ],
     "default_mrp": 35999,
     "base_resale_value": 19500,
@@ -22035,8 +21894,8 @@
       "8GB"
     ],
     "storage_options": [
-      "128GB",
-      "256GB"
+      "128 GB",
+      "256 GB"
     ],
     "default_mrp": 27999,
     "base_resale_value": 15170,
@@ -22059,8 +21918,8 @@
       "8GB"
     ],
     "storage_options": [
-      "128GB",
-      "256GB"
+      "128 GB",
+      "256 GB"
     ],
     "default_mrp": 42999,
     "base_resale_value": 19500,
@@ -22083,8 +21942,8 @@
       "8GB"
     ],
     "storage_options": [
-      "128GB",
-      "256GB"
+      "128 GB",
+      "256 GB"
     ],
     "default_mrp": 32999,
     "base_resale_value": 17680,
@@ -22107,8 +21966,8 @@
       "8GB"
     ],
     "storage_options": [
-      "128GB",
-      "256GB"
+      "128 GB",
+      "256 GB"
     ],
     "default_mrp": 37999,
     "base_resale_value": 18910,
@@ -22131,8 +21990,8 @@
       "8GB"
     ],
     "storage_options": [
-      "128GB",
-      "256GB"
+      "128 GB",
+      "256 GB"
     ],
     "default_mrp": 32999,
     "base_resale_value": 16750,
@@ -22155,8 +22014,8 @@
       "8GB"
     ],
     "storage_options": [
-      "128GB",
-      "256GB"
+      "128 GB",
+      "256 GB"
     ],
     "default_mrp": 35999,
     "base_resale_value": 12950,
@@ -22179,8 +22038,8 @@
       "8GB"
     ],
     "storage_options": [
-      "128GB",
-      "256GB"
+      "128 GB",
+      "256 GB"
     ],
     "default_mrp": 38990,
     "base_resale_value": 12700,
@@ -22203,8 +22062,8 @@
       "8GB"
     ],
     "storage_options": [
-      "128GB",
-      "256GB"
+      "128 GB",
+      "256 GB"
     ],
     "default_mrp": 29990,
     "base_resale_value": 6940,
@@ -22227,8 +22086,8 @@
       "8GB"
     ],
     "storage_options": [
-      "128GB",
-      "256GB"
+      "128 GB",
+      "256 GB"
     ],
     "default_mrp": 22990,
     "base_resale_value": 3160,
@@ -22251,8 +22110,8 @@
       "8GB"
     ],
     "storage_options": [
-      "128GB",
-      "256GB"
+      "128 GB",
+      "256 GB"
     ],
     "default_mrp": 21990,
     "base_resale_value": 3700,
@@ -22274,8 +22133,8 @@
       "8GB"
     ],
     "storage_options": [
-      "128GB",
-      "256GB"
+      "128 GB",
+      "256 GB"
     ],
     "default_mrp": 18990,
     "base_resale_value": 3350,
@@ -22297,8 +22156,8 @@
       "8GB"
     ],
     "storage_options": [
-      "128GB",
-      "256GB"
+      "128 GB",
+      "256 GB"
     ],
     "default_mrp": 17980,
     "base_resale_value": 1630,
@@ -22321,8 +22180,8 @@
       "8GB"
     ],
     "storage_options": [
-      "128GB",
-      "256GB"
+      "128 GB",
+      "256 GB"
     ],
     "default_mrp": 17980,
     "base_resale_value": 2300,
@@ -22344,8 +22203,8 @@
       "8GB"
     ],
     "storage_options": [
-      "128GB",
-      "256GB"
+      "128 GB",
+      "256 GB"
     ],
     "default_mrp": 23999,
     "base_resale_value": 13180,
@@ -22368,8 +22227,8 @@
       "8GB"
     ],
     "storage_options": [
-      "128GB",
-      "256GB"
+      "128 GB",
+      "256 GB"
     ],
     "default_mrp": 16999,
     "base_resale_value": 9400,
@@ -22391,8 +22250,8 @@
       "8GB"
     ],
     "storage_options": [
-      "128GB",
-      "256GB"
+      "128 GB",
+      "256 GB"
     ],
     "default_mrp": 21990,
     "base_resale_value": 7000,
@@ -22415,8 +22274,8 @@
       "8GB"
     ],
     "storage_options": [
-      "128GB",
-      "256GB"
+      "128 GB",
+      "256 GB"
     ],
     "default_mrp": 14499,
     "base_resale_value": 7050,
@@ -22438,8 +22297,8 @@
       "8GB"
     ],
     "storage_options": [
-      "128GB",
-      "256GB"
+      "128 GB",
+      "256 GB"
     ],
     "default_mrp": 18990,
     "base_resale_value": 6020,
@@ -22462,8 +22321,8 @@
       "8GB"
     ],
     "storage_options": [
-      "128GB",
-      "256GB"
+      "128 GB",
+      "256 GB"
     ],
     "default_mrp": 13990,
     "base_resale_value": 5090,
@@ -22486,8 +22345,8 @@
       "8GB"
     ],
     "storage_options": [
-      "128GB",
-      "256GB"
+      "128 GB",
+      "256 GB"
     ],
     "default_mrp": 17990,
     "base_resale_value": 4800,
@@ -22510,8 +22369,8 @@
       "8GB"
     ],
     "storage_options": [
-      "128GB",
-      "256GB"
+      "128 GB",
+      "256 GB"
     ],
     "default_mrp": 12990,
     "base_resale_value": 4730,
@@ -22534,8 +22393,8 @@
       "8GB"
     ],
     "storage_options": [
-      "128GB",
-      "256GB"
+      "128 GB",
+      "256 GB"
     ],
     "default_mrp": 13990,
     "base_resale_value": 4100,
@@ -22557,8 +22416,8 @@
       "8GB"
     ],
     "storage_options": [
-      "128GB",
-      "256GB"
+      "128 GB",
+      "256 GB"
     ],
     "default_mrp": 8990,
     "base_resale_value": 3100,
@@ -22581,8 +22440,8 @@
       "8GB"
     ],
     "storage_options": [
-      "128GB",
-      "256GB"
+      "128 GB",
+      "256 GB"
     ],
     "default_mrp": 16990,
     "base_resale_value": 3750,
@@ -22604,8 +22463,8 @@
       "8GB"
     ],
     "storage_options": [
-      "128GB",
-      "256GB"
+      "128 GB",
+      "256 GB"
     ],
     "default_mrp": 14990,
     "base_resale_value": 2740,
@@ -22628,8 +22487,8 @@
       "8GB"
     ],
     "storage_options": [
-      "128GB",
-      "256GB"
+      "128 GB",
+      "256 GB"
     ],
     "default_mrp": 10990,
     "base_resale_value": 2900,
@@ -22651,8 +22510,8 @@
       "8GB"
     ],
     "storage_options": [
-      "128GB",
-      "256GB"
+      "128 GB",
+      "256 GB"
     ],
     "default_mrp": 11980,
     "base_resale_value": 2060,
@@ -22675,8 +22534,8 @@
       "8GB"
     ],
     "storage_options": [
-      "128GB",
-      "256GB"
+      "128 GB",
+      "256 GB"
     ],
     "default_mrp": 7990,
     "base_resale_value": 1950,
@@ -22698,8 +22557,8 @@
       "8GB"
     ],
     "storage_options": [
-      "128GB",
-      "256GB"
+      "128 GB",
+      "256 GB"
     ],
     "default_mrp": 31999,
     "base_resale_value": 20120,
@@ -22722,8 +22581,8 @@
       "8GB"
     ],
     "storage_options": [
-      "128GB",
-      "256GB"
+      "128 GB",
+      "256 GB"
     ],
     "default_mrp": 12999,
     "base_resale_value": 8650,
@@ -22745,8 +22604,8 @@
       "8GB"
     ],
     "storage_options": [
-      "128GB",
-      "256GB"
+      "128 GB",
+      "256 GB"
     ],
     "default_mrp": 23999,
     "base_resale_value": 8570,
@@ -22769,8 +22628,8 @@
       "8GB"
     ],
     "storage_options": [
-      "128GB",
-      "256GB"
+      "128 GB",
+      "256 GB"
     ],
     "default_mrp": 11999,
     "base_resale_value": 6600,
@@ -22792,8 +22651,8 @@
       "8GB"
     ],
     "storage_options": [
-      "128GB",
-      "256GB"
+      "128 GB",
+      "256 GB"
     ],
     "default_mrp": 18990,
     "base_resale_value": 4600,
@@ -22816,8 +22675,8 @@
       "8GB"
     ],
     "storage_options": [
-      "128GB",
-      "256GB"
+      "128 GB",
+      "256 GB"
     ],
     "default_mrp": 11990,
     "base_resale_value": 4450,
@@ -22839,8 +22698,8 @@
       "8GB"
     ],
     "storage_options": [
-      "128GB",
-      "256GB"
+      "128 GB",
+      "256 GB"
     ],
     "default_mrp": 48990,
     "base_resale_value": 10150,
@@ -22863,8 +22722,8 @@
       "8GB"
     ],
     "storage_options": [
-      "128GB",
-      "256GB"
+      "128 GB",
+      "256 GB"
     ],
     "default_mrp": 19990,
     "base_resale_value": 5200,
@@ -22887,8 +22746,8 @@
       "8GB"
     ],
     "storage_options": [
-      "128GB",
-      "256GB"
+      "128 GB",
+      "256 GB"
     ],
     "default_mrp": 21999,
     "base_resale_value": 14900,
@@ -22910,8 +22769,8 @@
       "8GB"
     ],
     "storage_options": [
-      "128GB",
-      "256GB"
+      "128 GB",
+      "256 GB"
     ],
     "default_mrp": 84999,
     "base_resale_value": 59000,
@@ -22934,8 +22793,8 @@
       "8GB"
     ],
     "storage_options": [
-      "128GB",
-      "256GB"
+      "128 GB",
+      "256 GB"
     ],
     "default_mrp": 15999,
     "base_resale_value": 9500,
@@ -22958,9 +22817,9 @@
       "8GB"
     ],
     "storage_options": [
-      "64GB",
-      "128GB",
-      "256GB"
+      "64 GB",
+      "128 GB",
+      "256 GB"
     ],
     "default_mrp": 20999,
     "base_resale_value": 5500,
@@ -22982,8 +22841,8 @@
       "8GB"
     ],
     "storage_options": [
-      "128GB",
-      "256GB"
+      "128 GB",
+      "256 GB"
     ],
     "default_mrp": 57999,
     "base_resale_value": 20890,
@@ -23006,8 +22865,8 @@
       "8GB"
     ],
     "storage_options": [
-      "128GB",
-      "256GB"
+      "128 GB",
+      "256 GB"
     ],
     "default_mrp": 34999,
     "base_resale_value": 13400,
@@ -23029,7 +22888,7 @@
       "10GB"
     ],
     "storage_options": [
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 50999,
     "base_resale_value": 6500,
@@ -23051,7 +22910,7 @@
       "10GB"
     ],
     "storage_options": [
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 50999,
     "base_resale_value": 6500,
@@ -23074,8 +22933,8 @@
       "16GB"
     ],
     "storage_options": [
-      "256GB",
-      "512GB"
+      "256 GB",
+      "512 GB"
     ],
     "default_mrp": 54999,
     "base_resale_value": 38000,
@@ -23098,8 +22957,8 @@
       "16GB"
     ],
     "storage_options": [
-      "256GB",
-      "512GB"
+      "256 GB",
+      "512 GB"
     ],
     "default_mrp": 54999,
     "base_resale_value": 38000,
@@ -23121,7 +22980,7 @@
       "12GB"
     ],
     "storage_options": [
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 58999,
     "base_resale_value": 10000,
@@ -23143,7 +23002,7 @@
       "12GB"
     ],
     "storage_options": [
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 58999,
     "base_resale_value": 10000,
@@ -23166,8 +23025,8 @@
       "12GB"
     ],
     "storage_options": [
-      "128GB",
-      "256GB"
+      "128 GB",
+      "256 GB"
     ],
     "default_mrp": 26999,
     "base_resale_value": 14000,
@@ -23190,8 +23049,8 @@
       "12GB"
     ],
     "storage_options": [
-      "128GB",
-      "256GB"
+      "128 GB",
+      "256 GB"
     ],
     "default_mrp": 28999,
     "base_resale_value": 18500,
@@ -23214,8 +23073,8 @@
       "12GB"
     ],
     "storage_options": [
-      "128GB",
-      "256GB"
+      "128 GB",
+      "256 GB"
     ],
     "default_mrp": 28999,
     "base_resale_value": 18500,
@@ -23238,7 +23097,7 @@
       "8GB"
     ],
     "storage_options": [
-      "128GB"
+      "128 GB"
     ],
     "default_mrp": 18999,
     "base_resale_value": 9000,
@@ -23262,9 +23121,9 @@
       "16GB"
     ],
     "storage_options": [
-      "128GB",
-      "256GB",
-      "512GB"
+      "128 GB",
+      "256 GB",
+      "512 GB"
     ],
     "default_mrp": 36999,
     "base_resale_value": 24500,
@@ -23288,9 +23147,9 @@
       "16GB"
     ],
     "storage_options": [
-      "128GB",
-      "256GB",
-      "512GB"
+      "128 GB",
+      "256 GB",
+      "512 GB"
     ],
     "default_mrp": 36999,
     "base_resale_value": 24500,
@@ -23313,8 +23172,8 @@
       "12GB"
     ],
     "storage_options": [
-      "128GB",
-      "256GB"
+      "128 GB",
+      "256 GB"
     ],
     "default_mrp": 32999,
     "base_resale_value": 21500,
@@ -23337,8 +23196,8 @@
       "12GB"
     ],
     "storage_options": [
-      "128GB",
-      "256GB"
+      "128 GB",
+      "256 GB"
     ],
     "default_mrp": 32999,
     "base_resale_value": 21500,
@@ -23360,8 +23219,8 @@
       "8GB"
     ],
     "storage_options": [
-      "128GB",
-      "256GB"
+      "128 GB",
+      "256 GB"
     ],
     "default_mrp": 39999,
     "base_resale_value": 13800,
@@ -23385,8 +23244,8 @@
       "8GB"
     ],
     "storage_options": [
-      "128GB",
-      "256GB"
+      "128 GB",
+      "256 GB"
     ],
     "default_mrp": 39999,
     "base_resale_value": 13800,
@@ -23409,8 +23268,8 @@
     "release_year": 2024,
     "storage": "256 GB",
     "storage_options": [
-      "256GB",
-      "512GB"
+      "256 GB",
+      "512 GB"
     ],
     "ram_options": [
       "8GB",
@@ -23436,8 +23295,8 @@
     "release_year": 2022,
     "storage": "64 GB",
     "storage_options": [
-      "64GB",
-      "256GB"
+      "64 GB",
+      "256 GB"
     ],
     "ram_options": [
       "4GB"
@@ -23462,8 +23321,8 @@
     "release_year": 2022,
     "storage": "128 GB",
     "storage_options": [
-      "128GB",
-      "256GB"
+      "128 GB",
+      "256 GB"
     ],
     "ram_options": [
       "8GB",
@@ -23489,8 +23348,8 @@
     "release_year": 2022,
     "storage": "128 GB",
     "storage_options": [
-      "128GB",
-      "256GB"
+      "128 GB",
+      "256 GB"
     ],
     "ram_options": [
       "8GB",
@@ -23516,8 +23375,8 @@
     "release_year": 2020,
     "storage": "128 GB",
     "storage_options": [
-      "128GB",
-      "256GB"
+      "128 GB",
+      "256 GB"
     ],
     "ram_options": [
       "8GB",
@@ -23543,8 +23402,8 @@
     "release_year": 2020,
     "storage": "128 GB",
     "storage_options": [
-      "128GB",
-      "256GB"
+      "128 GB",
+      "256 GB"
     ],
     "ram_options": [
       "8GB",
@@ -23570,8 +23429,8 @@
     "release_year": 2025,
     "storage": "128 GB",
     "storage_options": [
-      "128GB",
-      "256GB"
+      "128 GB",
+      "256 GB"
     ],
     "ram_options": [
       "12GB"
@@ -23596,7 +23455,7 @@
     "release_year": 2023,
     "storage": "256 GB",
     "storage_options": [
-      "256GB"
+      "256 GB"
     ],
     "ram_options": [
       "8GB",
@@ -23622,8 +23481,8 @@
     "release_year": 2025,
     "storage": "128 GB",
     "storage_options": [
-      "128GB",
-      "256GB"
+      "128 GB",
+      "256 GB"
     ],
     "ram_options": [
       "6GB",
@@ -23649,8 +23508,8 @@
     "release_year": 2025,
     "storage": "128 GB",
     "storage_options": [
-      "128GB",
-      "256GB"
+      "128 GB",
+      "256 GB"
     ],
     "ram_options": [
       "6GB",
@@ -23676,7 +23535,7 @@
     "release_year": 2025,
     "storage": "128 GB",
     "storage_options": [
-      "128GB"
+      "128 GB"
     ],
     "ram_options": [
       "4GB",
@@ -23702,7 +23561,7 @@
     "release_year": 2025,
     "storage": "128 GB",
     "storage_options": [
-      "128GB"
+      "128 GB"
     ],
     "ram_options": [
       "4GB",
@@ -23728,8 +23587,8 @@
     "release_year": 2020,
     "storage": "64 GB",
     "storage_options": [
-      "64GB",
-      "128GB"
+      "64 GB",
+      "128 GB"
     ],
     "ram_options": [
       "4GB",
@@ -23755,8 +23614,8 @@
     "release_year": 2020,
     "storage": "64 GB",
     "storage_options": [
-      "64GB",
-      "128GB"
+      "64 GB",
+      "128 GB"
     ],
     "ram_options": [
       "4GB",
@@ -23782,8 +23641,8 @@
     "release_year": 2025,
     "storage": "256 GB",
     "storage_options": [
-      "256GB",
-      "512GB"
+      "256 GB",
+      "512 GB"
     ],
     "ram_options": [
       "12GB",
@@ -23809,8 +23668,8 @@
     "release_year": 2025,
     "storage": "256 GB",
     "storage_options": [
-      "256GB",
-      "512GB"
+      "256 GB",
+      "512 GB"
     ],
     "ram_options": [
       "12GB",
@@ -23836,8 +23695,8 @@
     "release_year": 2025,
     "storage": "128 GB",
     "storage_options": [
-      "128GB",
-      "256GB"
+      "128 GB",
+      "256 GB"
     ],
     "ram_options": [
       "8GB",
@@ -23863,8 +23722,8 @@
     "release_year": 2025,
     "storage": "128 GB",
     "storage_options": [
-      "128GB",
-      "256GB"
+      "128 GB",
+      "256 GB"
     ],
     "ram_options": [
       "8GB",
@@ -23890,7 +23749,7 @@
     "release_year": 2025,
     "storage": "128 GB",
     "storage_options": [
-      "128GB"
+      "128 GB"
     ],
     "ram_options": [
       "6GB",
@@ -23916,7 +23775,7 @@
     "release_year": 2025,
     "storage": "128 GB",
     "storage_options": [
-      "128GB"
+      "128 GB"
     ],
     "ram_options": [
       "6GB",
@@ -23942,8 +23801,8 @@
     "release_year": 2025,
     "storage": "128 GB",
     "storage_options": [
-      "128GB",
-      "256GB"
+      "128 GB",
+      "256 GB"
     ],
     "ram_options": [
       "6GB",
@@ -23969,8 +23828,8 @@
     "release_year": 2025,
     "storage": "128 GB",
     "storage_options": [
-      "128GB",
-      "256GB"
+      "128 GB",
+      "256 GB"
     ],
     "ram_options": [
       "6GB",
@@ -23996,8 +23855,8 @@
     "release_year": 2024,
     "storage": "128 GB",
     "storage_options": [
-      "128GB",
-      "256GB"
+      "128 GB",
+      "256 GB"
     ],
     "ram_options": [
       "6GB",
@@ -24023,8 +23882,8 @@
     "release_year": 2024,
     "storage": "128 GB",
     "storage_options": [
-      "128GB",
-      "256GB"
+      "128 GB",
+      "256 GB"
     ],
     "ram_options": [
       "6GB",
@@ -24050,8 +23909,8 @@
     "release_year": 2020,
     "storage": "64 GB",
     "storage_options": [
-      "64GB",
-      "128GB"
+      "64 GB",
+      "128 GB"
     ],
     "ram_options": [
       "6GB"
@@ -24076,8 +23935,8 @@
     "release_year": 2020,
     "storage": "64 GB",
     "storage_options": [
-      "64GB",
-      "128GB"
+      "64 GB",
+      "128 GB"
     ],
     "ram_options": [
       "6GB"
@@ -24102,8 +23961,8 @@
     "release_year": 2025,
     "storage": "256 GB",
     "storage_options": [
-      "256GB",
-      "512GB"
+      "256 GB",
+      "512 GB"
     ],
     "ram_options": [
       "12GB",
@@ -24129,8 +23988,8 @@
     "release_year": 2024,
     "storage": "128 GB",
     "storage_options": [
-      "128GB",
-      "256GB"
+      "128 GB",
+      "256 GB"
     ],
     "ram_options": [
       "8GB",
@@ -24156,8 +24015,8 @@
     "release_year": 2025,
     "storage": "128 GB",
     "storage_options": [
-      "128GB",
-      "256GB"
+      "128 GB",
+      "256 GB"
     ],
     "ram_options": [
       "8GB",
@@ -24183,8 +24042,8 @@
     "release_year": 2025,
     "storage": "128 GB",
     "storage_options": [
-      "128GB",
-      "256GB"
+      "128 GB",
+      "256 GB"
     ],
     "ram_options": [
       "8GB",
@@ -24210,8 +24069,8 @@
     "release_year": 2025,
     "storage": "128 GB",
     "storage_options": [
-      "128GB",
-      "256GB"
+      "128 GB",
+      "256 GB"
     ],
     "ram_options": [
       "6GB",
@@ -24237,7 +24096,7 @@
     "release_year": 2025,
     "storage": "128 GB",
     "storage_options": [
-      "128GB"
+      "128 GB"
     ],
     "ram_options": [
       "4GB",
@@ -24263,8 +24122,8 @@
     "release_year": 2025,
     "storage": "128 GB",
     "storage_options": [
-      "128GB",
-      "256GB"
+      "128 GB",
+      "256 GB"
     ],
     "ram_options": [
       "8GB",
@@ -24290,8 +24149,8 @@
     "release_year": 2025,
     "storage": "128 GB",
     "storage_options": [
-      "128GB",
-      "256GB"
+      "128 GB",
+      "256 GB"
     ],
     "ram_options": [
       "8GB",
@@ -24317,7 +24176,7 @@
     "release_year": 2025,
     "storage": "128 GB",
     "storage_options": [
-      "128GB"
+      "128 GB"
     ],
     "ram_options": [
       "6GB",
@@ -24343,7 +24202,7 @@
     "release_year": 2025,
     "storage": "128 GB",
     "storage_options": [
-      "128GB"
+      "128 GB"
     ],
     "ram_options": [
       "4GB",
@@ -24454,7 +24313,7 @@
       "512 GB"
     ],
     "ram_options": [
-      "16 GB"
+      "16GB"
     ],
     "default_storage": "512 GB",
     "default_ram": "16 GB",
@@ -24483,8 +24342,7 @@
       "12GB"
     ],
     "storage_options": [
-      "256 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": null,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/vivo-x100-pro.jpg",
@@ -24506,8 +24364,7 @@
       "12GB"
     ],
     "storage_options": [
-      "256 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": null,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/vivo-x100-pro.jpg",
@@ -24529,8 +24386,7 @@
       "12GB"
     ],
     "storage_options": [
-      "256 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 69999,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/vivo-x100-pro.jpg",
@@ -24555,7 +24411,7 @@
     ],
     "storage_options": [
       "512 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 64999,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/vivo-x100-pro.jpg",
@@ -24579,8 +24435,7 @@
       "12GB"
     ],
     "storage_options": [
-      "256 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 54999,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/vivo-x100-pro.jpg",
@@ -24604,8 +24459,7 @@
       "12GB"
     ],
     "storage_options": [
-      "256 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": null,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/vivo-x100-pro.jpg",
@@ -24628,7 +24482,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": null,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/vivo-x100-pro.jpg",
@@ -24651,7 +24505,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": null,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/vivo-x100-pro.jpg",
@@ -24674,7 +24528,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": null,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/vivo-x100-pro.jpg",
@@ -24696,8 +24550,7 @@
       "12GB"
     ],
     "storage_options": [
-      "256 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": null,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/vivo-x100-pro.jpg",
@@ -24719,8 +24572,7 @@
       "12GB"
     ],
     "storage_options": [
-      "256 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": null,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/vivo-x100-pro.jpg",
@@ -24743,7 +24595,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": null,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/vivo-x100-pro.jpg",
@@ -24765,8 +24617,7 @@
       "12GB"
     ],
     "storage_options": [
-      "256 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": null,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/vivo-x100-pro.jpg",
@@ -24789,7 +24640,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": null,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/vivo-x100-pro.jpg",
@@ -24812,7 +24663,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 16990,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/vivo-x100-pro.jpg",
@@ -24837,7 +24688,7 @@
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": null,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/vivo-x100-pro.jpg",
@@ -24860,7 +24711,7 @@
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 10990,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/vivo-x100-pro.jpg",
@@ -24885,7 +24736,7 @@
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": null,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/vivo-x100-pro.jpg",
@@ -24908,7 +24759,7 @@
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": null,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/vivo-x100-pro.jpg",
@@ -24931,7 +24782,7 @@
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": null,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/vivo-x100-pro.jpg",
@@ -24954,7 +24805,7 @@
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": null,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/vivo-x100-pro.jpg",
@@ -24977,7 +24828,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": null,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/vivo-x100-pro.jpg",
@@ -25124,8 +24975,7 @@
       "12GB"
     ],
     "storage_options": [
-      "256 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": null,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-14.jpg",
@@ -25149,8 +24999,7 @@
       "12GB"
     ],
     "storage_options": [
-      "256 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": null,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-14.jpg",
@@ -25176,8 +25025,7 @@
       "12GB"
     ],
     "storage_options": [
-      "256 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": null,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-14.jpg",
@@ -25201,8 +25049,7 @@
       "12GB"
     ],
     "storage_options": [
-      "256 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": null,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-14.jpg",
@@ -25227,7 +25074,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": null,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-14.jpg",
@@ -25254,7 +25101,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": null,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-14.jpg",
@@ -25279,7 +25126,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": null,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-14.jpg",
@@ -25304,7 +25151,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": null,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-14.jpg",
@@ -25329,7 +25176,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": null,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-14.jpg",
@@ -25354,7 +25201,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": null,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-14.jpg",
@@ -25379,7 +25226,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": null,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-14.jpg",
@@ -25404,7 +25251,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": null,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-14.jpg",
@@ -25429,7 +25276,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": null,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-14.jpg",
@@ -25453,8 +25300,7 @@
       "12GB"
     ],
     "storage_options": [
-      "256 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": null,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-14.jpg",
@@ -25479,7 +25325,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": null,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-14.jpg",
@@ -25504,7 +25350,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": null,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-14.jpg",
@@ -25528,8 +25374,7 @@
       "12GB"
     ],
     "storage_options": [
-      "256 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": null,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-14.jpg",
@@ -25554,7 +25399,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": null,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-14.jpg",
@@ -25579,7 +25424,7 @@
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": null,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-14.jpg",
@@ -25603,8 +25448,7 @@
       "12GB"
     ],
     "storage_options": [
-      "256 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": null,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-14.jpg",
@@ -25628,8 +25472,7 @@
       "12GB"
     ],
     "storage_options": [
-      "256 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": null,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-14.jpg",
@@ -25654,7 +25497,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": null,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-14.jpg",
@@ -25679,7 +25522,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": null,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-14.jpg",
@@ -25704,7 +25547,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": null,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-14.jpg",
@@ -25729,7 +25572,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": null,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-14.jpg",
@@ -25754,7 +25597,7 @@
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": null,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-14.jpg",
@@ -25779,7 +25622,7 @@
     ],
     "storage_options": [
       "512 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": null,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-14.jpg",
@@ -25798,13 +25641,10 @@
     "model": "Xiaomi 14 Ultra 5G",
     "release_year": 2024,
     "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
+      "16GB"
     ],
     "storage_options": [
-      "512 GB",
-      "256GB"
+      "512 GB"
     ],
     "default_mrp": null,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-14.jpg",
@@ -25825,13 +25665,10 @@
     "model": "Xiaomi 13 Pro 5G",
     "release_year": 2024,
     "ram_options": [
-      "6GB",
-      "8GB",
       "12GB"
     ],
     "storage_options": [
-      "256 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": null,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-14.jpg",
@@ -25857,8 +25694,7 @@
       "12GB"
     ],
     "storage_options": [
-      "256 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": null,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-14.jpg",
@@ -25884,8 +25720,7 @@
       "12GB"
     ],
     "storage_options": [
-      "256 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": null,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-14.jpg",
@@ -25912,7 +25747,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": null,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-14.jpg",
@@ -25939,7 +25774,7 @@
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": null,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-14.jpg",
@@ -25964,7 +25799,7 @@
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": null,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-14.jpg",
@@ -25989,7 +25824,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": null,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-14.jpg",
@@ -26010,13 +25845,13 @@
     "model": "Redmi 12 5G",
     "release_year": 2024,
     "ram_options": [
+      "4GB",
       "6GB",
-      "8GB",
-      "12GB"
+      "8GB"
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": null,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-14.jpg",
@@ -26043,7 +25878,7 @@
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": null,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-14.jpg",
@@ -26068,7 +25903,7 @@
     ],
     "storage_options": [
       "512 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 89999,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/oppo-reno12-pro.jpg",
@@ -26092,8 +25927,7 @@
       "12GB"
     ],
     "storage_options": [
-      "256 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 69999,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/oppo-reno12-pro.jpg",
@@ -26117,8 +25951,7 @@
       "12GB"
     ],
     "storage_options": [
-      "256 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 94999,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/oppo-reno12-pro.jpg",
@@ -26142,8 +25975,7 @@
       "12GB"
     ],
     "storage_options": [
-      "256 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 89999,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/oppo-reno12-pro.jpg",
@@ -26168,7 +26000,7 @@
     ],
     "storage_options": [
       "512 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": null,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/oppo-reno12-pro.jpg",
@@ -26192,8 +26024,7 @@
       "12GB"
     ],
     "storage_options": [
-      "256 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 36999,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/oppo-reno12-pro.jpg",
@@ -26217,8 +26048,7 @@
       "12GB"
     ],
     "storage_options": [
-      "256 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 32999,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/oppo-reno12-pro.jpg",
@@ -26242,8 +26072,7 @@
       "12GB"
     ],
     "storage_options": [
-      "256 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 39999,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/oppo-reno12-pro.jpg",
@@ -26267,8 +26096,7 @@
       "12GB"
     ],
     "storage_options": [
-      "256 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 29999,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/oppo-reno12-pro.jpg",
@@ -26292,8 +26120,7 @@
       "12GB"
     ],
     "storage_options": [
-      "256 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 39999,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/oppo-reno12-pro.jpg",
@@ -26317,8 +26144,7 @@
       "12GB"
     ],
     "storage_options": [
-      "256 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 32999,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/oppo-reno12-pro.jpg",
@@ -26342,8 +26168,7 @@
       "12GB"
     ],
     "storage_options": [
-      "256 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": null,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/oppo-reno12-pro.jpg",
@@ -26368,7 +26193,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": null,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/oppo-reno12-pro.jpg",
@@ -26392,8 +26217,7 @@
       "12GB"
     ],
     "storage_options": [
-      "256 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": null,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/oppo-reno12-pro.jpg",
@@ -26417,8 +26241,7 @@
       "12GB"
     ],
     "storage_options": [
-      "256 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": null,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/oppo-reno12-pro.jpg",
@@ -26443,7 +26266,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": null,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/oppo-reno12-pro.jpg",
@@ -26468,7 +26291,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": null,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/oppo-reno12-pro.jpg",
@@ -26492,8 +26315,7 @@
       "12GB"
     ],
     "storage_options": [
-      "256 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 29999,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/oppo-reno12-pro.jpg",
@@ -26517,8 +26339,7 @@
       "12GB"
     ],
     "storage_options": [
-      "256 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 25999,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/oppo-reno12-pro.jpg",
@@ -26543,7 +26364,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 16999,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/oppo-reno12-pro.jpg",
@@ -26568,7 +26389,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": null,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/oppo-reno12-pro.jpg",
@@ -26593,7 +26414,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": null,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/oppo-reno12-pro.jpg",
@@ -26618,7 +26439,7 @@
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": null,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/oppo-reno12-pro.jpg",
@@ -26643,7 +26464,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": null,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/oppo-reno12-pro.jpg",
@@ -26668,7 +26489,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": null,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/oppo-reno12-pro.jpg",
@@ -26691,8 +26512,8 @@
       "6GB"
     ],
     "storage_options": [
-      "64GB",
-      "128GB"
+      "64 GB",
+      "128 GB"
     ],
     "default_mrp": 9999,
     "base_resale_value": 6800,
@@ -26713,7 +26534,7 @@
       "8GB"
     ],
     "storage_options": [
-      "128GB"
+      "128 GB"
     ],
     "default_mrp": 8799,
     "base_resale_value": 5800,
@@ -26734,7 +26555,7 @@
       "12GB"
     ],
     "storage_options": [
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 29999,
     "base_resale_value": 18900,
@@ -26756,7 +26577,7 @@
       "12GB"
     ],
     "storage_options": [
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 24999,
     "base_resale_value": 15200,
@@ -26778,8 +26599,8 @@
       "8GB"
     ],
     "storage_options": [
-      "128GB",
-      "256GB"
+      "128 GB",
+      "256 GB"
     ],
     "default_mrp": 19999,
     "base_resale_value": 11800,
@@ -26801,7 +26622,7 @@
       "12GB"
     ],
     "storage_options": [
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 27999,
     "base_resale_value": 13500,
@@ -26823,7 +26644,7 @@
       "8GB"
     ],
     "storage_options": [
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 21999,
     "base_resale_value": 11800,
@@ -26846,8 +26667,8 @@
       "8GB"
     ],
     "storage_options": [
-      "128GB",
-      "256GB"
+      "128 GB",
+      "256 GB"
     ],
     "default_mrp": 15999,
     "base_resale_value": 8400,
@@ -26870,7 +26691,7 @@
       "12GB"
     ],
     "storage_options": [
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 23999,
     "base_resale_value": 12400,
@@ -26892,8 +26713,8 @@
       "8GB"
     ],
     "storage_options": [
-      "128GB",
-      "256GB"
+      "128 GB",
+      "256 GB"
     ],
     "default_mrp": 12999,
     "base_resale_value": 7200,
@@ -26916,7 +26737,7 @@
       "8GB"
     ],
     "storage_options": [
-      "128GB"
+      "128 GB"
     ],
     "default_mrp": 12499,
     "base_resale_value": 6800,

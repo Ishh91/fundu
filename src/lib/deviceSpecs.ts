@@ -1279,10 +1279,18 @@ const MODEL_HARDWARE_RULES: Array<{
   // VIVO & iQOO
   // ==========================================
   {
-    pattern: /vivo\s*x100/i,
+    pattern: /vivo\s*x(200|100|90|80|70)\b/i,
     variants: [
-      { storage: '256 GB', rams: ['12 GB'] },
-      { storage: '512 GB', rams: ['16 GB'] },
+      { storage: '256 GB', rams: ['8 GB', '12 GB'] },
+      { storage: '512 GB', rams: ['12 GB', '16 GB'] },
+    ],
+  },
+  {
+    pattern: /vivo\s*y(21|22|20|16|15|12|02|01|35|56|200)\b/i,
+    variants: [
+      { storage: '32 GB', rams: ['3 GB', '4 GB'] },
+      { storage: '64 GB', rams: ['4 GB'] },
+      { storage: '128 GB', rams: ['4 GB', '6 GB', '8 GB'] },
     ],
   },
   {
@@ -1494,6 +1502,14 @@ const MODEL_HARDWARE_RULES: Array<{
     variants: [
       { storage: '128 GB', rams: ['8 GB'] },
       { storage: '256 GB', rams: ['8 GB'] },
+    ],
+  },
+  {
+    pattern: /oppo\s*a(78|54|53|31|17|16|15)\b/i,
+    variants: [
+      { storage: '32 GB', rams: ['3 GB', '4 GB'] },
+      { storage: '64 GB', rams: ['4 GB'] },
+      { storage: '128 GB', rams: ['4 GB', '6 GB', '8 GB'] },
     ],
   },
 
@@ -1867,6 +1883,14 @@ const MODEL_HARDWARE_RULES: Array<{
       { storage: '128 GB', rams: ['6 GB'] },
     ],
   },
+  {
+    pattern: /redmi\s*(12c|10a|9a|9c|9\s*power|10\b|a1|a2|a3)\b/i,
+    variants: [
+      { storage: '32 GB', rams: ['2 GB', '3 GB'] },
+      { storage: '64 GB', rams: ['3 GB', '4 GB'] },
+      { storage: '128 GB', rams: ['4 GB', '6 GB'] },
+    ],
+  },
 
   // ==========================================
   // REALME
@@ -1910,6 +1934,14 @@ const MODEL_HARDWARE_RULES: Array<{
     variants: [
       { storage: '64 GB', rams: ['4 GB'] },
       { storage: '128 GB', rams: ['4 GB', '6 GB'] },
+    ],
+  },
+  {
+    pattern: /realme\s*c(55|53|35|33|31|30|25|21|15|12|11)\b/i,
+    variants: [
+      { storage: '32 GB', rams: ['3 GB', '4 GB'] },
+      { storage: '64 GB', rams: ['4 GB'] },
+      { storage: '128 GB', rams: ['4 GB', '6 GB', '8 GB'] },
     ],
   },
 
@@ -1973,6 +2005,8 @@ const MODEL_HARDWARE_RULES: Array<{
     variants: [
       { storage: '128 GB', rams: ['12 GB'] },
       { storage: '256 GB', rams: ['12 GB'] },
+      { storage: '512 GB', rams: ['12 GB'] },
+      { storage: '1 TB', rams: ['12 GB'] },
     ],
   },
   {
@@ -1993,12 +2027,15 @@ const MODEL_HARDWARE_RULES: Array<{
     pattern: /pixel\s*fold\b/i,
     variants: [
       { storage: '256 GB', rams: ['12 GB'] },
+      { storage: '512 GB', rams: ['12 GB'] },
     ],
   },
   {
     pattern: /pixel\s*7\s*pro/i,
     variants: [
       { storage: '128 GB', rams: ['12 GB'] },
+      { storage: '256 GB', rams: ['12 GB'] },
+      { storage: '512 GB', rams: ['12 GB'] },
     ],
   },
   {
@@ -2011,6 +2048,7 @@ const MODEL_HARDWARE_RULES: Array<{
     pattern: /pixel\s*7\b(?!\s*(pro|a))/i,
     variants: [
       { storage: '128 GB', rams: ['8 GB'] },
+      { storage: '256 GB', rams: ['8 GB'] },
     ],
   },
   {
@@ -2018,6 +2056,7 @@ const MODEL_HARDWARE_RULES: Array<{
     variants: [
       { storage: '128 GB', rams: ['12 GB'] },
       { storage: '256 GB', rams: ['12 GB'] },
+      { storage: '512 GB', rams: ['12 GB'] },
     ],
   },
   {
@@ -2030,6 +2069,7 @@ const MODEL_HARDWARE_RULES: Array<{
     pattern: /pixel\s*6\b(?!\s*(pro|a))/i,
     variants: [
       { storage: '128 GB', rams: ['8 GB'] },
+      { storage: '256 GB', rams: ['8 GB'] },
     ],
   },
   {
@@ -2205,6 +2245,28 @@ const MODEL_HARDWARE_RULES: Array<{
     variants: [
       { storage: '128 GB', rams: ['8 GB'] },
       { storage: '256 GB', rams: ['12 GB'] },
+    ],
+  },
+  {
+    pattern: /razr\s*(50|40)\s*ultra/i,
+    variants: [
+      { storage: '256 GB', rams: ['8 GB', '12 GB'] },
+      { storage: '512 GB', rams: ['12 GB', '16 GB'] },
+    ],
+  },
+  {
+    pattern: /edge\s*50\s*ultra/i,
+    variants: [
+      { storage: '512 GB', rams: ['12 GB', '16 GB'] },
+      { storage: '1 TB', rams: ['16 GB'] },
+    ],
+  },
+  {
+    pattern: /edge\s*50\s*pro/i,
+    variants: [
+      { storage: '128 GB', rams: ['8 GB'] },
+      { storage: '256 GB', rams: ['8 GB', '12 GB'] },
+      { storage: '512 GB', rams: ['12 GB'] },
     ],
   },
   {
@@ -2503,27 +2565,33 @@ export function is512GBValidForModel(brand = '', model = ''): boolean {
     return false;
   }
 
-  // 5. Vivo / iQOO: Strictly Vivo X series flagships (X100, X200, X90 Pro) & iQOO 12/13
+  // 5. Vivo / iQOO: Strictly Vivo X series flagships (X70-X200, Pro), V30/V40 Pro & iQOO 11/12/13/15
   if (b.includes('vivo') || b.includes('iqoo')) {
-    if (/vivo\s*x(100|200|90)|iqoo\s*(12|13)/i.test(m)) return true;
-    return false; // Vivo V series (V20, V29, V30, V40) and Y series never had 512GB in India
+    if (/vivo\s*x(70|80|90|100|200)|v(30|40)\s*pro|iqoo\s*(11|12|13|15)/i.test(m)) return true;
+    return false; // Vivo V series standard and Y series never had 512GB in India
   }
 
-  // 6. Realme: Strictly GT 6 / GT 7
+  // 6. Realme: Strictly GT 6 / GT 7 / GT 2 Pro
   if (b.includes('realme')) {
-    if (/gt\s*[67]/i.test(m)) return true;
+    if (/gt\s*(6|7|2\s*pro)/i.test(m)) return true;
     return false;
   }
 
-  // 7. Motorola: Strictly Razr Ultra & Edge 50 Ultra
+  // 7. Motorola: Strictly Razr Ultra & Edge 50 Ultra / Edge 50 Pro
   if (b.includes('motorola') || b.includes('moto')) {
-    if (/razr\s*(40|50|60)\s*ultra|edge\s*50\s*ultra/i.test(m)) return true;
+    if (/razr\s*(40|50|60)\s*ultra|edge\s*50\s*(ultra|pro)/i.test(m)) return true;
     return false;
   }
 
-  // 8. Google Pixel: Strictly Pixel 9 Pro XL & Pixel 9 Pro Fold (older Pixels: 8 Pro, 7 Pro, 6 Pro NEVER launched 512GB in India)
+  // 8. Google Pixel: Strictly Pixel 6 Pro, 7 Pro, 8 Pro, 9 Pro, 9 Pro XL, 9/10 Pro Fold, 10 Pro
   if (b.includes('google') || b.includes('pixel')) {
-    if (/pixel\s*(9|10)\s*pro\s*(xl|fold)/i.test(m)) return true;
+    if (/pixel\s*(6\s*pro|7\s*pro|8\s*pro|9\s*pro|10\s*pro|fold)/i.test(m)) return true;
+    return false;
+  }
+
+  // 9. Oppo: Strictly Find N series, Reno 11/12 Pro
+  if (b.includes('oppo')) {
+    if (/find\s*n|reno\s*(11|12)\s*pro/i.test(m)) return true;
     return false;
   }
 
@@ -2565,9 +2633,9 @@ export function isStorageAllowedForModel(brand = '', model = '', storageStr = ''
 
   // 2. Tier: 256 GB
   if (gb === 256) {
-    // Google Pixel: In India retail, strictly Pixel 8/8a/8 Pro, Pixel 9 series. (7 Pro, 7, 7a, 6, 6a, 5a, 4a, 3a NEVER had 256GB in India)
+    // Google Pixel: In India & online recommerce, Pixel 6/7/8/9/10 series and Pixel Fold officially support 256GB
     if (b.includes('google') || b.includes('pixel')) {
-      if (/pixel\s*(?:8|9|10)/i.test(m)) return true;
+      if (/pixel\s*(?:6|7|8|9|10|fold)/i.test(m)) return true;
       return false;
     }
 
