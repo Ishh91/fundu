@@ -236,6 +236,118 @@ export const MASTER_MODEL_CATALOG = [
   {
     "brand": "Apple",
     "series": "iPhone 17 Series",
+    "model": "Apple iPhone 17 Air",
+    "storage": "256 GB",
+    "price": 82000,
+    "image": "https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-air.jpg"
+  },
+  {
+    "brand": "Apple",
+    "series": "iPhone 7 Series",
+    "model": "Apple iPhone 7 Plus",
+    "storage": "128 GB",
+    "price": 5400,
+    "image": "https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-7r4.jpg"
+  },
+  {
+    "brand": "Apple",
+    "series": "iPhone 7 Series",
+    "model": "Apple iPhone 7",
+    "storage": "128 GB",
+    "price": 3600,
+    "image": "https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-7r4.jpg"
+  },
+  {
+    "brand": "Apple",
+    "series": "iPhone 6 Series",
+    "model": "Apple iPhone 6s Plus",
+    "storage": "64 GB",
+    "price": 3200,
+    "image": "https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-6s-plus.jpg"
+  },
+  {
+    "brand": "Apple",
+    "series": "iPhone 6 Series",
+    "model": "Apple iPhone 6s",
+    "storage": "64 GB",
+    "price": 2400,
+    "image": "https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-6s.jpg"
+  },
+  {
+    "brand": "Apple",
+    "series": "iPhone 6 Series",
+    "model": "Apple iPhone 6 Plus",
+    "storage": "64 GB",
+    "price": 2500,
+    "image": "https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-6-plus.jpg"
+  },
+  {
+    "brand": "Apple",
+    "series": "iPhone 6 Series",
+    "model": "Apple iPhone 6",
+    "storage": "64 GB",
+    "price": 1800,
+    "image": "https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-6s.jpg"
+  },
+  {
+    "brand": "Apple",
+    "series": "iPhone SE Series",
+    "model": "Apple iPhone SE 1st Gen (2016)",
+    "storage": "32 GB",
+    "price": 2800,
+    "image": "https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-5s.jpg"
+  },
+  {
+    "brand": "Apple",
+    "series": "Classic Series",
+    "model": "Apple iPhone 5s",
+    "storage": "32 GB",
+    "price": 1400,
+    "image": "https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-5s.jpg"
+  },
+  {
+    "brand": "Apple",
+    "series": "Classic Series",
+    "model": "Apple iPhone 5c",
+    "storage": "16 GB",
+    "price": 1000,
+    "image": "https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-5c.jpg"
+  },
+  {
+    "brand": "Apple",
+    "series": "Classic Series",
+    "model": "Apple iPhone 5",
+    "storage": "32 GB",
+    "price": 900,
+    "image": "https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-5.jpg"
+  },
+  {
+    "brand": "Apple",
+    "series": "Classic Series",
+    "model": "Apple iPhone 4s",
+    "storage": "16 GB",
+    "price": 700,
+    "image": "https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-4s.jpg"
+  },
+  {
+    "brand": "Apple",
+    "series": "Classic Series",
+    "model": "Apple iPhone 4",
+    "storage": "16 GB",
+    "price": 600,
+    "image": "https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-4.jpg"
+  },
+  {
+    "brand": "Apple",
+    "series": "Classic Series",
+    "model": "Apple iPhone 1 (Original 2007)",
+    "storage": "8 GB",
+    "price": 1200,
+    "image": "https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-3gs.jpg"
+  },
+  {
+    "brand": "Apple",
+    "series": "iPhone 17 Series",
     "model": "Apple iPhone Air",
     "storage": "256 GB",
     "price": 82000,
@@ -316,6 +428,14 @@ export const MASTER_MODEL_CATALOG = [
   {
     "brand": "Google",
     "series": "Pixel 6 & Older Generation Series",
+    "model": "Google Pixel 3",
+    "storage": "64 GB",
+    "price": 1800,
+    "image": "https://api.mobileapi.dev/devices/775/thumb.png"
+  },
+  {
+    "brand": "Google",
+    "series": "Pixel 6 & Older Generation Series",
     "model": "Google Pixel 3 XL",
     "storage": "64 GB",
     "price": 1950,
@@ -336,6 +456,22 @@ export const MASTER_MODEL_CATALOG = [
     "storage": "64 GB",
     "price": 2150,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/google-pixel-3a-xl.jpg"
+  },
+  {
+    "brand": "Google",
+    "series": "Pixel 6 & Older Generation Series",
+    "model": "Google Pixel 4",
+    "storage": "64 GB",
+    "price": 3000,
+    "image": "https://api.mobileapi.dev/devices/772/thumb.png"
+  },
+  {
+    "brand": "Google",
+    "series": "Pixel 6 & Older Generation Series",
+    "model": "Google Pixel C",
+    "storage": "32 GB",
+    "price": 2800,
+    "image": "https://api.mobileapi.dev/devices/786/thumb.png"
   },
   {
     "brand": "Google",
@@ -389,6 +525,14 @@ export const MASTER_MODEL_CATALOG = [
     "brand": "Google",
     "series": "Google Pixel 7 Series",
     "model": "Google Pixel 7",
+    "storage": "128 GB",
+    "price": 15400,
+    "image": "https://fdn2.gsmarena.com/vv/bigpic/google-pixel-7-.jpg"
+  },
+  {
+    "brand": "Google",
+    "series": "Google Pixel 7 Series",
+    "model": "Google Pixel 7 5G",
     "storage": "128 GB",
     "price": 15400,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/google-pixel-7-.jpg"

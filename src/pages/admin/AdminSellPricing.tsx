@@ -44,6 +44,7 @@ import {
 } from '../../lib/priceSync';
 import { ALL_INDIAN_PHONES_CATALOG } from '../../data/indianPhonesCatalog';
 import { MASTER_MODEL_CATALOG } from '../../data/masterModelCatalog';
+import { BRAND_SERIES_DEFINITIONS } from '../../data/brandSeriesCatalog';
 import { getModelHardwareSpecs, calculateHardwareVariantMultiplier, normalizeStorageString } from '../../lib/deviceSpecs';
 
 export type UnifiedSellModel = {
@@ -350,6 +351,40 @@ export default function AdminSellPricing({
           existing.base_price = p.base_resale_value;
         }
       }
+    });
+
+    // 3.5 Process All Brand Series Definitions Default Models (ensures full series coverage e.g. iPhone 7, 6s, 5, Pixel 4, etc.)
+    Object.values(BRAND_SERIES_DEFINITIONS).forEach((seriesList) => {
+      seriesList.forEach((ser) => {
+        (ser.defaultModels || []).forEach((p) => {
+          const cleanM = getCleanModelName(p.brand, p.model);
+          const key = makeKey(p.brand, p.model);
+
+          if (!modelMap.has(key)) {
+            const customImg = getOverrideImage(p.brand, p.model, cleanM) || p.image || '';
+            const customPr = getOverridePrice(p.brand, p.model, cleanM);
+            const basePr = customPr !== undefined ? customPr : (p.price || 12000);
+
+            modelMap.set(key, {
+              id: `ser-${key}`,
+              brand: p.brand,
+              model: cleanM,
+              storage: normalizeStorageString(p.storage || '128 GB'),
+              base_price: basePr,
+              default_mrp: Math.round(basePr * 1.5),
+              excellent_multiplier: 0.75,
+              good_multiplier: 0.60,
+              fair_multiplier: 0.45,
+              box_bonus: 600,
+              charger_bonus: 400,
+              image_url: customImg,
+              is_active: !isModelDeleted(p.brand, p.model) && !isModelDeleted(p.brand, cleanM),
+              hasCustomPrice: customPr !== undefined,
+              hasCustomImage: Boolean(getOverrideImage(p.brand, p.model, cleanM)),
+            });
+          }
+        });
+      });
     });
 
     // 4. Overlay Explicit Database Sell Price Configs (Absolute Single Source of Truth)
