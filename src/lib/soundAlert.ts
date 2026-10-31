@@ -1,7 +1,7 @@
 // Professional Web Audio & Native Desktop System Notification Manager
 // Zero external audio file dependencies — fully standalone synthetic audio + OS desktop notifications
 
-export type NotificationType = 'sell' | 'repair' | 'order' | 'vendor_quote' | 'test';
+export type NotificationType = 'sell' | 'repair' | 'order' | 'vendor_quote' | 'rider_inspection' | 'rider_declined' | 'test';
 
 class SoundNotifier {
   private ctx: AudioContext | null = null;
@@ -159,6 +159,25 @@ class SoundNotifier {
             { freq: 1046.5, delay: 0.12, duration: 0.2, wave: 'sine' },
             { freq: 1318.51, delay: 0.24, duration: 0.25, wave: 'triangle' },
             { freq: 1567.98, delay: 0.36, duration: 0.45, wave: 'sine' },
+          ];
+          break;
+
+        case 'rider_inspection':
+          // Crisp 4-tone doorstep inspection clearance chime (F5 -> A5 -> C6 -> F6)
+          notes = [
+            { freq: 698.46, delay: 0.0, duration: 0.18, wave: 'sine' },
+            { freq: 880.0, delay: 0.11, duration: 0.2, wave: 'sine' },
+            { freq: 1046.5, delay: 0.22, duration: 0.24, wave: 'triangle' },
+            { freq: 1396.91, delay: 0.33, duration: 0.5, wave: 'sine' },
+          ];
+          break;
+
+        case 'rider_declined':
+          // Warning low-tone alert when rider declines assigned pickup (F4 -> D4 -> Bb3)
+          notes = [
+            { freq: 349.23, delay: 0.0, duration: 0.25, wave: 'sawtooth' },
+            { freq: 293.66, delay: 0.18, duration: 0.25, wave: 'triangle' },
+            { freq: 233.08, delay: 0.36, duration: 0.45, wave: 'sawtooth' },
           ];
           break;
 

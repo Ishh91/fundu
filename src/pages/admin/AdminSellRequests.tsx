@@ -548,27 +548,99 @@ export default function AdminSellRequests({
                 </div>
               )}
 
-              {/* Rider Inspection Approval Alert */}
-              {selectedSell.status === 'inspection_submitted' && (
-                <div className="p-4 rounded-2xl bg-amber-50 border border-amber-200 flex flex-wrap items-center justify-between gap-3">
-                  <div>
-                    <span className="badge bg-amber-200 text-amber-900 font-bold text-[10px] uppercase">
-                      🚨 Field Executive Doorstep Inspection Ready
+              {/* Rider Declined Task Alert */}
+              {(selectedSell as any).rider_acceptance_status === 'declined' && (
+                <div className="p-4 rounded-2xl bg-red-50 border border-red-300 flex flex-wrap items-center justify-between gap-3 text-xs">
+                  <div className="space-y-1">
+                    <span className="badge bg-red-600 text-white font-extrabold text-[10px] uppercase">
+                      🚨 Field Executive Declined Task
                     </span>
-                    <p className="font-bold text-amber-950 text-sm mt-1">
-                      Rider has uploaded 4 live photos & verified IMEI. Proposed Spot Payout: <span className="font-black text-emerald-800">{formatINR(selectedSell.final_price || selectedSell.estimated_price || 0)}</span>
+                    <p className="font-bold text-red-950 text-sm mt-0.5">
+                      Rider {(selectedSell as any).pickup_person_name ? `(${(selectedSell as any).pickup_person_name})` : ''} was unable to complete this pickup.
+                    </p>
+                    <p className="text-red-700 italic">
+                      Decline Reason: "{(selectedSell as any).rider_decline_reason || 'Schedule conflict / area unreachable'}"
                     </p>
                   </div>
                   <div className="flex items-center gap-2">
+                    <select
+                      defaultValue=""
+                      onChange={(e) => onReassignAgent(selectedSell.id, e.target.value)}
+                      className="input text-xs py-1.5 px-3 bg-white font-bold border-red-300 text-gray-800"
+                    >
+                      <option value="" disabled>⚡ Reassign to another Rider...</option>
+                      {agents.map((ag) => (
+                        <option key={ag.id} value={ag.id}>
+                          {ag.name} ({ag.status}) - {ag.current_orders_count} tasks
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+              )}
+
+              {/* Rider Inspection Approval Alert */}
+              {selectedSell.status === 'inspection_submitted' && (
+                <div className="p-4 rounded-2xl bg-amber-50 border border-amber-300 flex flex-wrap items-center justify-between gap-3 shadow-xs">
+                  <div className="space-y-1">
+                    <span className="badge bg-amber-200 text-amber-900 font-extrabold text-[10px] uppercase">
+                      🚨 Field Executive Doorstep Inspection Ready
+                    </span>
+                    <p className="font-bold text-amber-950 text-sm mt-1">
+                      Rider uploaded live inspection photos & verified IMEI. Proposed Spot Payout:{' '}
+                      <span className="font-black text-xl text-emerald-800">
+                        {formatINR(selectedSell.final_price || selectedSell.estimated_price || 0)}
+                      </span>
+                      <span className="text-xs text-gray-500 font-medium ml-2">
+                        (Original: {formatINR(selectedSell.estimated_price || 0)})
+                      </span>
+                    </p>
+                    {selectedSell.notes && (
+                      <p className="text-xs text-amber-900 italic bg-amber-100/70 p-2 rounded-lg border border-amber-200">
+                        Rider Notes: "{selectedSell.notes}"
+                      </p>
+                    )}
+                  </div>
+
+                  <div className="flex flex-wrap items-center gap-2">
                     <button
                       onClick={() => {
                         onUpdateStatus(selectedSell.id, 'confirmed');
                         alert(`✅ Spot Payout of ${formatINR(selectedSell.final_price || selectedSell.estimated_price || 0)} approved for ${selectedSell.brand} ${selectedSell.model}!\nDelivery Executive portal has received live clearance.`);
                       }}
-                      className="btn bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs px-4 py-2 rounded-xl shadow-xs"
+                      className="btn bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs px-4 py-2 rounded-xl shadow-xs flex items-center gap-1.5"
                     >
-                      ✅ Approve Spot Payout ({formatINR(selectedSell.final_price || selectedSell.estimated_price || 0)})
+                      <CheckCircle2 className="h-4 w-4" /> Approve Spot Payout ({formatINR(selectedSell.final_price || selectedSell.estimated_price || 0)})
                     </button>
+
+                    <button
+                      onClick={() =>
+                        setOverrideModal({
+                          open: true,
+                          sell: selectedSell,
+                          price: String(selectedSell.final_price || selectedSell.estimated_price || ''),
+                        })
+                      }
+                      className="btn-outline bg-white hover:bg-gray-50 text-indigo-700 border-indigo-200 font-bold text-xs px-3.5 py-2 rounded-xl shadow-xs flex items-center gap-1"
+                    >
+                      <Edit3 className="h-3.5 w-3.5" /> Override Payout
+                    </button>
+
+                    <div className="flex items-center gap-1 bg-white border border-gray-300 rounded-xl px-2 py-1 shadow-xs">
+                      <RotateCcw className="h-3 w-3 text-gray-500 shrink-0" />
+                      <select
+                        value={selectedSell.assigned_agent_id || ''}
+                        onChange={(e) => onReassignAgent(selectedSell.id, e.target.value)}
+                        className="bg-transparent text-xs font-bold text-gray-800 focus:outline-none cursor-pointer"
+                      >
+                        <option value="" disabled>Reassign Rider...</option>
+                        {agents.map((ag) => (
+                          <option key={ag.id} value={ag.id}>
+                            {ag.name} ({ag.status}) - {ag.current_orders_count} tasks
+                          </option>
+                        ))}
+                      </select>
+                    </div>
                   </div>
                 </div>
               )}

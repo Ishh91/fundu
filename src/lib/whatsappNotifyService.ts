@@ -1,4 +1,5 @@
 import { db } from './db';
+import { API_BASE } from '../config/apiConfig';
 
 // Hardcoded Baseline Admin WhatsApp Numbers (Always Included)
 export const BASELINE_ADMIN_NUMBERS = [
@@ -79,8 +80,6 @@ export function buildWhatsAppUrl(phone: string, text: string): string {
   const norm = normalizePhone(phone) || (phone.startsWith('91') ? phone : `91${phone}`);
   return `https://api.whatsapp.com/send?phone=${norm}&text=${encodeURIComponent(text)}`;
 }
-
-import { API_BASE } from '../config/apiConfig';
 
 /**
  * Dispatches automated WhatsApp notification:
@@ -285,6 +284,68 @@ export async function notifyVendorQuoteSubmitted(data: VendorQuoteNotificationDa
     (data.notes ? `📝 *Vendor Notes:* "${data.notes}"\n` : '') +
     `━━━━━━━━━━━━━━━━━━━━━\n` +
     `⚡ Action Required! Verify & Approve or Reassign in Admin:\n${origin}/admin/wholesalers`;
+
+  return await dispatchWhatsAppAlert(msg, autoOpen);
+}
+
+// =========================================================================
+// 6. RIDER DOORSTEP INSPECTION SUBMITTED NOTIFICATION
+// =========================================================================
+export interface RiderInspectionNotificationData {
+  requestId: string;
+  riderName: string;
+  riderPhone?: string | null;
+  brand: string;
+  model: string;
+  imei?: string | null;
+  proposedPayout: number;
+  originalPrice?: number | null;
+  notes?: string | null;
+}
+
+export async function notifyRiderInspectionSubmitted(data: RiderInspectionNotificationData, autoOpen: boolean = false) {
+  const origin = typeof window !== 'undefined' ? window.location.origin : 'https://thefundu.com';
+  const msg =
+    `🛵 *RIDER DOORSTEP INSPECTION SUBMITTED!*\n` +
+    `━━━━━━━━━━━━━━━━━━━━━\n` +
+    `🚴 *Executive:* ${data.riderName} ${data.riderPhone ? `(${data.riderPhone})` : ''}\n` +
+    `🆔 *Sell Request:* #${data.requestId.slice(0, 8).toUpperCase()}\n` +
+    `📱 *Device:* ${data.brand} ${data.model}\n` +
+    (data.imei ? `🔢 *Verified IMEI:* ${data.imei}\n` : '') +
+    `💰 *Proposed Spot Payout:* ₹${data.proposedPayout.toLocaleString('en-IN')}\n` +
+    (data.originalPrice ? `📊 *Customer Quoted Price:* ₹${data.originalPrice.toLocaleString('en-IN')}\n` : '') +
+    (data.notes ? `📝 *Rider Observations:* "${data.notes}"\n` : '') +
+    `━━━━━━━━━━━━━━━━━━━━━\n` +
+    `⚡ Clear Spot Payout or Override in Admin Console:\n${origin}/admin`;
+
+  return await dispatchWhatsAppAlert(msg, autoOpen);
+}
+
+// =========================================================================
+// 7. RIDER DECLINED TASK NOTIFICATION
+// =========================================================================
+export interface RiderDeclinedTaskData {
+  taskId: string;
+  taskType: 'sell' | 'repair' | 'order';
+  riderName: string;
+  riderPhone?: string | null;
+  brand?: string | null;
+  model?: string | null;
+  reason?: string | null;
+}
+
+export async function notifyRiderDeclinedTask(data: RiderDeclinedTaskData, autoOpen: boolean = false) {
+  const origin = typeof window !== 'undefined' ? window.location.origin : 'https://thefundu.com';
+  const msg =
+    `🚨 *RIDER DECLINED ASSIGNED TASK!*\n` +
+    `━━━━━━━━━━━━━━━━━━━━━\n` +
+    `🚴 *Rider:* ${data.riderName} ${data.riderPhone ? `(${data.riderPhone})` : ''}\n` +
+    `📋 *Task Type:* ${data.taskType === 'sell' ? 'Sell Pickup' : data.taskType === 'repair' ? 'Repair Visit' : 'Store Delivery'}\n` +
+    `🆔 *ID:* #${data.taskId.slice(0, 8).toUpperCase()}\n` +
+    (data.brand && data.model ? `📱 *Item:* ${data.brand} ${data.model}\n` : '') +
+    (data.reason ? `⚠️ *Reason:* "${data.reason}"\n` : '') +
+    `━━━━━━━━━━━━━━━━━━━━━\n` +
+    `⚡ Action Required! Please Reassign lead to another rider in Admin:\n${origin}/admin`;
 
   return await dispatchWhatsAppAlert(msg, autoOpen);
 }

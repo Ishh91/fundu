@@ -165,6 +165,8 @@ export default function Admin() {
   const lastKnownOrderId = useRef<string | null>(null);
   const knownQuotedSellIds = useRef<Set<string>>(new Set());
   const knownQuotedRepairIds = useRef<Set<string>>(new Set());
+  const knownRiderInspectionIds = useRef<Set<string>>(new Set());
+  const knownRiderDeclinedIds = useRef<Set<string>>(new Set());
 
   // Data Stores
   const [products, setProducts] = useState<Product[]>([]);
@@ -467,12 +469,22 @@ export default function Admin() {
 
     const pollInterval = setInterval(async () => {
       try {
-        const [sellsRes, repairsRes, ordersRes, pendingSellQuotesRes, pendingRepairQuotesRes] = await Promise.all([
+        const [
+          sellsRes,
+          repairsRes,
+          ordersRes,
+          pendingSellQuotesRes,
+          pendingRepairQuotesRes,
+          pendingRiderInspectionsRes,
+          declinedRiderTasksRes,
+        ] = await Promise.all([
           db.from('sell_requests').select('*').sort({ field: 'created_at', ascending: false }).limit(8),
           db.from('repair_bookings').select('*').sort({ field: 'created_at', ascending: false }).limit(8),
           db.from('orders').select('*').sort({ field: 'created_at', ascending: false }).limit(8),
           db.from('sell_requests').select('*').eq('vendor_quote_status', 'quoted').limit(5),
           db.from('repair_bookings').select('*').eq('quotation_status', 'quoted').limit(5),
+          db.from('sell_requests').select('*').eq('status', 'inspection_submitted').limit(5),
+          db.from('sell_requests').select('*').eq('rider_acceptance_status', 'declined').limit(5),
         ]);
 
         // 1. Sell Requests Live Notification
@@ -626,6 +638,70 @@ export default function Admin() {
               });
             } else if (isInitialLoad.current) {
               knownQuotedRepairIds.current.add(rq.id);
+            }
+          });
+        }
+
+        // 6. Rider Doorstep Inspection Live Notification
+        if (pendingRiderInspectionsRes.data && Array.isArray(pendingRiderInspectionsRes.data) && pendingRiderInspectionsRes.data.length > 0) {
+          const freshInspections = pendingRiderInspectionsRes.data as SellRequest[];
+          freshInspections.forEach((insp) => {
+            if (!isInitialLoad.current && !knownRiderInspectionIds.current.has(insp.id)) {
+              knownRiderInspectionIds.current.add(insp.id);
+              const proposedVal = insp.final_price || insp.estimated_price || 0;
+              const newNotif: LiveNotification = {
+                id: `rider-insp-${insp.id}`,
+                type: 'rider_inspection',
+                title: `Rider Inspection: ₹${proposedVal.toLocaleString('en-IN')}`,
+                subtitle: `${insp.brand} ${insp.model} · Field Executive Clearance Required`,
+                locality: insp.pickup_area || 'Doorstep Pickup',
+                amount: proposedVal,
+                timestamp: new Date(),
+                tabTarget: 'sells',
+              };
+              setActiveNotifications((prev) => [newNotif, ...prev.slice(0, 3)]);
+              soundNotifier.notify({
+                type: 'rider_inspection',
+                title: `🛵 Rider Inspection Submitted: ${insp.brand} ${insp.model}`,
+                body: `Executive submitted 4 photos & verified IMEI.\nProposed Spot Payout: ₹${proposedVal.toLocaleString('en-IN')}\nClick to approve spot payout or override.`,
+                onClick: () => {
+                  setTab('sells');
+                  setSelectedSellId(insp.id);
+                },
+              });
+            } else if (isInitialLoad.current) {
+              knownRiderInspectionIds.current.add(insp.id);
+            }
+          });
+        }
+
+        // 7. Rider Declined Task Live Notification
+        if (declinedRiderTasksRes.data && Array.isArray(declinedRiderTasksRes.data) && declinedRiderTasksRes.data.length > 0) {
+          const freshDeclined = declinedRiderTasksRes.data as SellRequest[];
+          freshDeclined.forEach((dec) => {
+            if (!isInitialLoad.current && !knownRiderDeclinedIds.current.has(dec.id)) {
+              knownRiderDeclinedIds.current.add(dec.id);
+              const newNotif: LiveNotification = {
+                id: `rider-dec-${dec.id}`,
+                type: 'rider_declined',
+                title: `Rider Declined: ${dec.brand} ${dec.model}`,
+                subtitle: `Reason: ${(dec as any).rider_decline_reason || 'Area unreachable'}. Reassign now!`,
+                locality: dec.pickup_area || 'Doorstep Pickup',
+                timestamp: new Date(),
+                tabTarget: 'sells',
+              };
+              setActiveNotifications((prev) => [newNotif, ...prev.slice(0, 3)]);
+              soundNotifier.notify({
+                type: 'rider_declined',
+                title: `🚨 Executive Declined Task: ${dec.brand} ${dec.model}`,
+                body: `Rider declined this pickup.\nReason: ${(dec as any).rider_decline_reason || 'Schedule conflict'}\nClick to reassign to another rider.`,
+                onClick: () => {
+                  setTab('sells');
+                  setSelectedSellId(dec.id);
+                },
+              });
+            } else if (isInitialLoad.current) {
+              knownRiderDeclinedIds.current.add(dec.id);
             }
           });
         }

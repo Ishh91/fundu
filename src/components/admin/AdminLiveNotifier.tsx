@@ -13,23 +13,26 @@ import {
   MapPin,
   Flame,
   Building2,
+  Bike,
+  Truck,
+  AlertTriangle,
 } from 'lucide-react';
 import { soundNotifier } from '../../lib/soundAlert';
 import { formatINR } from '../../lib/db';
 
 export type LiveNotification = {
   id: string;
-  type: 'sell' | 'repair' | 'order' | 'vendor_quote';
+  type: 'sell' | 'repair' | 'order' | 'vendor_quote' | 'rider_inspection' | 'rider_declined';
   title: string;
   subtitle: string;
   locality?: string;
   amount?: number | null;
   timestamp: Date;
-  tabTarget: 'sells' | 'repairs' | 'orders' | 'wholesalers';
+  tabTarget: 'sells' | 'repairs' | 'orders' | 'wholesalers' | 'agents';
 };
 
 type Props = {
-  onNavigateTab: (tab: 'sells' | 'repairs' | 'orders' | 'wholesalers', itemId?: string) => void;
+  onNavigateTab: (tab: 'sells' | 'repairs' | 'orders' | 'wholesalers' | 'agents', itemId?: string) => void;
   activeNotifications: LiveNotification[];
   onDismiss: (id: string) => void;
   onSimulateTestAlert: () => void;
@@ -170,13 +173,19 @@ function NotificationToastItem({
   const isSell = notif.type === 'sell';
   const isRepair = notif.type === 'repair';
   const isVendorQuote = notif.type === 'vendor_quote';
+  const isRiderInspection = notif.type === 'rider_inspection';
+  const isRiderDeclined = notif.type === 'rider_declined';
 
   return (
     <div
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       className={`pointer-events-auto overflow-hidden rounded-2xl p-4 text-white shadow-2xl border backdrop-blur-2xl ring-1 ring-white/20 transition-all duration-300 transform animate-in fade-in slide-in-from-top-3 ${
-        isVendorQuote
+        isRiderDeclined
+          ? 'bg-gradient-to-r from-[#881337] via-[#be123c] to-[#e11d48] border-rose-300/50 shadow-rose-950/50 ring-rose-400/40'
+          : isRiderInspection
+          ? 'bg-gradient-to-r from-[#0f766e] via-[#0d9488] to-[#14b8a6] border-teal-300/50 shadow-teal-950/50 ring-teal-400/40'
+          : isVendorQuote
           ? 'bg-gradient-to-r from-[#7c2d12] via-[#c2410c] to-[#ea580c] border-amber-300/50 shadow-orange-950/50 ring-amber-400/40'
           : isSell
           ? 'bg-gradient-to-r from-[#202938] via-[#344257] to-[#47576E] border-[#6A859F]/60 shadow-slate-950/50'
@@ -188,7 +197,11 @@ function NotificationToastItem({
       <div className="flex items-start justify-between gap-3">
         <div className="flex items-start gap-3 flex-1 min-w-0">
           <div className="relative mt-0.5 grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-white/20 text-white backdrop-blur-md shadow-inner">
-            {isVendorQuote ? (
+            {isRiderDeclined ? (
+              <AlertTriangle className="h-5 w-5 text-rose-200" />
+            ) : isRiderInspection ? (
+              <Bike className="h-5 w-5 text-teal-100" />
+            ) : isVendorQuote ? (
               <Building2 className="h-5 w-5 text-amber-200" />
             ) : isSell ? (
               <Smartphone className="h-5 w-5" />
@@ -203,9 +216,25 @@ function NotificationToastItem({
           <div className="min-w-0 flex-1">
             <div className="flex items-center gap-1.5 flex-wrap">
               <span className={`rounded-md px-1.5 py-0.5 text-[10px] font-black uppercase tracking-wider text-white ${
-                isVendorQuote ? 'bg-amber-900/60 text-amber-200 border border-amber-400/40' : 'bg-white/25'
+                isRiderDeclined
+                  ? 'bg-rose-950/70 text-rose-200 border border-rose-400/50'
+                  : isRiderInspection
+                  ? 'bg-teal-950/60 text-teal-200 border border-teal-300/40'
+                  : isVendorQuote
+                  ? 'bg-amber-900/60 text-amber-200 border border-amber-400/40'
+                  : 'bg-white/25'
               }`}>
-                {isVendorQuote ? '💼 Vendor Quoted Price' : isSell ? '⚡ New Sell Lead' : isRepair ? '🛠️ Doorstep Repair' : '📦 New Order'}
+                {isRiderDeclined
+                  ? '🚨 Rider Declined Task'
+                  : isRiderInspection
+                  ? '🛵 Rider Inspection Submitted'
+                  : isVendorQuote
+                  ? '💼 Vendor Quoted Price'
+                  : isSell
+                  ? '⚡ New Sell Lead'
+                  : isRepair
+                  ? '🛠️ Doorstep Repair'
+                  : '📦 New Order'}
               </span>
               <span className="text-[10px] text-white/80">Just now</span>
               {isHovered && (
@@ -250,7 +279,13 @@ function NotificationToastItem({
       {/* Action Footer */}
       <div className="mt-3 pt-2.5 border-t border-white/15 flex items-center justify-between gap-2">
         <span className="text-[10px] text-white/75 truncate">
-          {isVendorQuote ? 'Requires Admin Review & Approval' : 'Auto-assigned to Service Agent'}
+          {isRiderDeclined
+            ? 'Action Needed: Reassign task to another rider'
+            : isRiderInspection
+            ? 'Doorstep Spot Clearance Required'
+            : isVendorQuote
+            ? 'Requires Admin Review & Approval'
+            : 'Auto-assigned to Service Agent'}
         </span>
         <button
           type="button"
@@ -259,12 +294,18 @@ function NotificationToastItem({
             onDismiss(notif.id);
           }}
           className={`inline-flex items-center gap-1.5 rounded-lg px-3.5 py-1.5 text-xs font-black shadow-md transition active:scale-95 shrink-0 ${
-            isVendorQuote
+            isRiderDeclined
+              ? 'bg-rose-200 text-rose-950 hover:bg-white font-black'
+              : isRiderInspection
+              ? 'bg-teal-200 text-teal-950 hover:bg-white font-black'
+              : isVendorQuote
               ? 'bg-amber-300 text-amber-950 hover:bg-amber-200 font-extrabold'
               : 'bg-white text-gray-900 hover:bg-gray-100'
           }`}
         >
-          <span>{isVendorQuote ? 'Verify Quote' : 'Open Lead'}</span>
+          <span>
+            {isRiderDeclined ? 'Reassign Rider' : isRiderInspection ? 'Verify & Clear Payout' : isVendorQuote ? 'Verify Quote' : 'Open Lead'}
+          </span>
           <ExternalLink className="h-3 w-3" />
         </button>
       </div>

@@ -41,6 +41,10 @@ import {
 import { useAuth } from '../context/AuthContext';
 import { db, formatINR } from '../lib/db';
 import type { SellRequest, RepairBooking, Order, DeliveryAgent } from '../types';
+import {
+  notifyRiderInspectionSubmitted,
+  notifyRiderDeclinedTask,
+} from '../lib/whatsappNotifyService';
 
 function RiderTaskMapWidget({
   address,
@@ -203,6 +207,83 @@ export default function DeliveryAgentPortal() {
   } | null>(null);
   const [otpInput, setOtpInput] = useState('');
   const [otpSubmitting, setOtpSubmitting] = useState(false);
+
+  // Task Acceptance & Decline Handlers (Signals Admin For Dynamic Reassignment)
+  const handleAcceptTask = async (type: 'sell' | 'repair' | 'order', id: string) => {
+    try {
+      if (type === 'sell') {
+        await db.from('sell_requests').update({ rider_acceptance_status: 'accepted' }).eq('id', id);
+        setSells((prev) => prev.map((s) => (s.id === id ? ({ ...s, rider_acceptance_status: 'accepted' } as any) : s)));
+      } else if (type === 'repair') {
+        await db.from('repair_bookings').update({ rider_acceptance_status: 'accepted' }).eq('id', id);
+        setRepairs((prev) => prev.map((r) => (r.id === id ? ({ ...r, rider_acceptance_status: 'accepted' } as any) : r)));
+      } else {
+        await db.from('orders').update({ rider_acceptance_status: 'accepted' }).eq('id', id);
+        setOrders((prev) => prev.map((o) => (o.id === id ? ({ ...o, rider_acceptance_status: 'accepted' } as any) : o)));
+      }
+      alert('✅ Task Accepted! Proceed with doorstep visit.');
+    } catch {
+      alert('Failed to accept task.');
+    }
+  };
+
+  const handleDeclineTask = async (type: 'sell' | 'repair' | 'order', item: any) => {
+    const reason = prompt('Please enter reason for declining this task (e.g. Area unreachable, bike breakdown, emergency):', 'Schedule conflict / area unreachable');
+    if (reason === null) return;
+
+    try {
+      if (type === 'sell') {
+        await db.from('sell_requests').update({
+          rider_acceptance_status: 'declined',
+          assigned_agent_id: null,
+          pickup_person_name: null,
+          pickup_person_phone: null,
+          status: 'pending',
+          rider_decline_reason: reason,
+        }).eq('id', item.id);
+        setSells((prev) => prev.filter((s) => s.id !== item.id));
+      } else if (type === 'repair') {
+        await db.from('repair_bookings').update({
+          rider_acceptance_status: 'declined',
+          assigned_agent_id: null,
+          delivery_person_name: null,
+          delivery_person_phone: null,
+          status: 'pending',
+          rider_decline_reason: reason,
+        }).eq('id', item.id);
+        setRepairs((prev) => prev.filter((r) => r.id !== item.id));
+      } else {
+        await db.from('orders').update({
+          rider_acceptance_status: 'declined',
+          assigned_agent_id: null,
+          delivery_person_name: null,
+          delivery_person_phone: null,
+          status: 'pending',
+          rider_decline_reason: reason,
+        }).eq('id', item.id);
+        setOrders((prev) => prev.filter((o) => o.id !== item.id));
+      }
+
+      // Dispatch automated WhatsApp alert to Central Admin
+      try {
+        await notifyRiderDeclinedTask({
+          taskId: item.id,
+          taskType: type,
+          riderName: selectedRiderName,
+          riderPhone: selectedRiderPhone,
+          brand: item.brand,
+          model: item.model,
+          reason,
+        });
+      } catch (waErr) {
+        console.warn('WhatsApp alert warning:', waErr);
+      }
+
+      alert('❌ Task declined. Admin has been notified via WhatsApp to reassign this order.');
+    } catch {
+      alert('Failed to decline task.');
+    }
+  };
 
   // Trip Progress & Milestone Status Handlers
   const handleMarkOnTheWay = async (
@@ -450,10 +531,28 @@ export default function DeliveryAgentPortal() {
         ].filter(Boolean) as string[],
         payout_method: payoutMethod,
         payout_details: customerUpiId || 'Cash on spot at doorstep',
+        rider_inspection_status: 'pending_approval',
       };
 
       const { error } = await db.from('sell_requests').update(updatePayload).eq('id', inspectingSell.id);
       if (error) throw error;
+
+      // Dispatch automated WhatsApp alert to Central Admin
+      try {
+        await notifyRiderInspectionSubmitted({
+          requestId: inspectingSell.id,
+          riderName: selectedRiderName,
+          riderPhone: selectedRiderPhone,
+          brand: inspectingSell.brand,
+          model: inspectingSell.model,
+          imei: imeiInput,
+          proposedPayout: payoutAmount,
+          originalPrice: inspectingSell.estimated_price,
+          notes: `Condition: ${selectedCondition}. Screen: ${screenCondition}, Body: ${bodyCondition}. ${riderNotes || ''}`,
+        });
+      } catch (waErr) {
+        console.warn('WhatsApp alert warning:', waErr);
+      }
 
       setApprovalWaiting(true);
       setInspectingSell((prev) => (prev ? { ...prev, ...updatePayload } : null));
@@ -528,6 +627,23 @@ export default function DeliveryAgentPortal() {
 
       await db.from('repair_bookings').update(updatePayload).eq('id', inspectingRepair.id);
       setRepairs((prev) => prev.map((r) => r.id === inspectingRepair.id ? { ...r, ...updatePayload } : r));
+
+      // Dispatch automated WhatsApp notification to central admin
+      try {
+        await notifyRiderInspectionSubmitted({
+          requestId: inspectingRepair.id,
+          riderName: selectedRiderName,
+          riderPhone: selectedRiderPhone,
+          brand: inspectingRepair.brand,
+          model: inspectingRepair.model,
+          proposedPayout: finalNum,
+          originalPrice: inspectingRepair.estimated_cost,
+          notes: `Doorstep Diagnostic: ${repairDiagnosticDetail || inspectingRepair.problem}`,
+        });
+      } catch (waErr) {
+        console.warn('WhatsApp alert warning:', waErr);
+      }
+
       alert(`🔧 Technician Diagnostic Submitted for ${inspectingRepair.brand} ${inspectingRepair.model}!\nQuotation: ₹${finalNum.toLocaleString('en-IN')}`);
       setInspectingRepair(null);
     } catch (err) {
@@ -1007,6 +1123,45 @@ export default function DeliveryAgentPortal() {
                       }
                     />
 
+                    {/* Rider Acceptance & Decline Actions Bar */}
+                    <div className="flex items-center justify-between gap-2 p-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs">
+                      <div className="flex items-center gap-1.5">
+                        {(sell as any).rider_acceptance_status === 'accepted' ? (
+                          <span className="badge bg-emerald-100 text-emerald-800 font-bold text-[10px]">
+                            ✓ Task Accepted by You
+                          </span>
+                        ) : (
+                          <span className="badge bg-amber-100 text-amber-800 font-bold text-[10px] animate-pulse">
+                            ⚡ New Task Assigned
+                          </span>
+                        )}
+                        {isWaitingAdmin && (
+                          <span className="badge bg-amber-500 text-white font-bold text-[10px]">
+                            ⏳ Awaiting Admin Spot Clearance
+                          </span>
+                        )}
+                      </div>
+
+                      <div className="flex items-center gap-1.5">
+                        {(sell as any).rider_acceptance_status !== 'accepted' && (
+                          <button
+                            type="button"
+                            onClick={() => handleAcceptTask('sell', sell.id)}
+                            className="btn bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] font-bold px-3 py-1 rounded-lg"
+                          >
+                            ✓ Accept
+                          </button>
+                        )}
+                        <button
+                          type="button"
+                          onClick={() => handleDeclineTask('sell', sell)}
+                          className="btn-outline text-red-600 hover:bg-red-50 border-red-200 text-[11px] font-bold px-2.5 py-1 rounded-lg"
+                        >
+                          ✕ Decline
+                        </button>
+                      </div>
+                    </div>
+
                     {/* Rider Handover Milestone Actions Bar */}
                     <div className="space-y-2 pt-2 border-t border-slate-100">
                       <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
@@ -1196,6 +1351,40 @@ export default function DeliveryAgentPortal() {
                       }
                     />
 
+                    {/* Rider Acceptance & Decline Actions Bar */}
+                    <div className="flex items-center justify-between gap-2 p-2.5 rounded-xl bg-purple-50/60 border border-purple-200 text-xs">
+                      <div className="flex items-center gap-1.5">
+                        {(repair as any).rider_acceptance_status === 'accepted' ? (
+                          <span className="badge bg-emerald-100 text-emerald-800 font-bold text-[10px]">
+                            ✓ Task Accepted by You
+                          </span>
+                        ) : (
+                          <span className="badge bg-amber-100 text-amber-800 font-bold text-[10px] animate-pulse">
+                            ⚡ New Repair Assigned
+                          </span>
+                        )}
+                      </div>
+
+                      <div className="flex items-center gap-1.5">
+                        {(repair as any).rider_acceptance_status !== 'accepted' && (
+                          <button
+                            type="button"
+                            onClick={() => handleAcceptTask('repair', repair.id)}
+                            className="btn bg-purple-600 hover:bg-purple-700 text-white text-[11px] font-bold px-3 py-1 rounded-lg"
+                          >
+                            ✓ Accept
+                          </button>
+                        )}
+                        <button
+                          type="button"
+                          onClick={() => handleDeclineTask('repair', repair)}
+                          className="btn-outline text-red-600 hover:bg-red-50 border-red-200 text-[11px] font-bold px-2.5 py-1 rounded-lg"
+                        >
+                          ✕ Decline
+                        </button>
+                      </div>
+                    </div>
+
                     {/* Action Bar */}
                     <div className="flex flex-wrap items-center justify-between gap-2 text-xs pt-2 border-t border-slate-100">
                       <div className="flex items-center gap-2">
@@ -1366,6 +1555,40 @@ export default function DeliveryAgentPortal() {
                         })
                       }
                     />
+
+                    {/* Rider Acceptance & Decline Actions Bar */}
+                    <div className="flex items-center justify-between gap-2 p-2.5 rounded-xl bg-blue-50/60 border border-blue-200 text-xs">
+                      <div className="flex items-center gap-1.5">
+                        {(order as any).rider_acceptance_status === 'accepted' ? (
+                          <span className="badge bg-emerald-100 text-emerald-800 font-bold text-[10px]">
+                            ✓ Task Accepted by You
+                          </span>
+                        ) : (
+                          <span className="badge bg-amber-100 text-amber-800 font-bold text-[10px] animate-pulse">
+                            ⚡ New Order Assigned
+                          </span>
+                        )}
+                      </div>
+
+                      <div className="flex items-center gap-1.5">
+                        {(order as any).rider_acceptance_status !== 'accepted' && (
+                          <button
+                            type="button"
+                            onClick={() => handleAcceptTask('order', order.id)}
+                            className="btn bg-blue-600 hover:bg-blue-700 text-white text-[11px] font-bold px-3 py-1 rounded-lg"
+                          >
+                            ✓ Accept
+                          </button>
+                        )}
+                        <button
+                          type="button"
+                          onClick={() => handleDeclineTask('order', order)}
+                          className="btn-outline text-red-600 hover:bg-red-50 border-red-200 text-[11px] font-bold px-2.5 py-1 rounded-lg"
+                        >
+                          ✕ Decline
+                        </button>
+                      </div>
+                    </div>
 
                     {/* Action Bar */}
                     <div className="flex flex-wrap items-center justify-between gap-2 text-xs pt-2 border-t border-slate-100">
