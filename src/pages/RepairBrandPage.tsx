@@ -429,7 +429,12 @@ export default function RepairBrandPage() {
   }, [brandModels, brandDisplayName, brandCleanKey]);
 
   const handleBookRepair = (modelName: string, issueId: string = 'screen') => {
-    const modelSlugClean = modelName.toLowerCase().replace(/\s+/g, '-');
+    const modelSlugClean = modelName
+      .toLowerCase()
+      .replace(/\+/g, 'plus')
+      .replace(/[()]/g, '')
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-+|-+$/g, '');
     const targetUrl = `/repair/${brandCleanKey}/${modelSlugClean}?step=2&issue=${encodeURIComponent(issueId)}`;
     navigate(targetUrl);
   };

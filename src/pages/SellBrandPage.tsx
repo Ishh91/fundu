@@ -484,7 +484,12 @@ export default function SellBrandPage() {
   };
 
   const handleSelectModel = (modelName: string, storage: string) => {
-    const modelSlugClean = modelName.toLowerCase().replace(/\s+/g, '-');
+    const modelSlugClean = modelName
+      .toLowerCase()
+      .replace(/\+/g, 'plus')
+      .replace(/[()]/g, '')
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-+|-+$/g, '');
     navigate(`/sell-old-mobile-phone/sell-${brandCleanKey}/sell-${modelSlugClean}?storage=${encodeURIComponent(storage)}`);
   };
 

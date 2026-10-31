@@ -486,29 +486,38 @@ export default function SellPhone() {
         }
 
         const cleanModelKey = sanitizedSlug.replace(/-/g, ' ').trim();
-        const stripped = cleanModelKey.replace(/[\s-]+/g, '');
-        const strippedNoBrand = stripped.replace(new RegExp(`^${cleanBrandKey}`), '');
+        const sNorm = cleanModelKey.toLowerCase().replace(/\+/g, 'plus').replace(/[^a-z0-9]/g, '');
+        const sNormNoBrand = sNorm.replace(new RegExp(`^${cleanBrandKey}`), '');
 
         const matchCandidate = (candidateModel: string, candidateBrand: string) => {
           if (candidateBrand.toLowerCase() !== cleanBrandKey) return false;
-          const cNorm = candidateModel.toLowerCase().replace(/[\s-]+/g, '');
+          const cNorm = candidateModel.toLowerCase().replace(/\+/g, 'plus').replace(/[^a-z0-9]/g, '');
           const cNormNoBrand = cNorm.replace(new RegExp(`^${cleanBrandKey}`), '');
           return (
-            cNorm === stripped ||
-            cNormNoBrand === strippedNoBrand ||
-            cNorm === strippedNoBrand ||
-            cNormNoBrand === stripped
+            cNorm === sNorm ||
+            cNormNoBrand === sNormNoBrand ||
+            cNorm === sNormNoBrand ||
+            cNormNoBrand === sNorm ||
+            cNorm === `${sNorm}5g` ||
+            cNormNoBrand === `${sNormNoBrand}5g` ||
+            `${cNorm}5g` === sNorm ||
+            `${cNormNoBrand}5g` === sNormNoBrand ||
+            cNorm.replace(/5g$/, '') === sNorm.replace(/5g$/, '') ||
+            cNormNoBrand.replace(/5g$/, '') === sNormNoBrand.replace(/5g$/, '')
           );
         };
 
+        const matched =
+          ALL_INDIAN_PHONES_CATALOG.find((p) => matchCandidate(p.model, p.brand)) ||
+          MASTER_MODEL_CATALOG.find((m) => matchCandidate(m.model, m.brand));
+
         let foundModel =
-          ALL_INDIAN_PHONES_CATALOG.find((p) => matchCandidate(p.model, p.brand))?.model ||
-          MASTER_MODEL_CATALOG.find((m) => matchCandidate(m.model, m.brand))?.model ||
+          matched?.model ||
           cleanModelKey.split(' ').map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
 
         // Clean out any rogue 'Sell ' or duplicate brand prefixes
         foundModel = foundModel.replace(/^(sell\s+|old\s+|used\s+)+/i, '').trim();
-        if (foundModel.toLowerCase().startsWith(foundBrand.toLowerCase())) {
+        if (!matched && foundModel.toLowerCase().startsWith(foundBrand.toLowerCase())) {
           foundModel = foundModel.slice(foundBrand.length).trim();
         }
 

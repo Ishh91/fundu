@@ -669,18 +669,47 @@ export default function Repair() {
   useEffect(() => {
     if (brandSlug && modelSlug) {
       const cleanBrandKey = brandSlug.replace(/^repair-/, '').toLowerCase();
-      const stripped = modelSlug.toLowerCase().replace(/[\s-]+/g, '');
+      let sanitizedSlug = modelSlug.toLowerCase();
+      let prevSlug = '';
+      while (sanitizedSlug !== prevSlug) {
+        prevSlug = sanitizedSlug;
+        sanitizedSlug = sanitizedSlug
+          .replace(/^(repair-)/, '')
+          .replace(new RegExp(`^${cleanBrandKey}-`), '');
+      }
+
+      const cleanModelKey = sanitizedSlug.replace(/-/g, ' ').trim();
+      const sNorm = cleanModelKey.toLowerCase().replace(/\+/g, 'plus').replace(/[^a-z0-9]/g, '');
+      const sNormNoBrand = sNorm.replace(new RegExp(`^${cleanBrandKey}`), '');
 
       const foundBrand = BRAND_CARDS.find((b) => b.name.toLowerCase() === cleanBrandKey)?.name ||
         cleanBrandKey.charAt(0).toUpperCase() + cleanBrandKey.slice(1);
 
-      const foundModel = ALL_INDIAN_PHONES_CATALOG.find(
-        (p) => p.brand.toLowerCase() === cleanBrandKey && p.model.toLowerCase().replace(/[\s-]+/g, '') === stripped
-      )?.model ||
-      MASTER_MODEL_CATALOG.find(
-        (m) => m.brand.toLowerCase() === cleanBrandKey && m.model.toLowerCase().replace(/[\s-]+/g, '') === stripped
-      )?.model ||
-      modelSlug.split('-').map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+      const matchCandidate = (candidateModel: string, candidateBrand: string) => {
+        if (candidateBrand.toLowerCase() !== cleanBrandKey) return false;
+        const cNorm = candidateModel.toLowerCase().replace(/\+/g, 'plus').replace(/[^a-z0-9]/g, '');
+        const cNormNoBrand = cNorm.replace(new RegExp(`^${cleanBrandKey}`), '');
+        return (
+          cNorm === sNorm ||
+          cNormNoBrand === sNormNoBrand ||
+          cNorm === sNormNoBrand ||
+          cNormNoBrand === sNorm ||
+          cNorm === `${sNorm}5g` ||
+          cNormNoBrand === `${sNormNoBrand}5g` ||
+          `${cNorm}5g` === sNorm ||
+          `${cNormNoBrand}5g` === sNormNoBrand ||
+          cNorm.replace(/5g$/, '') === sNorm.replace(/5g$/, '') ||
+          cNormNoBrand.replace(/5g$/, '') === sNormNoBrand.replace(/5g$/, '')
+        );
+      };
+
+      const matched =
+        ALL_INDIAN_PHONES_CATALOG.find((p) => matchCandidate(p.model, p.brand)) ||
+        MASTER_MODEL_CATALOG.find((m) => matchCandidate(m.model, m.brand));
+
+      const foundModel =
+        matched?.model ||
+        cleanModelKey.split(' ').map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
 
       setForm((cur) => ({
         ...cur,

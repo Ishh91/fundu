@@ -2166,12 +2166,12 @@ export function groupModelsBySeries(brand: string, allModels: CatalogModelItem[]
  */
 export function isSeriesSlug(slug?: string): boolean {
   if (!slug) return false;
-  const clean = slug.toLowerCase().trim().replace(/^sell-/, '');
+  const clean = slug.toLowerCase().trim().replace(/^(sell|repair)-/, '');
   if (clean.endsWith('-series') || clean.endsWith('-models') || clean === 'other-models') {
     return true;
   }
   for (const list of Object.values(BRAND_SERIES_DEFINITIONS)) {
-    if (list.some((def) => def.slug === clean || def.id === clean)) {
+    if (list.some((def) => def.slug === clean)) {
       return true;
     }
   }
@@ -2184,8 +2184,8 @@ export function isSeriesSlug(slug?: string): boolean {
 export function getSeriesBySlug(brand: string, seriesSlug?: string): BrandSeriesDefinition | undefined {
   if (!seriesSlug) return undefined;
   const cleanBrand = brand.trim().toLowerCase();
-  const cleanSlug = seriesSlug.trim().toLowerCase().replace(/^sell-/, '');
+  const cleanSlug = seriesSlug.trim().toLowerCase().replace(/^(sell|repair)-/, '');
   const defs = BRAND_SERIES_DEFINITIONS[cleanBrand] || [];
-  return defs.find((d) => d.slug === cleanSlug || d.id === cleanSlug);
+  return defs.find((d) => d.slug === cleanSlug || d.slug.replace(/-series$/, '') === cleanSlug.replace(/-series$/, ''));
 }
 
