@@ -44,6 +44,7 @@ import { useAuth } from '../context/AuthContext';
 import { DOORSTEP_AREAS } from '../types';
 import { db, formatINR, formatMaskedPrice, formatDisplayPrice } from '../lib/db';
 import { verifyPanIndiaPincode, type VerifiedLocation } from '../lib/locationService';
+import { checkPincodeServiceability } from '../lib/pincodeService';
 import { fetchPhoneModels, searchMobileApiDev } from '../lib/mobileApi';
 import { useRepairPriceSync, getModelRepairPricing } from '../lib/repairPriceSync';
 import { isModelDeleted } from '../lib/catalogSync';
@@ -245,6 +246,15 @@ export default function Repair() {
     setVerifyingPin(true);
     setPincodeError(null);
     try {
+      // 1. Check doorstep serviceability for repair
+      const serviceCheck = await checkPincodeServiceability(clean, 'repair');
+      if (!serviceCheck.serviceable) {
+        setVerifiedLocation(null);
+        setPincodeError(serviceCheck.message || 'Doorstep service is currently not available at this pincode. We are rapidly expanding to new areas!');
+        return;
+      }
+
+      // 2. Fetch postal locality metadata
       const res = await verifyPanIndiaPincode(clean);
       if (res.valid) {
         setVerifiedLocation(res);
@@ -257,8 +267,21 @@ export default function Repair() {
           pickupArea: `${res.city}, ${res.state} (${res.pincode})`,
         }));
       } else {
-        setVerifiedLocation(null);
-        setPincodeError(res.error || 'Pincode not recognized in Indian postal database.');
+        const fallbackLoc: VerifiedLocation = {
+          valid: true,
+          city: serviceCheck.city || 'Hub',
+          state: serviceCheck.state || 'India',
+          pincode: clean,
+        };
+        setVerifiedLocation(fallbackLoc);
+        setPincodeError(null);
+        setForm((prev) => ({
+          ...prev,
+          pincode: clean,
+          city: fallbackLoc.city,
+          state: fallbackLoc.state,
+          pickupArea: `${fallbackLoc.city}, ${fallbackLoc.state} (${clean})`,
+        }));
       }
     } catch (_err) {
       setPincodeError('Could not verify PIN code. Please check your network connection.');
@@ -796,6 +819,14 @@ export default function Repair() {
     const cleanPin = (form.pincode || '').replace(/\D/g, '').slice(0, 6);
     if (cleanPin.length !== 6) {
       setError('⚠️ Please enter a valid 6-digit Indian PIN code.');
+      return;
+    }
+
+    // Verify doorstep serviceability
+    const serviceCheck = await checkPincodeServiceability(cleanPin, 'repair');
+    if (!serviceCheck.serviceable) {
+      setError(serviceCheck.message || 'Doorstep service is currently not available at this pincode. We are rapidly expanding to new areas!');
+      setPincodeError(serviceCheck.message);
       return;
     }
 

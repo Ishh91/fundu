@@ -42,7 +42,8 @@ export type AdminTab =
   | 'parts'
   | 'users'
   | 'reviews'
-  | 'contact';
+  | 'contact'
+  | 'pincodes';
 
 export const statusColors: Record<string, string> = {
   pending: 'bg-amber-50 text-amber-700 border border-amber-200',

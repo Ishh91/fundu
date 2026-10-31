@@ -18,6 +18,7 @@ import {
   type PanIndiaLocation,
   type VerifiedLocation,
 } from '../../lib/locationService';
+import { checkPincodeServiceability } from '../../lib/pincodeService';
 
 interface SellStep4ScheduleProps {
   form: {
@@ -74,6 +75,15 @@ export default function SellStep4Schedule({
       setVerifyingPin(true);
       setPinError(null);
       try {
+        // 1. Verify doorstep serviceability for sell
+        const serviceCheck = await checkPincodeServiceability(clean, 'sell');
+        if (!serviceCheck.serviceable) {
+          setVerifiedLoc(null);
+          setPinError(serviceCheck.message || 'Doorstep service is currently not available at this pincode. We are rapidly expanding to new areas!');
+          return;
+        }
+
+        // 2. Query postal metadata for locality suggestions
         const res = await verifyPanIndiaPincode(clean);
         if (res.valid) {
           setVerifiedLoc(res);
@@ -83,8 +93,18 @@ export default function SellStep4Schedule({
             pickupArea: `${res.city}, ${res.state} (${res.pincode})`,
           }));
         } else {
-          setVerifiedLoc(null);
-          setPinError(res.error || 'Pincode not recognized in Indian postal database.');
+          const fallbackLoc: VerifiedLocation = {
+            valid: true,
+            city: serviceCheck.city || 'Service Hub',
+            state: serviceCheck.state || 'India',
+            pincode: clean,
+          };
+          setVerifiedLoc(fallbackLoc);
+          setPinError(null);
+          setForm((prev: any) => ({
+            ...prev,
+            pickupArea: `${fallbackLoc.city}, ${fallbackLoc.state} (${clean})`,
+          }));
         }
       } catch (_err) {
         setPinError('Could not verify PIN code. Check connection.');
@@ -158,7 +178,7 @@ export default function SellStep4Schedule({
                   <MapPin className="h-4 w-4 text-[#344257]" /> Pincode (PIN Code) *
                 </label>
                 <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-1.5 py-0.5 rounded-full">
-                  Pan-India
+                  Auto-Verified
                 </span>
               </div>
               <div className="relative">
@@ -168,7 +188,7 @@ export default function SellStep4Schedule({
                   maxLength={6}
                   value={form.pincode}
                   onChange={(e) => handlePincodeChange(e.target.value)}
-                  placeholder="6-digit PIN (e.g. 473001)"
+                  placeholder="6-digit PIN (e.g. 226010)"
                   className={`input text-xs sm:text-sm font-semibold tracking-wider ${
                     verifiedLoc?.valid
                       ? 'border-emerald-500 bg-emerald-50/20 text-gray-900'
@@ -238,107 +258,19 @@ export default function SellStep4Schedule({
             </div>
           </div>
 
-          {/* Pan-India Pincode / City Location Selector */}
-          <div className="space-y-2">
-            <div className="flex items-center justify-between">
-              <label className="label text-xs font-bold text-gray-900 flex items-center gap-1.5">
-                <MapPin className="h-4 w-4 text-[#344257]" /> Doorstep Pickup Location (Pincode / City)
-              </label>
-              <span className="text-[11px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full">
-                Pan-India Coverage Active
-              </span>
-            </div>
-
-            {/* Interactive Pincode or City Search Input */}
-            <div className="relative">
-              <div className="flex items-center rounded-xl border-2 border-[#C0C8D8] focus-within:border-[#344257] bg-white px-3.5 py-2.5 transition shadow-2xs">
-                <Search className="h-4 w-4 text-[#6A859F] shrink-0 mr-2" />
-                <input
-                  type="text"
-                  value={pickupSearchQuery}
-                  onChange={(e) => setPickupSearchQuery(e.target.value)}
-                  placeholder="Search Pincode (e.g. 110001, 226001, 560001) or City / Town name..."
-                  className="w-full bg-transparent text-xs sm:text-sm font-semibold text-gray-900 outline-none placeholder:text-gray-400"
-                />
-                {isSearchingPickupLoc && (
-                  <RefreshCw className="h-3.5 w-3.5 text-[#344257] animate-spin shrink-0 ml-2" />
-                )}
-                {pickupSearchQuery && (
-                  <button
-                    type="button"
-                    onClick={() => setPickupSearchQuery('')}
-                    className="text-gray-400 hover:text-gray-600 transition ml-2 p-0.5"
-                  >
-                    <X className="h-3.5 w-3.5" />
-                  </button>
-                )}
-              </div>
-
-              {/* Instant Autocomplete Suggestions Dropdown */}
-              {pickupSearchResults.length > 0 && (
-                <div className="absolute left-0 right-0 top-full mt-1.5 z-30 max-h-56 overflow-y-auto rounded-xl border border-gray-200 bg-white p-1.5 shadow-xl space-y-1">
-                  {pickupSearchResults.map((loc) => (
-                    <div
-                      key={`${loc.city}-${loc.pincode}-${loc.displayLabel}`}
-                      onClick={() => {
-                        const label = `${loc.city}, ${loc.state} (${loc.pincode})`;
-                        setForm((f: any) => ({ ...f, pickupArea: label }));
-                        setPickupSearchQuery('');
-                      }}
-                      className="flex items-center justify-between p-2 rounded-lg hover:bg-[#F0F0F5] cursor-pointer transition text-xs"
-                    >
-                      <div className="min-w-0 flex-1 pr-2">
-                        <p className="font-bold text-gray-900 truncate">{loc.city}</p>
-                        <p className="text-[11px] text-gray-500 truncate">
-                          {loc.district ? `${loc.district}, ` : ''}{loc.state} • PIN: <span className="font-extrabold text-[#344257]">{loc.pincode}</span>
-                        </p>
-                      </div>
-                      <span className="shrink-0 text-[10px] font-bold text-[#344257] bg-[#F0F0F5] px-2 py-0.5 rounded border border-[#C0C8D8]">
-                        Select
-                      </span>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-
-            {/* Selected Location Pill */}
+          {/* Pickup Area Summary */}
+          {verifiedLoc?.valid && (
             <div className="flex flex-wrap items-center justify-between gap-2 rounded-xl bg-[#F0F0F5] p-2.5 border border-[#C0C8D8]/70 text-xs">
               <div className="flex items-center gap-1.5 text-gray-700 min-w-0 flex-1">
-                <span className="text-gray-500 font-medium shrink-0">Selected Area:</span>
-                <span className="font-extrabold text-[#344257] truncate">{form.pickupArea}</span>
+                <MapPin className="h-4 w-4 text-[#344257] shrink-0" />
+                <span className="text-gray-500 font-medium shrink-0">Service Area:</span>
+                <span className="font-extrabold text-[#344257] truncate">{form.pickupArea || `${verifiedLoc.city}, ${verifiedLoc.state}`}</span>
               </div>
               <span className="text-[11px] font-bold text-emerald-700 flex items-center gap-1 shrink-0">
-                <Check className="h-3 w-3" /> Free Doorstep Visit
+                <Check className="h-3 w-3" /> Free Doorstep Visit Included
               </span>
             </div>
-
-            {/* Quick Popular City Chips */}
-            <div className="pt-1">
-              <p className="text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-1.5">
-                Or 1-Click Select City Hub:
-              </p>
-              <div className="flex flex-wrap gap-1.5">
-                {PAN_INDIA_POPULAR_CITIES.slice(0, 8).map((cityItem) => (
-                  <button
-                    key={cityItem.city}
-                    type="button"
-                    onClick={() => {
-                      setForm((f: any) => ({ ...f, pickupArea: `${cityItem.city}, ${cityItem.state} (${cityItem.pincode})` }));
-                      setPickupSearchQuery('');
-                    }}
-                    className={`rounded-lg px-2.5 py-1 text-[11px] font-semibold border transition ${
-                      form.pickupArea.includes(cityItem.city)
-                        ? 'bg-[#344257] text-white border-[#344257]'
-                        : 'bg-white hover:bg-[#F0F0F5] text-gray-700 border-gray-200'
-                    }`}
-                  >
-                    {cityItem.city}
-                  </button>
-                ))}
-              </div>
-            </div>
-          </div>
+          )}
 
           <div>
             <label className="label">Full Doorstep Address</label>
@@ -401,7 +333,7 @@ export default function SellStep4Schedule({
             disabled={
               submitting ||
               verifyingPin ||
-              (form.pincode.length === 6 && verifiedLoc?.valid === false) ||
+              !verifiedLoc?.valid ||
               !form.pickupAddress.trim() ||
               !form.locality.trim() ||
               form.pincode.replace(/\D/g, '').length !== 6 ||
@@ -409,11 +341,21 @@ export default function SellStep4Schedule({
             }
             className="btn-primary text-sm flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {verifyingPin
-              ? 'Verifying Pincode...'
-              : submitting
-              ? 'Auto-Assigning Agent...'
-              : 'Confirm Pickup Booking'} <CheckCircle2 className="h-4 w-4" />
+            {verifyingPin ? (
+              <>
+                <RefreshCw className="h-4 w-4 animate-spin" /> Verifying Pincode...
+              </>
+            ) : form.pincode.length === 6 && !verifiedLoc?.valid ? (
+              <>
+                <AlertCircle className="h-4 w-4" /> Service Not Available at Pincode
+              </>
+            ) : submitting ? (
+              'Auto-Assigning Agent...'
+            ) : (
+              <>
+                Confirm Pickup Booking <CheckCircle2 className="h-4 w-4" />
+              </>
+            )}
           </button>
         </div>
       </div>

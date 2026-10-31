@@ -15,6 +15,7 @@ import { WholesaleInventory } from './WholesaleInventory.js';
 import { WholesaleOrder } from './WholesaleOrder.js';
 import { VendorLedger } from './VendorLedger.js';
 import { RepairPriceCatalog } from './RepairPriceCatalog.js';
+import { ServiceablePincode } from './ServiceablePincode.js';
 
 export {
   User,
@@ -34,6 +35,7 @@ export {
   WholesaleInventory,
   WholesaleOrder,
   VendorLedger,
+  ServiceablePincode,
 };
 
 export const TABLE_MODELS = {
@@ -61,6 +63,9 @@ export const TABLE_MODELS = {
   wholesale_orders: WholesaleOrder,
   vendor_ledgers: VendorLedger,
   vendor_ledger: VendorLedger,
+  serviceable_pincodes: ServiceablePincode,
+  serviceablepincodes: ServiceablePincode,
+  pincodes: ServiceablePincode,
 };
 
 export const getModel = (table) => {

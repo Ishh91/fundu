@@ -68,6 +68,7 @@ import AdminHeroPosters from './admin/AdminHeroPosters';
 import AdminWholesalers from './admin/AdminWholesalers';
 import AdminContactQueries from './admin/AdminContactQueries';
 import AdminCompetitorRadar from './admin/AdminCompetitorRadar';
+import AdminPincodes from './admin/AdminPincodes';
 import {
   buildConfigFromSeedItem,
   SEED_REPAIR_MODELS,
@@ -113,7 +114,7 @@ export default function Admin() {
       const validTabs: AdminTab[] = [
         'overview', 'catalog', 'sells', 'orders', 'repairs', 'repair_pricing',
         'wholesalers', 'agents', 'products', 'pricing', 'competitor_radar',
-        'banners', 'parts', 'users', 'reviews', 'contact'
+        'banners', 'parts', 'users', 'reviews', 'contact', 'pincodes'
       ];
       if (validTabs.includes(subtab as AdminTab)) return subtab as AdminTab;
     }
@@ -147,6 +148,7 @@ export default function Admin() {
       overview: '',
       competitor_radar: 'competitor-radar',
       repair_pricing: 'repair-pricing',
+      pincodes: 'pincodes',
     };
     const slug = slugMap[newTab] !== undefined ? slugMap[newTab] : newTab;
     const targetPath = slug ? `/admin/${slug}` : '/admin';
@@ -211,7 +213,7 @@ export default function Admin() {
         const validTabs: AdminTab[] = [
           'overview', 'catalog', 'sells', 'orders', 'repairs', 'repair_pricing',
           'wholesalers', 'agents', 'products', 'pricing', 'competitor_radar',
-          'banners', 'parts', 'users', 'reviews', 'contact',
+          'banners', 'parts', 'users', 'reviews', 'contact', 'pincodes',
         ];
         if (validTabs.includes(subtab as AdminTab)) t = subtab as AdminTab;
       }
@@ -1643,6 +1645,7 @@ export default function Admin() {
                 {tab === 'users' && 'User Accounts & Roles'}
                 {tab === 'reviews' && 'Customer Reviews & Moderation'}
                 {tab === 'contact' && 'Customer Help & Contact Queries'}
+                {tab === 'pincodes' && 'Serviceable Pincodes & Hubs'}
                 {tab === 'overview' && 'Admin Control Center'}
               </h1>
               <p className="text-[11px] font-bold text-emerald-600 flex items-center gap-1">
@@ -2140,6 +2143,7 @@ export default function Admin() {
           )}
 
           {tab === 'contact' && <AdminContactQueries />}
+          {tab === 'pincodes' && <AdminPincodes />}
         </main>
       </div>
 

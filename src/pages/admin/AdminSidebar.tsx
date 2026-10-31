@@ -133,6 +133,14 @@ export default function AdminSidebar({
       title: 'FLEET & PARTNERS',
       items: [
         {
+          id: 'pincodes' as AdminTab,
+          label: 'Serviceable Pincodes',
+          icon: MapPin,
+          badge: 'Hubs',
+          badgeColor: 'bg-emerald-600 text-white',
+          path: '/admin/pincodes',
+        },
+        {
           id: 'agents' as AdminTab,
           label: 'Delivery Fleet',
           icon: Truck,

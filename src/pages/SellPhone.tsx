@@ -45,6 +45,7 @@ import {
   PAN_INDIA_POPULAR_CITIES,
   type PanIndiaLocation,
 } from '../lib/locationService';
+import { checkPincodeServiceability } from '../lib/pincodeService';
 import { getModelDedupeKey, groupModelsBySeries } from '../data/brandSeriesCatalog';
 import { notifyNewSellRequest } from '../lib/whatsappNotifyService';
 
@@ -1109,6 +1110,14 @@ export default function SellPhone() {
 
     setSubmitting(true);
     setError(null);
+
+    // Verify Doorstep Serviceability for Sell
+    const serviceCheck = await checkPincodeServiceability(cleanPincode, 'sell');
+    if (!serviceCheck.serviceable) {
+      setSubmitting(false);
+      setError(serviceCheck.message || 'Doorstep service is currently not available at this pincode. We are rapidly expanding to new areas!');
+      return;
+    }
 
     // Verify Pan-India Pincode with Postal Registry
     const verifiedLoc = await verifyPanIndiaPincode(cleanPincode);
