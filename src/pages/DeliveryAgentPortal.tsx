@@ -37,6 +37,7 @@ import {
   Store,
   User,
   Radio,
+  Send,
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { db, formatINR } from '../lib/db';
@@ -44,6 +45,8 @@ import type { SellRequest, RepairBooking, Order, DeliveryAgent } from '../types'
 import {
   notifyRiderInspectionSubmitted,
   notifyRiderDeclinedTask,
+  sendCustomerDeliveryOtp,
+  notifyDeliveryCompletedOtpVerified,
 } from '../lib/whatsappNotifyService';
 
 function RiderTaskMapWidget({
@@ -204,9 +207,11 @@ export default function DeliveryAgentPortal() {
     phone: string;
     amount: number;
     address: string;
+    expectedOtp: string;
   } | null>(null);
   const [otpInput, setOtpInput] = useState('');
   const [otpSubmitting, setOtpSubmitting] = useState(false);
+  const [otpResending, setOtpResending] = useState(false);
 
   // Task Acceptance & Decline Handlers (Signals Admin For Dynamic Reassignment)
   const handleAcceptTask = async (type: 'sell' | 'repair' | 'order', id: string) => {
@@ -285,36 +290,81 @@ export default function DeliveryAgentPortal() {
     }
   };
 
+  // Generate or Retrieve Active 4-Digit Customer Verification OTP
+  const ensureOrGenerateOtp = async (
+    type: 'sell' | 'repair' | 'order',
+    id: string,
+    currentOtp?: string | null
+  ): Promise<string> => {
+    if (currentOtp && /^\d{4}$/.test(String(currentOtp).trim())) {
+      return String(currentOtp).trim();
+    }
+    const freshOtp = String(Math.floor(1000 + Math.random() * 9000));
+    const table = type === 'sell' ? 'sell_requests' : type === 'repair' ? 'repair_bookings' : 'orders';
+    try {
+      await db.from(table).update({
+        delivery_otp: freshOtp,
+        delivery_otp_created_at: new Date().toISOString(),
+      }).eq('id', id);
+    } catch {}
+
+    if (type === 'sell') {
+      setSells((prev) => prev.map((s) => (s.id === id ? ({ ...s, delivery_otp: freshOtp } as any) : s)));
+    } else if (type === 'repair') {
+      setRepairs((prev) => prev.map((r) => (r.id === id ? ({ ...r, delivery_otp: freshOtp } as any) : r)));
+    } else {
+      setOrders((prev) => prev.map((o) => (o.id === id ? ({ ...o, delivery_otp: freshOtp } as any) : o)));
+    }
+    return freshOtp;
+  };
+
   // Trip Progress & Milestone Status Handlers
   const handleMarkOnTheWay = async (
     id: string,
     type: 'sell' | 'repair' | 'order',
     address: string,
     phone: string,
-    name: string
+    name: string,
+    currentOtp?: string | null,
+    itemTitle?: string,
+    amount?: number
   ) => {
     try {
       const statusValue = 'on_the_way';
+      const activeOtp = await ensureOrGenerateOtp(type, id, currentOtp);
+      const table = type === 'sell' ? 'sell_requests' : type === 'repair' ? 'repair_bookings' : 'orders';
+      await db.from(table).update({ status: statusValue, delivery_otp: activeOtp }).eq('id', id);
+
       if (type === 'sell') {
-        await db.from('sell_requests').update({ status: statusValue }).eq('id', id);
-        setSells((prev) => prev.map((s) => (s.id === id ? { ...s, status: statusValue } : s)));
+        setSells((prev) => prev.map((s) => (s.id === id ? { ...s, status: statusValue, delivery_otp: activeOtp } : s)));
       } else if (type === 'repair') {
-        await db.from('repair_bookings').update({ status: statusValue }).eq('id', id);
-        setRepairs((prev) => prev.map((r) => (r.id === id ? { ...r, status: statusValue } : r)));
+        setRepairs((prev) => prev.map((r) => (r.id === id ? { ...r, status: statusValue, delivery_otp: activeOtp } : r)));
       } else {
-        await db.from('orders').update({ status: statusValue }).eq('id', id);
-        setOrders((prev) => prev.map((o) => (o.id === id ? { ...o, status: statusValue } : o)));
+        setOrders((prev) => prev.map((o) => (o.id === id ? { ...o, status: statusValue, delivery_otp: activeOtp } : o)));
       }
+
+      // Automatically dispatch WhatsApp OTP to customer
+      sendCustomerDeliveryOtp({
+        phone,
+        customerName: name,
+        otp: activeOtp,
+        taskType: type,
+        itemTitle: itemTitle || 'Fundu Service',
+        amount: amount || 0,
+        riderName: selectedRiderName,
+        riderPhone: selectedRiderPhone,
+      });
 
       const cleanPhone = phone.replace(/\D/g, '') || '9839122345';
       const msg = encodeURIComponent(
         `🚨 *FUNDU DOORSTEP DELIVERY UPDATE*\n\n` +
           `Hi *${name}*, your Fundu Executive *${selectedRiderName}* (${selectedVehicle}) has started the trip and is *ON THE WAY* to your doorstep:\n` +
           `📍 *Address:* ${address}\n\n` +
-          `Expected arrival in 10-15 mins. Please keep your device / OTP ready!`
+          `🔑 *Your Secure Handover OTP:* *${activeOtp}*\n` +
+          `Expected arrival in 10-15 mins. Please keep this OTP ready to share with the executive at handover!`
       );
       window.open(`https://wa.me/91${cleanPhone}?text=${msg}`, '_blank');
-      alert('🚴 Status updated to ON THE WAY! WhatsApp notification sent to customer.');
+      alert(`🚴 Status: ON THE WAY!\n\nCustomer OTP (*${activeOtp}*) has been generated & dispatched to customer's WhatsApp.`);
     } catch (err) {
       alert('Failed to update trip status');
     }
@@ -325,63 +375,185 @@ export default function DeliveryAgentPortal() {
     type: 'sell' | 'repair' | 'order',
     address: string,
     phone: string,
-    name: string
+    name: string,
+    currentOtp?: string | null,
+    itemTitle?: string,
+    amount?: number
   ) => {
     try {
       const statusValue = 'arrived';
+      const activeOtp = await ensureOrGenerateOtp(type, id, currentOtp);
+      const table = type === 'sell' ? 'sell_requests' : type === 'repair' ? 'repair_bookings' : 'orders';
+      await db.from(table).update({ status: statusValue, delivery_otp: activeOtp }).eq('id', id);
+
       if (type === 'sell') {
-        await db.from('sell_requests').update({ status: statusValue }).eq('id', id);
-        setSells((prev) => prev.map((s) => (s.id === id ? { ...s, status: statusValue } : s)));
+        setSells((prev) => prev.map((s) => (s.id === id ? { ...s, status: statusValue, delivery_otp: activeOtp } : s)));
       } else if (type === 'repair') {
-        await db.from('repair_bookings').update({ status: statusValue }).eq('id', id);
-        setRepairs((prev) => prev.map((r) => (r.id === id ? { ...r, status: statusValue } : r)));
+        setRepairs((prev) => prev.map((r) => (r.id === id ? { ...r, status: statusValue, delivery_otp: activeOtp } : r)));
       } else {
-        await db.from('orders').update({ status: statusValue }).eq('id', id);
-        setOrders((prev) => prev.map((o) => (o.id === id ? { ...o, status: statusValue } : o)));
+        setOrders((prev) => prev.map((o) => (o.id === id ? { ...o, status: statusValue, delivery_otp: activeOtp } : o)));
       }
+
+      // Send WhatsApp OTP to customer
+      sendCustomerDeliveryOtp({
+        phone,
+        customerName: name,
+        otp: activeOtp,
+        taskType: type,
+        itemTitle: itemTitle || 'Fundu Service',
+        amount: amount || 0,
+        riderName: selectedRiderName,
+        riderPhone: selectedRiderPhone,
+      });
 
       const cleanPhone = phone.replace(/\D/g, '') || '9839122345';
       const msg = encodeURIComponent(
         `📍 *FUNDU RIDER ARRIVED AT DOORSTEP*\n\n` +
           `Hi *${name}*, I have arrived outside your address: ${address}.\n` +
+          `🔑 *Your Handover OTP:* *${activeOtp}*\n\n` +
           `Please meet me at your doorstep for verification & handover!`
       );
       window.open(`https://wa.me/91${cleanPhone}?text=${msg}`, '_blank');
-      alert('📌 Marked ARRIVED AT DOORSTEP! Customer WhatsApp alert sent.');
+      alert(`📌 Marked ARRIVED AT DOORSTEP!\nCustomer OTP (*${activeOtp}*) sent to customer via WhatsApp.`);
     } catch (err) {
       alert('Failed to update status');
+    }
+  };
+
+  // Open OTP Modal & Dispatch Instant Verification PIN to Customer
+  const handleOpenOtpModal = async (
+    type: 'sell' | 'repair' | 'order',
+    item: any,
+    customerName: string,
+    phone: string,
+    amount: number,
+    title: string,
+    address: string
+  ) => {
+    const activeOtp = await ensureOrGenerateOtp(type, item.id, item.delivery_otp);
+
+    // Auto-dispatch OTP to customer's phone in background
+    sendCustomerDeliveryOtp({
+      phone,
+      customerName,
+      otp: activeOtp,
+      taskType: type,
+      itemTitle: title,
+      amount,
+      riderName: selectedRiderName,
+      riderPhone: selectedRiderPhone,
+    });
+
+    setOtpModalTask({
+      id: item.id,
+      type,
+      title,
+      customerName,
+      phone,
+      amount,
+      address,
+      expectedOtp: activeOtp,
+    });
+    setOtpInput('');
+  };
+
+  // Rider One-Click Re-send OTP to Customer's WhatsApp
+  const handleResendOtpToCustomer = async () => {
+    if (!otpModalTask) return;
+    setOtpResending(true);
+    try {
+      await sendCustomerDeliveryOtp(
+        {
+          phone: otpModalTask.phone,
+          customerName: otpModalTask.customerName,
+          otp: otpModalTask.expectedOtp,
+          taskType: otpModalTask.type,
+          itemTitle: otpModalTask.title,
+          amount: otpModalTask.amount,
+          riderName: selectedRiderName,
+          riderPhone: selectedRiderPhone,
+        },
+        true // opens WhatsApp Web / chat directly
+      );
+      alert(`📲 Handover OTP (*${otpModalTask.expectedOtp}*) resent to customer ${otpModalTask.customerName} (${otpModalTask.phone})!`);
+    } catch {
+      alert('Failed to resend OTP');
+    } finally {
+      setOtpResending(false);
     }
   };
 
   const handleVerifyOtpSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!otpModalTask) return;
-    if (otpInput.length < 4) {
-      alert('⚠️ Please enter the 4-digit Customer Delivery OTP.');
+
+    const entered = otpInput.trim();
+    if (entered.length < 4) {
+      alert('⚠️ Please enter the full 4-digit Customer Delivery OTP.');
+      return;
+    }
+
+    if (entered !== otpModalTask.expectedOtp) {
+      alert(
+        `❌ INVALID OTP!\n\n` +
+          `The OTP you entered ("${entered}") does not match the Customer's 4-digit verification code.\n\n` +
+          `Please ask ${otpModalTask.customerName} for the exact OTP sent to their WhatsApp (+91 ${otpModalTask.phone}) or visible in their Fundu Dashboard.`
+      );
       return;
     }
 
     setOtpSubmitting(true);
     try {
-      const { id, type, title, customerName, amount } = otpModalTask;
+      const { id, type, title, customerName, phone, amount } = otpModalTask;
+      const verifiedAt = new Date().toISOString();
+
       if (type === 'sell') {
-        await db.from('sell_requests').update({ status: 'completed', final_price: amount }).eq('id', id);
-        setSells((prev) => prev.map((s) => (s.id === id ? { ...s, status: 'completed', final_price: amount } : s)));
+        await db.from('sell_requests').update({
+          status: 'completed',
+          final_price: amount,
+          delivery_otp_verified_at: verifiedAt,
+          delivery_otp_verified_by: selectedRiderName,
+        }).eq('id', id);
+        setSells((prev) => prev.map((s) => (s.id === id ? { ...s, status: 'completed', final_price: amount, delivery_otp_verified_at: verifiedAt } : s)));
       } else if (type === 'repair') {
-        await db.from('repair_bookings').update({ status: 'delivered', final_cost: amount }).eq('id', id);
-        setRepairs((prev) => prev.map((r) => (r.id === id ? { ...r, status: 'delivered', final_cost: amount } : r)));
+        await db.from('repair_bookings').update({
+          status: 'delivered',
+          final_cost: amount,
+          delivery_otp_verified_at: verifiedAt,
+          delivery_otp_verified_by: selectedRiderName,
+        }).eq('id', id);
+        setRepairs((prev) => prev.map((r) => (r.id === id ? { ...r, status: 'delivered', final_cost: amount, delivery_otp_verified_at: verifiedAt } : r)));
       } else {
-        await db.from('orders').update({ status: 'delivered', payment_status: 'paid' }).eq('id', id);
-        setOrders((prev) => prev.map((o) => (o.id === id ? { ...o, status: 'delivered', payment_status: 'paid' } : o)));
+        await db.from('orders').update({
+          status: 'delivered',
+          payment_status: 'paid',
+          delivery_otp_verified_at: verifiedAt,
+          delivery_otp_verified_by: selectedRiderName,
+        }).eq('id', id);
+        setOrders((prev) => prev.map((o) => (o.id === id ? { ...o, status: 'delivered', payment_status: 'paid', delivery_otp_verified_at: verifiedAt } : o)));
       }
+
+      // Dispatch automated WhatsApp notification confirming handover to Admin & Customer
+      notifyDeliveryCompletedOtpVerified({
+        taskId: id,
+        taskType: type,
+        customerName,
+        customerPhone: phone,
+        itemTitle: title,
+        amount,
+        riderName: selectedRiderName,
+        otp: entered,
+      });
 
       alert(
         `🎉 Customer Delivery OTP Verified!\n\n` +
-          `Task #${id.slice(0, 8).toUpperCase()} (${title}) marked COMPLETE.\n` +
-          `Amount: ₹${amount.toLocaleString('en-IN')}\n` +
-          `Customer: ${customerName}`
+          `✅ Task #${id.slice(0, 8).toUpperCase()} (${title}) marked COMPLETE.\n` +
+          `💰 Confirmed Handover Amount: ₹${amount.toLocaleString('en-IN')}\n` +
+          `👤 Customer: ${customerName}\n\n` +
+          `Confirmation receipt dispatched to Customer and Admin.`
       );
       setOtpModalTask(null);
+      setOtpInput('');
     } catch (err) {
       alert('Failed to complete verification');
     } finally {
@@ -1170,7 +1342,7 @@ export default function DeliveryAgentPortal() {
                       <div className="flex flex-wrap items-center gap-2 text-xs">
                         <button
                           type="button"
-                          onClick={() => handleMarkOnTheWay(sell.id, 'sell', address, customerPhone, customerName)}
+                          onClick={() => handleMarkOnTheWay(sell.id, 'sell', address, customerPhone, customerName, (sell as any).delivery_otp, `${sell.brand} ${sell.model}`, payoutAmount)}
                           className="btn bg-blue-50 text-blue-700 hover:bg-blue-100 font-bold px-3 py-1.5 rounded-xl flex items-center gap-1"
                         >
                           🚴 Mark On The Way
@@ -1178,7 +1350,7 @@ export default function DeliveryAgentPortal() {
 
                         <button
                           type="button"
-                          onClick={() => handleMarkArrived(sell.id, 'sell', address, customerPhone, customerName)}
+                          onClick={() => handleMarkArrived(sell.id, 'sell', address, customerPhone, customerName, (sell as any).delivery_otp, `${sell.brand} ${sell.model}`, payoutAmount)}
                           className="btn bg-purple-50 text-purple-700 hover:bg-purple-100 font-bold px-3 py-1.5 rounded-xl flex items-center gap-1"
                         >
                           📌 Mark Arrived
@@ -1202,15 +1374,15 @@ export default function DeliveryAgentPortal() {
                         <button
                           type="button"
                           onClick={() =>
-                            setOtpModalTask({
-                              id: sell.id,
-                              type: 'sell',
-                              title: `${sell.brand} ${sell.model}`,
+                            handleOpenOtpModal(
+                              'sell',
+                              sell,
                               customerName,
-                              phone: customerPhone,
-                              amount: payoutAmount,
-                              address,
-                            })
+                              customerPhone,
+                              payoutAmount,
+                              `${sell.brand} ${sell.model}`,
+                              address
+                            )
                           }
                           className="btn bg-slate-900 text-white hover:bg-slate-800 font-bold px-3.5 py-1.5 rounded-xl flex items-center gap-1 ml-auto"
                         >
@@ -1390,14 +1562,14 @@ export default function DeliveryAgentPortal() {
                       <div className="flex items-center gap-2">
                         <button
                           type="button"
-                          onClick={() => handleMarkOnTheWay(repair.id, 'repair', address, customerPhone, customerName)}
+                          onClick={() => handleMarkOnTheWay(repair.id, 'repair', address, customerPhone, customerName, (repair as any).delivery_otp, `${repair.brand} ${repair.model} Repair`, repairCost)}
                           className="btn bg-blue-50 text-blue-700 hover:bg-blue-100 font-bold px-3 py-1.5 rounded-xl"
                         >
                           🚴 On The Way
                         </button>
                         <button
                           type="button"
-                          onClick={() => handleMarkArrived(repair.id, 'repair', address, customerPhone, customerName)}
+                          onClick={() => handleMarkArrived(repair.id, 'repair', address, customerPhone, customerName, (repair as any).delivery_otp, `${repair.brand} ${repair.model} Repair`, repairCost)}
                           className="btn bg-purple-50 text-purple-700 hover:bg-purple-100 font-bold px-3 py-1.5 rounded-xl"
                         >
                           📌 Arrived
@@ -1419,15 +1591,15 @@ export default function DeliveryAgentPortal() {
                         <button
                           type="button"
                           onClick={() =>
-                            setOtpModalTask({
-                              id: repair.id,
-                              type: 'repair',
-                              title: `${repair.brand} ${repair.model} Repair`,
+                            handleOpenOtpModal(
+                              'repair',
+                              repair,
                               customerName,
-                              phone: customerPhone,
-                              amount: repairCost,
-                              address,
-                            })
+                              customerPhone,
+                              repairCost,
+                              `${repair.brand} ${repair.model} Repair`,
+                              address
+                            )
                           }
                           className="btn bg-slate-900 text-white hover:bg-slate-800 font-bold px-3.5 py-1.5 rounded-xl flex items-center gap-1"
                         >
@@ -1595,14 +1767,14 @@ export default function DeliveryAgentPortal() {
                       <div className="flex items-center gap-2">
                         <button
                           type="button"
-                          onClick={() => handleMarkOnTheWay(order.id, 'order', address, customerPhone, customerName)}
+                          onClick={() => handleMarkOnTheWay(order.id, 'order', address, customerPhone, customerName, (order as any).delivery_otp, `Store Order #${order.id.slice(0, 8)}`, orderAmount)}
                           className="btn bg-blue-50 text-blue-700 hover:bg-blue-100 font-bold px-3 py-1.5 rounded-xl"
                         >
                           🚴 On The Way
                         </button>
                         <button
                           type="button"
-                          onClick={() => handleMarkArrived(order.id, 'order', address, customerPhone, customerName)}
+                          onClick={() => handleMarkArrived(order.id, 'order', address, customerPhone, customerName, (order as any).delivery_otp, `Store Order #${order.id.slice(0, 8)}`, orderAmount)}
                           className="btn bg-purple-50 text-purple-700 hover:bg-purple-100 font-bold px-3 py-1.5 rounded-xl"
                         >
                           📌 Arrived
@@ -1619,15 +1791,15 @@ export default function DeliveryAgentPortal() {
                         <button
                           type="button"
                           onClick={() =>
-                            setOtpModalTask({
-                              id: order.id,
-                              type: 'order',
-                              title: `Store Order #${order.id.slice(0, 8)}`,
+                            handleOpenOtpModal(
+                              'order',
+                              order,
                               customerName,
-                              phone: customerPhone,
-                              amount: orderAmount,
-                              address,
-                            })
+                              customerPhone,
+                              orderAmount,
+                              `Store Order #${order.id.slice(0, 8)}`,
+                              address
+                            )
                           }
                           className="btn bg-slate-900 text-white hover:bg-slate-800 font-bold px-3.5 py-1.5 rounded-xl flex items-center gap-1"
                         >
@@ -2376,57 +2548,75 @@ export default function DeliveryAgentPortal() {
       )}
 
       {/* ========================================================================= */}
-      {/* 10. CUSTOMER OTP DELIVERY VERIFICATION MODAL */}
+      {/* 10. CUSTOMER OTP DELIVERY & PAYOUT VERIFICATION MODAL */}
       {/* ========================================================================= */}
       {otpModalTask && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 backdrop-blur-xs p-4">
           <div className="w-full max-w-md bg-white rounded-[28px] shadow-2xl border border-slate-200 p-6 space-y-5 animate-fade-in">
             <div className="flex items-center justify-between border-b border-slate-100 pb-3">
               <div>
-                <span className="badge bg-brand-50 text-brand-700 text-[10px] font-bold">
-                  Fundu Security Handover
+                <span className="badge bg-emerald-50 text-emerald-700 text-[10px] font-bold uppercase tracking-wider flex items-center gap-1">
+                  <ShieldCheck className="h-3 w-3 text-emerald-600" /> Fundu Security Handover
                 </span>
-                <h3 className="font-display font-black text-lg text-slate-900 mt-0.5">
-                  Verify Customer Delivery OTP
+                <h3 className="font-display font-black text-lg text-slate-900 mt-1">
+                  Customer Doorstep OTP Verification
                 </h3>
               </div>
-              <button type="button" onClick={() => setOtpModalTask(null)} className="w-7 h-7 rounded-full bg-slate-100 grid place-items-center">
+              <button
+                type="button"
+                onClick={() => setOtpModalTask(null)}
+                className="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 grid place-items-center text-slate-600 transition-colors"
+              >
                 <X className="h-4 w-4" />
               </button>
             </div>
 
-            <div className="p-4 rounded-2xl bg-brand-50/70 border border-brand-200/80 text-xs space-y-1">
-              <p className="font-bold text-slate-900">{otpModalTask.title}</p>
-              <p className="text-slate-600">Customer: <strong>{otpModalTask.customerName}</strong> ({otpModalTask.phone})</p>
-              <p className="text-slate-600">Address: {otpModalTask.address}</p>
-              <p className="text-brand-800 font-extrabold text-sm pt-1">
-                Handover Amount: {formatINR(otpModalTask.amount)}
+            <div className="p-4 rounded-2xl bg-emerald-50/70 border border-emerald-200 text-xs space-y-1.5">
+              <div className="flex items-center justify-between">
+                <span className="font-bold text-slate-900 text-sm">{otpModalTask.title}</span>
+                <span className="badge bg-emerald-600 text-white font-extrabold text-[11px] px-2.5 py-0.5">
+                  {formatINR(otpModalTask.amount)}
+                </span>
+              </div>
+              <p className="text-slate-600">
+                Customer: <strong>{otpModalTask.customerName}</strong> (<span className="font-mono">{otpModalTask.phone}</span>)
               </p>
+              <p className="text-slate-600 truncate">
+                Address: {otpModalTask.address}
+              </p>
+              <div className="pt-2 border-t border-emerald-200/60 flex items-center justify-between">
+                <span className="text-[11px] text-emerald-800 font-semibold flex items-center gap-1">
+                  <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600" /> OTP Dispatched to WhatsApp
+                </span>
+                <button
+                  type="button"
+                  onClick={handleResendOtpToCustomer}
+                  disabled={otpResending}
+                  className="text-[11px] font-bold text-emerald-700 hover:text-emerald-900 bg-white border border-emerald-300 px-2.5 py-1 rounded-lg shadow-2xs hover:bg-emerald-100/50 flex items-center gap-1 cursor-pointer transition-all"
+                >
+                  <Send className="h-3 w-3" />
+                  {otpResending ? 'Sending...' : '📲 Resend OTP'}
+                </button>
+              </div>
             </div>
 
             <form onSubmit={handleVerifyOtpSubmit} className="space-y-4">
               <div>
-                <div className="flex items-center justify-between mb-1">
-                  <label className="font-bold text-slate-700 text-xs">Enter 4-Digit Customer OTP</label>
-                  <button
-                    type="button"
-                    onClick={() => setOtpInput('8492')}
-                    className="text-[10px] font-bold text-brand-600 bg-brand-50 px-2 py-0.5 rounded-full hover:bg-brand-100"
-                  >
-                    ⚡ Use Demo OTP (8492)
-                  </button>
-                </div>
+                <label className="block font-bold text-slate-800 text-xs mb-1.5 text-center">
+                  Ask customer for the 4-digit PIN received on WhatsApp / SMS:
+                </label>
                 <input
                   type="text"
                   maxLength={4}
                   required
+                  autoFocus
                   value={otpInput}
                   onChange={(e) => setOtpInput(e.target.value.replace(/\D/g, ''))}
-                  placeholder="e.g. 8492"
-                  className="input text-center text-2xl tracking-[0.5em] font-mono font-black py-3 bg-slate-50 border-slate-300 w-full"
+                  placeholder="••••"
+                  className="input text-center text-3xl tracking-[0.5em] font-mono font-black py-3.5 bg-slate-50 border-2 border-slate-300 focus:border-emerald-500 focus:bg-white w-full rounded-2xl shadow-inner text-slate-900"
                 />
-                <p className="text-[10px] text-slate-400 mt-1 text-center">
-                  Ask customer for the 4-digit PIN sent via SMS to {otpModalTask.phone}.
+                <p className="text-[11px] text-slate-500 mt-2 text-center leading-relaxed">
+                  🔒 Customer shares this OTP after verifying device & amount. Handover & payment cannot be confirmed without this OTP.
                 </p>
               </div>
 
@@ -2434,17 +2624,17 @@ export default function DeliveryAgentPortal() {
                 <button
                   type="button"
                   onClick={() => setOtpModalTask(null)}
-                  className="btn-outline text-xs px-4 py-2"
+                  className="btn-outline text-xs px-4 py-2.5 rounded-xl"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={otpSubmitting || otpInput.length < 4}
-                  className="btn bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs px-5 py-2.5 rounded-xl shadow-md flex items-center gap-1.5"
+                  className="btn bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 text-white font-black text-xs px-5 py-2.5 rounded-xl shadow-md flex items-center gap-1.5 cursor-pointer"
                 >
                   <CheckCircle2 className="h-4 w-4" />
-                  {otpSubmitting ? 'Verifying OTP...' : 'Verify OTP & Complete Delivery'}
+                  {otpSubmitting ? 'Verifying OTP...' : `Verify OTP & Confirm ${formatINR(otpModalTask.amount)}`}
                 </button>
               </div>
             </form>

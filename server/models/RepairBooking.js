@@ -39,6 +39,10 @@ const repairBookingSchema = createSchema({
   commission_percent: { type: Number, default: 10 },
   commission_amount: { type: Number, default: null },
   vendor_payout_amount: { type: Number, default: null },
+  delivery_otp: { type: String, default: null },
+  delivery_otp_created_at: { type: String, default: null },
+  delivery_otp_verified_at: { type: String, default: null },
+  delivery_otp_verified_by: { type: String, default: null },
 }, { timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' } });
 
 export const RepairBooking = mongoose.models.RepairBooking || mongoose.model('RepairBooking', repairBookingSchema);

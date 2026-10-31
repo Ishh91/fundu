@@ -349,3 +349,138 @@ export async function notifyRiderDeclinedTask(data: RiderDeclinedTaskData, autoO
 
   return await dispatchWhatsAppAlert(msg, autoOpen);
 }
+
+
+// =========================================================================
+// 8. CUSTOMER DOORSTEP HANDOVER OTP NOTIFICATION
+// =========================================================================
+export interface CustomerDeliveryOtpData {
+  phone: string;
+  customerName: string;
+  otp: string;
+  taskType: 'sell' | 'repair' | 'order';
+  itemTitle: string;
+  amount: number;
+  riderName?: string;
+  riderPhone?: string;
+}
+
+export async function sendCustomerDeliveryOtp(data: CustomerDeliveryOtpData, openInBrowser: boolean = false) {
+  const normPhone = normalizePhone(data.phone) || `91${data.phone.replace(/\D/g, '')}`;
+  const amountStr = data.amount > 0 ? `₹${data.amount.toLocaleString('en-IN')}` : 'N/A';
+
+  const actionLabel =
+    data.taskType === 'sell'
+      ? 'Sell Handover & Spot Payout'
+      : data.taskType === 'repair'
+      ? 'Doorstep Repair & Handover'
+      : 'Store Delivery & Handover';
+
+  const msg =
+    `🔒 *FUNDU SECURE HANDOVER OTP: ${data.otp}*\n` +
+    `━━━━━━━━━━━━━━━━━━━━━\n` +
+    `Hi *${data.customerName || 'Customer'}*,\n` +
+    `Your Fundu Field Executive *${data.riderName || 'Rider'}* is at/near your doorstep for:\n` +
+    `📱 *Service:* ${actionLabel}\n` +
+    `📦 *Item:* ${data.itemTitle}\n` +
+    `💰 *Handover Amount:* ${amountStr}\n\n` +
+    `🔑 *Your 4-Digit Handover OTP:* *${data.otp}*\n\n` +
+    `⚠️ *Important Security Rule:* Please share this OTP with the executive ONLY after physical verification of the device and confirmation of the payout/delivery amount.\n` +
+    `━━━━━━━━━━━━━━━━━━━━━\n` +
+    `Fundu Official Helpline: +91 98391 22345`;
+
+  // 1. Direct automated server-side background WhatsApp API dispatch
+  try {
+    const apiBase = API_BASE.replace(/\/$/, '');
+    await fetch(`${apiBase}/whatsapp/send`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        numbers: [normPhone],
+        message: msg,
+      }),
+    });
+    console.log(`🤖 [Customer Handover OTP Dispatched] to ${normPhone}: OTP ${data.otp}`);
+  } catch (err) {
+    console.warn('⚠️ [WhatsApp Backend API Error]:', err);
+  }
+
+  // 2. Open directly in browser if requested (or when rider clicks 'Resend OTP to Customer')
+  if (openInBrowser) {
+    const url = buildWhatsAppUrl(normPhone, msg);
+    try {
+      window.open(url, '_blank');
+    } catch {}
+  }
+
+  return { success: true, phone: normPhone, msg };
+}
+
+// =========================================================================
+// 9. OTP VERIFIED & DELIVERY COMPLETED NOTIFICATION
+// =========================================================================
+export interface DeliveryCompletedOtpData {
+  taskId: string;
+  taskType: 'sell' | 'repair' | 'order';
+  customerName: string;
+  customerPhone: string;
+  itemTitle: string;
+  amount: number;
+  riderName: string;
+  otp: string;
+}
+
+export async function notifyDeliveryCompletedOtpVerified(data: DeliveryCompletedOtpData) {
+  const origin = typeof window !== 'undefined' ? window.location.origin : 'https://thefundu.com';
+  const typeLabel =
+    data.taskType === 'sell'
+      ? 'Sell Phone Pickup & Spot Payout'
+      : data.taskType === 'repair'
+      ? 'Doorstep Repair Handover'
+      : 'Store Product Delivery';
+
+  const adminMsg =
+    `✅ *CUSTOMER OTP VERIFIED — TASK COMPLETED!*\n` +
+    `━━━━━━━━━━━━━━━━━━━━━\n` +
+    `🚴 *Executive:* ${data.riderName}\n` +
+    `📋 *Type:* ${typeLabel}\n` +
+    `🆔 *Task ID:* #${data.taskId.slice(0, 8).toUpperCase()}\n` +
+    `👤 *Customer:* ${data.customerName} (${data.customerPhone})\n` +
+    `📱 *Item:* ${data.itemTitle}\n` +
+    `💰 *Confirmed Amount:* ₹${data.amount.toLocaleString('en-IN')}\n` +
+    `🔑 *Verified OTP:* ${data.otp}\n` +
+    `⏰ *Completed At:* ${new Date().toLocaleTimeString('en-IN')}\n` +
+    `━━━━━━━━━━━━━━━━━━━━━\n` +
+    `Live Records in Admin Console: ${origin}/admin`;
+
+  // Notify Admins
+  await dispatchWhatsAppAlert(adminMsg, false);
+
+  // Send Final Handover Receipt to Customer
+  const custMsg =
+    `🎉 *HANDOVER COMPLETED & VERIFIED!*\n` +
+    `━━━━━━━━━━━━━━━━━━━━━\n` +
+    `Hi *${data.customerName}*,\n` +
+    `Your transaction for *${data.itemTitle}* has been successfully completed and authenticated via Doorstep OTP.\n\n` +
+    `💰 *Confirmed Amount:* ₹${data.amount.toLocaleString('en-IN')}\n` +
+    `🚴 *Executive:* ${data.riderName}\n` +
+    `━━━━━━━━━━━━━━━━━━━━━\n` +
+    `Thank you for trusting Fundu! For any support, WhatsApp us at +91 98391 22345.`;
+
+  try {
+    const apiBase = API_BASE.replace(/\/$/, '');
+    const normCustPhone = normalizePhone(data.customerPhone);
+    if (normCustPhone) {
+      await fetch(`${apiBase}/whatsapp/send`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          numbers: [normCustPhone],
+          message: custMsg,
+        }),
+      });
+    }
+  } catch {}
+
+  return { success: true };
+}

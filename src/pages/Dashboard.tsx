@@ -772,6 +772,34 @@ function SellCard({
         </div>
       )}
 
+      {/* Customer Handover OTP */}
+      {s.delivery_otp && !isTerminal && (
+        <div className="mt-4 p-4 rounded-2xl bg-gradient-to-r from-emerald-50 via-teal-50 to-emerald-50 border-2 border-emerald-400/80 shadow-xs flex flex-wrap items-center justify-between gap-3 animate-fade-in">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-emerald-600 text-white flex items-center justify-center font-black text-lg shadow-xs">
+              🔑
+            </div>
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="badge bg-emerald-700 text-white text-[10px] font-black uppercase tracking-wider">
+                  Pickup Handover OTP
+                </span>
+                <span className="text-[11px] text-emerald-800 font-bold">Doorstep Verification</span>
+              </div>
+              <p className="text-xs text-slate-600 mt-0.5">
+                Share this 4-digit OTP with your Fundu Executive at doorstep to confirm device handover & release payout.
+              </p>
+            </div>
+          </div>
+          <div className="text-right ml-auto">
+            <div className="px-4 py-1.5 bg-white rounded-xl border-2 border-emerald-500 font-mono font-black text-2xl text-emerald-800 tracking-[0.25em] shadow-inner">
+              {s.delivery_otp}
+            </div>
+            <span className="text-[10px] text-emerald-700 font-semibold block mt-0.5">Confidential Handover PIN</span>
+          </div>
+        </div>
+      )}
+
       {/* Agent */}
       {s.pickup_person_name && (
         <AgentCard
@@ -909,6 +937,34 @@ function RepairCard({
         )}
       </div>
 
+      {/* Customer Handover OTP */}
+      {r.delivery_otp && !isTerminal && (
+        <div className="mt-4 p-4 rounded-2xl bg-gradient-to-r from-emerald-50 via-teal-50 to-emerald-50 border-2 border-emerald-400/80 shadow-xs flex flex-wrap items-center justify-between gap-3 animate-fade-in">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-emerald-600 text-white flex items-center justify-center font-black text-lg shadow-xs">
+              🔑
+            </div>
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="badge bg-emerald-700 text-white text-[10px] font-black uppercase tracking-wider">
+                  Repair Handover OTP
+                </span>
+                <span className="text-[11px] text-emerald-800 font-bold">Doorstep Verification</span>
+              </div>
+              <p className="text-xs text-slate-600 mt-0.5">
+                Share this 4-digit OTP with your Fundu Repair Executive at doorstep after inspecting the repaired device.
+              </p>
+            </div>
+          </div>
+          <div className="text-right ml-auto">
+            <div className="px-4 py-1.5 bg-white rounded-xl border-2 border-emerald-500 font-mono font-black text-2xl text-emerald-800 tracking-[0.25em] shadow-inner">
+              {r.delivery_otp}
+            </div>
+            <span className="text-[10px] text-emerald-700 font-semibold block mt-0.5">Confidential Handover PIN</span>
+          </div>
+        </div>
+      )}
+
       {/* Agent */}
       {r.pickup_person_name && (
         <AgentCard
@@ -1030,6 +1086,34 @@ function OrderCard({
           <InfoRow icon={Star} label="Tracking ID" value={o.tracking_id} accent />
         )}
       </div>
+
+      {/* Customer Handover OTP */}
+      {o.delivery_otp && !isTerminal && (
+        <div className="mt-4 p-4 rounded-2xl bg-gradient-to-r from-emerald-50 via-teal-50 to-emerald-50 border-2 border-emerald-400/80 shadow-xs flex flex-wrap items-center justify-between gap-3 animate-fade-in">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-emerald-600 text-white flex items-center justify-center font-black text-lg shadow-xs">
+              🔑
+            </div>
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="badge bg-emerald-700 text-white text-[10px] font-black uppercase tracking-wider">
+                  Store Delivery Handover OTP
+                </span>
+                <span className="text-[11px] text-emerald-800 font-bold">Doorstep Verification</span>
+              </div>
+              <p className="text-xs text-slate-600 mt-0.5">
+                Share this 4-digit OTP with your Fundu Delivery Rider only after inspecting the package and confirming payment.
+              </p>
+            </div>
+          </div>
+          <div className="text-right ml-auto">
+            <div className="px-4 py-1.5 bg-white rounded-xl border-2 border-emerald-500 font-mono font-black text-2xl text-emerald-800 tracking-[0.25em] shadow-inner">
+              {o.delivery_otp}
+            </div>
+            <span className="text-[10px] text-emerald-700 font-semibold block mt-0.5">Confidential Handover PIN</span>
+          </div>
+        </div>
+      )}
 
       {/* Dispatch info */}
       {disp && (

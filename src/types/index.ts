@@ -85,6 +85,10 @@ export type SellRequest = {
   commission_percent?: number;
   commission_amount?: number | null;
   paid_via_vendor_limit?: boolean;
+  delivery_otp?: string | null;
+  delivery_otp_created_at?: string | null;
+  delivery_otp_verified_at?: string | null;
+  delivery_otp_verified_by?: string | null;
   created_at: string;
 };
 
@@ -170,6 +174,10 @@ export type RepairBooking = {
   commission_percent?: number;
   commission_amount?: number | null;
   vendor_payout_amount?: number | null;
+  delivery_otp?: string | null;
+  delivery_otp_created_at?: string | null;
+  delivery_otp_verified_at?: string | null;
+  delivery_otp_verified_by?: string | null;
   created_at: string;
 };
 
@@ -222,6 +230,10 @@ export type Order = {
   dispatched_at?: string | null;
   delivered_at?: string | null;
   tracking_id?: string;
+  delivery_otp?: string | null;
+  delivery_otp_created_at?: string | null;
+  delivery_otp_verified_at?: string | null;
+  delivery_otp_verified_by?: string | null;
   created_at: string;
 };
 
