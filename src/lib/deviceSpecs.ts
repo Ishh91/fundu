@@ -1484,32 +1484,158 @@ const MODEL_HARDWARE_RULES: Array<{
   // ==========================================
   // OPPO
   // ==========================================
+  // Find Series
   {
-    pattern: /oppo\s*reno\s*12\s*pro/i,
+    pattern: /oppo\s*find\s*n3\b(?!\s*flip)/i,
+    variants: [
+      { storage: '512 GB', rams: ['16 GB'] },
+    ],
+  },
+  {
+    pattern: /oppo\s*find\s*n[23]\s*flip/i,
+    variants: [
+      { storage: '256 GB', rams: ['8 GB', '12 GB'] },
+    ],
+  },
+  {
+    pattern: /oppo\s*(find\s*x[78]\s*ultra|find\s*x8\s*pro)/i,
+    variants: [
+      { storage: '256 GB', rams: ['12 GB', '16 GB'] },
+      { storage: '512 GB', rams: ['16 GB'] },
+    ],
+  },
+  {
+    pattern: /oppo\s*find\s*(?:x[28]|x\b)/i,
+    variants: [
+      { storage: '256 GB', rams: ['8 GB', '12 GB'] },
+    ],
+  },
+  // Reno Series
+  {
+    pattern: /oppo\s*reno\s*(?:12|13|14|15)\s*pro/i,
     variants: [
       { storage: '256 GB', rams: ['12 GB'] },
       { storage: '512 GB', rams: ['12 GB'] },
     ],
   },
   {
-    pattern: /oppo\s*reno\s*12\b/i,
+    pattern: /oppo\s*reno\s*(?:10\s*pro\+|10\s*pro|11\s*pro|7\s*pro|8\s*pro|6\s*pro|10\b|7\b|12\b|2\b|2z\b)/i,
     variants: [
-      { storage: '256 GB', rams: ['8 GB'] },
+      { storage: '256 GB', rams: ['8 GB', '12 GB'] },
     ],
   },
   {
-    pattern: /oppo\s*f27\s*pro\+/i,
+    pattern: /oppo\s*reno\s*(?:11\b|3\s*pro|2f|10x\s*zoom)/i,
+    variants: [
+      { storage: '128 GB', rams: ['8 GB'] },
+      { storage: '256 GB', rams: ['8 GB', '12 GB'] },
+    ],
+  },
+  {
+    pattern: /oppo\s*reno\s*(?:8\b|8t|6\b|5\s*pro|4\s*pro)/i,
+    variants: [
+      { storage: '128 GB', rams: ['8 GB'] },
+    ],
+  },
+  // F Series
+  {
+    pattern: /oppo\s*f(?:27\s*pro\+|27\b|25\s*pro|19\s*pro\+|19\s*pro\b)/i,
     variants: [
       { storage: '128 GB', rams: ['8 GB'] },
       { storage: '256 GB', rams: ['8 GB'] },
     ],
   },
   {
-    pattern: /oppo\s*a(78|54|53|31|17|16|15)\b/i,
+    pattern: /oppo\s*f23\b/i,
+    variants: [
+      { storage: '256 GB', rams: ['8 GB'] },
+    ],
+  },
+  {
+    pattern: /oppo\s*f(?:11\s*pro|9\s*pro|7\b)/i,
+    variants: [
+      { storage: '64 GB', rams: ['4 GB', '6 GB'] },
+      { storage: '128 GB', rams: ['6 GB'] },
+    ],
+  },
+  {
+    pattern: /oppo\s*f(?:21s?\s*pro|19s?|17\s*pro|17\b|15|11\b)/i,
+    variants: [
+      { storage: '128 GB', rams: ['6 GB', '8 GB'] },
+    ],
+  },
+  {
+    pattern: /oppo\s*f(?:9\b|3\b)/i,
+    variants: [
+      { storage: '64 GB', rams: ['4 GB'] },
+    ],
+  },
+  {
+    pattern: /oppo\s*f(?:5\b|1s\b)/i,
     variants: [
       { storage: '32 GB', rams: ['3 GB', '4 GB'] },
+      { storage: '64 GB', rams: ['4 GB', '6 GB'] },
+    ],
+  },
+  // K Series
+  {
+    pattern: /oppo\s*k12x/i,
+    variants: [
+      { storage: '128 GB', rams: ['6 GB', '8 GB'] },
+      { storage: '256 GB', rams: ['8 GB'] },
+    ],
+  },
+  {
+    pattern: /oppo\s*k10\b/i,
+    variants: [
+      { storage: '128 GB', rams: ['6 GB', '8 GB'] },
+    ],
+  },
+  {
+    pattern: /oppo\s*k3\b/i,
+    variants: [
+      { storage: '64 GB', rams: ['6 GB'] },
+      { storage: '128 GB', rams: ['8 GB'] },
+    ],
+  },
+  {
+    pattern: /oppo\s*k1\b/i,
+    variants: [
       { storage: '64 GB', rams: ['4 GB'] },
+    ],
+  },
+  // A Series
+  {
+    pattern: /oppo\s*a3\s*pro/i,
+    variants: [
+      { storage: '128 GB', rams: ['8 GB'] },
+      { storage: '256 GB', rams: ['8 GB'] },
+    ],
+  },
+  {
+    pattern: /oppo\s*a(?:79|78|77s|76|74|58|53s|52|38|96|9\s*2020|3\b)/i,
+    variants: [
       { storage: '128 GB', rams: ['4 GB', '6 GB', '8 GB'] },
+    ],
+  },
+  {
+    pattern: /oppo\s*a(?:59|55|54|53|31|77\b|18|3x|15s)/i,
+    variants: [
+      { storage: '64 GB', rams: ['4 GB'] },
+      { storage: '128 GB', rams: ['4 GB', '6 GB'] },
+    ],
+  },
+  {
+    pattern: /oppo\s*a(?:57|5\s*2020|17k?)/i,
+    variants: [
+      { storage: '64 GB', rams: ['3 GB', '4 GB'] },
+    ],
+  },
+  {
+    pattern: /oppo\s*a(?:16[ke]?|15\b|12\b|11k)/i,
+    variants: [
+      { storage: '32 GB', rams: ['3 GB'] },
+      { storage: '64 GB', rams: ['4 GB'] },
     ],
   },
 
@@ -2589,9 +2715,9 @@ export function is512GBValidForModel(brand = '', model = ''): boolean {
     return false;
   }
 
-  // 9. Oppo: Strictly Find N series, Reno 11/12 Pro
+  // 9. Oppo: Strictly Find N series, Find X series, Reno 11/12/13/14/15 Pro
   if (b.includes('oppo')) {
-    if (/find\s*n|reno\s*(11|12)\s*pro/i.test(m)) return true;
+    if (/find\s*(?:n|x[2-9]|x\d+)|reno\s*(?:11|12|13|14|15)\s*pro/i.test(m)) return true;
     return false;
   }
 
@@ -2692,13 +2818,30 @@ export function isStorageAllowedForModel(brand = '', model = '', storageStr = ''
       return true;
     }
 
+    // Oppo: Budget A series and older lower F/K series NEVER had 256GB in India
+    if (b.includes('oppo')) {
+      if (/oppo\s*a(?!3\s*pro)/i.test(m) || /\ba(1[1-9]|3[138x]|5[2-9]|7[4-9]|9[26]|9\s*2020|5\s*2020)\b/i.test(m)) {
+        return false;
+      }
+      if (/oppo\s*f(?:[13579]|1[157]|19s?|21s?)\b(?!\s*pro\+)/i.test(m) || /oppo\s*f21s?\s*pro/i.test(m)) {
+        return false;
+      }
+      if (/oppo\s*k([13]|10)\b/i.test(m)) {
+        return false;
+      }
+      return true;
+    }
+
     return true;
   }
 
   // 3. Tier: 128 GB
   if (gb === 128) {
     // Ultra / Fold flagships that START at 256 GB (128 GB never launched / does not exist)
-    if (/s2[3-6]\s*ultra|15\s*pro\s*max|16\s*pro\s*max|z\s*fold\s*[2-6]|pixel\s*9\s*pro\s*fold|oneplus\s*open|iqoo\s*(12|13)|x100\s*pro|x90\s*pro|note\s*20\s*ultra/i.test(full)) {
+    if (
+      /s2[3-6]\s*ultra|15\s*pro\s*max|16\s*pro\s*max|z\s*fold\s*[2-6]|pixel\s*9\s*pro\s*fold|oneplus\s*open|iqoo\s*(12|13)|x100\s*pro|x90\s*pro|note\s*20\s*ultra/i.test(full) ||
+      /oppo\s*(?:find\s*(?:x[7-9]|n[23]\s*flip)|reno\s*(?:7|8|10|11|12)\s*pro|reno\s*10\s*pro\+|reno\s*10\b|f23\b)/i.test(full)
+    ) {
       return false;
     }
     // Antique phones that only had up to 32GB or 64GB
@@ -2721,6 +2864,7 @@ export function isStorageAllowedForModel(brand = '', model = '', storageStr = ''
       /vivo\s*x(50|60|70|80|90|100|200)/i.test(m) ||
       /vivo\s*v(2[1-9]|3[0-9]|4[0-9])/i.test(m) ||
       /iqoo\s*(3|7|9|11|12|13|neo|z[6-9]\s*5g|z[6-9]\s*pro|z9s)/i.test(m) ||
+      /oppo\s*(?:reno\s*\d+|find|f(?:19|2[1-7])|k1[0-9]|a(?:3\s*pro|5[89]|7[89]|9[68]))/i.test(full) ||
       /nothing\s*phone|cmf\s*phone/i.test(full)
     ) {
       return false;

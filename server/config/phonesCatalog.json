@@ -5022,13 +5022,11 @@
     "model": "A18",
     "release_year": 2017,
     "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
+      "4GB"
     ],
     "storage_options": [
       "64 GB",
-      "256 GB"
+      "128 GB"
     ],
     "default_mrp": 9999,
     "base_resale_value": 7500,
@@ -5047,13 +5045,10 @@
     "model": "A3 5G",
     "release_year": 2022,
     "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
+      "6GB"
     ],
     "storage_options": [
-      "128 GB",
-      "256 GB"
+      "128 GB"
     ],
     "default_mrp": 18285,
     "base_resale_value": 12190,
@@ -5071,9 +5066,7 @@
     "model": "A3 Pro 5G",
     "release_year": 2022,
     "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
+      "8GB"
     ],
     "storage_options": [
       "128 GB",
@@ -5096,13 +5089,12 @@
     "model": "A31",
     "release_year": 2022,
     "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
+      "4GB",
+      "6GB"
     ],
     "storage_options": [
       "64 GB",
-      "256 GB"
+      "128 GB"
     ],
     "default_mrp": 8610,
     "base_resale_value": 7260,
@@ -5121,13 +5113,10 @@
     "model": "A38",
     "release_year": 2017,
     "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
+      "4GB"
     ],
     "storage_options": [
-      "128 GB",
-      "256 GB"
+      "128 GB"
     ],
     "default_mrp": 12999,
     "base_resale_value": 8000,
@@ -5146,13 +5135,11 @@
     "model": "A5 2020",
     "release_year": 2022,
     "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
+      "3GB",
+      "4GB"
     ],
     "storage_options": [
-      "64 GB",
-      "256 GB"
+      "64 GB"
     ],
     "default_mrp": 7635,
     "base_resale_value": 6510,
@@ -5171,9 +5158,7 @@
     "model": "A5 Pro 5G",
     "release_year": 2022,
     "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
+      "8GB"
     ],
     "storage_options": [
       "128 GB",
@@ -5195,13 +5180,12 @@
     "model": "A52",
     "release_year": 2022,
     "ram_options": [
+      "4GB",
       "6GB",
-      "8GB",
-      "12GB"
+      "8GB"
     ],
     "storage_options": [
-      "128 GB",
-      "256 GB"
+      "128 GB"
     ],
     "default_mrp": 9390,
     "base_resale_value": 7910,
@@ -5245,12 +5229,10 @@
     "release_year": 2022,
     "ram_options": [
       "6GB",
-      "8GB",
-      "12GB"
+      "8GB"
     ],
     "storage_options": [
-      "128 GB",
-      "256 GB"
+      "128 GB"
     ],
     "default_mrp": 14999,
     "base_resale_value": 7500,
@@ -5293,13 +5275,12 @@
     "model": "A55",
     "release_year": 2022,
     "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
+      "4GB",
+      "6GB"
     ],
     "storage_options": [
       "64 GB",
-      "256 GB"
+      "128 GB"
     ],
     "default_mrp": 15499,
     "base_resale_value": 6800,
@@ -5318,13 +5299,10 @@
     "model": "A57 2022",
     "release_year": 2017,
     "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
+      "4GB"
     ],
     "storage_options": [
-      "64 GB",
-      "256 GB"
+      "64 GB"
     ],
     "default_mrp": 9540,
     "base_resale_value": 7430,
@@ -5343,13 +5321,10 @@
     "model": "A58 5G",
     "release_year": 2017,
     "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
+      "6GB"
     ],
     "storage_options": [
-      "128 GB",
-      "256 GB"
+      "128 GB"
     ],
     "default_mrp": 15999,
     "base_resale_value": 9800,
@@ -5368,13 +5343,11 @@
     "model": "A59 5G",
     "release_year": 2022,
     "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
+      "4GB",
+      "6GB"
     ],
     "storage_options": [
-      "128 GB",
-      "256 GB"
+      "128 GB"
     ],
     "default_mrp": 14999,
     "base_resale_value": 10500,
@@ -5393,13 +5366,12 @@
     "model": "A5x 5G",
     "release_year": 2018,
     "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
+      "4GB",
+      "6GB"
     ],
     "storage_options": [
       "64 GB",
-      "256 GB"
+      "128 GB"
     ],
     "default_mrp": 11790,
     "base_resale_value": 7860,
@@ -5417,9 +5389,7 @@
     "model": "A6 5G",
     "release_year": 2016,
     "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
+      "8GB"
     ],
     "storage_options": [
       "128 GB",
@@ -5441,9 +5411,7 @@
     "model": "A6 Pro 5G",
     "release_year": 2016,
     "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
+      "8GB"
     ],
     "storage_options": [
       "128 GB",
@@ -5465,13 +5433,12 @@
     "model": "A6c",
     "release_year": 2022,
     "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
+      "4GB",
+      "6GB"
     ],
     "storage_options": [
       "64 GB",
-      "256 GB"
+      "128 GB"
     ],
     "default_mrp": 17160,
     "base_resale_value": 11440,
@@ -5489,9 +5456,7 @@
     "model": "A6s 5G",
     "release_year": 2016,
     "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
+      "8GB"
     ],
     "storage_options": [
       "128 GB",
@@ -5513,13 +5478,12 @@
     "model": "A6x 5G",
     "release_year": 2018,
     "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
+      "4GB",
+      "6GB"
     ],
     "storage_options": [
       "64 GB",
-      "256 GB"
+      "128 GB"
     ],
     "default_mrp": 16635,
     "base_resale_value": 11090,
@@ -5537,13 +5501,10 @@
     "model": "A74 5G",
     "release_year": 2022,
     "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
+      "6GB"
     ],
     "storage_options": [
-      "128 GB",
-      "256 GB"
+      "128 GB"
     ],
     "default_mrp": 17999,
     "base_resale_value": 8500,
@@ -5562,13 +5523,10 @@
     "model": "A76",
     "release_year": 2016,
     "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
+      "6GB"
     ],
     "storage_options": [
-      "128 GB",
-      "256 GB"
+      "128 GB"
     ],
     "default_mrp": 11235,
     "base_resale_value": 7870,
@@ -5587,13 +5545,11 @@
     "model": "A77 2022",
     "release_year": 2017,
     "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
+      "4GB"
     ],
     "storage_options": [
       "64 GB",
-      "256 GB"
+      "128 GB"
     ],
     "default_mrp": 7605,
     "base_resale_value": 7740,
@@ -5612,13 +5568,10 @@
     "model": "A77s",
     "release_year": 2022,
     "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
+      "8GB"
     ],
     "storage_options": [
-      "128 GB",
-      "256 GB"
+      "128 GB"
     ],
     "default_mrp": 10995,
     "base_resale_value": 8780,
@@ -5659,13 +5612,10 @@
     "model": "A79 5G",
     "release_year": 2022,
     "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
+      "8GB"
     ],
     "storage_options": [
-      "128 GB",
-      "256 GB"
+      "128 GB"
     ],
     "default_mrp": 19999,
     "base_resale_value": 12000,
@@ -5684,13 +5634,10 @@
     "model": "A9",
     "release_year": 2022,
     "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
+      "4GB"
     ],
     "storage_options": [
-      "128 GB",
-      "256 GB"
+      "128 GB"
     ],
     "default_mrp": 8955,
     "base_resale_value": 6730,
@@ -5709,13 +5656,11 @@
     "model": "A9 2020",
     "release_year": 2022,
     "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
+      "4GB",
+      "8GB"
     ],
     "storage_options": [
-      "128 GB",
-      "256 GB"
+      "128 GB"
     ],
     "default_mrp": 8895,
     "base_resale_value": 6730,
@@ -5734,13 +5679,10 @@
     "model": "A96",
     "release_year": 2016,
     "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
+      "8GB"
     ],
     "storage_options": [
-      "128 GB",
-      "256 GB"
+      "128 GB"
     ],
     "default_mrp": 11250,
     "base_resale_value": 8690,
@@ -5759,13 +5701,11 @@
     "model": "F11",
     "release_year": 2019,
     "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
+      "4GB",
+      "6GB"
     ],
     "storage_options": [
-      "128 GB",
-      "256 GB"
+      "128 GB"
     ],
     "default_mrp": 19999,
     "base_resale_value": 4800,
@@ -5784,13 +5724,11 @@
     "model": "F11 Pro",
     "release_year": 2019,
     "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
+      "6GB"
     ],
     "storage_options": [
       "64 GB",
-      "256 GB"
+      "128 GB"
     ],
     "default_mrp": 24999,
     "base_resale_value": 5500,
@@ -5809,13 +5747,10 @@
     "model": "F11 Pro Avenger Edition",
     "release_year": 2019,
     "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
+      "6GB"
     ],
     "storage_options": [
-      "128 GB",
-      "256 GB"
+      "128 GB"
     ],
     "default_mrp": 27999,
     "base_resale_value": 6200,
@@ -5834,13 +5769,11 @@
     "model": "F15",
     "release_year": 2023,
     "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
+      "4GB",
+      "8GB"
     ],
     "storage_options": [
-      "128 GB",
-      "256 GB"
+      "128 GB"
     ],
     "default_mrp": 19999,
     "base_resale_value": 6500,
@@ -5860,12 +5793,10 @@
     "release_year": 2017,
     "ram_options": [
       "6GB",
-      "8GB",
-      "12GB"
+      "8GB"
     ],
     "storage_options": [
-      "128 GB",
-      "256 GB"
+      "128 GB"
     ],
     "default_mrp": 17999,
     "base_resale_value": 7000,
@@ -5884,13 +5815,10 @@
     "model": "F17 Pro",
     "release_year": 2017,
     "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
+      "8GB"
     ],
     "storage_options": [
-      "128 GB",
-      "256 GB"
+      "128 GB"
     ],
     "default_mrp": 22999,
     "base_resale_value": 7800,
@@ -5909,13 +5837,10 @@
     "model": "F19",
     "release_year": 2022,
     "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
+      "6GB"
     ],
     "storage_options": [
-      "128 GB",
-      "256 GB"
+      "128 GB"
     ],
     "default_mrp": 18999,
     "base_resale_value": 8000,
@@ -5934,9 +5859,7 @@
     "model": "F19 Pro",
     "release_year": 2022,
     "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
+      "8GB"
     ],
     "storage_options": [
       "128 GB",
@@ -5959,9 +5882,7 @@
     "model": "F19 Pro+ 5G",
     "release_year": 2022,
     "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
+      "8GB"
     ],
     "storage_options": [
       "128 GB",
@@ -5984,13 +5905,10 @@
     "model": "F19s",
     "release_year": 2022,
     "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
+      "6GB"
     ],
     "storage_options": [
-      "128 GB",
-      "256 GB"
+      "128 GB"
     ],
     "default_mrp": 19999,
     "base_resale_value": 8000,
@@ -6009,13 +5927,10 @@
     "model": "F21 Pro 5G",
     "release_year": 2022,
     "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
+      "8GB"
     ],
     "storage_options": [
-      "128 GB",
-      "256 GB"
+      "128 GB"
     ],
     "default_mrp": 26999,
     "base_resale_value": 10500,
@@ -6034,13 +5949,10 @@
     "model": "F21s Pro 5G",
     "release_year": 2022,
     "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
+      "8GB"
     ],
     "storage_options": [
-      "128 GB",
-      "256 GB"
+      "128 GB"
     ],
     "default_mrp": 25999,
     "base_resale_value": 11000,
@@ -6059,12 +5971,9 @@
     "model": "F23 5G",
     "release_year": 2022,
     "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
+      "8GB"
     ],
     "storage_options": [
-      "128 GB",
       "256 GB"
     ],
     "default_mrp": 19999,
@@ -6084,9 +5993,7 @@
     "model": "F25 Pro 5G",
     "release_year": 2022,
     "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
+      "8GB"
     ],
     "storage_options": [
       "128 GB",
@@ -6109,9 +6016,7 @@
     "model": "F27 5G",
     "release_year": 2017,
     "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
+      "8GB"
     ],
     "storage_options": [
       "128 GB",
@@ -6134,9 +6039,7 @@
     "model": "F27 Pro+ 5G",
     "release_year": 2024,
     "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
+      "8GB"
     ],
     "storage_options": [
       "128 GB",
@@ -6159,9 +6062,7 @@
     "model": "F29 5G",
     "release_year": 2022,
     "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
+      "8GB"
     ],
     "storage_options": [
       "128 GB",
@@ -6183,7 +6084,6 @@
     "model": "F29 Pro 5G",
     "release_year": 2022,
     "ram_options": [
-      "6GB",
       "8GB",
       "12GB"
     ],
@@ -6207,9 +6107,7 @@
     "model": "F31 5G",
     "release_year": 2022,
     "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
+      "8GB"
     ],
     "storage_options": [
       "128 GB",
@@ -6231,7 +6129,6 @@
     "model": "F31 Pro 5G",
     "release_year": 2022,
     "ram_options": [
-      "6GB",
       "8GB",
       "12GB"
     ],
@@ -6255,8 +6152,6 @@
     "model": "F31 Pro Plus 5G",
     "release_year": 2022,
     "ram_options": [
-      "6GB",
-      "8GB",
       "12GB"
     ],
     "storage_options": [
@@ -6278,9 +6173,7 @@
     "model": "F33 5G",
     "release_year": 2022,
     "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
+      "8GB"
     ],
     "storage_options": [
       "128 GB",
@@ -6302,7 +6195,6 @@
     "model": "F33 Pro 5G",
     "release_year": 2022,
     "ram_options": [
-      "6GB",
       "8GB",
       "12GB"
     ],
@@ -6326,13 +6218,12 @@
     "model": "F7",
     "release_year": 2017,
     "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
+      "4GB",
+      "6GB"
     ],
     "storage_options": [
       "64 GB",
-      "256 GB"
+      "128 GB"
     ],
     "default_mrp": 21999,
     "base_resale_value": 3200,
@@ -6351,13 +6242,10 @@
     "model": "F9",
     "release_year": 2022,
     "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
+      "4GB"
     ],
     "storage_options": [
-      "64 GB",
-      "256 GB"
+      "64 GB"
     ],
     "default_mrp": 19999,
     "base_resale_value": 3500,
@@ -6376,13 +6264,11 @@
     "model": "F9 Pro",
     "release_year": 2022,
     "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
+      "6GB"
     ],
     "storage_options": [
       "64 GB",
-      "256 GB"
+      "128 GB"
     ],
     "default_mrp": 23999,
     "base_resale_value": 4000,
@@ -6401,9 +6287,7 @@
     "model": "Find X",
     "release_year": 2018,
     "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
+      "8GB"
     ],
     "storage_options": [
       "256 GB"
@@ -6425,8 +6309,6 @@
     "model": "Find X2",
     "release_year": 2022,
     "ram_options": [
-      "6GB",
-      "8GB",
       "12GB"
     ],
     "storage_options": [
@@ -6449,8 +6331,6 @@
     "model": "Find X5 Pro",
     "release_year": 2022,
     "ram_options": [
-      "6GB",
-      "8GB",
       "12GB"
     ],
     "storage_options": [
@@ -6473,8 +6353,6 @@
     "model": "Find X9 5G",
     "release_year": 2022,
     "ram_options": [
-      "6GB",
-      "8GB",
       "12GB"
     ],
     "storage_options": [
@@ -6496,13 +6374,11 @@
     "model": "Find X9 Pro",
     "release_year": 2022,
     "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
+      "16GB"
     ],
     "storage_options": [
-      "512 GB",
-      "256 GB"
+      "256 GB",
+      "512 GB"
     ],
     "default_mrp": 93975,
     "base_resale_value": 62650,
@@ -6520,13 +6396,11 @@
     "model": "Find X9 Ultra",
     "release_year": 2022,
     "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
+      "16GB"
     ],
     "storage_options": [
-      "512 GB",
-      "256 GB"
+      "256 GB",
+      "512 GB"
     ],
     "default_mrp": 118875,
     "base_resale_value": 79250,
@@ -6544,8 +6418,6 @@
     "model": "Find X9s",
     "release_year": 2022,
     "ram_options": [
-      "6GB",
-      "8GB",
       "12GB"
     ],
     "storage_options": [
@@ -6567,13 +6439,10 @@
     "model": "K1",
     "release_year": 2022,
     "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
+      "4GB"
     ],
     "storage_options": [
-      "64 GB",
-      "256 GB"
+      "64 GB"
     ],
     "default_mrp": 7365,
     "base_resale_value": 7030,
@@ -6592,13 +6461,10 @@
     "model": "K10 5G",
     "release_year": 2022,
     "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
+      "8GB"
     ],
     "storage_options": [
-      "128 GB",
-      "256 GB"
+      "128 GB"
     ],
     "default_mrp": 17499,
     "base_resale_value": 10000,
@@ -6618,8 +6484,7 @@
     "release_year": 2020,
     "ram_options": [
       "6GB",
-      "8GB",
-      "12GB"
+      "8GB"
     ],
     "storage_options": [
       "128 GB",
@@ -6642,9 +6507,7 @@
     "model": "K13 5G",
     "release_year": 2021,
     "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
+      "8GB"
     ],
     "storage_options": [
       "128 GB",
@@ -6666,7 +6529,6 @@
     "model": "K13 Turbo 5G",
     "release_year": 2021,
     "ram_options": [
-      "6GB",
       "8GB",
       "12GB"
     ],
@@ -6690,8 +6552,6 @@
     "model": "K13 Turbo Pro 5G",
     "release_year": 2021,
     "ram_options": [
-      "6GB",
-      "8GB",
       "12GB"
     ],
     "storage_options": [
@@ -6714,8 +6574,7 @@
     "release_year": 2021,
     "ram_options": [
       "6GB",
-      "8GB",
-      "12GB"
+      "8GB"
     ],
     "storage_options": [
       "128 GB",
@@ -6737,9 +6596,7 @@
     "model": "K14 5G",
     "release_year": 2022,
     "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
+      "8GB"
     ],
     "storage_options": [
       "128 GB",
@@ -6762,12 +6619,11 @@
     "release_year": 2022,
     "ram_options": [
       "6GB",
-      "8GB",
-      "12GB"
+      "8GB"
     ],
     "storage_options": [
       "64 GB",
-      "256 GB"
+      "128 GB"
     ],
     "default_mrp": 17325,
     "base_resale_value": 11550,
@@ -6786,12 +6642,11 @@
     "release_year": 2022,
     "ram_options": [
       "6GB",
-      "8GB",
-      "12GB"
+      "8GB"
     ],
     "storage_options": [
       "64 GB",
-      "256 GB"
+      "128 GB"
     ],
     "default_mrp": 8670,
     "base_resale_value": 8000,
@@ -6810,13 +6665,10 @@
     "model": "R17",
     "release_year": 2017,
     "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
+      "8GB"
     ],
     "storage_options": [
-      "128 GB",
-      "256 GB"
+      "128 GB"
     ],
     "default_mrp": 9045,
     "base_resale_value": 6940,
@@ -6836,8 +6688,7 @@
     "release_year": 2022,
     "ram_options": [
       "6GB",
-      "8GB",
-      "12GB"
+      "8GB"
     ],
     "storage_options": [
       "128 GB",
@@ -6860,12 +6711,9 @@
     "model": "Reno 10 5G",
     "release_year": 2022,
     "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
+      "8GB"
     ],
     "storage_options": [
-      "128 GB",
       "256 GB"
     ],
     "default_mrp": 32999,
@@ -6885,8 +6733,6 @@
     "model": "Reno 10 Pro 5G",
     "release_year": 2022,
     "ram_options": [
-      "6GB",
-      "8GB",
       "12GB"
     ],
     "storage_options": [
@@ -6909,8 +6755,6 @@
     "model": "Reno 10 Pro+ 5G",
     "release_year": 2022,
     "ram_options": [
-      "6GB",
-      "8GB",
       "12GB"
     ],
     "storage_options": [
@@ -7071,9 +6915,7 @@
     "model": "Reno 2",
     "release_year": 2022,
     "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
+      "8GB"
     ],
     "storage_options": [
       "256 GB"
@@ -7095,9 +6937,7 @@
     "model": "Reno 2Z",
     "release_year": 2022,
     "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
+      "8GB"
     ],
     "storage_options": [
       "256 GB"
@@ -7119,12 +6959,9 @@
     "model": "Reno 6 Pro 5G",
     "release_year": 2016,
     "ram_options": [
-      "6GB",
-      "8GB",
       "12GB"
     ],
     "storage_options": [
-      "128 GB",
       "256 GB"
     ],
     "default_mrp": 39999,
@@ -7144,8 +6981,6 @@
     "model": "Reno 7 Pro 5G",
     "release_year": 2017,
     "ram_options": [
-      "6GB",
-      "8GB",
       "12GB"
     ],
     "storage_options": [
@@ -7168,13 +7003,10 @@
     "model": "Reno 8 5G",
     "release_year": 2017,
     "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
+      "8GB"
     ],
     "storage_options": [
-      "128 GB",
-      "256 GB"
+      "128 GB"
     ],
     "default_mrp": 29999,
     "base_resale_value": 12500,
@@ -7193,8 +7025,6 @@
     "model": "Reno 8 Pro 5G",
     "release_year": 2017,
     "ram_options": [
-      "6GB",
-      "8GB",
       "12GB"
     ],
     "storage_options": [
@@ -7217,7 +7047,6 @@
     "model": "Reno13 5G",
     "release_year": 2021,
     "ram_options": [
-      "6GB",
       "8GB",
       "12GB"
     ],
@@ -7241,12 +7070,11 @@
     "model": "Reno13 Pro 5G",
     "release_year": 2022,
     "ram_options": [
-      "6GB",
-      "8GB",
       "12GB"
     ],
     "storage_options": [
-      "256 GB"
+      "256 GB",
+      "512 GB"
     ],
     "default_mrp": 37545,
     "base_resale_value": 25030,
@@ -7264,8 +7092,6 @@
     "model": "Reno14 5G",
     "release_year": 2022,
     "ram_options": [
-      "6GB",
-      "8GB",
       "12GB"
     ],
     "storage_options": [
@@ -7287,12 +7113,11 @@
     "model": "Reno14 Pro 5G",
     "release_year": 2022,
     "ram_options": [
-      "6GB",
-      "8GB",
       "12GB"
     ],
     "storage_options": [
-      "256 GB"
+      "256 GB",
+      "512 GB"
     ],
     "default_mrp": 47250,
     "base_resale_value": 31500,
@@ -7310,8 +7135,6 @@
     "model": "Reno15 5G",
     "release_year": 2023,
     "ram_options": [
-      "6GB",
-      "8GB",
       "12GB"
     ],
     "storage_options": [
@@ -7333,12 +7156,11 @@
     "model": "Reno15 Pro 5G",
     "release_year": 2023,
     "ram_options": [
-      "6GB",
-      "8GB",
       "12GB"
     ],
     "storage_options": [
-      "256 GB"
+      "256 GB",
+      "512 GB"
     ],
     "default_mrp": 64725,
     "base_resale_value": 43150,
@@ -7356,8 +7178,6 @@
     "model": "Reno15 Pro Mini 5G",
     "release_year": 2023,
     "ram_options": [
-      "6GB",
-      "8GB",
       "12GB"
     ],
     "storage_options": [
@@ -7379,8 +7199,6 @@
     "model": "Reno16 5G",
     "release_year": 2024,
     "ram_options": [
-      "6GB",
-      "8GB",
       "12GB"
     ],
     "storage_options": [
@@ -7402,9 +7220,7 @@
     "model": "Reno16c 5G",
     "release_year": 2024,
     "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
+      "8GB"
     ],
     "storage_options": [
       "128 GB",
@@ -7427,10 +7243,10 @@
     "release_year": 2022,
     "ram_options": [
       "6GB",
-      "8GB",
-      "12GB"
+      "8GB"
     ],
     "storage_options": [
+      "128 GB",
       "256 GB"
     ],
     "default_mrp": 25999,
@@ -7450,9 +7266,7 @@
     "model": "Reno3 Pro",
     "release_year": 2022,
     "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
+      "8GB"
     ],
     "storage_options": [
       "128 GB",
@@ -7475,13 +7289,10 @@
     "model": "Reno4 Pro",
     "release_year": 2022,
     "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
+      "8GB"
     ],
     "storage_options": [
-      "128 GB",
-      "256 GB"
+      "128 GB"
     ],
     "default_mrp": 34999,
     "base_resale_value": 8500,
@@ -7500,13 +7311,10 @@
     "model": "Reno5 Pro 5G",
     "release_year": 2022,
     "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
+      "8GB"
     ],
     "storage_options": [
-      "128 GB",
-      "256 GB"
+      "128 GB"
     ],
     "default_mrp": 35999,
     "base_resale_value": 10000,
@@ -7525,13 +7333,10 @@
     "model": "Reno6 5G",
     "release_year": 2016,
     "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
+      "8GB"
     ],
     "storage_options": [
-      "128 GB",
-      "256 GB"
+      "128 GB"
     ],
     "default_mrp": 29999,
     "base_resale_value": 10000,
@@ -7550,9 +7355,7 @@
     "model": "Reno7 5G",
     "release_year": 2017,
     "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
+      "8GB"
     ],
     "storage_options": [
       "256 GB"
@@ -7574,13 +7377,10 @@
     "model": "Reno8T 5G",
     "release_year": 2022,
     "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
+      "8GB"
     ],
     "storage_options": [
-      "128 GB",
-      "256 GB"
+      "128 GB"
     ],
     "default_mrp": 20265,
     "base_resale_value": 13210,
@@ -22765,12 +22565,12 @@
     "model": "Find X7 Ultra 5G",
     "release_year": 2024,
     "ram_options": [
-      "6GB",
-      "8GB"
+      "12GB",
+      "16GB"
     ],
     "storage_options": [
-      "128 GB",
-      "256 GB"
+      "256 GB",
+      "512 GB"
     ],
     "default_mrp": 84999,
     "base_resale_value": 59000,
@@ -25897,13 +25697,10 @@
     "model": "OPPO Find X8 Pro 5G",
     "release_year": 2024,
     "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
+      "16GB"
     ],
     "storage_options": [
-      "512 GB",
-      "256 GB"
+      "512 GB"
     ],
     "default_mrp": 89999,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/oppo-reno12-pro.jpg",
@@ -25922,9 +25719,8 @@
     "model": "OPPO Find X8 5G",
     "release_year": 2024,
     "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
+      "12GB",
+      "16GB"
     ],
     "storage_options": [
       "256 GB"
@@ -25946,8 +25742,6 @@
     "model": "OPPO Find N3 Flip 5G",
     "release_year": 2024,
     "ram_options": [
-      "6GB",
-      "8GB",
       "12GB"
     ],
     "storage_options": [
@@ -25970,9 +25764,7 @@
     "model": "OPPO Find N2 Flip 5G",
     "release_year": 2024,
     "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
+      "8GB"
     ],
     "storage_options": [
       "256 GB"
@@ -25994,13 +25786,10 @@
     "model": "OPPO Find X2 Pro",
     "release_year": 2024,
     "ram_options": [
-      "6GB",
-      "8GB",
       "12GB"
     ],
     "storage_options": [
-      "512 GB",
-      "256 GB"
+      "512 GB"
     ],
     "default_mrp": null,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/oppo-reno12-pro.jpg",
@@ -26019,12 +25808,11 @@
     "model": "OPPO Reno12 Pro",
     "release_year": 2024,
     "ram_options": [
-      "6GB",
-      "8GB",
       "12GB"
     ],
     "storage_options": [
-      "256 GB"
+      "256 GB",
+      "512 GB"
     ],
     "default_mrp": 36999,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/oppo-reno12-pro.jpg",
@@ -26043,9 +25831,7 @@
     "model": "OPPO Reno12",
     "release_year": 2024,
     "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
+      "8GB"
     ],
     "storage_options": [
       "256 GB"
@@ -26067,8 +25853,6 @@
     "model": "OPPO Reno11 Pro",
     "release_year": 2024,
     "ram_options": [
-      "6GB",
-      "8GB",
       "12GB"
     ],
     "storage_options": [
@@ -26091,11 +25875,10 @@
     "model": "OPPO Reno11",
     "release_year": 2024,
     "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
+      "8GB"
     ],
     "storage_options": [
+      "128 GB",
       "256 GB"
     ],
     "default_mrp": 29999,
@@ -26115,8 +25898,6 @@
     "model": "OPPO Reno10 Pro",
     "release_year": 2024,
     "ram_options": [
-      "6GB",
-      "8GB",
       "12GB"
     ],
     "storage_options": [
@@ -26139,9 +25920,7 @@
     "model": "OPPO Reno10",
     "release_year": 2024,
     "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
+      "8GB"
     ],
     "storage_options": [
       "256 GB"
@@ -26163,8 +25942,6 @@
     "model": "OPPO Reno8 Pro",
     "release_year": 2024,
     "ram_options": [
-      "6GB",
-      "8GB",
       "12GB"
     ],
     "storage_options": [
@@ -26187,13 +25964,10 @@
     "model": "OPPO Reno8",
     "release_year": 2024,
     "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
+      "8GB"
     ],
     "storage_options": [
-      "128 GB",
-      "256 GB"
+      "128 GB"
     ],
     "default_mrp": null,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/oppo-reno12-pro.jpg",
@@ -26212,8 +25986,6 @@
     "model": "OPPO Reno7 Pro",
     "release_year": 2024,
     "ram_options": [
-      "6GB",
-      "8GB",
       "12GB"
     ],
     "storage_options": [
@@ -26236,8 +26008,6 @@
     "model": "OPPO Reno6 Pro",
     "release_year": 2024,
     "ram_options": [
-      "6GB",
-      "8GB",
       "12GB"
     ],
     "storage_options": [
@@ -26260,13 +26030,10 @@
     "model": "OPPO Reno 8 Lite 5G",
     "release_year": 2024,
     "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
+      "8GB"
     ],
     "storage_options": [
-      "128 GB",
-      "256 GB"
+      "128 GB"
     ],
     "default_mrp": null,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/oppo-reno12-pro.jpg",
@@ -26285,13 +26052,10 @@
     "model": "OPPO Reno 7 Lite 5G",
     "release_year": 2024,
     "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
+      "8GB"
     ],
     "storage_options": [
-      "128 GB",
-      "256 GB"
+      "128 GB"
     ],
     "default_mrp": null,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/oppo-reno12-pro.jpg",
@@ -26310,9 +26074,7 @@
     "model": "OPPO F27 Pro Plus 5G (256GB)",
     "release_year": 2024,
     "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
+      "8GB"
     ],
     "storage_options": [
       "256 GB"
@@ -26334,9 +26096,7 @@
     "model": "OPPO F25 Pro 5G (256GB)",
     "release_year": 2024,
     "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
+      "8GB"
     ],
     "storage_options": [
       "256 GB"
@@ -26358,13 +26118,10 @@
     "model": "OPPO F15 (4GB)",
     "release_year": 2024,
     "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
+      "4GB"
     ],
     "storage_options": [
-      "128 GB",
-      "256 GB"
+      "128 GB"
     ],
     "default_mrp": 16999,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/oppo-reno12-pro.jpg",
@@ -26383,13 +26140,10 @@
     "model": "OPPO R17 Pro",
     "release_year": 2024,
     "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
+      "8GB"
     ],
     "storage_options": [
-      "128 GB",
-      "256 GB"
+      "128 GB"
     ],
     "default_mrp": null,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/oppo-reno12-pro.jpg",
@@ -26408,13 +26162,10 @@
     "model": "OPPO R15 Pro",
     "release_year": 2024,
     "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
+      "6GB"
     ],
     "storage_options": [
-      "128 GB",
-      "256 GB"
+      "128 GB"
     ],
     "default_mrp": null,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/oppo-reno12-pro.jpg",
@@ -26433,13 +26184,11 @@
     "model": "OPPO A3x 5G",
     "release_year": 2024,
     "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
+      "4GB"
     ],
     "storage_options": [
       "64 GB",
-      "256 GB"
+      "128 GB"
     ],
     "default_mrp": null,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/oppo-reno12-pro.jpg",
@@ -26458,13 +26207,10 @@
     "model": "OPPO A77 5G",
     "release_year": 2024,
     "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
+      "6GB"
     ],
     "storage_options": [
-      "128 GB",
-      "256 GB"
+      "128 GB"
     ],
     "default_mrp": null,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/oppo-reno12-pro.jpg",
@@ -26483,9 +26229,7 @@
     "model": "OPPO A98 5G",
     "release_year": 2024,
     "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
+      "8GB"
     ],
     "storage_options": [
       "128 GB",
