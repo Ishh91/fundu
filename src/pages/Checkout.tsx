@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, ShoppingCart, MapPin, Phone, User, CheckCircle2 } from 'lucide-react';
+import { ArrowLeft, ShoppingCart, MapPin, Phone, User, CheckCircle2, AlertCircle, RefreshCw, Sparkles } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
-import { DOORSTEP_AREAS } from '../types';
 import { formatINR } from '../lib/db';
 import { getCleanPhoneImage } from '../lib/phoneImages';
+import { verifyPanIndiaPincode, type VerifiedLocation } from '../lib/locationService';
 
 export default function Checkout() {
   const { cartItems, totalAmount, totalItems, updateQuantity, removeFromCart, setDeliveryDetails } = useCart();
@@ -17,9 +17,47 @@ export default function Checkout() {
     pincode: '',
     locality: '',
     address: '',
-    area: ''
+    area: '',
+    city: '',
+    state: '',
   });
   const [formError, setFormError] = useState<string | null>(null);
+  const [verifyingPin, setVerifyingPin] = useState(false);
+  const [verifiedLocation, setVerifiedLocation] = useState<VerifiedLocation | null>(null);
+  const [pincodeError, setPincodeError] = useState<string | null>(null);
+
+  // Auto-verify location when customer types complete 6-digit Pincode
+  const handlePincodeVerify = async (codeToVerify: string) => {
+    const clean = codeToVerify.replace(/\D/g, '').slice(0, 6);
+    if (clean.length !== 6) {
+      setVerifiedLocation(null);
+      setPincodeError(null);
+      return;
+    }
+
+    setVerifyingPin(true);
+    setPincodeError(null);
+    try {
+      const res = await verifyPanIndiaPincode(clean);
+      if (res.valid) {
+        setVerifiedLocation(res);
+        setPincodeError(null);
+        setForm((prev) => ({
+          ...prev,
+          city: res.city,
+          state: res.state,
+          area: `${res.city}, ${res.state} (${res.pincode})`,
+        }));
+      } else {
+        setVerifiedLocation(null);
+        setPincodeError(res.error || 'Pincode not recognized in Indian postal database.');
+      }
+    } catch (_err) {
+      setPincodeError('Could not verify PIN code. Please check your network and try again.');
+    } finally {
+      setVerifyingPin(false);
+    }
+  };
 
   useEffect(() => {
     if (!loading && !user) {
@@ -78,7 +116,7 @@ export default function Checkout() {
     );
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setFormError(null);
 
@@ -92,6 +130,27 @@ export default function Checkout() {
     if (cleanPincode.length !== 6) {
       setFormError('⚠️ Please enter a valid 6-digit Indian PIN code.');
       return;
+    }
+
+    // Strict Pan-India Location Verification check before moving to next step
+    let activeVerified = verifiedLocation;
+    if (!activeVerified || !activeVerified.valid || activeVerified.pincode !== cleanPincode) {
+      setVerifyingPin(true);
+      const res = await verifyPanIndiaPincode(cleanPincode);
+      setVerifyingPin(false);
+      if (!res.valid) {
+        setFormError(res.error || '⚠️ Please enter a verified Pan-India delivery PIN code.');
+        setPincodeError(res.error || 'Invalid PIN code');
+        return;
+      }
+      activeVerified = res;
+      setVerifiedLocation(res);
+      setForm((prev) => ({
+        ...prev,
+        city: res.city,
+        state: res.state,
+        area: `${res.city}, ${res.state} (${res.pincode})`,
+      }));
     }
 
     if (!form.locality.trim()) {
@@ -108,6 +167,7 @@ export default function Checkout() {
       ...form,
       phone: cleanPhone,
       pincode: cleanPincode,
+      area: activeVerified?.displayLabel || `${activeVerified?.city}, ${activeVerified?.state} (${cleanPincode})`,
     });
     navigate('/payment');
   };
@@ -277,73 +337,176 @@ export default function Checkout() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
+              {/* Pan-India Pincode with Auto-Verification */}
+              <div>
+                <div className="flex items-center justify-between mb-1">
                   <label className="label flex items-center gap-2 text-xs font-bold text-gray-700">
-                    <MapPin className="h-4 w-4 text-[#344257]" /> Pincode (PIN Code) *
+                    <MapPin className="h-4 w-4 text-[#344257]" /> Delivery Pincode (PIN Code) *
                   </label>
-                  <input
-                    required
-                    type="text"
-                    maxLength={6}
-                    value={form.pincode}
-                    onChange={(e) => setForm(prev => ({ ...prev, pincode: e.target.value.replace(/\D/g, '').slice(0, 6) }))}
-                    className="input text-sm font-semibold"
-                    placeholder="6-digit Pincode (e.g. 226001)"
-                  />
-                  {form.pincode && form.pincode.length === 6 && (
-                    <span className="text-[10px] text-emerald-600 font-bold mt-0.5 block">✓ Valid 6-digit Pincode</span>
-                  )}
+                  <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full flex items-center gap-1">
+                    <Sparkles className="h-3 w-3" /> Pan-India Verified Delivery
+                  </span>
                 </div>
-                <div>
-                  <label className="label flex items-center gap-2 text-xs font-bold text-gray-700">
-                    <MapPin className="h-4 w-4 text-[#344257]" /> Locality / Sector / Landmark *
-                  </label>
-                  <input
-                    required
-                    type="text"
-                    value={form.locality}
-                    onChange={(e) => setForm(prev => ({ ...prev, locality: e.target.value }))}
-                    className="input text-sm"
-                    placeholder="e.g. Gomti Nagar, Sector 4, Near Mall"
-                  />
+
+                <div className="flex gap-2">
+                  <div className="relative flex-1">
+                    <input
+                      required
+                      type="text"
+                      maxLength={6}
+                      value={form.pincode}
+                      onChange={(e) => {
+                        const val = e.target.value.replace(/\D/g, '').slice(0, 6);
+                        setForm((prev) => ({ ...prev, pincode: val }));
+                        if (val.length === 6) {
+                          handlePincodeVerify(val);
+                        } else {
+                          setVerifiedLocation(null);
+                          setPincodeError(null);
+                        }
+                      }}
+                      className={`input text-sm font-semibold tracking-wider ${
+                        verifiedLocation?.valid
+                          ? 'border-emerald-500 bg-emerald-50/20 text-gray-900 focus:border-emerald-600 focus:ring-emerald-500/20'
+                          : pincodeError
+                          ? 'border-rose-400 bg-rose-50/20 text-rose-900 focus:border-rose-500'
+                          : ''
+                      }`}
+                      placeholder="Enter 6-digit Pincode (e.g. 473001, 226001, 110001)"
+                    />
+                    {verifyingPin && (
+                      <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-1 text-[11px] text-[#344257] font-semibold">
+                        <RefreshCw className="h-3.5 w-3.5 animate-spin" />
+                        <span>Verifying...</span>
+                      </div>
+                    )}
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={() => handlePincodeVerify(form.pincode)}
+                    disabled={verifyingPin || form.pincode.length !== 6}
+                    className="btn-outline px-4 text-xs font-bold shrink-0 disabled:opacity-40"
+                  >
+                    {verifyingPin ? 'Checking...' : 'Verify PIN'}
+                  </button>
                 </div>
+
+                {/* Verified Location Card Badge */}
+                {verifiedLocation?.valid && (
+                  <div className="mt-2.5 rounded-xl bg-emerald-50/90 border border-emerald-200 p-3 text-xs text-emerald-950 flex items-start gap-2.5 shadow-2xs animate-in fade-in">
+                    <CheckCircle2 className="h-4 w-4 text-emerald-600 shrink-0 mt-0.5" />
+                    <div className="flex-1 min-w-0">
+                      <p className="font-extrabold text-emerald-900 text-xs">
+                        ✓ Serviceable: {verifiedLocation.city}, {verifiedLocation.state} (PIN: {verifiedLocation.pincode})
+                      </p>
+                      <p className="text-[11px] text-emerald-700 mt-0.5">
+                        Free doorstep delivery available in {verifiedLocation.district || verifiedLocation.city} with live tracking.
+                      </p>
+                    </div>
+                  </div>
+                )}
+
+                {/* Pincode Error Banner */}
+                {pincodeError && (
+                  <div className="mt-2 rounded-xl bg-rose-50 border border-rose-200 p-2.5 text-xs text-rose-800 flex items-center gap-2 animate-in fade-in">
+                    <AlertCircle className="h-4 w-4 text-rose-600 shrink-0" />
+                    <span>{pincodeError}</span>
+                  </div>
+                )}
               </div>
 
+              {/* Locality with Auto-Suggestions from Post Offices */}
               <div>
                 <label className="label flex items-center gap-2 text-xs font-bold text-gray-700">
-                  <MapPin className="h-4 w-4 text-[#344257]" /> Complete Street Address *
+                  <MapPin className="h-4 w-4 text-[#344257]" /> Locality / Sector / Area / Landmark *
+                </label>
+                <input
+                  required
+                  type="text"
+                  value={form.locality}
+                  onChange={(e) => setForm((prev) => ({ ...prev, locality: e.target.value }))}
+                  className="input text-sm"
+                  placeholder="e.g. Bazar Road, Cantt Area, Sector 4, Near Clock Tower"
+                />
+
+                {/* Quick Post Office Chips if Available */}
+                {verifiedLocation?.postOffices && verifiedLocation.postOffices.length > 0 && (
+                  <div className="mt-1.5 flex flex-wrap gap-1.5 items-center">
+                    <span className="text-[10px] text-gray-500 font-semibold">Postal Areas:</span>
+                    {verifiedLocation.postOffices.slice(0, 6).map((po) => (
+                      <button
+                        key={po}
+                        type="button"
+                        onClick={() => setForm((prev) => ({ ...prev, locality: po }))}
+                        className={`text-[10px] px-2 py-0.5 rounded-md border transition ${
+                          form.locality === po
+                            ? 'bg-[#344257] text-white border-[#344257]'
+                            : 'bg-white hover:bg-gray-100 text-gray-700 border-gray-200'
+                        }`}
+                      >
+                        {po}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {/* Complete Street Address */}
+              <div>
+                <label className="label flex items-center gap-2 text-xs font-bold text-gray-700">
+                  <MapPin className="h-4 w-4 text-[#344257]" /> Complete Doorstep Address *
                 </label>
                 <textarea
                   required
                   rows={3}
                   value={form.address}
-                  onChange={(e) => setForm(prev => ({ ...prev, address: e.target.value }))}
+                  onChange={(e) => setForm((prev) => ({ ...prev, address: e.target.value }))}
                   className="input min-h-[85px] text-sm"
-                  placeholder="Flat / House No., Apartment / Building Name, Street / Road"
+                  placeholder="Flat / House No., Apartment / Building Name, Street / Road, Near Landmark"
                 />
               </div>
 
-              <div>
-                <label className="label flex items-center gap-2 text-xs font-bold text-gray-700">
-                  <MapPin className="h-4 w-4 text-[#344257]" /> City / Service Hub Area
-                </label>
-                <select
-                  value={form.area}
-                  onChange={(e) => setForm(prev => ({ ...prev, area: e.target.value }))}
-                  className="input text-sm"
-                >
-                  <option value="">Select city or hub (Optional)</option>
-                  {DOORSTEP_AREAS.map(area => (
-                    <option key={area} value={area}>{area}</option>
-                  ))}
-                </select>
+              {/* City & State (Auto-Populated from Verified Pincode) */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                <div>
+                  <label className="label text-xs font-bold text-gray-600">City / District</label>
+                  <input
+                    type="text"
+                    readOnly
+                    value={verifiedLocation?.city || form.city || 'Verified upon PIN entry'}
+                    className="input text-xs bg-gray-50 text-gray-700 cursor-not-allowed font-semibold"
+                  />
+                </div>
+                <div>
+                  <label className="label text-xs font-bold text-gray-600">State</label>
+                  <input
+                    type="text"
+                    readOnly
+                    value={verifiedLocation?.state || form.state || 'Verified upon PIN entry'}
+                    className="input text-xs bg-gray-50 text-gray-700 cursor-not-allowed font-semibold"
+                  />
+                </div>
               </div>
+
               <button
                 type="submit"
-                className="btn-primary w-full mt-6"
+                disabled={verifyingPin || !verifiedLocation?.valid}
+                className="btn-primary w-full mt-6 py-3 text-sm font-extrabold flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                Continue to Payment <CheckCircle2 className="h-4 w-4 ml-2" />
+                {verifyingPin ? (
+                  <>
+                    <RefreshCw className="h-4 w-4 animate-spin" /> Verifying Delivery Location...
+                  </>
+                ) : !verifiedLocation?.valid ? (
+                  <>
+                    <MapPin className="h-4 w-4" /> Verify PIN Code to Continue
+                  </>
+                ) : (
+                  <>
+                    Continue to Payment <CheckCircle2 className="h-4 w-4 ml-1" />
+                  </>
+                )}
               </button>
             </form>
           </div>

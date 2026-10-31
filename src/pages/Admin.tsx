@@ -627,12 +627,21 @@ export default function Admin() {
   }, []);
 
   const handleSimulateTestAlert = () => {
+    const sampleLocations = [
+      'Guna, Madhya Pradesh (473001)',
+      'Gomti Nagar, Lucknow (226010)',
+      'Bandra West, Mumbai (400050)',
+      'Indiranagar, Bengaluru (560038)',
+      'Connaught Place, New Delhi (110001)',
+    ];
+    const pickedLoc = sampleLocations[Math.floor(Math.random() * sampleLocations.length)];
+
     const mockLead: LiveNotification = {
       id: `test_${Date.now()}`,
       type: 'sell',
       title: 'Apple iPhone 14 Pro Max (256GB)',
       subtitle: 'Excellent Condition • Box & Charger available',
-      locality: 'Gomti Nagar',
+      locality: pickedLoc,
       amount: 68500,
       timestamp: new Date(),
       tabTarget: 'sells',
@@ -641,7 +650,7 @@ export default function Admin() {
     soundNotifier.notify({
       type: 'sell',
       title: '💰 New Sell Query: Apple iPhone 14 Pro Max',
-      body: 'Gomti Nagar · Valuation: ₹68,500\nClick to view details in Admin Sells.',
+      body: `${pickedLoc} · Valuation: ₹68,500\nClick to view details in Admin Sells.`,
       onClick: () => {
         setTab('sells');
       },

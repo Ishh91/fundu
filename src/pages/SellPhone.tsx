@@ -41,6 +41,7 @@ import { getModelHardwareSpecs, calculateHardwareVariantMultiplier, calculateRam
 import {
   getPanIndiaLocation,
   searchPanIndiaLocations,
+  verifyPanIndiaPincode,
   PAN_INDIA_POPULAR_CITIES,
   type PanIndiaLocation,
 } from '../lib/locationService';
@@ -1109,6 +1110,21 @@ export default function SellPhone() {
     setSubmitting(true);
     setError(null);
 
+    // Verify Pan-India Pincode with Postal Registry
+    const verifiedLoc = await verifyPanIndiaPincode(cleanPincode);
+    if (!verifiedLoc.valid) {
+      setSubmitting(false);
+      setError(verifiedLoc.error || '⚠️ PIN code not recognized in Indian postal database. Please check your 6-digit code.');
+      return;
+    }
+
+    const resolvedPickupArea = [
+      form.locality.trim(),
+      verifiedLoc.displayLabel || `${verifiedLoc.city}, ${verifiedLoc.state} (${cleanPincode})`,
+    ]
+      .filter(Boolean)
+      .join(', ');
+
     try {
       const payload = {
         user_id: user?.id || null,
@@ -1153,7 +1169,7 @@ export default function SellPhone() {
           form.locality,
           `PIN: ${cleanPincode}`
         ].filter(Boolean).join(', '),
-        pickup_area: form.pickupArea || form.locality || '',
+        pickup_area: resolvedPickupArea,
         pickup_date: form.pickupDate,
         pickup_slot: form.pickupSlot,
         notes: form.notes || (funduQuote?.status === 'requires_manual_review' ? `Manual Inspection: ${funduQuote.reviewReason || funduQuote.reason || 'Manual review required'}` : ''),
@@ -1177,7 +1193,7 @@ export default function SellPhone() {
           storage: form.storage,
           condition: form.cosmeticCondition,
           offeredPrice: funduQuote?.offerAmount || 15000,
-          pickupAddress: [form.pickupAddress, form.pickupArea || form.locality, form.pincode].filter(Boolean).join(', '),
+          pickupAddress: [form.pickupAddress, resolvedPickupArea].filter(Boolean).join(', '),
           pickupDate: form.pickupDate,
           pickupSlot: form.pickupSlot,
         });

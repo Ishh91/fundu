@@ -43,6 +43,7 @@ import {
 import { useAuth } from '../context/AuthContext';
 import { DOORSTEP_AREAS } from '../types';
 import { db, formatINR, formatMaskedPrice, formatDisplayPrice } from '../lib/db';
+import { verifyPanIndiaPincode, type VerifiedLocation } from '../lib/locationService';
 import { fetchPhoneModels, searchMobileApiDev } from '../lib/mobileApi';
 import { useRepairPriceSync, getModelRepairPricing } from '../lib/repairPriceSync';
 import { isModelDeleted } from '../lib/catalogSync';
@@ -219,10 +220,52 @@ export default function Repair() {
     storage: '',
     problemDetail: '',
     pickupAddress: '',
-    pickupArea: DOORSTEP_AREAS[0] || 'Gomti Nagar',
+    pincode: '',
+    locality: '',
+    city: '',
+    state: '',
+    pickupArea: '',
     pickupDate: new Date().toISOString().split('T')[0],
     pickupSlot: '10 AM - 12 PM',
   });
+
+  const [verifyingPin, setVerifyingPin] = useState(false);
+  const [verifiedLocation, setVerifiedLocation] = useState<VerifiedLocation | null>(null);
+  const [pincodeError, setPincodeError] = useState<string | null>(null);
+
+  // Auto-verify location when customer types complete 6-digit Pincode
+  const handleRepairPincodeVerify = async (codeToVerify: string) => {
+    const clean = codeToVerify.replace(/\D/g, '').slice(0, 6);
+    if (clean.length !== 6) {
+      setVerifiedLocation(null);
+      setPincodeError(null);
+      return;
+    }
+
+    setVerifyingPin(true);
+    setPincodeError(null);
+    try {
+      const res = await verifyPanIndiaPincode(clean);
+      if (res.valid) {
+        setVerifiedLocation(res);
+        setPincodeError(null);
+        setForm((prev) => ({
+          ...prev,
+          pincode: clean,
+          city: res.city,
+          state: res.state,
+          pickupArea: `${res.city}, ${res.state} (${res.pincode})`,
+        }));
+      } else {
+        setVerifiedLocation(null);
+        setPincodeError(res.error || 'Pincode not recognized in Indian postal database.');
+      }
+    } catch (_err) {
+      setPincodeError('Could not verify PIN code. Please check your network connection.');
+    } finally {
+      setVerifyingPin(false);
+    }
+  };
 
   const [selectedIssueIds, setSelectedIssueIds] = useState<string[]>(['screen']);
 
@@ -750,8 +793,45 @@ export default function Repair() {
       return;
     }
 
+    const cleanPin = (form.pincode || '').replace(/\D/g, '').slice(0, 6);
+    if (cleanPin.length !== 6) {
+      setError('⚠️ Please enter a valid 6-digit Indian PIN code.');
+      return;
+    }
+
+    let activeVerified = verifiedLocation;
+    if (!activeVerified || !activeVerified.valid || activeVerified.pincode !== cleanPin) {
+      setVerifyingPin(true);
+      const res = await verifyPanIndiaPincode(cleanPin);
+      setVerifyingPin(false);
+      if (!res.valid) {
+        setError(res.error || '⚠️ Please enter a verified Pan-India delivery PIN code.');
+        setPincodeError(res.error || 'Invalid PIN code');
+        return;
+      }
+      activeVerified = res;
+      setVerifiedLocation(res);
+    }
+
+    if (!form.locality?.trim()) {
+      setError('⚠️ Please provide your locality / landmark / sector.');
+      return;
+    }
+
+    if (!form.pickupAddress?.trim()) {
+      setError('⚠️ Please enter your complete doorstep address.');
+      return;
+    }
+
     setSubmitting(true);
     setError(null);
+
+    const resolvedArea = [
+      form.locality.trim(),
+      activeVerified?.displayLabel || `${activeVerified?.city}, ${activeVerified?.state} (${cleanPin})`,
+    ]
+      .filter(Boolean)
+      .join(', ');
 
     const inspectionNotes = selectedIssues
       .filter((i) => i.note)
@@ -773,7 +853,7 @@ export default function Repair() {
         problem_detail: combinedDetail || null,
         estimated_cost: totalRepairCost || 1499,
         pickup_address: form.pickupAddress,
-        pickup_area: form.pickupArea,
+        pickup_area: resolvedArea,
         pickup_date: form.pickupDate || null,
         pickup_slot: form.pickupSlot || null,
         status: 'pending',
@@ -799,7 +879,7 @@ export default function Repair() {
         model: form.model,
         problem: combinedProblemLabel || 'General Repair',
         estimatedCost: totalRepairCost || 1499,
-        pickupAddress: [form.pickupAddress, form.pickupArea].filter(Boolean).join(', '),
+        pickupAddress: [form.pickupAddress, resolvedArea].filter(Boolean).join(', '),
         pickupDate: form.pickupDate,
         pickupSlot: form.pickupSlot,
       });
@@ -1705,50 +1785,152 @@ export default function Repair() {
               )}
 
               <div className="mt-6 space-y-4">
+                {/* Pan-India Pincode with Auto-Verification */}
                 <div>
-                  <label className="label">Repair Area / Locality</label>
-                  <select
-                    value={form.pickupArea}
-                    onChange={(e) => setForm({ ...form, pickupArea: e.target.value })}
-                    className="input mt-1"
-                  >
-                    {DOORSTEP_AREAS.map((area) => (
-                      <option key={area} value={area}>
-                        {area}
-                      </option>
-                    ))}
-                  </select>
+                  <div className="flex items-center justify-between mb-1">
+                    <label className="label text-xs font-bold text-ink-800 flex items-center gap-1.5">
+                      <MapPin className="h-4 w-4 text-brand-600" /> Doorstep Repair Pincode *
+                    </label>
+                    <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full flex items-center gap-1">
+                      <Sparkles className="h-3 w-3" /> Pan-India Doorstep Coverage
+                    </span>
+                  </div>
+
+                  <div className="flex gap-2">
+                    <div className="relative flex-1">
+                      <input
+                        required
+                        type="text"
+                        maxLength={6}
+                        value={form.pincode}
+                        onChange={(e) => {
+                          const val = e.target.value.replace(/\D/g, '').slice(0, 6);
+                          setForm((prev) => ({ ...prev, pincode: val }));
+                          if (val.length === 6) {
+                            handleRepairPincodeVerify(val);
+                          } else {
+                            setVerifiedLocation(null);
+                            setPincodeError(null);
+                          }
+                        }}
+                        className={`input text-sm font-semibold tracking-wider ${
+                          verifiedLocation?.valid
+                            ? 'border-emerald-500 bg-emerald-50/20 text-ink-900 focus:border-emerald-600'
+                            : pincodeError
+                            ? 'border-rose-400 bg-rose-50/20 text-rose-900 focus:border-rose-500'
+                            : ''
+                        }`}
+                        placeholder="Enter 6-digit Pincode (e.g. 473001, 226001, 110001)"
+                      />
+                      {verifyingPin && (
+                        <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-1 text-[11px] text-brand-700 font-semibold">
+                          <RefreshCw className="h-3.5 w-3.5 animate-spin" />
+                          <span>Verifying...</span>
+                        </div>
+                      )}
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={() => handleRepairPincodeVerify(form.pincode)}
+                      disabled={verifyingPin || form.pincode.length !== 6}
+                      className="btn-outline px-4 text-xs font-bold shrink-0 disabled:opacity-40"
+                    >
+                      {verifyingPin ? 'Checking...' : 'Verify PIN'}
+                    </button>
+                  </div>
+
+                  {/* Verified Location Card Badge */}
+                  {verifiedLocation?.valid && (
+                    <div className="mt-2.5 rounded-xl bg-emerald-50/90 border border-emerald-200 p-3 text-xs text-emerald-950 flex items-start gap-2.5 shadow-2xs animate-in fade-in">
+                      <CheckCircle2 className="h-4 w-4 text-emerald-600 shrink-0 mt-0.5" />
+                      <div className="flex-1 min-w-0">
+                        <p className="font-extrabold text-emerald-900 text-xs">
+                          ✓ Service Available: {verifiedLocation.city}, {verifiedLocation.state} (PIN: {verifiedLocation.pincode})
+                        </p>
+                        <p className="text-[11px] text-emerald-700 mt-0.5">
+                          Certified Fundu technician doorstep visit available in {verifiedLocation.district || verifiedLocation.city}.
+                        </p>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Pincode Error Banner */}
+                  {pincodeError && (
+                    <div className="mt-2 rounded-xl bg-rose-50 border border-rose-200 p-2.5 text-xs text-rose-800 flex items-center gap-2 animate-in fade-in">
+                      <AlertCircle className="h-4 w-4 text-rose-600 shrink-0" />
+                      <span>{pincodeError}</span>
+                    </div>
+                  )}
                 </div>
 
+                {/* Locality with Auto-Suggestions from Post Offices */}
                 <div>
-                  <label className="label">Full Doorstep Address</label>
+                  <label className="label text-xs font-bold text-ink-800 flex items-center gap-1.5">
+                    <MapPin className="h-4 w-4 text-brand-600" /> Locality / Sector / Landmark *
+                  </label>
+                  <input
+                    required
+                    type="text"
+                    value={form.locality}
+                    onChange={(e) => setForm((prev) => ({ ...prev, locality: e.target.value }))}
+                    className="input mt-1 text-sm"
+                    placeholder="e.g. Near Bus Stand, Main Market, Sector 12, Clock Tower"
+                  />
+
+                  {/* Quick Post Office Chips if Available */}
+                  {verifiedLocation?.postOffices && verifiedLocation.postOffices.length > 0 && (
+                    <div className="mt-1.5 flex flex-wrap gap-1.5 items-center">
+                      <span className="text-[10px] text-gray-500 font-semibold">Postal Areas:</span>
+                      {verifiedLocation.postOffices.slice(0, 6).map((po) => (
+                        <button
+                          key={po}
+                          type="button"
+                          onClick={() => setForm((prev) => ({ ...prev, locality: po }))}
+                          className={`text-[10px] px-2 py-0.5 rounded-md border transition ${
+                            form.locality === po
+                              ? 'bg-brand-600 text-white border-brand-600'
+                              : 'bg-white hover:bg-gray-100 text-gray-700 border-gray-200'
+                          }`}
+                        >
+                          {po}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                {/* Complete Street Address */}
+                <div>
+                  <label className="label text-xs font-bold text-ink-800">Complete Doorstep Address *</label>
                   <textarea
                     rows={3}
                     value={form.pickupAddress}
                     onChange={(e) => setForm({ ...form, pickupAddress: e.target.value })}
-                    placeholder="House / Flat No., Building Name, Street, Landmark"
-                    className="input mt-1"
+                    placeholder="House / Flat No., Building Name, Street / Road, Landmark"
+                    className="input mt-1 text-sm"
                     required
                   />
                 </div>
 
+                {/* Preferred Repair Date & Time Slot */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label className="label">Preferred Repair Date</label>
+                    <label className="label text-xs font-bold text-ink-800">Preferred Repair Date</label>
                     <input
                       type="date"
                       value={form.pickupDate}
                       onChange={(e) => setForm({ ...form, pickupDate: e.target.value })}
-                      className="input mt-1"
+                      className="input mt-1 text-sm"
                     />
                   </div>
 
                   <div>
-                    <label className="label">Preferred Time Slot</label>
+                    <label className="label text-xs font-bold text-ink-800">Preferred Time Slot</label>
                     <select
                       value={form.pickupSlot}
                       onChange={(e) => setForm({ ...form, pickupSlot: e.target.value })}
-                      className="input mt-1"
+                      className="input mt-1 text-sm"
                     >
                       {['10 AM - 12 PM', '12 PM - 2 PM', '2 PM - 4 PM', '4 PM - 6 PM', '6 PM - 8 PM'].map((slot) => (
                         <option key={slot} value={slot}>
@@ -1767,10 +1949,30 @@ export default function Repair() {
                 <button
                   type="button"
                   onClick={handleSubmit}
-                  disabled={submitting || !form.pickupAddress.trim()}
-                  className="btn-primary text-sm flex items-center gap-2"
+                  disabled={
+                    submitting ||
+                    verifyingPin ||
+                    !verifiedLocation?.valid ||
+                    !form.pickupAddress.trim() ||
+                    !form.locality.trim()
+                  }
+                  className="btn-primary text-sm flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  {submitting ? 'Booking Repair...' : 'Confirm Doorstep Repair Booking'} <CheckCircle2 className="h-4 w-4" />
+                  {verifyingPin ? (
+                    <>
+                      <RefreshCw className="h-4 w-4 animate-spin" /> Verifying Location...
+                    </>
+                  ) : !verifiedLocation?.valid ? (
+                    <>
+                      <MapPin className="h-4 w-4" /> Verify Location to Book
+                    </>
+                  ) : submitting ? (
+                    'Booking Repair...'
+                  ) : (
+                    <>
+                      Confirm Doorstep Repair Booking <CheckCircle2 className="h-4 w-4" />
+                    </>
+                  )}
                 </button>
               </div>
             </div>

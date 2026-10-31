@@ -31,6 +31,7 @@ import type { Product, Review } from '../types';
 import { getModelHardwareSpecs, normalizeStorageString, isStorageAllowedForModel } from '../lib/deviceSpecs';
 import { findSampleProductById, SAMPLE_PRODUCTS_MAP } from '../data/sampleProducts';
 import { findSampleLaptopById } from '../data/sampleLaptops';
+import { verifyPanIndiaPincode } from '../lib/locationService';
 
 // Doorstep PIN code to Area mapping dictionary
 const DOORSTEP_PINCODE_MAP: Record<string, string> = {
@@ -246,27 +247,17 @@ const handleCheckPincode = async (codeToTest?: string) => {
   setPincodeLoading(true);
   setPincodeError(null);
 
-  // 1. Check local service database first
-  if (DOORSTEP_PINCODE_MAP[targetPin]) {
-    setLocationName(DOORSTEP_PINCODE_MAP[targetPin]);
-    setPincodeLoading(false);
-    return;
-  }
-
-  // 2. Fetch from free Indian Postal API
   try {
-    const res = await fetch(`https://api.postalpincode.in/pincode/${targetPin}`);
-    const data = await res.json();
-
-    if (data && data[0] && data[0].Status === 'Success' && data[0].PostOffice?.[0]) {
-      const po = data[0].PostOffice[0];
-      const derivedLoc = `${po.Name}, ${po.District}, ${po.State}`;
-      setLocationName(derivedLoc);
+    const verified = await verifyPanIndiaPincode(targetPin);
+    if (verified.valid) {
+      setLocationName(`${verified.city}, ${verified.state}`);
+      setPincodeError(null);
     } else {
-      setLocationName(`Area (PIN ${targetPin}), India`);
+      setPincodeError(verified.error || 'PIN code not found in Indian postal registry.');
+      setLocationName(null);
     }
   } catch {
-    setLocationName(`Area (PIN ${targetPin}), India`);
+    setLocationName(`Serviceable PIN (${targetPin}), India`);
   } finally {
     setPincodeLoading(false);
   }

@@ -295,7 +295,7 @@ export const RESALE_BENCHMARKS = [
   { brand: 'Lenovo', model: "Lenovo K10 Note", storage: '64 GB', proceeds: 2300, lastUpdated: '2026-10-27' },
   { brand: 'Lenovo', model: "Lenovo K10 Note", storage: '128 GB', proceeds: 2600, lastUpdated: '2026-10-27' },
   { brand: 'Lenovo', model: "Lenovo K10 Plus", storage: '64 GB', proceeds: 1950, lastUpdated: '2026-10-27' },
-        // Infinix Benchmarks
+  // Infinix Benchmarks
   { brand: 'Infinix', model: "Infinix GT 20 Pro 5G", storage: '256 GB', proceeds: 17000, lastUpdated: '2026-10-27' },
   { brand: 'Infinix', model: "Infinix GT 10 Pro 5G", storage: '256 GB', proceeds: 13200, lastUpdated: '2026-10-27' },
   { brand: 'Infinix', model: "Infinix GT 10 Pro 5G", storage: '128 GB', proceeds: 11800, lastUpdated: '2026-10-27' },

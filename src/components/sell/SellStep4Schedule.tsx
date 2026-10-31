@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   MapPin,
   Search,
@@ -9,9 +9,15 @@ import {
   AlertCircle,
   User,
   Phone,
+  Sparkles,
 } from 'lucide-react';
 import { formatINR } from '../../lib/db';
-import { PAN_INDIA_POPULAR_CITIES, type PanIndiaLocation } from '../../lib/locationService';
+import {
+  PAN_INDIA_POPULAR_CITIES,
+  verifyPanIndiaPincode,
+  type PanIndiaLocation,
+  type VerifiedLocation,
+} from '../../lib/locationService';
 
 interface SellStep4ScheduleProps {
   form: {
@@ -56,6 +62,40 @@ export default function SellStep4Schedule({
   onBack,
   profile,
 }: SellStep4ScheduleProps) {
+  const [verifyingPin, setVerifyingPin] = useState(false);
+  const [verifiedLoc, setVerifiedLoc] = useState<VerifiedLocation | null>(null);
+  const [pinError, setPinError] = useState<string | null>(null);
+
+  const handlePincodeChange = async (val: string) => {
+    const clean = val.replace(/\D/g, '').slice(0, 6);
+    setForm((prev: any) => ({ ...prev, pincode: clean }));
+
+    if (clean.length === 6) {
+      setVerifyingPin(true);
+      setPinError(null);
+      try {
+        const res = await verifyPanIndiaPincode(clean);
+        if (res.valid) {
+          setVerifiedLoc(res);
+          setPinError(null);
+          setForm((prev: any) => ({
+            ...prev,
+            pickupArea: `${res.city}, ${res.state} (${res.pincode})`,
+          }));
+        } else {
+          setVerifiedLoc(null);
+          setPinError(res.error || 'Pincode not recognized in Indian postal database.');
+        }
+      } catch (_err) {
+        setPinError('Could not verify PIN code. Check connection.');
+      } finally {
+        setVerifyingPin(false);
+      }
+    } else {
+      setVerifiedLoc(null);
+      setPinError(null);
+    }
+  };
   return (
     <div className="max-w-2xl mx-auto space-y-6 animate-fade-in">
       <div className="card p-6 md:p-8 rounded-[28px] bg-white border border-gray-200 shadow-xl space-y-6">
@@ -110,27 +150,60 @@ export default function SellStep4Schedule({
             </div>
           </div>
 
-          {/* Proper Pincode & Locality */}
+          {/* Proper Pincode & Locality with Auto-Verification */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
             <div>
-              <label className="label text-xs font-bold text-gray-900 flex items-center gap-1.5">
-                <MapPin className="h-4 w-4 text-[#344257]" /> Pincode (PIN Code) *
-              </label>
-              <input
-                required
-                type="text"
-                maxLength={6}
-                value={form.pincode}
-                onChange={(e) => setForm((prev: any) => ({ ...prev, pincode: e.target.value.replace(/\D/g, '').slice(0, 6) }))}
-                placeholder="6-digit Pincode (e.g. 226001)"
-                className="input mt-1 text-xs sm:text-sm font-semibold focus:border-[#6A859F] focus:ring-4 focus:ring-[#6A859F]/15"
-              />
-              {form.pincode && form.pincode.length === 6 && (
-                <span className="text-[10px] text-emerald-600 font-bold mt-0.5 block">✓ Valid 6-digit Pincode</span>
+              <div className="flex items-center justify-between mb-1">
+                <label className="label text-xs font-bold text-gray-900 flex items-center gap-1.5">
+                  <MapPin className="h-4 w-4 text-[#344257]" /> Pincode (PIN Code) *
+                </label>
+                <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-1.5 py-0.5 rounded-full">
+                  Pan-India
+                </span>
+              </div>
+              <div className="relative">
+                <input
+                  required
+                  type="text"
+                  maxLength={6}
+                  value={form.pincode}
+                  onChange={(e) => handlePincodeChange(e.target.value)}
+                  placeholder="6-digit PIN (e.g. 473001)"
+                  className={`input text-xs sm:text-sm font-semibold tracking-wider ${
+                    verifiedLoc?.valid
+                      ? 'border-emerald-500 bg-emerald-50/20 text-gray-900'
+                      : pinError
+                      ? 'border-rose-400 bg-rose-50/20 text-rose-900'
+                      : 'focus:border-[#6A859F]'
+                  }`}
+                />
+                {verifyingPin && (
+                  <RefreshCw className="h-3.5 w-3.5 text-[#344257] animate-spin absolute right-3 top-1/2 -translate-y-1/2" />
+                )}
+              </div>
+
+              {/* Verified Location Badge */}
+              {verifiedLoc?.valid && (
+                <div className="mt-1.5 rounded-lg bg-emerald-50 border border-emerald-200 p-2 text-[11px] text-emerald-950 flex items-start gap-1.5">
+                  <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600 shrink-0 mt-0.5" />
+                  <div>
+                    <span className="font-bold">✓ {verifiedLoc.city}, {verifiedLoc.state}</span>
+                    <span className="text-emerald-700 block text-[10px]">Doorstep pickup active</span>
+                  </div>
+                </div>
+              )}
+
+              {/* Error Alert */}
+              {pinError && (
+                <div className="mt-1.5 rounded-lg bg-rose-50 border border-rose-200 p-2 text-[11px] text-rose-800 flex items-center gap-1.5">
+                  <AlertCircle className="h-3.5 w-3.5 text-rose-600 shrink-0" />
+                  <span>{pinError}</span>
+                </div>
               )}
             </div>
+
             <div>
-              <label className="label text-xs font-bold text-gray-900 flex items-center gap-1.5">
+              <label className="label text-xs font-bold text-gray-900 flex items-center gap-1.5 mb-1">
                 <MapPin className="h-4 w-4 text-[#344257]" /> Locality / Sector / Landmark *
               </label>
               <input
@@ -138,9 +211,30 @@ export default function SellStep4Schedule({
                 type="text"
                 value={form.locality}
                 onChange={(e) => setForm((prev: any) => ({ ...prev, locality: e.target.value }))}
-                placeholder="e.g. Gomti Nagar, Sector 4, Near Clock Tower"
-                className="input mt-1 text-xs sm:text-sm focus:border-[#6A859F] focus:ring-4 focus:ring-[#6A859F]/15"
+                placeholder="e.g. Main Market, Cantt, Sector 4, Near Clock Tower"
+                className="input text-xs sm:text-sm focus:border-[#6A859F] focus:ring-4 focus:ring-[#6A859F]/15"
               />
+
+              {/* Quick Postal Locality Chips */}
+              {verifiedLoc?.postOffices && verifiedLoc.postOffices.length > 0 && (
+                <div className="mt-1.5 flex flex-wrap gap-1 items-center">
+                  <span className="text-[10px] text-gray-500 font-semibold">Select:</span>
+                  {verifiedLoc.postOffices.slice(0, 5).map((po) => (
+                    <button
+                      key={po}
+                      type="button"
+                      onClick={() => setForm((prev: any) => ({ ...prev, locality: po }))}
+                      className={`text-[10px] px-1.5 py-0.5 rounded border transition ${
+                        form.locality === po
+                          ? 'bg-[#344257] text-white border-[#344257]'
+                          : 'bg-white hover:bg-gray-100 text-gray-700 border-gray-200'
+                      }`}
+                    >
+                      {po}
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
 
@@ -306,14 +400,20 @@ export default function SellStep4Schedule({
             onClick={handleSubmit}
             disabled={
               submitting ||
+              verifyingPin ||
+              (form.pincode.length === 6 && verifiedLoc?.valid === false) ||
               !form.pickupAddress.trim() ||
               !form.locality.trim() ||
               form.pincode.replace(/\D/g, '').length !== 6 ||
               !(form.customerPhone || profile?.phone)
             }
-            className="btn-primary text-sm flex items-center gap-2"
+            className="btn-primary text-sm flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {submitting ? 'Auto-Assigning Agent...' : 'Confirm Pickup Booking'} <CheckCircle2 className="h-4 w-4" />
+            {verifyingPin
+              ? 'Verifying Pincode...'
+              : submitting
+              ? 'Auto-Assigning Agent...'
+              : 'Confirm Pickup Booking'} <CheckCircle2 className="h-4 w-4" />
           </button>
         </div>
       </div>

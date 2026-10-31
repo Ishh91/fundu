@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import {
   Bell,
   Volume2,
@@ -114,98 +115,155 @@ export default function AdminLiveNotifier({
         </button>
       </div>
 
-      {/* Floating Active Notifications Container */}
-      <div className="fixed bottom-4 right-4 z-50 flex flex-col gap-3 max-w-sm w-full pointer-events-none">
-        {activeNotifications.map((notif) => {
-          const isSell = notif.type === 'sell';
-          const isRepair = notif.type === 'repair';
-
-          return (
-            <div
-              key={notif.id}
-              className={`pointer-events-auto rounded-2xl p-4 text-white shadow-2xl border backdrop-blur-xl animate-slide-up transition-all ${
-                isSell
-                  ? 'bg-gradient-to-r from-[#344257] to-[#47576E] border-[#6A859F]/40 shadow-slate-900/30'
-                  : isRepair
-                  ? 'bg-gradient-to-r from-[#2563eb] to-[#1d4ed8] border-blue-300/40 shadow-blue-900/30'
-                  : 'bg-gradient-to-r from-[#7c3aed] to-[#6d28d9] border-purple-300/40 shadow-purple-900/30'
-              }`}
-            >
-              <div className="flex items-start justify-between gap-3">
-                <div className="flex items-start gap-3">
-                  <div className="relative mt-0.5 grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-white/20 text-white backdrop-blur-md shadow-inner">
-                    {isSell ? (
-                      <Smartphone className="h-5 w-5" />
-                    ) : isRepair ? (
-                      <Wrench className="h-5 w-5" />
-                    ) : (
-                      <Package className="h-5 w-5" />
-                    )}
-                    <span className="absolute -top-1 -right-1 h-3 w-3 rounded-full bg-emerald-400 border-2 border-white animate-ping" />
-                  </div>
-
-                  <div>
-                    <div className="flex items-center gap-1.5">
-                      <span className="rounded-md bg-white/25 px-1.5 py-0.5 text-[10px] font-black uppercase tracking-wider text-white">
-                        {isSell ? '⚡ New Sell Lead' : isRepair ? '🛠️ Doorstep Repair' : '📦 New Order'}
-                      </span>
-                      <span className="text-[10px] text-white/80">Just now</span>
-                    </div>
-
-                    <h5 className="font-display font-black text-sm text-white mt-1">
-                      {notif.title}
-                    </h5>
-
-                    <p className="text-xs text-white/90 mt-0.5">
-                      {notif.subtitle}
-                    </p>
-
-                    <div className="flex items-center gap-3 mt-2 text-[11px] font-bold text-white/90">
-                      {notif.locality && (
-                        <span className="flex items-center gap-1 bg-black/20 px-2 py-0.5 rounded-md">
-                          <MapPin className="h-3 w-3 text-emerald-300" />
-                          {notif.locality}
-                        </span>
-                      )}
-                      {notif.amount && (
-                        <span className="bg-white/20 px-2 py-0.5 rounded-md text-emerald-200 font-mono">
-                          {formatINR(notif.amount)}
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                </div>
-
-                <button
-                  type="button"
-                  onClick={() => onDismiss(notif.id)}
-                  className="grid h-6 w-6 place-items-center rounded-full bg-white/10 hover:bg-white/30 text-white transition"
-                >
-                  <X className="h-3.5 w-3.5" />
-                </button>
-              </div>
-
-              {/* Action Button */}
-              <div className="mt-3 pt-2.5 border-t border-white/15 flex items-center justify-between">
-                <span className="text-[10px] text-white/70">
-                  Auto-assigned to Service Agent
-                </span>
-                <button
-                  type="button"
-                  onClick={() => {
-                    onNavigateTab(notif.tabTarget, notif.id);
-                    onDismiss(notif.id);
-                  }}
-                  className="inline-flex items-center gap-1.5 rounded-lg bg-white text-gray-900 px-3 py-1 text-xs font-black shadow hover:bg-gray-100 transition active:scale-95"
-                >
-                  <span>Open Lead</span>
-                  <ExternalLink className="h-3 w-3" />
-                </button>
-              </div>
-            </div>
-          );
-        })}
-      </div>
+      {/* Floating Active Notifications Container — Rendered in Portal so it NEVER clips or hides under header/backdrop-filter */}
+      {typeof document !== 'undefined' &&
+        createPortal(
+          <div className="fixed top-20 right-4 sm:right-6 z-[99999] flex flex-col gap-3 max-w-sm sm:max-w-md w-full pointer-events-none">
+            {activeNotifications.map((notif) => (
+              <NotificationToastItem
+                key={notif.id}
+                notif={notif}
+                onDismiss={onDismiss}
+                onNavigateTab={onNavigateTab}
+              />
+            ))}
+          </div>,
+          document.body
+        )}
     </>
+  );
+}
+
+function NotificationToastItem({
+  notif,
+  onDismiss,
+  onNavigateTab,
+}: {
+  notif: LiveNotification;
+  onDismiss: (id: string) => void;
+  onNavigateTab: (tab: 'sells' | 'repairs' | 'orders', itemId?: string) => void;
+}) {
+  const [isHovered, setIsHovered] = useState(false);
+  const [progress, setProgress] = useState(100);
+  const durationMs = 16000; // 16 seconds auto-dismiss
+  const intervalMs = 100;
+
+  useEffect(() => {
+    if (isHovered) return;
+
+    const timer = setInterval(() => {
+      setProgress((prev) => {
+        const next = prev - (intervalMs / durationMs) * 100;
+        if (next <= 0) {
+          clearInterval(timer);
+          onDismiss(notif.id);
+          return 0;
+        }
+        return next;
+      });
+    }, intervalMs);
+
+    return () => clearInterval(timer);
+  }, [isHovered, notif.id, onDismiss]);
+
+  const isSell = notif.type === 'sell';
+  const isRepair = notif.type === 'repair';
+
+  return (
+    <div
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      className={`pointer-events-auto overflow-hidden rounded-2xl p-4 text-white shadow-2xl border backdrop-blur-2xl ring-1 ring-white/20 transition-all duration-300 transform animate-in fade-in slide-in-from-top-3 ${
+        isSell
+          ? 'bg-gradient-to-r from-[#202938] via-[#344257] to-[#47576E] border-[#6A859F]/60 shadow-slate-950/50'
+          : isRepair
+          ? 'bg-gradient-to-r from-[#1e3a8a] via-[#2563eb] to-[#1d4ed8] border-blue-300/50 shadow-blue-950/50'
+          : 'bg-gradient-to-r from-[#581c87] via-[#7c3aed] to-[#6d28d9] border-purple-300/50 shadow-purple-950/50'
+      }`}
+    >
+      <div className="flex items-start justify-between gap-3">
+        <div className="flex items-start gap-3 flex-1 min-w-0">
+          <div className="relative mt-0.5 grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-white/20 text-white backdrop-blur-md shadow-inner">
+            {isSell ? (
+              <Smartphone className="h-5 w-5" />
+            ) : isRepair ? (
+              <Wrench className="h-5 w-5" />
+            ) : (
+              <Package className="h-5 w-5" />
+            )}
+            <span className="absolute -top-1 -right-1 h-3 w-3 rounded-full bg-emerald-400 border-2 border-white animate-ping" />
+          </div>
+
+          <div className="min-w-0 flex-1">
+            <div className="flex items-center gap-1.5 flex-wrap">
+              <span className="rounded-md bg-white/25 px-1.5 py-0.5 text-[10px] font-black uppercase tracking-wider text-white">
+                {isSell ? '⚡ New Sell Lead' : isRepair ? '🛠️ Doorstep Repair' : '📦 New Order'}
+              </span>
+              <span className="text-[10px] text-white/80">Just now</span>
+              {isHovered && (
+                <span className="text-[9px] bg-black/30 px-1.5 py-0.5 rounded text-white/70">Paused</span>
+              )}
+            </div>
+
+            <h5 className="font-display font-black text-sm text-white mt-1 truncate">
+              {notif.title}
+            </h5>
+
+            <p className="text-xs text-white/90 mt-0.5 line-clamp-2">
+              {notif.subtitle}
+            </p>
+
+            <div className="flex items-center gap-2 mt-2 text-[11px] font-bold text-white/90 flex-wrap">
+              {notif.locality && (
+                <span className="flex items-center gap-1 bg-black/30 px-2 py-0.5 rounded-md border border-white/10 max-w-[200px] truncate">
+                  <MapPin className="h-3 w-3 text-emerald-300 shrink-0" />
+                  <span className="truncate">{notif.locality}</span>
+                </span>
+              )}
+              {notif.amount && (
+                <span className="bg-emerald-500/30 border border-emerald-400/40 px-2 py-0.5 rounded-md text-emerald-200 font-mono font-black">
+                  {formatINR(notif.amount)}
+                </span>
+              )}
+            </div>
+          </div>
+        </div>
+
+        <button
+          type="button"
+          onClick={() => onDismiss(notif.id)}
+          title="Dismiss Alert"
+          className="grid h-7 w-7 shrink-0 place-items-center rounded-full bg-white/10 hover:bg-white/30 text-white transition active:scale-95"
+        >
+          <X className="h-4 w-4" />
+        </button>
+      </div>
+
+      {/* Action Footer */}
+      <div className="mt-3 pt-2.5 border-t border-white/15 flex items-center justify-between gap-2">
+        <span className="text-[10px] text-white/75 truncate">
+          Auto-assigned to Service Agent
+        </span>
+        <button
+          type="button"
+          onClick={() => {
+            onNavigateTab(notif.tabTarget, notif.id);
+            onDismiss(notif.id);
+          }}
+          className="inline-flex items-center gap-1.5 rounded-lg bg-white text-gray-900 px-3.5 py-1.5 text-xs font-black shadow-md hover:bg-gray-100 transition active:scale-95 shrink-0"
+        >
+          <span>Open Lead</span>
+          <ExternalLink className="h-3 w-3" />
+        </button>
+      </div>
+
+      {/* Auto-Dismiss Progress Bar */}
+      <div className="mt-2.5 h-1 w-full bg-white/10 rounded-full overflow-hidden">
+        <div
+          className="h-full bg-emerald-400/80 transition-all duration-100 ease-linear rounded-full"
+          style={{ width: `${progress}%` }}
+        />
+      </div>
+    </div>
   );
 }
