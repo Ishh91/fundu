@@ -13,7 +13,7 @@ console.log(`Loaded ${allBrandPrices.length} brand prices.`);
 function normalizeKey(str) {
   return (str || '')
     .toLowerCase()
-    .replace(/^samsung\s+|^motorola\s+|^moto\s+|^lenovo\s+|^infinix\s+|^google\s+|^honor\s+|^nokia\s+/i, '')
+    .replace(/^samsung\s+|^motorola\s+|^moto\s+|^infinix\s+|^google\s+|^honor\s+/i, '')
     .replace(/\s*5g\b/gi, '')
     .replace(/\s*\(.*?\)/g, '')
     .replace(/[^a-z0-9]/g, '');

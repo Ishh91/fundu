@@ -234,10 +234,10 @@ const BUY_LAPTOP_HIGHLIGHTS = [
     badge: 'M-Series',
   },
   {
-    title: 'Lenovo ThinkPad',
-    desc: 'Legendary business reliability (T14 & E14)',
-    to: '/buy-laptop?brand=Lenovo',
-    badge: 'Military Grade',
+    title: 'Acer Swift & Aspire',
+    desc: 'Lightweight ultra-portable thin & power laptops',
+    to: '/buy-laptop?brand=Acer',
+    badge: 'Ultra Thin',
   },
   {
     title: 'Dell Latitude & XPS',

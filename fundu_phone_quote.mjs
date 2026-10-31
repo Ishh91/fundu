@@ -292,9 +292,6 @@ export const RESALE_BENCHMARKS = [
   { brand: 'iQOO', model: "iQOO Z9s Pro 5G", storage: '128 GB', proceeds: 14950, lastUpdated: '2026-10-08' },
   { brand: 'iQOO', model: "iQOO Z9s Pro 5G", storage: '256 GB', proceeds: 16750, lastUpdated: '2026-10-08' },
   { brand: 'iQOO', model: "iQOO Z9x 5G", storage: '128 GB', proceeds: 9600, lastUpdated: '2026-10-08' },
-  { brand: 'Lenovo', model: "Lenovo K10 Note", storage: '64 GB', proceeds: 2300, lastUpdated: '2026-10-27' },
-  { brand: 'Lenovo', model: "Lenovo K10 Note", storage: '128 GB', proceeds: 2600, lastUpdated: '2026-10-27' },
-  { brand: 'Lenovo', model: "Lenovo K10 Plus", storage: '64 GB', proceeds: 1950, lastUpdated: '2026-10-27' },
   // Infinix Benchmarks
   { brand: 'Infinix', model: "Infinix GT 20 Pro 5G", storage: '256 GB', proceeds: 17000, lastUpdated: '2026-10-27' },
   { brand: 'Infinix', model: "Infinix GT 10 Pro 5G", storage: '256 GB', proceeds: 13200, lastUpdated: '2026-10-27' },
@@ -306,16 +303,6 @@ export const RESALE_BENCHMARKS = [
   { brand: 'Infinix', model: "Infinix Zero 30 5G", storage: '256 GB', proceeds: 13900, lastUpdated: '2026-10-27' },
   { brand: 'Infinix', model: "Infinix Hot 40 Pro", storage: '128 GB', proceeds: 7200, lastUpdated: '2026-10-27' },
   { brand: 'Infinix', model: "Infinix Hot 30 5G", storage: '128 GB', proceeds: 6800, lastUpdated: '2026-10-27' },
-
-  // Additional Lenovo Benchmarks
-  { brand: 'Lenovo', model: "Lenovo Legion Y90", storage: '256 GB', proceeds: 25600, lastUpdated: '2026-10-27' },
-  { brand: 'Lenovo', model: "Lenovo Legion Pro", storage: '128 GB', proceeds: 14500, lastUpdated: '2026-10-27' },
-  { brand: 'Lenovo', model: "Lenovo Z6 Lite", storage: '64 GB', proceeds: 3950, lastUpdated: '2026-10-27' },
-  { brand: 'Lenovo', model: "Lenovo Z5 Pro GT", storage: '128 GB', proceeds: 5800, lastUpdated: '2026-10-27' },
-  { brand: 'Lenovo', model: "Lenovo Z5s", storage: '64 GB', proceeds: 3450, lastUpdated: '2026-10-27' },
-  { brand: 'Lenovo', model: "Lenovo Z2 Plus", storage: '64 GB', proceeds: 1600, lastUpdated: '2026-10-27' },
-  { brand: 'Lenovo', model: "Lenovo Legion Duel 2", storage: '256 GB', proceeds: 20950, lastUpdated: '2025-02-15' },
-  { brand: 'Lenovo', model: "Lenovo Z6 Pro", storage: '128 GB', proceeds: 6400, lastUpdated: '2026-10-27' },
   { brand: 'Motorola', model: "Motorola Moto E13", storage: '64 GB', proceeds: 5050, lastUpdated: '2026-10-08' },
   { brand: 'Motorola', model: "Motorola Moto E13", storage: '128 GB', proceeds: 5750, lastUpdated: '2026-10-08' },
   { brand: 'Motorola', model: "Motorola Moto e22s", storage: '64 GB', proceeds: 4350, lastUpdated: '2026-10-08' },
@@ -1858,12 +1845,6 @@ export const CONFIGURED_REPAIRS = {
   'realme:realme gt 6': { screen: 6999, battery: 2199, charging: 899, camera: 2799, backglass: 1899, speaker: 649 },
   'nothing:nothing phone (2)': { screen: 7999, battery: 2499, charging: 899, camera: 2999, backglass: 2999, speaker: 749 },
   'nothing:nothing phone (2a)': { screen: 4499, battery: 1699, charging: 699, camera: 1899, backglass: 1699, speaker: 599 },
-
-  // Lenovo
-  'lenovo:lenovo k10 note': { screen: 1199, battery: 699, charging: 349, camera: 599, backglass: 399, speaker: 249 },
-  'lenovo:k10 note': { screen: 1199, battery: 699, charging: 349, camera: 599, backglass: 399, speaker: 249 },
-  'lenovo:k10 plus': { screen: 1099, battery: 649, charging: 349, camera: 549, backglass: 349, speaker: 249 },
-  'lenovo:k8 note': { screen: 999, battery: 599, charging: 299, camera: 499, backglass: 299, speaker: 249 },
 };
 
 /**
@@ -2109,22 +2090,6 @@ export function computeDynamicBenchmarkProceeds(brand = '', model = '', storage 
     else if (normModel.includes('cmf phone 1')) base = 11500;
     else base = 18000;
   }
-  // Lenovo
-  else if (normBrand.includes('lenovo') || normModel.includes('lenovo')) {
-    if (normModel.includes('legion duel 2')) base = 18500;
-    else if (normModel.includes('legion y90')) base = 22000;
-    else if (normModel.includes('legion pro')) base = 14000;
-    else if (normModel.includes('z6 pro')) base = 8500;
-    else if (normModel.includes('z6 lite')) base = 4200;
-    else if (normModel.includes('z5 pro gt')) base = 6800;
-    else if (normModel.includes('k10 note')) base = 1500;
-    else if (normModel.includes('k10 plus')) base = 3100;
-    else if (normModel.includes('k9 note')) base = 2700;
-    else if (normModel.includes('k8 note')) base = 2400;
-    else if (normModel.includes('k8 plus')) base = 2100;
-    else if (normModel.includes('a6 note')) base = 2200;
-    else base = 3000;
-  }
 
   // Apply unified Hardware Multiplier for Storage and RAM
   const mult = calculateHardwareVariantMultiplier(normStorage, ram, brand);
@@ -2320,9 +2285,6 @@ export function isAmoledModel(brand, model) {
   if (b.includes('infinix')) {
     if (/\b(gt\s*\d+|zero\s*\d+|note\s*40)\b/i.test(m)) return true;
   }
-  if (b.includes('lenovo')) {
-    if (/\b(legion|z6\s*pro)\b/i.test(m)) return true;
-  }
   return false;
 }
 
@@ -2358,7 +2320,7 @@ export function isStylusDevice(brand, model) {
   const m = String(model || '').toLowerCase().trim();
   const full = `${b} ${m}`;
 
-  // Samsung Galaxy Note Series (Exclude Redmi/Infinix/Lenovo Note)
+  // Samsung Galaxy Note Series (Exclude Redmi/Infinix Note)
   if (full.includes('note') && (b.includes('samsung') || full.includes('galaxy'))) {
     if (!full.includes('redmi') && !full.includes('infinix') && !full.includes('k10') && !full.includes('k8')) {
       return true;

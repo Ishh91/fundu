@@ -70,7 +70,6 @@ const SEED_REPAIR_MODELS = [
   { product_type: 'laptop', brand: 'Dell', model: 'Dell Inspiron 15', device_series: 'Inspiron Series', screenPrice: 4499, batteryPrice: 2499, chargingPrice: 1199, cameraPrice: 1299, backglassPrice: 1699, motherboardPrice: 1999 },
   { product_type: 'laptop', brand: 'Dell', model: 'Dell XPS 13', device_series: 'XPS Premium Series', screenPrice: 11999, batteryPrice: 3899, chargingPrice: 1899, cameraPrice: 1999, backglassPrice: 2499, motherboardPrice: 2999 },
   { product_type: 'laptop', brand: 'HP', model: 'HP Pavilion 15', device_series: 'Pavilion Series', screenPrice: 4699, batteryPrice: 2499, chargingPrice: 1199, cameraPrice: 1299, backglassPrice: 1699, motherboardPrice: 1999 },
-  { product_type: 'laptop', brand: 'Lenovo', model: 'Lenovo ThinkPad E14', device_series: 'ThinkPad Series', screenPrice: 5499, batteryPrice: 2899, chargingPrice: 1299, cameraPrice: 1499, backglassPrice: 1899, motherboardPrice: 2299 },
 
   // --- TABLETS ---
   { product_type: 'tablet', brand: 'Apple', model: 'iPad 10th Gen', device_series: 'iPad Base Series', screenPrice: 6999, batteryPrice: 2999, chargingPrice: 1199, cameraPrice: 1899, backglassPrice: 2299, motherboardPrice: 1899 },

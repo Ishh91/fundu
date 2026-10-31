@@ -143,12 +143,6 @@ const BRAND_DETAILS: Record<
     desc: 'Sell used Infinix GT, Zero, Note & Hot series phones online at your doorstep for top guaranteed cash.',
     count: '30+ Infinix Models',
   },
-  lenovo: {
-    logo: getCleanBrandLogo('lenovo'),
-    tagline: 'Sell Old Lenovo Mobile Phone Online for Instant Cash at Doorstep',
-    desc: 'Sell used Lenovo K Note, Legion Gaming, Z Series & Vibe smartphones online for guaranteed highest cash with free doorstep pickup.',
-    count: '18+ Lenovo Models',
-  },
 };
 
 export default function SellBrandPage() {
@@ -172,7 +166,6 @@ export default function SellBrandPage() {
     if (brandCleanKey === 'moto') return 'motorola';
     if (brandCleanKey === 'pixel') return 'google';
     if (brandCleanKey === 'iphone') return 'apple';
-    if (brandCleanKey === 'lenevo') return 'lenovo';
     return brandCleanKey;
   }, [brandCleanKey]);
 

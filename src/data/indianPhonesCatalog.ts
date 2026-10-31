@@ -5200,28 +5200,6 @@ export const ALL_INDIAN_PHONES_CATALOG: MasterPhone[] = [
     "is_active": true
   },
   {
-    "id": "lenovo-lenovo-moto-m",
-    "brand": "Lenovo",
-    "model": "Lenovo Moto M",
-    "release_year": 2016,
-    "ram_options": [
-      "4GB"
-    ],
-    "storage_options": [
-      "64GB"
-    ],
-    "default_mrp": 15999,
-    "base_resale_value": 2900,
-    "image_url": "https://fdn2.gsmarena.com/vv/bigpic/lenovo-moto-m.jpg",
-    "popular_tag": "Full Metal Body Dolby Atmos",
-    "processor": "MediaTek Helio P15 Octa-Core",
-    "camera_spec": "16MP PDAF Dual-CCT Flash",
-    "battery_spec": "3050 mAh 10W Rapid Charge",
-    "display_spec": "5.5\" FHD IPS Display",
-    "is_5g": false,
-    "is_active": true
-  },
-  {
     "id": "apple-iphone-18-pro-max",
     "brand": "Apple",
     "model": "Apple iPhone 18 Pro Max",

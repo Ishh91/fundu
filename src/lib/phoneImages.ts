@@ -28,11 +28,7 @@ export const BRAND_OFFICIAL_LOGOS: Record<string, string> = {
   infinix: '/infinix-logo.svg',
   tecno: '/tecno-logo.svg',
   itel: '/itel-logo.svg',
-  lenovo: 'https://cdn.simpleicons.org/lenovo/e2231a',
   honor: 'https://cdn.simpleicons.org/honor/000000',
-  asus: 'https://cdn.simpleicons.org/asus/00539b',
-  nokia: 'https://cdn.simpleicons.org/nokia/124191',
-  lava: 'https://cdn.simpleicons.org/google/ea4335',
 };
 
 // Model-Specific Official Studio Renders (sorted longest keyword first)
@@ -339,15 +335,6 @@ export const RAW_MODEL_EXACT_RENDERS: Array<{ keyword: string; url: string }> = 
   { keyword: 'nothing phone 2', url: 'https://fdn2.gsmarena.com/vv/bigpic/nothing-phone-2.jpg' },
   { keyword: 'nothing phone 1', url: 'https://fdn2.gsmarena.com/vv/bigpic/nothing-phone-1.jpg' },
   { keyword: 'cmf phone 1', url: 'https://fdn2.gsmarena.com/vv/bigpic/nothing-cmf-phone-1.jpg' },
-
-  // Lenovo
-  { keyword: 'lenovo legion duel 2', url: 'https://fdn2.gsmarena.com/vv/bigpic/lenovo-legion-duel-2.jpg' },
-  { keyword: 'lenovo k10 note', url: 'https://fdn2.gsmarena.com/vv/bigpic/lenovo-k10-note.jpg' },
-  { keyword: 'lenovo k10 plus', url: 'https://fdn2.gsmarena.com/vv/bigpic/lenovo-k10-plus.jpg' },
-  { keyword: 'lenovo k9 note', url: 'https://fdn2.gsmarena.com/vv/bigpic/lenovo-k9-note.jpg' },
-  { keyword: 'lenovo k8 note', url: 'https://fdn2.gsmarena.com/vv/bigpic/lenovo-k8-note.jpg' },
-  { keyword: 'lenovo z6 pro', url: 'https://fdn2.gsmarena.com/vv/bigpic/lenovo-z6-pro.jpg' },
-  { keyword: 'lenovo a6 note', url: 'https://fdn2.gsmarena.com/vv/bigpic/lenovo-a6-note.jpg' },
 ];
 
 // Always sort by keyword length descending so specific variants take precedence over base models
@@ -378,7 +365,6 @@ export const BRAND_FRONT_FALLBACKS: Record<string, string> = {
   tecno: 'https://fdn2.gsmarena.com/vv/bigpic/tecno-camon-30-pro.jpg',
   itel: 'https://fdn2.gsmarena.com/vv/bigpic/itel-s24.jpg',
   honor: 'https://fdn2.gsmarena.com/vv/bigpic/honor-90.jpg',
-  lenovo: 'https://fdn2.gsmarena.com/vv/bigpic/lenovo-k13-pro.jpg',
 };
 
 /**

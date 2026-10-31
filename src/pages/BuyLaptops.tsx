@@ -43,8 +43,6 @@ const BRAND_PILLS = [
   { name: 'Apple', label: 'Apple' },
   { name: 'Dell', label: 'Dell' },
   { name: 'HP', label: 'HP' },
-  { name: 'Lenovo', label: 'Lenovo' },
-  { name: 'Asus', label: 'ASUS' },
   { name: 'Acer', label: 'Acer' },
 ];
 

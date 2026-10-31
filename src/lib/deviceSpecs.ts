@@ -53,7 +53,7 @@ export function deviceIncludesStylus(brand?: string, model?: string): boolean {
   const m = String(model || '').toLowerCase().trim();
   const full = `${b} ${m}`;
 
-  // Samsung Galaxy Note Series (Exclude Redmi/Infinix/Lenovo Note)
+  // Samsung Galaxy Note Series (Exclude Redmi/Infinix Note)
   if (full.includes('note') && (b.includes('samsung') || full.includes('galaxy'))) {
     if (!full.includes('redmi') && !full.includes('infinix') && !full.includes('k10') && !full.includes('k8')) {
       return true;
@@ -162,12 +162,6 @@ export function isAmoledDisplay(brand = '', model = '', displaySpec = ''): boole
   // 11. Infinix
   if (b.includes('infinix')) {
     if (/\b(gt\s*\d+|zero\s*\d+|note\s*40|note\s*12)\b/i.test(m)) return true;
-    return false;
-  }
-
-  // 12. Lenovo
-  if (b.includes('lenovo')) {
-    if (/\b(legion|z6\s*pro|z5\s*pro)\b/i.test(m)) return true;
     return false;
   }
 
@@ -408,18 +402,7 @@ export function getModelReleaseYear(brand = '', model = ''): number {
     return 2023;
   }
 
-  // 16. Lenovo
-  if (/lenovo/i.test(full)) {
-    if (/legion\s*y90/i.test(m)) return 2022;
-    if (/legion\s*duel\s*2/i.test(m)) return 2021;
-    if (/legion\s*pro/i.test(m)) return 2020;
-    if (/z6\s*pro|z6\s*lite|k10\s*note|k10\s*plus/i.test(m)) return 2019;
-    if (/z5\s*pro\s*gt|z5s|z5/i.test(m)) return 2018;
-    if (/z2\s*plus/i.test(m)) return 2016;
-    return 2019;
-  }
-
-  // 17. Explicit 4-digit year match if present
+  // 16. Explicit 4-digit year match if present
   if (yrMatch) return parseInt(yrMatch[1], 10);
 
   // Default older devices to 2022
@@ -1122,21 +1105,21 @@ const MODEL_HARDWARE_RULES: Array<{
     ],
   },
   {
-    pattern: /(?:iqoo\s*z6\s*pro|(?<!lenovo.*)\bz6\s*pro)(?:\s*5g)?\b/i,
+    pattern: /(?:iqoo\s*z6\s*pro|\bz6\s*pro)(?:\s*5g)?\b/i,
     variants: [
       { storage: '128 GB', rams: ['6 GB', '8 GB'] },
       { storage: '256 GB', rams: ['8 GB', '12 GB'] },
     ],
   },
   {
-    pattern: /(?:iqoo\s*z6\s*lite|(?<!lenovo.*)\bz6\s*lite)(?:\s*5g)?\b/i,
+    pattern: /(?:iqoo\s*z6\s*lite|\bz6\s*lite)(?:\s*5g)?\b/i,
     variants: [
       { storage: '64 GB', rams: ['4 GB'] },
       { storage: '128 GB', rams: ['6 GB'] },
     ],
   },
   {
-    pattern: /(?:iqoo\s*z6|(?<!lenovo.*)\bz6\s*(?:5g|44w)?\b)(?!\s*(?:pro|lite))/i,
+    pattern: /(?:iqoo\s*z6|\bz6\s*(?:5g|44w)?\b)(?!\s*(?:pro|lite))/i,
     variants: [
       { storage: '128 GB', rams: ['4 GB', '6 GB', '8 GB'] },
     ],
@@ -1950,79 +1933,6 @@ const MODEL_HARDWARE_RULES: Array<{
   },
 
   // ==========================================
-  // LENOVO
-  // ==========================================
-  {
-    pattern: /lenovo\s*legion\s*y90/i,
-    variants: [
-      { storage: '256 GB', rams: ['12 GB', '16 GB', '18 GB'] },
-      { storage: '512 GB', rams: ['18 GB'] },
-    ],
-  },
-  {
-    pattern: /lenovo\s*legion\s*duel\s*2/i,
-    variants: [
-      { storage: '256 GB', rams: ['12 GB'] },
-      { storage: '512 GB', rams: ['16 GB'] },
-    ],
-  },
-  {
-    pattern: /lenovo\s*legion\s*pro/i,
-    variants: [
-      { storage: '128 GB', rams: ['8 GB', '12 GB'] },
-      { storage: '256 GB', rams: ['12 GB'] },
-      { storage: '512 GB', rams: ['16 GB'] },
-    ],
-  },
-  {
-    pattern: /lenovo\s*z6\s*pro/i,
-    variants: [
-      { storage: '128 GB', rams: ['6 GB', '8 GB'] },
-      { storage: '256 GB', rams: ['8 GB', '12 GB'] },
-    ],
-  },
-  {
-    pattern: /lenovo\s*z6\s*lite/i,
-    variants: [
-      { storage: '64 GB', rams: ['4 GB', '6 GB'] },
-      { storage: '128 GB', rams: ['6 GB'] },
-    ],
-  },
-  {
-    pattern: /lenovo\s*z5\s*pro\s*gt/i,
-    variants: [
-      { storage: '128 GB', rams: ['6 GB', '8 GB'] },
-      { storage: '256 GB', rams: ['8 GB', '12 GB'] },
-    ],
-  },
-  {
-    pattern: /lenovo\s*z5s/i,
-    variants: [
-      { storage: '64 GB', rams: ['4 GB', '6 GB'] },
-      { storage: '128 GB', rams: ['6 GB'] },
-    ],
-  },
-  {
-    pattern: /lenovo\s*k10\s*note/i,
-    variants: [
-      { storage: '64 GB', rams: ['4 GB'] },
-      { storage: '128 GB', rams: ['6 GB'] },
-    ],
-  },
-  {
-    pattern: /lenovo\s*k10\s*plus/i,
-    variants: [
-      { storage: '64 GB', rams: ['4 GB'] },
-    ],
-  },
-  {
-    pattern: /lenovo\s*z2\s*plus/i,
-    variants: [
-      { storage: '64 GB', rams: ['4 GB'] },
-    ],
-  },
-
-  // ==========================================
   // MOTOROLA
   // ==========================================
   {
@@ -2400,10 +2310,7 @@ export function is512GBValidForModel(brand = '', model = ''): boolean {
     return false;
   }
 
-  // 9. Asus: ROG Phone 8 Pro, 7 Ultimate, 6 Pro
-  if (b.includes('asus') && /rog\s*phone\s*[6-8]/i.test(m)) return true;
-
-  // 10. Honor: Honor 200 Pro & Magic 6 Pro
+  // 9. Honor: Honor 200 Pro & Magic 6 Pro
   if (b.includes('honor') && /(200\s*pro|magic\s*6\s*pro)/i.test(m)) return true;
 
   // 11. Tecno: Phantom V Fold & Camon 30 Premier
@@ -2898,7 +2805,7 @@ export function getModelHardwareSpecs(
 
   // 3. Check customCatalog variants if provided (e.g. MASTER_MODEL_CATALOG)
   if (Array.isArray(customCatalog) && customCatalog.length > 0) {
-    const brandPrefixRegex = /^(apple|samsung|oneplus|xiaomi|vivo|oppo|realme|motorola|moto|google|pixel|nothing|cmf|tecno|techno|itel|infinix|poco|iqoo|honor|lenovo|asus|nokia|lava)\s+/i;
+    const brandPrefixRegex = /^(apple|samsung|oneplus|xiaomi|vivo|oppo|realme|motorola|moto|google|pixel|nothing|cmf|tecno|techno|itel|infinix|poco|iqoo|honor)\s+/i;
     const cleanTarget = normModel
       .replace(brandPrefixRegex, '')
       .replace(/[\s-]+/g, ' ')

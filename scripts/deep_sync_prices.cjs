@@ -12,7 +12,7 @@ const allBrandPrices = eval(arrayStr);
 function normalizeKey(str) {
   return (str || '')
     .toLowerCase()
-    .replace(/^samsung\s+|^motorola\s+|^moto\s+|^lenovo\s+|^infinix\s+|^google\s+|^honor\s+|^nokia\s+/i, '')
+    .replace(/^samsung\s+|^motorola\s+|^moto\s+|^infinix\s+|^google\s+|^honor\s+/i, '')
     .replace(/\s*5g\b/gi, '')
     .replace(/\s*\(.*?\)/g, '')
     .replace(/[^a-z0-9]/g, '');
@@ -64,9 +64,7 @@ async function deepUpdate() {
     { brand: 'Samsung', model: /S24 Ultra/i },
     { brand: 'Motorola', model: /Razr 50 Ultra/i },
     { brand: 'Google', model: /Pixel 9 Pro Fold/i },
-    { brand: 'Lenovo', model: /Z6 Pro/i },
     { brand: 'Infinix', model: /Zero 30/i },
-    { brand: 'Nokia', model: /X30/i },
     { brand: 'Honor', model: /Magic 6 Pro/i },
   ];
   console.log('\nVerified updated samples in MongoDB:');

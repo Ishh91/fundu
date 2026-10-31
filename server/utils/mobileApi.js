@@ -3,8 +3,8 @@ import { INDIAN_MARKET_PHONES_LAST_10_YEARS } from '../config/seedPhones.js';
 
 export const DEFAULT_PHONE_BRANDS = [
   'Apple', 'Samsung', 'OnePlus', 'Xiaomi', 'Realme', 'Vivo', 'Oppo',
-  'Motorola', 'Google', 'Nothing', 'Poco', 'Redmi', 'iQOO', 'Asus', 'Nokia',
-  'Infinix', 'Tecno', 'Itel', 'Honor', 'Lava', 'Micromax',
+  'Motorola', 'Google', 'Nothing', 'Poco', 'Redmi', 'iQOO',
+  'Infinix', 'Tecno', 'Itel', 'Honor', 'Micromax',
 ];
 
 export const mobileCache = new Map();

@@ -118,11 +118,7 @@ const BRANDS = [
   'Poco',
   'Tecno',
   'Infinix',
-  'Lenovo',
   'Itel',
-  'Asus',
-  'Nokia',
-  'Lava',
 ];
 
 const DEFAULT_BRAND_MODELS: Record<string, { model: string; storage: string }> = {
@@ -140,11 +136,7 @@ const DEFAULT_BRAND_MODELS: Record<string, { model: string; storage: string }> =
   Poco: { model: 'Poco X6 Pro', storage: '256 GB' },
   Tecno: { model: 'Tecno Camon 30 5G', storage: '256 GB' },
   Infinix: { model: 'Infinix GT 20 Pro 5G', storage: '256 GB' },
-  Lenovo: { model: 'Lenovo Legion Y90', storage: '256 GB' },
   Itel: { model: 'Itel Color Pro 5G', storage: '128 GB' },
-  Asus: { model: 'ROG Phone 8', storage: '256 GB' },
-  Nokia: { model: 'Nokia G42 5G', storage: '128 GB' },
-  Lava: { model: 'Lava Agni 2 5G', storage: '256 GB' },
 };
 
 function normalizeModelDisplayName(brand: string, rawModel: string): string {
@@ -473,16 +465,8 @@ export default function AdminCompetitorRadar() {
       detectedBrand = 'Tecno';
     } else if (low.includes('infinix') || low.includes('hot 40') || low.includes('hot 30') || low.includes('gt 20') || low.includes('gt 10')) {
       detectedBrand = 'Infinix';
-    } else if (low.includes('lenovo') || low.includes('legion')) {
-      detectedBrand = 'Lenovo';
     } else if (low.includes('itel')) {
       detectedBrand = 'Itel';
-    } else if (low.includes('asus') || low.includes('rog phone') || low.includes('zenfone')) {
-      detectedBrand = 'Asus';
-    } else if (low.includes('nokia')) {
-      detectedBrand = 'Nokia';
-    } else if (low.includes('lava') || low.includes('agni') || low.includes('blaze')) {
-      detectedBrand = 'Lava';
     }
 
     if (detectedBrand !== selectedBrand) {

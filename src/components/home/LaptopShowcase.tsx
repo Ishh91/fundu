@@ -42,10 +42,10 @@ export default function LaptopShowcase({ customLaptops }: LaptopShowcaseProps) {
       return allLaptops.filter((l) => l.brand.toLowerCase() === 'apple').slice(0, 8);
     }
     if (activeTab === 'business') {
-      return allLaptops.filter((l) => ['dell', 'lenovo', 'hp'].includes(l.brand.toLowerCase())).slice(0, 8);
+      return allLaptops.filter((l) => ['dell', 'hp'].includes(l.brand.toLowerCase())).slice(0, 8);
     }
     if (activeTab === 'gaming') {
-      return allLaptops.filter((l) => ['asus', 'acer'].includes(l.brand.toLowerCase()) || /rtx|gtx|ryzen 9|rog/i.test(`${l.title} ${l.processor} ${l.graphics}`)).slice(0, 8);
+      return allLaptops.filter((l) => ['acer'].includes(l.brand.toLowerCase()) || /rtx|gtx|ryzen 9/i.test(`${l.title} ${l.processor} ${l.graphics}`)).slice(0, 8);
     }
     return allLaptops.slice(0, 8);
   }, [allLaptops, activeTab]);
@@ -71,7 +71,7 @@ export default function LaptopShowcase({ customLaptops }: LaptopShowcaseProps) {
               Flagship Laptops. Unbeatable Prices.
             </h2>
             <p className="text-sm font-semibold text-ink-500 max-w-2xl">
-              Save up to 60% on verified MacBooks, ThinkPads & Ultrabooks. 32-point inspected, 6-month doorstep warranty & genuine chargers included.
+              Save up to 60% on verified MacBooks, Dell Latitudes & Ultrabooks. 32-point inspected, 6-month doorstep warranty & genuine chargers included.
             </p>
           </div>
 
@@ -89,8 +89,8 @@ export default function LaptopShowcase({ customLaptops }: LaptopShowcaseProps) {
           {[
             { id: 'all', label: 'All Top Models' },
             { id: 'macbook', label: '🍎 Apple MacBooks' },
-            { id: 'business', label: '💼 Work & Business (ThinkPad / Dell / HP)' },
-            { id: 'gaming', label: '⚡ Performance & Gaming (ASUS / Acer)' },
+            { id: 'business', label: '💼 Work & Business (Dell / HP)' },
+            { id: 'gaming', label: '⚡ Performance & Gaming (Acer)' },
           ].map((tab) => (
             <button
               key={tab.id}

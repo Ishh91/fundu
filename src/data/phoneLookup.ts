@@ -68,9 +68,6 @@ export const LOOKUP_BRANDS = [
   'Infinix',
   'Tecno',
   'Itel',
-  'Lenovo',
-  'Asus',
-  'Nokia',
   'Micromax',
 ];
 

@@ -203,14 +203,6 @@ const extraModels = [
   { name: 'Infinix Zero 30', url: 'https://fdn2.gsmarena.com/vv/bigpic/infinix-zero-30-5g.jpg' },
   { name: 'Tecno Camon 30 Pro', url: 'https://fdn2.gsmarena.com/vv/bigpic/tecno-camon-30-pro.jpg' },
   { name: 'Tecno Pova 6 Pro', url: 'https://fdn2.gsmarena.com/vv/bigpic/tecno-pova-6-pro.jpg' },
-
-  // Lenovo
-  { name: 'Lenovo K10 Note', url: 'https://fdn2.gsmarena.com/vv/bigpic/lenovo-k10-note.jpg' },
-  { name: 'Lenovo K10 Plus', url: 'https://fdn2.gsmarena.com/vv/bigpic/lenovo-k10-plus.jpg' },
-  { name: 'Lenovo K9 Note', url: 'https://fdn2.gsmarena.com/vv/bigpic/lenovo-k9-note.jpg' },
-  { name: 'Lenovo K8 Note', url: 'https://fdn2.gsmarena.com/vv/bigpic/lenovo-k8-note.jpg' },
-  { name: 'Lenovo Legion Duel 2', url: 'https://fdn2.gsmarena.com/vv/bigpic/lenovo-legion-duel-2.jpg' },
-  { name: 'Lenovo Z6 Pro', url: 'https://fdn2.gsmarena.com/vv/bigpic/lenovo-z6-pro.jpg' },
 ];
 
 for (const m of extraModels) {

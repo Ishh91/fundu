@@ -527,7 +527,7 @@ export const REPAIR_PROBLEMS = [
 
 export const PHONE_BRANDS = [
   'Apple', 'Samsung', 'OnePlus', 'Xiaomi', 'Realme', 'Vivo', 'Oppo',
-  'Motorola', 'Google', 'Nothing', 'Poco', 'Redmi', 'iQOO', 'Asus', 'Nokia',
+  'Motorola', 'Google', 'Nothing', 'Poco', 'Redmi', 'iQOO',
 ];
 
 export const DOORSTEP_AREAS = [

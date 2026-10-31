@@ -182,29 +182,6 @@ const allBrandPrices = [
   { brand: 'Motorola', name: 'Moto E6s', variant: '64 GB', price: 2600 },
   { brand: 'Motorola', name: 'Moto M', variant: '64 GB', price: 2200 },
 
-  // ===================== 3. LENOVO =====================
-  { brand: 'Lenovo', name: 'Z6 Pro', variant: '128 GB', price: 5800 },
-  { brand: 'Lenovo', name: 'K10 Note', variant: '128 GB', price: 3200 },
-  { brand: 'Lenovo', name: 'K10 Note', variant: '64 GB', price: 2750 },
-  { brand: 'Lenovo', name: 'K10 Plus', variant: '64 GB', price: 2400 },
-  { brand: 'Lenovo', name: 'K9 Note', variant: '64 GB', price: 2100 },
-  { brand: 'Lenovo', name: 'K9', variant: '32 GB', price: 1650 },
-  { brand: 'Lenovo', name: 'A6 Note', variant: '32 GB', price: 1500 },
-  { brand: 'Lenovo', name: 'Z2 Plus', variant: '64 GB', price: 1850 },
-  { brand: 'Lenovo', name: 'Z2 Plus', variant: '32 GB', price: 1450 },
-  { brand: 'Lenovo', name: 'P2', variant: '64 GB', price: 1800 },
-  { brand: 'Lenovo', name: 'P2', variant: '32 GB', price: 1400 },
-  { brand: 'Lenovo', name: 'K8 Note', variant: '64 GB', price: 1350 },
-  { brand: 'Lenovo', name: 'K8 Plus', variant: '32 GB', price: 1150 },
-  { brand: 'Lenovo', name: 'K6 Note', variant: '32 GB', price: 1100 },
-  { brand: 'Lenovo', name: 'K6 Power', variant: '32 GB', price: 950 },
-  { brand: 'Lenovo', name: 'Phab 2 Plus', variant: '32 GB', price: 1250 },
-  { brand: 'Lenovo', name: 'Phab 2', variant: '32 GB', price: 1050 },
-  { brand: 'Lenovo', name: 'Vibe K5 Note', variant: '32 GB', price: 950 },
-  { brand: 'Lenovo', name: 'K4 Note', variant: '16 GB', price: 800 },
-  { brand: 'Lenovo', name: 'K3 Note', variant: '16 GB', price: 650 },
-  { brand: 'Lenovo', name: 'A7000', variant: '16 GB', price: 500 },
-
   // ===================== 4. INFINIX =====================
   { brand: 'Infinix', name: 'Zero 30 5G', variant: '256 GB', price: 11400 },
   { brand: 'Infinix', name: 'GT 20 Pro 5G', variant: '256 GB', price: 11200 },
@@ -246,35 +223,6 @@ const allBrandPrices = [
   { brand: 'Google', name: 'Pixel 3a', variant: '64 GB', price: 1850 },
   { brand: 'Google', name: 'Pixel 3 XL', variant: '64 GB', price: 1950 },
 
-  // ===================== 6. NOKIA =====================
-  { brand: 'Nokia', name: 'X30 5G', variant: '256 GB', price: 7750 },
-  { brand: 'Nokia', name: 'XR20 5G', variant: '128 GB', price: 6890 },
-  { brand: 'Nokia', name: 'XR21 5G', variant: '128 GB', price: 7400 },
-  { brand: 'Nokia', name: 'X20 5G', variant: '128 GB', price: 5600 },
-  { brand: 'Nokia', name: 'X10 5G', variant: '64 GB', price: 4800 },
-  { brand: 'Nokia', name: 'G60 5G', variant: '128 GB', price: 6270 },
-  { brand: 'Nokia', name: 'G42 5G', variant: '256 GB', price: 5200 },
-  { brand: 'Nokia', name: 'G42 5G', variant: '128 GB', price: 4450 },
-  { brand: 'Nokia', name: 'G22', variant: '64 GB', price: 3200 },
-  { brand: 'Nokia', name: 'G21', variant: '128 GB', price: 3620 },
-  { brand: 'Nokia', name: 'G21', variant: '64 GB', price: 2890 },
-  { brand: 'Nokia', name: 'G20', variant: '64 GB', price: 2480 },
-  { brand: 'Nokia', name: 'G50 5G', variant: '64 GB', price: 3800 },
-  { brand: 'Nokia', name: 'G11', variant: '64 GB', price: 2350 },
-  { brand: 'Nokia', name: '8 Sirocco', variant: '128 GB', price: 2820 },
-  { brand: 'Nokia', name: '8.1', variant: '128 GB', price: 2950 },
-  { brand: 'Nokia', name: '8.1', variant: '64 GB', price: 2650 },
-  { brand: 'Nokia', name: '7 Plus', variant: '64 GB', price: 2380 },
-  { brand: 'Nokia', name: '7.2', variant: '64 GB', price: 2590 },
-  { brand: 'Nokia', name: '6.2', variant: '64 GB', price: 2140 },
-  { brand: 'Nokia', name: '6.1 Plus', variant: '64 GB', price: 1950 },
-  { brand: 'Nokia', name: '5.4', variant: '64 GB', price: 2410 },
-  { brand: 'Nokia', name: '5.3', variant: '64 GB', price: 1880 },
-  { brand: 'Nokia', name: 'C32', variant: '128 GB', price: 2780 },
-  { brand: 'Nokia', name: 'C32', variant: '64 GB', price: 2420 },
-  { brand: 'Nokia', name: 'C31', variant: '64 GB', price: 1980 },
-  { brand: 'Nokia', name: 'C30', variant: '64 GB', price: 1740 },
-
   // ===================== 7. HONOR =====================
   { brand: 'Honor', name: 'Magic 6 Pro 5G', variant: '512 GB', price: 36000 },
   { brand: 'Honor', name: 'Magic 5 Pro 5G', variant: '512 GB', price: 24800 },
@@ -310,7 +258,7 @@ const allBrandPrices = [
 function normalizeKey(str) {
   return (str || '')
     .toLowerCase()
-    .replace(/^samsung\s+|^motorola\s+|^moto\s+|^lenovo\s+|^infinix\s+|^google\s+|^honor\s+|^nokia\s+/i, '')
+    .replace(/^samsung\s+|^motorola\s+|^moto\s+|^infinix\s+|^google\s+|^honor\s+/i, '')
     .replace(/\s*5g\b/gi, '')
     .replace(/\s*\(.*?\)/g, '')
     .replace(/[^a-z0-9]/g, '');
