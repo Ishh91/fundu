@@ -2512,10 +2512,14 @@ export function calculatePhoneAgingFactor(brand = '', model = '', underWarranty 
     normAge === 'above_9_months' ||
     normAge === 'older_than_9_months' ||
     normAge === 'above_11_months' ||
-    normAge === 'out_of_warranty' ||
-    underWarranty === false
+    normAge === 'out_of_warranty'
   ) {
     return 0.80;
+  }
+
+  // If no explicit agePeriod was passed, fall back to warranty status:
+  if (underWarranty) {
+    return 1.00;
   }
   return 0.80;
 }
@@ -2679,10 +2683,10 @@ export function quotePhone(input = {}, options = {}) {
   const is0to3Months = isApple && (normAge === '0_to_3_months' || normAge === 'below_3_months');
 
   const cosmeticKey = String(cosmetic_condition).toLowerCase();
-  const activeCosmeticMultipliers = {
+  const activeCosmeticMultipliers = options.cosmeticMultipliers || {
     flawless: 1.00,
-    good: 0.80,
-    fair: 0.60,
+    good: 0.85,
+    fair: 0.70,
   };
   const cosmeticMultiplier = activeCosmeticMultipliers[cosmeticKey] ?? 1.00;
 
@@ -2799,9 +2803,13 @@ export function quotePhone(input = {}, options = {}) {
 
   // Exact Business Formula:
   // Base proceeds equals catalog/benchmark buyback value.
-  // 1. Natural Aging & Generation factor
-  // When options.isDirectBuybackPrice is true (admin/database set base price), the admin has already set the exact buyback value.
-  // DO NOT apply secondary aging discount on top of the admin's fixed price!
+  // 1. Natural Aging & Generation factor:
+  // Admin/catalog price reflects the 100% brand-new / 0-3 month baseline.
+  // Device age depreciates dynamically based on the verified purchase age period:
+  // - 0 to 3 months: 100% (1.00)
+  // - 3 to 6 months: 93.45% (0.9345)
+  // - 6 to 11 months: 90.78% (0.9078)
+  // - > 11 months (out of warranty): 80% (0.80)
   let ramOffsetAmount = 0;
   if (ram && !String(brand || '').toLowerCase().includes('apple')) {
     const ramMatch = String(ram).match(/(\d+)/);
@@ -2812,14 +2820,34 @@ export function quotePhone(input = {}, options = {}) {
     }
   }
 
-  const isDirectPrice = !!options.isDirectBuybackPrice;
-  const agingFactor = isDirectPrice ? 1.0 : calculatePhoneAgingFactor(brand, model, under_warranty, agePeriod);
+  const agingFactor = calculatePhoneAgingFactor(brand, model, under_warranty, agePeriod);
   let baseP = Math.round(expectedResaleProceeds * agingFactor);
-  if (!isDirectPrice && ramOffsetAmount > 0 && agingFactor < 1.0) {
+  if (ramOffsetAmount > 0 && agingFactor < 1.0) {
     const baselineWithoutRam = Math.max(500, expectedResaleProceeds - ramOffsetAmount);
     baseP = Math.round(baselineWithoutRam * agingFactor) + ramOffsetAmount;
   }
   const condP = Math.round(baseP * cosmeticMultiplier);
+
+  // Note age status in condition reasons for full transparency
+  if (normAge === '0_to_3_months' || normAge === 'below_3_months') {
+    conditionReasons.push('Device purchase age: 0-3 months (100% full valuation)');
+  } else if (normAge === '3_to_6_months') {
+    conditionReasons.push('Device purchase age: 3-6 months (6.55% market age adjustment)');
+  } else if (
+    normAge === '6_to_9_months' ||
+    normAge === '6_to_11_months' ||
+    normAge === '3_to_10_months' ||
+    normAge === '10_to_12_months'
+  ) {
+    conditionReasons.push('Device purchase age: 6-11 months (9.22% market age adjustment)');
+  } else if (
+    normAge === 'above_9_months' ||
+    normAge === 'older_than_9_months' ||
+    normAge === 'above_11_months' ||
+    normAge === 'out_of_warranty'
+  ) {
+    conditionReasons.push('Device purchase age: >11 months / out of warranty (20% age adjustment)');
+  }
 
   // Missing accessories deductions if not included (box: -300, charger: -300, bill: -200)
   let accessoriesAdjustment = 0;
