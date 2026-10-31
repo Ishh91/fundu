@@ -46,6 +46,13 @@ app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 app.use(parseAuth);
 app.use('/api', apiRoutes);
 
+app.get('/favicon.ico', (_req, res) => {
+  const icoPath = path.resolve(__dirname, '..', 'public', 'favicon.ico');
+  res.sendFile(icoPath, (err) => {
+    if (err) res.status(204).end();
+  });
+});
+
 app.get('/health', (_req, res) => {
   res.json({ status: 'ok', service: 'fundu-api', time: new Date().toISOString() });
 });

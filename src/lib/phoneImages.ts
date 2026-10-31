@@ -460,18 +460,37 @@ function cleanOversizedStorageOnBoot() {
     const raw = localStorage.getItem(CUSTOM_MODEL_IMAGES_KEY);
     if (!raw) return;
 
-    if (raw.length > 1_500_000) {
-      console.warn('[phoneImages] Pruning bloated custom model images from localStorage (size:', raw.length, 'bytes)');
+    let needsClean = false;
+    // If size > 150KB or contains any base64 data URIs, clean immediately
+    if (raw.length > 150_000 || raw.includes('data:image/')) {
+      needsClean = true;
+    }
+
+    if (needsClean) {
       const parsed = JSON.parse(raw);
       const cleaned: Record<string, string> = {};
       for (const [k, v] of Object.entries(parsed)) {
         if (typeof v === 'string') {
-          // Keep URLs and lightweight base64
-          if (v.startsWith('data:') && v.length > 250_000) continue;
-          cleaned[k] = v;
+          // Absolute ban on base64 in localStorage to preserve the 5MB browser origin quota
+          if (v.startsWith('data:') || v.startsWith('blob:')) continue;
+          if (v.startsWith('http://') || v.startsWith('https://')) {
+            cleaned[k] = v;
+          }
         }
       }
-      localStorage.setItem(CUSTOM_MODEL_IMAGES_KEY, JSON.stringify(cleaned));
+      const serialized = JSON.stringify(cleaned);
+      if (serialized.length > 250_000) {
+        // Prune to only canonical keys (e.g. "brand:model")
+        const minimal: Record<string, string> = {};
+        for (const [k, v] of Object.entries(cleaned)) {
+          if (k.includes(':')) {
+            minimal[k] = v;
+          }
+        }
+        localStorage.setItem(CUSTOM_MODEL_IMAGES_KEY, JSON.stringify(minimal));
+      } else {
+        localStorage.setItem(CUSTOM_MODEL_IMAGES_KEY, serialized);
+      }
     }
   } catch (err) {
     try {
@@ -485,23 +504,32 @@ cleanOversizedStorageOnBoot();
 function safeSetLocalStorage(key: string, data: Record<string, string>) {
   if (typeof window === 'undefined') return;
 
-  try {
-    localStorage.setItem(key, JSON.stringify(data));
-  } catch (err: any) {
-    console.warn('[phoneImages] localStorage.setItem quota reached, executing emergency prune:', err?.message);
-
-    const pruned: Record<string, string> = {};
-    for (const [k, v] of Object.entries(data)) {
-      if (typeof v === 'string' && v.startsWith('data:') && v.length > 80_000) {
-        continue;
-      }
-      pruned[k] = v;
+  // Never store base64 or blob URIs in localStorage
+  const filtered: Record<string, string> = {};
+  for (const [k, v] of Object.entries(data)) {
+    if (typeof v === 'string') {
+      if (v.startsWith('data:') || v.startsWith('blob:')) continue;
+      filtered[k] = v;
     }
+  }
 
+  try {
+    localStorage.setItem(key, JSON.stringify(filtered));
+  } catch {
+    // Quota reached - emergency prune: keep only canonical keys
     try {
-      localStorage.setItem(key, JSON.stringify(pruned));
+      const canonicalOnly: Record<string, string> = {};
+      for (const [k, v] of Object.entries(filtered)) {
+        if (k.includes(':')) {
+          canonicalOnly[k] = v;
+        }
+      }
+      localStorage.setItem(key, JSON.stringify(canonicalOnly));
     } catch {
-      console.warn('[phoneImages] localStorage origin quota exhausted. Retaining images in memory & DB.');
+      // If still fails, clear this key so origin isn't locked up; memory & DB handle it smoothly
+      try {
+        localStorage.removeItem(key);
+      } catch {}
     }
   }
 }
@@ -571,8 +599,18 @@ export function syncCustomImagesFromDatabase(
         memoryCustomCache[k] = url;
         changed = true;
       }
-      customToPersist[k] = url;
     });
+
+    // In localStorage, store ONLY canonical keys (and skip base64) to avoid multiplying storage 10x
+    if (!url.startsWith('data:') && !url.startsWith('blob:')) {
+      const b = (brand || '').toLowerCase().trim();
+      let strippedM = (model || '').toLowerCase().trim();
+      if (b && strippedM.startsWith(b)) {
+        strippedM = strippedM.slice(b.length).trim();
+      }
+      const canonicalKey = `${b}:${strippedM || (model || '').toLowerCase().trim()}`;
+      customToPersist[canonicalKey] = url;
+    }
   });
 
   if (changed && typeof window !== 'undefined') {
@@ -657,13 +695,12 @@ export function saveCustomModelImage(brand: string, model: string, imageUrl: str
     const secondaryKey = strippedM || (model || '').toLowerCase().trim();
 
     if (val) {
-      // Store all variations so both full name and clean name lookups match instantly
-      keys.forEach((k) => {
-        current[k] = val;
-      });
-      current[primaryKey] = val;
-      if (secondaryKey) {
-        current[secondaryKey] = val;
+      // Only persist to localStorage if it's not base64/blob, and only store primary keys to save quota
+      if (!val.startsWith('data:') && !val.startsWith('blob:')) {
+        current[primaryKey] = val;
+        if (secondaryKey) {
+          current[secondaryKey] = val;
+        }
       }
     } else {
       delete current[primaryKey];
