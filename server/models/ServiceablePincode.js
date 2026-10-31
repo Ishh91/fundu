@@ -58,3 +58,4 @@ serviceablePincodeSchema.index({ pincode: 1, is_active: 1, services: 1 });
 export const ServiceablePincode =
   mongoose.models.ServiceablePincode ||
   mongoose.model('ServiceablePincode', serviceablePincodeSchema, 'serviceablepincodes');
+

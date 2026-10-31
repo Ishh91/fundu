@@ -300,3 +300,4 @@ router.post('/seed-lucknow', async (_req, res) => {
 });
 
 export default router;
+
