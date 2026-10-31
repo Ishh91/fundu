@@ -574,7 +574,7 @@ export default function SellPhone() {
 
   // Model-accurate hardware variant specifications (Storage & RAM options)
   const currentDeviceSpecs = useMemo(() => {
-    return getModelHardwareSpecs(form.brand, form.model, MASTER_MODEL_CATALOG);
+    return getModelHardwareSpecs(form.brand, form.model);
   }, [form.brand, form.model]);
 
   // Dynamic RAM options strictly dependent on the CURRENT selected storage

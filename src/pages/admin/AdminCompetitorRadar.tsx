@@ -244,7 +244,7 @@ export default function AdminCompetitorRadar() {
 
   // 1. Hardware Specs (Authentic Storages & RAMs for THIS exact model)
   const currentDeviceSpecs = useMemo(() => {
-    return getModelHardwareSpecs(selectedBrand, searchModel, MASTER_MODEL_CATALOG);
+    return getModelHardwareSpecs(selectedBrand, searchModel);
   }, [selectedBrand, searchModel]);
 
   // Authentic Storages that realistically exist for this phone (e.g. S24 Ultra -> 256GB, 512GB, 1TB)
@@ -395,7 +395,7 @@ export default function AdminCompetitorRadar() {
     setSelectedBrand(newBrand);
     const def = DEFAULT_BRAND_MODELS[newBrand] || { model: `${newBrand} Phone`, storage: '128 GB' };
     setSearchModel(def.model);
-    const specs = getModelHardwareSpecs(newBrand, def.model, MASTER_MODEL_CATALOG);
+    const specs = getModelHardwareSpecs(newBrand, def.model);
     const targetStorage = specs.storages.length > 0
       ? (specs.storages.includes(def.storage) ? def.storage : specs.defaultStorage || specs.storages[0])
       : def.storage;
@@ -409,7 +409,7 @@ export default function AdminCompetitorRadar() {
   const handleModelSelect = (newModel: string) => {
     if (!newModel) return;
     setSearchModel(newModel);
-    const specs = getModelHardwareSpecs(selectedBrand, newModel, MASTER_MODEL_CATALOG);
+    const specs = getModelHardwareSpecs(selectedBrand, newModel);
     const targetStorage = specs.storages.length > 0
       ? (specs.storages.includes(selectedStorage) ? selectedStorage : specs.defaultStorage || specs.storages[0])
       : selectedStorage;
@@ -484,7 +484,7 @@ export default function AdminCompetitorRadar() {
   const handleApplyWatchlistItem = (item: typeof TOP_WATCHLIST[0]) => {
     setSelectedBrand(item.brand);
     setSearchModel(item.model);
-    const specs = getModelHardwareSpecs(item.brand, item.model, MASTER_MODEL_CATALOG);
+    const specs = getModelHardwareSpecs(item.brand, item.model);
     const targetStorage = specs.storages.length > 0
       ? (specs.storages.includes(item.storage) ? item.storage : specs.defaultStorage || specs.storages[0])
       : item.storage;
@@ -766,7 +766,7 @@ export default function AdminCompetitorRadar() {
               <div className="flex flex-col sm:flex-row items-center sm:items-start gap-5">
                 <div className="h-28 w-28 shrink-0 rounded-2xl bg-gray-50 border border-gray-200 p-2 flex items-center justify-center shadow-inner overflow-hidden">
                   <img
-                    src={radarData.device.image || getCleanPhoneImage(radarData.device.brand, radarData.device.model)}
+                    src={(typeof radarData.device.image === 'string' && radarData.device.image.trim()) ? radarData.device.image : getCleanPhoneImage(radarData.device.brand, radarData.device.model)}
                     alt={radarData.device.model}
                     className="h-full w-full object-contain"
                     onError={(e) => {

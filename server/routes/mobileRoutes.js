@@ -1251,7 +1251,13 @@ router.get('/sell-pricing/competitor-radar', async (req, res, next) => {
     const grossMarginPercent = Math.round((grossMargin / b2bLiquidationEst) * 100);
     const suggestedOptimumPrice = Math.max(targetFunduMin, marketHighest + (marketHighest >= 5000 ? 1000 : 500));
 
-    const image = resolveDeviceImage(rawBrand, rawModel);
+    let image = '';
+    try {
+      const imageObj = await resolveDeviceImage(rawBrand, rawModel);
+      image = imageObj?.imageUrl || '';
+    } catch {
+      image = '';
+    }
 
     res.json({
       success: true,

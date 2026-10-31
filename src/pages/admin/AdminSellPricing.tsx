@@ -543,7 +543,7 @@ export default function AdminSellPricing({
   // All official and configured storage options for this model
   const selectedModelStorages = useMemo(() => {
     if (!selectedModel) return ['128 GB'];
-    const specs = getModelHardwareSpecs(selectedModel.brand, selectedModel.model, MASTER_MODEL_CATALOG);
+    const specs = getModelHardwareSpecs(selectedModel.brand, selectedModel.model);
     const set = new Set<string>();
     if (selectedModel.storage) set.add(normalizeStorageString(selectedModel.storage));
     (specs.storages || []).forEach((s) => set.add(normalizeStorageString(s)));
