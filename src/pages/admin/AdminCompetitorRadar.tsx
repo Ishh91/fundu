@@ -461,6 +461,8 @@ export default function AdminCompetitorRadar() {
       detectedBrand = 'Poco';
     } else if (low.includes('redmi') || low.includes('xiaomi')) {
       detectedBrand = 'Xiaomi';
+    } else if (low.includes('nothing') || low.includes('cmf')) {
+      detectedBrand = 'Nothing';
     } else if (low.includes('iqoo')) {
       detectedBrand = 'iQOO';
     } else if (low.includes('realme')) {

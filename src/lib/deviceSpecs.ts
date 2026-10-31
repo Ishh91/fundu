@@ -961,20 +961,72 @@ const MODEL_HARDWARE_RULES: Array<{
   // NOTHING & CMF
   // ==========================================
   {
-    pattern: /nothing\s*phone\s*\(?2a\)?\s*plus/i,
+    pattern: /nothing\s*phone\s*\(?4a\)?\s*pro/i,
     variants: [
+      { storage: '128 GB', rams: ['8 GB'] },
       { storage: '256 GB', rams: ['8 GB', '12 GB'] },
+      { storage: '512 GB', rams: ['12 GB'] },
     ],
   },
   {
-    pattern: /nothing\s*phone\s*\(?2a\)?\b/i,
+    pattern: /nothing\s*phone\s*\(?4a\)?\b(?!\s*pro)/i,
     variants: [
       { storage: '128 GB', rams: ['8 GB'] },
       { storage: '256 GB', rams: ['8 GB', '12 GB'] },
     ],
   },
   {
-    pattern: /nothing\s*phone\s*\(?2\)?\b/i,
+    pattern: /nothing\s*phone\s*\(?4b\)?\b/i,
+    variants: [
+      { storage: '128 GB', rams: ['8 GB'] },
+      { storage: '256 GB', rams: ['8 GB', '12 GB'] },
+    ],
+  },
+  {
+    pattern: /nothing\s*phone\s*\(?3a\)?\s*pro/i,
+    variants: [
+      { storage: '128 GB', rams: ['8 GB'] },
+      { storage: '256 GB', rams: ['8 GB', '12 GB'] },
+      { storage: '512 GB', rams: ['12 GB'] },
+    ],
+  },
+  {
+    pattern: /nothing\s*phone\s*\(?3a\)?\s*lite/i,
+    variants: [
+      { storage: '128 GB', rams: ['8 GB'] },
+      { storage: '256 GB', rams: ['8 GB'] },
+    ],
+  },
+  {
+    pattern: /nothing\s*phone\s*\(?3a\)?\b(?!\s*(?:pro|lite))/i,
+    variants: [
+      { storage: '128 GB', rams: ['8 GB'] },
+      { storage: '256 GB', rams: ['8 GB', '12 GB'] },
+    ],
+  },
+  {
+    pattern: /nothing\s*phone\s*\(?3\)?\b(?!\s*a)/i,
+    variants: [
+      { storage: '128 GB', rams: ['8 GB'] },
+      { storage: '256 GB', rams: ['12 GB'] },
+      { storage: '512 GB', rams: ['12 GB', '16 GB'] },
+    ],
+  },
+  {
+    pattern: /nothing\s*phone\s*\(?2a\)?\s*plus/i,
+    variants: [
+      { storage: '256 GB', rams: ['8 GB', '12 GB'] },
+    ],
+  },
+  {
+    pattern: /nothing\s*phone\s*\(?2a\)?\b(?!\s*plus)/i,
+    variants: [
+      { storage: '128 GB', rams: ['8 GB'] },
+      { storage: '256 GB', rams: ['8 GB', '12 GB'] },
+    ],
+  },
+  {
+    pattern: /nothing\s*phone\s*\(?2\)?\b(?!\s*a)/i,
     variants: [
       { storage: '128 GB', rams: ['8 GB'] },
       { storage: '256 GB', rams: ['12 GB'] },
@@ -989,7 +1041,14 @@ const MODEL_HARDWARE_RULES: Array<{
     ],
   },
   {
-    pattern: /cmf\s*phone\s*1/i,
+    pattern: /(?:cmf(?:\s*by\s*nothing)?\s*phone\s*2\s*pro|cmf\s*2\s*pro)/i,
+    variants: [
+      { storage: '128 GB', rams: ['8 GB'] },
+      { storage: '256 GB', rams: ['8 GB', '12 GB'] },
+    ],
+  },
+  {
+    pattern: /(?:cmf(?:\s*by\s*nothing)?\s*phone\s*1|cmf\s*phone\s*1\s*by\s*nothing)/i,
     variants: [
       { storage: '128 GB', rams: ['6 GB', '8 GB'] },
       { storage: '256 GB', rams: ['8 GB'] },
@@ -2115,7 +2174,7 @@ const MODEL_HARDWARE_RULES: Array<{
   {
     pattern: /moto\s*e13/i,
     variants: [
-      { storage: '64 GB', rams: ['2 GB', '4 GB'] },
+      { storage: '64 GB', rams: ['4 GB'] },
       { storage: '128 GB', rams: ['8 GB'] },
     ],
   },
@@ -2349,6 +2408,12 @@ export function is512GBValidForModel(brand = '', model = ''): boolean {
 
   // 11. Tecno: Phantom V Fold & Camon 30 Premier
   if (b.includes('tecno') && /(phantom\s*v|camon\s*30\s*premier)/i.test(m)) return true;
+
+  // 12. Nothing: Phone (2), Phone 3, Phone 3a Pro, Phone 4a Pro
+  if (b.includes('nothing')) {
+    if (/phone\s*\(?2\)?\b(?!\s*[ap])/i.test(m) || /phone\s*(?:3\b|3a\s*pro|4a\s*pro)/i.test(m)) return true;
+    return false;
+  }
 
   return false;
 }
@@ -2598,21 +2663,21 @@ export function inferTierHardwareSpecs(
   ) {
     tierStorages = ['32 GB', '64 GB', '128 GB'];
     tierRamMap = {
-      '32 GB': ['2 GB', '3 GB', '4 GB'],
-      '64 GB': ['3 GB', '4 GB', '6 GB'],
+      '32 GB': ['4 GB'],
+      '64 GB': ['4 GB', '6 GB'],
       '128 GB': ['4 GB', '6 GB', '8 GB'],
     };
-    allRams = ['2 GB', '3 GB', '4 GB', '6 GB'];
+    allRams = ['4 GB', '6 GB', '8 GB'];
   }
   // 5. Classic / Vintage J, C, On series
   else if (/galaxy\s*[jcon]\d|\bj\d|\bc\d|\bon\d|galaxy\s*core|galaxy\s*grand/i.test(fullText)) {
     tierStorages = ['16 GB', '32 GB', '64 GB'];
     tierRamMap = {
-      '16 GB': ['2 GB', '3 GB'],
-      '32 GB': ['3 GB', '4 GB'],
+      '16 GB': ['4 GB'],
+      '32 GB': ['4 GB'],
       '64 GB': ['4 GB'],
     };
-    allRams = ['2 GB', '3 GB', '4 GB'];
+    allRams = ['4 GB'];
   }
   // 6. Standard Mid-range default (A2x, A3x, M3x, Redmi Note base, Realme number, Moto G, etc.)
   else {
@@ -2632,8 +2697,8 @@ export function inferTierHardwareSpecs(
   const finalStorages = rawStorages.filter((stg) => {
     return isStorageAllowedForModel(brand, model, stg);
   });
-  const normalizedSeedRams = seedRams.map(normalizeRamString).filter(Boolean);
-  const finalRams = Array.from(new Set([...normalizedSeedRams, ...allRams]));
+  const normalizedSeedRams = seedRams.map(normalizeRamString).filter((r) => parseInt(r, 10) >= 4);
+  const finalRams = Array.from(new Set([...normalizedSeedRams, ...allRams])).filter((r) => parseInt(r, 10) >= 4);
 
   const getRamsForStorage = (stg: string): string[] => {
     if (isApple) return [];
@@ -2670,7 +2735,7 @@ export function inferTierHardwareSpecs(
     }
 
     if (tierRamMap[norm] && tierRamMap[norm].length > 0) {
-      return tierRamMap[norm];
+      return tierRamMap[norm].filter((r) => parseInt(r, 10) >= 4);
     }
     return [];
   };
@@ -2709,13 +2774,26 @@ export function getModelHardwareSpecs(
     });
     const safeStorages = storages.length > 0 ? storages : (specs.storages[0] ? [specs.storages[0]] : ['128 GB']);
     const defaultStorage = safeStorages.includes(specs.defaultStorage) ? specs.defaultStorage : safeStorages[0];
-    const defaultRams = specs.getRamsForStorage(defaultStorage);
+
+    // Filter out all RAM <= 3 GB (1 GB, 2 GB, 3 GB) globally
+    const sanitizedGetRamsForStorage = (stg: string): string[] => {
+      if (isApple) return [];
+      const rawRams = specs.getRamsForStorage(stg) || [];
+      const cleanRams = rawRams.filter((r) => {
+        const gb = parseInt(r, 10);
+        return !isNaN(gb) && gb >= 4;
+      });
+      return cleanRams.length > 0 ? cleanRams : (rawRams.length > 0 ? ['4 GB'] : []);
+    };
+
+    const defaultRams = sanitizedGetRamsForStorage(defaultStorage);
     return {
       ...specs,
       storages: safeStorages,
       defaultStorage,
       rams: defaultRams,
-      defaultRam: defaultRams[0] || '',
+      defaultRam: defaultRams[0] || (isApple ? '' : '4 GB'),
+      getRamsForStorage: sanitizedGetRamsForStorage,
     };
   };
 
@@ -2773,7 +2851,7 @@ export function getModelHardwareSpecs(
 
     if (dbStorages.length > 0) {
       const defaultStorage = dbStorages[0] || '128 GB';
-      const validRams = isApple ? [] : dbRams;
+      const validRams = isApple ? [] : dbRams.filter((r) => parseInt(r, 10) >= 4);
 
       const getRamsForStorage = (stg: string): string[] => {
         if (isApple || validRams.length === 0) return [];
