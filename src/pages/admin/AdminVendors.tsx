@@ -239,6 +239,32 @@ export default function AdminVendors() {
     .filter((l) => l.type === 'sell_commission_fee' || l.type === 'repair_commission_fee')
     .reduce((sum, l) => sum + (l.amount || 0), 0);
 
+  // Pending Vendor Quotations Waiting for Admin Verification & Approval
+  const pendingSellQuotes = sellRequests.filter(
+    (s) =>
+      s.vendor_quote_status === 'quoted' ||
+      (s.vendor_quote_price &&
+        s.vendor_quote_status !== 'admin_approved' &&
+        s.vendor_quote_status !== 'user_accepted' &&
+        s.vendor_quote_status !== 'user_rejected' &&
+        s.status !== 'completed' &&
+        s.status !== 'cancelled')
+  );
+
+  const pendingRepairQuotes = repairBookings.filter(
+    (r) =>
+      r.quotation_status === 'quoted' ||
+      (r.vendor_quotation_amount &&
+        r.quotation_status !== 'admin_approved' &&
+        r.quotation_status !== 'user_accepted' &&
+        r.quotation_status !== 'user_rejected' &&
+        r.status !== 'delivered' &&
+        r.status !== 'cancelled' &&
+        r.status !== 'completed')
+  );
+
+  const totalPendingQuotes = pendingSellQuotes.length + pendingRepairQuotes.length;
+
   // Assign or Reassign Mobile Sell Request to Vendor
   const handleAssignSellToVendor = async (sellId: string, vendorId: string) => {
     try {
