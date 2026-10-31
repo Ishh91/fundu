@@ -816,56 +816,293 @@ const MODEL_HARDWARE_RULES: Array<{
   // ==========================================
   // SAMSUNG GALAXY
   // ==========================================
+  // 1. S-Series Ultra (S26 Ultra down to S20 Ultra)
   {
-    pattern: /samsung.*(s25|s24|s23|s22)\s*ultra/i,
+    pattern: /samsung.*(s2[3-6])\s*ultra/i,
     variants: [
+      { storage: '256 GB', rams: ['12 GB'] },
+      { storage: '512 GB', rams: ['12 GB', '16 GB'] },
+      { storage: '1 TB', rams: ['12 GB', '16 GB'] },
+    ],
+  },
+  {
+    pattern: /samsung.*s22\s*ultra/i,
+    variants: [
+      { storage: '128 GB', rams: ['8 GB'] },
       { storage: '256 GB', rams: ['12 GB'] },
       { storage: '512 GB', rams: ['12 GB'] },
       { storage: '1 TB', rams: ['12 GB'] },
     ],
   },
   {
-    pattern: /samsung.*(s25|s24|s23|s22)\s*\+/i,
+    pattern: /samsung.*(s21|s20)\s*ultra/i,
     variants: [
+      { storage: '128 GB', rams: ['12 GB'] },
       { storage: '256 GB', rams: ['12 GB'] },
+      { storage: '512 GB', rams: ['16 GB'] },
+    ],
+  },
+
+  // 2. S-Series Plus (S26+ down to S20+)
+  {
+    pattern: /samsung.*(s2[3-6])\s*\+/i,
+    variants: [
+      { storage: '256 GB', rams: ['8 GB', '12 GB'] },
       { storage: '512 GB', rams: ['12 GB'] },
     ],
   },
   {
-    pattern: /samsung.*(s25|s24|s23|s22)\s*(5g|\b)/i,
+    pattern: /samsung.*(s22|s21)\s*\+/i,
     variants: [
       { storage: '128 GB', rams: ['8 GB'] },
       { storage: '256 GB', rams: ['8 GB'] },
     ],
   },
   {
-    pattern: /samsung.*(s24|s23)\s*fe/i,
+    pattern: /samsung.*s20\s*\+/i,
     variants: [
       { storage: '128 GB', rams: ['8 GB'] },
-      { storage: '256 GB', rams: ['8 GB'] },
-    ],
-  },
-  {
-    pattern: /samsung.*z\s*fold\s*(6|5|4)/i,
-    variants: [
-      { storage: '256 GB', rams: ['12 GB'] },
       { storage: '512 GB', rams: ['12 GB'] },
-      { storage: '1 TB', rams: ['12 GB'] },
     ],
   },
+
+  // 3. S-Series Base (S26 down to S20)
   {
-    pattern: /samsung.*z\s*flip\s*6/i,
+    pattern: /samsung.*(s26|s25)\s*(5g|\b)(?!\s*(ultra|\+|fe|edge|slim))/i,
     variants: [
+      { storage: '128 GB', rams: ['12 GB'] },
       { storage: '256 GB', rams: ['12 GB'] },
       { storage: '512 GB', rams: ['12 GB'] },
     ],
   },
   {
-    pattern: /samsung.*z\s*flip\s*(5|4)/i,
+    pattern: /samsung.*s24\s*(5g|\b)(?!\s*(ultra|\+|fe))/i,
     variants: [
       { storage: '128 GB', rams: ['8 GB'] },
       { storage: '256 GB', rams: ['8 GB'] },
       { storage: '512 GB', rams: ['8 GB'] },
+    ],
+  },
+  {
+    pattern: /samsung.*(s23|s22|s21)\s*(5g|\b)(?!\s*(ultra|\+|fe))/i,
+    variants: [
+      { storage: '128 GB', rams: ['8 GB'] },
+      { storage: '256 GB', rams: ['8 GB'] },
+    ],
+  },
+  {
+    pattern: /samsung.*s20\s*(5g|\b)(?!\s*(ultra|\+|fe))/i,
+    variants: [
+      { storage: '128 GB', rams: ['8 GB'] },
+    ],
+  },
+
+  // 4. S-Series FE
+  {
+    pattern: /samsung.*s24\s*fe/i,
+    variants: [
+      { storage: '128 GB', rams: ['8 GB'] },
+      { storage: '256 GB', rams: ['8 GB'] },
+      { storage: '512 GB', rams: ['8 GB'] },
+    ],
+  },
+  {
+    pattern: /samsung.*(s26|s25|s23|s21|s20)\s*fe/i,
+    variants: [
+      { storage: '128 GB', rams: ['6 GB', '8 GB'] },
+      { storage: '256 GB', rams: ['8 GB'] },
+    ],
+  },
+
+  // 5. S10 Series
+  {
+    pattern: /samsung.*s10\s*\+/i,
+    variants: [
+      { storage: '128 GB', rams: ['8 GB'] },
+      { storage: '512 GB', rams: ['8 GB'] },
+      { storage: '1 TB', rams: ['12 GB'] },
+    ],
+  },
+  {
+    pattern: /samsung.*s10\s*lite/i,
+    variants: [
+      { storage: '128 GB', rams: ['8 GB'] },
+      { storage: '512 GB', rams: ['8 GB'] },
+    ],
+  },
+  {
+    pattern: /samsung.*s10e/i,
+    variants: [
+      { storage: '128 GB', rams: ['6 GB', '8 GB'] },
+      { storage: '256 GB', rams: ['8 GB'] },
+    ],
+  },
+  {
+    pattern: /samsung.*s10\b(?!\s*(\+|lite|e))/i,
+    variants: [
+      { storage: '128 GB', rams: ['8 GB'] },
+      { storage: '512 GB', rams: ['8 GB'] },
+    ],
+  },
+
+  // 6. S9 & S8 Series
+  {
+    pattern: /samsung.*s9\s*(\+|plus)/i,
+    variants: [
+      { storage: '64 GB', rams: ['6 GB'] },
+      { storage: '128 GB', rams: ['6 GB'] },
+      { storage: '256 GB', rams: ['6 GB'] },
+    ],
+  },
+  {
+    pattern: /samsung.*s9\b(?!\s*(\+|plus))/i,
+    variants: [
+      { storage: '64 GB', rams: ['4 GB'] },
+      { storage: '128 GB', rams: ['4 GB'] },
+      { storage: '256 GB', rams: ['4 GB'] },
+    ],
+  },
+  {
+    pattern: /samsung.*s8\s*(\+|plus)/i,
+    variants: [
+      { storage: '64 GB', rams: ['4 GB', '6 GB'] },
+      { storage: '128 GB', rams: ['6 GB'] },
+    ],
+  },
+  {
+    pattern: /samsung.*s8\b(?!\s*(\+|plus))/i,
+    variants: [
+      { storage: '64 GB', rams: ['4 GB'] },
+    ],
+  },
+
+  // 7. GALAXY Z FOLD SERIES
+  {
+    pattern: /samsung.*z\s*fold\s*special/i,
+    variants: [
+      { storage: '512 GB', rams: ['16 GB'] },
+      { storage: '1 TB', rams: ['16 GB'] },
+    ],
+  },
+  {
+    pattern: /samsung.*z\s*fold\s*([4-8])/i,
+    variants: [
+      { storage: '256 GB', rams: ['12 GB'] },
+      { storage: '512 GB', rams: ['12 GB', '16 GB'] },
+      { storage: '1 TB', rams: ['12 GB', '16 GB'] },
+    ],
+  },
+  {
+    pattern: /samsung.*z\s*fold\s*[23]/i,
+    variants: [
+      { storage: '256 GB', rams: ['12 GB'] },
+      { storage: '512 GB', rams: ['12 GB'] },
+    ],
+  },
+  {
+    pattern: /samsung.*galaxy\s*fold\b(?!\s*[2-8])/i,
+    variants: [
+      { storage: '512 GB', rams: ['12 GB'] },
+    ],
+  },
+
+  // 8. GALAXY Z FLIP SERIES
+  {
+    pattern: /samsung.*z\s*flip\s*([6-8])/i,
+    variants: [
+      { storage: '256 GB', rams: ['12 GB'] },
+      { storage: '512 GB', rams: ['12 GB'] },
+    ],
+  },
+  {
+    pattern: /samsung.*z\s*flip\s*5\b/i,
+    variants: [
+      { storage: '256 GB', rams: ['8 GB'] },
+      { storage: '512 GB', rams: ['8 GB'] },
+    ],
+  },
+  {
+    pattern: /samsung.*z\s*flip\s*4\b/i,
+    variants: [
+      { storage: '128 GB', rams: ['8 GB'] },
+      { storage: '256 GB', rams: ['8 GB'] },
+      { storage: '512 GB', rams: ['8 GB'] },
+    ],
+  },
+  {
+    pattern: /samsung.*z\s*flip\s*3\b/i,
+    variants: [
+      { storage: '128 GB', rams: ['8 GB'] },
+      { storage: '256 GB', rams: ['8 GB'] },
+    ],
+  },
+  {
+    pattern: /samsung.*galaxy\s*z\s*flip\b(?!\s*[3-8])/i,
+    variants: [
+      { storage: '256 GB', rams: ['8 GB'] },
+    ],
+  },
+
+  // 9. GALAXY NOTE SERIES
+  {
+    pattern: /samsung.*note\s*20\s*ultra/i,
+    variants: [
+      { storage: '256 GB', rams: ['12 GB'] },
+      { storage: '512 GB', rams: ['12 GB'] },
+    ],
+  },
+  {
+    pattern: /samsung.*note\s*20\b(?!\s*ultra)/i,
+    variants: [
+      { storage: '256 GB', rams: ['8 GB'] },
+    ],
+  },
+  {
+    pattern: /samsung.*note\s*10\s*(\+|plus)/i,
+    variants: [
+      { storage: '256 GB', rams: ['12 GB'] },
+      { storage: '512 GB', rams: ['12 GB'] },
+    ],
+  },
+  {
+    pattern: /samsung.*note\s*10\s*lite/i,
+    variants: [
+      { storage: '128 GB', rams: ['6 GB', '8 GB'] },
+    ],
+  },
+  {
+    pattern: /samsung.*note\s*10\b(?!\s*(\+|plus|lite))/i,
+    variants: [
+      { storage: '256 GB', rams: ['8 GB'] },
+    ],
+  },
+  {
+    pattern: /samsung.*note\s*9/i,
+    variants: [
+      { storage: '128 GB', rams: ['6 GB'] },
+      { storage: '512 GB', rams: ['8 GB'] },
+    ],
+  },
+  {
+    pattern: /samsung.*note\s*8/i,
+    variants: [
+      { storage: '64 GB', rams: ['6 GB'] },
+    ],
+  },
+
+  // 10. GALAXY A & M POPULAR SERIES
+  {
+    pattern: /samsung.*(a14|a13|a12|a15|a16|m14|m13|m12|f14)\s*(5g|\b)/i,
+    variants: [
+      { storage: '64 GB', rams: ['4 GB', '6 GB'] },
+      { storage: '128 GB', rams: ['4 GB', '6 GB', '8 GB'] },
+    ],
+  },
+  {
+    pattern: /samsung.*(a04|a04s|a03|a03s|a05|m04|f04)\b/i,
+    variants: [
+      { storage: '32 GB', rams: ['3 GB', '4 GB'] },
+      { storage: '64 GB', rams: ['4 GB'] },
     ],
   },
   {
@@ -1407,30 +1644,8 @@ const MODEL_HARDWARE_RULES: Array<{
   },
 
   // ==========================================
-  // SAMSUNG
+  // SAMSUNG LEGACY
   // ==========================================
-  {
-    pattern: /s26\s*fe|s26fe/i,
-    variants: [
-      { storage: '128 GB', rams: ['8 GB'] },
-      { storage: '256 GB', rams: ['8 GB'] },
-    ],
-  },
-  {
-    pattern: /z\s*flip\s*8|flip\s*8|flip8/i,
-    variants: [
-      { storage: '256 GB', rams: ['12 GB'] },
-      { storage: '512 GB', rams: ['12 GB'] },
-    ],
-  },
-  {
-    pattern: /z\s*fold\s*8|fold\s*8|fold8/i,
-    variants: [
-      { storage: '256 GB', rams: ['12 GB', '16 GB'] },
-      { storage: '512 GB', rams: ['16 GB'] },
-      { storage: '1 TB', rams: ['16 GB'] },
-    ],
-  },
   {
     pattern: /galaxy\s*a8\b|\ba8\s*\(2018\)|\ba8\b/i,
     variants: [
@@ -2268,10 +2483,12 @@ export function is512GBValidForModel(brand = '', model = ''): boolean {
     return false;
   }
 
-  // 2. Samsung: Strictly Ultra, Fold, Flip 5/6/7, S24+, S25+, S26+, Note 20 Ultra
+  // 2. Samsung: Strictly Ultra (S20-S26, Note 20), Fold, Flip 4/5/6/7/8, S-Plus (S20-S26+), S24/S25/S26 Base, S24 FE, S10/S10+/S10 Lite, Note 10+, Note 9
   if (b.includes('samsung') || m.includes('galaxy')) {
-    if (/ultra|fold|flip\s*[5-7]|s2[4-6]\s*\+|note\s*20\s*ultra/i.test(m)) return true;
-    return false; // All other Samsung (A, M, F, base S20/S21/S22/S23, FE) max out at 256GB
+    if (
+      /ultra|fold|flip\s*[4-8]|s2[0-6]\s*\+|s2[4-6]\s*(5g|\b)|s24\s*fe|s10\s*(\+|lite|\b)|note\s*(20|10\+|9)/i.test(m)
+    ) return true;
+    return false; // All other Samsung (A, M, F, base S20/S21/S22/S23, other FE) max out at 256GB
   }
 
   // 3. OnePlus: Strictly OnePlus 12, 13, Open (Nord series, 11R, 12R never had 512GB in India)

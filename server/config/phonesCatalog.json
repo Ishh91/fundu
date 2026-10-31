@@ -11336,13 +11336,13 @@
     "model": "Galaxy A04s",
     "release_year": 2022,
     "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
+      "3GB",
+      "4GB"
     ],
     "storage_options": [
+      "32 GB",
       "64 GB",
-      "256GB"
+      "128 GB"
     ],
     "default_mrp": 8175,
     "base_resale_value": 4200,
@@ -11361,13 +11361,12 @@
     "model": "Galaxy A05",
     "release_year": 2022,
     "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
+      "4GB",
+      "6GB"
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "128 GB"
     ],
     "default_mrp": 10635,
     "base_resale_value": 5200,
@@ -11386,13 +11385,12 @@
     "model": "Galaxy A05s",
     "release_year": 2022,
     "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
+      "4GB",
+      "6GB"
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "128 GB"
     ],
     "default_mrp": 10710,
     "base_resale_value": 6200,
@@ -11417,7 +11415,7 @@
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 10260,
     "base_resale_value": 6840,
@@ -11441,7 +11439,7 @@
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 11190,
     "base_resale_value": 7460,
@@ -11459,13 +11457,12 @@
     "model": "Galaxy A12",
     "release_year": 2020,
     "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
+      "4GB",
+      "6GB"
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "128 GB"
     ],
     "default_mrp": 8460,
     "base_resale_value": 5200,
@@ -11484,13 +11481,12 @@
     "model": "Galaxy A13",
     "release_year": 2021,
     "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
+      "4GB",
+      "6GB"
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "128 GB"
     ],
     "default_mrp": 8895,
     "base_resale_value": 6000,
@@ -11509,13 +11505,13 @@
     "model": "Galaxy A14 5G",
     "release_year": 2022,
     "ram_options": [
+      "4GB",
       "6GB",
-      "8GB",
-      "12GB"
+      "8GB"
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "128 GB"
     ],
     "default_mrp": 11520,
     "base_resale_value": 7000,
@@ -11535,12 +11531,10 @@
     "release_year": 2023,
     "ram_options": [
       "6GB",
-      "8GB",
-      "12GB"
+      "8GB"
     ],
     "storage_options": [
-      "128 GB",
-      "256GB"
+      "128 GB"
     ],
     "default_mrp": 17610,
     "base_resale_value": 7800,
@@ -11560,12 +11554,10 @@
     "release_year": 2024,
     "ram_options": [
       "6GB",
-      "8GB",
-      "12GB"
+      "8GB"
     ],
     "storage_options": [
-      "128 GB",
-      "256GB"
+      "128 GB"
     ],
     "default_mrp": 18840,
     "base_resale_value": 12560,
@@ -11589,7 +11581,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 20580,
     "base_resale_value": 13720,
@@ -11613,7 +11605,7 @@
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 7950,
     "base_resale_value": 5300,
@@ -11637,7 +11629,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 8625,
     "base_resale_value": 4900,
@@ -11662,7 +11654,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 9795,
     "base_resale_value": 7500,
@@ -11687,7 +11679,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 17925,
     "base_resale_value": 6500,
@@ -11712,7 +11704,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 18510,
     "base_resale_value": 10500,
@@ -11737,7 +11729,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 20805,
     "base_resale_value": 13870,
@@ -11761,7 +11753,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 35505,
     "base_resale_value": 23670,
@@ -11785,7 +11777,7 @@
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 6930,
     "base_resale_value": 2900,
@@ -11810,7 +11802,7 @@
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 6705,
     "base_resale_value": 3800,
@@ -11835,7 +11827,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 8565,
     "base_resale_value": 4500,
@@ -11860,7 +11852,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 10395,
     "base_resale_value": 5600,
@@ -11885,7 +11877,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 13035,
     "base_resale_value": 8500,
@@ -11910,7 +11902,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 18675,
     "base_resale_value": 11000,
@@ -11935,7 +11927,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 21675,
     "base_resale_value": 14500,
@@ -11960,7 +11952,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 29370,
     "base_resale_value": 19580,
@@ -11984,7 +11976,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 37770,
     "base_resale_value": 25180,
@@ -12008,7 +12000,7 @@
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 7845,
     "base_resale_value": 3600,
@@ -12033,7 +12025,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 7155,
     "base_resale_value": 5000,
@@ -12058,7 +12050,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 8820,
     "base_resale_value": 5400,
@@ -12083,7 +12075,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 10920,
     "base_resale_value": 7500,
@@ -12108,7 +12100,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 14595,
     "base_resale_value": 9200,
@@ -12133,7 +12125,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 14175,
     "base_resale_value": 12000,
@@ -12158,7 +12150,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 38999,
     "base_resale_value": 15000,
@@ -12183,7 +12175,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 39999,
     "base_resale_value": 18500,
@@ -12208,7 +12200,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 36870,
     "base_resale_value": 24580,
@@ -12231,8 +12223,7 @@
       "12GB"
     ],
     "storage_options": [
-      "256 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 51375,
     "base_resale_value": 34250,
@@ -12256,7 +12247,7 @@
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 5490,
     "base_resale_value": 3660,
@@ -12280,7 +12271,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 9285,
     "base_resale_value": 4700,
@@ -12305,7 +12296,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 8040,
     "base_resale_value": 5200,
@@ -12330,7 +12321,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 8970,
     "base_resale_value": 7000,
@@ -12355,7 +12346,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 12375,
     "base_resale_value": 8500,
@@ -12380,7 +12371,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 15945,
     "base_resale_value": 13500,
@@ -12405,7 +12396,7 @@
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 6285,
     "base_resale_value": 2600,
@@ -12430,7 +12421,7 @@
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 5505,
     "base_resale_value": 3670,
@@ -12454,7 +12445,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 10395,
     "base_resale_value": 6100,
@@ -12479,7 +12470,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 6045,
     "base_resale_value": 4030,
@@ -12503,7 +12494,7 @@
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 5895,
     "base_resale_value": 3930,
@@ -12527,7 +12518,7 @@
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 6075,
     "base_resale_value": 4050,
@@ -12551,7 +12542,7 @@
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 5985,
     "base_resale_value": 3990,
@@ -12569,13 +12560,10 @@
     "model": "Galaxy F04",
     "release_year": 2022,
     "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
+      "4GB"
     ],
     "storage_options": [
-      "64 GB",
-      "256GB"
+      "64 GB"
     ],
     "default_mrp": 7410,
     "base_resale_value": 2800,
@@ -12600,7 +12588,7 @@
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 9480,
     "base_resale_value": 6320,
@@ -12624,7 +12612,7 @@
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 10425,
     "base_resale_value": 6950,
@@ -12648,7 +12636,7 @@
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 10950,
     "base_resale_value": 7300,
@@ -12672,7 +12660,7 @@
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 7965,
     "base_resale_value": 3000,
@@ -12697,7 +12685,7 @@
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 8820,
     "base_resale_value": 4000,
@@ -12716,13 +12704,12 @@
     "model": "Galaxy F14 5G",
     "release_year": 2022,
     "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
+      "4GB",
+      "6GB"
     ],
     "storage_options": [
-      "128 GB",
-      "256GB"
+      "64 GB",
+      "128 GB"
     ],
     "default_mrp": 10380,
     "base_resale_value": 6500,
@@ -12747,7 +12734,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 14670,
     "base_resale_value": 6500,
@@ -12772,7 +12759,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 15825,
     "base_resale_value": 10550,
@@ -12796,7 +12783,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 16560,
     "base_resale_value": 11040,
@@ -12820,7 +12807,7 @@
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 8460,
     "base_resale_value": 4800,
@@ -12845,7 +12832,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 12465,
     "base_resale_value": 6000,
@@ -12870,7 +12857,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 16725,
     "base_resale_value": 8500,
@@ -12895,7 +12882,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 20580,
     "base_resale_value": 13720,
@@ -12919,7 +12906,7 @@
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 7680,
     "base_resale_value": 3800,
@@ -12944,7 +12931,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 12405,
     "base_resale_value": 5500,
@@ -12968,8 +12955,7 @@
       "12GB"
     ],
     "storage_options": [
-      "256 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 22350,
     "base_resale_value": 12000,
@@ -12994,7 +12980,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 20220,
     "base_resale_value": 16000,
@@ -13019,7 +13005,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 26790,
     "base_resale_value": 17860,
@@ -13043,7 +13029,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 10230,
     "base_resale_value": 7200,
@@ -13068,7 +13054,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 29775,
     "base_resale_value": 19850,
@@ -13092,7 +13078,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 16185,
     "base_resale_value": 10790,
@@ -13110,15 +13096,12 @@
     "model": "Galaxy Fold",
     "release_year": 2022,
     "ram_options": [
-      "6GB",
-      "8GB",
       "12GB"
     ],
     "storage_options": [
-      "512 GB",
-      "256GB"
+      "512 GB"
     ],
-    "default_mrp": 21840,
+    "default_mrp": 164999,
     "base_resale_value": 14560,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-fold.jpg",
     "popular_tag": "Samsung Official Model",
@@ -13134,13 +13117,11 @@
     "model": "Galaxy M04",
     "release_year": 2022,
     "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
+      "4GB"
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "128 GB"
     ],
     "default_mrp": 8310,
     "base_resale_value": 2800,
@@ -13165,7 +13146,7 @@
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 9930,
     "base_resale_value": 6620,
@@ -13189,7 +13170,7 @@
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 11100,
     "base_resale_value": 7400,
@@ -13213,7 +13194,7 @@
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 10005,
     "base_resale_value": 6670,
@@ -13237,7 +13218,7 @@
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 8625,
     "base_resale_value": 3000,
@@ -13256,13 +13237,12 @@
     "model": "Galaxy M13",
     "release_year": 2021,
     "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
+      "4GB",
+      "6GB"
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "128 GB"
     ],
     "default_mrp": 9105,
     "base_resale_value": 4500,
@@ -13287,7 +13267,7 @@
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 10935,
     "base_resale_value": 7290,
@@ -13305,13 +13285,12 @@
     "model": "Galaxy M14 5G",
     "release_year": 2022,
     "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
+      "4GB",
+      "6GB"
     ],
     "storage_options": [
-      "128 GB",
-      "256GB"
+      "64 GB",
+      "128 GB"
     ],
     "default_mrp": 14385,
     "base_resale_value": 6500,
@@ -13336,7 +13315,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 14430,
     "base_resale_value": 6500,
@@ -13361,7 +13340,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 13365,
     "base_resale_value": 8910,
@@ -13385,7 +13364,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 15345,
     "base_resale_value": 10230,
@@ -13409,7 +13388,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 17400,
     "base_resale_value": 11600,
@@ -13433,7 +13412,7 @@
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 7575,
     "base_resale_value": 3500,
@@ -13458,7 +13437,7 @@
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 7815,
     "base_resale_value": 5210,
@@ -13482,7 +13461,7 @@
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 6855,
     "base_resale_value": 3800,
@@ -13507,7 +13486,7 @@
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 7620,
     "base_resale_value": 5000,
@@ -13532,7 +13511,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 8460,
     "base_resale_value": 5800,
@@ -13557,7 +13536,7 @@
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 8130,
     "base_resale_value": 5800,
@@ -13582,7 +13561,7 @@
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 10320,
     "base_resale_value": 6880,
@@ -13606,7 +13585,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 13215,
     "base_resale_value": 7200,
@@ -13631,7 +13610,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 18999,
     "base_resale_value": 8500,
@@ -13656,7 +13635,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 17775,
     "base_resale_value": 11000,
@@ -13681,7 +13660,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 18525,
     "base_resale_value": 12350,
@@ -13705,7 +13684,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 7770,
     "base_resale_value": 3600,
@@ -13730,7 +13709,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 12855,
     "base_resale_value": 6800,
@@ -13755,7 +13734,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 33450,
     "base_resale_value": 22300,
@@ -13779,7 +13758,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 9720,
     "base_resale_value": 7000,
@@ -13804,7 +13783,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 14010,
     "base_resale_value": 7500,
@@ -13829,7 +13808,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 15345,
     "base_resale_value": 10500,
@@ -13854,7 +13833,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 23700,
     "base_resale_value": 10500,
@@ -13879,7 +13858,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 26999,
     "base_resale_value": 13500,
@@ -13904,7 +13883,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 19950,
     "base_resale_value": 13300,
@@ -13928,7 +13907,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 25500,
     "base_resale_value": 17000,
@@ -13946,16 +13925,13 @@
     "model": "Galaxy Note 10",
     "release_year": 2019,
     "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
+      "8GB"
     ],
     "storage_options": [
-      "256 GB",
-      "256GB"
+      "256 GB"
     ],
-    "default_mrp": 16380,
-    "base_resale_value": 9800,
+    "default_mrp": 69999,
+    "base_resale_value": 14000,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-note10-.jpg",
     "popular_tag": "Samsung Official Model",
     "processor": "High-Efficiency Processor",
@@ -13972,15 +13948,13 @@
     "release_year": 2019,
     "ram_options": [
       "6GB",
-      "8GB",
-      "12GB"
+      "8GB"
     ],
     "storage_options": [
-      "128 GB",
-      "256GB"
+      "128 GB"
     ],
-    "default_mrp": 11175,
-    "base_resale_value": 7500,
+    "default_mrp": 38999,
+    "base_resale_value": 11000,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-note10-lite.jpg",
     "popular_tag": "Samsung Official Model",
     "processor": "High-Efficiency Processor",
@@ -13996,16 +13970,14 @@
     "model": "Galaxy Note 10+",
     "release_year": 2019,
     "ram_options": [
-      "6GB",
-      "8GB",
       "12GB"
     ],
     "storage_options": [
       "256 GB",
-      "256GB"
+      "512 GB"
     ],
-    "default_mrp": 29925,
-    "base_resale_value": 9800,
+    "default_mrp": 79999,
+    "base_resale_value": 16500,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-note10-plus-.jpg",
     "popular_tag": "Samsung Official Model",
     "processor": "5G Octa-core Processor",
@@ -14021,16 +13993,13 @@
     "model": "Galaxy Note 20",
     "release_year": 2020,
     "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
+      "8GB"
     ],
     "storage_options": [
-      "256 GB",
-      "256GB"
+      "256 GB"
     ],
-    "default_mrp": 30450,
-    "base_resale_value": 14000,
+    "default_mrp": 77999,
+    "base_resale_value": 18000,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-note20-5g-r.jpg",
     "popular_tag": "Samsung Official Model",
     "processor": "High-Efficiency Processor",
@@ -14046,16 +14015,14 @@
     "model": "Galaxy Note 20 Ultra 5G",
     "release_year": 2020,
     "ram_options": [
-      "6GB",
-      "8GB",
       "12GB"
     ],
     "storage_options": [
       "256 GB",
-      "256GB"
+      "512 GB"
     ],
     "default_mrp": 104999,
-    "base_resale_value": 23000,
+    "base_resale_value": 26000,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-note20-ultra-5g-.jpg",
     "popular_tag": "Samsung Official Model",
     "processor": "5G Octa-core Processor",
@@ -14071,16 +14038,13 @@
     "model": "Galaxy Note 8",
     "release_year": 2017,
     "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
+      "6GB"
     ],
     "storage_options": [
-      "64 GB",
-      "256GB"
+      "64 GB"
     ],
-    "default_mrp": 10095,
-    "base_resale_value": 5000,
+    "default_mrp": 67900,
+    "base_resale_value": 6500,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-note8-sm-n950.jpg",
     "popular_tag": "Samsung Official Model",
     "processor": "High-Efficiency Processor",
@@ -14097,15 +14061,14 @@
     "release_year": 2022,
     "ram_options": [
       "6GB",
-      "8GB",
-      "12GB"
+      "8GB"
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "512 GB"
     ],
-    "default_mrp": 11805,
-    "base_resale_value": 6500,
+    "default_mrp": 67900,
+    "base_resale_value": 9500,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-note9-r1.jpg",
     "popular_tag": "Samsung Official Model",
     "processor": "High-Efficiency Processor",
@@ -14121,16 +14084,14 @@
     "model": "Galaxy S10",
     "release_year": 2018,
     "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
+      "8GB"
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "512 GB"
     ],
-    "default_mrp": 13050,
-    "base_resale_value": 7500,
+    "default_mrp": 66900,
+    "base_resale_value": 9500,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s10-1.jpg",
     "popular_tag": "Samsung Official Model",
     "processor": "High-Efficiency Processor",
@@ -14146,16 +14107,14 @@
     "model": "Galaxy S10 Lite",
     "release_year": 2018,
     "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
+      "8GB"
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "512 GB"
     ],
-    "default_mrp": 11655,
-    "base_resale_value": 6500,
+    "default_mrp": 39999,
+    "base_resale_value": 9000,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s10-lite-sm-g770f.jpg",
     "popular_tag": "Samsung Official Model",
     "processor": "High-Efficiency Processor",
@@ -14171,16 +14130,16 @@
     "model": "Galaxy S10+",
     "release_year": 2018,
     "ram_options": [
-      "6GB",
       "8GB",
       "12GB"
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "512 GB",
+      "1 TB"
     ],
-    "default_mrp": 20175,
-    "base_resale_value": 7500,
+    "default_mrp": 73900,
+    "base_resale_value": 11500,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s10-plus-new.jpg",
     "popular_tag": "Samsung Official Model",
     "processor": "5G Octa-core Processor",
@@ -14197,15 +14156,14 @@
     "release_year": 2018,
     "ram_options": [
       "6GB",
-      "8GB",
-      "12GB"
+      "8GB"
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
-    "default_mrp": 11190,
-    "base_resale_value": 6000,
+    "default_mrp": 55900,
+    "base_resale_value": 8000,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s10e-1.jpg",
     "popular_tag": "Samsung Official Model",
     "processor": "High-Efficiency Processor",
@@ -14221,16 +14179,13 @@
     "model": "Galaxy S20",
     "release_year": 2019,
     "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
+      "8GB"
     ],
     "storage_options": [
-      "128 GB",
-      "256GB"
+      "128 GB"
     ],
-    "default_mrp": 14175,
-    "base_resale_value": 11000,
+    "default_mrp": 60999,
+    "base_resale_value": 12000,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s20-r.jpg",
     "popular_tag": "Samsung Official Model",
     "processor": "High-Efficiency Processor",
@@ -14246,16 +14201,14 @@
     "model": "Galaxy S20 FE",
     "release_year": 2019,
     "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
+      "8GB"
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
-    "default_mrp": 14025,
-    "base_resale_value": 11000,
+    "default_mrp": 35999,
+    "base_resale_value": 9500,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s20-fe-5g.jpg",
     "popular_tag": "Samsung Official Model",
     "processor": "High-Efficiency Processor",
@@ -14271,16 +14224,16 @@
     "model": "Galaxy S20 Ultra 5G",
     "release_year": 2020,
     "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
+      "12GB",
+      "16GB"
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB",
+      "512 GB"
     ],
-    "default_mrp": 22080,
-    "base_resale_value": 18000,
+    "default_mrp": 97999,
+    "base_resale_value": 19500,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s20-ultra-5g-r.jpg",
     "popular_tag": "Samsung Official Model",
     "processor": "5G Octa-core Processor",
@@ -14296,16 +14249,14 @@
     "model": "Galaxy S20+",
     "release_year": 2019,
     "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
+      "8GB"
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "512 GB"
     ],
-    "default_mrp": 28200,
-    "base_resale_value": 11000,
+    "default_mrp": 73999,
+    "base_resale_value": 14500,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s20-plus-r.jpg",
     "popular_tag": "Samsung Official Model",
     "processor": "5G Octa-core Processor",
@@ -14322,16 +14273,14 @@
     "model": "Galaxy S21 5G",
     "release_year": 2020,
     "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
+      "8GB"
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
-    "default_mrp": 30600,
-    "base_resale_value": 16000,
+    "default_mrp": 54999,
+    "base_resale_value": 17500,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s21-5g-r.jpg",
     "popular_tag": "Samsung Official Model",
     "processor": "5G Octa-core Processor",
@@ -14347,16 +14296,14 @@
     "model": "Galaxy S21 FE 5G",
     "release_year": 2022,
     "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
+      "8GB"
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
-    "default_mrp": 49999,
-    "base_resale_value": 14000,
+    "default_mrp": 44999,
+    "base_resale_value": 15500,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s21-fe-5g.jpg",
     "popular_tag": "Samsung Official Model",
     "processor": "5G Octa-core Processor",
@@ -14373,16 +14320,16 @@
     "model": "Galaxy S21 Ultra 5G",
     "release_year": 2020,
     "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
+      "12GB",
+      "16GB"
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB",
+      "512 GB"
     ],
-    "default_mrp": 30600,
-    "base_resale_value": 25500,
+    "default_mrp": 105999,
+    "base_resale_value": 28000,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s21-ultra-5g-.jpg",
     "popular_tag": "Samsung Official Model",
     "processor": "5G Octa-core Processor",
@@ -14398,16 +14345,14 @@
     "model": "Galaxy S21+ 5G",
     "release_year": 2020,
     "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
+      "8GB"
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
-    "default_mrp": 23250,
-    "base_resale_value": 16000,
+    "default_mrp": 71999,
+    "base_resale_value": 21000,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s21-plus-5g-.jpg",
     "popular_tag": "Samsung Official Model",
     "processor": "5G Octa-core Processor",
@@ -14423,16 +14368,14 @@
     "model": "Galaxy S22 5G",
     "release_year": 2022,
     "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
+      "8GB"
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
-    "default_mrp": 62999,
-    "base_resale_value": 21500,
+    "default_mrp": 59999,
+    "base_resale_value": 24000,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s22-5g.jpg",
     "popular_tag": "Samsung Official Model",
     "processor": "5G Octa-core Processor",
@@ -14449,16 +14392,17 @@
     "model": "Galaxy S22 Ultra 5G",
     "release_year": 2022,
     "ram_options": [
-      "6GB",
       "8GB",
       "12GB"
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB",
+      "512 GB",
+      "1 TB"
     ],
     "default_mrp": 109999,
-    "base_resale_value": 32000,
+    "base_resale_value": 39000,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s22-ultra-5g.jpg",
     "popular_tag": "Samsung Official Model",
     "processor": "5G Octa-core Processor",
@@ -14475,16 +14419,14 @@
     "model": "Galaxy S22+ 5G",
     "release_year": 2021,
     "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
+      "8GB"
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
-    "default_mrp": 32175,
-    "base_resale_value": 21500,
+    "default_mrp": 79999,
+    "base_resale_value": 29000,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s22-plus-5g.jpg",
     "popular_tag": "Samsung Official Model",
     "processor": "5G Octa-core Processor",
@@ -14501,16 +14443,14 @@
     "model": "Galaxy S23 5G",
     "release_year": 2023,
     "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
+      "8GB"
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
-    "default_mrp": 74999,
-    "base_resale_value": 28000,
+    "default_mrp": 64999,
+    "base_resale_value": 32000,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s23-5g.jpg",
     "popular_tag": "Samsung Official Model",
     "processor": "5G Octa-core Processor",
@@ -14527,16 +14467,14 @@
     "model": "Galaxy S23 FE 5G",
     "release_year": 2023,
     "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
+      "8GB"
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 49999,
-    "base_resale_value": 21500,
+    "base_resale_value": 26000,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s23-fe.jpg",
     "popular_tag": "Samsung Official Model",
     "processor": "5G Octa-core Processor",
@@ -14553,16 +14491,16 @@
     "model": "Galaxy S23 Ultra",
     "release_year": 2023,
     "ram_options": [
-      "6GB",
       "8GB",
       "12GB"
     ],
     "storage_options": [
       "256 GB",
-      "256GB"
+      "512 GB",
+      "1 TB"
     ],
-    "default_mrp": 124999,
-    "base_resale_value": 48000,
+    "default_mrp": 114999,
+    "base_resale_value": 52000,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s23-ultra-5g.jpg",
     "popular_tag": "Samsung Official Model",
     "processor": "5G Octa-core Processor",
@@ -14579,16 +14517,14 @@
     "model": "Galaxy S23+",
     "release_year": 2022,
     "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
+      "8GB"
     ],
     "storage_options": [
       "256 GB",
-      "256GB"
+      "512 GB"
     ],
-    "default_mrp": 47925,
-    "base_resale_value": 28000,
+    "default_mrp": 84999,
+    "base_resale_value": 41000,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s23-plus-5g.jpg",
     "popular_tag": "Samsung Official Model",
     "processor": "5G Octa-core Processor",
@@ -14605,16 +14541,15 @@
     "model": "Galaxy S24 5G",
     "release_year": 2024,
     "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
+      "8GB"
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB",
+      "512 GB"
     ],
-    "default_mrp": 79999,
-    "base_resale_value": 43000,
+    "default_mrp": 74999,
+    "base_resale_value": 42000,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s24-5g-sm-s921.jpg",
     "popular_tag": "Samsung Official Model",
     "processor": "5G Octa-core Processor",
@@ -14631,16 +14566,15 @@
     "model": "Galaxy S24 FE",
     "release_year": 2023,
     "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
+      "8GB"
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB",
+      "512 GB"
     ],
-    "default_mrp": 49950,
-    "base_resale_value": 33300,
+    "default_mrp": 59999,
+    "base_resale_value": 35000,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s24-fe.jpg",
     "popular_tag": "Samsung Official Model",
     "processor": "High-Efficiency Processor",
@@ -14657,16 +14591,15 @@
     "model": "Galaxy S24 Ultra",
     "release_year": 2024,
     "ram_options": [
-      "6GB",
-      "8GB",
       "12GB"
     ],
     "storage_options": [
       "256 GB",
-      "256GB"
+      "512 GB",
+      "1 TB"
     ],
     "default_mrp": 129999,
-    "base_resale_value": 65500,
+    "base_resale_value": 78000,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s24-ultra-5g-sm-s928-stylus.jpg",
     "popular_tag": "Samsung Official Model",
     "processor": "5G Octa-core Processor",
@@ -14683,16 +14616,14 @@
     "model": "Galaxy S24+",
     "release_year": 2024,
     "ram_options": [
-      "6GB",
-      "8GB",
       "12GB"
     ],
     "storage_options": [
       "256 GB",
-      "256GB"
+      "512 GB"
     ],
     "default_mrp": 99999,
-    "base_resale_value": 43000,
+    "base_resale_value": 58000,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s24-plus-5g-sm-s926.jpg",
     "popular_tag": "Samsung Official Model",
     "processor": "5G Octa-core Processor",
@@ -14709,19 +14640,18 @@
     "model": "Galaxy S25 5G",
     "release_year": 2025,
     "ram_options": [
-      "6GB",
-      "8GB",
       "12GB"
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB",
+      "512 GB"
     ],
-    "default_mrp": 84999,
+    "default_mrp": 79999,
     "base_resale_value": 43800,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s24-5g-sm-s921.jpg",
     "popular_tag": "Samsung Official Model",
-    "processor": "5G Octa-core Processor",
+    "processor": "Snapdragon 8 Elite for Galaxy",
     "camera_spec": "50MP OIS Camera",
     "battery_spec": "5000 mAh Fast Charging",
     "display_spec": "6.7\" AMOLED 120Hz",
@@ -14733,15 +14663,13 @@
     "model": "Galaxy S25 Edge",
     "release_year": 2024,
     "ram_options": [
-      "6GB",
-      "8GB",
       "12GB"
     ],
     "storage_options": [
       "256 GB",
-      "256GB"
+      "512 GB"
     ],
-    "default_mrp": 66930,
+    "default_mrp": 89999,
     "base_resale_value": 44620,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s25-edge.jpg",
     "popular_tag": "Samsung Official Model",
@@ -14757,15 +14685,13 @@
     "model": "Galaxy S25 FE",
     "release_year": 2025,
     "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
+      "8GB"
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
-    "default_mrp": 64999,
+    "default_mrp": 59999,
     "base_resale_value": 34850,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s25-fe.jpg",
     "popular_tag": "Samsung Official Model",
@@ -14781,19 +14707,17 @@
     "model": "Galaxy S26 5G",
     "release_year": 2026,
     "ram_options": [
-      "6GB",
-      "8GB",
       "12GB"
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
-    "default_mrp": 89999,
+    "default_mrp": 84999,
     "base_resale_value": 51850,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s24-5g-sm-s921.jpg",
     "popular_tag": "Samsung Official Model",
-    "processor": "5G Octa-core Processor",
+    "processor": "Snapdragon 8 Elite Gen 2",
     "camera_spec": "50MP OIS Camera",
     "battery_spec": "5000 mAh Fast Charging",
     "display_spec": "6.7\" AMOLED 120Hz",
@@ -14805,22 +14729,22 @@
     "model": "Galaxy S26 Ultra",
     "release_year": 2026,
     "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
+      "12GB",
+      "16GB"
     ],
     "storage_options": [
       "256 GB",
-      "256GB"
+      "512 GB",
+      "1 TB"
     ],
-    "default_mrp": 149999,
+    "default_mrp": 139999,
     "base_resale_value": 124900,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s25-ultra-sm-s938.jpg",
     "popular_tag": "Samsung Official Model",
-    "processor": "5G Octa-core Processor",
-    "camera_spec": "50MP OIS Camera",
+    "processor": "Snapdragon 8 Elite Gen 2",
+    "camera_spec": "200MP Quad Camera OIS",
     "battery_spec": "5000 mAh Fast Charging",
-    "display_spec": "6.7\" AMOLED 120Hz",
+    "display_spec": "6.9\" Dynamic LTPO AMOLED 2X 120Hz",
     "is_5g": true,
     "is_active": true
   },
@@ -14829,19 +14753,17 @@
     "model": "Galaxy S26+",
     "release_year": 2026,
     "ram_options": [
-      "6GB",
-      "8GB",
       "12GB"
     ],
     "storage_options": [
       "256 GB",
-      "256GB"
+      "512 GB"
     ],
-    "default_mrp": 119999,
+    "default_mrp": 109999,
     "base_resale_value": 94800,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s24-plus-5g-sm-s926.jpg",
     "popular_tag": "Samsung Official Model",
-    "processor": "5G Octa-core Processor",
+    "processor": "Snapdragon 8 Elite Gen 2",
     "camera_spec": "50MP OIS Camera",
     "battery_spec": "5000 mAh Fast Charging",
     "display_spec": "6.7\" AMOLED 120Hz",
@@ -14853,15 +14775,15 @@
     "model": "Galaxy Z Fold 7",
     "release_year": 2025,
     "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
+      "12GB",
+      "16GB"
     ],
     "storage_options": [
       "256 GB",
-      "256GB"
+      "512 GB",
+      "1 TB"
     ],
-    "default_mrp": 174999,
+    "default_mrp": 169999,
     "base_resale_value": 94900,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-z-fold6.jpg",
     "popular_tag": "Samsung Official Model",
@@ -14879,16 +14801,14 @@
     "model": "Galaxy Z Flip 7",
     "release_year": 2025,
     "ram_options": [
-      "6GB",
-      "8GB",
       "12GB"
     ],
     "storage_options": [
       "256 GB",
-      "256GB"
+      "512 GB"
     ],
-    "default_mrp": 114999,
-    "base_resale_value": 14000,
+    "default_mrp": 109999,
+    "base_resale_value": 65000,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-z-flip6.jpg",
     "popular_tag": "Samsung Official Model",
     "processor": "5G Octa-core Processor",
@@ -14905,15 +14825,13 @@
     "model": "Galaxy Z Fold Special Edition",
     "release_year": 2022,
     "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
+      "16GB"
     ],
     "storage_options": [
       "512 GB",
-      "256GB"
+      "1 TB"
     ],
-    "default_mrp": 133350,
+    "default_mrp": 179999,
     "base_resale_value": 88900,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-z-fold6.jpg",
     "popular_tag": "Samsung Official Model",
@@ -14931,19 +14849,17 @@
     "model": "Galaxy S25+",
     "release_year": 2025,
     "ram_options": [
-      "6GB",
-      "8GB",
       "12GB"
     ],
     "storage_options": [
       "256 GB",
-      "256GB"
+      "512 GB"
     ],
-    "default_mrp": 109999,
+    "default_mrp": 99999,
     "base_resale_value": 88900,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s24-plus-5g-sm-s926.jpg",
     "popular_tag": "Samsung Official Model",
-    "processor": "5G Octa-core Processor",
+    "processor": "Snapdragon 8 Elite for Galaxy",
     "camera_spec": "50MP OIS Camera",
     "battery_spec": "5000 mAh Fast Charging",
     "display_spec": "6.7\" AMOLED 120Hz",
@@ -14955,16 +14871,15 @@
     "model": "Galaxy S9",
     "release_year": 2018,
     "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
+      "4GB"
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "128 GB",
+      "256 GB"
     ],
-    "default_mrp": 9180,
-    "base_resale_value": 3500,
+    "default_mrp": 57900,
+    "base_resale_value": 5000,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s9.jpg",
     "popular_tag": "Samsung Official Model",
     "processor": "High-Efficiency Processor",
@@ -14981,16 +14896,15 @@
     "model": "Galaxy S9 Plus",
     "release_year": 2018,
     "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
+      "6GB"
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "128 GB",
+      "256 GB"
     ],
-    "default_mrp": 9375,
-    "base_resale_value": 4800,
+    "default_mrp": 64900,
+    "base_resale_value": 6500,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s9-plus.jpg",
     "popular_tag": "Samsung Official Model",
     "processor": "5G Octa-core Processor",
@@ -15007,15 +14921,12 @@
     "model": "Galaxy Z Flip",
     "release_year": 2022,
     "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
+      "8GB"
     ],
     "storage_options": [
-      "128 GB",
-      "256GB"
+      "256 GB"
     ],
-    "default_mrp": 70425,
+    "default_mrp": 109999,
     "base_resale_value": 14000,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-z-flip-01.jpg",
     "popular_tag": "Samsung Official Model",
@@ -15032,15 +14943,13 @@
     "model": "Galaxy Z Flip 3 5G",
     "release_year": 2021,
     "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
+      "8GB"
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
-    "default_mrp": 34350,
+    "default_mrp": 84999,
     "base_resale_value": 16000,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-z-flip3-5g.jpg",
     "popular_tag": "Samsung Official Model",
@@ -15057,15 +14966,14 @@
     "model": "Galaxy Z Flip 4",
     "release_year": 2022,
     "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
+      "8GB"
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB",
+      "512 GB"
     ],
-    "default_mrp": 30525,
+    "default_mrp": 89999,
     "base_resale_value": 24500,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-z-flip4.jpg",
     "popular_tag": "Samsung Official Model",
@@ -15082,15 +14990,13 @@
     "model": "Galaxy Z Flip 5",
     "release_year": 2023,
     "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
+      "8GB"
     ],
     "storage_options": [
       "256 GB",
-      "256GB"
+      "512 GB"
     ],
-    "default_mrp": 47775,
+    "default_mrp": 99999,
     "base_resale_value": 36000,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-z-flip5.jpg",
     "popular_tag": "Samsung Official Model",
@@ -15107,15 +15013,13 @@
     "model": "Galaxy Z Flip 6",
     "release_year": 2024,
     "ram_options": [
-      "6GB",
-      "8GB",
       "12GB"
     ],
     "storage_options": [
       "256 GB",
-      "256GB"
+      "512 GB"
     ],
-    "default_mrp": 70425,
+    "default_mrp": 109999,
     "base_resale_value": 49000,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-z-flip6.jpg",
     "popular_tag": "Samsung Official Model",
@@ -15137,8 +15041,7 @@
       "12GB"
     ],
     "storage_options": [
-      "256 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": 79650,
     "base_resale_value": 14000,
@@ -15158,15 +15061,13 @@
     "model": "Galaxy Z Fold 2 5G",
     "release_year": 2022,
     "ram_options": [
-      "6GB",
-      "8GB",
       "12GB"
     ],
     "storage_options": [
       "256 GB",
-      "256GB"
+      "512 GB"
     ],
-    "default_mrp": 40425,
+    "default_mrp": 149999,
     "base_resale_value": 23000,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-z-fold2-5g.jpg",
     "popular_tag": "Samsung Official Model",
@@ -15183,15 +15084,13 @@
     "model": "Galaxy Z Fold 3 5G",
     "release_year": 2021,
     "ram_options": [
-      "6GB",
-      "8GB",
       "12GB"
     ],
     "storage_options": [
       "256 GB",
-      "256GB"
+      "512 GB"
     ],
-    "default_mrp": 58500,
+    "default_mrp": 139999,
     "base_resale_value": 27000,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-z-fold3-5g.jpg",
     "popular_tag": "Samsung Official Model",
@@ -15208,15 +15107,14 @@
     "model": "Galaxy Z Fold 4",
     "release_year": 2022,
     "ram_options": [
-      "6GB",
-      "8GB",
       "12GB"
     ],
     "storage_options": [
       "256 GB",
-      "256GB"
+      "512 GB",
+      "1 TB"
     ],
-    "default_mrp": 55425,
+    "default_mrp": 144999,
     "base_resale_value": 42000,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-z-fold4.jpg",
     "popular_tag": "Samsung Official Model",
@@ -15233,15 +15131,14 @@
     "model": "Galaxy Z Fold 5",
     "release_year": 2023,
     "ram_options": [
-      "6GB",
-      "8GB",
       "12GB"
     ],
     "storage_options": [
       "256 GB",
-      "256GB"
+      "512 GB",
+      "1 TB"
     ],
-    "default_mrp": 85275,
+    "default_mrp": 154999,
     "base_resale_value": 55000,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-z-fold5.jpg",
     "popular_tag": "Samsung Official Model",
@@ -15258,15 +15155,14 @@
     "model": "Galaxy Z Fold 6",
     "release_year": 2024,
     "ram_options": [
-      "6GB",
-      "8GB",
       "12GB"
     ],
     "storage_options": [
       "256 GB",
-      "256GB"
+      "512 GB",
+      "1 TB"
     ],
-    "default_mrp": 124425,
+    "default_mrp": 164999,
     "base_resale_value": 76000,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-z-fold6.jpg",
     "popular_tag": "Samsung Official Model",
@@ -21372,21 +21268,22 @@
     "model": "Galaxy S25 Ultra",
     "release_year": 2025,
     "ram_options": [
-      "6GB",
-      "8GB"
+      "12GB",
+      "16GB"
     ],
     "storage_options": [
-      "128GB",
-      "256GB"
+      "256 GB",
+      "512 GB",
+      "1 TB"
     ],
-    "default_mrp": 139999,
+    "default_mrp": 129999,
     "base_resale_value": 115900,
     "image_url": null,
     "popular_tag": "Samsung Bestseller",
-    "processor": "Octa-core Processor",
-    "camera_spec": "50MP Camera",
-    "battery_spec": "5000 mAh",
-    "display_spec": "AMOLED Display",
+    "processor": "Snapdragon 8 Elite for Galaxy",
+    "camera_spec": "200MP Quad Camera with 5x Periscope OIS",
+    "battery_spec": "5000 mAh 45W Fast Charging",
+    "display_spec": "6.86\" Dynamic LTPO AMOLED 2X 120Hz",
     "is_5g": true,
     "is_active": true
   },
@@ -25103,7 +25000,7 @@
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": null,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s24-ultra-5g-sm-s928-final.jpg",
@@ -25128,7 +25025,7 @@
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": null,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s24-ultra-5g-sm-s928-final.jpg",
@@ -25153,7 +25050,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": null,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s24-ultra-5g-sm-s928-final.jpg",
@@ -25178,7 +25075,7 @@
     ],
     "storage_options": [
       "64 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": null,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s24-ultra-5g-sm-s928-final.jpg",
@@ -25203,7 +25100,7 @@
     ],
     "storage_options": [
       "128 GB",
-      "256GB"
+      "256 GB"
     ],
     "default_mrp": null,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s24-ultra-5g-sm-s928-final.jpg",
@@ -27471,7 +27368,7 @@
       "256 GB"
     ],
     "default_mrp": 39999,
-    "base_resale_value": 14500,
+    "base_resale_value": 11000,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s20-fe-5g.jpg",
     "popular_tag": "Samsung Official Model",
     "processor": "Snapdragon 865 5G",
@@ -27495,8 +27392,8 @@
       "64 GB",
       "128 GB"
     ],
-    "default_mrp": 24999,
-    "base_resale_value": 4800,
+    "default_mrp": 54900,
+    "base_resale_value": 4500,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s8-plus.jpg",
     "popular_tag": "Samsung Official Model",
     "processor": "Exynos 8895",
@@ -27518,8 +27415,8 @@
     "storage_options": [
       "64 GB"
     ],
-    "default_mrp": 19999,
-    "base_resale_value": 3900,
+    "default_mrp": 49900,
+    "base_resale_value": 3800,
     "image_url": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s8.jpg",
     "popular_tag": "Samsung Official Model",
     "processor": "Exynos 8895",
