@@ -54,9 +54,11 @@ const sellRequestSchema = createSchema({
   payout_method: { type: String, default: 'UPI / Spot Cash' },
   payout_details: { type: String, default: null },
   assigned_vendor_id: { type: String, default: null },
+  assigned_vendor_name: { type: String, default: null },
   forwarded_to_vendor: { type: Boolean, default: false },
   vendor_quote_price: { type: Number, default: null },
   vendor_notes: { type: String, default: null },
+  vendor_quote_notes: { type: String, default: null },
   vendor_quote_status: { type: String, default: 'none' }, // 'none', 'pending_inspection', 'quoted', 'user_accepted', 'user_rejected', 'completed'
   commission_percent: { type: Number, default: 10 },
   commission_amount: { type: Number, default: null },

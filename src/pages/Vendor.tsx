@@ -118,9 +118,13 @@ export default function Vendor() {
     try {
       const nowIso = new Date().toISOString();
       const notes = sellInspectionNotes || 'Physical inspection completed by Vendor.';
+      const vendorName = profile?.business_name || profile?.full_name || 'Vendor Partner';
       const { error } = await db.from('sell_requests').update({
         vendor_quote_price: priceNum,
         vendor_notes: notes,
+        vendor_quote_notes: notes,
+        assigned_vendor_id: (sellQuoteModal as any).assigned_vendor_id || user.id,
+        assigned_vendor_name: (sellQuoteModal as any).assigned_vendor_name || vendorName,
         vendor_quote_status: 'quoted',
         status: 'quoted_by_vendor',
         updated_at: nowIso,
@@ -204,9 +208,13 @@ export default function Vendor() {
     try {
       const nowIso = new Date().toISOString();
       const details = repairQuotationDetails || 'Repair quotation uploaded by Vendor.';
+      const vendorName = profile?.business_name || profile?.full_name || 'Vendor Partner';
       const { error } = await db.from('repair_bookings').update({
         vendor_quotation_amount: amountNum,
         vendor_quotation_details: details,
+        vendor_quotation_notes: details,
+        assigned_vendor_id: (repairQuoteModal as any).assigned_vendor_id || user.id,
+        assigned_vendor_name: (repairQuoteModal as any).assigned_vendor_name || vendorName,
         quotation_status: 'quoted',
         status: 'quoted_by_vendor',
         updated_at: nowIso,

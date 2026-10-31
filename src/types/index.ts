@@ -78,9 +78,11 @@ export type SellRequest = {
   payout_method?: string | null;
   payout_details?: string | null;
   assigned_vendor_id?: string | null;
+  assigned_vendor_name?: string | null;
   forwarded_to_vendor?: boolean;
   vendor_quote_price?: number | null;
   vendor_notes?: string | null;
+  vendor_quote_notes?: string | null;
   vendor_quote_status?: 'none' | 'pending_inspection' | 'quoted' | 'user_accepted' | 'user_rejected' | 'completed' | string;
   commission_percent?: number;
   commission_amount?: number | null;
@@ -167,9 +169,11 @@ export type RepairBooking = {
   estimated_arrival_time?: string | null;
   tracking_id: string;
   assigned_vendor_id?: string | null;
+  assigned_vendor_name?: string | null;
   forwarded_to_vendor?: boolean;
   vendor_quotation_amount?: number | null;
   vendor_quotation_details?: string | null;
+  vendor_quotation_notes?: string | null;
   quotation_status?: 'none' | 'pending_quote' | 'quoted' | 'user_accepted' | 'user_rejected' | 'paid' | string;
   commission_percent?: number;
   commission_amount?: number | null;

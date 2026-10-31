@@ -61,12 +61,35 @@ export default function AdminSellRequests({
   useEffect(() => {
     db.from('profiles')
       .select('*')
-      .in('role', ['vendor', 'wholesaler'])
+      .in('role', ['vendor', 'wholesaler', 'admin'])
       .order('created_at', { ascending: false })
       .then(({ data }) => {
         if (data) setVendors(data);
       });
   }, []);
+
+  const getVendorInfo = (vendorId?: string | null, fallbackName?: string | null) => {
+    const cleanId = vendorId ? String(vendorId).trim() : '';
+    const cleanFallback = fallbackName ? String(fallbackName).trim() : '';
+    if (!cleanId && !cleanFallback) return null;
+
+    const vendor = vendors.find(
+      (v) =>
+        (v.id && String(v.id).trim() === cleanId) ||
+        (v._id && String(v._id).trim() === cleanId) ||
+        (cleanFallback && (
+          (v.business_name && v.business_name.toLowerCase() === cleanFallback.toLowerCase()) ||
+          (v.full_name && v.full_name.toLowerCase() === cleanFallback.toLowerCase())
+        ))
+    );
+
+    const name = vendor?.business_name || vendor?.full_name || cleanFallback || (cleanId ? `Vendor (${cleanId.slice(0, 8)})` : 'Partner Store');
+    const phone = vendor?.phone || vendor?.mobile || null;
+    const location = vendor?.vendor_location || vendor?.address || vendor?.city || null;
+    const businessName = vendor?.business_name || null;
+    const ownerName = vendor?.full_name || null;
+    return { vendor, name, phone, location, businessName, ownerName };
+  };
 
   const handleApproveVendorQuote = async (sell: any) => {
     const price = Number(sell.vendor_quote_price);
@@ -104,15 +127,18 @@ export default function AdminSellRequests({
   };
 
   const handleReassignVendor = async (sell: any, newVendorId: string) => {
-    const newVendor = vendors.find((v) => v.id === newVendorId);
-    const vendorName = newVendor ? (newVendor.business_name || newVendor.full_name) : null;
     const isDirect = !newVendorId || newVendorId === 'direct';
+    const newVendor = vendors.find(
+      (v) => (v.id && String(v.id) === String(newVendorId)) || (v._id && String(v._id) === String(newVendorId))
+    );
+    const vendorName = newVendor ? (newVendor.business_name || newVendor.full_name) : null;
 
     const { error } = await db.from('sell_requests').update({
       assigned_vendor_id: isDirect ? null : newVendorId,
       assigned_vendor_name: isDirect ? null : vendorName,
       vendor_quote_price: null,
       vendor_quote_notes: null,
+      vendor_notes: null,
       vendor_quote_status: isDirect ? null : 'pending_inspection',
       forwarded_to_vendor: !isDirect,
       status: isDirect ? 'pending' : 'assigned_to_vendor',
@@ -341,29 +367,34 @@ export default function AdminSellRequests({
                       </div>
                     )}
 
-                    {Boolean((s as any).assigned_vendor_name || (s as any).vendor_quote_status) && (
-                      <div className="mt-2 pt-2 border-t border-ink-100/60 flex items-center justify-between text-[11px]">
-                        <span className="flex items-center gap-1 font-bold text-gray-700 truncate max-w-[160px]">
-                          <Building2 className="h-3 w-3 text-purple-600 shrink-0" />
-                          {(s as any).assigned_vendor_name || 'Partner Store'}
-                        </span>
-                        {(s as any).vendor_quote_status === 'quoted' && (
-                          <span className="badge bg-amber-100 text-amber-900 border border-amber-300 font-extrabold text-[9px] animate-pulse">
-                            ⚡ Quoted: {formatINR((s as any).vendor_quote_price || 0)}
+                    {Boolean((s as any).assigned_vendor_name || (s as any).vendor_quote_status || (s as any).assigned_vendor_id) && (() => {
+                      const vInfo = getVendorInfo((s as any).assigned_vendor_id, (s as any).assigned_vendor_name);
+                      const displayName = vInfo?.name || (s as any).assigned_vendor_name || 'Partner Store';
+                      return (
+                        <div className="mt-2 pt-2 border-t border-ink-100/60 flex items-center justify-between text-[11px] gap-2">
+                          <span className="flex items-center gap-1 font-bold text-purple-900 truncate max-w-[200px]" title={displayName}>
+                            <Building2 className="h-3.5 w-3.5 text-purple-600 shrink-0" />
+                            <span className="truncate">{displayName}</span>
+                            {vInfo?.phone && <span className="text-gray-400 font-normal text-[10px] shrink-0">({vInfo.phone})</span>}
                           </span>
-                        )}
-                        {(s as any).vendor_quote_status === 'admin_approved' && (
-                          <span className="badge bg-emerald-100 text-emerald-800 font-bold text-[9px]">
-                            ✓ Approved
-                          </span>
-                        )}
-                        {(s as any).vendor_quote_status === 'vendor_declined' && (
-                          <span className="badge bg-red-100 text-red-800 font-bold text-[9px]">
-                            ❌ Declined
-                          </span>
-                        )}
-                      </div>
-                    )}
+                          {(s as any).vendor_quote_status === 'quoted' && (
+                            <span className="badge bg-amber-100 text-amber-900 border border-amber-300 font-extrabold text-[9px] shrink-0 animate-pulse">
+                              ⚡ Quoted: {formatINR((s as any).vendor_quote_price || 0)}
+                            </span>
+                          )}
+                          {(s as any).vendor_quote_status === 'admin_approved' && (
+                            <span className="badge bg-emerald-100 text-emerald-800 font-bold text-[9px] shrink-0">
+                              ✓ Approved
+                            </span>
+                          )}
+                          {(s as any).vendor_quote_status === 'vendor_declined' && (
+                            <span className="badge bg-red-100 text-red-800 font-bold text-[9px] shrink-0">
+                              ❌ Declined
+                            </span>
+                          )}
+                        </div>
+                      );
+                    })()}
                   </div>
                 );
               })
@@ -439,114 +470,155 @@ export default function AdminSellRequests({
               </div>
 
               {/* Partner Store / Vendor Quotation & Verification Alert */}
-              {Boolean((selectedSell as any).assigned_vendor_id || (selectedSell as any).vendor_quote_status) && (
-                <div className={`p-4 rounded-2xl border transition-all ${
-                  (selectedSell as any).vendor_quote_status === 'quoted'
-                    ? 'bg-amber-50 border-amber-300 ring-2 ring-amber-400/20'
-                    : (selectedSell as any).vendor_quote_status === 'vendor_declined'
-                    ? 'bg-red-50 border-red-300'
-                    : 'bg-indigo-50/60 border-indigo-200'
-                }`}>
-                  <div className="flex flex-wrap items-center justify-between gap-3">
-                    <div className="space-y-1">
-                      <div className="flex items-center gap-2">
-                        <span className="badge bg-purple-100 text-purple-900 font-extrabold text-[10px] uppercase flex items-center gap-1">
-                          <Building2 className="h-3 w-3" />
-                          Partner: {(selectedSell as any).assigned_vendor_name || 'Assigned Store'}
-                        </span>
+              {Boolean((selectedSell as any).assigned_vendor_id || (selectedSell as any).vendor_quote_status || (selectedSell as any).assigned_vendor_name) && (() => {
+                const vInfo = getVendorInfo((selectedSell as any).assigned_vendor_id, (selectedSell as any).assigned_vendor_name);
+                const quoteNotes = (selectedSell as any).vendor_notes || (selectedSell as any).vendor_quote_notes;
+                const displayName = vInfo?.name || (selectedSell as any).assigned_vendor_name || 'Assigned Partner Store';
+                const currentVendorId = (() => {
+                  const targetId = (selectedSell as any).assigned_vendor_id;
+                  if (!targetId) return '';
+                  const match = vendors.find((v) => (v.id && String(v.id) === String(targetId)) || (v._id && String(v._id) === String(targetId)));
+                  return match ? (match.id || match._id) : targetId;
+                })();
+
+                return (
+                  <div className={`p-4 rounded-2xl border transition-all ${
+                    (selectedSell as any).vendor_quote_status === 'quoted'
+                      ? 'bg-amber-50/90 border-amber-300 ring-2 ring-amber-400/30'
+                      : (selectedSell as any).vendor_quote_status === 'vendor_declined'
+                      ? 'bg-red-50 border-red-300'
+                      : 'bg-indigo-50/60 border-indigo-200'
+                  }`}>
+                    <div className="flex flex-wrap items-center justify-between gap-3">
+                      <div className="space-y-1.5 flex-1 min-w-[280px]">
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <span className="badge bg-purple-100 text-purple-950 border border-purple-200 font-extrabold text-[11px] uppercase flex items-center gap-1.5 px-3 py-1 shadow-2xs">
+                            <Building2 className="h-3.5 w-3.5 text-purple-700 shrink-0" />
+                            Quoted By Vendor: <span className="underline decoration-purple-400 font-black">{displayName}</span>
+                          </span>
+
+                          {vInfo?.phone && (
+                            <a
+                              href={`tel:${vInfo.phone}`}
+                              className="badge bg-white hover:bg-emerald-50 text-emerald-800 border border-emerald-300 font-bold text-[11px] flex items-center gap-1 px-2.5 py-1 transition shadow-2xs"
+                              title="Call Vendor"
+                            >
+                              <PhoneCall className="h-3 w-3 text-emerald-600" />
+                              {vInfo.phone}
+                            </a>
+                          )}
+
+                          {vInfo?.location && (
+                            <span className="badge bg-gray-100 text-gray-700 border border-gray-200 text-[10px] font-semibold flex items-center gap-1 px-2 py-0.5">
+                              <MapPin className="h-3 w-3 text-gray-500" /> {vInfo.location}
+                            </span>
+                          )}
+
+                          {(selectedSell as any).vendor_quote_status === 'quoted' && (
+                            <span className="badge bg-amber-500 text-white font-black text-[10px] animate-pulse">
+                              ⚡ Quote Awaiting Verification
+                            </span>
+                          )}
+                          {(selectedSell as any).vendor_quote_status === 'admin_approved' && (
+                            <span className="badge bg-emerald-600 text-white font-bold text-[10px]">
+                              ✓ Price Approved
+                            </span>
+                          )}
+                          {(selectedSell as any).vendor_quote_status === 'vendor_declined' && (
+                            <span className="badge bg-red-600 text-white font-bold text-[10px]">
+                              ❌ Vendor Declined Lead
+                            </span>
+                          )}
+                        </div>
+
                         {(selectedSell as any).vendor_quote_status === 'quoted' && (
-                          <span className="badge bg-amber-500 text-white font-black text-[10px] animate-pulse">
-                            ⚡ Quote Awaiting Verification
-                          </span>
+                          <div className="mt-2 bg-white/90 p-3.5 rounded-xl border border-amber-200 shadow-2xs space-y-1.5">
+                            <p className="font-extrabold text-gray-900 text-sm flex items-center flex-wrap gap-2">
+                              <span>Vendor Quoted Valuation:</span>
+                              <span className="font-black text-2xl text-emerald-700">
+                                {formatINR((selectedSell as any).vendor_quote_price || 0)}
+                              </span>
+                              <span className="text-xs text-gray-500 font-medium">
+                                (Customer Portal Est: {formatINR(selectedSell.estimated_price || 0)})
+                              </span>
+                            </p>
+                            {quoteNotes && (
+                              <div className="text-xs text-gray-700 bg-amber-50/70 p-2.5 rounded-lg border border-amber-200/80">
+                                <span className="font-bold text-amber-950 block mb-0.5">Physical Inspection Remarks:</span>
+                                <span className="italic">"{quoteNotes}"</span>
+                              </div>
+                            )}
+                          </div>
                         )}
-                        {(selectedSell as any).vendor_quote_status === 'admin_approved' && (
-                          <span className="badge bg-emerald-600 text-white font-bold text-[10px]">
-                            ✓ Price Approved
-                          </span>
+
+                        {quoteNotes && (selectedSell as any).vendor_quote_status !== 'quoted' && (
+                          <p className="text-xs text-gray-700 italic bg-white/70 px-2.5 py-1 rounded-lg border border-gray-200">
+                            Vendor Remarks: "{quoteNotes}"
+                          </p>
                         )}
+
                         {(selectedSell as any).vendor_quote_status === 'vendor_declined' && (
-                          <span className="badge bg-red-600 text-white font-bold text-[10px]">
-                            ❌ Vendor Declined Lead
-                          </span>
+                          <p className="text-xs font-bold text-red-800">
+                            Vendor declined to purchase this device. Please reassign to another vendor below.
+                          </p>
                         )}
                       </div>
 
-                      {(selectedSell as any).vendor_quote_status === 'quoted' && (
-                        <p className="font-extrabold text-gray-900 text-sm">
-                          Vendor Quoted Valuation:{' '}
-                          <span className="font-black text-xl text-emerald-800">
-                            {formatINR((selectedSell as any).vendor_quote_price || 0)}
-                          </span>
-                          <span className="text-xs text-gray-500 font-medium ml-2">
-                            (Original Est: {formatINR(selectedSell.estimated_price || 0)})
-                          </span>
-                        </p>
-                      )}
+                      {/* Quick Verification Actions */}
+                      <div className="flex flex-wrap items-center gap-2">
+                        {(selectedSell as any).vendor_quote_status === 'quoted' && (
+                          <>
+                            <button
+                              onClick={() => handleApproveVendorQuote(selectedSell)}
+                              className="btn bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs px-3.5 py-2 rounded-xl shadow-xs flex items-center gap-1.5"
+                            >
+                              <CheckCircle2 className="h-3.5 w-3.5" /> Approve Quote ({formatINR((selectedSell as any).vendor_quote_price || 0)})
+                            </button>
 
-                      {(selectedSell as any).vendor_quote_notes && (
-                        <p className="text-xs text-gray-700 italic bg-white/70 px-2.5 py-1 rounded-lg border border-gray-200">
-                          Vendor Remarks: "{(selectedSell as any).vendor_quote_notes}"
-                        </p>
-                      )}
+                            <button
+                              onClick={() => setOverrideModal({
+                                open: true,
+                                sell: selectedSell,
+                                price: String((selectedSell as any).vendor_quote_price || selectedSell.estimated_price || ''),
+                              })}
+                              className="btn-outline bg-white hover:bg-ink-50 text-indigo-700 border-indigo-200 font-bold text-xs px-3 py-2 rounded-xl shadow-xs flex items-center gap-1"
+                            >
+                              <Edit3 className="h-3.5 w-3.5" /> Override Price
+                            </button>
 
-                      {(selectedSell as any).vendor_quote_status === 'vendor_declined' && (
-                        <p className="text-xs font-bold text-red-800">
-                          Vendor declined to purchase this device. Please reassign to another vendor below.
-                        </p>
-                      )}
-                    </div>
+                            <button
+                              onClick={() => handleRejectVendorQuote(selectedSell)}
+                              className="btn-outline bg-white hover:bg-red-50 text-red-600 border-red-200 font-bold text-xs px-3 py-2 rounded-xl shadow-xs flex items-center gap-1"
+                            >
+                              <XCircle className="h-3.5 w-3.5" /> Reject
+                            </button>
+                          </>
+                        )}
 
-                    {/* Quick Verification Actions */}
-                    <div className="flex flex-wrap items-center gap-2">
-                      {(selectedSell as any).vendor_quote_status === 'quoted' && (
-                        <>
-                          <button
-                            onClick={() => handleApproveVendorQuote(selectedSell)}
-                            className="btn bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs px-3.5 py-2 rounded-xl shadow-xs flex items-center gap-1.5"
+                        {/* Reassign Vendor Dropdown */}
+                        <div className="flex items-center gap-1.5 bg-white border border-gray-300 rounded-xl px-2.5 py-1.5 shadow-xs">
+                          <RotateCcw className="h-3 w-3 text-gray-500 shrink-0" />
+                          <select
+                            value={currentVendorId}
+                            onChange={(e) => handleReassignVendor(selectedSell, e.target.value)}
+                            className="bg-transparent text-xs font-bold text-gray-800 focus:outline-none cursor-pointer max-w-[220px]"
                           >
-                            <CheckCircle2 className="h-3.5 w-3.5" /> Approve Quote ({formatINR((selectedSell as any).vendor_quote_price || 0)})
-                          </button>
-
-                          <button
-                            onClick={() => setOverrideModal({
-                              open: true,
-                              sell: selectedSell,
-                              price: String((selectedSell as any).vendor_quote_price || selectedSell.estimated_price || ''),
+                            <option value="">Platform Direct (Unassigned)</option>
+                            {vendors.map((v) => {
+                              const vId = v.id || v._id;
+                              return (
+                                <option key={vId} value={vId}>
+                                  {v.business_name || v.full_name} ({v.phone || 'Store'})
+                                </option>
+                              );
                             })}
-                            className="btn-outline bg-white hover:bg-ink-50 text-indigo-700 border-indigo-200 font-bold text-xs px-3 py-2 rounded-xl shadow-xs flex items-center gap-1"
-                          >
-                            <Edit3 className="h-3.5 w-3.5" /> Override Price
-                          </button>
-
-                          <button
-                            onClick={() => handleRejectVendorQuote(selectedSell)}
-                            className="btn-outline bg-white hover:bg-red-50 text-red-600 border-red-200 font-bold text-xs px-3 py-2 rounded-xl shadow-xs flex items-center gap-1"
-                          >
-                            <XCircle className="h-3.5 w-3.5" /> Reject
-                          </button>
-                        </>
-                      )}
-
-                      {/* Reassign Vendor Dropdown */}
-                      <div className="flex items-center gap-1.5 bg-white border border-gray-300 rounded-xl px-2 py-1 shadow-xs">
-                        <RotateCcw className="h-3 w-3 text-gray-500 shrink-0" />
-                        <select
-                          value={(selectedSell as any).assigned_vendor_id || ''}
-                          onChange={(e) => handleReassignVendor(selectedSell, e.target.value)}
-                          className="bg-transparent text-xs font-bold text-gray-800 focus:outline-none cursor-pointer"
-                        >
-                          <option value="">Platform Direct (Unassigned)</option>
-                          {vendors.map((v) => (
-                            <option key={v.id} value={v.id}>
-                              {v.business_name || v.full_name} ({v.phone || 'Store'})
-                            </option>
-                          ))}
-                        </select>
+                          </select>
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
-              )}
+                );
+              })()}
 
               {/* Rider Declined Task Alert */}
               {(selectedSell as any).rider_acceptance_status === 'declined' && (
@@ -851,12 +923,18 @@ export default function AdminSellRequests({
                     <span className="font-extrabold text-amber-800">{formatINR(overrideModal.sell.vendor_quote_price)}</span>
                   </div>
                 )}
-                {overrideModal.sell.assigned_vendor_name && (
-                  <div className="flex justify-between">
-                    <span className="text-gray-500">Partner Store:</span>
-                    <span className="font-semibold text-gray-800">{overrideModal.sell.assigned_vendor_name}</span>
-                  </div>
-                )}
+                {(() => {
+                  const vInfo = getVendorInfo(overrideModal.sell.assigned_vendor_id, overrideModal.sell.assigned_vendor_name);
+                  const name = vInfo?.name || overrideModal.sell.assigned_vendor_name;
+                  return name ? (
+                    <div className="flex justify-between">
+                      <span className="text-gray-500">Partner Store:</span>
+                      <span className="font-semibold text-gray-800">
+                        {name} {vInfo?.phone ? `(${vInfo.phone})` : ''}
+                      </span>
+                    </div>
+                  ) : null;
+                })()}
               </div>
 
               <div>

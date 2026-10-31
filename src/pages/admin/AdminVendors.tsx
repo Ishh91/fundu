@@ -269,8 +269,11 @@ export default function AdminVendors() {
   const handleAssignSellToVendor = async (sellId: string, vendorId: string) => {
     try {
       const isReassign = Boolean(vendorId);
+      const targetVendor = vendors.find((v) => (v.id && String(v.id) === String(vendorId)) || (v._id && String(v._id) === String(vendorId)));
+      const vendorName = targetVendor ? (targetVendor.business_name || targetVendor.full_name) : null;
       const { error } = await db.from('sell_requests').update({
         assigned_vendor_id: vendorId || null,
+        assigned_vendor_name: isReassign ? vendorName : null,
         forwarded_to_vendor: isReassign,
         vendor_quote_status: isReassign ? 'pending_inspection' : 'none',
         status: isReassign ? 'assigned_to_vendor' : 'pending',
@@ -278,7 +281,6 @@ export default function AdminVendors() {
       }).eq('id', sellId);
 
       if (error) throw error;
-      const targetVendor = vendors.find((v) => v.id === vendorId);
       if (vendorId) {
         alert(`✅ Mobile sell request forwarded/reassigned to Vendor "${targetVendor?.business_name || targetVendor?.full_name || 'Vendor'}"!`);
       } else {
@@ -333,8 +335,11 @@ export default function AdminVendors() {
   const handleAssignRepairToVendor = async (repairId: string, vendorId: string) => {
     try {
       const isReassign = Boolean(vendorId);
+      const targetVendor = vendors.find((v) => (v.id && String(v.id) === String(vendorId)) || (v._id && String(v._id) === String(vendorId)));
+      const vendorName = targetVendor ? (targetVendor.business_name || targetVendor.full_name) : null;
       const { error } = await db.from('repair_bookings').update({
         assigned_vendor_id: vendorId || null,
+        assigned_vendor_name: isReassign ? vendorName : null,
         forwarded_to_vendor: isReassign,
         quotation_status: isReassign ? 'pending_quote' : 'none',
         status: isReassign ? 'assigned_to_vendor' : 'pending',
@@ -342,7 +347,6 @@ export default function AdminVendors() {
       }).eq('id', repairId);
 
       if (error) throw error;
-      const targetVendor = vendors.find((v) => v.id === vendorId);
       if (vendorId) {
         alert(`✅ Repair request assigned/reassigned to Vendor "${targetVendor?.business_name || targetVendor?.full_name || 'Vendor'}"!`);
       } else {
@@ -619,7 +623,9 @@ export default function AdminVendors() {
 
                   <div className="grid grid-cols-1 gap-4">
                     {pendingSellQuotes.map((s) => {
-                      const vendor = vendors.find((v) => v.id === s.assigned_vendor_id);
+                      const vendor = vendors.find((v) => (v.id && String(v.id) === String(s.assigned_vendor_id)) || (v._id && String(v._id) === String(s.assigned_vendor_id)));
+                      const vendorName = vendor?.business_name || vendor?.full_name || (s as any).assigned_vendor_name || 'Vendor Partner';
+                      const vendorPhone = vendor?.phone || vendor?.mobile || null;
                       return (
                         <div key={s.id} className="card p-5 rounded-2xl bg-white shadow-xs border-2 border-amber-300 space-y-4">
                           <div className="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-ink-100">
@@ -634,7 +640,7 @@ export default function AdminVendors() {
                                 {s.brand} {s.model} {s.storage ? `(${s.storage})` : ''} · Condition: {s.condition}
                               </h4>
                               <p className="text-xs text-ink-500">
-                                Assigned Vendor: <strong>{vendor?.business_name || vendor?.full_name || 'Vendor Partner'}</strong> ({vendor?.phone || 'No phone'})
+                                Assigned Vendor: <strong className="text-brand-900">{vendorName}</strong> {vendorPhone ? `(${vendorPhone})` : ''}
                               </p>
                             </div>
 
@@ -728,7 +734,9 @@ export default function AdminVendors() {
 
                   <div className="grid grid-cols-1 gap-4">
                     {pendingRepairQuotes.map((r) => {
-                      const vendor = vendors.find((v) => v.id === r.assigned_vendor_id);
+                      const vendor = vendors.find((v) => (v.id && String(v.id) === String(r.assigned_vendor_id)) || (v._id && String(v._id) === String(r.assigned_vendor_id)));
+                      const vendorName = vendor?.business_name || vendor?.full_name || (r as any).assigned_vendor_name || 'Vendor Partner';
+                      const vendorPhone = vendor?.phone || vendor?.mobile || null;
                       return (
                         <div key={r.id} className="card p-5 rounded-2xl bg-white shadow-xs border-2 border-purple-300 space-y-4">
                           <div className="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-ink-100">
@@ -743,7 +751,7 @@ export default function AdminVendors() {
                                 {r.brand} {r.model} · Issue: <span className="text-rose-700 font-bold">{r.problem}</span>
                               </h4>
                               <p className="text-xs text-ink-500">
-                                Assigned Technician/Vendor: <strong>{vendor?.business_name || vendor?.full_name || 'Vendor Partner'}</strong> ({vendor?.phone || 'No phone'})
+                                Assigned Technician/Vendor: <strong className="text-purple-900">{vendorName}</strong> {vendorPhone ? `(${vendorPhone})` : ''}
                               </p>
                             </div>
 
@@ -1001,7 +1009,8 @@ export default function AdminVendors() {
               return true;
             })
             .map((s) => {
-              const currentVendor = vendors.find((v) => v.id === s.assigned_vendor_id);
+              const currentVendor = vendors.find((v) => (v.id && String(v.id) === String(s.assigned_vendor_id)) || (v._id && String(v._id) === String(s.assigned_vendor_id)));
+              const vendorName = currentVendor?.business_name || currentVendor?.full_name || (s as any).assigned_vendor_name || 'Vendor Partner';
               const isQuoted = s.vendor_quote_status === 'quoted';
               const isAdminApproved = s.vendor_quote_status === 'admin_approved';
               const isUserAccepted = s.vendor_quote_status === 'user_accepted' || s.status === 'completed';
@@ -1041,7 +1050,7 @@ export default function AdminVendors() {
                           </span>
                         ) : s.assigned_vendor_id ? (
                           <span className="badge bg-indigo-50 text-indigo-700 font-bold text-[10px]">
-                            Assigned to {currentVendor?.business_name || currentVendor?.full_name || 'Vendor'}
+                            Assigned to {vendorName}
                           </span>
                         ) : (
                           <span className="badge bg-ink-100 text-ink-800 text-[10px] font-bold">
@@ -1058,16 +1067,19 @@ export default function AdminVendors() {
                     <div className="flex items-center gap-2">
                       <label className="text-xs font-bold text-ink-700">Forward / Reassign:</label>
                       <select
-                        value={s.assigned_vendor_id || ''}
+                        value={currentVendor ? (currentVendor.id || currentVendor._id) : (s.assigned_vendor_id || '')}
                         onChange={(e) => handleAssignSellToVendor(s.id, e.target.value)}
                         className="input py-1 px-3 text-xs font-bold text-brand-900 border-brand-300"
                       >
                         <option value="">-- Platform Direct (No Vendor) --</option>
-                        {vendors.map((v) => (
-                          <option key={v.id} value={v.id}>
-                            {v.business_name || v.full_name} ({v.phone})
-                          </option>
-                        ))}
+                        {vendors.map((v) => {
+                          const vId = v.id || v._id;
+                          return (
+                            <option key={vId} value={vId}>
+                              {v.business_name || v.full_name} ({v.phone || 'Store'})
+                            </option>
+                          );
+                        })}
                       </select>
                     </div>
                   </div>
@@ -1173,7 +1185,8 @@ export default function AdminVendors() {
               return true;
             })
             .map((r) => {
-              const currentVendor = vendors.find((v) => v.id === r.assigned_vendor_id);
+              const currentVendor = vendors.find((v) => (v.id && String(v.id) === String(r.assigned_vendor_id)) || (v._id && String(v._id) === String(r.assigned_vendor_id)));
+              const vendorName = currentVendor?.business_name || currentVendor?.full_name || (r as any).assigned_vendor_name || 'Vendor Partner';
               const isQuoted = r.quotation_status === 'quoted';
               const isAdminApproved = r.quotation_status === 'admin_approved';
               const isPaid = r.quotation_status === 'paid' || r.status === 'paid';
@@ -1208,7 +1221,7 @@ export default function AdminVendors() {
                           </span>
                         ) : r.assigned_vendor_id ? (
                           <span className="badge bg-purple-50 text-purple-700 font-bold text-[10px]">
-                            Assigned to {currentVendor?.business_name || currentVendor?.full_name || 'Vendor'}
+                            Assigned to {vendorName}
                           </span>
                         ) : (
                           <span className="badge bg-ink-100 text-ink-800 text-[10px] font-bold">
@@ -1225,16 +1238,19 @@ export default function AdminVendors() {
                     <div className="flex items-center gap-2">
                       <label className="text-xs font-bold text-ink-700">Assign / Reassign:</label>
                       <select
-                        value={r.assigned_vendor_id || ''}
+                        value={currentVendor ? (currentVendor.id || currentVendor._id) : (r.assigned_vendor_id || '')}
                         onChange={(e) => handleAssignRepairToVendor(r.id, e.target.value)}
                         className="input py-1 px-3 text-xs font-bold text-purple-900 border-purple-300"
                       >
                         <option value="">-- Platform Technician --</option>
-                        {vendors.map((v) => (
-                          <option key={v.id} value={v.id}>
-                            {v.business_name || v.full_name} ({v.phone})
-                          </option>
-                        ))}
+                        {vendors.map((v) => {
+                          const vId = v.id || v._id;
+                          return (
+                            <option key={vId} value={vId}>
+                              {v.business_name || v.full_name} ({v.phone || 'Store'})
+                            </option>
+                          );
+                        })}
                       </select>
                     </div>
                   </div>

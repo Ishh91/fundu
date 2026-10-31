@@ -32,9 +32,11 @@ const repairBookingSchema = createSchema({
     default: () => `RB${Math.random().toString(36).slice(2, 10).toUpperCase()}`,
   },
   assigned_vendor_id: { type: String, default: null },
+  assigned_vendor_name: { type: String, default: null },
   forwarded_to_vendor: { type: Boolean, default: false },
   vendor_quotation_amount: { type: Number, default: null },
   vendor_quotation_details: { type: String, default: null },
+  vendor_quotation_notes: { type: String, default: null },
   quotation_status: { type: String, default: 'none' }, // 'none', 'pending_quote', 'quoted', 'user_accepted', 'user_rejected', 'paid'
   commission_percent: { type: Number, default: 10 },
   commission_amount: { type: Number, default: null },
