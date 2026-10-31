@@ -519,7 +519,7 @@ const MODEL_HARDWARE_RULES: Array<{
     ],
   },
   {
-    pattern: /iphone\s*(17|16|15)\s*pro\s*max\b/i,
+    pattern: /(?:apple\s*(?:iphone\s*)?|iphone\s*)(?:1[5-9]|[2-9]\d)\s*pro\s*max\b/i,
     variants: [
       { storage: '256 GB', rams: [] },
       { storage: '512 GB', rams: [] },
@@ -527,7 +527,7 @@ const MODEL_HARDWARE_RULES: Array<{
     ],
   },
   {
-    pattern: /iphone\s*14\s*pro\s*max\b/i,
+    pattern: /(?:apple\s*(?:iphone\s*)?|iphone\s*)14\s*pro\s*max\b/i,
     variants: [
       { storage: '128 GB', rams: [] },
       { storage: '256 GB', rams: [] },
@@ -536,7 +536,7 @@ const MODEL_HARDWARE_RULES: Array<{
     ],
   },
   {
-    pattern: /iphone\s*13\s*pro\s*max\b/i,
+    pattern: /(?:apple\s*(?:iphone\s*)?|iphone\s*)13\s*pro\s*max\b/i,
     variants: [
       { storage: '128 GB', rams: [] },
       { storage: '256 GB', rams: [] },
@@ -545,7 +545,7 @@ const MODEL_HARDWARE_RULES: Array<{
     ],
   },
   {
-    pattern: /iphone\s*(17|16|15|14|13)\s*pro(?!\s*max)\b/i,
+    pattern: /(?:apple\s*(?:iphone\s*)?|iphone\s*)(?:1[3-9]|[2-9]\d)\s*pro(?!\s*max)\b/i,
     variants: [
       { storage: '128 GB', rams: [] },
       { storage: '256 GB', rams: [] },
@@ -554,14 +554,14 @@ const MODEL_HARDWARE_RULES: Array<{
     ],
   },
   {
-    pattern: /iphone\s*16e\b/i,
+    pattern: /(?:apple\s*(?:iphone\s*)?|iphone\s*)16e\b/i,
     variants: [
       { storage: '128 GB', rams: [] },
       { storage: '256 GB', rams: [] },
     ],
   },
   {
-    pattern: /iphone\s*(17\s*air|16|15|14|13)\s*(plus|\b)(?!\s*(pro|max|mini))/i,
+    pattern: /(?:apple\s*(?:iphone\s*)?|iphone\s*)(?:1[3-9]|[2-9]\d)\s*(?:plus|air|\b)(?!\s*(?:pro|max|mini))/i,
     variants: [
       { storage: '128 GB', rams: [] },
       { storage: '256 GB', rams: [] },
@@ -2663,18 +2663,18 @@ export function is512GBValidForModel(brand = '', model = ''): boolean {
   const b = String(brand || '').toLowerCase().trim();
   const m = String(model || '').toLowerCase().trim();
 
-  // 1. Apple: Only iPhone 11 Pro / Pro Max and newer, XS / XS Max, or iPhone 13/14/15/16 standard/plus/pro
+  // 1. Apple: Only iPhone 11 Pro / Pro Max and newer, XS / XS Max, or iPhone 13/14/15/16/17/18/19/20+ standard/plus/pro
   if (b.includes('apple') || m.includes('iphone') || m.includes('ipad')) {
     if (/ipad/i.test(m)) return true;
-    if (/iphone\s*(17|16|15|14|13|12\s*pro|11\s*pro|xs)/i.test(m)) return true;
+    if (/(?:iphone\s*)?(?:1[3-9]|[2-9]\d|12\s*pro|11\s*pro|xs)/i.test(m)) return true;
     // iPhone 12/11 base, XR, X, 8, 7, 6, SE max out at 256GB or lower
     return false;
   }
 
-  // 2. Samsung: Strictly Ultra (S20-S26, Note 20), Fold, Flip 4/5/6/7/8, S-Plus (S20-S26+), S24/S25/S26 Base, S24 FE, S10/S10+/S10 Lite, Note 10+, Note 9
+  // 2. Samsung: Strictly Ultra (S20-S30, Note 20), Fold, Flip 4/5/6/7/8/9, S-Plus (S20-S30+), S24-S30 Base, S24 FE, S10/S10+/S10 Lite, Note 10+, Note 9
   if (b.includes('samsung') || m.includes('galaxy')) {
     if (
-      /ultra|fold|flip\s*[4-8]|s2[0-6]\s*\+|s2[4-6]\s*(5g|\b)|s24\s*fe|s10\s*(\+|lite|\b)|note\s*(20|10\+|9)/i.test(m)
+      /ultra|fold|flip\s*[4-9]|s2[0-9]\s*\+|s3\d\s*\+|s2[4-9]\s*(5g|\b)|s3\d\s*(5g|\b)|s24\s*fe|s10\s*(\+|lite|\b)|note\s*(20|10\+|9)/i.test(m)
     ) return true;
     return false; // All other Samsung (A, M, F, base S20/S21/S22/S23, other FE) max out at 256GB
   }
@@ -2839,7 +2839,7 @@ export function isStorageAllowedForModel(brand = '', model = '', storageStr = ''
   if (gb === 128) {
     // Ultra / Fold flagships that START at 256 GB (128 GB never launched / does not exist)
     if (
-      /s2[3-6]\s*ultra|15\s*pro\s*max|16\s*pro\s*max|z\s*fold\s*[2-6]|pixel\s*9\s*pro\s*fold|oneplus\s*open|iqoo\s*(12|13)|x100\s*pro|x90\s*pro|note\s*20\s*ultra/i.test(full) ||
+      /s2[3-9]\s*ultra|s3\d\s*ultra|(?:1[5-9]|[2-9]\d)\s*pro\s*max|z\s*fold\s*[2-9]|pixel\s*(?:9|10)\s*pro\s*fold|oneplus\s*open|iqoo\s*(12|13|15)|x100\s*pro|x90\s*pro|note\s*20\s*ultra/i.test(full) ||
       /oppo\s*(?:find\s*(?:x[7-9]|n[23]\s*flip)|reno\s*(?:7|8|10|11|12)\s*pro|reno\s*10\s*pro\+|reno\s*10\b|f23\b)/i.test(full)
     ) {
       return false;
@@ -2855,8 +2855,9 @@ export function isStorageAllowedForModel(brand = '', model = '', storageStr = ''
   if (gb === 64) {
     // Modern phones starting in 2021+ that START at 128 GB (64 GB is completely fake)
     if (
-      /iphone\s*(13|14|15|16)/i.test(m) ||
-      /galaxy\s*s2[0-6]/i.test(m) ||
+      /iphone\s*(?:1[3-9]|[2-9]\d)/i.test(m) ||
+      /galaxy\s*s2[0-9]/i.test(m) ||
+      /galaxy\s*s3\d/i.test(m) ||
       /galaxy\s*note\s*20/i.test(m) ||
       /z\s*(fold|flip)/i.test(m) ||
       /pixel\s*([4-9]|1[0-9])/i.test(m) ||
@@ -2910,7 +2911,7 @@ export function inferTierHardwareSpecs(
   if (isApple) {
     let storages = ['128 GB', '256 GB', '512 GB'];
     if (/pro\s*max/i.test(mLower)) {
-      if (/1[567]/i.test(mLower)) storages = ['256 GB', '512 GB', '1 TB'];
+      if (/(?:1[5-9]|[2-9]\d)/i.test(mLower)) storages = ['256 GB', '512 GB', '1 TB'];
       else storages = ['128 GB', '256 GB', '512 GB', '1 TB'];
     } else if (/\bpro\b/i.test(mLower)) {
       if (/1[12]/i.test(mLower)) storages = /11/i.test(mLower) ? ['64 GB', '256 GB', '512 GB'] : ['128 GB', '256 GB', '512 GB'];
