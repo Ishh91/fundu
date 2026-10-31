@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   BadgeIndianRupee,
   Search,
@@ -12,6 +12,13 @@ import {
   UserCheck,
   Building2,
   MessageSquare,
+  CheckCircle2,
+  XCircle,
+  Edit3,
+  AlertTriangle,
+  RotateCcw,
+  DollarSign,
+  X,
 } from 'lucide-react';
 import type { SellRequest, DeliveryAgent, MasterPhone } from './adminTypes';
 import { statusColors } from './adminTypes';
@@ -44,6 +51,103 @@ export default function AdminSellRequests({
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [customerModalData, setCustomerModalData] = useState<any>(null);
+  const [vendors, setVendors] = useState<any[]>([]);
+  const [overrideModal, setOverrideModal] = useState<{ open: boolean; sell: any; price: string }>({
+    open: false,
+    sell: null,
+    price: '',
+  });
+
+  useEffect(() => {
+    db.from('profiles')
+      .select('*')
+      .in('role', ['vendor', 'wholesaler'])
+      .order('created_at', { ascending: false })
+      .then(({ data }) => {
+        if (data) setVendors(data);
+      });
+  }, []);
+
+  const handleApproveVendorQuote = async (sell: any) => {
+    const price = Number(sell.vendor_quote_price);
+    if (!price || price <= 0) {
+      alert('⚠️ Invalid quote price from vendor.');
+      return;
+    }
+    const { error } = await db.from('sell_requests').update({
+      vendor_quote_status: 'admin_approved',
+      final_price: price,
+      status: 'inspection_mismatch',
+    }).eq('id', sell.id);
+
+    if (error) {
+      alert(`❌ Error approving quotation: ${error.message}`);
+      return;
+    }
+    alert(`✅ Quotation of ${formatINR(price)} approved! Forwarded to customer dashboard.`);
+    window.location.reload();
+  };
+
+  const handleRejectVendorQuote = async (sell: any) => {
+    if (!window.confirm('Reject this quotation and reset lead status to pending?')) return;
+    const { error } = await db.from('sell_requests').update({
+      vendor_quote_status: 'admin_rejected',
+      status: 'pending',
+    }).eq('id', sell.id);
+
+    if (error) {
+      alert(`❌ Error rejecting quote: ${error.message}`);
+      return;
+    }
+    alert('❌ Quotation rejected. You can now reassign this lead to another partner vendor.');
+    window.location.reload();
+  };
+
+  const handleReassignVendor = async (sell: any, newVendorId: string) => {
+    const newVendor = vendors.find((v) => v.id === newVendorId);
+    const vendorName = newVendor ? (newVendor.business_name || newVendor.full_name) : null;
+    const isDirect = !newVendorId || newVendorId === 'direct';
+
+    const { error } = await db.from('sell_requests').update({
+      assigned_vendor_id: isDirect ? null : newVendorId,
+      assigned_vendor_name: isDirect ? null : vendorName,
+      vendor_quote_price: null,
+      vendor_quote_notes: null,
+      vendor_quote_status: isDirect ? null : 'pending_inspection',
+      forwarded_to_vendor: !isDirect,
+      status: isDirect ? 'pending' : 'assigned_to_vendor',
+    }).eq('id', sell.id);
+
+    if (error) {
+      alert(`❌ Reassignment error: ${error.message}`);
+      return;
+    }
+    alert(isDirect ? '✅ Reassigned to Direct Fundu Platform!' : `✅ Reassigned to partner vendor ${vendorName}!`);
+    window.location.reload();
+  };
+
+  const handleSavePriceOverride = async () => {
+    if (!overrideModal.sell) return;
+    const num = Number(overrideModal.price);
+    if (!num || num <= 0) {
+      alert('Please enter a valid price.');
+      return;
+    }
+    const { error } = await db.from('sell_requests').update({
+      vendor_quote_price: num,
+      final_price: num,
+      vendor_quote_status: 'admin_approved',
+      status: 'inspection_mismatch',
+    }).eq('id', overrideModal.sell.id);
+
+    if (error) {
+      alert(`❌ Error saving price override: ${error.message}`);
+      return;
+    }
+    alert(`✅ Price overridden to ${formatINR(num)} and approved for customer!`);
+    setOverrideModal({ open: false, sell: null, price: '' });
+    window.location.reload();
+  };
 
   const handleTransferToWholesale = async (sell: SellRequest) => {
     try {
@@ -236,6 +340,30 @@ export default function AdminSellRequests({
                         <Shield className="h-3 w-3" /> IMEI: {s.imei}
                       </div>
                     )}
+
+                    {Boolean((s as any).assigned_vendor_name || (s as any).vendor_quote_status) && (
+                      <div className="mt-2 pt-2 border-t border-ink-100/60 flex items-center justify-between text-[11px]">
+                        <span className="flex items-center gap-1 font-bold text-gray-700 truncate max-w-[160px]">
+                          <Building2 className="h-3 w-3 text-purple-600 shrink-0" />
+                          {(s as any).assigned_vendor_name || 'Partner Store'}
+                        </span>
+                        {(s as any).vendor_quote_status === 'quoted' && (
+                          <span className="badge bg-amber-100 text-amber-900 border border-amber-300 font-extrabold text-[9px] animate-pulse">
+                            ⚡ Quoted: {formatINR((s as any).vendor_quote_price || 0)}
+                          </span>
+                        )}
+                        {(s as any).vendor_quote_status === 'admin_approved' && (
+                          <span className="badge bg-emerald-100 text-emerald-800 font-bold text-[9px]">
+                            ✓ Approved
+                          </span>
+                        )}
+                        {(s as any).vendor_quote_status === 'vendor_declined' && (
+                          <span className="badge bg-red-100 text-red-800 font-bold text-[9px]">
+                            ❌ Declined
+                          </span>
+                        )}
+                      </div>
+                    )}
                   </div>
                 );
               })
@@ -309,6 +437,116 @@ export default function AdminSellRequests({
                   </a>
                 </div>
               </div>
+
+              {/* Partner Store / Vendor Quotation & Verification Alert */}
+              {Boolean((selectedSell as any).assigned_vendor_id || (selectedSell as any).vendor_quote_status) && (
+                <div className={`p-4 rounded-2xl border transition-all ${
+                  (selectedSell as any).vendor_quote_status === 'quoted'
+                    ? 'bg-amber-50 border-amber-300 ring-2 ring-amber-400/20'
+                    : (selectedSell as any).vendor_quote_status === 'vendor_declined'
+                    ? 'bg-red-50 border-red-300'
+                    : 'bg-indigo-50/60 border-indigo-200'
+                }`}>
+                  <div className="flex flex-wrap items-center justify-between gap-3">
+                    <div className="space-y-1">
+                      <div className="flex items-center gap-2">
+                        <span className="badge bg-purple-100 text-purple-900 font-extrabold text-[10px] uppercase flex items-center gap-1">
+                          <Building2 className="h-3 w-3" />
+                          Partner: {(selectedSell as any).assigned_vendor_name || 'Assigned Store'}
+                        </span>
+                        {(selectedSell as any).vendor_quote_status === 'quoted' && (
+                          <span className="badge bg-amber-500 text-white font-black text-[10px] animate-pulse">
+                            ⚡ Quote Awaiting Verification
+                          </span>
+                        )}
+                        {(selectedSell as any).vendor_quote_status === 'admin_approved' && (
+                          <span className="badge bg-emerald-600 text-white font-bold text-[10px]">
+                            ✓ Price Approved
+                          </span>
+                        )}
+                        {(selectedSell as any).vendor_quote_status === 'vendor_declined' && (
+                          <span className="badge bg-red-600 text-white font-bold text-[10px]">
+                            ❌ Vendor Declined Lead
+                          </span>
+                        )}
+                      </div>
+
+                      {(selectedSell as any).vendor_quote_status === 'quoted' && (
+                        <p className="font-extrabold text-gray-900 text-sm">
+                          Vendor Quoted Valuation:{' '}
+                          <span className="font-black text-xl text-emerald-800">
+                            {formatINR((selectedSell as any).vendor_quote_price || 0)}
+                          </span>
+                          <span className="text-xs text-gray-500 font-medium ml-2">
+                            (Original Est: {formatINR(selectedSell.estimated_price || 0)})
+                          </span>
+                        </p>
+                      )}
+
+                      {(selectedSell as any).vendor_quote_notes && (
+                        <p className="text-xs text-gray-700 italic bg-white/70 px-2.5 py-1 rounded-lg border border-gray-200">
+                          Vendor Remarks: "{(selectedSell as any).vendor_quote_notes}"
+                        </p>
+                      )}
+
+                      {(selectedSell as any).vendor_quote_status === 'vendor_declined' && (
+                        <p className="text-xs font-bold text-red-800">
+                          Vendor declined to purchase this device. Please reassign to another vendor below.
+                        </p>
+                      )}
+                    </div>
+
+                    {/* Quick Verification Actions */}
+                    <div className="flex flex-wrap items-center gap-2">
+                      {(selectedSell as any).vendor_quote_status === 'quoted' && (
+                        <>
+                          <button
+                            onClick={() => handleApproveVendorQuote(selectedSell)}
+                            className="btn bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs px-3.5 py-2 rounded-xl shadow-xs flex items-center gap-1.5"
+                          >
+                            <CheckCircle2 className="h-3.5 w-3.5" /> Approve Quote ({formatINR((selectedSell as any).vendor_quote_price || 0)})
+                          </button>
+
+                          <button
+                            onClick={() => setOverrideModal({
+                              open: true,
+                              sell: selectedSell,
+                              price: String((selectedSell as any).vendor_quote_price || selectedSell.estimated_price || ''),
+                            })}
+                            className="btn-outline bg-white hover:bg-ink-50 text-indigo-700 border-indigo-200 font-bold text-xs px-3 py-2 rounded-xl shadow-xs flex items-center gap-1"
+                          >
+                            <Edit3 className="h-3.5 w-3.5" /> Override Price
+                          </button>
+
+                          <button
+                            onClick={() => handleRejectVendorQuote(selectedSell)}
+                            className="btn-outline bg-white hover:bg-red-50 text-red-600 border-red-200 font-bold text-xs px-3 py-2 rounded-xl shadow-xs flex items-center gap-1"
+                          >
+                            <XCircle className="h-3.5 w-3.5" /> Reject
+                          </button>
+                        </>
+                      )}
+
+                      {/* Reassign Vendor Dropdown */}
+                      <div className="flex items-center gap-1.5 bg-white border border-gray-300 rounded-xl px-2 py-1 shadow-xs">
+                        <RotateCcw className="h-3 w-3 text-gray-500 shrink-0" />
+                        <select
+                          value={(selectedSell as any).assigned_vendor_id || ''}
+                          onChange={(e) => handleReassignVendor(selectedSell, e.target.value)}
+                          className="bg-transparent text-xs font-bold text-gray-800 focus:outline-none cursor-pointer"
+                        >
+                          <option value="">Platform Direct (Unassigned)</option>
+                          {vendors.map((v) => (
+                            <option key={v.id} value={v.id}>
+                              {v.business_name || v.full_name} ({v.phone || 'Store'})
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
 
               {/* Rider Inspection Approval Alert */}
               {selectedSell.status === 'inspection_submitted' && (
@@ -504,6 +742,87 @@ export default function AdminSellRequests({
         onClose={() => setCustomerModalData(null)}
         customer={customerModalData}
       />
+
+      {/* PRICE OVERRIDE MODAL */}
+      {overrideModal.open && overrideModal.sell && (
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl space-y-4 animate-in fade-in zoom-in-95">
+            <div className="flex items-center justify-between pb-3 border-b border-gray-100">
+              <div className="flex items-center gap-2">
+                <div className="h-9 w-9 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center font-bold">
+                  <DollarSign className="h-5 w-5" />
+                </div>
+                <div>
+                  <h3 className="text-base font-extrabold text-gray-900">Admin Price Override</h3>
+                  <p className="text-xs text-gray-500">
+                    {overrideModal.sell.brand} {overrideModal.sell.model} ({overrideModal.sell.storage || '128GB'})
+                  </p>
+                </div>
+              </div>
+              <button
+                onClick={() => setOverrideModal({ open: false, sell: null, price: '' })}
+                className="text-gray-400 hover:text-gray-600 p-1"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+
+            <div className="space-y-3">
+              <div className="p-3 bg-gray-50 rounded-xl space-y-1 text-xs">
+                <div className="flex justify-between">
+                  <span className="text-gray-500">Original Estimate:</span>
+                  <span className="font-bold text-gray-700">{formatINR(overrideModal.sell.estimated_price || 0)}</span>
+                </div>
+                {overrideModal.sell.vendor_quote_price && (
+                  <div className="flex justify-between">
+                    <span className="text-amber-700 font-bold">Vendor Quoted:</span>
+                    <span className="font-extrabold text-amber-800">{formatINR(overrideModal.sell.vendor_quote_price)}</span>
+                  </div>
+                )}
+                {overrideModal.sell.assigned_vendor_name && (
+                  <div className="flex justify-between">
+                    <span className="text-gray-500">Partner Store:</span>
+                    <span className="font-semibold text-gray-800">{overrideModal.sell.assigned_vendor_name}</span>
+                  </div>
+                )}
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-gray-700 mb-1">
+                  Verified Payout Amount (₹)
+                </label>
+                <input
+                  type="number"
+                  value={overrideModal.price}
+                  onChange={(e) => setOverrideModal((prev) => ({ ...prev, price: e.target.value }))}
+                  placeholder="e.g. 18500"
+                  className="input w-full text-base font-black text-gray-900"
+                />
+                <p className="text-[11px] text-gray-400 mt-1">
+                  This final amount will be locked and forwarded to the customer's portal for approval.
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-center justify-end gap-2 pt-3 border-t border-gray-100">
+              <button
+                type="button"
+                onClick={() => setOverrideModal({ open: false, sell: null, price: '' })}
+                className="btn-outline text-xs px-4 py-2"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={handleSavePriceOverride}
+                className="btn-primary text-xs px-4 py-2 bg-indigo-600 hover:bg-indigo-700"
+              >
+                Confirm & Approve Price
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

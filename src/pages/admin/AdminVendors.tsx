@@ -20,7 +20,15 @@ import {
   Wrench,
   Smartphone,
   ShieldCheck,
-  UserCheck
+  UserCheck,
+  Check,
+  AlertTriangle,
+  RotateCcw,
+  Edit2,
+  Clock,
+  Sparkles,
+  ArrowRight,
+  Filter,
 } from 'lucide-react';
 import type { Profile, WholesaleInventory, WholesaleOrder, SellRequest, RepairBooking, VendorLedger } from '../../types';
 import { db, formatINR } from '../../lib/db';
@@ -28,7 +36,7 @@ import { statusColors } from './adminTypes';
 import { sendEmailOtpCode } from '../../lib/freeNotifyService';
 
 export default function AdminVendors() {
-  const [activeSubtab, setActiveSubtab] = useState<'vendors' | 'assign-sell' | 'assign-repair' | 'commissions'>('vendors');
+  const [activeSubtab, setActiveSubtab] = useState<'pending-quotes' | 'assign-sell' | 'assign-repair' | 'vendors' | 'commissions'>('pending-quotes');
   const [_loading, setLoading] = useState(true);
 
   // Data states
@@ -37,6 +45,8 @@ export default function AdminVendors() {
   const [repairBookings, setRepairBookings] = useState<RepairBooking[]>([]);
   const [ledgers, setLedgers] = useState<VendorLedger[]>([]);
   const [search, setSearch] = useState('');
+  const [sellFilter, setSellFilter] = useState<'all' | 'pending_quote' | 'admin_approved' | 'user_accepted' | 'declined'>('all');
+  const [repairFilter, setRepairFilter] = useState<'all' | 'pending_quote' | 'admin_approved' | 'paid' | 'declined'>('all');
 
   // Modals
   const [paymentModal, setPaymentModal] = useState<{ vendor: Profile } | null>(null);
@@ -48,6 +58,18 @@ export default function AdminVendors() {
   const [limitModal, setLimitModal] = useState<{ vendor: Profile } | null>(null);
   const [newLimit, setNewLimit] = useState('');
   const [limitSubmitting, setLimitSubmitting] = useState(false);
+
+  // Admin Price Override Modal
+  const [overrideModal, setOverrideModal] = useState<{
+    type: 'sell' | 'repair';
+    id: string;
+    brand: string;
+    model: string;
+    currentPrice: number;
+    vendorName?: string;
+  } | null>(null);
+  const [overridePriceInput, setOverridePriceInput] = useState('');
+  const [overrideSubmitting, setOverrideSubmitting] = useState(false);
 
   // Add Vendor Modal State
   const [addVendorModal, setAddVendorModal] = useState(false);
@@ -217,39 +239,174 @@ export default function AdminVendors() {
     .filter((l) => l.type === 'sell_commission_fee' || l.type === 'repair_commission_fee')
     .reduce((sum, l) => sum + (l.amount || 0), 0);
 
-  // Assign Mobile Sell Request to Vendor
+  // Assign or Reassign Mobile Sell Request to Vendor
   const handleAssignSellToVendor = async (sellId: string, vendorId: string) => {
     try {
+      const isReassign = Boolean(vendorId);
       const { error } = await db.from('sell_requests').update({
         assigned_vendor_id: vendorId || null,
-        forwarded_to_vendor: Boolean(vendorId),
-        vendor_quote_status: vendorId ? 'pending_inspection' : 'none',
+        forwarded_to_vendor: isReassign,
+        vendor_quote_status: isReassign ? 'pending_inspection' : 'none',
+        status: isReassign ? 'assigned_to_vendor' : 'pending',
+        updated_at: new Date().toISOString(),
       }).eq('id', sellId);
 
       if (error) throw error;
       const targetVendor = vendors.find((v) => v.id === vendorId);
-      alert(`✅ Mobile sell request forwarded to Vendor "${targetVendor?.business_name || targetVendor?.full_name || 'Vendor'}" for physical valuation!`);
+      if (vendorId) {
+        alert(`✅ Mobile sell request forwarded/reassigned to Vendor "${targetVendor?.business_name || targetVendor?.full_name || 'Vendor'}"!`);
+      } else {
+        alert(`Lead reset to Platform Direct (Vendor unassigned).`);
+      }
       await fetchData();
     } catch (err) {
       alert(err instanceof Error ? err.message : 'Failed to forward sell request to vendor');
     }
   };
 
-  // Assign Repair Request to Vendor
+  // Approve Vendor Sell Quotation (Admin verifies & pushes price to customer)
+  const handleApproveSellQuote = async (sellId: string, price: number) => {
+    try {
+      const { error } = await db.from('sell_requests').update({
+        vendor_quote_status: 'admin_approved',
+        final_price: price,
+        status: 'inspection_mismatch', // Triggers user acceptance prompt on dashboard
+        updated_at: new Date().toISOString(),
+      }).eq('id', sellId);
+
+      if (error) throw error;
+      alert(`✅ Quoted valuation of ${formatINR(price)} APPROVED by Admin! Customer can now accept on their dashboard.`);
+      await fetchData();
+    } catch (err: any) {
+      alert(err?.message || 'Failed to approve sell quotation');
+    }
+  };
+
+  // Reject Vendor Sell Quotation
+  const handleRejectSellQuote = async (sellId: string) => {
+    const confirmReject = window.confirm(
+      'Are you sure you want to reject this vendor quotation? You can reassign this lead to another vendor.'
+    );
+    if (!confirmReject) return;
+    try {
+      const { error } = await db.from('sell_requests').update({
+        vendor_quote_status: 'admin_rejected',
+        status: 'pending',
+        updated_at: new Date().toISOString(),
+      }).eq('id', sellId);
+
+      if (error) throw error;
+      alert('Quotation rejected. You can now reassign this lead to another vendor.');
+      await fetchData();
+    } catch (err: any) {
+      alert(err?.message || 'Failed to reject quotation');
+    }
+  };
+
+  // Assign or Reassign Repair Request to Vendor
   const handleAssignRepairToVendor = async (repairId: string, vendorId: string) => {
     try {
+      const isReassign = Boolean(vendorId);
       const { error } = await db.from('repair_bookings').update({
         assigned_vendor_id: vendorId || null,
-        forwarded_to_vendor: Boolean(vendorId),
-        quotation_status: vendorId ? 'pending_quote' : 'none',
+        forwarded_to_vendor: isReassign,
+        quotation_status: isReassign ? 'pending_quote' : 'none',
+        status: isReassign ? 'assigned_to_vendor' : 'pending',
+        updated_at: new Date().toISOString(),
       }).eq('id', repairId);
 
       if (error) throw error;
       const targetVendor = vendors.find((v) => v.id === vendorId);
-      alert(`✅ Repair request assigned to nearby Vendor "${targetVendor?.business_name || targetVendor?.full_name || 'Vendor'}" for quotation upload!`);
+      if (vendorId) {
+        alert(`✅ Repair request assigned/reassigned to Vendor "${targetVendor?.business_name || targetVendor?.full_name || 'Vendor'}"!`);
+      } else {
+        alert(`Repair reset to Platform Technician.`);
+      }
       await fetchData();
     } catch (err) {
       alert(err instanceof Error ? err.message : 'Failed to assign repair request to vendor');
+    }
+  };
+
+  // Approve Vendor Repair Quotation (Admin verifies & pushes quotation to customer)
+  const handleApproveRepairQuote = async (repairId: string, amount: number) => {
+    try {
+      const { error } = await db.from('repair_bookings').update({
+        quotation_status: 'admin_approved',
+        final_cost: amount,
+        status: 'quoted', // Triggers payment/acceptance on customer dashboard
+        updated_at: new Date().toISOString(),
+      }).eq('id', repairId);
+
+      if (error) throw error;
+      alert(`✅ Repair quotation of ${formatINR(amount)} APPROVED by Admin! Customer can now review & pay on their dashboard.`);
+      await fetchData();
+    } catch (err: any) {
+      alert(err?.message || 'Failed to approve repair quotation');
+    }
+  };
+
+  // Reject Vendor Repair Quotation
+  const handleRejectRepairQuote = async (repairId: string) => {
+    const confirmReject = window.confirm(
+      'Are you sure you want to reject this repair quotation? You can reassign this repair to another nearby vendor.'
+    );
+    if (!confirmReject) return;
+    try {
+      const { error } = await db.from('repair_bookings').update({
+        quotation_status: 'admin_rejected',
+        status: 'pending',
+        updated_at: new Date().toISOString(),
+      }).eq('id', repairId);
+
+      if (error) throw error;
+      alert('Repair quotation rejected. You can now reassign this repair to another vendor.');
+      await fetchData();
+    } catch (err: any) {
+      alert(err?.message || 'Failed to reject quotation');
+    }
+  };
+
+  // Admin Custom Price Override Submission
+  const handleSaveOverridePrice = async () => {
+    if (!overrideModal || !overridePriceInput) return;
+    const num = Number(overridePriceInput);
+    if (isNaN(num) || num <= 0) {
+      alert('Please enter a valid amount.');
+      return;
+    }
+
+    setOverrideSubmitting(true);
+    try {
+      const nowIso = new Date().toISOString();
+      if (overrideModal.type === 'sell') {
+        const { error } = await db.from('sell_requests').update({
+          vendor_quote_price: num,
+          final_price: num,
+          vendor_quote_status: 'admin_approved',
+          status: 'inspection_mismatch',
+          updated_at: nowIso,
+        }).eq('id', overrideModal.id);
+        if (error) throw error;
+        alert(`✅ Verified price of ${formatINR(num)} approved for ${overrideModal.brand} ${overrideModal.model}!`);
+      } else {
+        const { error } = await db.from('repair_bookings').update({
+          vendor_quotation_amount: num,
+          final_cost: num,
+          quotation_status: 'admin_approved',
+          status: 'quoted',
+          updated_at: nowIso,
+        }).eq('id', overrideModal.id);
+        if (error) throw error;
+        alert(`✅ Verified repair cost of ${formatINR(num)} approved for ${overrideModal.brand} ${overrideModal.model}!`);
+      }
+      setOverrideModal(null);
+      setOverridePriceInput('');
+      await fetchData();
+    } catch (err: any) {
+      alert(err?.message || 'Failed to override price');
+    } finally {
+      setOverrideSubmitting(false);
     }
   };
 
@@ -358,27 +515,292 @@ export default function AdminVendors() {
 
       {/* Subtabs Bar */}
       <div className="flex flex-wrap items-center justify-between gap-3 border-b border-ink-100 pb-3">
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
           {[
-            { id: 'vendors', label: 'Vendor Partners', count: vendors.length },
-            { id: 'assign-sell', label: 'Forward Mobile Sell Leads', count: sellRequests.length },
-            { id: 'assign-repair', label: 'Assign Repair Bookings', count: repairBookings.length },
-            { id: 'commissions', label: '10% Commission Ledgers', count: ledgers.length },
+            {
+              id: 'pending-quotes',
+              label: '⚡ Pending Quotations',
+              count: totalPendingQuotes,
+              alert: totalPendingQuotes > 0,
+            },
+            { id: 'assign-sell', label: 'Forward Mobile Sell Leads', count: sellRequests.length, alert: false },
+            { id: 'assign-repair', label: 'Assign Repair Bookings', count: repairBookings.length, alert: false },
+            { id: 'vendors', label: 'Vendor Partners', count: vendors.length, alert: false },
+            { id: 'commissions', label: '10% Commission Ledgers', count: ledgers.length, alert: false },
           ].map((tab) => (
             <button
               key={tab.id}
               onClick={() => setActiveSubtab(tab.id as any)}
-              className={`px-4 py-2 rounded-xl text-xs font-bold transition ${
+              className={`px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 cursor-pointer ${
                 activeSubtab === tab.id
                   ? 'bg-brand-600 text-white shadow-xs'
+                  : tab.alert
+                  ? 'bg-amber-100 text-amber-900 border border-amber-300 font-black animate-pulse'
                   : 'bg-white text-ink-600 hover:bg-ink-100 border border-ink-200/60'
               }`}
             >
-              {tab.label} ({tab.count})
+              <span>{tab.label}</span>
+              <span
+                className={`px-1.5 py-0.2 rounded-full text-[10px] font-black ${
+                  activeSubtab === tab.id
+                    ? 'bg-white/20 text-white'
+                    : tab.alert
+                    ? 'bg-amber-500 text-white'
+                    : 'bg-ink-100 text-ink-700'
+                }`}
+              >
+                {tab.count}
+              </span>
+              {tab.alert && activeSubtab !== tab.id && (
+                <span className="h-2 w-2 rounded-full bg-amber-500 animate-ping" />
+              )}
             </button>
           ))}
         </div>
       </div>
+
+      {/* ── SUBTAB 0: PENDING VENDOR QUOTATIONS QUEUE (ADMIN VERIFICATION) ── */}
+      {activeSubtab === 'pending-quotes' && (
+        <div className="space-y-6">
+          <div className="card p-5 rounded-2xl bg-gradient-to-r from-amber-50 via-orange-50 to-white border border-amber-200 space-y-1">
+            <div className="flex items-center gap-2 text-amber-900 font-black text-sm">
+              <Sparkles className="h-4 w-4 text-amber-600" /> Vendor Quotation Verification & Approval Queue
+            </div>
+            <p className="text-xs text-amber-800">
+              Vendors have submitted prices after physical diagnostic checks. Verify if the quotation is fair and accurate.
+              Click <strong>Approve Price</strong> to push it to the customer dashboard, <strong>Override</strong> to modify the price,
+              or <strong>Reassign</strong> if the vendor declined or quoted an invalid price.
+            </p>
+          </div>
+
+          {totalPendingQuotes === 0 ? (
+            <div className="card p-12 text-center bg-white rounded-2xl border border-ink-100">
+              <CheckCircle2 className="h-10 w-10 text-emerald-500 mx-auto" />
+              <h3 className="mt-3 font-display font-bold text-ink-800 text-sm">All Vendor Quotations Verified</h3>
+              <p className="text-xs text-ink-500 mt-1">There are currently no pending quotes from vendors awaiting Admin verification.</p>
+            </div>
+          ) : (
+            <div className="space-y-6">
+              {/* Sell Request Quotes */}
+              {pendingSellQuotes.length > 0 && (
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <h3 className="font-display font-bold text-ink-900 text-sm flex items-center gap-2">
+                      <Smartphone className="h-4 w-4 text-brand-600" />
+                      Mobile Buyback Quotes ({pendingSellQuotes.length})
+                    </h3>
+                  </div>
+
+                  <div className="grid grid-cols-1 gap-4">
+                    {pendingSellQuotes.map((s) => {
+                      const vendor = vendors.find((v) => v.id === s.assigned_vendor_id);
+                      return (
+                        <div key={s.id} className="card p-5 rounded-2xl bg-white shadow-xs border-2 border-amber-300 space-y-4">
+                          <div className="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-ink-100">
+                            <div>
+                              <div className="flex items-center gap-2">
+                                <span className="badge bg-brand-50 text-brand-700 font-bold">Sell #{s.id.slice(0, 8)}</span>
+                                <span className="badge bg-amber-500 text-white font-black text-[10px] animate-pulse">
+                                  ⚡ Quoted by Vendor: {formatINR(s.vendor_quote_price || 0)}
+                                </span>
+                              </div>
+                              <h4 className="text-sm font-black text-ink-900 mt-1">
+                                {s.brand} {s.model} {s.storage ? `(${s.storage})` : ''} · Condition: {s.condition}
+                              </h4>
+                              <p className="text-xs text-ink-500">
+                                Assigned Vendor: <strong>{vendor?.business_name || vendor?.full_name || 'Vendor Partner'}</strong> ({vendor?.phone || 'No phone'})
+                              </p>
+                            </div>
+
+                            {/* Verification Action Buttons */}
+                            <div className="flex items-center gap-2 flex-wrap">
+                              <button
+                                type="button"
+                                onClick={() => handleApproveSellQuote(s.id, s.vendor_quote_price || 0)}
+                                className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-black rounded-xl shadow-xs transition flex items-center gap-1.5 cursor-pointer"
+                              >
+                                <Check className="h-4 w-4" /> Approve Price ({formatINR(s.vendor_quote_price || 0)})
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  setOverrideModal({
+                                    type: 'sell',
+                                    id: s.id,
+                                    brand: s.brand,
+                                    model: s.model,
+                                    currentPrice: s.vendor_quote_price || s.estimated_price || 0,
+                                    vendorName: vendor?.business_name || vendor?.full_name || undefined,
+                                  });
+                                  setOverridePriceInput(String(s.vendor_quote_price || s.estimated_price || ''));
+                                }}
+                                className="px-3.5 py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-xl transition flex items-center gap-1.5 cursor-pointer"
+                              >
+                                <Edit2 className="h-3.5 w-3.5" /> Override Price
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => handleRejectSellQuote(s.id)}
+                                className="px-3 py-2 bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 text-xs font-bold rounded-xl transition cursor-pointer"
+                              >
+                                Reject Quote
+                              </button>
+                            </div>
+                          </div>
+
+                          <div className="grid grid-cols-1 sm:grid-cols-4 gap-3 text-xs bg-amber-50/50 p-3.5 rounded-xl border border-amber-100">
+                            <div>
+                              <span className="text-[10px] uppercase font-bold text-ink-500 block">Est. Online Valuation</span>
+                              <strong className="text-ink-800">{formatINR(s.estimated_price || 0)}</strong>
+                            </div>
+                            <div>
+                              <span className="text-[10px] uppercase font-bold text-amber-800 block">Vendor Quoted Valuation</span>
+                              <strong className="text-amber-900 font-display text-base font-black">{formatINR(s.vendor_quote_price || 0)}</strong>
+                            </div>
+                            <div>
+                              <span className="text-[10px] uppercase font-bold text-emerald-700 block">10% Platform Commission</span>
+                              <strong className="text-emerald-800 font-bold">{formatINR(Math.round((s.vendor_quote_price || 0) * 0.10))}</strong>
+                            </div>
+                            <div>
+                              <span className="text-[10px] uppercase font-bold text-ink-500 block">Reassign to Other Vendor</span>
+                              <select
+                                value={s.assigned_vendor_id || ''}
+                                onChange={(e) => handleAssignSellToVendor(s.id, e.target.value)}
+                                className="input py-0.5 px-2 text-xs font-bold text-brand-900 border-brand-300 w-full mt-0.5"
+                              >
+                                <option value="">-- Platform Direct --</option>
+                                {vendors.map((v) => (
+                                  <option key={v.id} value={v.id}>
+                                    {v.business_name || v.full_name}
+                                  </option>
+                                ))}
+                              </select>
+                            </div>
+                          </div>
+
+                          {s.vendor_notes && (
+                            <div className="text-xs bg-ink-50 p-3 rounded-xl border border-ink-100 text-ink-800">
+                              <span className="font-bold text-ink-900">Vendor Inspection Note:</span> "{s.vendor_notes}"
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+
+              {/* Repair Request Quotes */}
+              {pendingRepairQuotes.length > 0 && (
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <h3 className="font-display font-bold text-ink-900 text-sm flex items-center gap-2">
+                      <Wrench className="h-4 w-4 text-purple-600" />
+                      Doorstep Repair Quotations ({pendingRepairQuotes.length})
+                    </h3>
+                  </div>
+
+                  <div className="grid grid-cols-1 gap-4">
+                    {pendingRepairQuotes.map((r) => {
+                      const vendor = vendors.find((v) => v.id === r.assigned_vendor_id);
+                      return (
+                        <div key={r.id} className="card p-5 rounded-2xl bg-white shadow-xs border-2 border-purple-300 space-y-4">
+                          <div className="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-ink-100">
+                            <div>
+                              <div className="flex items-center gap-2">
+                                <span className="badge bg-purple-50 text-purple-700 font-bold">Repair #{r.tracking_id || r.id.slice(0, 8)}</span>
+                                <span className="badge bg-purple-600 text-white font-black text-[10px] animate-pulse">
+                                  ⚡ Quoted by Vendor: {formatINR(r.vendor_quotation_amount || 0)}
+                                </span>
+                              </div>
+                              <h4 className="text-sm font-black text-ink-900 mt-1">
+                                {r.brand} {r.model} · Issue: <span className="text-rose-700 font-bold">{r.problem}</span>
+                              </h4>
+                              <p className="text-xs text-ink-500">
+                                Assigned Technician/Vendor: <strong>{vendor?.business_name || vendor?.full_name || 'Vendor Partner'}</strong> ({vendor?.phone || 'No phone'})
+                              </p>
+                            </div>
+
+                            <div className="flex items-center gap-2 flex-wrap">
+                              <button
+                                type="button"
+                                onClick={() => handleApproveRepairQuote(r.id, r.vendor_quotation_amount || 0)}
+                                className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-black rounded-xl shadow-xs transition flex items-center gap-1.5 cursor-pointer"
+                              >
+                                <Check className="h-4 w-4" /> Approve Quotation ({formatINR(r.vendor_quotation_amount || 0)})
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  setOverrideModal({
+                                    type: 'repair',
+                                    id: r.id,
+                                    brand: r.brand,
+                                    model: r.model,
+                                    currentPrice: r.vendor_quotation_amount || r.estimated_cost || 0,
+                                    vendorName: vendor?.business_name || vendor?.full_name || undefined,
+                                  });
+                                  setOverridePriceInput(String(r.vendor_quotation_amount || r.estimated_cost || ''));
+                                }}
+                                className="px-3.5 py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-xl transition flex items-center gap-1.5 cursor-pointer"
+                              >
+                                <Edit2 className="h-3.5 w-3.5" /> Override Cost
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => handleRejectRepairQuote(r.id)}
+                                className="px-3 py-2 bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 text-xs font-bold rounded-xl transition cursor-pointer"
+                              >
+                                Reject Quote
+                              </button>
+                            </div>
+                          </div>
+
+                          <div className="grid grid-cols-1 sm:grid-cols-4 gap-3 text-xs bg-purple-50/50 p-3.5 rounded-xl border border-purple-100">
+                            <div>
+                              <span className="text-[10px] uppercase font-bold text-ink-500 block">Est. Online Cost</span>
+                              <strong className="text-ink-800">{formatINR(r.estimated_cost || 0)}</strong>
+                            </div>
+                            <div>
+                              <span className="text-[10px] uppercase font-bold text-purple-800 block">Vendor Repair Quotation</span>
+                              <strong className="text-purple-900 font-display text-base font-black">{formatINR(r.vendor_quotation_amount || 0)}</strong>
+                            </div>
+                            <div>
+                              <span className="text-[10px] uppercase font-bold text-emerald-700 block">10% Platform Commission</span>
+                              <strong className="text-emerald-800 font-bold">{formatINR(Math.round((r.vendor_quotation_amount || 0) * 0.10))}</strong>
+                            </div>
+                            <div>
+                              <span className="text-[10px] uppercase font-bold text-ink-500 block">Reassign to Other Vendor</span>
+                              <select
+                                value={r.assigned_vendor_id || ''}
+                                onChange={(e) => handleAssignRepairToVendor(r.id, e.target.value)}
+                                className="input py-0.5 px-2 text-xs font-bold text-purple-900 border-purple-300 w-full mt-0.5"
+                              >
+                                <option value="">-- Platform Technician --</option>
+                                {vendors.map((v) => (
+                                  <option key={v.id} value={v.id}>
+                                    {v.business_name || v.full_name}
+                                  </option>
+                                ))}
+                              </select>
+                            </div>
+                          </div>
+
+                          {r.vendor_quotation_details && (
+                            <div className="text-xs bg-ink-50 p-3 rounded-xl border border-ink-100 text-ink-800">
+                              <span className="font-bold text-ink-900">Quotation Breakdown:</span> "{r.vendor_quotation_details}"
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+      )}
 
       {/* ── SUBTAB 1: VENDORS & CREDIT LEDGER ── */}
       {activeSubtab === 'vendors' && (
@@ -520,97 +942,338 @@ export default function AdminVendors() {
       {/* ── SUBTAB 2: FORWARD MOBILE SELL REQUESTS TO VENDORS ── */}
       {activeSubtab === 'assign-sell' && (
         <div className="space-y-4">
-          {sellRequests.map((s) => {
-            const currentVendor = vendors.find((v) => v.id === s.assigned_vendor_id);
+          {/* Sell Filter Controls */}
+          <div className="flex flex-wrap items-center gap-2 pb-2">
+            {[
+              { id: 'all', label: `All (${sellRequests.length})` },
+              { id: 'pending_quote', label: `⚡ Pending Quote (${pendingSellQuotes.length})` },
+              { id: 'admin_approved', label: `✓ Admin Approved (${sellRequests.filter((s) => s.vendor_quote_status === 'admin_approved').length})` },
+              { id: 'user_accepted', label: `✓ Customer Accepted (${sellRequests.filter((s) => s.vendor_quote_status === 'user_accepted' || s.status === 'completed').length})` },
+              { id: 'declined', label: `❌ Declined (${sellRequests.filter((s) => s.vendor_quote_status === 'vendor_declined' || s.vendor_quote_status === 'user_rejected').length})` },
+            ].map((f) => (
+              <button
+                key={f.id}
+                type="button"
+                onClick={() => setSellFilter(f.id as any)}
+                className={`px-3 py-1.5 rounded-xl text-xs font-bold transition cursor-pointer ${
+                  sellFilter === f.id
+                    ? 'bg-[#344257] text-white shadow-xs'
+                    : 'bg-white text-ink-600 hover:bg-ink-50 border border-ink-200/60'
+                }`}
+              >
+                {f.label}
+              </button>
+            ))}
+          </div>
 
-            return (
-              <div key={s.id} className="card p-6 rounded-2xl bg-white shadow-xs border border-ink-100 space-y-4">
-                <div className="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-ink-100">
-                  <div>
-                    <div className="flex items-center gap-2">
-                      <span className="badge bg-brand-50 text-brand-700 font-bold">Sell #{s.id.slice(0, 8)}</span>
-                      <span className="badge bg-ink-100 text-ink-800 text-[10px] font-bold capitalize">{s.status}</span>
-                      {s.vendor_quote_status === 'user_accepted' && (
-                        <span className="badge bg-emerald-600 text-white font-bold text-[10px]">✓ User Accepted (Bought via Limit)</span>
-                      )}
+          {sellRequests
+            .filter((s) => {
+              if (sellFilter === 'pending_quote') return s.vendor_quote_status === 'quoted';
+              if (sellFilter === 'admin_approved') return s.vendor_quote_status === 'admin_approved';
+              if (sellFilter === 'user_accepted') return s.vendor_quote_status === 'user_accepted' || s.status === 'completed';
+              if (sellFilter === 'declined') return s.vendor_quote_status === 'vendor_declined' || s.vendor_quote_status === 'user_rejected';
+              return true;
+            })
+            .map((s) => {
+              const currentVendor = vendors.find((v) => v.id === s.assigned_vendor_id);
+              const isQuoted = s.vendor_quote_status === 'quoted';
+              const isAdminApproved = s.vendor_quote_status === 'admin_approved';
+              const isUserAccepted = s.vendor_quote_status === 'user_accepted' || s.status === 'completed';
+              const isVendorDeclined = s.vendor_quote_status === 'vendor_declined';
+              const isUserRejected = s.vendor_quote_status === 'user_rejected';
+
+              return (
+                <div
+                  key={s.id}
+                  className={`card p-6 rounded-2xl bg-white shadow-xs border transition space-y-4 ${
+                    isQuoted ? 'border-2 border-amber-300 ring-2 ring-amber-100' : 'border-ink-100'
+                  }`}
+                >
+                  <div className="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-ink-100">
+                    <div>
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <span className="badge bg-brand-50 text-brand-700 font-bold">Sell #{s.id.slice(0, 8)}</span>
+                        {isUserAccepted ? (
+                          <span className="badge bg-emerald-600 text-white font-bold text-[10px]">
+                            ✓ Customer Accepted (Bought via Limit)
+                          </span>
+                        ) : isAdminApproved ? (
+                          <span className="badge bg-blue-600 text-white font-bold text-[10px]">
+                            ✓ Approved by Admin ({formatINR(s.vendor_quote_price || 0)}) — Sent to Customer
+                          </span>
+                        ) : isQuoted ? (
+                          <span className="badge bg-amber-500 text-white font-black text-[10px] animate-pulse">
+                            ⚡ Quoted by Vendor: {formatINR(s.vendor_quote_price || 0)} (Awaiting Verification)
+                          </span>
+                        ) : isVendorDeclined ? (
+                          <span className="badge bg-rose-600 text-white font-bold text-[10px]">
+                            ❌ Vendor Declined Lead — Please Reassign
+                          </span>
+                        ) : isUserRejected ? (
+                          <span className="badge bg-gray-600 text-white font-bold text-[10px]">
+                            ❌ Customer Declined Quote
+                          </span>
+                        ) : s.assigned_vendor_id ? (
+                          <span className="badge bg-indigo-50 text-indigo-700 font-bold text-[10px]">
+                            Assigned to {currentVendor?.business_name || currentVendor?.full_name || 'Vendor'}
+                          </span>
+                        ) : (
+                          <span className="badge bg-ink-100 text-ink-800 text-[10px] font-bold">
+                            Platform Direct
+                          </span>
+                        )}
+                      </div>
+                      <p className="text-xs text-ink-500 mt-1">
+                        Device: <strong className="text-ink-900">{s.brand} {s.model} ({s.storage})</strong> · Pickup: {s.pickup_address || s.pickup_area}
+                      </p>
                     </div>
-                    <p className="text-xs text-ink-500 mt-1">
-                      Device: <strong className="text-ink-900">{s.brand} {s.model} ({s.storage})</strong> · Pickup: {s.pickup_address || s.pickup_area}
-                    </p>
+
+                    {/* Forward / Reassign Dropdown */}
+                    <div className="flex items-center gap-2">
+                      <label className="text-xs font-bold text-ink-700">Forward / Reassign:</label>
+                      <select
+                        value={s.assigned_vendor_id || ''}
+                        onChange={(e) => handleAssignSellToVendor(s.id, e.target.value)}
+                        className="input py-1 px-3 text-xs font-bold text-brand-900 border-brand-300"
+                      >
+                        <option value="">-- Platform Direct (No Vendor) --</option>
+                        {vendors.map((v) => (
+                          <option key={v.id} value={v.id}>
+                            {v.business_name || v.full_name} ({v.phone})
+                          </option>
+                        ))}
+                      </select>
+                    </div>
                   </div>
 
-                  {/* Vendor Forward Selection */}
-                  <div className="flex items-center gap-2">
-                    <label className="text-xs font-bold text-ink-700">Forward to Vendor:</label>
-                    <select
-                      value={s.assigned_vendor_id || ''}
-                      onChange={(e) => handleAssignSellToVendor(s.id, e.target.value)}
-                      className="input py-1 px-3 text-xs font-bold text-brand-900 border-brand-300"
-                    >
-                      <option value="">-- Platform Direct (No Vendor) --</option>
-                      {vendors.map((v) => (
-                        <option key={v.id} value={v.id}>
-                          {v.business_name || v.full_name} ({v.phone})
-                        </option>
-                      ))}
-                    </select>
+                  {/* Valuation Breakdown */}
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs bg-ink-50 p-3 rounded-xl">
+                    <div>Est. Online Price: <strong>{formatINR(s.estimated_price || 0)}</strong></div>
+                    <div>
+                      Vendor Quoted Valuation:{' '}
+                      <strong className={isQuoted ? 'text-amber-700 font-black' : ''}>
+                        {s.vendor_quote_price ? formatINR(s.vendor_quote_price) : 'Not Quoted Yet'}
+                      </strong>
+                    </div>
+                    <div>10% Platform Commission: <strong>{s.vendor_quote_price ? formatINR(Math.round(s.vendor_quote_price * 0.10)) : '-'}</strong></div>
                   </div>
-                </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs bg-ink-50 p-3 rounded-xl">
-                  <div>Est. Online Price: <strong>{formatINR(s.estimated_price || 0)}</strong></div>
-                  <div>Vendor Quoted Valuation: <strong>{s.vendor_quote_price ? formatINR(s.vendor_quote_price) : 'Not Quoted Yet'}</strong></div>
-                  <div>10% Platform Commission: <strong>{s.vendor_quote_price ? formatINR(Math.round(s.vendor_quote_price * 0.10)) : '-'}</strong></div>
+                  {s.vendor_notes && (
+                    <div className="text-xs bg-amber-50/60 p-2.5 rounded-xl border border-amber-200 text-amber-900">
+                      <strong>Vendor Inspection Notes:</strong> "{s.vendor_notes}"
+                    </div>
+                  )}
+
+                  {/* Verification Actions for Admin */}
+                  {isQuoted && (
+                    <div className="flex items-center justify-between gap-3 pt-2 border-t border-ink-100 flex-wrap bg-amber-50/30 p-2.5 rounded-xl">
+                      <span className="text-xs font-bold text-amber-900">
+                        ⚡ Action Required: Verify Vendor Quotation
+                      </span>
+                      <div className="flex items-center gap-2">
+                        <button
+                          type="button"
+                          onClick={() => handleApproveSellQuote(s.id, s.vendor_quote_price || 0)}
+                          className="px-3.5 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-black rounded-xl shadow-xs transition flex items-center gap-1 cursor-pointer"
+                        >
+                          <Check className="h-3.5 w-3.5" /> Approve Price ({formatINR(s.vendor_quote_price || 0)})
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setOverrideModal({
+                              type: 'sell',
+                              id: s.id,
+                              brand: s.brand,
+                              model: s.model,
+                              currentPrice: s.vendor_quote_price || s.estimated_price || 0,
+                              vendorName: currentVendor?.business_name || currentVendor?.full_name || undefined,
+                            });
+                            setOverridePriceInput(String(s.vendor_quote_price || s.estimated_price || ''));
+                          }}
+                          className="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-xl transition flex items-center gap-1 cursor-pointer"
+                        >
+                          <Edit2 className="h-3.5 w-3.5" /> Override
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => handleRejectSellQuote(s.id)}
+                          className="px-3 py-1.5 bg-white text-rose-600 border border-rose-200 hover:bg-rose-50 text-xs font-bold rounded-xl transition cursor-pointer"
+                        >
+                          Reject Quote
+                        </button>
+                      </div>
+                    </div>
+                  )}
                 </div>
-              </div>
-            );
-          })}
+              );
+            })}
         </div>
       )}
 
       {/* ── SUBTAB 3: ASSIGN REPAIR REQUESTS TO NEARBY VENDORS ── */}
       {activeSubtab === 'assign-repair' && (
         <div className="space-y-4">
-          {repairBookings.map((r) => {
-            return (
-              <div key={r.id} className="card p-6 rounded-2xl bg-white shadow-xs border border-ink-100 space-y-4">
-                <div className="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-ink-100">
-                  <div>
-                    <div className="flex items-center gap-2">
-                      <span className="badge bg-purple-50 text-purple-700 font-bold">Repair #{r.tracking_id || r.id.slice(0, 8)}</span>
-                      <span className="badge bg-ink-100 text-ink-800 text-[10px] font-bold capitalize">{r.status}</span>
+          {/* Repair Filter Controls */}
+          <div className="flex flex-wrap items-center gap-2 pb-2">
+            {[
+              { id: 'all', label: `All (${repairBookings.length})` },
+              { id: 'pending_quote', label: `⚡ Pending Quote (${pendingRepairQuotes.length})` },
+              { id: 'admin_approved', label: `✓ Admin Approved (${repairBookings.filter((r) => r.quotation_status === 'admin_approved').length})` },
+              { id: 'paid', label: `✓ Paid/Done (${repairBookings.filter((r) => r.quotation_status === 'paid' || r.status === 'paid').length})` },
+              { id: 'declined', label: `❌ Declined (${repairBookings.filter((r) => r.quotation_status === 'vendor_declined' || r.quotation_status === 'user_rejected').length})` },
+            ].map((f) => (
+              <button
+                key={f.id}
+                type="button"
+                onClick={() => setRepairFilter(f.id as any)}
+                className={`px-3 py-1.5 rounded-xl text-xs font-bold transition cursor-pointer ${
+                  repairFilter === f.id
+                    ? 'bg-[#344257] text-white shadow-xs'
+                    : 'bg-white text-ink-600 hover:bg-ink-50 border border-ink-200/60'
+                }`}
+              >
+                {f.label}
+              </button>
+            ))}
+          </div>
+
+          {repairBookings
+            .filter((r) => {
+              if (repairFilter === 'pending_quote') return r.quotation_status === 'quoted';
+              if (repairFilter === 'admin_approved') return r.quotation_status === 'admin_approved';
+              if (repairFilter === 'paid') return r.quotation_status === 'paid' || r.status === 'paid';
+              if (repairFilter === 'declined') return r.quotation_status === 'vendor_declined' || r.quotation_status === 'user_rejected';
+              return true;
+            })
+            .map((r) => {
+              const currentVendor = vendors.find((v) => v.id === r.assigned_vendor_id);
+              const isQuoted = r.quotation_status === 'quoted';
+              const isAdminApproved = r.quotation_status === 'admin_approved';
+              const isPaid = r.quotation_status === 'paid' || r.status === 'paid';
+              const isVendorDeclined = r.quotation_status === 'vendor_declined';
+
+              return (
+                <div
+                  key={r.id}
+                  className={`card p-6 rounded-2xl bg-white shadow-xs border transition space-y-4 ${
+                    isQuoted ? 'border-2 border-purple-300 ring-2 ring-purple-100' : 'border-ink-100'
+                  }`}
+                >
+                  <div className="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-ink-100">
+                    <div>
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <span className="badge bg-purple-50 text-purple-700 font-bold">Repair #{r.tracking_id || r.id.slice(0, 8)}</span>
+                        {isPaid ? (
+                          <span className="badge bg-emerald-600 text-white font-bold text-[10px]">
+                            ✓ Paid by Customer
+                          </span>
+                        ) : isAdminApproved ? (
+                          <span className="badge bg-blue-600 text-white font-bold text-[10px]">
+                            ✓ Approved by Admin ({formatINR(r.vendor_quotation_amount || 0)}) — Sent to Customer
+                          </span>
+                        ) : isQuoted ? (
+                          <span className="badge bg-purple-600 text-white font-black text-[10px] animate-pulse">
+                            ⚡ Quoted by Vendor: {formatINR(r.vendor_quotation_amount || 0)} (Awaiting Verification)
+                          </span>
+                        ) : isVendorDeclined ? (
+                          <span className="badge bg-rose-600 text-white font-bold text-[10px]">
+                            ❌ Vendor Declined Repair — Please Reassign
+                          </span>
+                        ) : r.assigned_vendor_id ? (
+                          <span className="badge bg-purple-50 text-purple-700 font-bold text-[10px]">
+                            Assigned to {currentVendor?.business_name || currentVendor?.full_name || 'Vendor'}
+                          </span>
+                        ) : (
+                          <span className="badge bg-ink-100 text-ink-800 text-[10px] font-bold">
+                            Platform Technician
+                          </span>
+                        )}
+                      </div>
+                      <p className="text-xs text-ink-500 mt-1">
+                        Problem: <strong className="text-rose-700">{r.problem}</strong> on {r.brand} {r.model} · Area: {r.pickup_area || 'Doorstep Service'}
+                      </p>
                     </div>
-                    <p className="text-xs text-ink-500 mt-1">
-                      Problem: <strong className="text-rose-700">{r.problem}</strong> on {r.brand} {r.model} · Area: {r.pickup_area || 'Doorstep Service'}
-                    </p>
+
+                    {/* Vendor Assignment Dropdown */}
+                    <div className="flex items-center gap-2">
+                      <label className="text-xs font-bold text-ink-700">Assign / Reassign:</label>
+                      <select
+                        value={r.assigned_vendor_id || ''}
+                        onChange={(e) => handleAssignRepairToVendor(r.id, e.target.value)}
+                        className="input py-1 px-3 text-xs font-bold text-purple-900 border-purple-300"
+                      >
+                        <option value="">-- Platform Technician --</option>
+                        {vendors.map((v) => (
+                          <option key={v.id} value={v.id}>
+                            {v.business_name || v.full_name} ({v.phone})
+                          </option>
+                        ))}
+                      </select>
+                    </div>
                   </div>
 
-                  {/* Vendor Assignment Dropdown */}
-                  <div className="flex items-center gap-2">
-                    <label className="text-xs font-bold text-ink-700">Assign Nearby Vendor:</label>
-                    <select
-                      value={r.assigned_vendor_id || ''}
-                      onChange={(e) => handleAssignRepairToVendor(r.id, e.target.value)}
-                      className="input py-1 px-3 text-xs font-bold text-purple-900 border-purple-300"
-                    >
-                      <option value="">-- Platform Technician --</option>
-                      {vendors.map((v) => (
-                        <option key={v.id} value={v.id}>
-                          {v.business_name || v.full_name} ({v.phone})
-                        </option>
-                      ))}
-                    </select>
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs bg-purple-50/50 p-3 rounded-xl border border-purple-100">
+                    <div>
+                      Vendor Quotation:{' '}
+                      <strong className={isQuoted ? 'text-purple-800 font-black' : ''}>
+                        {r.vendor_quotation_amount ? formatINR(r.vendor_quotation_amount) : 'Pending Upload'}
+                      </strong>
+                    </div>
+                    <div>10% Platform Commission: <strong>{r.vendor_quotation_amount ? formatINR(Math.round(r.vendor_quotation_amount * 0.10)) : '-'}</strong></div>
+                    <div>Vendor Net Payout (90%): <strong>{r.vendor_quotation_amount ? formatINR(Math.round(r.vendor_quotation_amount * 0.90)) : '-'}</strong></div>
                   </div>
-                </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs bg-purple-50/50 p-3 rounded-xl border border-purple-100">
-                  <div>Vendor Quotation: <strong>{r.vendor_quotation_amount ? formatINR(r.vendor_quotation_amount) : 'Pending Upload'}</strong></div>
-                  <div>10% Platform Commission: <strong>{r.vendor_quotation_amount ? formatINR(Math.round(r.vendor_quotation_amount * 0.10)) : '-'}</strong></div>
-                  <div>Vendor Net Payout (90%): <strong>{r.vendor_quotation_amount ? formatINR(Math.round(r.vendor_quotation_amount * 0.90)) : '-'}</strong></div>
+                  {r.vendor_quotation_details && (
+                    <div className="text-xs bg-purple-50/40 p-2.5 rounded-xl border border-purple-100 text-purple-900">
+                      <strong>Quotation Breakdown:</strong> "{r.vendor_quotation_details}"
+                    </div>
+                  )}
+
+                  {/* Verification Actions for Admin */}
+                  {isQuoted && (
+                    <div className="flex items-center justify-between gap-3 pt-2 border-t border-ink-100 flex-wrap bg-purple-50/40 p-2.5 rounded-xl">
+                      <span className="text-xs font-bold text-purple-900">
+                        ⚡ Action Required: Verify Repair Quotation
+                      </span>
+                      <div className="flex items-center gap-2">
+                        <button
+                          type="button"
+                          onClick={() => handleApproveRepairQuote(r.id, r.vendor_quotation_amount || 0)}
+                          className="px-3.5 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-black rounded-xl shadow-xs transition flex items-center gap-1 cursor-pointer"
+                        >
+                          <Check className="h-3.5 w-3.5" /> Approve Cost ({formatINR(r.vendor_quotation_amount || 0)})
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setOverrideModal({
+                              type: 'repair',
+                              id: r.id,
+                              brand: r.brand,
+                              model: r.model,
+                              currentPrice: r.vendor_quotation_amount || r.estimated_cost || 0,
+                              vendorName: currentVendor?.business_name || currentVendor?.full_name || undefined,
+                            });
+                            setOverridePriceInput(String(r.vendor_quotation_amount || r.estimated_cost || ''));
+                          }}
+                          className="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-xl transition flex items-center gap-1 cursor-pointer"
+                        >
+                          <Edit2 className="h-3.5 w-3.5" /> Override
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => handleRejectRepairQuote(r.id)}
+                          className="px-3 py-1.5 bg-white text-rose-600 border border-rose-200 hover:bg-rose-50 text-xs font-bold rounded-xl transition cursor-pointer"
+                        >
+                          Reject Quote
+                        </button>
+                      </div>
+                    </div>
+                  )}
                 </div>
-              </div>
-            );
-          })}
+              );
+            })}
         </div>
       )}
 
@@ -755,6 +1418,69 @@ export default function AdminVendors() {
               </a>
               <button onClick={() => setShareCredModal(null)} className="btn-outline text-xs py-2">
                 Done
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ── ADMIN PRICE OVERRIDE & APPROVAL MODAL ── */}
+      {overrideModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-ink-900/60 backdrop-blur-xs p-4">
+          <div className="card w-full max-w-md p-6 bg-white rounded-2xl shadow-2xl space-y-4">
+            <div className="flex items-center justify-between pb-2 border-b border-ink-100">
+              <h3 className="font-display font-bold text-ink-900 flex items-center gap-2 text-sm">
+                <Edit2 className="h-4 w-4 text-blue-600" />
+                Override & Approve {overrideModal.type === 'sell' ? 'Valuation Price' : 'Repair Cost'}
+              </h3>
+              <button
+                type="button"
+                onClick={() => setOverrideModal(null)}
+                className="text-ink-400 hover:text-ink-700"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+
+            <div className="p-3 bg-blue-50/60 rounded-xl space-y-1 text-xs border border-blue-100">
+              <p>Device: <strong>{overrideModal.brand} {overrideModal.model}</strong></p>
+              {overrideModal.vendorName && <p>Assigned Vendor: <strong>{overrideModal.vendorName}</strong></p>}
+              <p>Current Quoted Amount: <strong className="text-blue-900">{formatINR(overrideModal.currentPrice)}</strong></p>
+            </div>
+
+            <div>
+              <label className="text-xs font-bold text-ink-700">
+                Verified Final {overrideModal.type === 'sell' ? 'Valuation Amount' : 'Repair Cost'} (₹)
+              </label>
+              <input
+                type="number"
+                value={overridePriceInput}
+                onChange={(e) => setOverridePriceInput(e.target.value)}
+                placeholder="e.g. 7500"
+                className="input mt-1 text-sm font-black text-ink-900"
+                autoFocus
+              />
+              <p className="text-[11px] text-ink-500 mt-1">
+                This verified price will be approved by Admin and immediately sent to the customer dashboard for acceptance.
+              </p>
+            </div>
+
+            <div className="flex justify-end gap-2 pt-2 border-t border-ink-100">
+              <button
+                type="button"
+                onClick={() => setOverrideModal(null)}
+                className="btn-outline text-xs px-4 py-2"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={handleSaveOverridePrice}
+                disabled={overrideSubmitting}
+                className="px-5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs rounded-xl shadow-xs transition flex items-center gap-1.5 cursor-pointer"
+              >
+                <Check className="h-4 w-4" />
+                {overrideSubmitting ? 'Saving...' : 'Approve Verified Price'}
               </button>
             </div>
           </div>

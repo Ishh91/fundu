@@ -11,6 +11,7 @@ import type { Product, SparePart, WholesaleInventory, WholesaleOrder, VendorLedg
 import { PHONE_BRANDS } from '../types';
 import { db, formatINR } from '../lib/db';
 import CustomerDetailsModal from '../components/CustomerDetailsModal';
+import { notifyVendorQuoteSubmitted } from '../lib/whatsappNotifyService';
 
 export default function Vendor() {
   const { user, profile, loading, refreshProfile, signOut } = useAuth();
@@ -115,16 +116,32 @@ export default function Vendor() {
 
     setSellQuoteSubmitting(true);
     try {
+      const nowIso = new Date().toISOString();
+      const notes = sellInspectionNotes || 'Physical inspection completed by Vendor.';
       const { error } = await db.from('sell_requests').update({
         vendor_quote_price: priceNum,
-        vendor_notes: sellInspectionNotes || 'Physical inspection completed by Vendor.',
+        vendor_notes: notes,
         vendor_quote_status: 'quoted',
         status: 'quoted_by_vendor',
+        updated_at: nowIso,
       }).eq('id', sellQuoteModal.id);
 
       if (error) throw error;
 
-      alert(`✅ Valuation quote of ${formatINR(priceNum)} submitted for customer mobile (${sellQuoteModal.brand} ${sellQuoteModal.model}). Customer can now accept on their dashboard!`);
+      // Automated WhatsApp notification to Admin
+      notifyVendorQuoteSubmitted({
+        leadId: sellQuoteModal.id,
+        leadType: 'sell',
+        vendorName: profile?.business_name || profile?.full_name || 'Vendor Partner',
+        vendorPhone: profile?.phone,
+        brand: sellQuoteModal.brand,
+        model: sellQuoteModal.model,
+        quotedPrice: priceNum,
+        originalPrice: sellQuoteModal.estimated_price,
+        notes,
+      }).catch(() => {});
+
+      alert(`✅ Valuation quote of ${formatINR(priceNum)} submitted for customer mobile (${sellQuoteModal.brand} ${sellQuoteModal.model}). Sent to Admin for verification & approval!`);
       setSellQuoteModal(null);
       setSellValuationPrice('');
       setSellInspectionNotes('');
@@ -133,6 +150,44 @@ export default function Vendor() {
       alert(err instanceof Error ? err.message : 'Failed to submit sell valuation');
     } finally {
       setSellQuoteSubmitting(false);
+    }
+  };
+
+  // Vendor Accepts assigned sell lead
+  const handleAcceptSellLead = async (lead: SellRequest) => {
+    try {
+      const { error } = await db.from('sell_requests').update({
+        vendor_quote_status: 'vendor_accepted',
+        status: 'inspecting_by_vendor',
+        updated_at: new Date().toISOString(),
+      }).eq('id', lead.id);
+      if (error) throw error;
+      alert(`✅ Lead accepted! You can now physically inspect the device and submit your valuation quote.`);
+      await fetchData();
+    } catch (err: any) {
+      alert(err?.message || 'Failed to accept lead');
+    }
+  };
+
+  // Vendor Declines assigned sell lead (returns to Admin)
+  const handleDeclineSellLead = async (lead: SellRequest) => {
+    const confirmDecline = window.confirm(
+      `Are you sure you want to decline this buyback lead (${lead.brand} ${lead.model})? It will be sent back to Admin to reassign to another vendor.`
+    );
+    if (!confirmDecline) return;
+    try {
+      const { error } = await db.from('sell_requests').update({
+        vendor_quote_status: 'vendor_declined',
+        status: 'vendor_declined',
+        assigned_vendor_id: null,
+        forwarded_to_vendor: false,
+        updated_at: new Date().toISOString(),
+      }).eq('id', lead.id);
+      if (error) throw error;
+      alert(`Lead returned to Admin console for reassignment.`);
+      await fetchData();
+    } catch (err: any) {
+      alert(err?.message || 'Failed to decline lead');
     }
   };
 
@@ -147,16 +202,32 @@ export default function Vendor() {
 
     setRepairQuoteSubmitting(true);
     try {
+      const nowIso = new Date().toISOString();
+      const details = repairQuotationDetails || 'Repair quotation uploaded by Vendor.';
       const { error } = await db.from('repair_bookings').update({
         vendor_quotation_amount: amountNum,
-        vendor_quotation_details: repairQuotationDetails || 'Repair quotation uploaded by Vendor.',
+        vendor_quotation_details: details,
         quotation_status: 'quoted',
         status: 'quoted_by_vendor',
+        updated_at: nowIso,
       }).eq('id', repairQuoteModal.id);
 
       if (error) throw error;
 
-      alert(`✅ Repair quotation of ${formatINR(amountNum)} uploaded for ${repairQuoteModal.brand} ${repairQuoteModal.model}. Customer can now review & pay on their dashboard!`);
+      // Automated WhatsApp notification to Admin
+      notifyVendorQuoteSubmitted({
+        leadId: repairQuoteModal.id,
+        leadType: 'repair',
+        vendorName: profile?.business_name || profile?.full_name || 'Vendor Partner',
+        vendorPhone: profile?.phone,
+        brand: repairQuoteModal.brand,
+        model: repairQuoteModal.model,
+        quotedPrice: amountNum,
+        originalPrice: repairQuoteModal.estimated_cost,
+        notes: details,
+      }).catch(() => {});
+
+      alert(`✅ Repair quotation of ${formatINR(amountNum)} uploaded for ${repairQuoteModal.brand} ${repairQuoteModal.model}. Sent to Admin for verification & approval!`);
       setRepairQuoteModal(null);
       setRepairQuotationAmount('');
       setRepairQuotationDetails('');
@@ -165,6 +236,44 @@ export default function Vendor() {
       alert(err instanceof Error ? err.message : 'Failed to upload repair quotation');
     } finally {
       setRepairQuoteSubmitting(false);
+    }
+  };
+
+  // Vendor Accepts repair lead
+  const handleAcceptRepairLead = async (repair: RepairBooking) => {
+    try {
+      const { error } = await db.from('repair_bookings').update({
+        quotation_status: 'vendor_accepted',
+        status: 'inspecting_by_vendor',
+        updated_at: new Date().toISOString(),
+      }).eq('id', repair.id);
+      if (error) throw error;
+      alert(`✅ Repair lead accepted! Please upload your diagnostic quotation.`);
+      await fetchData();
+    } catch (err: any) {
+      alert(err?.message || 'Failed to accept repair');
+    }
+  };
+
+  // Vendor Declines repair lead
+  const handleDeclineRepairLead = async (repair: RepairBooking) => {
+    const confirmDecline = window.confirm(
+      `Are you sure you want to decline this repair (${repair.brand} ${repair.model})? Admin will reassign it to another nearby vendor.`
+    );
+    if (!confirmDecline) return;
+    try {
+      const { error } = await db.from('repair_bookings').update({
+        quotation_status: 'vendor_declined',
+        status: 'vendor_declined',
+        assigned_vendor_id: null,
+        forwarded_to_vendor: false,
+        updated_at: new Date().toISOString(),
+      }).eq('id', repair.id);
+      if (error) throw error;
+      alert(`Repair lead returned to Admin console for reassignment.`);
+      await fetchData();
+    } catch (err: any) {
+      alert(err?.message || 'Failed to decline repair');
     }
   };
 
@@ -451,8 +560,11 @@ export default function Vendor() {
               <div className="space-y-4">
                 {assignedSellLeads.map((lead) => {
                   const isQuoted = lead.vendor_quote_status === 'quoted';
+                  const isAdminApproved = lead.vendor_quote_status === 'admin_approved';
                   const isAccepted = lead.vendor_quote_status === 'user_accepted' || lead.status === 'completed';
                   const isRejected = lead.vendor_quote_status === 'user_rejected';
+                  const isVendorAccepted = lead.vendor_quote_status === 'vendor_accepted';
+                  const isPendingAction = !isQuoted && !isAdminApproved && !isAccepted && !isRejected;
 
                   return (
                     <div key={lead.id} className="card p-6 rounded-2xl bg-white shadow-xs border border-ink-100 space-y-4">
@@ -460,39 +572,55 @@ export default function Vendor() {
                         <div>
                           <div className="flex items-center gap-2">
                             <span className="badge bg-brand-50 text-brand-700 font-bold">Lead #{lead.id.slice(0, 8).toUpperCase()}</span>
-                            <span
-                              className={`badge capitalize text-[10px] font-bold ${
-                                isAccepted
-                                  ? 'bg-emerald-600 text-white'
-                                  : isQuoted
-                                  ? 'bg-blue-600 text-white'
-                                  : isRejected
-                                  ? 'bg-rose-600 text-white'
-                                  : 'bg-amber-500 text-white'
-                              }`}
-                            >
-                              {isAccepted
-                                ? '✓ Accepted by User (Bought via Limit)'
-                                : isQuoted
-                                ? `Quoted: ${formatINR(lead.vendor_quote_price || 0)}`
-                                : isRejected
-                                ? 'User Declined Quote'
-                                : 'Pending Physical Check'}
-                            </span>
+                            {isAccepted ? (
+                              <span className="badge bg-emerald-600 text-white font-bold text-[10px]">
+                                ✓ Customer Accepted (Bought via Limit)
+                              </span>
+                            ) : isAdminApproved ? (
+                              <span className="badge bg-blue-600 text-white font-bold text-[10px]">
+                                ✓ Approved by Admin: {formatINR(lead.vendor_quote_price || 0)} (Sent to Customer)
+                              </span>
+                            ) : isQuoted ? (
+                              <span className="badge bg-amber-500 text-white font-bold text-[10px]">
+                                ⏳ Quoted: {formatINR(lead.vendor_quote_price || 0)} (Awaiting Admin Verification)
+                              </span>
+                            ) : isVendorAccepted ? (
+                              <span className="badge bg-indigo-600 text-white font-bold text-[10px]">
+                                🛠️ Accepted by Store (Physical Inspection in Progress)
+                              </span>
+                            ) : isRejected ? (
+                              <span className="badge bg-rose-600 text-white font-bold text-[10px]">
+                                ❌ Customer Declined Quote
+                              </span>
+                            ) : (
+                              <span className="badge bg-amber-600 text-white font-bold text-[10px]">
+                                ⚡ Action Required (Accept or Quote)
+                              </span>
+                            )}
                           </div>
                           <p className="text-xs text-ink-500 mt-1">
                             Submitted on {new Date(lead.created_at).toLocaleDateString('en-IN')} · Est. Online Value: <strong>{formatINR(lead.estimated_price || 0)}</strong>
                           </p>
                         </div>
 
-                        {/* Valuation Action Button */}
-                        <div className="flex items-center gap-2">
+                        {/* Action Buttons */}
+                        <div className="flex items-center gap-2 flex-wrap">
                           <button
                             onClick={() => setCustomerModalData({ ...lead, type: 'sell' })}
                             className="btn-outline text-xs px-3 py-1.5 text-[#344257] border-[#C0C8D8] hover:bg-[#F0F0F5] flex items-center gap-1.5 font-bold rounded-xl"
                           >
-                            <Eye className="h-3.5 w-3.5 text-[#47576E]" /> Customer Details
+                            <Eye className="h-3.5 w-3.5 text-[#47576E]" /> Details
                           </button>
+
+                          {isPendingAction && !isVendorAccepted && (
+                            <button
+                              onClick={() => handleAcceptSellLead(lead)}
+                              className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-xl flex items-center gap-1 shadow-xs transition"
+                            >
+                              <Check className="h-3.5 w-3.5" /> Accept Lead
+                            </button>
+                          )}
+
                           {!isAccepted && (
                             <button
                               onClick={() => {
@@ -500,10 +628,20 @@ export default function Vendor() {
                                 setSellValuationPrice(String(lead.vendor_quote_price || lead.estimated_price || ''));
                                 setSellInspectionNotes(lead.vendor_notes || '');
                               }}
-                              className="btn-primary text-xs px-4 py-2 font-bold flex items-center gap-1.5"
+                              className="btn-primary text-xs px-4 py-1.5 font-bold flex items-center gap-1.5"
                             >
                               <Edit2 className="h-3.5 w-3.5" />
-                              {isQuoted ? 'Update Valuation' : 'Physical Check & Quote'}
+                              {isQuoted ? 'Update Quote' : 'Physical Check & Quote'}
+                            </button>
+                          )}
+
+                          {isPendingAction && (
+                            <button
+                              onClick={() => handleDeclineSellLead(lead)}
+                              className="px-3 py-1.5 text-rose-600 hover:bg-rose-50 border border-rose-200 text-xs font-bold rounded-xl transition"
+                              title="Decline this lead and return to Admin"
+                            >
+                              Decline
                             </button>
                           )}
                         </div>
@@ -603,7 +741,10 @@ export default function Vendor() {
               <div className="space-y-4">
                 {assignedRepairLeads.map((repair) => {
                   const isQuoted = repair.quotation_status === 'quoted';
+                  const isAdminApproved = repair.quotation_status === 'admin_approved';
                   const isPaid = repair.quotation_status === 'paid' || repair.quotation_status === 'user_accepted' || repair.status === 'paid';
+                  const isVendorAccepted = repair.quotation_status === 'vendor_accepted';
+                  const isPendingAction = !isQuoted && !isAdminApproved && !isPaid;
 
                   return (
                     <div key={repair.id} className="card p-6 rounded-2xl bg-white shadow-xs border border-ink-100 space-y-4">
@@ -611,34 +752,50 @@ export default function Vendor() {
                         <div>
                           <div className="flex items-center gap-2">
                             <span className="badge bg-brand-50 text-brand-700 font-bold">Repair #{repair.tracking_id || repair.id.slice(0, 8)}</span>
-                            <span
-                              className={`badge capitalize text-[10px] font-bold ${
-                                isPaid
-                                  ? 'bg-emerald-600 text-white'
-                                  : isQuoted
-                                  ? 'bg-purple-600 text-white'
-                                  : 'bg-amber-500 text-white'
-                              }`}
-                            >
-                              {isPaid
-                                ? '✓ Paid by User (90% Credited to Vendor)'
-                                : isQuoted
-                                ? `Quotation Uploaded: ${formatINR(repair.vendor_quotation_amount || 0)}`
-                                : 'Pending Repair Quotation'}
-                            </span>
+                            {isPaid ? (
+                              <span className="badge bg-emerald-600 text-white font-bold text-[10px]">
+                                ✓ Paid by User (90% Credited to Vendor)
+                              </span>
+                            ) : isAdminApproved ? (
+                              <span className="badge bg-blue-600 text-white font-bold text-[10px]">
+                                ✓ Approved by Admin: {formatINR(repair.vendor_quotation_amount || 0)} (Sent to Customer)
+                              </span>
+                            ) : isQuoted ? (
+                              <span className="badge bg-purple-600 text-white font-bold text-[10px]">
+                                ⏳ Quotation Uploaded: {formatINR(repair.vendor_quotation_amount || 0)} (Awaiting Admin Verification)
+                              </span>
+                            ) : isVendorAccepted ? (
+                              <span className="badge bg-indigo-600 text-white font-bold text-[10px]">
+                                🛠️ Accepted by Store (Diagnostic Check in Progress)
+                              </span>
+                            ) : (
+                              <span className="badge bg-amber-500 text-white font-bold text-[10px]">
+                                ⚡ Action Required (Accept or Quote)
+                              </span>
+                            )}
                           </div>
                           <p className="text-xs text-ink-500 mt-1">
                             Booked on {new Date(repair.created_at).toLocaleDateString('en-IN')} · Customer Area: <strong>{repair.pickup_area || 'Doorstep Service'}</strong>
                           </p>
                         </div>
 
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-2 flex-wrap">
                           <button
                             onClick={() => setCustomerModalData({ ...repair, type: 'repair' })}
                             className="btn-outline text-xs px-3 py-1.5 text-[#344257] border-[#C0C8D8] hover:bg-[#F0F0F5] flex items-center gap-1.5 font-bold rounded-xl"
                           >
-                            <Eye className="h-3.5 w-3.5 text-[#47576E]" /> Customer Details
+                            <Eye className="h-3.5 w-3.5 text-[#47576E]" /> Details
                           </button>
+
+                          {isPendingAction && !isVendorAccepted && (
+                            <button
+                              onClick={() => handleAcceptRepairLead(repair)}
+                              className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-xl flex items-center gap-1 shadow-xs transition"
+                            >
+                              <Check className="h-3.5 w-3.5" /> Accept
+                            </button>
+                          )}
+
                           {!isPaid && (
                             <button
                               onClick={() => {
@@ -646,9 +803,19 @@ export default function Vendor() {
                                 setRepairQuotationAmount(String(repair.vendor_quotation_amount || repair.estimated_cost || ''));
                                 setRepairQuotationDetails(repair.vendor_quotation_details || '');
                               }}
-                              className="btn-primary bg-purple-600 hover:bg-purple-700 text-xs flex items-center gap-1.5 px-4 py-2 font-bold"
+                              className="btn-primary bg-purple-600 hover:bg-purple-700 text-xs flex items-center gap-1.5 px-4 py-1.5 font-bold"
                             >
-                              <FileText className="h-4 w-4" /> {isQuoted ? 'Update Quotation' : 'Upload Repair Quotation'}
+                              <FileText className="h-4 w-4" /> {isQuoted ? 'Update Quote' : 'Upload Quotation'}
+                            </button>
+                          )}
+
+                          {isPendingAction && (
+                            <button
+                              onClick={() => handleDeclineRepairLead(repair)}
+                              className="px-3 py-1.5 text-rose-600 hover:bg-rose-50 border border-rose-200 text-xs font-bold rounded-xl transition"
+                              title="Decline this repair and return to Admin"
+                            >
+                              Decline
                             </button>
                           )}
                         </div>

@@ -249,9 +249,18 @@ export default function AdminCompetitorRadar() {
 
   // Authentic Storages that realistically exist for this phone (e.g. S24 Ultra -> 256GB, 512GB, 1TB)
   const availableStorages = useMemo(() => {
-    const list = currentDeviceSpecs.storages.length > 0 ? currentDeviceSpecs.storages : ['128 GB', '256 GB'];
-    const filtered = list.filter((s) => isStorageAllowedForModel(selectedBrand, searchModel, s));
-    return filtered.length > 0 ? filtered : list;
+    const isApple = selectedBrand.toLowerCase().includes('apple') || searchModel.toLowerCase().includes('iphone');
+    const catalogStorages = MASTER_MODEL_CATALOG
+      .filter((m) => m.brand.toLowerCase() === selectedBrand.toLowerCase() && m.model.toLowerCase() === searchModel.toLowerCase())
+      .map((m) => m.storage);
+
+    const baseList = isApple
+      ? ['128 GB', '256 GB', '512 GB', '1 TB']
+      : (currentDeviceSpecs.storages.length > 0 ? currentDeviceSpecs.storages : ['128 GB', '256 GB']);
+
+    const combined = Array.from(new Set([...baseList, ...catalogStorages]));
+    const filtered = combined.filter((s) => isStorageAllowedForModel(selectedBrand, searchModel, s));
+    return filtered.length > 0 ? filtered : combined;
   }, [currentDeviceSpecs, selectedBrand, searchModel]);
 
   // Authentic RAM options for the currently selected storage

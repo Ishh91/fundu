@@ -255,3 +255,36 @@ export async function notifyNewContactMessage(data: ContactMessageNotificationDa
 
   return await dispatchWhatsAppAlert(msg, autoOpen);
 }
+
+// =========================================================================
+// 5. VENDOR QUOTATION SUBMISSION NOTIFICATION
+// =========================================================================
+export interface VendorQuoteNotificationData {
+  leadId: string;
+  leadType: 'sell' | 'repair';
+  vendorName: string;
+  vendorPhone?: string | null;
+  brand: string;
+  model: string;
+  quotedPrice: number;
+  originalPrice?: number | null;
+  notes?: string | null;
+}
+
+export async function notifyVendorQuoteSubmitted(data: VendorQuoteNotificationData, autoOpen: boolean = false) {
+  const origin = typeof window !== 'undefined' ? window.location.origin : 'https://thefundu.com';
+  const msg =
+    `💼 *VENDOR QUOTATION SUBMITTED!*\n` +
+    `━━━━━━━━━━━━━━━━━━━━━\n` +
+    `🏪 *Vendor:* ${data.vendorName} ${data.vendorPhone ? `(${data.vendorPhone})` : ''}\n` +
+    `📋 *Lead Type:* ${data.leadType === 'sell' ? 'Mobile Buyback Valuation' : 'Doorstep Repair'}\n` +
+    `🆔 *Lead ID:* #${data.leadId.slice(0, 8).toUpperCase()}\n` +
+    `📱 *Device:* ${data.brand} ${data.model}\n` +
+    `💰 *Quoted Amount:* ₹${data.quotedPrice.toLocaleString('en-IN')}\n` +
+    (data.originalPrice ? `📊 *Original Estimate:* ₹${data.originalPrice.toLocaleString('en-IN')}\n` : '') +
+    (data.notes ? `📝 *Vendor Notes:* "${data.notes}"\n` : '') +
+    `━━━━━━━━━━━━━━━━━━━━━\n` +
+    `⚡ Action Required! Verify & Approve or Reassign in Admin:\n${origin}/admin/wholesalers`;
+
+  return await dispatchWhatsAppAlert(msg, autoOpen);
+}

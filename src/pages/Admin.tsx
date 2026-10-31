@@ -163,6 +163,8 @@ export default function Admin() {
   const lastKnownSellId = useRef<string | null>(null);
   const lastKnownRepairId = useRef<string | null>(null);
   const lastKnownOrderId = useRef<string | null>(null);
+  const knownQuotedSellIds = useRef<Set<string>>(new Set());
+  const knownQuotedRepairIds = useRef<Set<string>>(new Set());
 
   // Data Stores
   const [products, setProducts] = useState<Product[]>([]);
@@ -465,10 +467,12 @@ export default function Admin() {
 
     const pollInterval = setInterval(async () => {
       try {
-        const [sellsRes, repairsRes, ordersRes] = await Promise.all([
-          db.from('sell_requests').select('*').sort({ field: 'created_at', ascending: false }).limit(5),
-          db.from('repair_bookings').select('*').sort({ field: 'created_at', ascending: false }).limit(5),
-          db.from('orders').select('*').sort({ field: 'created_at', ascending: false }).limit(5),
+        const [sellsRes, repairsRes, ordersRes, pendingSellQuotesRes, pendingRepairQuotesRes] = await Promise.all([
+          db.from('sell_requests').select('*').sort({ field: 'created_at', ascending: false }).limit(8),
+          db.from('repair_bookings').select('*').sort({ field: 'created_at', ascending: false }).limit(8),
+          db.from('orders').select('*').sort({ field: 'created_at', ascending: false }).limit(8),
+          db.from('sell_requests').select('*').eq('vendor_quote_status', 'quoted').limit(5),
+          db.from('repair_bookings').select('*').eq('quotation_status', 'quoted').limit(5),
         ]);
 
         // 1. Sell Requests Live Notification
@@ -562,6 +566,68 @@ export default function Admin() {
           } else if (!lastKnownOrderId.current) {
             lastKnownOrderId.current = newest.id;
           }
+        }
+
+        // 4. Vendor Sell Quotation Live Notification
+        if (pendingSellQuotesRes.data && Array.isArray(pendingSellQuotesRes.data) && pendingSellQuotesRes.data.length > 0) {
+          const freshQuotedSells = pendingSellQuotesRes.data as SellRequest[];
+          freshQuotedSells.forEach((sq) => {
+            if (!isInitialLoad.current && !knownQuotedSellIds.current.has(sq.id)) {
+              knownQuotedSellIds.current.add(sq.id);
+              const newNotif: LiveNotification = {
+                id: `vendor-quote-${sq.id}`,
+                type: 'vendor_quote',
+                title: `Vendor Quoted: ₹${sq.vendor_quote_price?.toLocaleString('en-IN') || '—'}`,
+                subtitle: `${sq.brand} ${sq.model} · Awaiting Admin Verification`,
+                locality: sq.pickup_area || 'Vendor Buyback',
+                amount: sq.vendor_quote_price,
+                timestamp: new Date(),
+                tabTarget: 'wholesalers',
+              };
+              setActiveNotifications((prev) => [newNotif, ...prev.slice(0, 3)]);
+              soundNotifier.notify({
+                type: 'vendor_quote',
+                title: `💼 Vendor Quoted Price: ₹${sq.vendor_quote_price?.toLocaleString('en-IN')}`,
+                body: `Device: ${sq.brand} ${sq.model}\nVendor quoted valuation: ₹${sq.vendor_quote_price?.toLocaleString('en-IN')}\nClick to verify & approve/reassign.`,
+                onClick: () => {
+                  setTab('wholesalers');
+                },
+              });
+            } else if (isInitialLoad.current) {
+              knownQuotedSellIds.current.add(sq.id);
+            }
+          });
+        }
+
+        // 5. Vendor Repair Quotation Live Notification
+        if (pendingRepairQuotesRes.data && Array.isArray(pendingRepairQuotesRes.data) && pendingRepairQuotesRes.data.length > 0) {
+          const freshQuotedRepairs = pendingRepairQuotesRes.data as RepairBooking[];
+          freshQuotedRepairs.forEach((rq) => {
+            if (!isInitialLoad.current && !knownQuotedRepairIds.current.has(rq.id)) {
+              knownQuotedRepairIds.current.add(rq.id);
+              const newNotif: LiveNotification = {
+                id: `vendor-repair-quote-${rq.id}`,
+                type: 'vendor_quote',
+                title: `Repair Quoted: ₹${rq.vendor_quotation_amount?.toLocaleString('en-IN') || '—'}`,
+                subtitle: `${rq.brand} ${rq.model} (${rq.problem}) · Awaiting Verification`,
+                locality: rq.pickup_area || 'Doorstep Service',
+                amount: rq.vendor_quotation_amount,
+                timestamp: new Date(),
+                tabTarget: 'wholesalers',
+              };
+              setActiveNotifications((prev) => [newNotif, ...prev.slice(0, 3)]);
+              soundNotifier.notify({
+                type: 'vendor_quote',
+                title: `🛠️ Vendor Repair Quotation: ₹${rq.vendor_quotation_amount?.toLocaleString('en-IN')}`,
+                body: `Device: ${rq.brand} ${rq.model} (${rq.problem})\nVendor quoted: ₹${rq.vendor_quotation_amount?.toLocaleString('en-IN')}\nClick to verify & approve/reassign.`,
+                onClick: () => {
+                  setTab('wholesalers');
+                },
+              });
+            } else if (isInitialLoad.current) {
+              knownQuotedRepairIds.current.add(rq.id);
+            }
+          });
         }
 
         isInitialLoad.current = false;

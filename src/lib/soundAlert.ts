@@ -1,7 +1,7 @@
 // Professional Web Audio & Native Desktop System Notification Manager
 // Zero external audio file dependencies — fully standalone synthetic audio + OS desktop notifications
 
-export type NotificationType = 'sell' | 'repair' | 'order' | 'test';
+export type NotificationType = 'sell' | 'repair' | 'order' | 'vendor_quote' | 'test';
 
 class SoundNotifier {
   private ctx: AudioContext | null = null;
@@ -149,6 +149,16 @@ class SoundNotifier {
           notes = [
             { freq: 659.25, delay: 0.0, duration: 0.22, wave: 'sine' },
             { freq: 987.77, delay: 0.14, duration: 0.4, wave: 'triangle' },
+          ];
+          break;
+
+        case 'vendor_quote':
+          // Urgent business alert chime (G5 -> C6 -> E6 -> G6)
+          notes = [
+            { freq: 783.99, delay: 0.0, duration: 0.18, wave: 'sine' },
+            { freq: 1046.5, delay: 0.12, duration: 0.2, wave: 'sine' },
+            { freq: 1318.51, delay: 0.24, duration: 0.25, wave: 'triangle' },
+            { freq: 1567.98, delay: 0.36, duration: 0.45, wave: 'sine' },
           ];
           break;
 

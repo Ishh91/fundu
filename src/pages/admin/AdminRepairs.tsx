@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Wrench,
   Search,
@@ -12,10 +12,16 @@ import {
   Truck,
   Sparkles,
   MessageSquare,
+  Building2,
+  XCircle,
+  Edit3,
+  RotateCcw,
+  DollarSign,
+  X,
 } from 'lucide-react';
 import type { RepairBooking, DeliveryAgent } from './adminTypes';
 import { statusColors } from './adminTypes';
-import { formatINR } from '../../lib/db';
+import { db, formatINR } from '../../lib/db';
 import CustomerDetailsModal from '../../components/CustomerDetailsModal';
 
 type AdminRepairsProps = {
@@ -42,6 +48,103 @@ export default function AdminRepairs({
   const [editingCost, setEditingCost] = useState(false);
   const [costInput, setCostInput] = useState('');
   const [customerModalData, setCustomerModalData] = useState<any>(null);
+  const [vendors, setVendors] = useState<any[]>([]);
+  const [overrideModal, setOverrideModal] = useState<{ open: boolean; repair: any; amount: string }>({
+    open: false,
+    repair: null,
+    amount: '',
+  });
+
+  useEffect(() => {
+    db.from('profiles')
+      .select('*')
+      .in('role', ['vendor', 'wholesaler'])
+      .order('created_at', { ascending: false })
+      .then(({ data }) => {
+        if (data) setVendors(data);
+      });
+  }, []);
+
+  const handleApproveRepairQuote = async (repair: any) => {
+    const amount = Number(repair.vendor_quotation_amount);
+    if (!amount || amount <= 0) {
+      alert('⚠️ Invalid quotation amount from technician.');
+      return;
+    }
+    const { error } = await db.from('repair_bookings').update({
+      quotation_status: 'admin_approved',
+      final_cost: amount,
+      status: 'quoted',
+    }).eq('id', repair.id);
+
+    if (error) {
+      alert(`❌ Error approving quotation: ${error.message}`);
+      return;
+    }
+    alert(`✅ Repair quote of ${formatINR(amount)} approved! Customer has received the update.`);
+    window.location.reload();
+  };
+
+  const handleRejectRepairQuote = async (repair: any) => {
+    if (!window.confirm('Reject this repair quotation and reset status?')) return;
+    const { error } = await db.from('repair_bookings').update({
+      quotation_status: 'admin_rejected',
+      status: 'pending',
+    }).eq('id', repair.id);
+
+    if (error) {
+      alert(`❌ Error rejecting quote: ${error.message}`);
+      return;
+    }
+    alert('❌ Quotation rejected. You can now reassign to another partner workshop.');
+    window.location.reload();
+  };
+
+  const handleReassignRepairVendor = async (repair: any, newVendorId: string) => {
+    const newVendor = vendors.find((v) => v.id === newVendorId);
+    const vendorName = newVendor ? (newVendor.business_name || newVendor.full_name) : null;
+    const isDirect = !newVendorId || newVendorId === 'direct';
+
+    const { error } = await db.from('repair_bookings').update({
+      assigned_vendor_id: isDirect ? null : newVendorId,
+      assigned_vendor_name: isDirect ? null : vendorName,
+      vendor_quotation_amount: null,
+      vendor_quotation_notes: null,
+      quotation_status: isDirect ? null : 'pending_quote',
+      forwarded_to_vendor: !isDirect,
+      status: isDirect ? 'pending' : 'assigned_to_vendor',
+    }).eq('id', repair.id);
+
+    if (error) {
+      alert(`❌ Reassignment error: ${error.message}`);
+      return;
+    }
+    alert(isDirect ? '✅ Reassigned to Direct In-House Service!' : `✅ Reassigned to partner workshop ${vendorName}!`);
+    window.location.reload();
+  };
+
+  const handleSaveRepairOverride = async () => {
+    if (!overrideModal.repair) return;
+    const num = Number(overrideModal.amount);
+    if (!num || num <= 0) {
+      alert('Please enter a valid amount.');
+      return;
+    }
+    const { error } = await db.from('repair_bookings').update({
+      vendor_quotation_amount: num,
+      final_cost: num,
+      quotation_status: 'admin_approved',
+      status: 'quoted',
+    }).eq('id', overrideModal.repair.id);
+
+    if (error) {
+      alert(`❌ Error saving repair override: ${error.message}`);
+      return;
+    }
+    alert(`✅ Repair cost overridden to ${formatINR(num)} and approved for customer!`);
+    setOverrideModal({ open: false, repair: null, amount: '' });
+    window.location.reload();
+  };
 
   const filteredRepairs = repairs.filter((r) => {
     const matchesSearch = `${r.brand} ${r.model} ${r.tracking_id} ${r.problem} ${r.pickup_address || ''}`
@@ -205,6 +308,30 @@ export default function AdminRepairs({
                         <MapPin className="h-3 w-3 text-purple-600" /> {r.pickup_address ? 'Doorstep Service' : 'Pickup'}
                       </span>
                     </div>
+
+                    {Boolean((r as any).assigned_vendor_name || (r as any).quotation_status) && (
+                      <div className="mt-2 pt-2 border-t border-ink-100/60 flex items-center justify-between text-[11px]">
+                        <span className="flex items-center gap-1 font-bold text-gray-700 truncate max-w-[160px]">
+                          <Building2 className="h-3 w-3 text-purple-600 shrink-0" />
+                          {(r as any).assigned_vendor_name || 'Repair Partner'}
+                        </span>
+                        {(r as any).quotation_status === 'quoted' && (
+                          <span className="badge bg-amber-100 text-amber-900 border border-amber-300 font-extrabold text-[9px] animate-pulse">
+                            ⚡ Quoted: {formatINR((r as any).vendor_quotation_amount || 0)}
+                          </span>
+                        )}
+                        {(r as any).quotation_status === 'admin_approved' && (
+                          <span className="badge bg-emerald-100 text-emerald-800 font-bold text-[9px]">
+                            ✓ Approved
+                          </span>
+                        )}
+                        {(r as any).quotation_status === 'vendor_declined' && (
+                          <span className="badge bg-red-100 text-red-800 font-bold text-[9px]">
+                            ❌ Declined
+                          </span>
+                        )}
+                      </div>
+                    )}
                   </div>
                 );
               })
@@ -263,6 +390,116 @@ export default function AdminRepairs({
                   </select>
                 </div>
               </div>
+
+              {/* Partner Workshop / Technician Quotation & Verification Card */}
+              {Boolean((selectedRepair as any).assigned_vendor_id || (selectedRepair as any).quotation_status) && (
+                <div className={`p-4 rounded-2xl border transition-all ${
+                  (selectedRepair as any).quotation_status === 'quoted'
+                    ? 'bg-amber-50 border-amber-300 ring-2 ring-amber-400/20'
+                    : (selectedRepair as any).quotation_status === 'vendor_declined'
+                    ? 'bg-red-50 border-red-300'
+                    : 'bg-purple-50/60 border-purple-200'
+                }`}>
+                  <div className="flex flex-wrap items-center justify-between gap-3">
+                    <div className="space-y-1">
+                      <div className="flex items-center gap-2">
+                        <span className="badge bg-purple-100 text-purple-900 font-extrabold text-[10px] uppercase flex items-center gap-1">
+                          <Building2 className="h-3 w-3" />
+                          Assigned Workshop: {(selectedRepair as any).assigned_vendor_name || 'Partner Workshop'}
+                        </span>
+                        {(selectedRepair as any).quotation_status === 'quoted' && (
+                          <span className="badge bg-amber-500 text-white font-black text-[10px] animate-pulse">
+                            ⚡ Repair Quote Awaiting Approval
+                          </span>
+                        )}
+                        {(selectedRepair as any).quotation_status === 'admin_approved' && (
+                          <span className="badge bg-emerald-600 text-white font-bold text-[10px]">
+                            ✓ Cost Approved
+                          </span>
+                        )}
+                        {(selectedRepair as any).quotation_status === 'vendor_declined' && (
+                          <span className="badge bg-red-600 text-white font-bold text-[10px]">
+                            ❌ Technician Declined Booking
+                          </span>
+                        )}
+                      </div>
+
+                      {(selectedRepair as any).quotation_status === 'quoted' && (
+                        <p className="font-extrabold text-gray-900 text-sm">
+                          Technician Diagnostic Cost:{' '}
+                          <span className="font-black text-xl text-emerald-800">
+                            {formatINR((selectedRepair as any).vendor_quotation_amount || 0)}
+                          </span>
+                          <span className="text-xs text-gray-500 font-medium ml-2">
+                            (Customer Est: {formatINR(selectedRepair.estimated_cost || 0)})
+                          </span>
+                        </p>
+                      )}
+
+                      {(selectedRepair as any).vendor_quotation_notes && (
+                        <p className="text-xs text-gray-700 italic bg-white/70 px-2.5 py-1 rounded-lg border border-gray-200">
+                          Parts & Diagnosis: "{(selectedRepair as any).vendor_quotation_notes}"
+                        </p>
+                      )}
+
+                      {(selectedRepair as any).quotation_status === 'vendor_declined' && (
+                        <p className="text-xs font-bold text-red-800">
+                          Technician declined this repair. Please reassign to another service partner below.
+                        </p>
+                      )}
+                    </div>
+
+                    {/* Quick Verification Actions */}
+                    <div className="flex flex-wrap items-center gap-2">
+                      {(selectedRepair as any).quotation_status === 'quoted' && (
+                        <>
+                          <button
+                            onClick={() => handleApproveRepairQuote(selectedRepair)}
+                            className="btn bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs px-3.5 py-2 rounded-xl shadow-xs flex items-center gap-1.5"
+                          >
+                            <CheckCircle2 className="h-3.5 w-3.5" /> Approve Quote ({formatINR((selectedRepair as any).vendor_quotation_amount || 0)})
+                          </button>
+
+                          <button
+                            onClick={() => setOverrideModal({
+                              open: true,
+                              repair: selectedRepair,
+                              amount: String((selectedRepair as any).vendor_quotation_amount || selectedRepair.estimated_cost || ''),
+                            })}
+                            className="btn-outline bg-white hover:bg-ink-50 text-purple-700 border-purple-200 font-bold text-xs px-3 py-2 rounded-xl shadow-xs flex items-center gap-1"
+                          >
+                            <Edit3 className="h-3.5 w-3.5" /> Override Cost
+                          </button>
+
+                          <button
+                            onClick={() => handleRejectRepairQuote(selectedRepair)}
+                            className="btn-outline bg-white hover:bg-red-50 text-red-600 border-red-200 font-bold text-xs px-3 py-2 rounded-xl shadow-xs flex items-center gap-1"
+                          >
+                            <XCircle className="h-3.5 w-3.5" /> Reject
+                          </button>
+                        </>
+                      )}
+
+                      {/* Reassign Workshop Dropdown */}
+                      <div className="flex items-center gap-1.5 bg-white border border-gray-300 rounded-xl px-2 py-1 shadow-xs">
+                        <RotateCcw className="h-3 w-3 text-gray-500 shrink-0" />
+                        <select
+                          value={(selectedRepair as any).assigned_vendor_id || ''}
+                          onChange={(e) => handleReassignRepairVendor(selectedRepair, e.target.value)}
+                          className="bg-transparent text-xs font-bold text-gray-800 focus:outline-none cursor-pointer"
+                        >
+                          <option value="">Direct In-House (Unassigned)</option>
+                          {vendors.map((v) => (
+                            <option key={v.id} value={v.id}>
+                              {v.business_name || v.full_name} ({v.phone || 'Store'})
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
 
               {/* Problem Diagnosis Summary */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 bg-ink-50 p-4 rounded-2xl text-xs">
@@ -399,6 +636,91 @@ export default function AdminRepairs({
         onClose={() => setCustomerModalData(null)}
         customer={customerModalData}
       />
+
+      {/* REPAIR OVERRIDE MODAL */}
+      {overrideModal.open && overrideModal.repair && (
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl space-y-4 animate-in fade-in zoom-in-95">
+            <div className="flex items-center justify-between pb-3 border-b border-gray-100">
+              <div className="flex items-center gap-2">
+                <div className="h-9 w-9 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center font-bold">
+                  <DollarSign className="h-5 w-5" />
+                </div>
+                <div>
+                  <h3 className="text-base font-extrabold text-gray-900">Admin Cost Override</h3>
+                  <p className="text-xs text-gray-500">
+                    {overrideModal.repair.brand} {overrideModal.repair.model} ({overrideModal.repair.tracking_id})
+                  </p>
+                </div>
+              </div>
+              <button
+                onClick={() => setOverrideModal({ open: false, repair: null, amount: '' })}
+                className="text-gray-400 hover:text-gray-600 p-1"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+
+            <div className="space-y-3">
+              <div className="p-3 bg-gray-50 rounded-xl space-y-1 text-xs">
+                <div className="flex justify-between">
+                  <span className="text-gray-500">Reported Problem:</span>
+                  <span className="font-bold text-gray-800">{overrideModal.repair.problem}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-500">Estimated Cost:</span>
+                  <span className="font-bold text-gray-700">{formatINR(overrideModal.repair.estimated_cost || 0)}</span>
+                </div>
+                {overrideModal.repair.vendor_quotation_amount && (
+                  <div className="flex justify-between">
+                    <span className="text-amber-700 font-bold">Technician Quoted:</span>
+                    <span className="font-extrabold text-amber-800">{formatINR(overrideModal.repair.vendor_quotation_amount)}</span>
+                  </div>
+                )}
+                {overrideModal.repair.assigned_vendor_name && (
+                  <div className="flex justify-between">
+                    <span className="text-gray-500">Assigned Workshop:</span>
+                    <span className="font-semibold text-gray-800">{overrideModal.repair.assigned_vendor_name}</span>
+                  </div>
+                )}
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-gray-700 mb-1">
+                  Verified Final Repair Amount (₹)
+                </label>
+                <input
+                  type="number"
+                  value={overrideModal.amount}
+                  onChange={(e) => setOverrideModal((prev) => ({ ...prev, amount: e.target.value }))}
+                  placeholder="e.g. 2400"
+                  className="input w-full text-base font-black text-gray-900"
+                />
+                <p className="text-[11px] text-gray-400 mt-1">
+                  This final repair amount will be approved and reflected for customer clearance.
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-center justify-end gap-2 pt-3 border-t border-gray-100">
+              <button
+                type="button"
+                onClick={() => setOverrideModal({ open: false, repair: null, amount: '' })}
+                className="btn-outline text-xs px-4 py-2"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={handleSaveRepairOverride}
+                className="btn-primary text-xs px-4 py-2 bg-purple-600 hover:bg-purple-700"
+              >
+                Confirm & Approve Cost
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

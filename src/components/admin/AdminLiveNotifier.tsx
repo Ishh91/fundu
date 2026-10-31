@@ -12,23 +12,24 @@ import {
   ExternalLink,
   MapPin,
   Flame,
+  Building2,
 } from 'lucide-react';
 import { soundNotifier } from '../../lib/soundAlert';
 import { formatINR } from '../../lib/db';
 
 export type LiveNotification = {
   id: string;
-  type: 'sell' | 'repair' | 'order';
+  type: 'sell' | 'repair' | 'order' | 'vendor_quote';
   title: string;
   subtitle: string;
   locality?: string;
   amount?: number | null;
   timestamp: Date;
-  tabTarget: 'sells' | 'repairs' | 'orders';
+  tabTarget: 'sells' | 'repairs' | 'orders' | 'wholesalers';
 };
 
 type Props = {
-  onNavigateTab: (tab: 'sells' | 'repairs' | 'orders', itemId?: string) => void;
+  onNavigateTab: (tab: 'sells' | 'repairs' | 'orders' | 'wholesalers', itemId?: string) => void;
   activeNotifications: LiveNotification[];
   onDismiss: (id: string) => void;
   onSimulateTestAlert: () => void;
@@ -168,13 +169,16 @@ function NotificationToastItem({
 
   const isSell = notif.type === 'sell';
   const isRepair = notif.type === 'repair';
+  const isVendorQuote = notif.type === 'vendor_quote';
 
   return (
     <div
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       className={`pointer-events-auto overflow-hidden rounded-2xl p-4 text-white shadow-2xl border backdrop-blur-2xl ring-1 ring-white/20 transition-all duration-300 transform animate-in fade-in slide-in-from-top-3 ${
-        isSell
+        isVendorQuote
+          ? 'bg-gradient-to-r from-[#7c2d12] via-[#c2410c] to-[#ea580c] border-amber-300/50 shadow-orange-950/50 ring-amber-400/40'
+          : isSell
           ? 'bg-gradient-to-r from-[#202938] via-[#344257] to-[#47576E] border-[#6A859F]/60 shadow-slate-950/50'
           : isRepair
           ? 'bg-gradient-to-r from-[#1e3a8a] via-[#2563eb] to-[#1d4ed8] border-blue-300/50 shadow-blue-950/50'
@@ -184,7 +188,9 @@ function NotificationToastItem({
       <div className="flex items-start justify-between gap-3">
         <div className="flex items-start gap-3 flex-1 min-w-0">
           <div className="relative mt-0.5 grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-white/20 text-white backdrop-blur-md shadow-inner">
-            {isSell ? (
+            {isVendorQuote ? (
+              <Building2 className="h-5 w-5 text-amber-200" />
+            ) : isSell ? (
               <Smartphone className="h-5 w-5" />
             ) : isRepair ? (
               <Wrench className="h-5 w-5" />
@@ -196,8 +202,10 @@ function NotificationToastItem({
 
           <div className="min-w-0 flex-1">
             <div className="flex items-center gap-1.5 flex-wrap">
-              <span className="rounded-md bg-white/25 px-1.5 py-0.5 text-[10px] font-black uppercase tracking-wider text-white">
-                {isSell ? '⚡ New Sell Lead' : isRepair ? '🛠️ Doorstep Repair' : '📦 New Order'}
+              <span className={`rounded-md px-1.5 py-0.5 text-[10px] font-black uppercase tracking-wider text-white ${
+                isVendorQuote ? 'bg-amber-900/60 text-amber-200 border border-amber-400/40' : 'bg-white/25'
+              }`}>
+                {isVendorQuote ? '💼 Vendor Quoted Price' : isSell ? '⚡ New Sell Lead' : isRepair ? '🛠️ Doorstep Repair' : '📦 New Order'}
               </span>
               <span className="text-[10px] text-white/80">Just now</span>
               {isHovered && (
@@ -242,7 +250,7 @@ function NotificationToastItem({
       {/* Action Footer */}
       <div className="mt-3 pt-2.5 border-t border-white/15 flex items-center justify-between gap-2">
         <span className="text-[10px] text-white/75 truncate">
-          Auto-assigned to Service Agent
+          {isVendorQuote ? 'Requires Admin Review & Approval' : 'Auto-assigned to Service Agent'}
         </span>
         <button
           type="button"
@@ -250,9 +258,13 @@ function NotificationToastItem({
             onNavigateTab(notif.tabTarget, notif.id);
             onDismiss(notif.id);
           }}
-          className="inline-flex items-center gap-1.5 rounded-lg bg-white text-gray-900 px-3.5 py-1.5 text-xs font-black shadow-md hover:bg-gray-100 transition active:scale-95 shrink-0"
+          className={`inline-flex items-center gap-1.5 rounded-lg px-3.5 py-1.5 text-xs font-black shadow-md transition active:scale-95 shrink-0 ${
+            isVendorQuote
+              ? 'bg-amber-300 text-amber-950 hover:bg-amber-200 font-extrabold'
+              : 'bg-white text-gray-900 hover:bg-gray-100'
+          }`}
         >
-          <span>Open Lead</span>
+          <span>{isVendorQuote ? 'Verify Quote' : 'Open Lead'}</span>
           <ExternalLink className="h-3 w-3" />
         </button>
       </div>

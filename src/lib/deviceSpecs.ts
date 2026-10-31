@@ -2837,13 +2837,6 @@ export function isStorageAllowedForModel(brand = '', model = '', storageStr = ''
 
   // 3. Tier: 128 GB
   if (gb === 128) {
-    // Ultra / Fold flagships that START at 256 GB (128 GB never launched / does not exist)
-    if (
-      /s2[3-9]\s*ultra|s3\d\s*ultra|(?:1[5-9]|[2-9]\d)\s*pro\s*max|z\s*fold\s*[2-9]|pixel\s*(?:9|10)\s*pro\s*fold|oneplus\s*open|iqoo\s*(12|13|15)|x100\s*pro|x90\s*pro|note\s*20\s*ultra/i.test(full) ||
-      /oppo\s*(?:find\s*(?:x[7-9]|n[23]\s*flip)|reno\s*(?:7|8|10|11|12)\s*pro|reno\s*10\s*pro\+|reno\s*10\b|f23\b)/i.test(full)
-    ) {
-      return false;
-    }
     // Antique phones that only had up to 32GB or 64GB
     if (/iphone\s*[45]s?\b|galaxy\s*[jcon][1-3]\b/i.test(m)) {
       return false;
@@ -2911,8 +2904,7 @@ export function inferTierHardwareSpecs(
   if (isApple) {
     let storages = ['128 GB', '256 GB', '512 GB'];
     if (/pro\s*max/i.test(mLower)) {
-      if (/(?:1[5-9]|[2-9]\d)/i.test(mLower)) storages = ['256 GB', '512 GB', '1 TB'];
-      else storages = ['128 GB', '256 GB', '512 GB', '1 TB'];
+      storages = ['128 GB', '256 GB', '512 GB', '1 TB'];
     } else if (/\bpro\b/i.test(mLower)) {
       if (/1[12]/i.test(mLower)) storages = /11/i.test(mLower) ? ['64 GB', '256 GB', '512 GB'] : ['128 GB', '256 GB', '512 GB'];
       else storages = ['128 GB', '256 GB', '512 GB', '1 TB'];
