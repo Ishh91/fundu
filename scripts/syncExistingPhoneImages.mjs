@@ -1,5 +1,5 @@
 // Script to sync clean official upright device studio renders into MongoDB master_phones
-const API_BASE = 'https://fundu-o80c.onrender.com/api';
+const API_BASE = 'https://fundu-tagr.onrender.com/api';
 
 const MODEL_IMAGE_MAP = {
   // Apple iPhones
