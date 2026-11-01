@@ -47,3 +47,4 @@ export function isBlockedPhone(brand, model) {
   }
   return false;
 }
+
