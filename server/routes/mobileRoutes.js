@@ -759,6 +759,42 @@ router.get('/sell-pricing/config', async (req, res, next) => {
 });
 
 /**
+ * Public Endpoint to list all models disabled/removed by admin
+ * GET /api/sell/disabled-models
+ */
+router.get('/sell/disabled-models', async (req, res, next) => {
+  try {
+    res.setHeader('Cache-Control', 'public, max-age=60, stale-while-revalidate=300');
+    const [disabledConfigs, disabledMasterPhones] = await Promise.all([
+      SellPriceConfig.find({ is_active: false }).select('brand model').lean(),
+      MasterPhone.find({ is_active: false }).select('brand model').lean(),
+    ]);
+
+    const seen = new Set();
+    const disabled = [];
+
+    const add = (brand, model) => {
+      if (!brand || !model) return;
+      const cleanB = String(brand).trim();
+      const cleanM = String(model).trim();
+      const key = `${cleanB.toLowerCase()}:${cleanM.toLowerCase()}`;
+      if (!seen.has(key)) {
+        seen.add(key);
+        disabled.push({ brand: cleanB, model: cleanM });
+      }
+    };
+
+    (disabledConfigs || []).forEach((c) => add(c.brand, c.model));
+    (disabledMasterPhones || []).forEach((p) => add(p.brand, p.model));
+
+    res.json({ success: true, disabledModels: disabled });
+  } catch (err) {
+    console.warn('[disabled-models] lookup error:', err?.message || err);
+    res.json({ success: true, disabledModels: [] });
+  }
+});
+
+/**
  * Save or update sell price config directly in MongoDB SellPriceConfig
  * POST /api/sell-pricing/config
  */

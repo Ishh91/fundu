@@ -14,7 +14,7 @@ import { triggerEventNotification } from './notificationService.js';
 import { quotePhone } from '../../fundu_phone_quote.mjs';
 import { createPhoneQuote } from './quoteService.js';
 
-export const getReadScope = async (table, auth, filters) => {
+export const getReadScope = async (table, auth, filters, select) => {
   const baseFilter = buildMongoFilter(filters);
 
   switch (table) {
@@ -52,6 +52,10 @@ export const getReadScope = async (table, auth, filters) => {
       if (isAdmin(auth)) return baseFilter;
       // If client explicitly requested is_active filter (e.g. is_active=false to sync deleted/disabled models), respect it
       if (filters && Array.isArray(filters) && filters.some((f) => f.field === 'is_active')) {
+        return baseFilter;
+      }
+      // If client is syncing catalog fields to check is_active status
+      if (typeof select === 'string' && select.includes('is_active')) {
         return baseFilter;
       }
       return combineFilters(baseFilter, { is_active: true });
@@ -311,7 +315,7 @@ export const preparePayload = (table, action, input, auth) => {
 
 export const queryTable = async (table, { auth, filters, sort, select, single, limit }) => {
   const Model = getModel(table);
-  const scope = await getReadScope(table, auth, filters);
+  const scope = await getReadScope(table, auth, filters, select);
   const sortConfig = parseSort(sort);
   const selectConfig = parseSelect(select);
 

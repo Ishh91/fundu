@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { db } from './db';
 import { broadcastSync, subscribeToRealtimeSync } from './realtimeSync';
+import { API_BASE } from '../config/apiConfig';
 
 const DELETED_MODELS_STORAGE_KEY = 'fundu_deleted_models_v2';
 const DELETED_PRODUCTS_STORAGE_KEY = 'fundu_deleted_products_v2';
@@ -193,7 +194,7 @@ export function isModelDeleted(brand?: string, model?: string): boolean {
   if (!model) return false;
   if (isPermanentlyBlockedModel(brand, model)) return true;
 
-  // If phone is actively verified in live master_phones cache with is_active: true, it cannot be blocked by stale keys
+  // 1. If phone is actively verified in live master_phones cache with is_active: true, it cannot be blocked by stale keys
   if (typeof window !== 'undefined') {
     try {
       const raw = localStorage.getItem('fundu_live_master_phones_v2');
@@ -214,6 +215,17 @@ export function isModelDeleted(brand?: string, model?: string): boolean {
             if (match.is_active === false) return true;
             if (match.is_active === true) return false;
           }
+        }
+      }
+
+      // 2. Also check if admin has an explicit active price override for this model
+      const rawOverrides = localStorage.getItem('fundu_price_overrides_v1');
+      if (rawOverrides) {
+        const overrides = JSON.parse(rawOverrides);
+        const variants = getModelKeyVariants(brand, model);
+        const hasActiveOverride = variants.some((v) => typeof overrides[v] === 'number' && overrides[v] > 0);
+        if (hasActiveOverride) {
+          return false;
         }
       }
     } catch {}
@@ -262,12 +274,14 @@ export function isProductDeleted(productId?: string, title?: string): boolean {
 export async function refreshDeletedModelsFromDb(): Promise<void> {
   if (typeof window === 'undefined') return;
   try {
-    const [sellRes, masterRes] = await Promise.all([
+    const [sellRes, masterRes, disabledRes] = await Promise.all([
       db.from('sell_price_configs').select('brand, model, is_active'),
       db.from('master_phones').select('brand, model, is_active'),
+      fetch(`${API_BASE}/sell/disabled-models`).then((r) => r.json()).catch(() => ({ disabledModels: [] })),
     ]);
 
     const records = [...(sellRes.data || []), ...(masterRes.data || [])];
+    const serverDisabled = disabledRes?.disabledModels || [];
     const current = getDeletedModelKeys();
     let changed = false;
 
@@ -297,11 +311,25 @@ export async function refreshDeletedModelsFromDb(): Promise<void> {
       }
     });
 
+    // 3. Add any models from the authoritative server disabled list
+    serverDisabled.forEach((d: any) => {
+      if (d.brand && d.model) {
+        const variants = getModelKeyVariants(d.brand, d.model);
+        variants.forEach((v) => {
+          if (!current.has(v)) {
+            current.add(v);
+            changed = true;
+          }
+        });
+      }
+    });
+
     if (changed) {
       localStorage.setItem(DELETED_MODELS_STORAGE_KEY, JSON.stringify(Array.from(current)));
       window.dispatchEvent(new CustomEvent('fundu_model_deleted'));
       window.dispatchEvent(new CustomEvent('fundu_model_restored'));
       window.dispatchEvent(new CustomEvent('fundu_price_updated'));
+      window.dispatchEvent(new CustomEvent('fundu_catalog_synced'));
     }
   } catch {}
 }

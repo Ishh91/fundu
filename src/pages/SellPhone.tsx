@@ -48,7 +48,8 @@ import {
 import { checkPincodeServiceability } from '../lib/pincodeService';
 import { getModelDedupeKey, groupModelsBySeries } from '../data/brandSeriesCatalog';
 import { notifyNewSellRequest, sendCustomerDeliveryOtp } from '../lib/whatsappNotifyService';
-import { getUnifiedCatalog } from '../lib/modelCatalogSync';
+import { getUnifiedCatalog, pullLiveMasterPhonesFromDb } from '../lib/modelCatalogSync';
+import { refreshDeletedModelsFromDb } from '../lib/catalogSync';
 
 import {
   DOORSTEP_LOCALITIES,
@@ -88,15 +89,36 @@ export default function SellPhone() {
   const initialStep = !isNaN(stepParam) && stepParam >= 1 && stepParam <= 4 ? stepParam : (modelSlug ? 2 : 1);
   const [step, setStep] = useState(initialStep);
   const [, setImageVersion] = useState<number>(0);
+  const [catalogVer, setCatalogVer] = useState<number>(0);
 
   // Sync custom images live from database on mount & listen for admin updates
   useEffect(() => {
     pullLiveModelImagesFromDb();
+    pullLiveMasterPhonesFromDb().then(() => setCatalogVer((v) => v + 1));
+    refreshDeletedModelsFromDb().then(() => setCatalogVer((v) => v + 1));
+
     const handleModelImageUpdate = () => {
       setImageVersion((v) => v + 1);
+      setCatalogVer((v) => v + 1);
     };
+
+    const handleCatalogUpdate = () => {
+      setCatalogVer((v) => v + 1);
+    };
+
     window.addEventListener('fundu_model_image_updated', handleModelImageUpdate);
-    return () => window.removeEventListener('fundu_model_image_updated', handleModelImageUpdate);
+    window.addEventListener('fundu_catalog_synced', handleCatalogUpdate);
+    window.addEventListener('fundu_model_deleted', handleCatalogUpdate);
+    window.addEventListener('fundu_model_restored', handleCatalogUpdate);
+    window.addEventListener('fundu_price_updated', handleCatalogUpdate);
+
+    return () => {
+      window.removeEventListener('fundu_model_image_updated', handleModelImageUpdate);
+      window.removeEventListener('fundu_catalog_synced', handleCatalogUpdate);
+      window.removeEventListener('fundu_model_deleted', handleCatalogUpdate);
+      window.removeEventListener('fundu_model_restored', handleCatalogUpdate);
+      window.removeEventListener('fundu_price_updated', handleCatalogUpdate);
+    };
   }, []);
 
   // When visiting /sell or /sell-old-mobile-phone with no brand/model params, ensure All Brands is shown
@@ -986,7 +1008,7 @@ export default function SellPhone() {
 
     // Fallback to MobileAPI search results if local database has 0 matches
     return applyPriceOverrides(apiSearchResults.filter((d) => !isModelDeleted(d.brand, d.model) && !isObsoleteDeviceHardware(d)));
-  }, [debouncedQuery, apiSearchResults, version]);
+  }, [debouncedQuery, apiSearchResults, version, catalogVer]);
 
   // Available Series List for Selected Brand (in exact defined chronological order)
   const brandSeriesList = useMemo(() => {

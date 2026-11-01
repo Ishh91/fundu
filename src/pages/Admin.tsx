@@ -1068,17 +1068,28 @@ export default function Admin() {
 
   const deletePricingRule = async (id: string) => {
     const configToDelete = sellPriceConfigs.find((c) => c.id === id);
-    if (!confirm(`Are you sure you want to delete this pricing rule${configToDelete ? ` for ${configToDelete.brand} ${configToDelete.model}` : ''}?`)) return;
+    if (!confirm(`Are you sure you want to revert custom pricing${configToDelete ? ` for ${configToDelete.brand} ${configToDelete.model}` : ''} back to default catalog?`)) return;
     const { error } = await db.from('sell_price_configs').delete().eq('id', id);
     if (error) {
       alert(error.message);
       return;
     }
     if (configToDelete) {
-      markModelAsDeleted(configToDelete.brand, configToDelete.model);
+      try {
+        const rawOverrides = localStorage.getItem('fundu_price_overrides_v1');
+        if (rawOverrides) {
+          const overrides = JSON.parse(rawOverrides);
+          const bKey = configToDelete.brand.trim().toLowerCase();
+          const mKey = configToDelete.model.trim().toLowerCase();
+          delete overrides[`${bKey}:${mKey}`];
+          localStorage.setItem('fundu_price_overrides_v1', JSON.stringify(overrides));
+        }
+      } catch {}
+      restoreModel(configToDelete.brand, configToDelete.model);
     }
     setSellPriceConfigs((prev) => prev.filter((c) => c.id !== id));
     if (selectedPricingId === id) setSelectedPricingId(null);
+    broadcastSync('PRICE_UPDATE', 'sell_price_configs', 'delete', { id, brand: configToDelete?.brand, model: configToDelete?.model });
   };
 
   // Repair Price Catalog Handlers
@@ -2126,7 +2137,15 @@ export default function Admin() {
                   }
                 }
 
-                // 2. Persist in sell_price_configs
+                // 2. Persist across ALL configs in sell_price_configs for this phone
+                if (targetBrand && targetModel) {
+                  try {
+                    await db.from('sell_price_configs')
+                      .update({ is_active: newActive })
+                      .eq('brand', targetBrand)
+                      .eq('model', targetModel);
+                  } catch {}
+                }
                 if (id && !id.startsWith('master-') && !id.startsWith('mp-') && !id.startsWith('indian-') && !id.startsWith('cat-') && !id.startsWith('ser-')) {
                   await db.from('sell_price_configs').update({ is_active: newActive }).eq('id', id);
                 } else if (targetBrand && targetModel) {
