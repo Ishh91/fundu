@@ -23,6 +23,7 @@ import { seedDatabase } from '../config/db.js';
 import { resolveDeviceImage } from '../services/deviceImageService.js';
 import { INDIAN_MARKET_PHONES_LAST_10_YEARS } from '../config/seedPhones.js';
 import { calculateHardwareVariantMultiplier } from '../../fundu_phone_quote.mjs';
+import { isBlockedPhone } from '../utils/blockedModels.js';
 
 const router = Router();
 
@@ -146,8 +147,6 @@ const FALLBACK_MODELS = {
   motorola: [
     { name: 'Moto Edge 50 Ultra', storages: ['512GB'] },
     { name: 'Moto Edge 50 Pro 5G', storages: ['256GB', '512GB'] },
-    { name: 'Moto Edge 50 Fusion', storages: ['128GB', '256GB'] },
-    { name: 'Moto Edge 40 Neo', storages: ['128GB', '256GB'] },
     { name: 'Moto G84 5G', storages: ['256GB'] },
     { name: 'Moto G54 5G', storages: ['128GB', '256GB'] },
   ],
@@ -164,7 +163,6 @@ const FALLBACK_MODELS = {
     { name: 'iQOO Neo 7 Pro 5G', storages: ['128GB', '256GB'] },
   ],
   infinix: [
-    { name: 'Infinix Zero 30 5G', storages: ['256GB'] },
     { name: 'Infinix GT 20 Pro 5G', storages: ['256GB'] },
     { name: 'Infinix Note 40 Pro 5G', storages: ['256GB'] },
   ],
@@ -208,6 +206,7 @@ function getFallbackModels(brand, query) {
 
   // 1. Pull matching models from comprehensive catalog
   const catalogMatches = INDIAN_MARKET_PHONES_LAST_10_YEARS.filter((p) => {
+    if (isBlockedPhone(p.brand, p.model)) return false;
     const pBrand = p.brand.toLowerCase();
     let matchBrand = pBrand === bLower;
     if (!matchBrand) {
@@ -226,10 +225,10 @@ function getFallbackModels(brand, query) {
 
   if (catalogMatches.length > 0) return catalogMatches;
 
-  const list = FALLBACK_MODELS[bLower] ?? [
+  const list = (FALLBACK_MODELS[bLower] ?? [
     { name: `${brand} Phone Model 1`, storages: ['128GB', '256GB'] },
     { name: `${brand} Phone Model 2`, storages: ['128GB', '256GB'] },
-  ];
+  ]).filter((m) => !isBlockedPhone(brand, m.name));
 
   if (!qLower) return list;
   return list.filter((m) => m.name.toLowerCase().includes(qLower));

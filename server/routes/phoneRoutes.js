@@ -2,6 +2,7 @@ import { Router } from 'express';
 import { MasterPhone, SellPriceConfig } from '../models/index.js';
 import { normalizeDoc } from '../utils/dbHelpers.js';
 import { INDIAN_MARKET_PHONES_LAST_10_YEARS, ensureMasterPhonesSeeded } from '../config/seedPhones.js';
+import { isBlockedPhone } from '../utils/blockedModels.js';
 import {
   extractStorageOptions,
   extractRamOptions,
@@ -23,7 +24,7 @@ router.get('/search', async (req, res) => {
     const { query = '', brand = '', limit = '50', fetch_remote = 'true' } = req.query;
     const maxResults = Math.min(Number(limit) || 50, 100);
 
-    const filter = {};
+    const filter = { is_active: { $ne: false } };
     if (brand && brand !== 'All') {
       filter.brand = new RegExp(`^${brand.trim()}$`, 'i');
     }
@@ -44,10 +45,10 @@ router.get('/search', async (req, res) => {
       .limit(maxResults);
 
     // If local DB or memory catalog matches
-    let results = normalizeDoc(phones);
+    let results = normalizeDoc(phones).filter((p) => p.is_active !== false && !isBlockedPhone(p.brand, p.model));
 
     if (results.length === 0) {
-      let filtered = INDIAN_MARKET_PHONES_LAST_10_YEARS;
+      let filtered = INDIAN_MARKET_PHONES_LAST_10_YEARS.filter((p) => p.is_active !== false && !isBlockedPhone(p.brand, p.model));
       if (brand && brand !== 'All') {
         filtered = filtered.filter((p) => p.brand.toLowerCase() === brand.toLowerCase());
       }
@@ -61,7 +62,7 @@ router.get('/search', async (req, res) => {
     // If still no results and user provided a query, query https://mobileapi.dev live!
     if (results.length === 0 && query && fetch_remote !== 'false') {
       const searchRes = await fetchMobileApiSearch(query, brand, 1);
-      const remoteDevices = searchRes.devices || [];
+      const remoteDevices = (searchRes.devices || []).filter((p) => !isBlockedPhone(p.brand || brand, p.model || p.name));
       if (remoteDevices.length > 0) {
         return res.json({
           data: remoteDevices.slice(0, maxResults),
@@ -211,11 +212,13 @@ router.post('/mobileapi/import', async (req, res) => {
  */
 router.get('/all', async (_req, res) => {
   try {
-    const phones = await MasterPhone.find({}).sort({ release_year: -1, brand: 1 });
+    const phones = await MasterPhone.find({ is_active: { $ne: false } }).sort({ release_year: -1, brand: 1 });
     if (phones.length > 0) {
-      return res.json({ data: normalizeDoc(phones), count: phones.length });
+      const activeList = normalizeDoc(phones).filter((p) => p.is_active !== false && !isBlockedPhone(p.brand, p.model));
+      return res.json({ data: activeList, count: activeList.length });
     }
-    return res.json({ data: INDIAN_MARKET_PHONES_LAST_10_YEARS, count: INDIAN_MARKET_PHONES_LAST_10_YEARS.length });
+    const fallbackList = INDIAN_MARKET_PHONES_LAST_10_YEARS.filter((p) => p.is_active !== false && !isBlockedPhone(p.brand, p.model));
+    return res.json({ data: fallbackList, count: fallbackList.length });
   } catch (error) {
     return res.status(500).json({ error: { message: error.message } });
   }
@@ -232,9 +235,14 @@ router.get('/specs', async (req, res) => {
       return res.status(400).json({ error: { message: 'brand and model parameters required' } });
     }
 
+    if (isBlockedPhone(brand, model)) {
+      return res.status(404).json({ error: { message: 'Model discontinued or removed from catalog' } });
+    }
+
     let phone = await MasterPhone.findOne({
       brand: new RegExp(`^${brand.trim()}$`, 'i'),
       model: new RegExp(`^${model.trim()}$`, 'i'),
+      is_active: { $ne: false },
     });
 
     if (!phone) {

@@ -2297,51 +2297,6 @@
   },
   {
     "brand": "Motorola",
-    "model": "Moto Edge 30",
-    "release_year": 2022,
-    "ram_options": [
-      "6GB",
-      "8GB"
-    ],
-    "storage_options": [
-      "128 GB"
-    ],
-    "default_mrp": 15420,
-    "base_resale_value": 9600,
-    "image_url": "https://fdn2.gsmarena.com/vv/bigpic/motorola-motorola-moto-edge-30.jpg",
-    "popular_tag": "Motorola Official Model",
-    "processor": "High-Efficiency Processor",
-    "camera_spec": "50MP OIS Camera",
-    "battery_spec": "5000 mAh Fast Charging",
-    "display_spec": "6.7\" AMOLED 120Hz",
-    "is_5g": false,
-    "is_active": true,
-    "price": 9600
-  },
-  {
-    "brand": "Motorola",
-    "model": "Moto Edge 30 Fusion",
-    "release_year": 2022,
-    "ram_options": [
-      "8GB"
-    ],
-    "storage_options": [
-      "128 GB"
-    ],
-    "default_mrp": 17880,
-    "base_resale_value": 11800,
-    "image_url": "https://fdn2.gsmarena.com/vv/bigpic/motorola-motorola-moto-edge-30-fusion.jpg",
-    "popular_tag": "Motorola Official Model",
-    "processor": "High-Efficiency Processor",
-    "camera_spec": "50MP OIS Camera",
-    "battery_spec": "5000 mAh Fast Charging",
-    "display_spec": "6.7\" AMOLED 120Hz",
-    "is_5g": false,
-    "is_active": true,
-    "price": 11800
-  },
-  {
-    "brand": "Motorola",
     "model": "Moto Edge 30 Pro",
     "release_year": 2022,
     "ram_options": [
@@ -2365,76 +2320,6 @@
   },
   {
     "brand": "Motorola",
-    "model": "Moto Edge 30 Ultra",
-    "release_year": 2022,
-    "ram_options": [
-      "8GB",
-      "12GB"
-    ],
-    "storage_options": [
-      "128 GB",
-      "256 GB"
-    ],
-    "default_mrp": 21405,
-    "base_resale_value": 15800,
-    "image_url": "https://fdn2.gsmarena.com/vv/bigpic/motorola-motorola-moto-edge-30-ultra.jpg",
-    "popular_tag": "Motorola Official Model",
-    "processor": "5G Octa-core Processor",
-    "camera_spec": "50MP OIS Camera",
-    "battery_spec": "5000 mAh Fast Charging",
-    "display_spec": "6.7\" AMOLED 120Hz",
-    "is_5g": true,
-    "is_active": true,
-    "price": 15800
-  },
-  {
-    "brand": "Motorola",
-    "model": "Moto Edge 40",
-    "release_year": 2023,
-    "ram_options": [
-      "8GB"
-    ],
-    "storage_options": [
-      "256 GB"
-    ],
-    "default_mrp": 25605,
-    "base_resale_value": 13200,
-    "image_url": "https://fdn2.gsmarena.com/vv/bigpic/motorola-motorola-moto-edge-40.jpg",
-    "popular_tag": "Motorola Official Model",
-    "processor": "High-Efficiency Processor",
-    "camera_spec": "50MP OIS Camera",
-    "battery_spec": "5000 mAh Fast Charging",
-    "display_spec": "6.7\" AMOLED 120Hz",
-    "is_5g": false,
-    "is_active": true,
-    "price": 13200
-  },
-  {
-    "brand": "Motorola",
-    "model": "Moto Edge 40 Neo",
-    "release_year": 2023,
-    "ram_options": [
-      "8GB",
-      "12GB"
-    ],
-    "storage_options": [
-      "128 GB",
-      "256 GB"
-    ],
-    "default_mrp": 23670,
-    "base_resale_value": 11600,
-    "image_url": "https://fdn2.gsmarena.com/vv/bigpic/motorola-motorola-moto-edge-40-neo.jpg",
-    "popular_tag": "Motorola Official Model",
-    "processor": "High-Efficiency Processor",
-    "camera_spec": "50MP OIS Camera",
-    "battery_spec": "5000 mAh Fast Charging",
-    "display_spec": "6.7\" AMOLED 120Hz",
-    "is_5g": false,
-    "is_active": true,
-    "price": 11600
-  },
-  {
-    "brand": "Motorola",
     "model": "Moto Edge 50",
     "release_year": 2024,
     "ram_options": [
@@ -2453,30 +2338,6 @@
     "display_spec": "6.7\" AMOLED 120Hz",
     "is_5g": false,
     "is_active": true
-  },
-  {
-    "brand": "Motorola",
-    "model": "Moto Edge 50 Fusion",
-    "release_year": 2024,
-    "ram_options": [
-      "8GB",
-      "12GB"
-    ],
-    "storage_options": [
-      "128 GB",
-      "256 GB"
-    ],
-    "default_mrp": 23820,
-    "base_resale_value": 15500,
-    "image_url": "https://fdn2.gsmarena.com/vv/bigpic/motorola-motorola-moto-edge-50-fusion.jpg",
-    "popular_tag": "Motorola Official Model",
-    "processor": "High-Efficiency Processor",
-    "camera_spec": "50MP OIS Camera",
-    "battery_spec": "5000 mAh Fast Charging",
-    "display_spec": "6.7\" AMOLED 120Hz",
-    "is_5g": false,
-    "is_active": true,
-    "price": 15500
   },
   {
     "brand": "Motorola",
@@ -3832,52 +3693,6 @@
   },
   {
     "brand": "Motorola",
-    "model": "Moto Razr 40",
-    "release_year": 2023,
-    "ram_options": [
-      "8GB"
-    ],
-    "storage_options": [
-      "256 GB"
-    ],
-    "default_mrp": 30690,
-    "base_resale_value": 18200,
-    "image_url": "https://fdn2.gsmarena.com/vv/bigpic/motorola-motorola-moto-razr-40.jpg",
-    "popular_tag": "Motorola Official Model",
-    "processor": "High-Efficiency Processor",
-    "camera_spec": "50MP OIS Camera",
-    "battery_spec": "5000 mAh Fast Charging",
-    "display_spec": "6.7\" AMOLED 120Hz",
-    "is_5g": false,
-    "is_active": true,
-    "price": 18200
-  },
-  {
-    "brand": "Motorola",
-    "model": "Moto Razr 40 Ultra",
-    "release_year": 2023,
-    "ram_options": [
-      "8GB",
-      "12GB"
-    ],
-    "storage_options": [
-      "256 GB",
-      "512 GB"
-    ],
-    "default_mrp": 36870,
-    "base_resale_value": 24500,
-    "image_url": "https://fdn2.gsmarena.com/vv/bigpic/motorola-motorola-moto-razr-40-ultra.jpg",
-    "popular_tag": "Motorola Official Model",
-    "processor": "5G Octa-core Processor",
-    "camera_spec": "50MP OIS Camera",
-    "battery_spec": "5000 mAh Fast Charging",
-    "display_spec": "6.7\" AMOLED 120Hz",
-    "is_5g": true,
-    "is_active": true,
-    "price": 24500
-  },
-  {
-    "brand": "Motorola",
     "model": "Moto Razr 50",
     "release_year": 2024,
     "ram_options": [
@@ -3897,74 +3712,6 @@
     "is_5g": false,
     "is_active": true,
     "price": 29500
-  },
-  {
-    "brand": "Motorola",
-    "model": "Moto Razr 50 Ultra",
-    "release_year": 2024,
-    "ram_options": [
-      "12GB"
-    ],
-    "storage_options": [
-      "512 GB"
-    ],
-    "default_mrp": 49950,
-    "base_resale_value": 39800,
-    "image_url": "https://fdn2.gsmarena.com/vv/bigpic/motorola-motorola-moto-razr-50-ultra.jpg",
-    "popular_tag": "Motorola Official Model",
-    "processor": "5G Octa-core Processor",
-    "camera_spec": "50MP OIS Camera",
-    "battery_spec": "5000 mAh Fast Charging",
-    "display_spec": "6.7\" AMOLED 120Hz",
-    "is_5g": true,
-    "is_active": true,
-    "price": 39800
-  },
-  {
-    "brand": "Motorola",
-    "model": "Moto Razr 60",
-    "release_year": 2025,
-    "ram_options": [
-      "8GB",
-      "12GB"
-    ],
-    "storage_options": [
-      "256 GB",
-      "512 GB"
-    ],
-    "default_mrp": 42720,
-    "base_resale_value": 28480,
-    "image_url": "https://fdn2.gsmarena.com/vv/bigpic/motorola-motorola-moto-razr-60.jpg",
-    "popular_tag": "Motorola Official Model",
-    "processor": "High-Efficiency Processor",
-    "camera_spec": "50MP OIS Camera",
-    "battery_spec": "5000 mAh Fast Charging",
-    "display_spec": "6.7\" AMOLED 120Hz",
-    "is_5g": false,
-    "is_active": true
-  },
-  {
-    "brand": "Motorola",
-    "model": "Moto Razr 60 Ultra",
-    "release_year": 2025,
-    "ram_options": [
-      "12GB",
-      "16GB"
-    ],
-    "storage_options": [
-      "256 GB",
-      "512 GB"
-    ],
-    "default_mrp": 71565,
-    "base_resale_value": 47710,
-    "image_url": "https://fdn2.gsmarena.com/vv/bigpic/motorola-motorola-moto-razr-60-ultra.jpg",
-    "popular_tag": "Motorola Official Model",
-    "processor": "5G Octa-core Processor",
-    "camera_spec": "50MP OIS Camera",
-    "battery_spec": "5000 mAh Fast Charging",
-    "display_spec": "6.7\" AMOLED 120Hz",
-    "is_5g": true,
-    "is_active": true
   },
   {
     "brand": "Motorola",
@@ -4772,31 +4519,6 @@
     "is_5g": false,
     "is_active": true,
     "price": 7500
-  },
-  {
-    "brand": "OnePlus",
-    "model": "Nord N30 5G",
-    "release_year": 2023,
-    "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
-    ],
-    "storage_options": [
-      "128 GB",
-      "256 GB"
-    ],
-    "default_mrp": 19999,
-    "base_resale_value": 8500,
-    "image_url": "https://api.mobileapi.dev/devices/387/thumb.png",
-    "popular_tag": "OnePlus Official Model",
-    "processor": "5G Octa-core Processor",
-    "camera_spec": "50MP OIS Camera",
-    "battery_spec": "5000 mAh Fast Charging",
-    "display_spec": "6.7\" AMOLED 120Hz",
-    "is_5g": true,
-    "is_active": true,
-    "price": 8500
   },
   {
     "brand": "OnePlus",
@@ -27169,51 +26891,6 @@
   },
   {
     "brand": "Infinix",
-    "model": "Zero 30 5G",
-    "release_year": 2023,
-    "ram_options": [
-      "8GB",
-      "12GB"
-    ],
-    "storage_options": [
-      "256GB"
-    ],
-    "default_mrp": 27999,
-    "base_resale_value": 12400,
-    "price": 12400,
-    "popular_tag": "Zero Flagship Series",
-    "image_url": "https://fdn2.gsmarena.com/vv/bigpic/infinix-zero-30-5g.jpg",
-    "processor": "MediaTek Dimensity 8020 (6 nm)",
-    "camera_spec": "108MP OIS + 13MP Ultrawide + 2MP",
-    "battery_spec": "5000 mAh 68W Fast Charging",
-    "display_spec": "6.78\" Curved AMOLED 144Hz",
-    "is_5g": true,
-    "is_active": true
-  },
-  {
-    "brand": "Infinix",
-    "model": "Zero 30 4G",
-    "release_year": 2023,
-    "ram_options": [
-      "8GB"
-    ],
-    "storage_options": [
-      "256GB"
-    ],
-    "default_mrp": 20999,
-    "base_resale_value": 9800,
-    "price": 9800,
-    "popular_tag": "Zero Flagship Series",
-    "image_url": "https://fdn2.gsmarena.com/vv/bigpic/infinix-zero-30.jpg",
-    "processor": "MediaTek Helio G99 (6 nm)",
-    "camera_spec": "108MP + 2MP + 2MP",
-    "battery_spec": "5000 mAh 45W Fast Charging",
-    "display_spec": "6.78\" Curved AMOLED 120Hz",
-    "is_5g": false,
-    "is_active": true
-  },
-  {
-    "brand": "Infinix",
     "model": "Zero Ultra 5G",
     "release_year": 2022,
     "ram_options": [
@@ -27866,51 +27543,6 @@
     "processor": "MediaTek Helio G100 (6 nm)",
     "camera_spec": "50MP + 2MP + AI Lens",
     "battery_spec": "5000 mAh 18W Fast Charging",
-    "display_spec": "6.78\" FHD+ 120Hz IPS LCD",
-    "is_5g": false,
-    "is_active": true
-  },
-  {
-    "brand": "Infinix",
-    "model": "Hot 50i",
-    "release_year": 2024,
-    "ram_options": [
-      "4GB"
-    ],
-    "storage_options": [
-      "128GB"
-    ],
-    "default_mrp": 10999,
-    "base_resale_value": 5200,
-    "price": 5200,
-    "popular_tag": "Hot Performance Series",
-    "image_url": "https://fdn2.gsmarena.com/vv/bigpic/infinix-hot-50i.jpg",
-    "processor": "MediaTek Helio G81",
-    "camera_spec": "48MP AI Dual Camera",
-    "battery_spec": "5000 mAh 18W Fast Charging",
-    "display_spec": "6.7\" HD+ 120Hz",
-    "is_5g": false,
-    "is_active": true
-  },
-  {
-    "brand": "Infinix",
-    "model": "Hot 40 Pro",
-    "release_year": 2023,
-    "ram_options": [
-      "8GB"
-    ],
-    "storage_options": [
-      "128GB",
-      "256GB"
-    ],
-    "default_mrp": 15999,
-    "base_resale_value": 7200,
-    "price": 7200,
-    "popular_tag": "Hot Performance Series",
-    "image_url": "https://fdn2.gsmarena.com/vv/bigpic/infinix-hot-40-pro.jpg",
-    "processor": "MediaTek Helio G99 (6 nm)",
-    "camera_spec": "108MP + 2MP Macro + 2MP AI",
-    "battery_spec": "5000 mAh 33W Fast Charging",
     "display_spec": "6.78\" FHD+ 120Hz IPS LCD",
     "is_5g": false,
     "is_active": true

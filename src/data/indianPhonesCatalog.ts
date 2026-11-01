@@ -1,5 +1,3 @@
-import type { MasterPhone } from '../types';
-
 export const ALL_INDIAN_PHONES_CATALOG: MasterPhone[] = [
   {
     "id": "oneplus-nord-2",
@@ -4383,28 +4381,6 @@ export const ALL_INDIAN_PHONES_CATALOG: MasterPhone[] = [
     "is_active": true
   },
   {
-    "id": "moto-razr50u",
-    "brand": "Motorola",
-    "model": "Motorola Razr 50 Ultra",
-    "release_year": 2024,
-    "ram_options": [
-      "12GB"
-    ],
-    "storage_options": [
-      "512GB"
-    ],
-    "default_mrp": 99999,
-    "base_resale_value": 39800,
-    "image_url": "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=800&auto=format&fit=crop&q=80",
-    "popular_tag": "4.0\" Massive Cover Screen Flip",
-    "processor": "Snapdragon 8s Gen 3 (4nm)",
-    "camera_spec": "50MP OIS + 50MP 2x Telephoto",
-    "battery_spec": "4000 mAh 45W + 15W Wireless",
-    "display_spec": "6.9\" 165Hz LTPO pOLED Inner + 4.0\" 165Hz Outer",
-    "is_5g": true,
-    "is_active": true
-  },
-  {
     "id": "moto-e50u",
     "brand": "Motorola",
     "model": "Moto Edge 50 Ultra 5G",
@@ -4447,30 +4423,6 @@ export const ALL_INDIAN_PHONES_CATALOG: MasterPhone[] = [
     "camera_spec": "50MP OIS + 10MP 3x Telephoto + 13MP UW",
     "battery_spec": "4500 mAh 125W TurboPower",
     "display_spec": "6.7\" 1.5K 144Hz 3D Curved pOLED",
-    "is_5g": true,
-    "is_active": true
-  },
-  {
-    "id": "moto-e50f",
-    "brand": "Motorola",
-    "model": "Moto Edge 50 Fusion 5G",
-    "release_year": 2024,
-    "ram_options": [
-      "8GB",
-      "12GB"
-    ],
-    "storage_options": [
-      "128GB",
-      "256GB"
-    ],
-    "default_mrp": 22999,
-    "base_resale_value": 15500,
-    "image_url": "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=800&auto=format&fit=crop&q=80",
-    "popular_tag": "Sony LYT-700C + IP68 in Budget",
-    "processor": "Snapdragon 7s Gen 2 (4nm)",
-    "camera_spec": "50MP Sony LYT-700C OIS + 13MP UW Macro",
-    "battery_spec": "5000 mAh 68W TurboPower",
-    "display_spec": "6.7\" 144Hz 3D Curved pOLED",
     "is_5g": true,
     "is_active": true
   },
@@ -4606,51 +4558,6 @@ export const ALL_INDIAN_PHONES_CATALOG: MasterPhone[] = [
     "camera_spec": "108MP OIS + 50MP Ultrawide",
     "battery_spec": "5000 mAh 45W Fast Charging",
     "display_spec": "6.78\" 3D Curved AMOLED 120Hz",
-    "is_5g": false,
-    "is_active": true
-  },
-  {
-    "id": "infinix-zero305g",
-    "brand": "Infinix",
-    "model": "Infinix Zero 30 5G",
-    "release_year": 2023,
-    "ram_options": [
-      "8GB",
-      "12GB"
-    ],
-    "storage_options": [
-      "256GB"
-    ],
-    "default_mrp": 27999,
-    "base_resale_value": 12400,
-    "popular_tag": "Zero Flagship Series",
-    "image_url": "https://fdn2.gsmarena.com/vv/bigpic/infinix-zero-30-5g.jpg",
-    "processor": "MediaTek Dimensity 8020 (6 nm)",
-    "camera_spec": "108MP OIS + 13MP Ultrawide + 2MP",
-    "battery_spec": "5000 mAh 68W Fast Charging",
-    "display_spec": "6.78\" Curved AMOLED 144Hz",
-    "is_5g": true,
-    "is_active": true
-  },
-  {
-    "id": "infinix-zero304g",
-    "brand": "Infinix",
-    "model": "Infinix Zero 30 4G",
-    "release_year": 2023,
-    "ram_options": [
-      "8GB"
-    ],
-    "storage_options": [
-      "256GB"
-    ],
-    "default_mrp": 20999,
-    "base_resale_value": 9800,
-    "popular_tag": "Zero Flagship Series",
-    "image_url": "https://fdn2.gsmarena.com/vv/bigpic/infinix-zero-30.jpg",
-    "processor": "MediaTek Helio G99 (6 nm)",
-    "camera_spec": "108MP + 2MP + 2MP",
-    "battery_spec": "5000 mAh 45W Fast Charging",
-    "display_spec": "6.78\" Curved AMOLED 120Hz",
     "is_5g": false,
     "is_active": true
   },
@@ -5308,51 +5215,6 @@ export const ALL_INDIAN_PHONES_CATALOG: MasterPhone[] = [
     "processor": "MediaTek Helio G100 (6 nm)",
     "camera_spec": "50MP + 2MP + AI Lens",
     "battery_spec": "5000 mAh 18W Fast Charging",
-    "display_spec": "6.78\" FHD+ 120Hz IPS LCD",
-    "is_5g": false,
-    "is_active": true
-  },
-  {
-    "id": "infinix-hot50i",
-    "brand": "Infinix",
-    "model": "Infinix Hot 50i",
-    "release_year": 2024,
-    "ram_options": [
-      "4GB"
-    ],
-    "storage_options": [
-      "128GB"
-    ],
-    "default_mrp": 10999,
-    "base_resale_value": 5200,
-    "popular_tag": "Hot Performance Series",
-    "image_url": "https://fdn2.gsmarena.com/vv/bigpic/infinix-hot-50i.jpg",
-    "processor": "MediaTek Helio G81",
-    "camera_spec": "48MP AI Dual Camera",
-    "battery_spec": "5000 mAh 18W Fast Charging",
-    "display_spec": "6.7\" HD+ 120Hz",
-    "is_5g": false,
-    "is_active": true
-  },
-  {
-    "id": "infinix-hot40pro",
-    "brand": "Infinix",
-    "model": "Infinix Hot 40 Pro",
-    "release_year": 2023,
-    "ram_options": [
-      "8GB"
-    ],
-    "storage_options": [
-      "128GB",
-      "256GB"
-    ],
-    "default_mrp": 15999,
-    "base_resale_value": 7200,
-    "popular_tag": "Hot Performance Series",
-    "image_url": "https://fdn2.gsmarena.com/vv/bigpic/infinix-hot-40-pro.jpg",
-    "processor": "MediaTek Helio G99 (6 nm)",
-    "camera_spec": "108MP + 2MP Macro + 2MP AI",
-    "battery_spec": "5000 mAh 33W Fast Charging",
     "display_spec": "6.78\" FHD+ 120Hz IPS LCD",
     "is_5g": false,
     "is_active": true

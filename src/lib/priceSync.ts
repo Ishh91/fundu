@@ -193,6 +193,7 @@ export function applyPriceOverrides<T extends { brand: string; model: string; st
 
 export {
   isModelDeleted,
+  isPermanentlyBlockedModel,
   markModelAsDeleted,
   restoreModel,
   isProductDeleted,

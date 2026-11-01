@@ -3,6 +3,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import { MasterPhone } from '../models/MasterPhone.js';
 import { SellPriceConfig } from '../models/SellPriceConfig.js';
+import { isBlockedPhone } from '../utils/blockedModels.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -10,7 +11,8 @@ const catalogPath = path.join(__dirname, 'phonesCatalog.json');
 
 function loadCatalog() {
   try {
-    return JSON.parse(fs.readFileSync(catalogPath, 'utf8'));
+    const raw = JSON.parse(fs.readFileSync(catalogPath, 'utf8'));
+    return Array.isArray(raw) ? raw.filter((p) => !isBlockedPhone(p.brand, p.model)) : [];
   } catch (err) {
     console.error('[AutoSync] Could not read phonesCatalog.json:', err.message);
     return [];

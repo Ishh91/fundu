@@ -255,8 +255,8 @@ export default function AdminSellPricing({
 
     // 1. Process Master Phones (from DB)
     masterPhones.forEach((p) => {
-      if (p.is_active === false || isObsoleteDeviceHardware(p)) return;
       const cleanM = getCleanModelName(p.brand, p.model);
+      if (p.is_active === false || isObsoleteDeviceHardware(p) || isModelDeleted(p.brand, p.model) || isModelDeleted(p.brand, cleanM)) return;
       const key = makeKey(p.brand, p.model);
 
       const customImg = getOverrideImage(p.brand, p.model, cleanM) || p.image_url || '';
@@ -285,8 +285,8 @@ export default function AdminSellPricing({
 
     // 2. Process Full Master Model Catalog (1,162 phones across all brands)
     MASTER_MODEL_CATALOG.forEach((p) => {
-      if (isObsoleteDeviceHardware(p)) return;
       const cleanM = getCleanModelName(p.brand, p.model);
+      if (isObsoleteDeviceHardware(p) || isModelDeleted(p.brand, p.model) || isModelDeleted(p.brand, cleanM)) return;
       const key = makeKey(p.brand, p.model);
 
       if (!modelMap.has(key)) {
@@ -307,7 +307,7 @@ export default function AdminSellPricing({
           box_bonus: 600,
           charger_bonus: 400,
           image_url: customImg,
-          is_active: !isModelDeleted(p.brand, p.model) && !isModelDeleted(p.brand, cleanM),
+          is_active: true,
           hasCustomPrice: customPr !== undefined,
           hasCustomImage: Boolean(getOverrideImage(p.brand, p.model, cleanM)),
         });
@@ -321,8 +321,8 @@ export default function AdminSellPricing({
 
     // 3. Process All Indian Phones Catalog (best-sellers fallback)
     ALL_INDIAN_PHONES_CATALOG.forEach((p) => {
-      if (p.is_active === false || isObsoleteDeviceHardware(p)) return;
       const cleanM = getCleanModelName(p.brand, p.model);
+      if (p.is_active === false || isObsoleteDeviceHardware(p) || isModelDeleted(p.brand, p.model) || isModelDeleted(p.brand, cleanM)) return;
       const key = makeKey(p.brand, p.model);
 
       if (!modelMap.has(key)) {
@@ -343,7 +343,7 @@ export default function AdminSellPricing({
           box_bonus: 600,
           charger_bonus: 400,
           image_url: customImg,
-          is_active: !isModelDeleted(p.brand, p.model) && !isModelDeleted(p.brand, cleanM),
+          is_active: true,
           hasCustomPrice: customPr !== undefined,
           hasCustomImage: Boolean(getOverrideImage(p.brand, p.model, cleanM)),
         });
@@ -360,8 +360,8 @@ export default function AdminSellPricing({
     Object.values(BRAND_SERIES_DEFINITIONS).forEach((seriesList) => {
       seriesList.forEach((ser) => {
         (ser.defaultModels || []).forEach((p) => {
-          if (isObsoleteDeviceHardware(p)) return;
           const cleanM = getCleanModelName(p.brand, p.model);
+          if (isObsoleteDeviceHardware(p) || isModelDeleted(p.brand, p.model) || isModelDeleted(p.brand, cleanM)) return;
           const key = makeKey(p.brand, p.model);
 
           if (!modelMap.has(key)) {
@@ -382,7 +382,7 @@ export default function AdminSellPricing({
               box_bonus: 600,
               charger_bonus: 400,
               image_url: customImg,
-              is_active: !isModelDeleted(p.brand, p.model) && !isModelDeleted(p.brand, cleanM),
+              is_active: true,
               hasCustomPrice: customPr !== undefined,
               hasCustomImage: Boolean(getOverrideImage(p.brand, p.model, cleanM)),
             });
@@ -394,6 +394,7 @@ export default function AdminSellPricing({
     // 4. Overlay Explicit Database Sell Price Configs (Absolute Single Source of Truth)
     configs.forEach((cfg) => {
       const cleanM = getCleanModelName(cfg.brand, cfg.model);
+      if (isModelDeleted(cfg.brand, cfg.model) || isModelDeleted(cfg.brand, cleanM)) return;
       const key = makeKey(cfg.brand, cfg.model);
       const cfgPrice = Number(cfg.base_price);
       if (isNaN(cfgPrice) || cfgPrice <= 0) return; // Ignore any broken/invalid price configs

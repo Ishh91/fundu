@@ -587,14 +587,6 @@ export const MASTER_MODEL_CATALOG = [
   },
   {
     "brand": "Infinix",
-    "series": "Hot Series",
-    "model": "Infinix Hot 40 Pro",
-    "storage": "128 GB",
-    "price": 7200,
-    "image": "https://fdn2.gsmarena.com/vv/bigpic/infinix-hot-40-pro.jpg"
-  },
-  {
-    "brand": "Infinix",
     "series": "Note Series",
     "model": "Infinix Note 40 Pro 5G",
     "storage": "256 GB",
@@ -608,14 +600,6 @@ export const MASTER_MODEL_CATALOG = [
     "storage": "256 GB",
     "price": 13500,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/infinix-note-40-pro-plus-5g.jpg"
-  },
-  {
-    "brand": "Infinix",
-    "series": "Zero Series",
-    "model": "Infinix Zero 30 5G",
-    "storage": "256 GB",
-    "price": 12400,
-    "image": "https://fdn2.gsmarena.com/vv/bigpic/infinix-zero-30-5g.jpg"
   },
   {
     "brand": "iQOO",
@@ -916,62 +900,6 @@ export const MASTER_MODEL_CATALOG = [
   {
     "brand": "Motorola",
     "series": "Moto Edge Series",
-    "model": "Motorola Edge 30",
-    "storage": "128 GB",
-    "price": 9600,
-    "image": "https://fdn2.gsmarena.com/vv/bigpic/motorola-edge-30.jpg"
-  },
-  {
-    "brand": "Motorola",
-    "series": "Moto Edge Series",
-    "model": "Motorola Edge 30 Fusion",
-    "storage": "128 GB",
-    "price": 11800,
-    "image": "https://fdn2.gsmarena.com/vv/bigpic/motorola-edge-30-fusion.jpg"
-  },
-  {
-    "brand": "Motorola",
-    "series": "Moto Edge Series",
-    "model": "Motorola Edge 30 Ultra",
-    "storage": "128 GB",
-    "price": 15800,
-    "image": "https://fdn2.gsmarena.com/vv/bigpic/motorola-edge-30-ultra.jpg"
-  },
-  {
-    "brand": "Motorola",
-    "series": "Moto Edge Series",
-    "model": "Motorola Edge 40",
-    "storage": "256 GB",
-    "price": 13200,
-    "image": "https://fdn2.gsmarena.com/vv/bigpic/motorola-edge-40.jpg"
-  },
-  {
-    "brand": "Motorola",
-    "series": "Moto Edge Series",
-    "model": "Motorola Edge 40 Neo",
-    "storage": "128 GB",
-    "price": 11600,
-    "image": "https://fdn2.gsmarena.com/vv/bigpic/motorola-edge-40-neo.jpg"
-  },
-  {
-    "brand": "Motorola",
-    "series": "Moto Edge Series",
-    "model": "Motorola Edge 40 Pro",
-    "storage": "256 GB",
-    "price": 25950,
-    "image": "https://fdn2.gsmarena.com/vv/bigpic/motorola-edge-40-pro.jpg"
-  },
-  {
-    "brand": "Motorola",
-    "series": "Moto Edge Series",
-    "model": "Motorola Edge 50 Fusion",
-    "storage": "128 GB",
-    "price": 15500,
-    "image": "https://fdn2.gsmarena.com/vv/bigpic/motorola-edge-50-fusion.jpg"
-  },
-  {
-    "brand": "Motorola",
-    "series": "Moto Edge Series",
     "model": "Motorola Edge 50 Pro",
     "storage": "256 GB",
     "price": 18900,
@@ -1060,22 +988,6 @@ export const MASTER_MODEL_CATALOG = [
   {
     "brand": "Motorola",
     "series": "Motorola Series",
-    "model": "Motorola Moto Edge 30",
-    "storage": "128 GB",
-    "price": 10280,
-    "image": "https://fdn2.gsmarena.com/vv/bigpic/motorola-motorola-moto-edge-30.jpg"
-  },
-  {
-    "brand": "Motorola",
-    "series": "Motorola Series",
-    "model": "Motorola Moto Edge 30 Fusion",
-    "storage": "128 GB",
-    "price": 11920,
-    "image": "https://fdn2.gsmarena.com/vv/bigpic/motorola-motorola-moto-edge-30-fusion.jpg"
-  },
-  {
-    "brand": "Motorola",
-    "series": "Motorola Series",
     "model": "Motorola Moto Edge 30 Pro",
     "storage": "128 GB",
     "price": 10700,
@@ -1084,42 +996,10 @@ export const MASTER_MODEL_CATALOG = [
   {
     "brand": "Motorola",
     "series": "Motorola Series",
-    "model": "Motorola Moto Edge 30 Ultra",
-    "storage": "128 GB",
-    "price": 14270,
-    "image": "https://fdn2.gsmarena.com/vv/bigpic/motorola-motorola-moto-edge-30-ultra.jpg"
-  },
-  {
-    "brand": "Motorola",
-    "series": "Motorola Series",
-    "model": "Motorola Moto Edge 40",
-    "storage": "256 GB",
-    "price": 17070,
-    "image": "https://fdn2.gsmarena.com/vv/bigpic/motorola-motorola-moto-edge-40.jpg"
-  },
-  {
-    "brand": "Motorola",
-    "series": "Motorola Series",
-    "model": "Motorola Moto Edge 40 Neo",
-    "storage": "128 GB",
-    "price": 15780,
-    "image": "https://fdn2.gsmarena.com/vv/bigpic/motorola-motorola-moto-edge-40-neo.jpg"
-  },
-  {
-    "brand": "Motorola",
-    "series": "Motorola Series",
     "model": "Motorola Moto Edge 50",
     "storage": "256 GB",
     "price": 17310,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/motorola-motorola-moto-edge-50.jpg"
-  },
-  {
-    "brand": "Motorola",
-    "series": "Motorola Series",
-    "model": "Motorola Moto Edge 50 Fusion",
-    "storage": "128 GB",
-    "price": 15880,
-    "image": "https://fdn2.gsmarena.com/vv/bigpic/motorola-motorola-moto-edge-50-fusion.jpg"
   },
   {
     "brand": "Motorola",
@@ -1580,50 +1460,10 @@ export const MASTER_MODEL_CATALOG = [
   {
     "brand": "Motorola",
     "series": "Motorola Series",
-    "model": "Motorola Moto Razr 40",
-    "storage": "256 GB",
-    "price": 20460,
-    "image": "https://fdn2.gsmarena.com/vv/bigpic/motorola-motorola-moto-razr-40.jpg"
-  },
-  {
-    "brand": "Motorola",
-    "series": "Motorola Series",
-    "model": "Motorola Moto Razr 40 Ultra",
-    "storage": "256 GB",
-    "price": 24580,
-    "image": "https://fdn2.gsmarena.com/vv/bigpic/motorola-motorola-moto-razr-40-ultra.jpg"
-  },
-  {
-    "brand": "Motorola",
-    "series": "Motorola Series",
     "model": "Motorola Moto Razr 50",
     "storage": "256 GB",
     "price": 25280,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/motorola-motorola-moto-razr-50.jpg"
-  },
-  {
-    "brand": "Motorola",
-    "series": "Motorola Series",
-    "model": "Motorola Moto Razr 50 Ultra",
-    "storage": "512 GB",
-    "price": 33300,
-    "image": "https://fdn2.gsmarena.com/vv/bigpic/motorola-motorola-moto-razr-50-ultra.jpg"
-  },
-  {
-    "brand": "Motorola",
-    "series": "Motorola Series",
-    "model": "Motorola Moto Razr 60",
-    "storage": "256 GB",
-    "price": 28480,
-    "image": "https://fdn2.gsmarena.com/vv/bigpic/motorola-motorola-moto-razr-60.jpg"
-  },
-  {
-    "brand": "Motorola",
-    "series": "Motorola Series",
-    "model": "Motorola Moto Razr 60 Ultra",
-    "storage": "512 GB",
-    "price": 47710,
-    "image": "https://fdn2.gsmarena.com/vv/bigpic/motorola-motorola-moto-razr-60-ultra.jpg"
   },
   {
     "brand": "Motorola",
@@ -1684,34 +1524,10 @@ export const MASTER_MODEL_CATALOG = [
   {
     "brand": "Motorola",
     "series": "Moto Razr Series",
-    "model": "Motorola Razr 40",
-    "storage": "256 GB",
-    "price": 18200,
-    "image": "https://fdn2.gsmarena.com/vv/bigpic/motorola-razr-40.jpg"
-  },
-  {
-    "brand": "Motorola",
-    "series": "Moto Razr Series",
-    "model": "Motorola Razr 40 Ultra",
-    "storage": "256 GB",
-    "price": 24500,
-    "image": "https://fdn2.gsmarena.com/vv/bigpic/motorola-razr-40-ultra.jpg"
-  },
-  {
-    "brand": "Motorola",
-    "series": "Moto Razr Series",
     "model": "Motorola Razr 50",
     "storage": "256 GB",
     "price": 29500,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/motorola-razr-50.jpg"
-  },
-  {
-    "brand": "Motorola",
-    "series": "Moto Razr Series",
-    "model": "Motorola Razr 50 Ultra",
-    "storage": "512 GB",
-    "price": 39800,
-    "image": "https://fdn2.gsmarena.com/vv/bigpic/motorola-razr-50-ultra.jpg"
   },
   {
     "brand": "Nothing",
@@ -2088,14 +1904,6 @@ export const MASTER_MODEL_CATALOG = [
     "storage": "128 GB",
     "price": 7500,
     "image": "https://api.mobileapi.dev/devices/811/thumb.png"
-  },
-  {
-    "brand": "OnePlus",
-    "series": "OnePlus Nord Series",
-    "model": "OnePlus Nord N30 5G",
-    "storage": "128 GB",
-    "price": 8500,
-    "image": "https://api.mobileapi.dev/devices/387/thumb.png"
   },
   {
     "brand": "OnePlus",
