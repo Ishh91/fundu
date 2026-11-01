@@ -70,3 +70,4 @@ async function syncPrices() {
 }
 
 syncPrices().catch(console.error);
+

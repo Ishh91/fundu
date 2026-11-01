@@ -5454,7 +5454,7 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Galaxy S21 Series",
     "model": "Samsung Galaxy S21 Ultra 5G",
     "storage": "128 GB",
-    "price": 25500,
+    "price": 18000,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s21-ultra-5g-.jpg"
   },
   {
