@@ -77,6 +77,14 @@ export const RAW_MODEL_EXACT_RENDERS: Array<{ keyword: string; url: string }> = 
   { keyword: 'fold 7', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-z-fold6.jpg' },
   { keyword: 'z flip 7', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-z-flip6.jpg' },
   { keyword: 'flip 7', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-z-flip6.jpg' },
+  // Itel verified S-series & popular models
+  { keyword: 'itel s23+', url: 'https://fdn2.gsmarena.com/vv/bigpic/itel-s23-plus.jpg' },
+  { keyword: 'itel s23', url: 'https://fdn2.gsmarena.com/vv/bigpic/itel-s23.jpg' },
+  { keyword: 'itel s24', url: 'https://fdn2.gsmarena.com/vv/bigpic/itel-s24.jpg' },
+  { keyword: 'itel color pro', url: 'https://fdn2.gsmarena.com/vv/bigpic/itel-color-pro-5g.jpg' },
+  { keyword: 'itel p55+', url: 'https://fdn2.gsmarena.com/vv/bigpic/itel-p55-plus.jpg' },
+  { keyword: 'itel p55', url: 'https://fdn2.gsmarena.com/vv/bigpic/itel-p55.jpg' },
+
   { keyword: 'fold special edition', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-z-fold6.jpg' },
   { keyword: 'flip7 fe', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-z-flip6.jpg' },
   { keyword: 's25 ultra', url: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s25-ultra-sm-s938.jpg' },
@@ -872,6 +880,16 @@ export function getCleanPhoneImage(brand?: string, model?: string, fallbackUrl?:
 
   // 2. Try high-resolution flagship & classic renders (sorted longest keyword first)
   for (const item of MODEL_EXACT_RENDERS) {
+    // Prevent non-Samsung brands (e.g. Itel S23, Vivo S20) from matching generic Samsung S-series renders
+    const isSamsungRender = item.url.includes('samsung-galaxy');
+    if (isSamsungRender && b && b !== 'samsung' && !fullText.includes('galaxy') && !fullText.includes('samsung')) {
+      continue;
+    }
+    // Prevent non-Apple brands from matching iPhone renders
+    const isAppleRender = item.url.includes('apple-iphone');
+    if (isAppleRender && b && b !== 'apple' && !fullText.includes('iphone') && !fullText.includes('apple')) {
+      continue;
+    }
     if (fullText.includes(item.keyword) || modelNorm.includes(item.keyword)) {
       return cleanUrl(item.url, b);
     }

@@ -437,7 +437,7 @@ export default function AdminCompetitorRadar() {
     let detectedBrand = selectedBrand;
     if (low.includes('iphone') || low.includes('apple') || low.includes('ipad') || /\b(1[1-9]|[2-9]\d)\s*(pro\s*max|pro|plus|mini)\b/i.test(low)) {
       detectedBrand = 'Apple';
-    } else if (low.includes('galaxy') || low.includes('s24') || low.includes('s23') || low.includes('z fold') || low.includes('z flip')) {
+    } else if (low.includes('galaxy') || low.includes('samsung') || (selectedBrand === 'Samsung' && (low.includes('s24') || low.includes('s23') || low.includes('z fold') || low.includes('z flip')))) {
       detectedBrand = 'Samsung';
     } else if (low.includes('oneplus') || low.includes('nord')) {
       detectedBrand = 'OnePlus';
@@ -453,14 +453,18 @@ export default function AdminCompetitorRadar() {
       detectedBrand = 'iQOO';
     } else if (low.includes('realme')) {
       detectedBrand = 'Realme';
-    } else if (low.includes('moto') || low.includes('edge 50')) {
+    } else if (low.includes('moto') || low.includes('motorola')) {
       detectedBrand = 'Motorola';
-    } else if (low.includes('tecno') || low.includes('camon') || low.includes('pova') || low.includes('phantom')) {
+    } else if (low.includes('tecno')) {
       detectedBrand = 'Tecno';
-    } else if (low.includes('infinix') || low.includes('hot 40') || low.includes('hot 30') || low.includes('gt 20') || low.includes('gt 10')) {
+    } else if (low.includes('infinix')) {
       detectedBrand = 'Infinix';
     } else if (low.includes('itel')) {
       detectedBrand = 'Itel';
+    } else if (low.includes('vivo')) {
+      detectedBrand = 'Vivo';
+    } else if (low.includes('oppo')) {
+      detectedBrand = 'Oppo';
     }
 
     if (detectedBrand !== selectedBrand) {

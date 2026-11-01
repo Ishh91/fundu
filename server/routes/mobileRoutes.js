@@ -986,35 +986,41 @@ router.get('/sell-pricing/competitor-radar', async (req, res, next) => {
     const storage = typeof req.query.storage === 'string' && req.query.storage.trim() ? req.query.storage.trim() : '128 GB';
     const ram = typeof req.query.ram === 'string' && req.query.ram.trim() ? req.query.ram.trim() : '';
 
-    // Smart brand auto-correction to prevent mismatched queries like Samsung iPhone 16 Pro
+    // Smart brand auto-correction only when the model string explicitly specifies another brand
     let rawBrand = inputBrand;
     const mLower = rawModel.toLowerCase();
+    const bLower = (inputBrand || '').toLowerCase().trim();
+
     if (mLower.includes('iphone') || mLower.includes('ipad') || mLower.includes('apple')) {
       rawBrand = 'Apple';
-    } else if (mLower.includes('galaxy') || mLower.includes('z fold') || mLower.includes('z flip') || /\bs2[0-5]\b/i.test(mLower)) {
+    } else if (mLower.includes('galaxy') || mLower.includes('z fold') || mLower.includes('z flip') || mLower.startsWith('samsung') || (bLower === 'samsung' && /\bs2[0-5]\b/i.test(mLower))) {
       rawBrand = 'Samsung';
     } else if (mLower.includes('oneplus') || mLower.includes('nord')) {
       rawBrand = 'OnePlus';
     } else if (mLower.includes('pixel')) {
       rawBrand = 'Google';
-    } else if (mLower.includes('poco') || (inputBrand && inputBrand.toLowerCase() === 'poco')) {
+    } else if (mLower.includes('poco') || bLower === 'poco') {
       rawBrand = 'Poco';
     } else if (mLower.includes('redmi') || mLower.includes('xiaomi')) {
       rawBrand = 'Xiaomi';
     } else if (mLower.includes('iqoo')) {
       rawBrand = 'iQOO';
-    } else if (mLower.includes('realme')) {
+    } else if (mLower.includes('realme') || mLower.includes('narzo')) {
       rawBrand = 'Realme';
-    } else if (mLower.includes('moto') || mLower.includes('motorola') || mLower.includes('edge 50') || mLower.includes('edge 40')) {
+    } else if (mLower.includes('motorola') || (mLower.includes('moto ') && !mLower.includes('motorola'))) {
       rawBrand = 'Motorola';
-    } else if (mLower.includes('tecno') || (inputBrand && inputBrand.toLowerCase() === 'tecno')) {
+    } else if (mLower.includes('tecno') || bLower === 'tecno') {
       rawBrand = 'Tecno';
-    } else if (mLower.includes('infinix') || (inputBrand && inputBrand.toLowerCase() === 'infinix')) {
+    } else if (mLower.includes('infinix') || bLower === 'infinix') {
       rawBrand = 'Infinix';
-    } else if (mLower.includes('honor') || (inputBrand && inputBrand.toLowerCase() === 'honor')) {
+    } else if (mLower.includes('honor') || bLower === 'honor') {
       rawBrand = 'Honor';
-    } else if (mLower.includes('itel') || (inputBrand && inputBrand.toLowerCase() === 'itel')) {
+    } else if (mLower.includes('itel') || bLower === 'itel') {
       rawBrand = 'Itel';
+    } else if (mLower.includes('vivo') || bLower === 'vivo') {
+      rawBrand = 'Vivo';
+    } else if (mLower.includes('oppo') || bLower === 'oppo') {
+      rawBrand = 'Oppo';
     }
 
     // Sanitize model
@@ -1079,6 +1085,7 @@ router.get('/sell-pricing/competitor-radar', async (req, res, next) => {
     } else {
       const mp = await MasterPhone.findOne({ brand: brandRegex, model: modelRegex }).lean();
       if (mp && (mp.base_resale_value > 0 || mp.price > 0)) {
+        configId = mp._id ? String(mp._id) : 'masterphone-matched';
         const baseVal = mp.base_resale_value || Math.round(mp.price * 0.55);
         const catalogStorage = mp.storage_options?.[0] || '128 GB';
         const baseMult = calculateHardwareVariantMultiplier(catalogStorage, '', rawBrand);
@@ -1086,7 +1093,8 @@ router.get('/sell-pricing/competitor-radar', async (req, res, next) => {
         const ratio = baseMult > 0 ? targetMult / baseMult : 1.0;
         funduBasePrice = Math.max(500, Math.round((baseVal * ratio) / 50) * 50);
       } else {
-        funduBasePrice = 25000;
+        const isBudget = ['itel', 'tecno', 'infinix', 'lava', 'micromax'].includes(rawBrand.toLowerCase());
+        funduBasePrice = isBudget ? 6000 : 25000;
       }
     }
 

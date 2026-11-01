@@ -427,6 +427,15 @@ export function inferModelSeries(
     return { seriesName: 'Nothing Phone Series', seriesSlug: 'nothing-phone-series' };
   }
 
+  // 11. Itel
+  if (bLower === 'itel') {
+    if (/\bcolor\s*pro\b/i.test(mLower)) return { seriesName: 'Color Pro 5G Series', seriesSlug: 'itel-color-pro-series' };
+    if (/\bs\d+/i.test(mLower)) return { seriesName: 'S Series (Curved AMOLED)', seriesSlug: 'itel-s-series' };
+    if (/\bp\d+/i.test(mLower)) return { seriesName: 'P Power Series', seriesSlug: 'itel-p-series' };
+    if (/\ba\d+/i.test(mLower)) return { seriesName: 'A Value Series', seriesSlug: 'itel-a-series' };
+    return { seriesName: 'Itel Official Series', seriesSlug: 'itel-series' };
+  }
+
   const brandCap = brand ? brand.charAt(0).toUpperCase() + brand.slice(1) : 'Official';
   return { seriesName: `${brandCap} Series`, seriesSlug: `${bLower}-series` };
 }
