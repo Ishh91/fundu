@@ -34,6 +34,7 @@ import {
 import { ALL_INDIAN_PHONES_CATALOG } from '../../data/indianPhonesCatalog';
 import { MASTER_MODEL_CATALOG } from '../../data/masterModelCatalog';
 import { BRAND_SERIES_DEFINITIONS, getDeviceRecencyScore } from '../../data/brandSeriesCatalog';
+import { getUnifiedCatalog } from '../../lib/modelCatalogSync';
 
 interface CompetitorData {
   id: string;
@@ -249,7 +250,7 @@ export default function AdminCompetitorRadar() {
 
   // Authentic Storages that realistically exist for this phone (e.g. S24 Ultra -> 256GB, 512GB, 1TB)
   const availableStorages = useMemo(() => {
-    const isApple = selectedBrand.toLowerCase().includes('apple') || searchModel.toLowerCase().includes('iphone');
+    const isApple = selectedBrand.toLowerCase().includes('apple') || searchModel.toLowerCase().includes('iphone') || /pro\s*max/i.test(searchModel);
     const catalogStorages = MASTER_MODEL_CATALOG
       .filter((m) => m.brand.toLowerCase() === selectedBrand.toLowerCase() && m.model.toLowerCase() === searchModel.toLowerCase())
       .map((m) => m.storage);
@@ -287,7 +288,7 @@ export default function AdminCompetitorRadar() {
     }
   }, [availableRams, selectedRam]);
 
-  // Dynamic available models for the selected brand
+  // Dynamic available models for the selected brand synced from Unified Catalog (DB + Static)
   const availableModels = useMemo(() => {
     const brand = selectedBrand;
     const bLower = brand.toLowerCase().trim();
@@ -303,26 +304,10 @@ export default function AdminCompetitorRadar() {
       rawList.push(w.model);
     });
 
-    // 3. Brand series definitions
-    const seriesDefs = BRAND_SERIES_DEFINITIONS[bLower] || [];
-    seriesDefs.forEach((s) => {
-      (s.defaultModels || []).forEach((dm) => {
-        rawList.push(dm.model);
-      });
-    });
-
-    // 4. All Indian phones catalog
-    ALL_INDIAN_PHONES_CATALOG.forEach((p) => {
-      if (p.brand.toLowerCase().trim() === bLower) {
-        rawList.push(p.model);
-      }
-    });
-
-    // 5. Master model catalog
-    MASTER_MODEL_CATALOG.forEach((m) => {
-      if (m.brand.toLowerCase().trim() === bLower) {
-        rawList.push(m.model);
-      }
+    // 3. Unified Catalog (DB master_phones + 1,162 master models + 31k Indian phones + series)
+    const unified = getUnifiedCatalog(brand);
+    unified.forEach((m) => {
+      rawList.push(m.model);
     });
 
     // Deduplicate and normalize display names
@@ -450,7 +435,7 @@ export default function AdminCompetitorRadar() {
     setSearchModel(val);
     const low = val.toLowerCase();
     let detectedBrand = selectedBrand;
-    if (low.includes('iphone') || low.includes('apple') || low.includes('ipad')) {
+    if (low.includes('iphone') || low.includes('apple') || low.includes('ipad') || /\b(1[1-9]|[2-9]\d)\s*(pro\s*max|pro|plus|mini)\b/i.test(low)) {
       detectedBrand = 'Apple';
     } else if (low.includes('galaxy') || low.includes('s24') || low.includes('s23') || low.includes('z fold') || low.includes('z flip')) {
       detectedBrand = 'Samsung';

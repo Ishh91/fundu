@@ -48,6 +48,7 @@ import {
 import { checkPincodeServiceability } from '../lib/pincodeService';
 import { getModelDedupeKey, groupModelsBySeries } from '../data/brandSeriesCatalog';
 import { notifyNewSellRequest, sendCustomerDeliveryOtp } from '../lib/whatsappNotifyService';
+import { getUnifiedCatalog } from '../lib/modelCatalogSync';
 
 import {
   DOORSTEP_LOCALITIES,
@@ -1008,15 +1009,7 @@ export default function SellPhone() {
   // Available Series List for Selected Brand (in exact defined chronological order)
   const brandSeriesList = useMemo(() => {
     if (!form.brand) return [];
-    const isPoco = (form.brand || '').toLowerCase() === 'poco';
-    const models = MASTER_MODEL_CATALOG.filter((m) => {
-      if (isModelDeleted(m.brand, m.model)) return false;
-      const bLower = (m.brand || '').toLowerCase();
-      if (isPoco) {
-        return bLower === 'poco' || (bLower === 'xiaomi' && /poco/i.test(m.model));
-      }
-      return bLower === form.brand.toLowerCase();
-    });
+    const models = getUnifiedCatalog(form.brand);
     const groups = groupModelsBySeries(form.brand, models);
     const names = groups.filter((g) => g.models.length > 0).map((g) => g.name);
     return ['All', ...names];

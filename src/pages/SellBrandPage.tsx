@@ -25,6 +25,7 @@ import { formatINR } from '../lib/db';
 import { getCleanPhoneImage, getCleanBrandLogo, BRAND_FRONT_FALLBACKS, getGenericDevicePlaceholder, pullLiveModelImagesFromDb } from '../lib/phoneImages';
 import { usePriceSync, applyPriceOverrides, isModelDeleted, getEffectivePrice } from '../lib/priceSync';
 import { MASTER_MODEL_CATALOG } from '../data/masterModelCatalog';
+import { getUnifiedCatalog } from '../lib/modelCatalogSync';
 import { fetchBrandCatalogFromApi, getDynamicFallbackConfig, calculateMarketPriceComparison, type CatalogModelItem } from '../lib/mobileApi';
 import { ALL_INDIAN_PHONES_CATALOG } from '../data/indianPhonesCatalog';
 import {
@@ -276,6 +277,19 @@ export default function SellBrandPage() {
         combinedMap.set(key, { ...item, price: existing.price || item.price });
       }
     };
+
+    // 0. Add Unified Catalog models (DB master_phones + curated models + Indian catalog)
+    const unifiedList = getUnifiedCatalog(brandDisplayName);
+    unifiedList.forEach((m) => {
+      upsertModel({
+        brand: m.brand,
+        model: m.model,
+        series: m.series,
+        storage: m.storage,
+        price: m.price,
+        image: m.image,
+      });
+    });
 
     // 1. Add all master catalog items first (deduplicated)
     masterList.forEach(upsertModel);

@@ -2664,9 +2664,9 @@ export function is512GBValidForModel(brand = '', model = ''): boolean {
   const m = String(model || '').toLowerCase().trim();
 
   // 1. Apple: Only iPhone 11 Pro / Pro Max and newer, XS / XS Max, or iPhone 13/14/15/16/17/18/19/20+ standard/plus/pro
-  if (b.includes('apple') || m.includes('iphone') || m.includes('ipad')) {
+  if (b.includes('apple') || m.includes('iphone') || m.includes('ipad') || /pro\s*max/i.test(m)) {
     if (/ipad/i.test(m)) return true;
-    if (/(?:iphone\s*)?(?:1[3-9]|[2-9]\d|12\s*pro|11\s*pro|xs)/i.test(m)) return true;
+    if (/(?:iphone\s*)?(?:1[3-9]|[2-9]\d|12\s*pro|11\s*pro|xs)/i.test(m) || /pro\s*max/i.test(m)) return true;
     // iPhone 12/11 base, XR, X, 8, 7, 6, SE max out at 256GB or lower
     return false;
   }

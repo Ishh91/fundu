@@ -33,6 +33,7 @@ import {
 } from 'lucide-react';
 import { formatINR, formatDisplayPrice } from '../lib/db';
 import { MASTER_MODEL_CATALOG } from '../data/masterModelCatalog';
+import { getStoredLiveMasterPhones } from '../lib/modelCatalogSync';
 import { getCleanPhoneImage, getCleanBrandLogo, BRAND_FRONT_FALLBACKS, getGenericDevicePlaceholder } from '../lib/phoneImages';
 import { ALL_INDIAN_PHONES_CATALOG } from '../data/indianPhonesCatalog';
 import { useRepairPriceSync, getModelRepairPricing } from '../lib/repairPriceSync';
@@ -235,7 +236,17 @@ export default function RepairBrandPage() {
       price: 599,
     }));
 
-    const rawList = [...adminModels, ...indianList, ...masterList].filter(
+    const liveDbPhones = getStoredLiveMasterPhones()
+      .filter((p) => (p.brand || '').toLowerCase() === brandCleanKey && p.is_active !== false)
+      .map((p) => ({
+        brand: p.brand,
+        model: p.model,
+        series: '',
+        image: p.image_url,
+        price: 599,
+      }));
+
+    const rawList = [...adminModels, ...liveDbPhones, ...indianList, ...masterList].filter(
       (m) => !isForeignBrandModel(brandCleanKey, m.model) && !isModelDeleted(m.brand || brandDisplayName, m.model)
     );
 

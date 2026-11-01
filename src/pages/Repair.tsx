@@ -3,6 +3,7 @@ import { useNavigate, useSearchParams, useParams, Link } from 'react-router-dom'
 import { getCleanPhoneImage, getCleanBrandLogo, BRAND_FRONT_FALLBACKS } from '../lib/phoneImages';
 import { ALL_INDIAN_PHONES_CATALOG } from '../data/indianPhonesCatalog';
 import { MASTER_MODEL_CATALOG } from '../data/masterModelCatalog';
+import { getStoredLiveMasterPhones } from '../lib/modelCatalogSync';
 import { getModelDedupeKey, groupModelsBySeries, inferModelSeries, sortDeviceModelsLatestFirst } from '../data/brandSeriesCatalog';
 import { notifyNewRepairBooking, sendCustomerDeliveryOtp } from '../lib/whatsappNotifyService';
 import {
@@ -517,7 +518,18 @@ export default function Repair() {
         storages: ['64GB', '128GB', '256GB'],
       }));
 
-    const seenNames = new Set(adminModels.map((m) => getModelDedupeKey(form.brand, m.name)));
+    // 1b. Models configured by Admin in master_phones database
+    const liveDbPhones = getStoredLiveMasterPhones()
+      .filter((p) => (p.brand || '').toLowerCase().trim() === bLower && p.is_active !== false && !isForeignBrandModel(bLower, p.model))
+      .map((p) => ({
+        name: p.model,
+        brand: p.brand,
+        series: '',
+        storages: p.storage_options || ['64GB', '128GB', '256GB'],
+      }));
+
+    const combinedAdmin = [...adminModels, ...liveDbPhones];
+    const seenNames = new Set(combinedAdmin.map((m) => getModelDedupeKey(form.brand, m.name)));
 
     // 2. Master Model Catalog models with explicit series
     const masterModels = MASTER_MODEL_CATALOG
@@ -576,7 +588,7 @@ export default function Repair() {
         };
       });
 
-    const rawAll = [...adminModels, ...masterModels, ...indianModels, ...otherModels];
+    const rawAll = [...adminModels, ...liveDbPhones, ...masterModels, ...indianModels, ...otherModels];
 
     const catalogItems = rawAll.map((item) => ({
       brand: item.brand || form.brand,

@@ -27,6 +27,7 @@ import { BRAND_TILES, MASTER_MODEL_CATALOG, FAQS_LIST } from '../../data/masterM
 import { isModelDeleted, usePriceSync } from '../../lib/priceSync';
 import { getModelDedupeKey, sortDeviceModelsLatestFirst, inferModelSeries } from '../../data/brandSeriesCatalog';
 import { getModelHardwareSpecs } from '../../lib/deviceSpecs';
+import { getUnifiedCatalog } from '../../lib/modelCatalogSync';
 
 interface SellStep1DeviceProps {
   form: any;
@@ -141,25 +142,14 @@ export default function SellStep1Device({
                 {/* Brand Models Image Cards Grid */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                   {(() => {
-                    const seen = new Set<string>();
-                    const rawList = MASTER_MODEL_CATALOG.filter((m) => {
-                      if (isModelDeleted(m.brand, m.model)) return false;
-                      const isPoco = (m.brand || '').toLowerCase() === 'poco' || (form.brand || '').toLowerCase() === 'poco';
-                      const brandMatch = isPoco
-                        ? ((m.brand || '').toLowerCase() === 'poco' || ((m.brand || '').toLowerCase() === 'xiaomi' && /poco/i.test(m.model)))
-                        : (m.brand || '').toLowerCase() === (form.brand || '').toLowerCase();
-                      if (!brandMatch) return false;
+                    const unifiedList = getUnifiedCatalog(form.brand);
+                    const rawList = unifiedList.filter((m) => {
                       if (selectedSeries === 'All') return true;
                       if (m.series === selectedSeries) return true;
                       const inferred = inferModelSeries(m.brand || form.brand, m.model, m.series);
                       return inferred.seriesName.toLowerCase() === selectedSeries.toLowerCase();
-                    }).filter((m) => {
-                      const dKey = getModelDedupeKey(m.brand, m.model);
-                      if (seen.has(dKey)) return false;
-                      seen.add(dKey);
-                      return true;
                     });
-                    return sortDeviceModelsLatestFirst(form.brand, rawList);
+                    return rawList;
                   })().map((m) => (
                     <div
                       key={`${m.brand}-${m.model}`}
