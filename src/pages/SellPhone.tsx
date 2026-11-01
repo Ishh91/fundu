@@ -139,12 +139,12 @@ export default function SellPhone() {
   };
 
   const handleStep2Back = () => {
-    if (brandSlug || form.brand) {
-      const cleanBrandKey = (brandSlug || form.brand).replace(/^sell-/, '').toLowerCase();
-      navigate(`/sell-old-mobile-phone/sell-${cleanBrandKey}`);
-    } else {
-      goToStep(1);
-    }
+    setForm((f) => ({ ...f, model: '', storage: '' }));
+    setStep(1);
+    navigate('/sell');
+    try {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } catch {}
   };
 
   const handleGoToLoginForExactPrice = (targetStep: number = 3) => {
@@ -1457,7 +1457,15 @@ export default function SellPhone() {
             <div key={s} className="flex items-center gap-1.5 sm:gap-2 shrink-0">
               <button
                 type="button"
-                onClick={() => step > s && setStep(s)}
+                onClick={() => {
+                  if (step > s) {
+                    if (s === 1) {
+                      handleStep2Back();
+                    } else {
+                      goToStep(s);
+                    }
+                  }
+                }}
                 className={`flex items-center gap-1.5 sm:gap-2 rounded-full px-3.5 py-1.5 text-xs font-bold transition-all duration-200 ${
                   step === s
                     ? 'bg-gradient-to-r from-[#344257] to-[#47576E] text-white shadow-md'
