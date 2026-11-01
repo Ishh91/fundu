@@ -74,7 +74,7 @@ type AdminSellPricingProps = {
   onSelectPricing: (id: string) => void;
   onSavePriceConfig: (config: Partial<SellPriceConfig>) => Promise<void>;
   onUpdateImage: (phone: { brand: string; model: string; id?: string }, imageUrl: string) => Promise<void>;
-  onToggleActive: (id: string, current: boolean) => void;
+  onToggleActive: (id: string, current: boolean, brand: string, model: string) => void;
   onDeleteConfig: (id: string) => void;
   onAutoGenerateRules: () => void;
   generatingRules: boolean;
@@ -1196,7 +1196,16 @@ export default function AdminSellPricing({
                   <span className="text-[10px] font-bold text-gray-400 uppercase">Status</span>
                   <button
                     type="button"
-                    onClick={() => onToggleActive(selectedModel.configId || selectedModel.id, selectedModel.is_active)}
+                    onClick={() => {
+                      const newStatus = !selectedModel.is_active;
+                      selectedModel.is_active = newStatus;
+                      onToggleActive(
+                        selectedModel.configId || selectedModel.id,
+                        !newStatus,
+                        selectedModel.brand,
+                        selectedModel.model
+                      );
+                    }}
                     className={`px-3 py-1.5 rounded-xl text-xs font-black transition ${
                       selectedModel.is_active
                         ? 'bg-emerald-100 text-emerald-800 hover:bg-emerald-200'

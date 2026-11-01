@@ -49,7 +49,12 @@ export const getReadScope = async (table, auth, filters) => {
     case 'sell_price_configs':
     case 'repair_price_configs':
     case 'repair_catalogs':
-      return isAdmin(auth) ? baseFilter : combineFilters(baseFilter, { is_active: true });
+      if (isAdmin(auth)) return baseFilter;
+      // If client explicitly requested is_active filter (e.g. is_active=false to sync deleted/disabled models), respect it
+      if (filters && Array.isArray(filters) && filters.some((f) => f.field === 'is_active')) {
+        return baseFilter;
+      }
+      return combineFilters(baseFilter, { is_active: true });
     case 'dispatches': {
       if (!auth?.sub) return baseFilter;
       if (isAdmin(auth)) return baseFilter;
@@ -352,6 +357,40 @@ export const queryTable = async (table, { auth, filters, sort, select, single, l
         }
       } catch (e) {
         // silent fallback
+      }
+    }
+
+    // Auto-enrich assigned vendor details for sell_requests and repair_bookings if missing
+    if (table === 'sell_requests' || table === 'repair_bookings') {
+      const vendorIds = [...new Set(list.map((d) => d.assigned_vendor_id).filter(Boolean))];
+      if (vendorIds.length > 0) {
+        try {
+          const validObjIds = vendorIds.filter((id) => Types.ObjectId.isValid(id)).map((id) => new Types.ObjectId(id));
+          const vendors = await User.find({
+            $or: [
+              { _id: { $in: validObjIds } },
+              { id: { $in: vendorIds } },
+            ],
+          }).select('_id id full_name business_name phone email address');
+          const vMap = new Map();
+          vendors.forEach((v) => {
+            if (v._id) vMap.set(v._id.toString(), v);
+            if (v.id) vMap.set(String(v.id), v);
+          });
+          for (const item of list) {
+            if (item.assigned_vendor_id && vMap.has(String(item.assigned_vendor_id))) {
+              const v = vMap.get(String(item.assigned_vendor_id));
+              const shopName = v.business_name || v.full_name;
+              if (shopName && (!item.assigned_vendor_name || item.assigned_vendor_name === 'Partner Store' || item.assigned_vendor_name === 'Assigned Partner Store')) {
+                item.assigned_vendor_name = shopName;
+              }
+              if (!item.vendor_phone) item.vendor_phone = v.phone;
+              if (!item.vendor_business_name) item.vendor_business_name = v.business_name;
+            }
+          }
+        } catch (e) {
+          // silent fallback
+        }
       }
     }
   }

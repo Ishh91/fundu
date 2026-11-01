@@ -1217,10 +1217,15 @@ export default function Admin() {
 
   const handleDeleteMasterPhone = async (phone: MasterPhone) => {
     if (!confirm(`Are you sure you want to delete "${phone.brand} ${phone.model}" from catalog?`)) return;
+    try {
+      await db.from('master_phones').update({ is_active: false }).eq('brand', phone.brand).eq('model', phone.model);
+      await db.from('sell_price_configs').upsert({ brand: phone.brand, model: phone.model, is_active: false });
+    } catch {}
     await db.from('master_phones').delete().eq('id', phone.id);
     markModelAsDeleted(phone.brand, phone.model);
     setMasterPhones((prev) => prev.filter((p) => p.id !== phone.id));
     if (selectedPhoneId === phone.id) setSelectedPhoneId(null);
+    broadcastSync('MODEL_DELETE', 'master_phones', 'delete', { brand: phone.brand, model: phone.model });
     alert(`✅ "${phone.brand} ${phone.model}" deleted successfully from catalog.`);
   };
 
@@ -2080,17 +2085,56 @@ export default function Admin() {
               onUpdateImage={async (phone, newImageUrl) => {
                 await handleUpdateMasterPhoneImage(phone as MasterPhone, newImageUrl);
               }}
-              onToggleActive={async (id, current) => {
-                const cfg = sellPriceConfigs.find((c) => c.id === id);
-                await db.from('sell_price_configs').update({ is_active: !current }).eq('id', id);
-                if (cfg) {
-                  if (current) {
-                    markModelAsDeleted(cfg.brand, cfg.model);
+              onToggleActive={async (id, current, brand, model) => {
+                const newActive = !current;
+                const targetBrand = brand || sellPriceConfigs.find((c) => c.id === id)?.brand || '';
+                const targetModel = model || sellPriceConfigs.find((c) => c.id === id)?.model || '';
+
+                // 1. Sync Deleted / Restored sets locally & broadcast
+                if (targetBrand && targetModel) {
+                  if (!newActive) {
+                    markModelAsDeleted(targetBrand, targetModel);
                   } else {
-                    restoreModel(cfg.brand, cfg.model);
+                    restoreModel(targetBrand, targetModel);
                   }
                 }
-                setSellPriceConfigs((prev) => prev.map((c) => (c.id === id ? { ...c, is_active: !current } : c)));
+
+                // 2. Persist in sell_price_configs
+                if (id && !id.startsWith('master-') && !id.startsWith('mp-') && !id.startsWith('indian-') && !id.startsWith('cat-') && !id.startsWith('ser-')) {
+                  await db.from('sell_price_configs').update({ is_active: newActive }).eq('id', id);
+                } else if (targetBrand && targetModel) {
+                  await db.from('sell_price_configs').upsert({
+                    brand: targetBrand,
+                    model: targetModel,
+                    is_active: newActive,
+                  });
+                }
+
+                // 3. Also update master_phones table in MongoDB
+                if (targetBrand && targetModel) {
+                  try {
+                    await db.from('master_phones')
+                      .update({ is_active: newActive })
+                      .eq('brand', targetBrand)
+                      .eq('model', targetModel);
+                  } catch {}
+                }
+
+                // 4. Update local state
+                setSellPriceConfigs((prev) =>
+                  prev.map((c) => {
+                    if (c.id === id || (c.brand === targetBrand && c.model === targetModel)) {
+                      return { ...c, is_active: newActive };
+                    }
+                    return c;
+                  })
+                );
+
+                // 5. Broadcast to all open tabs and pages
+                broadcastSync(newActive ? 'MODEL_RESTORE' : 'MODEL_DELETE', 'master_phones', newActive ? 'restore' : 'delete', {
+                  brand: targetBrand,
+                  model: targetModel,
+                });
               }}
               onDeleteConfig={deletePricingRule}
               onAutoGenerateRules={handleAutoGenerateIndianPricingRules}

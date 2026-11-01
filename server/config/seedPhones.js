@@ -76,6 +76,28 @@ export async function ensureMasterPhonesSeeded(force = true) {
       }
     });
 
+    // 0b. Pre-fetch all Admin Disabled Models so seed NEVER re-activates them!
+    const disabledConfigs = await SellPriceConfig.find(
+      { is_active: false },
+      { brand: 1, model: 1 }
+    ).lean();
+    const disabledMaster = await MasterPhone.find(
+      { is_active: false },
+      { brand: 1, model: 1 }
+    ).lean();
+
+    const disabledSet = new Set();
+    [...disabledConfigs, ...disabledMaster].forEach((c) => {
+      const b = (c.brand || '').toLowerCase().trim();
+      const m = (c.model || '').toLowerCase().trim();
+      if (b && m) {
+        disabledSet.add(`${b}:${m}`);
+        let stripped = m;
+        if (stripped.startsWith(b)) stripped = stripped.slice(b.length).trim();
+        if (stripped) disabledSet.add(`${b}:${stripped}`);
+      }
+    });
+
     // 1. Bulk Upsert into MasterPhone
     const masterBulkOps = currentCatalog.map((phone) => {
       const b = (phone.brand || '').toLowerCase().trim();
@@ -89,6 +111,7 @@ export async function ensureMasterPhonesSeeded(force = true) {
       const strippedKey = `${b}:${strippedM}`;
       const lockedPrice = lockedPriceMap.get(key) || lockedPriceMap.get(strippedKey);
       const price = lockedPrice || phone.price || phone.base_resale_value || 12000;
+      const isExplicitlyDisabled = disabledSet.has(key) || disabledSet.has(strippedKey);
 
       const updateFields = {
         brand: phone.brand,
@@ -103,7 +126,7 @@ export async function ensureMasterPhonesSeeded(force = true) {
         battery_spec: phone.battery_spec || '5000 mAh Fast Charging',
         display_spec: phone.display_spec || 'AMOLED Display',
         is_5g: phone.is_5g !== false,
-        is_active: phone.is_active !== false,
+        is_active: !isExplicitlyDisabled && phone.is_active !== false,
         updated_at: new Date(),
       };
 

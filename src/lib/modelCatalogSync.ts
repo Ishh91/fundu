@@ -11,7 +11,8 @@ import {
   inferModelSeries,
 } from '../data/brandSeriesCatalog';
 import { getCleanPhoneImage } from './phoneImages';
-import { getLocalPriceOverrides, getPriceLookupKeys, isModelDeleted } from './priceSync';
+import { getLocalPriceOverrides, getPriceLookupKeys } from './priceSync';
+import { markModelAsDeleted, isModelDeleted } from './catalogSync';
 import { normalizeStorageString, getModelHardwareSpecs } from './deviceSpecs';
 
 const LIVE_MASTER_PHONES_STORAGE_KEY = 'fundu_live_master_phones_v2';
@@ -61,6 +62,12 @@ export async function pullLiveMasterPhonesFromDb(): Promise<any[]> {
     const { data, error } = await db.from('master_phones').select('*').limit(5000);
     if (!error && Array.isArray(data) && data.length > 0) {
       memoryLivePhones = data;
+      // Auto-sync deleted/inactive flags into local deleted models set
+      data.forEach((p: any) => {
+        if (p.is_active === false && p.brand && p.model) {
+          markModelAsDeleted(p.brand, p.model);
+        }
+      });
       try {
         localStorage.setItem(LIVE_MASTER_PHONES_STORAGE_KEY, JSON.stringify(data));
       } catch {}
@@ -198,6 +205,17 @@ export function getUnifiedCatalog(brandFilter?: string): UnifiedCatalogModel[] {
     });
   };
 
+  // 0. Pre-block all explicitly disabled models from DB so static fallbacks can never resurrect them
+  dbPhones.forEach((p) => {
+    if (p.is_active === false) {
+      const cleanBrand = normalizeCanonicalBrand(p.brand);
+      const cleanModel = getCleanModelName(cleanBrand, p.model);
+      const dedupeKey = getModelDedupeKey(cleanBrand, cleanModel);
+      seenKeys.add(`${cleanBrand.toLowerCase()}:${dedupeKey}`);
+      seenKeys.add(`${cleanBrand.toLowerCase()}:${cleanModel.toLowerCase().trim()}`);
+    }
+  });
+
   // 1. High Priority: Database master_phones (Admin customized / added models)
   dbPhones.forEach((p) => {
     if (p.is_active === false) return;
@@ -332,3 +350,4 @@ export function useUnifiedCatalog(brandFilter?: string) {
     syncVersion,
   };
 }
+

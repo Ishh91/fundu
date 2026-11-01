@@ -183,19 +183,22 @@ export function useCatalogSync() {
     window.addEventListener('storage', handleSync);
 
     const pullDeletedFromDb = () => {
-      db.from('sell_price_configs')
-        .select('brand, model, is_active')
-        .eq('is_active', false)
-        .then(({ data }) => {
-          if (Array.isArray(data) && data.length > 0) {
+      Promise.all([
+        db.from('sell_price_configs').select('brand, model, is_active').eq('is_active', false),
+        db.from('master_phones').select('brand, model, is_active').eq('is_active', false),
+      ])
+        .then(([sellRes, masterRes]) => {
+          const records = [...(sellRes.data || []), ...(masterRes.data || [])];
+          if (records.length > 0) {
             const current = getDeletedModelKeys();
             let changed = false;
-            data.forEach((r: any) => {
+            records.forEach((r: any) => {
               if (r.brand && r.model) {
                 const k = normalizeModelKey(r.brand, r.model);
-                if (!current.has(k)) {
+                const mOnly = normalizeName(r.model);
+                if (!current.has(k) || !current.has(mOnly)) {
                   current.add(k);
-                  current.add(normalizeName(r.model));
+                  current.add(mOnly);
                   changed = true;
                 }
               }
