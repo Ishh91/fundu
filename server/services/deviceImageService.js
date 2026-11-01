@@ -61,9 +61,13 @@ export async function resolveDeviceImage(brand, model) {
         const thumbUrl = `https://api.mobileapi.dev/devices/${best.id}/thumb.png`;
         setCachedValue(cacheKey, thumbUrl);
 
-        // Update database in background for permanent persistence
+        // Update database in background for permanent persistence (only if admin hasn't set a custom image)
         MasterPhone.updateOne(
-          { brand: new RegExp(`^${cleanBrand}$`, 'i'), model: new RegExp(`^${cleanModel}$`, 'i') },
+          { 
+            brand: new RegExp(`^${cleanBrand}$`, 'i'), 
+            model: new RegExp(`^${cleanModel}$`, 'i'),
+            custom_image: { $ne: true }
+          },
           { $set: { image_url: thumbUrl } }
         ).catch(() => {});
 
@@ -96,7 +100,11 @@ export async function resolveDeviceImage(brand, model) {
           const gsmImg = firstMatch.image;
           setCachedValue(cacheKey, gsmImg);
           MasterPhone.updateOne(
-            { brand: new RegExp(`^${cleanBrand}$`, 'i'), model: new RegExp(`^${cleanModel}$`, 'i') },
+            { 
+              brand: new RegExp(`^${cleanBrand}$`, 'i'), 
+              model: new RegExp(`^${cleanModel}$`, 'i'),
+              custom_image: { $ne: true }
+            },
             { $set: { image_url: gsmImg } }
           ).catch(() => {});
           return { 

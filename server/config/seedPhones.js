@@ -145,7 +145,11 @@ export async function ensureMasterPhonesSeeded(force = true) {
         updateFields.image_url = existingCustomImg;
         updateFields.custom_image = true;
       } else {
-        updateFields.image_url = phone.image_url || null;
+        // Do NOT overwrite existing phone image with stock URL. Only set image_url on initial insert.
+        updateFields.$setOnInsert = {
+          ...(updateFields.$setOnInsert || {}),
+          image_url: phone.image_url || null,
+        };
       }
 
       const setPayload = { ...updateFields };

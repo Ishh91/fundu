@@ -461,8 +461,8 @@ function cleanOversizedStorageOnBoot() {
     if (!raw) return;
 
     let needsClean = false;
-    // If size > 150KB or contains any base64 data URIs, clean immediately
-    if (raw.length > 150_000 || raw.includes('data:image/')) {
+    // If total storage > 500KB or has huge uncompressed images, clean safely
+    if (raw.length > 500_000) {
       needsClean = true;
     }
 
@@ -471,15 +471,15 @@ function cleanOversizedStorageOnBoot() {
       const cleaned: Record<string, string> = {};
       for (const [k, v] of Object.entries(parsed)) {
         if (typeof v === 'string') {
-          // Absolute ban on base64 in localStorage to preserve the 5MB browser origin quota
-          if (v.startsWith('data:') || v.startsWith('blob:')) continue;
-          if (v.startsWith('http://') || v.startsWith('https://')) {
+          // Allow compressed images (<60KB) and http/https URLs, skip huge blobs
+          if (v.startsWith('blob:') || (v.startsWith('data:') && v.length > 60000)) continue;
+          if (v.startsWith('http://') || v.startsWith('https://') || v.startsWith('data:')) {
             cleaned[k] = v;
           }
         }
       }
       const serialized = JSON.stringify(cleaned);
-      if (serialized.length > 250_000) {
+      if (serialized.length > 350_000) {
         // Prune to only canonical keys (e.g. "brand:model")
         const minimal: Record<string, string> = {};
         for (const [k, v] of Object.entries(cleaned)) {
@@ -504,11 +504,11 @@ cleanOversizedStorageOnBoot();
 function safeSetLocalStorage(key: string, data: Record<string, string>) {
   if (typeof window === 'undefined') return;
 
-  // Never store base64 or blob URIs in localStorage
+  // Persist URLs and compact compressed images (<60KB)
   const filtered: Record<string, string> = {};
   for (const [k, v] of Object.entries(data)) {
     if (typeof v === 'string') {
-      if (v.startsWith('data:') || v.startsWith('blob:')) continue;
+      if (v.startsWith('blob:') || (v.startsWith('data:') && v.length > 60000)) continue;
       filtered[k] = v;
     }
   }
@@ -601,8 +601,8 @@ export function syncCustomImagesFromDatabase(
       }
     });
 
-    // In localStorage, store ONLY canonical keys (and skip base64) to avoid multiplying storage 10x
-    if (!url.startsWith('data:') && !url.startsWith('blob:')) {
+    // In localStorage, store canonical keys and keep compact images (<60KB)
+    if (!url.startsWith('blob:') && (!url.startsWith('data:') || url.length < 60000)) {
       const b = (brand || '').toLowerCase().trim();
       let strippedM = (model || '').toLowerCase().trim();
       if (b && strippedM.startsWith(b)) {
@@ -695,8 +695,8 @@ export function saveCustomModelImage(brand: string, model: string, imageUrl: str
     const secondaryKey = strippedM || (model || '').toLowerCase().trim();
 
     if (val) {
-      // Only persist to localStorage if it's not base64/blob, and only store primary keys to save quota
-      if (!val.startsWith('data:') && !val.startsWith('blob:')) {
+      // Persist http URLs and compressed images under 60KB to localStorage for instant load across reloads
+      if (!val.startsWith('blob:') && (!val.startsWith('data:') || val.length < 60000)) {
         current[primaryKey] = val;
         if (secondaryKey) {
           current[secondaryKey] = val;

@@ -625,9 +625,9 @@ export default function AdminSellPricing({
     setImageSaving(true);
     try {
       let urlToSave = newImageUrl.trim();
-      // Compress if it is a large base64 data URL
-      if (urlToSave.startsWith('data:image/') && urlToSave.length > 30000) {
-        urlToSave = await compressImage(urlToSave, 640, 640, 0.82);
+      // Compress if it is a large base64 data URL to keep lightweight & persistable
+      if (urlToSave.startsWith('data:image/') && urlToSave.length > 25000) {
+        urlToSave = await compressImage(urlToSave, 480, 480, 0.80);
       }
       saveCustomModelImage(activeImageModel.brand, activeImageModel.model, urlToSave);
 
@@ -1534,7 +1534,7 @@ export default function AdminSellPricing({
                       const file = e.target.files?.[0];
                       if (!file) return;
                       try {
-                        const compressed = await compressImage(file, 640, 640, 0.82);
+                        const compressed = await compressImage(file, 480, 480, 0.80);
                         setNewImageUrl(compressed);
                       } catch {
                         const reader = new FileReader();

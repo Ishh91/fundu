@@ -1264,6 +1264,25 @@ export default function Admin() {
       targetIds.push(phone.id);
     }
 
+    if (targetIds.length === 0) {
+      // Check if existing record is already in DB before creating duplicate
+      try {
+        const existingInDb = await db.from('master_phones').select('id').eq('brand', brand).eq('model', model).maybeSingle();
+        const foundId = (existingInDb.data as any)?.id;
+        if (foundId && isMongoId(foundId)) {
+          targetIds.push(foundId);
+        }
+      } catch {}
+    }
+
+    // Always update sell_price_configs so custom photo is reflected in pricing tables
+    try {
+      await db.from('sell_price_configs').update({
+        image_url: url || null,
+        custom_image: Boolean(url),
+      }).eq('brand', brand).eq('model', model);
+    } catch {}
+
     if (targetIds.length > 0) {
       // Update all matching variant records in database
       await Promise.all(
@@ -1272,8 +1291,16 @@ export default function Admin() {
         )
       );
 
+      // Also ensure exact brand/model match in master_phones is updated
+      try {
+        await db.from('master_phones').update({
+          image_url: url || null,
+          custom_image: Boolean(url),
+        }).eq('brand', brand).eq('model', model);
+      } catch {}
+
       setMasterPhones((prev) =>
-        prev.map((p) => (targetIds.includes(p.id) ? { ...p, image_url: url, custom_image: Boolean(url) } : p))
+        prev.map((p) => (targetIds.includes(p.id) || (p.brand === brand && p.model === model) ? { ...p, image_url: url, custom_image: Boolean(url) } : p))
       );
     } else {
       // Create new record in master_phones so it persists in the database for all visitors
