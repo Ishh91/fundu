@@ -124,6 +124,29 @@ const apiRequest = async <T>(path: string, init: RequestInit = {}, useAuth = tru
   };
 };
 
+// Client-Side In-Memory SWR Cache for Instant 0ms Read Queries
+const clientQueryCache = new Map<string, { data: unknown; timestamp: number }>();
+const CLIENT_CACHE_TTL_MS = 45 * 1000; // 45 seconds fresh
+const CLIENT_CACHEABLE_TABLES = new Set([
+  'products',
+  'site_content',
+  'banners',
+  'repair_price_configs',
+  'repair_catalogs',
+  'sell_price_configs',
+  'master_phones',
+  'spare_parts',
+  'reviews',
+]);
+
+export function invalidateClientTableCache(table: string) {
+  for (const key of clientQueryCache.keys()) {
+    if (key.startsWith(`${table}:`)) {
+      clientQueryCache.delete(key);
+    }
+  }
+}
+
 class QueryBuilder<T = unknown> implements PromiseLike<QueryResponse<T>> {
   private readonly table: string;
 
@@ -217,8 +240,35 @@ class QueryBuilder<T = unknown> implements PromiseLike<QueryResponse<T>> {
       if (this.sortConfig) params.set('sort', JSON.stringify(this.sortConfig));
       if (typeof this.limitCount === 'number') params.set('limit', String(this.limitCount));
       if (this.expectSingle) params.set('single', 'true');
-      return apiRequest<T>(`/db/${this.table}?${params.toString()}`, { method: 'GET' }, true);
+
+      const cacheKey = `${this.table}:${params.toString()}`;
+      const isCacheable = CLIENT_CACHEABLE_TABLES.has(this.table);
+
+      // Fast SWR Memory Cache (Instant 0ms UI load)
+      if (isCacheable) {
+        const cached = clientQueryCache.get(cacheKey);
+        if (cached && Date.now() - cached.timestamp < CLIENT_CACHE_TTL_MS) {
+          // Revalidate in background if older than 15 seconds
+          if (Date.now() - cached.timestamp > 15 * 1000) {
+            apiRequest<T>(`/db/${this.table}?${params.toString()}`, { method: 'GET' }, true).then((fresh) => {
+              if (fresh && fresh.data && !fresh.error) {
+                clientQueryCache.set(cacheKey, { data: fresh.data, timestamp: Date.now() });
+              }
+            }).catch(() => {});
+          }
+          return { data: cached.data as T, error: null };
+        }
+      }
+
+      const res = await apiRequest<T>(`/db/${this.table}?${params.toString()}`, { method: 'GET' }, true);
+      if (isCacheable && res.data && !res.error) {
+        clientQueryCache.set(cacheKey, { data: res.data, timestamp: Date.now() });
+      }
+      return res;
     }
+
+    // Invalidate client cache on any mutation
+    invalidateClientTableCache(this.table);
 
     let res: QueryResponse<T>;
     if (this.action === 'insert' || this.action === 'upsert') {
