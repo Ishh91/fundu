@@ -14,6 +14,7 @@ import { getCleanPhoneImage, BRAND_FRONT_FALLBACKS, getGenericDevicePlaceholder 
 import { formatINR, formatMaskedPrice } from '../../lib/db';
 import { HARDWARE_DEFECTS, ACCESSORIES_LIST } from '../../data/masterModelCatalog';
 import { deviceIncludesStylus, getModelReleaseYear, isAmoledDisplay, calculateRamPriceOffset } from '../../lib/deviceSpecs';
+import { getCleanModelName } from '../../lib/modelCatalogSync';
 import type { FunduQuoteResponse } from '../../lib/quoteEngine';
 
 interface SellStep2ConditionProps {
@@ -160,7 +161,7 @@ export default function SellStep2Condition({
                 {form.brand}
               </span>
               <h3 className="font-extrabold text-base sm:text-lg text-gray-900">
-                {form.model} {form.ram && availableRams.length > 1 ? `(${form.ram} / ${form.storage})` : `(${form.storage})`}
+                {getCleanModelName(form.brand, form.model)} {form.ram && availableRams.length > 1 ? `(${form.ram} / ${form.storage})` : `(${form.storage})`}
               </h3>
             </div>
 

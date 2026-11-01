@@ -787,6 +787,18 @@ export const upsertTable = async (table, { auth, values, single }) => {
     }
     payload.updated_at = new Date();
     const doc = await Model.findOneAndUpdate(match, payload, { new: true, upsert: true, runValidators: false, setDefaultsOnInsert: true });
+
+    // Synchronize is_active state to master_phones so catalog remains 100% consistent
+    if (payload.is_active !== undefined) {
+      try {
+        const MP = getModel('master_phones');
+        await MP.updateMany(
+          { brand: brandRegex, model: modelRegex },
+          { $set: { is_active: payload.is_active } }
+        );
+      } catch {}
+    }
+
     return normalizeDoc(doc);
   }
 

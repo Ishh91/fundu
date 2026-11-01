@@ -10,12 +10,47 @@ const DELETED_PRODUCTS_STORAGE_KEY = 'fundu_deleted_products_v2';
  */
 export function normalizeModelKey(brand?: string, model?: string): string {
   const b = (brand || '').trim().toLowerCase().replace(/[^a-z0-9]/g, '');
-  const m = (model || '').trim().toLowerCase().replace(/[^a-z0-9]/g, '');
+  let m = (model || '').trim().toLowerCase().replace(/[^a-z0-9]/g, '');
+  if (b && m.startsWith(b)) {
+    const stripped = m.slice(b.length);
+    if (stripped) m = stripped;
+  }
   return `${b}:${m}`;
 }
 
-export function normalizeName(name?: string): string {
-  return (name || '').trim().toLowerCase().replace(/[^a-z0-9]/g, '');
+export function normalizeName(name?: string, brand?: string): string {
+  let n = (name || '').trim().toLowerCase().replace(/[^a-z0-9]/g, '');
+  if (brand) {
+    const b = (brand || '').trim().toLowerCase().replace(/[^a-z0-9]/g, '');
+    if (b && n.startsWith(b)) {
+      const stripped = n.slice(b.length);
+      if (stripped) n = stripped;
+    }
+  }
+  return n;
+}
+
+/**
+ * Returns all key variants for brand + model to ensure matching regardless of brand prefix
+ */
+export function getModelKeyVariants(brand?: string, model?: string): string[] {
+  if (!model) return [];
+  const b = (brand || '').trim().toLowerCase().replace(/[^a-z0-9]/g, '');
+  const m = (model || '').trim().toLowerCase().replace(/[^a-z0-9]/g, '');
+  const stripped = (b && m.startsWith(b)) ? m.slice(b.length) : m;
+  const prefixed = (b && !m.startsWith(b)) ? `${b}${m}` : m;
+
+  const set = new Set<string>();
+  if (b) {
+    if (stripped) set.add(`${b}:${stripped}`);
+    if (m) set.add(`${b}:${m}`);
+    if (prefixed) set.add(`${b}:${prefixed}`);
+  }
+  if (stripped) set.add(stripped);
+  if (m) set.add(m);
+  if (prefixed) set.add(prefixed);
+
+  return Array.from(set);
 }
 
 /**
@@ -48,14 +83,11 @@ export function getDeletedProductKeys(): Set<string> {
  * Marks a phone model as deleted (from Admin panel deletion of Pricing Rule, Catalog, or Repair Config)
  */
 export function markModelAsDeleted(brand: string, model: string) {
-  if (typeof window === 'undefined') return;
+  if (typeof window === 'undefined' || !model) return;
   const current = getDeletedModelKeys();
-  const fullKey = normalizeModelKey(brand, model);
-  const modelOnly = normalizeName(model);
+  const variants = getModelKeyVariants(brand, model);
 
-  current.add(fullKey);
-  current.add(modelOnly);
-
+  variants.forEach((v) => current.add(v));
   localStorage.setItem(DELETED_MODELS_STORAGE_KEY, JSON.stringify(Array.from(current)));
 
   // Also clean up any lingering local price overrides for this model
@@ -71,6 +103,7 @@ export function markModelAsDeleted(brand: string, model: string) {
   } catch {}
 
   // Broadcast real-time events across all tabs and open components
+  const fullKey = normalizeModelKey(brand, model);
   broadcastSync('MODEL_DELETE', 'master_phones', 'delete', { brand, model, fullKey });
   window.dispatchEvent(
     new CustomEvent('fundu_model_deleted', {
@@ -88,16 +121,14 @@ export function markModelAsDeleted(brand: string, model: string) {
  * Restores a deleted model
  */
 export function restoreModel(brand: string, model: string) {
-  if (typeof window === 'undefined') return;
+  if (typeof window === 'undefined' || !model) return;
   const current = getDeletedModelKeys();
-  const fullKey = normalizeModelKey(brand, model);
-  const modelOnly = normalizeName(model);
+  const variants = getModelKeyVariants(brand, model);
 
-  current.delete(fullKey);
-  current.delete(modelOnly);
-
+  variants.forEach((v) => current.delete(v));
   localStorage.setItem(DELETED_MODELS_STORAGE_KEY, JSON.stringify(Array.from(current)));
 
+  const fullKey = normalizeModelKey(brand, model);
   broadcastSync('MODEL_RESTORE', 'master_phones', 'restore', { brand, model, fullKey });
   window.dispatchEvent(
     new CustomEvent('fundu_model_restored', {
@@ -112,15 +143,15 @@ export function restoreModel(brand: string, model: string) {
 }
 
 /**
- * Checks if a specific model has been deleted by an admin
+ * Checks if a specific model has been deleted or disabled by an admin
  */
 export function isModelDeleted(brand?: string, model?: string): boolean {
   if (!model) return false;
   const current = getDeletedModelKeys();
-  const fullKey = normalizeModelKey(brand, model);
-  const modelOnly = normalizeName(model);
+  if (current.size === 0) return false;
 
-  return current.has(fullKey) || current.has(modelOnly);
+  const variants = getModelKeyVariants(brand, model);
+  return variants.some((v) => current.has(v));
 }
 
 /**
@@ -154,6 +185,48 @@ export function isProductDeleted(productId?: string, title?: string): boolean {
 }
 
 /**
+ * Pulls all disabled/inactive models from MongoDB tables and synchronizes local storage
+ */
+export async function refreshDeletedModelsFromDb(): Promise<void> {
+  if (typeof window === 'undefined') return;
+  try {
+    const [sellRes, masterRes] = await Promise.all([
+      db.from('sell_price_configs').select('brand, model, is_active').eq('is_active', false),
+      db.from('master_phones').select('brand, model, is_active').eq('is_active', false),
+    ]);
+
+    const records = [...(sellRes.data || []), ...(masterRes.data || [])];
+    if (records.length > 0) {
+      const current = getDeletedModelKeys();
+      let changed = false;
+
+      records.forEach((r: any) => {
+        if (r.brand && r.model) {
+          const variants = getModelKeyVariants(r.brand, r.model);
+          variants.forEach((v) => {
+            if (!current.has(v)) {
+              current.add(v);
+              changed = true;
+            }
+          });
+        }
+      });
+
+      if (changed) {
+        localStorage.setItem(DELETED_MODELS_STORAGE_KEY, JSON.stringify(Array.from(current)));
+        window.dispatchEvent(new CustomEvent('fundu_model_deleted'));
+        window.dispatchEvent(new CustomEvent('fundu_price_updated'));
+      }
+    }
+  } catch {}
+}
+
+// Immediate initial sync on browser load
+if (typeof window !== 'undefined') {
+  refreshDeletedModelsFromDb();
+}
+
+/**
  * Custom React hook for real-time live synchronization of deleted models across website components
  */
 export function useCatalogSync() {
@@ -182,48 +255,17 @@ export function useCatalogSync() {
     window.addEventListener('fundu_product_deleted', handleSync);
     window.addEventListener('storage', handleSync);
 
-    const pullDeletedFromDb = () => {
-      Promise.all([
-        db.from('sell_price_configs').select('brand, model, is_active').eq('is_active', false),
-        db.from('master_phones').select('brand, model, is_active').eq('is_active', false),
-      ])
-        .then(([sellRes, masterRes]) => {
-          const records = [...(sellRes.data || []), ...(masterRes.data || [])];
-          if (records.length > 0) {
-            const current = getDeletedModelKeys();
-            let changed = false;
-            records.forEach((r: any) => {
-              if (r.brand && r.model) {
-                const k = normalizeModelKey(r.brand, r.model);
-                const mOnly = normalizeName(r.model);
-                if (!current.has(k) || !current.has(mOnly)) {
-                  current.add(k);
-                  current.add(mOnly);
-                  changed = true;
-                }
-              }
-            });
-            if (changed) {
-              localStorage.setItem(DELETED_MODELS_STORAGE_KEY, JSON.stringify(Array.from(current)));
-              setSyncVersion((v) => v + 1);
-            }
-          }
-        })
-        .catch(() => null);
-    };
-
-    pullDeletedFromDb();
+    refreshDeletedModelsFromDb().then(handleSync);
 
     // Auto-fetch polling every 10 seconds + on window focus
     const interval = setInterval(() => {
       if (document.visibilityState === 'visible') {
-        pullDeletedFromDb();
+        refreshDeletedModelsFromDb().then(handleSync);
       }
     }, 10000);
 
     const handleFocus = () => {
-      pullDeletedFromDb();
-      handleSync();
+      refreshDeletedModelsFromDb().then(handleSync);
     };
 
     window.addEventListener('focus', handleFocus);
