@@ -662,11 +662,13 @@ export async function pullLiveModelImagesFromDb(): Promise<boolean> {
   return false;
 }
 
-// Auto-trigger database pull on client boot
+// Auto-trigger database pull in background without blocking initial paint
 if (typeof window !== 'undefined') {
-  setTimeout(() => {
-    pullLiveModelImagesFromDb();
-  }, 100);
+  if ('requestIdleCallback' in window) {
+    (window as any).requestIdleCallback(() => pullLiveModelImagesFromDb(), { timeout: 2500 });
+  } else {
+    setTimeout(() => pullLiveModelImagesFromDb(), 1500);
+  }
 }
 
 export function saveCustomModelImage(brand: string, model: string, imageUrl: string) {

@@ -84,11 +84,13 @@ export async function pullLiveMasterPhonesFromDb(): Promise<any[]> {
   return memoryLivePhones;
 }
 
-// Auto-trigger pull on client boot
+// Auto-trigger background pull on client boot without blocking initial render
 if (typeof window !== 'undefined') {
-  setTimeout(() => {
-    pullLiveMasterPhonesFromDb();
-  }, 200);
+  if ('requestIdleCallback' in window) {
+    (window as any).requestIdleCallback(() => pullLiveMasterPhonesFromDb(), { timeout: 2000 });
+  } else {
+    setTimeout(() => pullLiveMasterPhonesFromDb(), 1200);
+  }
 }
 
 /**

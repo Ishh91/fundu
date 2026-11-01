@@ -306,9 +306,13 @@ export async function refreshDeletedModelsFromDb(): Promise<void> {
   } catch {}
 }
 
-// Immediate initial sync on browser load
+// Background sync on browser load after initial paint
 if (typeof window !== 'undefined') {
-  refreshDeletedModelsFromDb();
+  if ('requestIdleCallback' in window) {
+    (window as any).requestIdleCallback(() => refreshDeletedModelsFromDb(), { timeout: 3000 });
+  } else {
+    setTimeout(() => refreshDeletedModelsFromDb(), 1800);
+  }
 }
 
 /**
