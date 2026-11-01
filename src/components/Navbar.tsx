@@ -33,8 +33,6 @@ import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
 import { formatINR } from '../lib/db';
 import BrandLogo from './BrandLogo';
-import { PHONE_LOOKUP_CATALOG } from '../data/phoneLookup';
-import { MASTER_MODEL_CATALOG } from '../data/masterModelCatalog';
 import { getModelDedupeKey, sortDeviceModelsLatestFirst } from '../data/brandSeriesCatalog';
 import { fetchBrandCatalogFromApi, fetchDeviceAutocomplete } from '../lib/mobileApi';
 import {
@@ -332,7 +330,42 @@ export default function Navbar() {
   const [search, setSearch] = useState('');
   const [searchOpen, setSearchOpen] = useState(false);
   const [apiModels, setApiModels] = useState<Array<{ model: string; brand: string; image?: string; price?: number }>>([]);
+  const [offlineModels, setOfflineModels] = useState<Array<{ model: string; brand: string; image?: string; price?: number }>>([]);
   const [isSearchingApi, setIsSearchingApi] = useState(false);
+
+  // Lazy-load offline lookup catalogs only when user begins typing in search (keeps 700KB+ out of initial home page bundle)
+  useEffect(() => {
+    if (search.trim().length >= 2 && offlineModels.length === 0) {
+      let active = true;
+      Promise.all([
+        import('../data/masterModelCatalog'),
+        import('../data/phoneLookup'),
+      ]).then(([masterModule, lookupModule]) => {
+        if (!active) return;
+        const items: Array<{ model: string; brand: string; image?: string; price?: number }> = [];
+        masterModule.MASTER_MODEL_CATALOG.forEach((p) => {
+          items.push({
+            model: p.model,
+            brand: p.brand,
+            image: p.image || getCleanPhoneImage(p.brand, p.model),
+            price: p.price,
+          });
+        });
+        lookupModule.PHONE_LOOKUP_CATALOG.forEach((p) => {
+          items.push({
+            model: p.model,
+            brand: p.brand,
+            image: getCleanPhoneImage(p.brand, p.model),
+          });
+        });
+        setOfflineModels(items);
+      }).catch(() => {});
+
+      return () => {
+        active = false;
+      };
+    }
+  }, [search, offlineModels.length]);
 
   const desktopSearchRef = useRef<HTMLDivElement>(null);
   const mobileSearchRef = useRef<HTMLDivElement>(null);
@@ -500,23 +533,9 @@ export default function Navbar() {
       }
     };
 
-    // Ingest apiModels, MASTER_MODEL_CATALOG, and PHONE_LOOKUP_CATALOG
+    // Ingest apiModels and on-demand offlineModels
     apiModels.forEach(record);
-    MASTER_MODEL_CATALOG.forEach((p) => {
-      record({
-        model: p.model,
-        brand: p.brand,
-        image: p.image || getCleanPhoneImage(p.brand, p.model),
-        price: p.price,
-      });
-    });
-    PHONE_LOOKUP_CATALOG.forEach((p) => {
-      record({
-        model: p.model,
-        brand: p.brand,
-        image: getCleanPhoneImage(p.brand, p.model),
-      });
-    });
+    offlineModels.forEach(record);
 
     const allItems = Array.from(catalogMap.values());
 

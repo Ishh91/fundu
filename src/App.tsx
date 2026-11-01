@@ -1,6 +1,5 @@
 import React, { useEffect, Suspense, lazy } from 'react';
 import { BrowserRouter, Routes, Route, useLocation, Navigate, useParams } from 'react-router-dom';
-import { isSeriesSlug } from './data/brandSeriesCatalog';
 
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { CartProvider } from './context/CartContext';
@@ -89,29 +88,13 @@ function ProtectedRoute({
   return children;
 }
 
-// Route dispatcher for multi-page brand series -> sub-models -> valuation
-function SellModelOrSeriesRoute() {
-  const { modelSlug, seriesSlug } = useParams<{ modelSlug?: string; seriesSlug?: string }>();
-  const slug = seriesSlug || modelSlug || '';
-  const cleanSlug = slug.replace(/^sell-/, '').toLowerCase();
-
-  if (isSeriesSlug(cleanSlug)) {
-    return <SellBrandPage />;
-  }
-  return <SellPhone />;
-}
-
-// Route dispatcher for multi-page repair brand series -> models
-function RepairModelOrSeriesRoute() {
-  const { modelSlug, seriesSlug } = useParams<{ modelSlug?: string; seriesSlug?: string }>();
-  const slug = seriesSlug || modelSlug || '';
-  const cleanSlug = slug.replace(/^repair-/, '').toLowerCase();
-
-  if (isSeriesSlug(cleanSlug)) {
-    return <RepairBrandPage />;
-  }
-  return <Repair />;
-}
+// Route dispatchers lazy loaded to keep brand catalogs out of initial bundle
+const SellModelOrSeriesRoute = lazy(() =>
+  import('./routes/CatalogRouteDispatcher').then((m) => ({ default: m.SellModelOrSeriesRoute }))
+);
+const RepairModelOrSeriesRoute = lazy(() =>
+  import('./routes/CatalogRouteDispatcher').then((m) => ({ default: m.RepairModelOrSeriesRoute }))
+);
 
 function MainLayout() {
   const location = useLocation();

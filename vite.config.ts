@@ -27,8 +27,14 @@ export default defineConfig({
           if (id.includes('node_modules/lucide-react')) {
             return 'vendor-icons';
           }
-          if (id.includes('src/data/indianPhonesCatalog') || id.includes('src/data/masterModelCatalog') || id.includes('src/data/brandSeriesCatalog')) {
-            return 'catalog-data';
+          if (id.includes('src/data/indianPhonesCatalog')) {
+            return 'catalog-indian-phones';
+          }
+          if (id.includes('src/data/masterModelCatalog') || id.includes('src/data/phoneLookup')) {
+            return 'catalog-master-models';
+          }
+          if (id.includes('src/data/brandSeriesCatalog')) {
+            return 'catalog-brand-series';
           }
         },
       },
