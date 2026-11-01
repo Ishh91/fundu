@@ -568,7 +568,7 @@ export function syncCustomImagesFromDatabase(
 
   phones.forEach((p) => {
     if (!p.brand || !p.model || !p.image_url) return;
-    const url = String(p.image_url).trim();
+    const url = cleanUrl(String(p.image_url).trim(), p.brand);
     if (!url || url.includes('777/thumb')) return;
 
     const isCustom = Boolean(p.custom_image) || !isStockImageUrl(url);
@@ -580,7 +580,7 @@ export function syncCustomImagesFromDatabase(
   // 1. Process all stock phone images: never overwrite a key if already occupied by a custom image
   phones.forEach((p) => {
     if (!p.brand || !p.model || !p.image_url) return;
-    const url = String(p.image_url).trim();
+    const url = cleanUrl(String(p.image_url).trim(), p.brand);
     if (!url || url.includes('777/thumb')) return;
 
     const isCustom = Boolean(p.custom_image) || !isStockImageUrl(url);
@@ -762,6 +762,8 @@ function cleanUrl(url: string, brandHint?: string): string {
 
   // Remove doubled brand prefixes in GSMArena URLs
   cleaned = cleaned.replace(/\/vv\/bigpic\/([a-z0-9]+)-\1-/gi, '/vv/bigpic/$1-');
+  cleaned = cleaned.replace(/\/vv\/bigpic\/motorola-motorola-/gi, '/vv/bigpic/motorola-');
+  cleaned = cleaned.replace(/\/vv\/bigpic\/infinix-infinix-/gi, '/vv/bigpic/infinix-');
   cleaned = cleaned.replace(/\/vv\/bigpic\/samsung-samsung-/gi, '/vv/bigpic/samsung-');
   cleaned = cleaned.replace(/\/vv\/bigpic\/apple-apple-/gi, '/vv/bigpic/apple-');
   cleaned = cleaned.replace(/\/vv\/bigpic\/google-google-/gi, '/vv/bigpic/google-');
@@ -857,7 +859,7 @@ export function getCleanPhoneImage(brand?: string, model?: string, fallbackUrl?:
       !customImages[k].includes('pexels.com') &&
       !customImages[k].includes('777/thumb')
     ) {
-      return customImages[k];
+      return cleanUrl(customImages[k], b);
     }
   }
 

@@ -12,7 +12,7 @@ import {
 } from '../data/brandSeriesCatalog';
 import { getCleanPhoneImage } from './phoneImages';
 import { getLocalPriceOverrides, getPriceLookupKeys } from './priceSync';
-import { markModelAsDeleted, isModelDeleted } from './catalogSync';
+import { markModelAsDeleted, restoreModel, isModelDeleted } from './catalogSync';
 import { normalizeStorageString, getModelHardwareSpecs, isObsoleteDeviceHardware } from './deviceSpecs';
 
 const LIVE_MASTER_PHONES_STORAGE_KEY = 'fundu_live_master_phones_v2';
@@ -66,6 +66,8 @@ export async function pullLiveMasterPhonesFromDb(): Promise<any[]> {
       data.forEach((p: any) => {
         if (p.is_active === false && p.brand && p.model) {
           markModelAsDeleted(p.brand, p.model);
+        } else if (p.is_active === true && p.brand && p.model) {
+          restoreModel(p.brand, p.model);
         }
       });
       try {

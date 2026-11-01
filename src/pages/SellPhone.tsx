@@ -962,44 +962,18 @@ export default function SellPhone() {
     );
   }, [pricingConfig, form.screenCondition, form.bodyCondition, form.canMakeCalls, form.underWarranty, form.defects, form.accessories, form.stylusAvailable, form.brand, form.model, form.storage, form.ram]);
 
-  // Filtered Master Models for Search Autocomplete (Combines Master Catalog, Indian Phones Catalog, & MobileAPI Live Fallback)
+  // Filtered Master Models for Search Autocomplete (Combines MongoDB Master Phones, Master Catalog, Indian Phones Catalog, & MobileAPI Live Fallback)
   const searchResults = useMemo(() => {
     if (!debouncedQuery) return [];
     const q = debouncedQuery.toLowerCase().trim();
     const queryWords = q.split(/\s+/).filter(Boolean);
 
-    // Combine MASTER_MODEL_CATALOG and ALL_INDIAN_PHONES_CATALOG (strictly deduplicated)
-    const modelMap = new Map<string, any>();
-
-    MASTER_MODEL_CATALOG.forEach((m) => {
-      if (isModelDeleted(m.brand, m.model) || isObsoleteDeviceHardware(m)) return;
-      const key = `${m.brand.toLowerCase()}-${getModelDedupeKey(m.brand, m.model)}`;
-      if (!modelMap.has(key)) {
-        modelMap.set(key, m);
-      }
-    });
-
-    if (Array.isArray(ALL_INDIAN_PHONES_CATALOG)) {
-      ALL_INDIAN_PHONES_CATALOG.forEach((p) => {
-        if (isModelDeleted(p.brand, p.model) || isObsoleteDeviceHardware(p)) return;
-        const key = `${p.brand.toLowerCase()}-${getModelDedupeKey(p.brand, p.model)}`;
-        if (!modelMap.has(key)) {
-          modelMap.set(key, {
-            brand: p.brand,
-            series: p.brand,
-            model: p.model,
-            storage: p.storage_options?.[0] || '128 GB',
-            price: p.base_resale_value || Math.round((p.default_mrp || 30000) * 0.55),
-            image: p.image_url || 'https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=300&auto=format&fit=crop&q=80',
-          });
-        }
-      });
-    }
-
-    const allModels = Array.from(modelMap.values());
+    // Unified live catalog (MongoDB master_phones, MASTER_MODEL_CATALOG, series catalog, Indian phones catalog)
+    const unified = getUnifiedCatalog();
 
     const cleanQ = q.replace(/[^a-z0-9]/g, '');
-    const localMatches = allModels.filter((m) => {
+    const localMatches = unified.filter((m) => {
+      if (isModelDeleted(m.brand, m.model) || isObsoleteDeviceHardware(m)) return false;
       const fullText = `${m.brand} ${m.series || ''} ${m.model}`.toLowerCase();
       if (queryWords.every((word) => fullText.includes(word))) return true;
       if (cleanQ && fullText.replace(/[^a-z0-9]/g, '').includes(cleanQ)) return true;

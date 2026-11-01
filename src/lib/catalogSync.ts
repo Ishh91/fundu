@@ -192,6 +192,33 @@ export function isPermanentlyBlockedModel(brand?: string, model?: string): boole
 export function isModelDeleted(brand?: string, model?: string): boolean {
   if (!model) return false;
   if (isPermanentlyBlockedModel(brand, model)) return true;
+
+  // If phone is actively verified in live master_phones cache with is_active: true, it cannot be blocked by stale keys
+  if (typeof window !== 'undefined') {
+    try {
+      const raw = localStorage.getItem('fundu_live_master_phones_v2');
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        if (Array.isArray(parsed)) {
+          const cleanB = (brand || '').toLowerCase().trim();
+          const cleanM = (model || '').toLowerCase().trim();
+          const match = parsed.find((p: any) => {
+            const pb = (p.brand || '').toLowerCase().trim();
+            const pm = (p.model || '').toLowerCase().trim();
+            return (
+              (pb === cleanB || cleanB.includes(pb)) &&
+              (pm === cleanM || cleanM.includes(pm) || pm.includes(cleanM))
+            );
+          });
+          if (match) {
+            if (match.is_active === false) return true;
+            if (match.is_active === true) return false;
+          }
+        }
+      }
+    } catch {}
+  }
+
   const current = getDeletedModelKeys();
   if (current.size === 0) return false;
 
@@ -236,32 +263,45 @@ export async function refreshDeletedModelsFromDb(): Promise<void> {
   if (typeof window === 'undefined') return;
   try {
     const [sellRes, masterRes] = await Promise.all([
-      db.from('sell_price_configs').select('brand, model, is_active').eq('is_active', false),
-      db.from('master_phones').select('brand, model, is_active').eq('is_active', false),
+      db.from('sell_price_configs').select('brand, model, is_active'),
+      db.from('master_phones').select('brand, model, is_active'),
     ]);
 
     const records = [...(sellRes.data || []), ...(masterRes.data || [])];
-    if (records.length > 0) {
-      const current = getDeletedModelKeys();
-      let changed = false;
+    const current = getDeletedModelKeys();
+    let changed = false;
 
-      records.forEach((r: any) => {
-        if (r.brand && r.model) {
-          const variants = getModelKeyVariants(r.brand, r.model);
-          variants.forEach((v) => {
-            if (!current.has(v)) {
-              current.add(v);
-              changed = true;
-            }
-          });
-        }
-      });
-
-      if (changed) {
-        localStorage.setItem(DELETED_MODELS_STORAGE_KEY, JSON.stringify(Array.from(current)));
-        window.dispatchEvent(new CustomEvent('fundu_model_deleted'));
-        window.dispatchEvent(new CustomEvent('fundu_price_updated'));
+    // 1. Remove any models from deleted set that are explicitly active in DB
+    records.forEach((r: any) => {
+      if (r.brand && r.model && r.is_active === true) {
+        const variants = getModelKeyVariants(r.brand, r.model);
+        variants.forEach((v) => {
+          if (current.has(v)) {
+            current.delete(v);
+            changed = true;
+          }
+        });
       }
+    });
+
+    // 2. Add any models that are explicitly marked inactive in DB
+    records.forEach((r: any) => {
+      if (r.brand && r.model && r.is_active === false) {
+        const variants = getModelKeyVariants(r.brand, r.model);
+        variants.forEach((v) => {
+          if (!current.has(v)) {
+            current.add(v);
+            changed = true;
+          }
+        });
+      }
+    });
+
+    if (changed) {
+      localStorage.setItem(DELETED_MODELS_STORAGE_KEY, JSON.stringify(Array.from(current)));
+      window.dispatchEvent(new CustomEvent('fundu_model_deleted'));
+      window.dispatchEvent(new CustomEvent('fundu_model_restored'));
+      window.dispatchEvent(new CustomEvent('fundu_price_updated'));
     }
   } catch {}
 }
