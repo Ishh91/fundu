@@ -367,15 +367,16 @@ export default function AdminSellRequests({
                       </div>
                     )}
 
-                    {Boolean((s as any).assigned_vendor_name || (s as any).vendor_quote_status || (s as any).assigned_vendor_id) && (() => {
-                      const vInfo = getVendorInfo((s as any).assigned_vendor_id, (s as any).assigned_vendor_name);
-                      const displayName = vInfo?.name || (s as any).assigned_vendor_name || 'Partner Store';
+                    {Boolean((s as any).assigned_vendor_name || (s as any).vendor_quote_status || (s as any).assigned_vendor_id || (s as any).vendor_business_name) && (() => {
+                      const vInfo = getVendorInfo((s as any).assigned_vendor_id, (s as any).assigned_vendor_name || (s as any).vendor_business_name);
+                      const displayName = (s as any).vendor_business_name || vInfo?.name || (s as any).assigned_vendor_name || (s as any).vendor_name || 'Partner Store';
+                      const displayPhone = (s as any).vendor_phone || vInfo?.phone;
                       return (
                         <div className="mt-2 pt-2 border-t border-ink-100/60 flex items-center justify-between text-[11px] gap-2">
-                          <span className="flex items-center gap-1 font-bold text-purple-900 truncate max-w-[200px]" title={displayName}>
-                            <Building2 className="h-3.5 w-3.5 text-purple-600 shrink-0" />
+                          <span className="flex items-center gap-1.5 font-bold text-purple-900 bg-purple-50/80 px-2 py-0.5 rounded-md border border-purple-200/70 truncate max-w-[210px]" title={displayName}>
+                            <Building2 className="h-3.5 w-3.5 text-purple-700 shrink-0" />
                             <span className="truncate">{displayName}</span>
-                            {vInfo?.phone && <span className="text-gray-400 font-normal text-[10px] shrink-0">({vInfo.phone})</span>}
+                            {displayPhone && <span className="text-gray-400 font-normal text-[10px] shrink-0">({displayPhone})</span>}
                           </span>
                           {(s as any).vendor_quote_status === 'quoted' && (
                             <span className="badge bg-amber-100 text-amber-900 border border-amber-300 font-extrabold text-[9px] shrink-0 animate-pulse">
@@ -470,16 +471,21 @@ export default function AdminSellRequests({
               </div>
 
               {/* Partner Store / Vendor Quotation & Verification Alert */}
-              {Boolean((selectedSell as any).assigned_vendor_id || (selectedSell as any).vendor_quote_status || (selectedSell as any).assigned_vendor_name) && (() => {
-                const vInfo = getVendorInfo((selectedSell as any).assigned_vendor_id, (selectedSell as any).assigned_vendor_name);
+              {Boolean((selectedSell as any).assigned_vendor_id || (selectedSell as any).vendor_quote_status || (selectedSell as any).assigned_vendor_name || (selectedSell as any).vendor_business_name) && (() => {
+                const vInfo = getVendorInfo((selectedSell as any).assigned_vendor_id, (selectedSell as any).assigned_vendor_name || (selectedSell as any).vendor_business_name);
                 const quoteNotes = (selectedSell as any).vendor_notes || (selectedSell as any).vendor_quote_notes;
-                const displayName = vInfo?.name || (selectedSell as any).assigned_vendor_name || 'Assigned Partner Store';
                 const currentVendorId = (() => {
                   const targetId = (selectedSell as any).assigned_vendor_id;
                   if (!targetId) return '';
                   const match = vendors.find((v) => (v.id && String(v.id) === String(targetId)) || (v._id && String(v._id) === String(targetId)));
                   return match ? (match.id || match._id) : targetId;
                 })();
+                const fallbackMatchedName = currentVendorId
+                  ? (vendors.find((v) => (v.id && String(v.id) === String(currentVendorId)) || (v._id && String(v._id) === String(currentVendorId)))?.business_name ||
+                     vendors.find((v) => (v.id && String(v.id) === String(currentVendorId)) || (v._id && String(v._id) === String(currentVendorId)))?.full_name)
+                  : null;
+                const displayName = (selectedSell as any).vendor_business_name || vInfo?.name || (selectedSell as any).assigned_vendor_name || fallbackMatchedName || 'Assigned Partner Store';
+                const displayPhone = (selectedSell as any).vendor_phone || vInfo?.phone;
 
                 return (
                   <div className={`p-4 rounded-2xl border transition-all ${
@@ -492,19 +498,19 @@ export default function AdminSellRequests({
                     <div className="flex flex-wrap items-center justify-between gap-3">
                       <div className="space-y-1.5 flex-1 min-w-[280px]">
                         <div className="flex items-center gap-2 flex-wrap">
-                          <span className="badge bg-purple-100 text-purple-950 border border-purple-200 font-extrabold text-[11px] uppercase flex items-center gap-1.5 px-3 py-1 shadow-2xs">
-                            <Building2 className="h-3.5 w-3.5 text-purple-700 shrink-0" />
-                            Quoted By Vendor: <span className="underline decoration-purple-400 font-black">{displayName}</span>
+                          <span className="badge bg-purple-100 text-purple-950 border border-purple-200 font-extrabold text-[12px] uppercase flex items-center gap-1.5 px-3 py-1 shadow-2xs">
+                            <Building2 className="h-4 w-4 text-purple-700 shrink-0" />
+                            Quoted By Vendor: <span className="underline decoration-purple-400 font-black text-purple-900">{displayName}</span>
                           </span>
 
-                          {vInfo?.phone && (
+                          {displayPhone && (
                             <a
-                              href={`tel:${vInfo.phone}`}
+                              href={`tel:${displayPhone}`}
                               className="badge bg-white hover:bg-emerald-50 text-emerald-800 border border-emerald-300 font-bold text-[11px] flex items-center gap-1 px-2.5 py-1 transition shadow-2xs"
                               title="Call Vendor"
                             >
                               <PhoneCall className="h-3 w-3 text-emerald-600" />
-                              {vInfo.phone}
+                              {displayPhone}
                             </a>
                           )}
 

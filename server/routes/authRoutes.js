@@ -476,17 +476,20 @@ router.post('/login', async (req, res, next) => {
       throw createHttpError(400, 'Mobile number/email and password are required.');
     }
 
-    const cleanEmail = rawIdentifier.toLowerCase();
+    const cleanEmail = rawIdentifier.toLowerCase().trim();
     const cleanPhone = normalisePhone(rawIdentifier);
 
-    const queryConditions = [{ email: cleanEmail }];
+    const queryConditions = [
+      { email: cleanEmail },
+      { email: new RegExp(`^${cleanEmail.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`, 'i') }
+    ];
     if (isValidPhone(cleanPhone)) {
       queryConditions.push({ phone: cleanPhone });
     }
 
     const user = await safeFindUser({ $or: queryConditions });
     if (!user) {
-      throw createHttpError(404, `⚠️ Account Not Found: No registered account with "${rawIdentifier}". Please check details or Create New Account.`);
+      throw createHttpError(401, `⚠️ Account Not Found: No registered account with "${rawIdentifier}". Please check details or Create New Account.`);
     }
 
     if (!user.passwordHash) {

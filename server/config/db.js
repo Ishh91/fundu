@@ -293,6 +293,14 @@ export const seedDatabase = async () => {
       is_verified: true,
     });
     console.log(`Created default admin user: ${adminEmail}`);
+  } else if (!admin.passwordHash || admin.role !== 'admin' || !admin.is_verified) {
+    admin.role = 'admin';
+    admin.is_verified = true;
+    if (!admin.passwordHash) {
+      admin.passwordHash = await bcrypt.hash(adminPassword, 10);
+    }
+    await admin.save();
+    console.log(`Updated admin user role/verification for: ${adminEmail}`);
   }
 
   const wholesalerEmail = 'wholesaler@fundu.in';
