@@ -4,7 +4,7 @@ import { Sparkles, CheckCircle2, Mail, X } from 'lucide-react';
 import { db } from '../lib/db';
 import { subscribeToRealtimeSync } from '../lib/realtimeSync';
 import { deduplicateProductsByModel } from '../lib/modelVariants';
-import { getCachedPhones, setCachedPhones } from '../lib/productsCache';
+import { getCachedFeaturedPhones, setCachedFeaturedPhones } from '../lib/productsCache';
 import type { Product } from '../types';
 import {
   HeroSection,
@@ -25,7 +25,7 @@ export default function Home() {
   const userName = params.get('name') || 'User';
 
   const [welcomeBannerVisible, setWelcomeBannerVisible] = useState(showWelcome);
-  const [products, setProducts] = useState<Product[]>(() => getCachedPhones());
+  const [products, setProducts] = useState<Product[]>(() => getCachedFeaturedPhones());
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -39,17 +39,18 @@ export default function Home() {
 
   useEffect(() => {
     const loadHomeProducts = () => {
+      // ONLY load products that are approved AND explicitly marked as featured by Admin
       db.from<Product[]>('products')
         .select('*')
         .eq('is_approved', true)
+        .eq('is_featured', true)
         .limit(60)
         .then(({ data }) => {
           const list = (data ?? []) as Product[];
-          // Sort with highest priority to featured items, tie-broken by newest update/creation
-          const sorted = [...list].sort((a, b) => {
-            if (a.is_featured && !b.is_featured) return -1;
-            if (!a.is_featured && b.is_featured) return 1;
-
+          // Strictly keep only approved AND featured items decided by Admin
+          const featuredOnly = list.filter((p) => p.is_approved && p.is_featured);
+          // Sort by newest update/creation
+          const sorted = [...featuredOnly].sort((a, b) => {
             const timeA = new Date(a.updated_at || a.created_at || 0).getTime();
             const timeB = new Date(b.updated_at || b.created_at || 0).getTime();
             return timeB - timeA;
@@ -57,7 +58,7 @@ export default function Home() {
           // Deduplicate by model so identical models do not repeat on the storefront
           const uniqueModels = deduplicateProductsByModel(sorted);
           setProducts(uniqueModels);
-          setCachedPhones(uniqueModels);
+          setCachedFeaturedPhones(uniqueModels);
           setLoading(false);
         })
         .catch(() => setLoading(false));

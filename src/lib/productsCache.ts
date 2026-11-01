@@ -3,7 +3,38 @@ import { SAMPLE_BEST_SELLING_PHONES } from '../data/sampleProducts';
 import { deduplicateProductsByModel } from './modelVariants';
 
 const CACHE_KEY_PHONES = 'fundu_cached_phones_v3';
+const CACHE_KEY_FEATURED_PHONES = 'fundu_cached_featured_phones_v1';
 const CACHE_KEY_LAPTOPS = 'fundu_cached_laptops_v3';
+
+/**
+ * Returns cached featured products for the Home page.
+ * Guarantees only products with is_featured: true are loaded on the home page.
+ */
+export function getCachedFeaturedPhones(): Product[] {
+  try {
+    const raw = typeof window !== 'undefined' ? localStorage.getItem(CACHE_KEY_FEATURED_PHONES) : null;
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        return deduplicateProductsByModel(parsed.filter((p: Product) => p.is_featured));
+      }
+    }
+  } catch (_e) {
+    // fallback
+  }
+  return deduplicateProductsByModel(SAMPLE_BEST_SELLING_PHONES.filter((p) => p.is_featured));
+}
+
+export function setCachedFeaturedPhones(products: Product[]): void {
+  try {
+    if (typeof window !== 'undefined' && Array.isArray(products)) {
+      const featured = products.filter((p) => p.is_featured);
+      localStorage.setItem(CACHE_KEY_FEATURED_PHONES, JSON.stringify(featured));
+    }
+  } catch (_e) {
+    // ignore
+  }
+}
 
 /**
  * Returns immediately with cached products or default instant sample products.

@@ -29,11 +29,15 @@ export default function LaptopShowcase({ customLaptops }: LaptopShowcaseProps) {
   const [addedId, setAddedId] = useState<string | null>(null);
 
   const allLaptops = useMemo(() => {
-    let list = SAMPLE_LAPTOPS;
+    // Only featured laptops as decided by Admin
+    const sampleFeatured = SAMPLE_LAPTOPS.filter((l) => l.is_featured);
     if (customLaptops && customLaptops.length > 0) {
-      list = [...customLaptops, ...SAMPLE_LAPTOPS.filter(s => !customLaptops.some(c => c.id === s.id))];
+      const customFeatured = customLaptops.filter((l) => l.is_featured && l.is_approved !== false);
+      if (customFeatured.length > 0) {
+        return deduplicateProductsByModel(customFeatured);
+      }
     }
-    return deduplicateProductsByModel(list);
+    return deduplicateProductsByModel(sampleFeatured);
   }, [customLaptops]);
 
   const filteredLaptops = useMemo(() => {

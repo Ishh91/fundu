@@ -202,10 +202,28 @@ export default function AdminProducts({
                       <div className="flex items-center justify-between gap-1.5">
                         <p className="font-bold text-xs text-ink-900 truncate">{p.title}</p>
                         <div className="flex items-center gap-1 shrink-0">
-                          {p.is_featured && (
-                            <span className="text-[9px] font-extrabold px-1.5 py-0.5 rounded-full bg-amber-100 text-amber-900 border border-amber-300">
-                              ⭐ Featured
-                            </span>
+                          {onToggleFeatured ? (
+                            <button
+                              type="button"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                onToggleFeatured(p.id, !!p.is_featured);
+                              }}
+                              className={`p-1 rounded-lg transition cursor-pointer ${
+                                p.is_featured
+                                  ? 'text-amber-500 hover:text-amber-600 bg-amber-50 border border-amber-200'
+                                  : 'text-gray-300 hover:text-amber-500 hover:bg-gray-100'
+                              }`}
+                              title={p.is_featured ? 'Featured on Home (Click to remove)' : 'Click to feature on Home'}
+                            >
+                              <Star className={`h-3.5 w-3.5 ${p.is_featured ? 'fill-amber-400 text-amber-500' : ''}`} />
+                            </button>
+                          ) : (
+                            p.is_featured && (
+                              <span className="text-[9px] font-extrabold px-1.5 py-0.5 rounded-full bg-amber-100 text-amber-900 border border-amber-300">
+                                ⭐ Featured
+                              </span>
+                            )
                           )}
                           <span
                             className={`text-[9px] font-extrabold px-1.5 py-0.5 rounded-full shrink-0 ${

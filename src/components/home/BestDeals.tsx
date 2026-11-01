@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight, ShieldCheck, CheckCircle2, ShoppingCart, Sparkles, Star } from 'lucide-react';
 import { formatINR } from '../../lib/db';
@@ -103,7 +104,13 @@ const FALLBACK_REFURBISHED_PHONES: Product[] = [
 
 export default function BestDeals({ products, loading }: BestDealsProps) {
   const { addToCart } = useCart();
-  const displayProducts = products && products.length > 0 ? products : FALLBACK_REFURBISHED_PHONES;
+  // Strictly display ONLY products where is_featured is true as decided by Admin
+  const displayProducts = useMemo(() => {
+    const featured = (products || []).filter((p) => p.is_featured && p.is_approved !== false);
+    if (featured.length > 0) return featured;
+    if (products && products.length > 0) return [];
+    return FALLBACK_REFURBISHED_PHONES.filter((p) => p.is_featured);
+  }, [products]);
 
   return (
     <section className="container-page py-8">
@@ -138,6 +145,15 @@ export default function BestDeals({ products, loading }: BestDealsProps) {
               className="h-96 rounded-2xl border border-gray-200 bg-white shadow-sm animate-pulse"
             />
           ))}
+        </div>
+      ) : displayProducts.length === 0 ? (
+        <div className="mt-6 p-8 text-center bg-gray-50 rounded-2xl border border-dashed border-gray-200">
+          <Sparkles className="h-6 w-6 text-amber-500 mx-auto mb-2" />
+          <p className="text-sm font-bold text-gray-700">No featured phones currently highlighted.</p>
+          <p className="text-xs text-gray-500 mt-1">Explore our full certified refurbished collection below.</p>
+          <Link to="/buy" className="mt-3 inline-block bg-[#344257] hover:bg-[#2A374A] text-white font-bold text-xs px-4 py-2 rounded-xl transition">
+            Browse All Phones
+          </Link>
         </div>
       ) : (
         <div className="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
