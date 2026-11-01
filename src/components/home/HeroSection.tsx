@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import {
   Search,
@@ -13,20 +13,52 @@ export default function HeroSection() {
   const { activePosters } = useHeroPosters();
   const [activeSlide, setActiveSlide] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
+  const touchStartX = useRef<number | null>(null);
+  const touchEndX = useRef<number | null>(null);
 
   const slidesCount = activePosters.length || 1;
 
+  // Auto-slide every 4.5 seconds with pause on hover/interaction
   useEffect(() => {
     if (slidesCount <= 1 || isPaused) return;
     const timer = window.setInterval(() => {
       setActiveSlide((current) => (current + 1) % slidesCount);
-    }, 9500); // Slower, comfortable slide duration (9.5s)
+    }, 4500);
 
     return () => window.clearInterval(timer);
-  }, [slidesCount, isPaused, activeSlide]);
+  }, [slidesCount, isPaused]);
 
   const currentIndex = activeSlide >= slidesCount ? 0 : activeSlide;
   const currentSlide = activePosters[currentIndex] || activePosters[0];
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    setIsPaused(true);
+    touchStartX.current = e.touches[0].clientX;
+    touchEndX.current = null;
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    touchEndX.current = e.touches[0].clientX;
+  };
+
+  const handleTouchEnd = () => {
+    setIsPaused(false);
+    if (touchStartX.current !== null && touchEndX.current !== null) {
+      const distance = touchStartX.current - touchEndX.current;
+      const isSwipe = Math.abs(distance) > 40;
+      if (isSwipe) {
+        if (distance > 0) {
+          // Swiped Left -> Next
+          setActiveSlide((prev) => (prev + 1) % slidesCount);
+        } else {
+          // Swiped Right -> Prev
+          setActiveSlide((prev) => (prev - 1 + slidesCount) % slidesCount);
+        }
+      }
+    }
+    touchStartX.current = null;
+    touchEndX.current = null;
+  };
 
   if (!currentSlide) return null;
 
@@ -46,50 +78,52 @@ export default function HeroSection() {
           </div>
         </div>
 
-        {/* Full Width Custom Poster Carousel with Official Hero Palette Frame */}
+        {/* Full Width Sliding Poster Carousel */}
         <div
-          className="relative group/hero overflow-hidden rounded-2xl sm:rounded-3xl p-1 sm:p-1.5 shadow-md"
+          className="relative group/hero overflow-hidden rounded-2xl sm:rounded-3xl p-1 sm:p-1.5 shadow-md select-none"
           style={{
             background: 'linear-gradient(135deg, #6A859F 0%, #F0F0F5 50%, #C0C8D8 100%)',
           }}
           onMouseEnter={() => setIsPaused(true)}
           onMouseLeave={() => setIsPaused(false)}
-          onTouchStart={() => setIsPaused(true)}
-          onTouchEnd={() => setIsPaused(false)}
+          onTouchStart={handleTouchStart}
+          onTouchMove={handleTouchMove}
+          onTouchEnd={handleTouchEnd}
         >
           <div className="relative overflow-hidden rounded-[14px] sm:rounded-[22px] bg-[#EAEFF5] border border-white/60 aspect-[16/7] sm:aspect-[21/8] md:aspect-[24/9] min-h-[160px] sm:min-h-[250px] md:min-h-[330px] lg:min-h-[400px] max-h-[500px] w-full">
-            {/* Zero-Layout-Shift Persistent Slides Stack */}
-            {activePosters.map((poster, index) => {
-              const isActive = index === currentIndex;
-              return (
-                <Link
-                  key={poster.id || index}
-                  to={poster.primaryHref || '/sell'}
-                  className={`absolute inset-0 w-full h-full overflow-hidden group cursor-pointer transition-opacity duration-700 ease-in-out ${
-                    isActive ? 'opacity-100 z-10 pointer-events-auto' : 'opacity-0 z-0 pointer-events-none'
-                  }`}
-                >
-                  <picture className="w-full h-full block">
-                    {poster.image_mobile && (
-                      <source media="(max-width: 639px)" srcSet={poster.image_mobile} />
-                    )}
-                    {poster.image_tablet && (
-                      <source media="(min-width: 640px) and (max-width: 1023px)" srcSet={poster.image_tablet} />
-                    )}
-                    <img
-                      src={poster.image}
-                      alt={poster.title || 'Fundu Poster'}
-                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.01] mx-auto block"
-                      loading={index === 0 ? 'eager' : 'lazy'}
-                      onError={(e) => {
-                        (e.target as HTMLImageElement).src =
-                          'https://placehold.co/1400x550?text=Fundu+Poster+Banner';
-                      }}
-                    />
-                  </picture>
-                </Link>
-              );
-            })}
+            {/* Sliding Track */}
+            <div
+              className="flex h-full w-full transition-transform duration-600 ease-in-out will-change-transform"
+              style={{ transform: `translateX(-${currentIndex * 100}%)` }}
+            >
+              {activePosters.map((poster, index) => (
+                <div key={poster.id || index} className="w-full h-full shrink-0 flex-none relative">
+                  <Link
+                    to={poster.primaryHref || '/sell'}
+                    className="block w-full h-full overflow-hidden group cursor-pointer"
+                  >
+                    <picture className="w-full h-full block">
+                      {poster.image_mobile && (
+                        <source media="(max-width: 639px)" srcSet={poster.image_mobile} />
+                      )}
+                      {poster.image_tablet && (
+                        <source media="(min-width: 640px) and (max-width: 1023px)" srcSet={poster.image_tablet} />
+                      )}
+                      <img
+                        src={poster.image}
+                        alt={poster.title || 'Fundu Poster'}
+                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.01] mx-auto block"
+                        loading={index === 0 ? 'eager' : 'lazy'}
+                        onError={(e) => {
+                          (e.target as HTMLImageElement).src =
+                            'https://placehold.co/1400x550?text=Fundu+Poster+Banner';
+                        }}
+                      />
+                    </picture>
+                  </Link>
+                </div>
+              ))}
+            </div>
 
             {/* Left Navigation Button */}
             {slidesCount > 1 && (
