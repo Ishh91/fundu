@@ -128,14 +128,6 @@ export default function SellPhone() {
     }
   }, [searchParams, modelSlug]);
 
-  // Guard: Redirect back to Step 1 if the selected model was disabled/deleted by admin
-  useEffect(() => {
-    if (form.model && isModelDeleted(form.brand, form.model)) {
-      setForm((prev: any) => ({ ...prev, model: '', storage: '' }));
-      goToStep(1, true);
-    }
-  }, [form.brand, form.model, version]);
-
   const goToStep = (nextStep: number, replace = false) => {
     setStep(nextStep);
     const newParams = new URLSearchParams(searchParams);
@@ -276,6 +268,14 @@ export default function SellPhone() {
       }));
     }
   }, [profile]);
+
+  // Guard: Redirect back to Step 1 if the selected model was disabled/deleted by admin
+  useEffect(() => {
+    if (form.model && isModelDeleted(form.brand, form.model)) {
+      setForm((prev: any) => ({ ...prev, model: '', storage: '' }));
+      goToStep(1, true);
+    }
+  }, [form.brand, form.model, version]);
 
   // Restore condition questionnaire answers from sessionStorage if customer logged in and redirected back
   useEffect(() => {
