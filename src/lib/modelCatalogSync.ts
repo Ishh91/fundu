@@ -13,7 +13,7 @@ import {
 import { getCleanPhoneImage } from './phoneImages';
 import { getLocalPriceOverrides, getPriceLookupKeys } from './priceSync';
 import { markModelAsDeleted, isModelDeleted } from './catalogSync';
-import { normalizeStorageString, getModelHardwareSpecs } from './deviceSpecs';
+import { normalizeStorageString, getModelHardwareSpecs, isObsoleteDeviceHardware } from './deviceSpecs';
 
 const LIVE_MASTER_PHONES_STORAGE_KEY = 'fundu_live_master_phones_v2';
 
@@ -170,6 +170,11 @@ export function getUnifiedCatalog(brandFilter?: string): UnifiedCatalogModel[] {
       return;
     }
 
+    // Exclude obsolete <=32GB devices
+    if (isObsoleteDeviceHardware({ brand: cleanBrand, model: cleanModel, storage: defaultStorage })) {
+      return;
+    }
+
     // Deduplication key
     const dedupeKey = getModelDedupeKey(cleanBrand, cleanModel);
     const fullKey = `${cleanBrand.toLowerCase()}:${dedupeKey}`;
@@ -205,9 +210,9 @@ export function getUnifiedCatalog(brandFilter?: string): UnifiedCatalogModel[] {
     });
   };
 
-  // 0. Pre-block all explicitly disabled models from DB so static fallbacks can never resurrect them
+  // 0. Pre-block all explicitly disabled or obsolete models from DB so static fallbacks can never resurrect them
   dbPhones.forEach((p) => {
-    if (p.is_active === false) {
+    if (p.is_active === false || isObsoleteDeviceHardware(p)) {
       const cleanBrand = normalizeCanonicalBrand(p.brand);
       const cleanModel = getCleanModelName(cleanBrand, p.model);
       const dedupeKey = getModelDedupeKey(cleanBrand, cleanModel);

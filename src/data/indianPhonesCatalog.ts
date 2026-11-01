@@ -4496,13 +4496,18 @@ export const ALL_INDIAN_PHONES_CATALOG: MasterPhone[] = [
     "is_5g": true,
     "is_active": true
   },
-    {
+  {
     "id": "infinix-gt20pro5g",
     "brand": "Infinix",
     "model": "Infinix GT 20 Pro 5G",
     "release_year": 2024,
-    "ram_options": ["8GB","12GB"],
-    "storage_options": ["256GB"],
+    "ram_options": [
+      "8GB",
+      "12GB"
+    ],
+    "storage_options": [
+      "256GB"
+    ],
     "default_mrp": 27999,
     "base_resale_value": 15200,
     "popular_tag": "GT Gaming Series",
@@ -4519,8 +4524,12 @@ export const ALL_INDIAN_PHONES_CATALOG: MasterPhone[] = [
     "brand": "Infinix",
     "model": "Infinix GT 10 Pro 5G",
     "release_year": 2023,
-    "ram_options": ["8GB"],
-    "storage_options": ["256GB"],
+    "ram_options": [
+      "8GB"
+    ],
+    "storage_options": [
+      "256GB"
+    ],
     "default_mrp": 24999,
     "base_resale_value": 11800,
     "popular_tag": "GT Gaming Series",
@@ -4537,8 +4546,13 @@ export const ALL_INDIAN_PHONES_CATALOG: MasterPhone[] = [
     "brand": "Infinix",
     "model": "Infinix Zero Flip 5G",
     "release_year": 2024,
-    "ram_options": ["8GB","16GB"],
-    "storage_options": ["512GB"],
+    "ram_options": [
+      "8GB",
+      "16GB"
+    ],
+    "storage_options": [
+      "512GB"
+    ],
     "default_mrp": 54999,
     "base_resale_value": 26500,
     "popular_tag": "Zero Flagship Series",
@@ -4555,8 +4569,13 @@ export const ALL_INDIAN_PHONES_CATALOG: MasterPhone[] = [
     "brand": "Infinix",
     "model": "Infinix Zero 40 5G",
     "release_year": 2024,
-    "ram_options": ["12GB"],
-    "storage_options": ["256GB","512GB"],
+    "ram_options": [
+      "12GB"
+    ],
+    "storage_options": [
+      "256GB",
+      "512GB"
+    ],
     "default_mrp": 32999,
     "base_resale_value": 16800,
     "popular_tag": "Zero Flagship Series",
@@ -4573,8 +4592,12 @@ export const ALL_INDIAN_PHONES_CATALOG: MasterPhone[] = [
     "brand": "Infinix",
     "model": "Infinix Zero 40 4G",
     "release_year": 2024,
-    "ram_options": ["8GB"],
-    "storage_options": ["256GB"],
+    "ram_options": [
+      "8GB"
+    ],
+    "storage_options": [
+      "256GB"
+    ],
     "default_mrp": 24999,
     "base_resale_value": 12400,
     "popular_tag": "Zero Flagship Series",
@@ -4591,8 +4614,13 @@ export const ALL_INDIAN_PHONES_CATALOG: MasterPhone[] = [
     "brand": "Infinix",
     "model": "Infinix Zero 30 5G",
     "release_year": 2023,
-    "ram_options": ["8GB","12GB"],
-    "storage_options": ["256GB"],
+    "ram_options": [
+      "8GB",
+      "12GB"
+    ],
+    "storage_options": [
+      "256GB"
+    ],
     "default_mrp": 27999,
     "base_resale_value": 12400,
     "popular_tag": "Zero Flagship Series",
@@ -4609,8 +4637,12 @@ export const ALL_INDIAN_PHONES_CATALOG: MasterPhone[] = [
     "brand": "Infinix",
     "model": "Infinix Zero 30 4G",
     "release_year": 2023,
-    "ram_options": ["8GB"],
-    "storage_options": ["256GB"],
+    "ram_options": [
+      "8GB"
+    ],
+    "storage_options": [
+      "256GB"
+    ],
     "default_mrp": 20999,
     "base_resale_value": 9800,
     "popular_tag": "Zero Flagship Series",
@@ -4627,8 +4659,12 @@ export const ALL_INDIAN_PHONES_CATALOG: MasterPhone[] = [
     "brand": "Infinix",
     "model": "Infinix Zero Ultra 5G",
     "release_year": 2022,
-    "ram_options": ["8GB"],
-    "storage_options": ["256GB"],
+    "ram_options": [
+      "8GB"
+    ],
+    "storage_options": [
+      "256GB"
+    ],
     "default_mrp": 36999,
     "base_resale_value": 16500,
     "popular_tag": "Zero Flagship Series",
@@ -4645,8 +4681,12 @@ export const ALL_INDIAN_PHONES_CATALOG: MasterPhone[] = [
     "brand": "Infinix",
     "model": "Infinix Zero 20",
     "release_year": 2022,
-    "ram_options": ["8GB"],
-    "storage_options": ["128GB"],
+    "ram_options": [
+      "8GB"
+    ],
+    "storage_options": [
+      "128GB"
+    ],
     "default_mrp": 22999,
     "base_resale_value": 9200,
     "popular_tag": "Zero Flagship Series",
@@ -4663,8 +4703,12 @@ export const ALL_INDIAN_PHONES_CATALOG: MasterPhone[] = [
     "brand": "Infinix",
     "model": "Infinix Zero 5G 2023 Turbo",
     "release_year": 2023,
-    "ram_options": ["8GB"],
-    "storage_options": ["256GB"],
+    "ram_options": [
+      "8GB"
+    ],
+    "storage_options": [
+      "256GB"
+    ],
     "default_mrp": 24999,
     "base_resale_value": 10400,
     "popular_tag": "Zero Flagship Series",
@@ -4681,8 +4725,12 @@ export const ALL_INDIAN_PHONES_CATALOG: MasterPhone[] = [
     "brand": "Infinix",
     "model": "Infinix Zero 5G 2023",
     "release_year": 2023,
-    "ram_options": ["8GB"],
-    "storage_options": ["128GB"],
+    "ram_options": [
+      "8GB"
+    ],
+    "storage_options": [
+      "128GB"
+    ],
     "default_mrp": 20999,
     "base_resale_value": 8900,
     "popular_tag": "Zero Flagship Series",
@@ -4699,8 +4747,12 @@ export const ALL_INDIAN_PHONES_CATALOG: MasterPhone[] = [
     "brand": "Infinix",
     "model": "Infinix Zero 5G",
     "release_year": 2022,
-    "ram_options": ["8GB"],
-    "storage_options": ["128GB"],
+    "ram_options": [
+      "8GB"
+    ],
+    "storage_options": [
+      "128GB"
+    ],
     "default_mrp": 19999,
     "base_resale_value": 7800,
     "popular_tag": "Zero Flagship Series",
@@ -4717,8 +4769,13 @@ export const ALL_INDIAN_PHONES_CATALOG: MasterPhone[] = [
     "brand": "Infinix",
     "model": "Infinix Zero X Pro",
     "release_year": 2021,
-    "ram_options": ["8GB"],
-    "storage_options": ["128GB","256GB"],
+    "ram_options": [
+      "8GB"
+    ],
+    "storage_options": [
+      "128GB",
+      "256GB"
+    ],
     "default_mrp": 24999,
     "base_resale_value": 8500,
     "popular_tag": "Zero Flagship Series",
@@ -4735,8 +4792,12 @@ export const ALL_INDIAN_PHONES_CATALOG: MasterPhone[] = [
     "brand": "Infinix",
     "model": "Infinix Zero X Neo",
     "release_year": 2021,
-    "ram_options": ["8GB"],
-    "storage_options": ["128GB"],
+    "ram_options": [
+      "8GB"
+    ],
+    "storage_options": [
+      "128GB"
+    ],
     "default_mrp": 17999,
     "base_resale_value": 6500,
     "popular_tag": "Zero Flagship Series",
@@ -4753,8 +4814,12 @@ export const ALL_INDIAN_PHONES_CATALOG: MasterPhone[] = [
     "brand": "Infinix",
     "model": "Infinix Zero 8i",
     "release_year": 2020,
-    "ram_options": ["8GB"],
-    "storage_options": ["128GB"],
+    "ram_options": [
+      "8GB"
+    ],
+    "storage_options": [
+      "128GB"
+    ],
     "default_mrp": 18999,
     "base_resale_value": 5800,
     "popular_tag": "Zero Flagship Series",
@@ -4771,8 +4836,12 @@ export const ALL_INDIAN_PHONES_CATALOG: MasterPhone[] = [
     "brand": "Infinix",
     "model": "Infinix Note 40 Pro+ 5G",
     "release_year": 2024,
-    "ram_options": ["12GB"],
-    "storage_options": ["256GB"],
+    "ram_options": [
+      "12GB"
+    ],
+    "storage_options": [
+      "256GB"
+    ],
     "default_mrp": 27999,
     "base_resale_value": 13500,
     "popular_tag": "Note Pro Series",
@@ -4789,8 +4858,12 @@ export const ALL_INDIAN_PHONES_CATALOG: MasterPhone[] = [
     "brand": "Infinix",
     "model": "Infinix Note 40 Pro 5G",
     "release_year": 2024,
-    "ram_options": ["8GB"],
-    "storage_options": ["256GB"],
+    "ram_options": [
+      "8GB"
+    ],
+    "storage_options": [
+      "256GB"
+    ],
     "default_mrp": 24999,
     "base_resale_value": 11800,
     "popular_tag": "Note Pro Series",
@@ -4807,8 +4880,12 @@ export const ALL_INDIAN_PHONES_CATALOG: MasterPhone[] = [
     "brand": "Infinix",
     "model": "Infinix Note 40 5G",
     "release_year": 2024,
-    "ram_options": ["8GB"],
-    "storage_options": ["256GB"],
+    "ram_options": [
+      "8GB"
+    ],
+    "storage_options": [
+      "256GB"
+    ],
     "default_mrp": 22999,
     "base_resale_value": 10800,
     "popular_tag": "Note Pro Series",
@@ -4825,8 +4902,14 @@ export const ALL_INDIAN_PHONES_CATALOG: MasterPhone[] = [
     "brand": "Infinix",
     "model": "Infinix Note 40X 5G",
     "release_year": 2024,
-    "ram_options": ["8GB","12GB"],
-    "storage_options": ["128GB","256GB"],
+    "ram_options": [
+      "8GB",
+      "12GB"
+    ],
+    "storage_options": [
+      "128GB",
+      "256GB"
+    ],
     "default_mrp": 17999,
     "base_resale_value": 9200,
     "popular_tag": "Note Pro Series",
@@ -4843,8 +4926,14 @@ export const ALL_INDIAN_PHONES_CATALOG: MasterPhone[] = [
     "brand": "Infinix",
     "model": "Infinix Note 30 5G",
     "release_year": 2023,
-    "ram_options": ["4GB","8GB"],
-    "storage_options": ["128GB","256GB"],
+    "ram_options": [
+      "4GB",
+      "8GB"
+    ],
+    "storage_options": [
+      "128GB",
+      "256GB"
+    ],
     "default_mrp": 19999,
     "base_resale_value": 8400,
     "popular_tag": "Note Pro Series",
@@ -4861,8 +4950,12 @@ export const ALL_INDIAN_PHONES_CATALOG: MasterPhone[] = [
     "brand": "Infinix",
     "model": "Infinix Note 30 VIP",
     "release_year": 2023,
-    "ram_options": ["12GB"],
-    "storage_options": ["256GB"],
+    "ram_options": [
+      "12GB"
+    ],
+    "storage_options": [
+      "256GB"
+    ],
     "default_mrp": 24999,
     "base_resale_value": 10500,
     "popular_tag": "Note Pro Series",
@@ -4879,8 +4972,12 @@ export const ALL_INDIAN_PHONES_CATALOG: MasterPhone[] = [
     "brand": "Infinix",
     "model": "Infinix Note 12 Pro 5G",
     "release_year": 2022,
-    "ram_options": ["8GB"],
-    "storage_options": ["128GB"],
+    "ram_options": [
+      "8GB"
+    ],
+    "storage_options": [
+      "128GB"
+    ],
     "default_mrp": 20999,
     "base_resale_value": 8900,
     "popular_tag": "Note Pro Series",
@@ -4897,8 +4994,12 @@ export const ALL_INDIAN_PHONES_CATALOG: MasterPhone[] = [
     "brand": "Infinix",
     "model": "Infinix Note 12 Pro 4G",
     "release_year": 2022,
-    "ram_options": ["8GB"],
-    "storage_options": ["256GB"],
+    "ram_options": [
+      "8GB"
+    ],
+    "storage_options": [
+      "256GB"
+    ],
     "default_mrp": 18999,
     "base_resale_value": 7800,
     "popular_tag": "Note Pro Series",
@@ -4915,8 +5016,13 @@ export const ALL_INDIAN_PHONES_CATALOG: MasterPhone[] = [
     "brand": "Infinix",
     "model": "Infinix Note 12 5G",
     "release_year": 2022,
-    "ram_options": ["6GB"],
-    "storage_options": ["64GB","128GB"],
+    "ram_options": [
+      "6GB"
+    ],
+    "storage_options": [
+      "64GB",
+      "128GB"
+    ],
     "default_mrp": 17999,
     "base_resale_value": 7200,
     "popular_tag": "Note Pro Series",
@@ -4933,8 +5039,12 @@ export const ALL_INDIAN_PHONES_CATALOG: MasterPhone[] = [
     "brand": "Infinix",
     "model": "Infinix Note 12 Turbo",
     "release_year": 2022,
-    "ram_options": ["8GB"],
-    "storage_options": ["128GB"],
+    "ram_options": [
+      "8GB"
+    ],
+    "storage_options": [
+      "128GB"
+    ],
     "default_mrp": 16999,
     "base_resale_value": 6800,
     "popular_tag": "Note Pro Series",
@@ -4951,8 +5061,14 @@ export const ALL_INDIAN_PHONES_CATALOG: MasterPhone[] = [
     "brand": "Infinix",
     "model": "Infinix Note 12",
     "release_year": 2022,
-    "ram_options": ["4GB","6GB"],
-    "storage_options": ["64GB","128GB"],
+    "ram_options": [
+      "4GB",
+      "6GB"
+    ],
+    "storage_options": [
+      "64GB",
+      "128GB"
+    ],
     "default_mrp": 14999,
     "base_resale_value": 5900,
     "popular_tag": "Note Pro Series",
@@ -4969,8 +5085,12 @@ export const ALL_INDIAN_PHONES_CATALOG: MasterPhone[] = [
     "brand": "Infinix",
     "model": "Infinix Note 12i",
     "release_year": 2022,
-    "ram_options": ["4GB"],
-    "storage_options": ["64GB"],
+    "ram_options": [
+      "4GB"
+    ],
+    "storage_options": [
+      "64GB"
+    ],
     "default_mrp": 12999,
     "base_resale_value": 5200,
     "popular_tag": "Note Pro Series",
@@ -4987,8 +5107,12 @@ export const ALL_INDIAN_PHONES_CATALOG: MasterPhone[] = [
     "brand": "Infinix",
     "model": "Infinix Note 11 Pro",
     "release_year": 2021,
-    "ram_options": ["8GB"],
-    "storage_options": ["128GB"],
+    "ram_options": [
+      "8GB"
+    ],
+    "storage_options": [
+      "128GB"
+    ],
     "default_mrp": 18999,
     "base_resale_value": 6500,
     "popular_tag": "Note Pro Series",
@@ -5005,8 +5129,14 @@ export const ALL_INDIAN_PHONES_CATALOG: MasterPhone[] = [
     "brand": "Infinix",
     "model": "Infinix Note 11s",
     "release_year": 2021,
-    "ram_options": ["6GB","8GB"],
-    "storage_options": ["64GB","128GB"],
+    "ram_options": [
+      "6GB",
+      "8GB"
+    ],
+    "storage_options": [
+      "64GB",
+      "128GB"
+    ],
     "default_mrp": 16999,
     "base_resale_value": 5800,
     "popular_tag": "Note Pro Series",
@@ -5023,8 +5153,14 @@ export const ALL_INDIAN_PHONES_CATALOG: MasterPhone[] = [
     "brand": "Infinix",
     "model": "Infinix Note 11",
     "release_year": 2021,
-    "ram_options": ["4GB","6GB"],
-    "storage_options": ["64GB","128GB"],
+    "ram_options": [
+      "4GB",
+      "6GB"
+    ],
+    "storage_options": [
+      "64GB",
+      "128GB"
+    ],
     "default_mrp": 14999,
     "base_resale_value": 5100,
     "popular_tag": "Note Pro Series",
@@ -5041,8 +5177,13 @@ export const ALL_INDIAN_PHONES_CATALOG: MasterPhone[] = [
     "brand": "Infinix",
     "model": "Infinix Note 10 Pro",
     "release_year": 2021,
-    "ram_options": ["8GB"],
-    "storage_options": ["128GB","256GB"],
+    "ram_options": [
+      "8GB"
+    ],
+    "storage_options": [
+      "128GB",
+      "256GB"
+    ],
     "default_mrp": 18999,
     "base_resale_value": 5500,
     "popular_tag": "Note Pro Series",
@@ -5059,8 +5200,14 @@ export const ALL_INDIAN_PHONES_CATALOG: MasterPhone[] = [
     "brand": "Infinix",
     "model": "Infinix Note 10",
     "release_year": 2021,
-    "ram_options": ["4GB","6GB"],
-    "storage_options": ["64GB","128GB"],
+    "ram_options": [
+      "4GB",
+      "6GB"
+    ],
+    "storage_options": [
+      "64GB",
+      "128GB"
+    ],
     "default_mrp": 13999,
     "base_resale_value": 4600,
     "popular_tag": "Note Pro Series",
@@ -5077,8 +5224,12 @@ export const ALL_INDIAN_PHONES_CATALOG: MasterPhone[] = [
     "brand": "Infinix",
     "model": "Infinix Note 8",
     "release_year": 2020,
-    "ram_options": ["6GB"],
-    "storage_options": ["128GB"],
+    "ram_options": [
+      "6GB"
+    ],
+    "storage_options": [
+      "128GB"
+    ],
     "default_mrp": 15999,
     "base_resale_value": 4200,
     "popular_tag": "Note Pro Series",
@@ -5095,8 +5246,14 @@ export const ALL_INDIAN_PHONES_CATALOG: MasterPhone[] = [
     "brand": "Infinix",
     "model": "Infinix Note 7",
     "release_year": 2020,
-    "ram_options": ["4GB","6GB"],
-    "storage_options": ["64GB","128GB"],
+    "ram_options": [
+      "4GB",
+      "6GB"
+    ],
+    "storage_options": [
+      "64GB",
+      "128GB"
+    ],
     "default_mrp": 13999,
     "base_resale_value": 3700,
     "popular_tag": "Note Pro Series",
@@ -5113,8 +5270,13 @@ export const ALL_INDIAN_PHONES_CATALOG: MasterPhone[] = [
     "brand": "Infinix",
     "model": "Infinix Hot 50 5G",
     "release_year": 2024,
-    "ram_options": ["4GB","8GB"],
-    "storage_options": ["128GB"],
+    "ram_options": [
+      "4GB",
+      "8GB"
+    ],
+    "storage_options": [
+      "128GB"
+    ],
     "default_mrp": 14999,
     "base_resale_value": 7800,
     "popular_tag": "Hot Performance Series",
@@ -5131,8 +5293,14 @@ export const ALL_INDIAN_PHONES_CATALOG: MasterPhone[] = [
     "brand": "Infinix",
     "model": "Infinix Hot 50",
     "release_year": 2024,
-    "ram_options": ["6GB","8GB"],
-    "storage_options": ["128GB","256GB"],
+    "ram_options": [
+      "6GB",
+      "8GB"
+    ],
+    "storage_options": [
+      "128GB",
+      "256GB"
+    ],
     "default_mrp": 12999,
     "base_resale_value": 6500,
     "popular_tag": "Hot Performance Series",
@@ -5149,8 +5317,12 @@ export const ALL_INDIAN_PHONES_CATALOG: MasterPhone[] = [
     "brand": "Infinix",
     "model": "Infinix Hot 50i",
     "release_year": 2024,
-    "ram_options": ["4GB"],
-    "storage_options": ["128GB"],
+    "ram_options": [
+      "4GB"
+    ],
+    "storage_options": [
+      "128GB"
+    ],
     "default_mrp": 10999,
     "base_resale_value": 5200,
     "popular_tag": "Hot Performance Series",
@@ -5167,8 +5339,13 @@ export const ALL_INDIAN_PHONES_CATALOG: MasterPhone[] = [
     "brand": "Infinix",
     "model": "Infinix Hot 40 Pro",
     "release_year": 2023,
-    "ram_options": ["8GB"],
-    "storage_options": ["128GB","256GB"],
+    "ram_options": [
+      "8GB"
+    ],
+    "storage_options": [
+      "128GB",
+      "256GB"
+    ],
     "default_mrp": 15999,
     "base_resale_value": 7200,
     "popular_tag": "Hot Performance Series",
@@ -5185,8 +5362,13 @@ export const ALL_INDIAN_PHONES_CATALOG: MasterPhone[] = [
     "brand": "Infinix",
     "model": "Infinix Hot 40i",
     "release_year": 2023,
-    "ram_options": ["8GB"],
-    "storage_options": ["128GB","256GB"],
+    "ram_options": [
+      "8GB"
+    ],
+    "storage_options": [
+      "128GB",
+      "256GB"
+    ],
     "default_mrp": 11999,
     "base_resale_value": 5600,
     "popular_tag": "Hot Performance Series",
@@ -5203,8 +5385,12 @@ export const ALL_INDIAN_PHONES_CATALOG: MasterPhone[] = [
     "brand": "Infinix",
     "model": "Infinix Hot 40",
     "release_year": 2023,
-    "ram_options": ["8GB"],
-    "storage_options": ["128GB"],
+    "ram_options": [
+      "8GB"
+    ],
+    "storage_options": [
+      "128GB"
+    ],
     "default_mrp": 13999,
     "base_resale_value": 6200,
     "popular_tag": "Hot Performance Series",
@@ -5221,8 +5407,13 @@ export const ALL_INDIAN_PHONES_CATALOG: MasterPhone[] = [
     "brand": "Infinix",
     "model": "Infinix Hot 30 5G",
     "release_year": 2023,
-    "ram_options": ["4GB","8GB"],
-    "storage_options": ["128GB"],
+    "ram_options": [
+      "4GB",
+      "8GB"
+    ],
+    "storage_options": [
+      "128GB"
+    ],
     "default_mrp": 14999,
     "base_resale_value": 6800,
     "popular_tag": "Hot Performance Series",
@@ -5239,8 +5430,12 @@ export const ALL_INDIAN_PHONES_CATALOG: MasterPhone[] = [
     "brand": "Infinix",
     "model": "Infinix Hot 30",
     "release_year": 2023,
-    "ram_options": ["8GB"],
-    "storage_options": ["128GB"],
+    "ram_options": [
+      "8GB"
+    ],
+    "storage_options": [
+      "128GB"
+    ],
     "default_mrp": 12999,
     "base_resale_value": 5600,
     "popular_tag": "Hot Performance Series",
@@ -5257,8 +5452,14 @@ export const ALL_INDIAN_PHONES_CATALOG: MasterPhone[] = [
     "brand": "Infinix",
     "model": "Infinix Hot 30i",
     "release_year": 2023,
-    "ram_options": ["4GB","8GB"],
-    "storage_options": ["64GB","128GB"],
+    "ram_options": [
+      "4GB",
+      "8GB"
+    ],
+    "storage_options": [
+      "64GB",
+      "128GB"
+    ],
     "default_mrp": 10999,
     "base_resale_value": 5100,
     "popular_tag": "Hot Performance Series",
@@ -5275,8 +5476,13 @@ export const ALL_INDIAN_PHONES_CATALOG: MasterPhone[] = [
     "brand": "Infinix",
     "model": "Infinix Hot 20 5G",
     "release_year": 2022,
-    "ram_options": ["4GB"],
-    "storage_options": ["64GB","128GB"],
+    "ram_options": [
+      "4GB"
+    ],
+    "storage_options": [
+      "64GB",
+      "128GB"
+    ],
     "default_mrp": 14999,
     "base_resale_value": 5900,
     "popular_tag": "Hot Performance Series",
@@ -5293,8 +5499,12 @@ export const ALL_INDIAN_PHONES_CATALOG: MasterPhone[] = [
     "brand": "Infinix",
     "model": "Infinix Hot 20 Play",
     "release_year": 2022,
-    "ram_options": ["4GB"],
-    "storage_options": ["64GB"],
+    "ram_options": [
+      "4GB"
+    ],
+    "storage_options": [
+      "64GB"
+    ],
     "default_mrp": 11999,
     "base_resale_value": 4800,
     "popular_tag": "Hot Performance Series",
@@ -5311,8 +5521,14 @@ export const ALL_INDIAN_PHONES_CATALOG: MasterPhone[] = [
     "brand": "Infinix",
     "model": "Infinix Hot 20",
     "release_year": 2022,
-    "ram_options": ["4GB","6GB"],
-    "storage_options": ["64GB","128GB"],
+    "ram_options": [
+      "4GB",
+      "6GB"
+    ],
+    "storage_options": [
+      "64GB",
+      "128GB"
+    ],
     "default_mrp": 12999,
     "base_resale_value": 4900,
     "popular_tag": "Hot Performance Series",
@@ -5329,8 +5545,12 @@ export const ALL_INDIAN_PHONES_CATALOG: MasterPhone[] = [
     "brand": "Infinix",
     "model": "Infinix Hot 20i",
     "release_year": 2022,
-    "ram_options": ["4GB"],
-    "storage_options": ["64GB"],
+    "ram_options": [
+      "4GB"
+    ],
+    "storage_options": [
+      "64GB"
+    ],
     "default_mrp": 9999,
     "base_resale_value": 4200,
     "popular_tag": "Hot Performance Series",
@@ -5347,8 +5567,14 @@ export const ALL_INDIAN_PHONES_CATALOG: MasterPhone[] = [
     "brand": "Infinix",
     "model": "Infinix Hot 12 Pro",
     "release_year": 2022,
-    "ram_options": ["6GB","8GB"],
-    "storage_options": ["64GB","128GB"],
+    "ram_options": [
+      "6GB",
+      "8GB"
+    ],
+    "storage_options": [
+      "64GB",
+      "128GB"
+    ],
     "default_mrp": 12999,
     "base_resale_value": 5100,
     "popular_tag": "Hot Performance Series",
@@ -5365,8 +5591,12 @@ export const ALL_INDIAN_PHONES_CATALOG: MasterPhone[] = [
     "brand": "Infinix",
     "model": "Infinix Hot 12 Play",
     "release_year": 2022,
-    "ram_options": ["4GB"],
-    "storage_options": ["64GB"],
+    "ram_options": [
+      "4GB"
+    ],
+    "storage_options": [
+      "64GB"
+    ],
     "default_mrp": 10999,
     "base_resale_value": 4500,
     "popular_tag": "Hot Performance Series",
@@ -5383,8 +5613,12 @@ export const ALL_INDIAN_PHONES_CATALOG: MasterPhone[] = [
     "brand": "Infinix",
     "model": "Infinix Hot 12",
     "release_year": 2022,
-    "ram_options": ["4GB"],
-    "storage_options": ["64GB"],
+    "ram_options": [
+      "4GB"
+    ],
+    "storage_options": [
+      "64GB"
+    ],
     "default_mrp": 11999,
     "base_resale_value": 4700,
     "popular_tag": "Hot Performance Series",
@@ -5401,8 +5635,14 @@ export const ALL_INDIAN_PHONES_CATALOG: MasterPhone[] = [
     "brand": "Infinix",
     "model": "Infinix Hot 11S",
     "release_year": 2021,
-    "ram_options": ["4GB","6GB"],
-    "storage_options": ["64GB","128GB"],
+    "ram_options": [
+      "4GB",
+      "6GB"
+    ],
+    "storage_options": [
+      "64GB",
+      "128GB"
+    ],
     "default_mrp": 13999,
     "base_resale_value": 4800,
     "popular_tag": "Hot Performance Series",
@@ -5419,8 +5659,12 @@ export const ALL_INDIAN_PHONES_CATALOG: MasterPhone[] = [
     "brand": "Infinix",
     "model": "Infinix Hot 11 2022",
     "release_year": 2022,
-    "ram_options": ["4GB"],
-    "storage_options": ["64GB"],
+    "ram_options": [
+      "4GB"
+    ],
+    "storage_options": [
+      "64GB"
+    ],
     "default_mrp": 11999,
     "base_resale_value": 4200,
     "popular_tag": "Hot Performance Series",
@@ -5437,8 +5681,12 @@ export const ALL_INDIAN_PHONES_CATALOG: MasterPhone[] = [
     "brand": "Infinix",
     "model": "Infinix Hot 11",
     "release_year": 2021,
-    "ram_options": ["4GB"],
-    "storage_options": ["64GB"],
+    "ram_options": [
+      "4GB"
+    ],
+    "storage_options": [
+      "64GB"
+    ],
     "default_mrp": 11499,
     "base_resale_value": 4100,
     "popular_tag": "Hot Performance Series",
@@ -5455,8 +5703,13 @@ export const ALL_INDIAN_PHONES_CATALOG: MasterPhone[] = [
     "brand": "Infinix",
     "model": "Infinix Hot 10S",
     "release_year": 2021,
-    "ram_options": ["4GB","6GB"],
-    "storage_options": ["64GB"],
+    "ram_options": [
+      "4GB",
+      "6GB"
+    ],
+    "storage_options": [
+      "64GB"
+    ],
     "default_mrp": 12999,
     "base_resale_value": 4100,
     "popular_tag": "Hot Performance Series",
@@ -5473,8 +5726,12 @@ export const ALL_INDIAN_PHONES_CATALOG: MasterPhone[] = [
     "brand": "Infinix",
     "model": "Infinix Hot 10 Play",
     "release_year": 2021,
-    "ram_options": ["3GB","4GB"],
-    "storage_options": ["32GB","64GB"],
+    "ram_options": [
+      "4GB"
+    ],
+    "storage_options": [
+      "64GB"
+    ],
     "default_mrp": 10499,
     "base_resale_value": 3600,
     "popular_tag": "Hot Performance Series",
@@ -5491,8 +5748,14 @@ export const ALL_INDIAN_PHONES_CATALOG: MasterPhone[] = [
     "brand": "Infinix",
     "model": "Infinix Hot 10",
     "release_year": 2020,
-    "ram_options": ["4GB","6GB"],
-    "storage_options": ["64GB","128GB"],
+    "ram_options": [
+      "4GB",
+      "6GB"
+    ],
+    "storage_options": [
+      "64GB",
+      "128GB"
+    ],
     "default_mrp": 11999,
     "base_resale_value": 3800,
     "popular_tag": "Hot Performance Series",
@@ -5509,8 +5772,12 @@ export const ALL_INDIAN_PHONES_CATALOG: MasterPhone[] = [
     "brand": "Infinix",
     "model": "Infinix Hot 9 Pro",
     "release_year": 2020,
-    "ram_options": ["4GB"],
-    "storage_options": ["64GB"],
+    "ram_options": [
+      "4GB"
+    ],
+    "storage_options": [
+      "64GB"
+    ],
     "default_mrp": 12499,
     "base_resale_value": 3600,
     "popular_tag": "Hot Performance Series",
@@ -5527,8 +5794,12 @@ export const ALL_INDIAN_PHONES_CATALOG: MasterPhone[] = [
     "brand": "Infinix",
     "model": "Infinix Hot 9",
     "release_year": 2020,
-    "ram_options": ["4GB"],
-    "storage_options": ["64GB"],
+    "ram_options": [
+      "4GB"
+    ],
+    "storage_options": [
+      "64GB"
+    ],
     "default_mrp": 11499,
     "base_resale_value": 3300,
     "popular_tag": "Hot Performance Series",
@@ -5545,8 +5816,12 @@ export const ALL_INDIAN_PHONES_CATALOG: MasterPhone[] = [
     "brand": "Infinix",
     "model": "Infinix Hot 8",
     "release_year": 2019,
-    "ram_options": ["4GB"],
-    "storage_options": ["64GB"],
+    "ram_options": [
+      "4GB"
+    ],
+    "storage_options": [
+      "64GB"
+    ],
     "default_mrp": 9999,
     "base_resale_value": 2900,
     "popular_tag": "Hot Performance Series",
@@ -5563,8 +5838,12 @@ export const ALL_INDIAN_PHONES_CATALOG: MasterPhone[] = [
     "brand": "Infinix",
     "model": "Infinix Smart 8 HD",
     "release_year": 2023,
-    "ram_options": ["3GB","6GB"],
-    "storage_options": ["64GB"],
+    "ram_options": [
+      "6GB"
+    ],
+    "storage_options": [
+      "64GB"
+    ],
     "default_mrp": 8999,
     "base_resale_value": 4200,
     "popular_tag": "Smart Budget Series",
@@ -5581,8 +5860,13 @@ export const ALL_INDIAN_PHONES_CATALOG: MasterPhone[] = [
     "brand": "Infinix",
     "model": "Infinix Smart 8 Plus",
     "release_year": 2024,
-    "ram_options": ["4GB"],
-    "storage_options": ["64GB","128GB"],
+    "ram_options": [
+      "4GB"
+    ],
+    "storage_options": [
+      "64GB",
+      "128GB"
+    ],
     "default_mrp": 9499,
     "base_resale_value": 4500,
     "popular_tag": "Smart Budget Series",
@@ -5599,8 +5883,13 @@ export const ALL_INDIAN_PHONES_CATALOG: MasterPhone[] = [
     "brand": "Infinix",
     "model": "Infinix Smart 8",
     "release_year": 2024,
-    "ram_options": ["4GB","8GB"],
-    "storage_options": ["64GB"],
+    "ram_options": [
+      "4GB",
+      "8GB"
+    ],
+    "storage_options": [
+      "64GB"
+    ],
     "default_mrp": 8999,
     "base_resale_value": 4300,
     "popular_tag": "Smart Budget Series",
@@ -5617,8 +5906,10 @@ export const ALL_INDIAN_PHONES_CATALOG: MasterPhone[] = [
     "brand": "Infinix",
     "model": "Infinix Smart 7 HD",
     "release_year": 2023,
-    "ram_options": ["2GB"],
-    "storage_options": ["64GB"],
+    "ram_options": [],
+    "storage_options": [
+      "64GB"
+    ],
     "default_mrp": 7999,
     "base_resale_value": 3400,
     "popular_tag": "Smart Budget Series",
@@ -5628,15 +5919,19 @@ export const ALL_INDIAN_PHONES_CATALOG: MasterPhone[] = [
     "battery_spec": "5000 mAh Battery",
     "display_spec": "6.6\" HD+ Sunlight Display",
     "is_5g": false,
-    "is_active": true
+    "is_active": false
   },
   {
     "id": "infinix-smart7",
     "brand": "Infinix",
     "model": "Infinix Smart 7",
     "release_year": 2023,
-    "ram_options": ["4GB"],
-    "storage_options": ["64GB"],
+    "ram_options": [
+      "4GB"
+    ],
+    "storage_options": [
+      "64GB"
+    ],
     "default_mrp": 8499,
     "base_resale_value": 3500,
     "popular_tag": "Smart Budget Series",
@@ -5653,8 +5948,8 @@ export const ALL_INDIAN_PHONES_CATALOG: MasterPhone[] = [
     "brand": "Infinix",
     "model": "Infinix Smart 6 Plus",
     "release_year": 2022,
-    "ram_options": ["2GB","3GB"],
-    "storage_options": ["32GB"],
+    "ram_options": [],
+    "storage_options": [],
     "default_mrp": 8999,
     "base_resale_value": 3100,
     "popular_tag": "Smart Budget Series",
@@ -5664,15 +5959,15 @@ export const ALL_INDIAN_PHONES_CATALOG: MasterPhone[] = [
     "battery_spec": "5000 mAh Battery",
     "display_spec": "6.82\" HD+ Display",
     "is_5g": false,
-    "is_active": true
+    "is_active": false
   },
   {
     "id": "infinix-smart6hd",
     "brand": "Infinix",
     "model": "Infinix Smart 6 HD",
     "release_year": 2022,
-    "ram_options": ["2GB"],
-    "storage_options": ["32GB"],
+    "ram_options": [],
+    "storage_options": [],
     "default_mrp": 7999,
     "base_resale_value": 2800,
     "popular_tag": "Smart Budget Series",
@@ -5682,15 +5977,15 @@ export const ALL_INDIAN_PHONES_CATALOG: MasterPhone[] = [
     "battery_spec": "5000 mAh Battery",
     "display_spec": "6.6\" HD+ Sunlight Display",
     "is_5g": false,
-    "is_active": true
+    "is_active": false
   },
   {
     "id": "infinix-smart6",
     "brand": "Infinix",
     "model": "Infinix Smart 6",
     "release_year": 2022,
-    "ram_options": ["2GB"],
-    "storage_options": ["32GB"],
+    "ram_options": [],
+    "storage_options": [],
     "default_mrp": 8499,
     "base_resale_value": 2900,
     "popular_tag": "Smart Budget Series",
@@ -5700,15 +5995,15 @@ export const ALL_INDIAN_PHONES_CATALOG: MasterPhone[] = [
     "battery_spec": "5000 mAh Battery",
     "display_spec": "6.6\" HD+ Display",
     "is_5g": false,
-    "is_active": true
+    "is_active": false
   },
   {
     "id": "infinix-smart5a",
     "brand": "Infinix",
     "model": "Infinix Smart 5A",
     "release_year": 2021,
-    "ram_options": ["2GB"],
-    "storage_options": ["32GB"],
+    "ram_options": [],
+    "storage_options": [],
     "default_mrp": 7999,
     "base_resale_value": 2600,
     "popular_tag": "Smart Budget Series",
@@ -5718,15 +6013,15 @@ export const ALL_INDIAN_PHONES_CATALOG: MasterPhone[] = [
     "battery_spec": "5000 mAh Battery",
     "display_spec": "6.52\" HD+ Drop Notch",
     "is_5g": false,
-    "is_active": true
+    "is_active": false
   },
   {
     "id": "infinix-smart5",
     "brand": "Infinix",
     "model": "Infinix Smart 5",
     "release_year": 2021,
-    "ram_options": ["2GB"],
-    "storage_options": ["32GB"],
+    "ram_options": [],
+    "storage_options": [],
     "default_mrp": 8499,
     "base_resale_value": 2700,
     "popular_tag": "Smart Budget Series",
@@ -5736,15 +6031,15 @@ export const ALL_INDIAN_PHONES_CATALOG: MasterPhone[] = [
     "battery_spec": "6000 mAh Mega Battery",
     "display_spec": "6.82\" HD+ Display",
     "is_5g": false,
-    "is_active": true
+    "is_active": false
   },
   {
     "id": "infinix-smart4plus",
     "brand": "Infinix",
     "model": "Infinix Smart 4 Plus",
     "release_year": 2020,
-    "ram_options": ["3GB"],
-    "storage_options": ["32GB"],
+    "ram_options": [],
+    "storage_options": [],
     "default_mrp": 8999,
     "base_resale_value": 2400,
     "popular_tag": "Smart Budget Series",
@@ -5754,15 +6049,15 @@ export const ALL_INDIAN_PHONES_CATALOG: MasterPhone[] = [
     "battery_spec": "6000 mAh Monster Battery",
     "display_spec": "6.82\" HD+ Display",
     "is_5g": false,
-    "is_active": true
+    "is_active": false
   },
   {
     "id": "infinix-smart4",
     "brand": "Infinix",
     "model": "Infinix Smart 4",
     "release_year": 2020,
-    "ram_options": ["2GB"],
-    "storage_options": ["32GB"],
+    "ram_options": [],
+    "storage_options": [],
     "default_mrp": 7999,
     "base_resale_value": 2100,
     "popular_tag": "Smart Budget Series",
@@ -5772,7 +6067,7 @@ export const ALL_INDIAN_PHONES_CATALOG: MasterPhone[] = [
     "battery_spec": "4000 mAh Battery",
     "display_spec": "6.82\" HD+ Display",
     "is_5g": false,
-    "is_active": true
+    "is_active": false
   },
   {
     "id": "tecno-camon30",

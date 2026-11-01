@@ -30,6 +30,7 @@ import {
   hasCustomModelImage,
 } from '../../lib/phoneImages';
 import { compressImage } from '../../lib/imageUtils';
+import { isObsoleteDeviceHardware } from '../../lib/deviceSpecs';
 
 type AdminCatalogProps = {
   masterPhones: MasterPhone[];
@@ -163,12 +164,14 @@ export default function AdminCatalog({
 
     // 1. Process masterPhones passed from props (DB / live imported)
     masterPhones.forEach((mp) => {
+      if (mp.is_active === false || isObsoleteDeviceHardware(mp)) return;
       const key = normKey(mp.brand, mp.model);
       map.set(key, mp);
     });
 
     // 2. Process ALL_INDIAN_PHONES_CATALOG
     ALL_INDIAN_PHONES_CATALOG.forEach((p) => {
+      if (p.is_active === false || isObsoleteDeviceHardware(p)) return;
       const key = normKey(p.brand, p.model);
       if (!map.has(key)) {
         map.set(key, p);
@@ -177,6 +180,7 @@ export default function AdminCatalog({
 
     // 3. Process MASTER_MODEL_CATALOG (1,167 models)
     MASTER_MODEL_CATALOG.forEach((m) => {
+      if (isObsoleteDeviceHardware(m)) return;
       const key = normKey(m.brand, m.model);
       if (!map.has(key)) {
         let cleanModel = m.model.trim();

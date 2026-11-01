@@ -113,12 +113,31 @@ export async function ensureMasterPhonesSeeded(force = true) {
       const price = lockedPrice || phone.price || phone.base_resale_value || 12000;
       const isExplicitlyDisabled = disabledSet.has(key) || disabledSet.has(strippedKey);
 
+      const rawStorages = Array.isArray(phone.storage_options) ? phone.storage_options : ['128GB'];
+      const cleanStorages = rawStorages.filter((s) => {
+        const match = String(s).match(/(\d+)\s*(?:gb|tb)/i);
+        if (!match) return false;
+        const num = parseInt(match[1], 10);
+        return /tb/i.test(s) ? num * 1024 >= 64 : num >= 64;
+      });
+
+      const isApple = b.includes('apple') || m.includes('iphone');
+      const rawRams = Array.isArray(phone.ram_options) ? phone.ram_options : ['6GB', '8GB'];
+      const cleanRams = isApple
+        ? rawRams
+        : rawRams.filter((r) => {
+            const match = String(r).match(/(\d+)\s*gb/i);
+            return match && parseInt(match[1], 10) >= 4;
+          });
+
+      const isObsoleteDevice = cleanStorages.length === 0 || (!isApple && cleanRams.length === 0);
+
       const updateFields = {
         brand: phone.brand,
         model: phone.model,
         release_year: phone.release_year || 2024,
-        ram_options: phone.ram_options || ['6GB', '8GB', '12GB'],
-        storage_options: phone.storage_options || ['128GB', '256GB'],
+        ram_options: cleanRams.length > 0 ? cleanRams : ['4GB', '6GB', '8GB'],
+        storage_options: cleanStorages.length > 0 ? cleanStorages : ['64GB', '128GB'],
         default_mrp: phone.default_mrp || Math.round(price * 1.5),
         popular_tag: phone.popular_tag || `${phone.brand} Official Model`,
         processor: phone.processor || 'High-Performance Processor',
@@ -126,7 +145,7 @@ export async function ensureMasterPhonesSeeded(force = true) {
         battery_spec: phone.battery_spec || '5000 mAh Fast Charging',
         display_spec: phone.display_spec || 'AMOLED Display',
         is_5g: phone.is_5g !== false,
-        is_active: !isExplicitlyDisabled && phone.is_active !== false,
+        is_active: !isExplicitlyDisabled && !isObsoleteDevice && phone.is_active !== false,
         updated_at: new Date(),
       };
 

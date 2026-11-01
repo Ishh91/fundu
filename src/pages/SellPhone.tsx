@@ -37,7 +37,7 @@ import { useAuth } from '../context/AuthContext';
 import { ALL_INDIAN_PHONES_CATALOG } from '../data/indianPhonesCatalog';
 import { getCleanPhoneImage, getCleanBrandLogo, BRAND_FRONT_FALLBACKS, getGenericDevicePlaceholder, pullLiveModelImagesFromDb } from '../lib/phoneImages';
 import { usePriceSync, applyPriceOverrides, isModelDeleted, savePriceOverride, getEffectivePrice } from '../lib/priceSync';
-import { getModelHardwareSpecs, calculateHardwareVariantMultiplier, calculateRamPriceOffset, deviceIncludesStylus, getModelReleaseYear, isAmoledDisplay } from '../lib/deviceSpecs';
+import { getModelHardwareSpecs, calculateHardwareVariantMultiplier, calculateRamPriceOffset, deviceIncludesStylus, getModelReleaseYear, isAmoledDisplay, isObsoleteDeviceHardware } from '../lib/deviceSpecs';
 import {
   getPanIndiaLocation,
   searchPanIndiaLocations,
@@ -972,7 +972,7 @@ export default function SellPhone() {
     const modelMap = new Map<string, any>();
 
     MASTER_MODEL_CATALOG.forEach((m) => {
-      if (isModelDeleted(m.brand, m.model)) return;
+      if (isModelDeleted(m.brand, m.model) || isObsoleteDeviceHardware(m)) return;
       const key = `${m.brand.toLowerCase()}-${getModelDedupeKey(m.brand, m.model)}`;
       if (!modelMap.has(key)) {
         modelMap.set(key, m);
@@ -981,7 +981,7 @@ export default function SellPhone() {
 
     if (Array.isArray(ALL_INDIAN_PHONES_CATALOG)) {
       ALL_INDIAN_PHONES_CATALOG.forEach((p) => {
-        if (isModelDeleted(p.brand, p.model)) return;
+        if (isModelDeleted(p.brand, p.model) || isObsoleteDeviceHardware(p)) return;
         const key = `${p.brand.toLowerCase()}-${getModelDedupeKey(p.brand, p.model)}`;
         if (!modelMap.has(key)) {
           modelMap.set(key, {
@@ -1011,7 +1011,7 @@ export default function SellPhone() {
     }
 
     // Fallback to MobileAPI search results if local database has 0 matches
-    return applyPriceOverrides(apiSearchResults.filter((d) => !isModelDeleted(d.brand, d.model)));
+    return applyPriceOverrides(apiSearchResults.filter((d) => !isModelDeleted(d.brand, d.model) && !isObsoleteDeviceHardware(d)));
   }, [debouncedQuery, apiSearchResults, version]);
 
   // Available Series List for Selected Brand (in exact defined chronological order)

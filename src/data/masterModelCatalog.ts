@@ -291,62 +291,6 @@ export const MASTER_MODEL_CATALOG = [
   },
   {
     "brand": "Apple",
-    "series": "iPhone SE Series",
-    "model": "Apple iPhone SE 1st Gen (2016)",
-    "storage": "32 GB",
-    "price": 2800,
-    "image": "https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-5s.jpg"
-  },
-  {
-    "brand": "Apple",
-    "series": "Classic Series",
-    "model": "Apple iPhone 5s",
-    "storage": "32 GB",
-    "price": 1400,
-    "image": "https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-5s.jpg"
-  },
-  {
-    "brand": "Apple",
-    "series": "Classic Series",
-    "model": "Apple iPhone 5c",
-    "storage": "16 GB",
-    "price": 1000,
-    "image": "https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-5c.jpg"
-  },
-  {
-    "brand": "Apple",
-    "series": "Classic Series",
-    "model": "Apple iPhone 5",
-    "storage": "32 GB",
-    "price": 900,
-    "image": "https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-5.jpg"
-  },
-  {
-    "brand": "Apple",
-    "series": "Classic Series",
-    "model": "Apple iPhone 4s",
-    "storage": "16 GB",
-    "price": 700,
-    "image": "https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-4s.jpg"
-  },
-  {
-    "brand": "Apple",
-    "series": "Classic Series",
-    "model": "Apple iPhone 4",
-    "storage": "16 GB",
-    "price": 600,
-    "image": "https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-4.jpg"
-  },
-  {
-    "brand": "Apple",
-    "series": "Classic Series",
-    "model": "Apple iPhone 1 (Original 2007)",
-    "storage": "8 GB",
-    "price": 1200,
-    "image": "https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-3gs.jpg"
-  },
-  {
-    "brand": "Apple",
     "series": "iPhone 17 Series",
     "model": "Apple iPhone Air",
     "storage": "256 GB",
@@ -464,14 +408,6 @@ export const MASTER_MODEL_CATALOG = [
     "storage": "64 GB",
     "price": 3000,
     "image": "https://api.mobileapi.dev/devices/772/thumb.png"
-  },
-  {
-    "brand": "Google",
-    "series": "Pixel 6 & Older Generation Series",
-    "model": "Google Pixel C",
-    "storage": "32 GB",
-    "price": 2800,
-    "image": "https://api.mobileapi.dev/devices/786/thumb.png"
   },
   {
     "brand": "Google",
@@ -8274,6 +8210,7 @@ export const MASTER_MODEL_CATALOG = [
     "image": "https://fdn2.gsmarena.com/vv/bigpic/infinix-smart-7.jpg"
   }
 ];
+
 export const STORAGE_OPTIONS = ['64 GB', '128 GB', '256 GB', '512 GB', '1 TB'];
 
 export const ACCESSORIES_LIST = [

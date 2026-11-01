@@ -45,7 +45,7 @@ import {
 import { ALL_INDIAN_PHONES_CATALOG } from '../../data/indianPhonesCatalog';
 import { MASTER_MODEL_CATALOG } from '../../data/masterModelCatalog';
 import { BRAND_SERIES_DEFINITIONS } from '../../data/brandSeriesCatalog';
-import { getModelHardwareSpecs, calculateHardwareVariantMultiplier, normalizeStorageString } from '../../lib/deviceSpecs';
+import { getModelHardwareSpecs, calculateHardwareVariantMultiplier, normalizeStorageString, isObsoleteDeviceHardware } from '../../lib/deviceSpecs';
 
 export type UnifiedSellModel = {
   id: string;
@@ -255,6 +255,7 @@ export default function AdminSellPricing({
 
     // 1. Process Master Phones (from DB)
     masterPhones.forEach((p) => {
+      if (p.is_active === false || isObsoleteDeviceHardware(p)) return;
       const cleanM = getCleanModelName(p.brand, p.model);
       const key = makeKey(p.brand, p.model);
 
@@ -284,6 +285,7 @@ export default function AdminSellPricing({
 
     // 2. Process Full Master Model Catalog (1,162 phones across all brands)
     MASTER_MODEL_CATALOG.forEach((p) => {
+      if (isObsoleteDeviceHardware(p)) return;
       const cleanM = getCleanModelName(p.brand, p.model);
       const key = makeKey(p.brand, p.model);
 
@@ -319,6 +321,7 @@ export default function AdminSellPricing({
 
     // 3. Process All Indian Phones Catalog (best-sellers fallback)
     ALL_INDIAN_PHONES_CATALOG.forEach((p) => {
+      if (p.is_active === false || isObsoleteDeviceHardware(p)) return;
       const cleanM = getCleanModelName(p.brand, p.model);
       const key = makeKey(p.brand, p.model);
 
@@ -357,6 +360,7 @@ export default function AdminSellPricing({
     Object.values(BRAND_SERIES_DEFINITIONS).forEach((seriesList) => {
       seriesList.forEach((ser) => {
         (ser.defaultModels || []).forEach((p) => {
+          if (isObsoleteDeviceHardware(p)) return;
           const cleanM = getCleanModelName(p.brand, p.model);
           const key = makeKey(p.brand, p.model);
 

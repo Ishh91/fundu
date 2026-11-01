@@ -29,10 +29,54 @@ export function getStorageInGb(storageStr: string): number {
   return unit === 'TB' ? num * 1024 : num;
 }
 
-// Validates whether a storage size is an authentic smartphone/tablet hardware tier (16GB - 2TB)
+// Validates whether a storage size is an authentic active smartphone hardware tier (64GB - 2TB). 16GB & 32GB are completely removed.
 export function isValidStorageTier(storageStr: string): boolean {
   const gb = getStorageInGb(storageStr);
-  return [16, 32, 64, 128, 256, 512, 1024, 2048].includes(gb);
+  return [64, 128, 256, 512, 1024, 2048].includes(gb);
+}
+
+/**
+ * Checks if a phone's hardware tiers are completely obsolete:
+ * - Has no storage option >= 64GB (e.g. only 16GB / 32GB)
+ * - OR for Android devices, only had <= 3GB RAM and no 4GB+ option
+ */
+export function isObsoleteDeviceHardware(params: {
+  brand?: string;
+  model?: string;
+  storage?: string;
+  storages?: string[];
+  storage_options?: string[];
+  ram_options?: string[];
+}): boolean {
+  const b = (params.brand || '').toLowerCase().trim();
+  const m = (params.model || '').toLowerCase().trim();
+  const isApple = b.includes('apple') || m.includes('iphone') || m.includes('ipad');
+
+  const allStorages = [
+    ...(params.storages || []),
+    ...(params.storage_options || []),
+    ...(params.storage ? [params.storage] : []),
+  ];
+
+  if (allStorages.length > 0) {
+    const hasValidStorage = allStorages.some((s) => {
+      const match = String(s).match(/(\d+)\s*(?:gb|tb)/i);
+      if (!match) return false;
+      const num = parseInt(match[1], 10);
+      return /tb/i.test(s) ? num * 1024 >= 64 : num >= 64;
+    });
+    if (!hasValidStorage) return true;
+  }
+
+  if (!isApple && params.ram_options && params.ram_options.length > 0) {
+    const hasValidRam = params.ram_options.some((r) => {
+      const match = String(r).match(/(\d+)\s*gb/i);
+      return match && parseInt(match[1], 10) >= 4;
+    });
+    if (!hasValidRam && allStorages.length === 0) return true;
+  }
+
+  return false;
 }
 
 // Normalizes RAM strings to standard 'X GB' format
@@ -2866,25 +2910,9 @@ export function isStorageAllowedForModel(brand = '', model = '', storageStr = ''
     return true;
   }
 
-  // 5. Tier: 16 GB & 32 GB
+  // 5. Tier: <= 32 GB (16 GB & 32 GB are completely banned across all devices)
   if (gb <= 32) {
-    // Allowed ONLY on legacy/vintage devices (iPhone <= 7, Galaxy S <= 7, Galaxy J, Redmi <= 6A, A1, C11)
-    if (
-      /iphone\s*(?:[89]|1[0-9]|x|se\s*(?:2|3|202[02]))/i.test(m) ||
-      /galaxy\s*s([89]|1[0-9]|2[0-9])/i.test(m) ||
-      /galaxy\s*note\s*([89]|1[0-9]|2[0-9])/i.test(m) ||
-      /oneplus\b/i.test(b) ||
-      /pixel\s*([2-9]|1[0-9])/i.test(m) ||
-      /nord\b/i.test(m) ||
-      /iqoo\b/i.test(b) ||
-      /vivo\s*[xv]\d+/i.test(m) ||
-      /oppo\s*(find|reno)/i.test(m) ||
-      /redmi\s*note/i.test(m) ||
-      /realme\s*(gt|number|\d+)/i.test(m)
-    ) {
-      return false;
-    }
-    return true;
+    return false;
   }
 
   return true;
