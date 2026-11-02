@@ -21137,53 +21137,6 @@
   },
   {
     "brand": "Vivo",
-    "model": "V3 / V3 Max",
-    "release_year": 2016,
-    "ram_options": [
-      "6GB",
-      "8GB"
-    ],
-    "storage_options": [
-      "128 GB",
-      "256 GB"
-    ],
-    "default_mrp": 17980,
-    "base_resale_value": 1630,
-    "image_url": null,
-    "popular_tag": "Vivo Bestseller",
-    "processor": "Octa-core Processor",
-    "camera_spec": "50MP Camera",
-    "battery_spec": "5000 mAh",
-    "display_spec": "AMOLED Display",
-    "is_5g": true,
-    "is_active": true,
-    "price": 1630
-  },
-  {
-    "brand": "Vivo",
-    "model": "V1 / V1 Max",
-    "release_year": 2015,
-    "ram_options": [
-      "6GB",
-      "8GB"
-    ],
-    "storage_options": [
-      "128 GB",
-      "256 GB"
-    ],
-    "default_mrp": 17980,
-    "base_resale_value": 2300,
-    "image_url": null,
-    "popular_tag": "Vivo Bestseller",
-    "processor": "Octa-core Processor",
-    "camera_spec": "50MP Camera",
-    "battery_spec": "5000 mAh",
-    "display_spec": "AMOLED Display",
-    "is_5g": true,
-    "is_active": true
-  },
-  {
-    "brand": "Vivo",
     "model": "Y300 Pro 5G",
     "release_year": 2024,
     "ram_options": [
@@ -24057,31 +24010,6 @@
     "is_active": true,
     "base_resale_value": 12500,
     "price": 12500
-  },
-  {
-    "brand": "Xiaomi",
-    "model": "Redmi 9 Active",
-    "release_year": 2024,
-    "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
-    ],
-    "storage_options": [
-      "64 GB",
-      "256 GB"
-    ],
-    "default_mrp": null,
-    "image_url": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-14.jpg",
-    "popular_tag": "Xiaomi Official Model",
-    "processor": "Snapdragon / MediaTek Dimensity",
-    "camera_spec": "50MP OIS Camera",
-    "battery_spec": "5000 mAh Fast Charging",
-    "display_spec": "AMOLED 120Hz Display",
-    "is_5g": false,
-    "is_active": true,
-    "base_resale_value": 4100,
-    "price": 4100
   },
   {
     "brand": "Xiaomi",

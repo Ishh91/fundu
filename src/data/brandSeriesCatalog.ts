@@ -896,7 +896,6 @@ export const BRAND_SERIES_DEFINITIONS: Record<string, BrandSeriesDefinition[]> =
         { brand: 'Xiaomi', series: 'Redmi Note 11 & Older Series', model: 'Redmi Note 11 Pro', storage: '128 GB', price: 7250, image: 'https://fdn2.gsmarena.com/vv/bigpic/xiaomi-redmi-note-11-pro-global.jpg' },
         { brand: 'Xiaomi', series: 'Redmi Note 11 & Older Series', model: 'Redmi Note 11T 5G', storage: '128 GB', price: 6800, image: getApiThumb('Xiaomi', 'Note 11T', 'https://fdn2.gsmarena.com/vv/bigpic/xiaomi-redmi-note-11t-5g.jpg') },
         { brand: 'Xiaomi', series: 'Redmi Note 11 & Older Series', model: 'Redmi Note 11', storage: '64 GB', price: 5100, image: 'https://fdn2.gsmarena.com/vv/bigpic/xiaomi-redmi-note-11.jpg' },
-        { brand: 'Xiaomi', series: 'Redmi Note 11 & Older Series', model: 'Redmi Note 11R', storage: '128 GB', price: 6450, image: getApiThumb('Xiaomi', 'Note 11R', 'https://fdn2.gsmarena.com/vv/bigpic/xiaomi-redmi-note-11r.jpg') },
         { brand: 'Xiaomi', series: 'Redmi Note 11 & Older Series', model: 'Redmi Note 10 Pro Max', storage: '128 GB', price: 13150, image: 'https://fdn2.gsmarena.com/vv/bigpic/xiaomi-redmi-note10-pro-max.jpg' },
         { brand: 'Xiaomi', series: 'Redmi Note 11 & Older Series', model: 'Redmi Note 10 Pro', storage: '128 GB', price: 6800, image: 'https://fdn2.gsmarena.com/vv/bigpic/xiaomi-redmi-note10-pro.jpg' },
         { brand: 'Xiaomi', series: 'Redmi Note 11 & Older Series', model: 'Redmi Note 10S', storage: '64 GB', price: 5000, image: 'https://fdn2.gsmarena.com/vv/bigpic/xiaomi-redmi-note-10s.jpg' },
