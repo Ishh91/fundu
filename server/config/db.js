@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 import bcrypt from 'bcryptjs';
-import { Product, SparePart, SellPriceConfig, User } from '../models/index.js';
+import { Product, SparePart, SellPriceConfig, MasterPhone, User } from '../models/index.js';
 import { ensureAgentsSeeded } from '../services/dispatchService.js';
 import { ensureMasterPhonesSeeded, startCatalogAutoWatcher } from './seedPhones.js';
 
@@ -356,6 +356,13 @@ export const connectDB = async () => {
       autoIndex: false,
     });
     console.log('Connected to MongoDB successfully.');
+    try {
+      await Promise.allSettled([
+        SellPriceConfig.createIndexes(),
+        MasterPhone.createIndexes(),
+      ]);
+      console.log('Ensured high-speed MongoDB compound indexes for catalog and pricing.');
+    } catch {}
     await seedDatabase();
   } catch (err) {
     console.warn('MongoDB connection notice:', err.message || err);

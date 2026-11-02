@@ -17,7 +17,12 @@ const masterPhoneSchema = createSchema({
   battery_spec: { type: String, default: null },
   display_spec: { type: String, default: null },
   is_5g: { type: Boolean, default: false },
-  is_active: { type: Boolean, default: true },
+  is_active: { type: Boolean, default: true, index: true },
 }, { timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' } });
+
+// High-speed compound indexes for instant brand and model lookups
+masterPhoneSchema.index({ brand: 1, model: 1, is_active: 1 });
+masterPhoneSchema.index({ brand: 1, is_active: 1 });
+masterPhoneSchema.index({ is_active: 1, updated_at: -1 });
 
 export const MasterPhone = mongoose.models.MasterPhone || mongoose.model('MasterPhone', masterPhoneSchema);
