@@ -1612,7 +1612,6 @@ export const RESALE_BENCHMARKS = [
   { brand: 'Xiaomi', model: "Xiaomi Mi 10i", storage: '64 GB', proceeds: 7150, lastUpdated: '2026-10-08' },
   { brand: 'Xiaomi', model: "Xiaomi Mi 10i", storage: '128 GB', proceeds: 8100, lastUpdated: '2026-10-08' },
   { brand: 'Xiaomi', model: "Xiaomi Mi 10T", storage: '128 GB', proceeds: 8600, lastUpdated: '2026-10-08' },
-  { brand: 'Xiaomi', model: "Xiaomi Mi 10T Pro", storage: '128 GB', proceeds: 9900, lastUpdated: '2026-10-08' },
   { brand: 'Xiaomi', model: "Xiaomi Redmi 10", storage: '128 GB', proceeds: 5100, lastUpdated: '2026-10-08' },
   { brand: 'Xiaomi', model: "Xiaomi Redmi 10", storage: '64 GB', proceeds: 4500, lastUpdated: '2026-10-08' },
   { brand: 'Xiaomi', model: "Xiaomi Redmi 10 Power", storage: '128 GB', proceeds: 6400, lastUpdated: '2026-10-08' },
@@ -1689,8 +1688,6 @@ export const RESALE_BENCHMARKS = [
   { brand: 'Xiaomi', model: "Xiaomi Redmi Note 11 Pro Plus 5G", storage: '128 GB', proceeds: 10500, lastUpdated: '2026-10-08' },
   { brand: 'Xiaomi', model: "Xiaomi Redmi Note 11 Pro Plus 5G", storage: '256 GB', proceeds: 11750, lastUpdated: '2026-10-08' },
   { brand: 'Xiaomi', model: "Xiaomi Redmi Note 11 SE", storage: '64 GB', proceeds: 5350, lastUpdated: '2026-10-08' },
-  { brand: 'Xiaomi', model: "Xiaomi Redmi Note 11S", storage: '128 GB', proceeds: 6600, lastUpdated: '2026-10-08' },
-  { brand: 'Xiaomi', model: "Xiaomi Redmi Note 11S", storage: '64 GB', proceeds: 5800, lastUpdated: '2026-10-08' },
   { brand: 'Xiaomi', model: "Xiaomi Redmi Note 11T 5G", storage: '64 GB', proceeds: 6000, lastUpdated: '2026-10-08' },
   { brand: 'Xiaomi', model: "Xiaomi Redmi Note 11T 5G", storage: '128 GB', proceeds: 6800, lastUpdated: '2026-10-08' },
   { brand: 'Xiaomi', model: "Xiaomi Redmi Note 12", storage: '64 GB', proceeds: 6950, lastUpdated: '2026-10-08' },
@@ -1976,7 +1973,6 @@ export function computeDynamicBenchmarkProceeds(brand = '', model = '', storage 
     else if (normModel.includes('note 12')) base = 9500;
     else if (normModel.includes('note 11 pro+')) base = 10500;
     else if (normModel.includes('note 11 pro')) base = 9000;
-    else if (normModel.includes('note 11s')) base = 8000;
     else if (normModel.includes('note 11')) base = 7000;
     else if (normModel.includes('note 10 pro max')) base = 8000;
     else if (normModel.includes('note 10 pro')) base = 7000;

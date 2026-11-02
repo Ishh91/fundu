@@ -5933,30 +5933,6 @@ export const ALL_INDIAN_PHONES_CATALOG: MasterPhone[] = [
     "is_active": true
   },
   {
-    "id": "oneplus-oneplus-8-5g-uw",
-    "brand": "OnePlus",
-    "model": "OnePlus 8 5G UW",
-    "release_year": 2020,
-    "ram_options": [
-      "8GB",
-      "12GB"
-    ],
-    "storage_options": [
-      "128GB",
-      "256GB"
-    ],
-    "default_mrp": 41999,
-    "base_resale_value": 9800,
-    "image_url": "https://api.mobileapi.dev/devices/16348/thumb.png",
-    "popular_tag": "Verizon Ultra Wideband mmWave",
-    "processor": "Snapdragon 865 5G",
-    "camera_spec": "48MP Sony IMX586 Triple Camera",
-    "battery_spec": "4300 mAh Warp Charge 30T",
-    "display_spec": "6.55\" 90Hz Fluid AMOLED FHD+",
-    "is_5g": true,
-    "is_active": true
-  },
-  {
     "id": "google-google-pixel-10",
     "brand": "Google",
     "model": "Google Pixel 10",

@@ -7012,14 +7012,6 @@ export const MASTER_MODEL_CATALOG = [
   {
     "brand": "Xiaomi",
     "series": "Redmi Note 12 & 11 Series",
-    "model": "Redmi Note 11S",
-    "storage": "128 GB",
-    "price": 6600,
-    "image": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-redmi-note-11s.jpg"
-  },
-  {
-    "brand": "Xiaomi",
-    "series": "Redmi Note 12 & 11 Series",
     "model": "Redmi Note 12 4G",
     "storage": "128 GB",
     "price": 7900,
@@ -7156,34 +7148,10 @@ export const MASTER_MODEL_CATALOG = [
   {
     "brand": "Xiaomi",
     "series": "Xiaomi Mi / Flagship Series",
-    "model": "Xiaomi 12 Lite",
-    "storage": "128 GB",
-    "price": 15900,
-    "image": "https://api.mobileapi.dev/devices/1837/thumb.png"
-  },
-  {
-    "brand": "Xiaomi",
-    "series": "Xiaomi Mi / Flagship Series",
     "model": "Xiaomi 12 Pro",
     "storage": "256 GB",
     "price": 19000,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-12-pro.jpg"
-  },
-  {
-    "brand": "Xiaomi",
-    "series": "Xiaomi Mi / Flagship Series",
-    "model": "Xiaomi 13",
-    "storage": "256 GB",
-    "price": 36950,
-    "image": "https://api.mobileapi.dev/devices/31521/thumb.png"
-  },
-  {
-    "brand": "Xiaomi",
-    "series": "Xiaomi Mi / Flagship Series",
-    "model": "Xiaomi 13 Lite",
-    "storage": "128 GB",
-    "price": 19950,
-    "image": "https://api.mobileapi.dev/devices/1834/thumb.png"
   },
   {
     "brand": "Xiaomi",
@@ -7288,14 +7256,6 @@ export const MASTER_MODEL_CATALOG = [
     "storage": "128 GB",
     "price": 8600,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-mi-10t.jpg"
-  },
-  {
-    "brand": "Xiaomi",
-    "series": "Xiaomi Mi / Flagship Series",
-    "model": "Xiaomi Mi 10T Pro",
-    "storage": "128 GB",
-    "price": 9900,
-    "image": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-mi-10t-pro-5g.jpg"
   },
   {
     "brand": "Xiaomi",
@@ -7608,14 +7568,6 @@ export const MASTER_MODEL_CATALOG = [
     "storage": "128 GB",
     "price": 13450,
     "image": "https://api.mobileapi.dev/devices/16344/thumb.png"
-  },
-  {
-    "brand": "OnePlus",
-    "series": "OnePlus 8 & 7 Series",
-    "model": "OnePlus 8 5G UW",
-    "storage": "128 GB",
-    "price": 10450,
-    "image": "https://api.mobileapi.dev/devices/16348/thumb.png"
   },
   {
     "brand": "Google",

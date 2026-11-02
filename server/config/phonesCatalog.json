@@ -589,7 +589,8 @@
     ],
     "storage_options": [
       "128 GB",
-      "256 GB"
+      "256 GB",
+      "512 GB"
     ],
     "default_mrp": 72450,
     "base_resale_value": 48000,
@@ -664,6 +665,7 @@
     ],
     "storage_options": [
       "64 GB",
+      "128 GB",
       "256 GB"
     ],
     "default_mrp": 18525,
@@ -5780,8 +5782,8 @@
       "16GB"
     ],
     "storage_options": [
-      "256 GB",
-      "512 GB"
+      "512 GB",
+      "1 TB"
     ],
     "default_mrp": 93975,
     "base_resale_value": 62650,
@@ -18908,78 +18910,6 @@
   },
   {
     "brand": "Xiaomi",
-    "model": "12 Lite",
-    "release_year": 2020,
-    "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
-    ],
-    "storage_options": [
-      "128 GB",
-      "256 GB"
-    ],
-    "default_mrp": 23850,
-    "base_resale_value": 15900,
-    "image_url": "https://api.mobileapi.dev/devices/1837/thumb.png",
-    "popular_tag": "Xiaomi Official Model",
-    "processor": "5G Octa-core Processor",
-    "camera_spec": "50MP OIS Camera",
-    "battery_spec": "5000 mAh Fast Charging",
-    "display_spec": "6.7\" AMOLED 120Hz",
-    "is_5g": true,
-    "is_active": true
-  },
-  {
-    "brand": "Xiaomi",
-    "model": "13",
-    "release_year": 2021,
-    "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
-    ],
-    "storage_options": [
-      "256 GB"
-    ],
-    "default_mrp": 55425,
-    "base_resale_value": 9880,
-    "image_url": "https://api.mobileapi.dev/devices/31521/thumb.png",
-    "popular_tag": "Xiaomi Official Model",
-    "processor": "5G Octa-core Processor",
-    "camera_spec": "50MP OIS Camera",
-    "battery_spec": "5000 mAh Fast Charging",
-    "display_spec": "6.7\" AMOLED 120Hz",
-    "is_5g": true,
-    "is_active": true,
-    "price": 9880
-  },
-  {
-    "brand": "Xiaomi",
-    "model": "13 Lite",
-    "release_year": 2021,
-    "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
-    ],
-    "storage_options": [
-      "128 GB",
-      "256 GB"
-    ],
-    "default_mrp": 29925,
-    "base_resale_value": 19950,
-    "image_url": "https://api.mobileapi.dev/devices/1834/thumb.png",
-    "popular_tag": "Xiaomi Official Model",
-    "processor": "5G Octa-core Processor",
-    "camera_spec": "50MP OIS Camera",
-    "battery_spec": "5000 mAh Fast Charging",
-    "display_spec": "6.7\" AMOLED 120Hz",
-    "is_5g": true,
-    "is_active": true
-  },
-  {
-    "brand": "Xiaomi",
     "model": "14",
     "release_year": 2024,
     "ram_options": [
@@ -20139,8 +20069,10 @@
       "8GB"
     ],
     "storage_options": [
-      "128 GB",
-      "256 GB"
+      "256 GB",
+      "512 GB",
+      "1 TB",
+      "2 TB"
     ],
     "default_mrp": 159900,
     "base_resale_value": 126000,
@@ -20163,8 +20095,10 @@
       "8GB"
     ],
     "storage_options": [
-      "128 GB",
-      "256 GB"
+      "256 GB",
+      "512 GB",
+      "1 TB",
+      "2 TB"
     ],
     "default_mrp": 134900,
     "base_resale_value": 104000,
@@ -20187,8 +20121,9 @@
       "8GB"
     ],
     "storage_options": [
-      "128 GB",
-      "256 GB"
+      "256 GB",
+      "512 GB",
+      "1 TB"
     ],
     "default_mrp": 99900,
     "base_resale_value": 82000,
@@ -22369,60 +22304,6 @@
     "is_active": true
   },
   {
-    "brand": "OnePlus",
-    "series": "OnePlus 8 & 7 Series",
-    "model": "OnePlus 8 5G UW",
-    "release_year": 2020,
-    "storage": "128 GB",
-    "storage_options": [
-      "128 GB",
-      "256 GB"
-    ],
-    "ram_options": [
-      "8GB",
-      "12GB"
-    ],
-    "default_mrp": 44999,
-    "base_resale_value": 9800,
-    "price": 9800,
-    "image": "https://api.mobileapi.dev/devices/16348/thumb.png",
-    "image_url": "https://api.mobileapi.dev/devices/16348/thumb.png",
-    "popular_tag": "Verizon Ultra Wideband mmWave",
-    "processor": "Snapdragon 865 5G",
-    "camera_spec": "48MP Sony IMX586 Triple Camera",
-    "battery_spec": "4300 mAh Warp Charge 30T",
-    "display_spec": "6.55\" 90Hz Fluid AMOLED FHD+",
-    "is_5g": true,
-    "is_active": true
-  },
-  {
-    "brand": "OnePlus",
-    "series": "OnePlus 8 & 7 Series",
-    "model": "8 5G UW",
-    "release_year": 2020,
-    "storage": "128 GB",
-    "storage_options": [
-      "128 GB",
-      "256 GB"
-    ],
-    "ram_options": [
-      "8GB",
-      "12GB"
-    ],
-    "default_mrp": 44999,
-    "base_resale_value": 9800,
-    "price": 9800,
-    "image": "https://api.mobileapi.dev/devices/16348/thumb.png",
-    "image_url": "https://api.mobileapi.dev/devices/16348/thumb.png",
-    "popular_tag": "Verizon Ultra Wideband mmWave",
-    "processor": "Snapdragon 865 5G",
-    "camera_spec": "48MP Sony IMX586 Triple Camera",
-    "battery_spec": "4300 mAh Warp Charge 30T",
-    "display_spec": "6.55\" 90Hz Fluid AMOLED FHD+",
-    "is_5g": true,
-    "is_active": true
-  },
-  {
     "brand": "Google",
     "series": "Google Pixel Series",
     "model": "Pixel 10",
@@ -23227,7 +23108,9 @@
     "model": "Apple iPhone 18 Pro Max",
     "storage_options": [
       "256 GB",
-      "512 GB"
+      "512 GB",
+      "1 TB",
+      "2 TB"
     ],
     "ram_options": [
       "4GB"
@@ -23254,9 +23137,10 @@
     "series": "iPhone 18 Series",
     "model": "Apple iPhone 18 Pro",
     "storage_options": [
-      "128 GB",
       "256 GB",
-      "512 GB"
+      "512 GB",
+      "1 TB",
+      "2 TB"
     ],
     "ram_options": [
       "4GB"
@@ -23469,29 +23353,6 @@
     "battery_spec": "5000 mAh Fast Charging",
     "display_spec": "6.78\" AMOLED 120Hz",
     "is_5g": true,
-    "is_active": true
-  },
-  {
-    "brand": "Vivo",
-    "model": "Vivo NEX Dual Display Edition",
-    "release_year": 2024,
-    "ram_options": [
-      "10 GB",
-      "8GB",
-      "12GB"
-    ],
-    "storage_options": [
-      "128 GB",
-      "256 GB"
-    ],
-    "default_mrp": null,
-    "image_url": "https://fdn2.gsmarena.com/vv/bigpic/vivo-x100-pro.jpg",
-    "popular_tag": "Vivo Official Model",
-    "processor": "High-Performance Processor",
-    "camera_spec": "50MP OIS Camera",
-    "battery_spec": "5000 mAh Fast Charging",
-    "display_spec": "6.78\" AMOLED 120Hz",
-    "is_5g": false,
     "is_active": true
   },
   {
@@ -24092,31 +23953,6 @@
   },
   {
     "brand": "Xiaomi",
-    "model": "Xiaomi Mi 10T Pro 5G",
-    "release_year": 2024,
-    "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
-    ],
-    "storage_options": [
-      "128 GB",
-      "256 GB"
-    ],
-    "default_mrp": null,
-    "image_url": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-14.jpg",
-    "popular_tag": "Xiaomi Official Model",
-    "processor": "Snapdragon / MediaTek Dimensity",
-    "camera_spec": "50MP OIS Camera",
-    "battery_spec": "5000 mAh Fast Charging",
-    "display_spec": "AMOLED 120Hz Display",
-    "is_5g": true,
-    "is_active": true,
-    "base_resale_value": 9900,
-    "price": 9900
-  },
-  {
-    "brand": "Xiaomi",
     "model": "Xiaomi Mi 10T 5G",
     "release_year": 2024,
     "ram_options": [
@@ -24189,156 +24025,6 @@
     "is_active": true,
     "base_resale_value": 11500,
     "price": 11500
-  },
-  {
-    "brand": "Xiaomi",
-    "model": "Redmi Note 13R Pro",
-    "release_year": 2024,
-    "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
-    ],
-    "storage_options": [
-      "128 GB",
-      "256 GB"
-    ],
-    "default_mrp": null,
-    "image_url": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-14.jpg",
-    "popular_tag": "Xiaomi Official Model",
-    "processor": "Snapdragon / MediaTek Dimensity",
-    "camera_spec": "50MP OIS Camera",
-    "battery_spec": "5000 mAh Fast Charging",
-    "display_spec": "AMOLED 120Hz Display",
-    "is_5g": false,
-    "is_active": true,
-    "base_resale_value": 8800,
-    "price": 8800
-  },
-  {
-    "brand": "Xiaomi",
-    "model": "Redmi Note 13R",
-    "release_year": 2024,
-    "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
-    ],
-    "storage_options": [
-      "128 GB",
-      "256 GB"
-    ],
-    "default_mrp": null,
-    "image_url": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-14.jpg",
-    "popular_tag": "Xiaomi Official Model",
-    "processor": "Snapdragon / MediaTek Dimensity",
-    "camera_spec": "50MP OIS Camera",
-    "battery_spec": "5000 mAh Fast Charging",
-    "display_spec": "AMOLED 120Hz Display",
-    "is_5g": false,
-    "is_active": true,
-    "base_resale_value": 8800,
-    "price": 8800
-  },
-  {
-    "brand": "Xiaomi",
-    "model": "Redmi Note 12T Pro 5G",
-    "release_year": 2024,
-    "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
-    ],
-    "storage_options": [
-      "128 GB",
-      "256 GB"
-    ],
-    "default_mrp": null,
-    "image_url": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-14.jpg",
-    "popular_tag": "Xiaomi Official Model",
-    "processor": "Snapdragon / MediaTek Dimensity",
-    "camera_spec": "50MP OIS Camera",
-    "battery_spec": "5000 mAh Fast Charging",
-    "display_spec": "AMOLED 120Hz Display",
-    "is_5g": true,
-    "is_active": true,
-    "base_resale_value": 11500,
-    "price": 11500
-  },
-  {
-    "brand": "Xiaomi",
-    "model": "Redmi Note 12S",
-    "release_year": 2024,
-    "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
-    ],
-    "storage_options": [
-      "128 GB",
-      "256 GB"
-    ],
-    "default_mrp": null,
-    "image_url": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-14.jpg",
-    "popular_tag": "Xiaomi Official Model",
-    "processor": "Snapdragon / MediaTek Dimensity",
-    "camera_spec": "50MP OIS Camera",
-    "battery_spec": "5000 mAh Fast Charging",
-    "display_spec": "AMOLED 120Hz Display",
-    "is_5g": false,
-    "is_active": true,
-    "base_resale_value": 8400,
-    "price": 8400
-  },
-  {
-    "brand": "Xiaomi",
-    "model": "Redmi Note 12R Pro",
-    "release_year": 2024,
-    "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
-    ],
-    "storage_options": [
-      "128 GB",
-      "256 GB"
-    ],
-    "default_mrp": null,
-    "image_url": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-14.jpg",
-    "popular_tag": "Xiaomi Official Model",
-    "processor": "Snapdragon / MediaTek Dimensity",
-    "camera_spec": "50MP OIS Camera",
-    "battery_spec": "5000 mAh Fast Charging",
-    "display_spec": "AMOLED 120Hz Display",
-    "is_5g": false,
-    "is_active": true,
-    "base_resale_value": 7200,
-    "price": 7200
-  },
-  {
-    "brand": "Xiaomi",
-    "model": "Redmi Note 12R",
-    "release_year": 2024,
-    "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
-    ],
-    "storage_options": [
-      "128 GB",
-      "256 GB"
-    ],
-    "default_mrp": null,
-    "image_url": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-14.jpg",
-    "popular_tag": "Xiaomi Official Model",
-    "processor": "Snapdragon / MediaTek Dimensity",
-    "camera_spec": "50MP OIS Camera",
-    "battery_spec": "5000 mAh Fast Charging",
-    "display_spec": "AMOLED 120Hz Display",
-    "is_5g": false,
-    "is_active": true,
-    "base_resale_value": 7200,
-    "price": 7200
   },
   {
     "brand": "Xiaomi",
@@ -24689,31 +24375,6 @@
     "price": 14000,
     "basePrice": 14000,
     "mrp": 39999
-  },
-  {
-    "brand": "Xiaomi",
-    "model": "Redmi Note 11S 5G",
-    "release_year": 2024,
-    "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
-    ],
-    "storage_options": [
-      "64 GB",
-      "256 GB"
-    ],
-    "default_mrp": null,
-    "image_url": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-14.jpg",
-    "popular_tag": "Xiaomi Official Model",
-    "processor": "Snapdragon / MediaTek Dimensity",
-    "camera_spec": "50MP OIS Camera",
-    "battery_spec": "5000 mAh Fast Charging",
-    "display_spec": "AMOLED 120Hz Display",
-    "is_5g": true,
-    "is_active": true,
-    "base_resale_value": 6400,
-    "price": 6400
   },
   {
     "brand": "Xiaomi",
@@ -25471,6 +25132,7 @@
       "2GB"
     ],
     "storage_options": [
+      "32 GB",
       "128 GB",
       "256 GB"
     ],
@@ -25567,6 +25229,8 @@
       "1GB"
     ],
     "storage_options": [
+      "16 GB",
+      "32 GB",
       "64 GB",
       "128 GB"
     ],
@@ -25591,6 +25255,8 @@
       "2GB"
     ],
     "storage_options": [
+      "16 GB",
+      "32 GB",
       "64 GB",
       "128 GB"
     ],

@@ -144,6 +144,36 @@ export function restoreModel(brand: string, model: string) {
 }
 
 export const PERMANENTLY_BLOCKED_TARGETS = [
+  // OnePlus (Requested removals)
+  { brand: 'oneplus', pattern: /\b8\s*5g\s*uw\b/i, label: 'OnePlus 8 5G UW' },
+
+  // Xiaomi / Redmi (Requested removals)
+  { brand: 'xiaomi', pattern: /note\s*12t\s*pro/i, label: 'Redmi Note 12T Pro' },
+  { brand: 'redmi', pattern: /note\s*12t\s*pro/i, label: 'Redmi Note 12T Pro' },
+  { brand: 'xiaomi', pattern: /note\s*13r\s*pro/i, label: 'Redmi Note 13R Pro' },
+  { brand: 'redmi', pattern: /note\s*13r\s*pro/i, label: 'Redmi Note 13R Pro' },
+  { brand: 'xiaomi', pattern: /note\s*12r\s*pro/i, label: 'Redmi Note 12R Pro' },
+  { brand: 'redmi', pattern: /note\s*12r\s*pro/i, label: 'Redmi Note 12R Pro' },
+  { brand: 'xiaomi', pattern: /note\s*11e\b/i, label: 'Redmi Note 11E' },
+  { brand: 'redmi', pattern: /note\s*11e\b/i, label: 'Redmi Note 11E' },
+  { brand: 'xiaomi', pattern: /note\s*11s\b/i, label: 'Redmi Note 11S' },
+  { brand: 'redmi', pattern: /note\s*11s\b/i, label: 'Redmi Note 11S' },
+  { brand: 'xiaomi', pattern: /(?:note\s*10t\s*pro|mi\s*10t\s*pro|10t\s*pro)/i, label: 'Redmi Note 10T Pro / Mi 10T Pro' },
+  { brand: 'redmi', pattern: /(?:note\s*10t\s*pro|mi\s*10t\s*pro|10t\s*pro)/i, label: 'Redmi Note 10T Pro / Mi 10T Pro' },
+  { brand: 'xiaomi', pattern: /note\s*13r\b(?!\s*pro)/i, label: 'Redmi Note 13R' },
+  { brand: 'redmi', pattern: /note\s*13r\b(?!\s*pro)/i, label: 'Redmi Note 13R' },
+  { brand: 'xiaomi', pattern: /note\s*12s\b/i, label: 'Redmi Note 12S' },
+  { brand: 'redmi', pattern: /note\s*12s\b/i, label: 'Redmi Note 12S' },
+  { brand: 'xiaomi', pattern: /note\s*12r\b(?!\s*pro)/i, label: 'Redmi Note 12R' },
+  { brand: 'redmi', pattern: /note\s*12r\b(?!\s*pro)/i, label: 'Redmi Note 12R' },
+  { brand: 'xiaomi', pattern: /(?:^|\b)(?:xiaomi\s*|mi\s*)13(?:\s*5g|\s*4g)?(?!\s*(?:pro|ultra|t\b|t\s*pro|c\b|r\b|x\b|lite|s\b))(?:$|\b)/i, label: 'Xiaomi 13 base' },
+  { brand: 'xiaomi', pattern: /\b13\s*lite\b/i, label: 'Xiaomi 13 Lite' },
+  { brand: 'xiaomi', pattern: /\b12\s*lite\b/i, label: 'Xiaomi 12 Lite' },
+  { brand: 'xiaomi', pattern: /\bcivi\s*3\b/i, label: 'Xiaomi Civi 3' },
+
+  // Vivo (Requested removals)
+  { brand: 'vivo', pattern: /\bnex\s*dual\s*display\b/i, label: 'Vivo NEX Dual Display Edition' },
+
   // Poco / Xiaomi GT models requested for complete removal
   { brand: 'poco', pattern: /x3\s*gt/i, label: 'POCO X3 GT' },
   { brand: 'poco', pattern: /x4\s*gt/i, label: 'POCO X4 GT' },
