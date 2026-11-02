@@ -393,21 +393,20 @@ export default function SellPhone() {
     const cleanQ = q.replace(/[^a-z0-9]/g, '');
     const queryWords = q.split(/\s+/).filter(Boolean);
 
-    // Calculate count of local catalog matches
-    const localMatchesCount = MASTER_MODEL_CATALOG.filter((m) => {
-      const fullText = `${m.brand} ${m.series || ''} ${m.model}`.toLowerCase();
-      if (queryWords.every((word) => fullText.includes(word))) return true;
-      if (cleanQ && fullText.replace(/[^a-z0-9]/g, '').includes(cleanQ)) return true;
-      return false;
-    }).length + (Array.isArray(ALL_INDIAN_PHONES_CATALOG) ? ALL_INDIAN_PHONES_CATALOG.filter((p) => {
-      const fullText = `${p.brand} ${p.model}`.toLowerCase();
-      if (queryWords.every((word) => fullText.includes(word))) return true;
-      if (cleanQ && fullText.replace(/[^a-z0-9]/g, '').includes(cleanQ)) return true;
-      return false;
-    }).length : 0);
+    // Fast check for local catalog matches (stops on first match without allocating arrays)
+    const hasLocalMatch =
+      MASTER_MODEL_CATALOG.some((m) => {
+        const fullText = `${m.brand} ${m.series || ''} ${m.model}`.toLowerCase();
+        return queryWords.every((word) => fullText.includes(word)) || Boolean(cleanQ && fullText.replace(/[^a-z0-9]/g, '').includes(cleanQ));
+      }) ||
+      (Array.isArray(ALL_INDIAN_PHONES_CATALOG) &&
+        ALL_INDIAN_PHONES_CATALOG.some((p) => {
+          const fullText = `${p.brand} ${p.model}`.toLowerCase();
+          return queryWords.every((word) => fullText.includes(word)) || Boolean(cleanQ && fullText.replace(/[^a-z0-9]/g, '').includes(cleanQ));
+        }));
 
     // If local database has 0 matches, perform live MobileAPI lookup
-    if (localMatchesCount === 0) {
+    if (!hasLocalMatch) {
       setIsSearchingApi(true);
       searchMobileApiDev(debouncedQuery)
         .then((devices) => {

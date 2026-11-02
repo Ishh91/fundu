@@ -170,7 +170,7 @@ export default function SellStep2Condition({
               <label className="text-sm font-extrabold text-gray-900 block tracking-tight">
                 Choose a variant
               </label>
-              <div className="flex flex-wrap gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
                 {(currentDeviceSpecs?.combinedVariants || []).map((v: any) => {
                   const isSelected = form.storage === v.storage && (v.ram ? form.ram === v.ram : true);
                   return (
@@ -178,7 +178,7 @@ export default function SellStep2Condition({
                       key={v.key}
                       type="button"
                       onClick={() => setForm((f: any) => ({ ...f, storage: v.storage, ram: v.ram }))}
-                      className={`flex items-center gap-3 px-4 py-3 rounded-xl border text-left transition-all cursor-pointer ${
+                      className={`flex items-center gap-3.5 px-4 py-3.5 rounded-xl border text-left transition-all cursor-pointer ${
                         isSelected
                           ? 'border-[#344257] bg-white shadow-sm ring-2 ring-[#344257]/20'
                           : 'border-gray-200 bg-white hover:border-gray-300 hover:bg-gray-50/50'

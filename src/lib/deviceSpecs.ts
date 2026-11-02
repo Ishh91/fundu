@@ -2128,7 +2128,6 @@ const MODEL_HARDWARE_RULES: Array<{
     {
       pattern: /realme.*14\s*pro\s*(\+|plus)/i,
       variants: [
-        { storage: '128 GB', rams: ['8 GB'] },
         { storage: '256 GB', rams: ['8 GB', '12 GB'] },
         { storage: '512 GB', rams: ['12 GB'] },
       ],
@@ -2145,7 +2144,6 @@ const MODEL_HARDWARE_RULES: Array<{
       pattern: /realme.*14[xt]\b/i,
       variants: [
         { storage: '128 GB', rams: ['6 GB', '8 GB'] },
-        { storage: '256 GB', rams: ['8 GB'] },
       ],
     },
 
@@ -2161,7 +2159,7 @@ const MODEL_HARDWARE_RULES: Array<{
       pattern: /realme.*13\s*pro(?!\s*(?:\+|plus))/i,
       variants: [
         { storage: '128 GB', rams: ['8 GB'] },
-        { storage: '256 GB', rams: ['8 GB'] },
+        { storage: '256 GB', rams: ['8 GB', '12 GB'] },
         { storage: '512 GB', rams: ['12 GB'] },
       ],
     },
@@ -2213,7 +2211,6 @@ const MODEL_HARDWARE_RULES: Array<{
       pattern: /realme.*12(?!\s*(?:\+|plus|pro|x))/i,
       variants: [
         { storage: '128 GB', rams: ['6 GB', '8 GB'] },
-        { storage: '256 GB', rams: ['8 GB'] },
       ],
     },
 
@@ -2257,7 +2254,6 @@ const MODEL_HARDWARE_RULES: Array<{
       pattern: /realme.*10\s*pro(?!\s*(?:\+|plus))/i,
       variants: [
         { storage: '128 GB', rams: ['6 GB', '8 GB'] },
-        { storage: '256 GB', rams: ['8 GB'] },
       ],
     },
     {
@@ -2280,7 +2276,6 @@ const MODEL_HARDWARE_RULES: Array<{
       pattern: /realme.*9\s*pro(?!\s*(?:\+|plus))/i,
       variants: [
         { storage: '128 GB', rams: ['6 GB', '8 GB'] },
-        { storage: '256 GB', rams: ['8 GB'] },
       ],
     },
     {
@@ -3087,9 +3082,9 @@ export function is512GBValidForModel(brand = '', model = ''): boolean {
     return false; // Vivo V series standard and Y series never had 512GB in India
   }
 
-  // 6. Realme: GT 6/7/2 Pro and 12/13/14 Pro / Pro+
+  // 6. Realme: Strictly GT 6/7 Pro, 12 Pro+, 13 Pro/Pro+, 14 Pro/Pro+
   if (b.includes('realme')) {
-    if (/gt\s*(6|7|2\s*pro)|(12|13|14)\s*pro/i.test(m)) return true;
+    if (/gt\s*(6|7\s*pro)|12\s*pro\s*(?:\+|plus)|13\s*pro|14\s*pro/i.test(m)) return true;
     return false;
   }
 
@@ -3187,11 +3182,12 @@ export function isStorageAllowedForModel(brand = '', model = '', storageStr = ''
       return true;
     }
 
-    // Realme: Budget C, Narzo, and older 1-7 series budget models NEVER had 256GB
+    // Realme: Budget C, Narzo, and models without 256GB
     if (b.includes('realme')) {
       if (/realme\s*c(1|2|3|11|12|15|20|21|25|30|31|33|35)\b/i.test(m)) return false;
       if (/narzo\s*([1-5]0i|[1-5]0a)\b/i.test(m)) return false;
       if (/(?:realme\s*)?(1|2|3|3i|5|5s|5i|6|6i|7|7i)\b(?!\s*pro)/i.test(m)) return false;
+      if (/realme\s*(12(?!\s*(?:\+|plus|pro|x))|10\s*pro(?!\s*(?:\+|plus))|9\s*pro(?!\s*(?:\+|plus))|8\s*pro|8s|8\b|7\s*pro)\b/i.test(m)) return false;
       return true;
     }
 
@@ -3603,7 +3599,7 @@ export function getModelHardwareSpecs(
         }
         if (norm.includes('512 GB') || norm.includes('1 TB')) {
           const match = validRams.filter((r) => parseInt(r, 10) >= 12);
-          return match.length > 0 ? match : [validRams[validRams.length - 1]];
+          return match.length > 0 ? match : [];
         }
         return validRams;
       };
@@ -3709,7 +3705,10 @@ export function getRadarHardwareSpecs(
     ? ['128 GB', '256 GB', '512 GB', '1 TB']
     : (currentDeviceSpecs.storages.length > 0 ? currentDeviceSpecs.storages : ['128 GB', '256 GB']);
 
-  const combined = Array.from(new Set([...baseList, ...catalogStorages]));
+  // If the model has authoritative hardware specs, use them directly without polluting from loose catalog items
+  const combined = currentDeviceSpecs.storages.length > 0 && !isApple
+    ? currentDeviceSpecs.storages
+    : Array.from(new Set([...baseList, ...catalogStorages]));
   const filtered = combined.filter((s) => isStorageAllowedForModel(brand, model, s));
   const storages = filtered.length > 0 ? filtered : combined;
 
