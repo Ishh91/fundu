@@ -1441,6 +1441,139 @@ const MODEL_HARDWARE_RULES: Array<{
     // ==========================================
     // XIAOMI / REDMI / POCO
     // ==========================================
+    // 1. Redmi Note 11T Pro: Add 64, remove 256
+    {
+      pattern: /(?:xiaomi|redmi)?.*note\s*11t\s*pro\b/i,
+      variants: [
+        { storage: '64 GB', rams: ['6 GB'] },
+        { storage: '128 GB', rams: ['6 GB', '8 GB'] },
+      ],
+    },
+    // 2. Redmi 8: Add 64, remove 256
+    {
+      pattern: /(?:xiaomi\s+)?redmi\s*8\b(?!\s*(?:a|prime|pro|note))/i,
+      variants: [
+        { storage: '32 GB', rams: ['3 GB', '4 GB'] },
+        { storage: '64 GB', rams: ['4 GB'] },
+      ],
+    },
+    // 3. Redmi Note 10T 5G: Add 64, remove 256
+    {
+      pattern: /(?:xiaomi|redmi)?.*note\s*10t\b/i,
+      variants: [
+        { storage: '64 GB', rams: ['4 GB'] },
+        { storage: '128 GB', rams: ['4 GB', '6 GB'] },
+      ],
+    },
+    // 4. Redmi Note 10S: Add 64, remove 256
+    {
+      pattern: /(?:xiaomi|redmi)?.*note\s*10s\b/i,
+      variants: [
+        { storage: '64 GB', rams: ['6 GB'] },
+        { storage: '128 GB', rams: ['6 GB', '8 GB'] },
+      ],
+    },
+    // 5. 17 (Redmi 17 / Redmi Note 17 / Xiaomi 17): Remove 64, 256
+    {
+      pattern: /(?:xiaomi|redmi)\s*(?:note\s*)?17\b(?!\s*(?:pro|ultra))/i,
+      variants: [
+        { storage: '128 GB', rams: ['6 GB', '8 GB'] },
+        { storage: '512 GB', rams: ['12 GB'] },
+      ],
+    },
+    // 6. 15 (Redmi 15 / Redmi Note 15 / Xiaomi 15): Remove 64
+    {
+      pattern: /(?:xiaomi|redmi)\s*(?:note\s*)?15\b(?!\s*(?:pro|plus|ultra|se|a\b))/i,
+      variants: [
+        { storage: '128 GB', rams: ['6 GB', '8 GB'] },
+        { storage: '256 GB', rams: ['8 GB', '12 GB'] },
+      ],
+    },
+    // 7. Redmi 9 Prime: 256 remove
+    {
+      pattern: /(?:xiaomi|redmi)?.*9\s*prime\b/i,
+      variants: [
+        { storage: '64 GB', rams: ['4 GB'] },
+        { storage: '128 GB', rams: ['4 GB'] },
+      ],
+    },
+    // 8. Redmi A2 Plus: Add 32
+    {
+      pattern: /(?:xiaomi|redmi)?.*a2\s*(?:plus|\+)\b/i,
+      variants: [
+        { storage: '32 GB', rams: ['2 GB', '3 GB'] },
+        { storage: '64 GB', rams: ['3 GB', '4 GB'] },
+      ],
+    },
+    // 9. Redmi A1 Plus: Add 32, remove 64, 128
+    {
+      pattern: /(?:xiaomi|redmi)?.*a1\s*(?:plus|\+)\b/i,
+      variants: [
+        { storage: '32 GB', rams: ['2 GB', '3 GB'] },
+      ],
+    },
+    // 10. Redmi 15A: Remove 256
+    {
+      pattern: /(?:xiaomi|redmi)?.*15a\b/i,
+      variants: [
+        { storage: '64 GB', rams: ['4 GB'] },
+        { storage: '128 GB', rams: ['4 GB', '6 GB'] },
+      ],
+    },
+    // 11. Redmi 13C: Remove 64, add 256
+    {
+      pattern: /(?:xiaomi|redmi)?.*13c\b/i,
+      variants: [
+        { storage: '128 GB', rams: ['4 GB', '6 GB'] },
+        { storage: '256 GB', rams: ['8 GB'] },
+      ],
+    },
+    // 12. Redmi A7: Remove 128, 256. 4/6 -> 64, add 3/64
+    {
+      pattern: /(?:xiaomi|redmi)?.*a7\b(?!\s*(?:plus|\+|pro))/i,
+      variants: [
+        { storage: '64 GB', rams: ['3 GB', '4 GB', '6 GB'] },
+      ],
+    },
+    // 13. Redmi A5: Remove 4/6 -> 64; 6/8 -> 128, 256; Add 3/64, 4/128
+    {
+      pattern: /(?:xiaomi|redmi)?.*a5\b(?!\s*(?:plus|\+|pro))/i,
+      variants: [
+        { storage: '64 GB', rams: ['3 GB'] },
+        { storage: '128 GB', rams: ['4 GB'] },
+      ],
+    },
+    // 14. Redmi A3X: Remove 4/6 -> 64; 128 -> 6/8; Add 3/64
+    {
+      pattern: /(?:xiaomi|redmi)?.*a3x\b/i,
+      variants: [
+        { storage: '64 GB', rams: ['3 GB'] },
+        { storage: '128 GB', rams: ['4 GB'] },
+      ],
+    },
+    // 15. Redmi 10A: Add 3/32, remove 128
+    {
+      pattern: /(?:xiaomi|redmi)?.*10a\b/i,
+      variants: [
+        { storage: '32 GB', rams: ['3 GB', '4 GB'] },
+        { storage: '64 GB', rams: ['4 GB'] },
+      ],
+    },
+    // 16. Redmi A1: Remove 64, 128. Add 2/32
+    {
+      pattern: /(?:xiaomi|redmi)?.*redmi\s*a1\b(?!\s*(?:plus|\+|pro))/i,
+      variants: [
+        { storage: '32 GB', rams: ['2 GB'] },
+      ],
+    },
+    // 17. Redmi A2: Remove 128. Add 2/32
+    {
+      pattern: /(?:xiaomi|redmi)?.*redmi\s*a2\b(?!\s*(?:plus|\+|pro))/i,
+      variants: [
+        { storage: '32 GB', rams: ['2 GB'] },
+        { storage: '64 GB', rams: ['2 GB', '4 GB'] },
+      ],
+    },
     {
       pattern: /redmi\s*note\s*13\s*pro\+/i,
       variants: [
@@ -3428,7 +3561,22 @@ export function isStorageAllowedForModel(brand = '', model = '', storageStr = ''
     }
 
     // Xiaomi / Redmi / Poco: Budget lines NEVER had 256GB
-    if (b.includes('xiaomi') || b.includes('redmi') || b.includes('poco')) {
+    if (b.includes('xiaomi') || b.includes('redmi') || b.includes('poco') || full.includes('redmi') || full.includes('xiaomi')) {
+      if (/13c\b/i.test(m)) return true;
+      if (
+        /note\s*11t\s*pro/i.test(m) ||
+        /redmi\s*8\b/i.test(m) ||
+        /note\s*10t\b/i.test(m) ||
+        /note\s*10s\b/i.test(m) ||
+        /(?:note\s*)?17\b/i.test(m) ||
+        /9\s*prime\b/i.test(m) ||
+        /15a\b/i.test(m) ||
+        /a7\b/i.test(m) ||
+        /a5\b/i.test(m) ||
+        /a3x\b/i.test(m)
+      ) {
+        return false;
+      }
       if (/redmi\s*([1-9][ac]|10a|12c|a[1-3]|go)\b/i.test(m)) return false;
       if (/poco\s*c[3-6]\d\b/i.test(m)) return false;
       if (/poco\s*m[2-4]\b(?!\s*pro)/i.test(m)) return false;
@@ -3481,11 +3629,30 @@ export function isStorageAllowedForModel(brand = '', model = '', storageStr = ''
     if (/iphone\s*[45]s?\b|galaxy\s*[jcon][1-3]\b/i.test(m)) {
       return false;
     }
+    if (b.includes('xiaomi') || b.includes('redmi') || full.includes('redmi') || full.includes('xiaomi')) {
+      if (
+        /a1\s*(?:plus|\+)\b/i.test(m) ||
+        /redmi\s*a7\b|a7\b(?!\s*pro)/i.test(m) ||
+        /redmi\s*10a\b|10a\b/i.test(m) ||
+        /redmi\s*a1\b(?!\s*(?:plus|\+|pro))/i.test(m) ||
+        /redmi\s*a2\b(?!\s*(?:plus|\+|pro))/i.test(m)
+      ) {
+        return false;
+      }
+    }
     return true;
   }
 
   // 4. Tier: 64 GB
   if (gb === 64) {
+    if (b.includes('xiaomi') || b.includes('redmi') || full.includes('redmi') || full.includes('xiaomi')) {
+      if (/(?:note\s*)?17\b/i.test(m)) return false;
+      if (/(?:note\s*)?15\b(?!\s*a\b)/i.test(m)) return false;
+      if (/13c\b/i.test(m)) return false;
+      if (/a1\s*(?:plus|\+)\b/i.test(m)) return false;
+      if (/redmi\s*a1\b(?!\s*(?:plus|\+|pro))/i.test(m)) return false;
+      if (/note\s*11t\s*pro|redmi\s*8\b|note\s*10t|note\s*10s|a7\b|a5\b|a3x\b|10a\b|9\s*prime|15a\b/i.test(m)) return true;
+    }
     // Modern phones starting in 2021+ that START at 128 GB (64 GB is completely fake)
     if (
       /iphone\s*(?:1[3-9]|[2-9]\d)/i.test(m) ||
@@ -3506,7 +3673,7 @@ export function isStorageAllowedForModel(brand = '', model = '', storageStr = ''
     return true;
   }
 
-  // 5. Tier: <= 32 GB (Only allowed on classic Apple devices: iPhone 6/6s/6 Plus, iPhone 7/7 Plus, iPhone SE 1st Gen, or classic Vivo X1)
+  // 5. Tier: <= 32 GB (Only allowed on classic Apple devices, classic Vivo X1, and specified budget Redmi models)
   if (gb <= 32) {
     if (b.includes('apple') || m.includes('iphone')) {
       if (gb === 32) {
@@ -3518,6 +3685,11 @@ export function isStorageAllowedForModel(brand = '', model = '', storageStr = ''
     }
     if ((b.includes('vivo') || m.includes('vivo')) && /\bx1\b(?!\s*(?:0|fold))/i.test(m)) {
       return gb === 16;
+    }
+    if (b.includes('xiaomi') || b.includes('redmi') || full.includes('redmi') || full.includes('xiaomi')) {
+      if (gb === 32) {
+        return /a2\s*(?:plus|\+)|a1\s*(?:plus|\+)|10a\b|redmi\s*a1\b|redmi\s*a2\b|redmi\s*8\b|9a\b|9c\b|7a\b|8a\b|6a\b/i.test(m);
+      }
     }
     return false;
   }
@@ -3792,15 +3964,15 @@ export function getModelHardwareSpecs(
     const safeStorages = storages.length > 0 ? storages : (specs.storages[0] ? [specs.storages[0]] : ['128 GB']);
     const defaultStorage = safeStorages.includes(specs.defaultStorage) ? specs.defaultStorage : safeStorages[0];
 
-    // Filter out all RAM <= 3 GB (1 GB, 2 GB, 3 GB) globally
+    // Filter out RAM < 2 GB (1 GB) globally
     const sanitizedGetRamsForStorage = (stg: string): string[] => {
       if (isApple) return [];
       const rawRams = specs.getRamsForStorage(stg) || [];
       const cleanRams = rawRams.filter((r) => {
         const gb = parseInt(r, 10);
-        return !isNaN(gb) && gb >= 4;
+        return !isNaN(gb) && gb >= 2;
       });
-      return cleanRams.length > 0 ? cleanRams : (rawRams.length > 0 ? ['4 GB'] : []);
+      return cleanRams.length > 0 ? cleanRams : (rawRams.length > 0 ? [rawRams[0]] : ['2 GB']);
     };
 
     const defaultRams = sanitizedGetRamsForStorage(defaultStorage);
@@ -3809,7 +3981,7 @@ export function getModelHardwareSpecs(
       storages: safeStorages,
       defaultStorage,
       rams: defaultRams,
-      defaultRam: defaultRams[0] || (isApple ? '' : '4 GB'),
+      defaultRam: defaultRams[0] || (isApple ? '' : '2 GB'),
       getRamsForStorage: sanitizedGetRamsForStorage,
     };
   };

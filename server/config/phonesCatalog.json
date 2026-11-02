@@ -18238,9 +18238,11 @@
     "model": "Redmi 10A",
     "release_year": 2022,
     "ram_options": [
+      "3GB",
       "4GB"
     ],
     "storage_options": [
+      "32 GB",
       "64 GB"
     ],
     "default_mrp": 7290,
@@ -18415,7 +18417,7 @@
     ],
     "storage_options": [
       "64 GB",
-      "256 GB"
+      "128 GB"
     ],
     "default_mrp": 9780,
     "base_resale_value": 5700,
@@ -18994,7 +18996,7 @@
       "12GB"
     ],
     "storage_options": [
-      "256 GB"
+      "128 GB"
     ],
     "default_mrp": 83895,
     "base_resale_value": 40800,
@@ -19271,7 +19273,7 @@
     ],
     "storage_options": [
       "64 GB",
-      "256 GB"
+      "128 GB"
     ],
     "default_mrp": 16860,
     "base_resale_value": 11240,
@@ -19318,8 +19320,7 @@
       "12GB"
     ],
     "storage_options": [
-      "128 GB",
-      "256 GB"
+      "128 GB"
     ],
     "default_mrp": 26100,
     "base_resale_value": 40800,
@@ -19394,7 +19395,7 @@
     ],
     "storage_options": [
       "64 GB",
-      "256 GB"
+      "128 GB"
     ],
     "default_mrp": 8580,
     "base_resale_value": 4300,
@@ -19413,13 +19414,12 @@
     "model": "Redmi A3x",
     "release_year": 2018,
     "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
+      "3GB",
+      "4GB"
     ],
     "storage_options": [
       "64 GB",
-      "256 GB"
+      "128 GB"
     ],
     "default_mrp": 9180,
     "base_resale_value": 6120,
@@ -19461,13 +19461,12 @@
     "model": "Redmi A5",
     "release_year": 2022,
     "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
+      "3GB",
+      "4GB"
     ],
     "storage_options": [
       "64 GB",
-      "256 GB"
+      "128 GB"
     ],
     "default_mrp": 10050,
     "base_resale_value": 6700,
@@ -19485,13 +19484,12 @@
     "model": "Redmi A7",
     "release_year": 2017,
     "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
+      "3GB",
+      "4GB",
+      "6GB"
     ],
     "storage_options": [
-      "64 GB",
-      "256 GB"
+      "64 GB"
     ],
     "default_mrp": 13230,
     "base_resale_value": 8820,
@@ -19639,7 +19637,7 @@
     ],
     "storage_options": [
       "64 GB",
-      "256 GB"
+      "128 GB"
     ],
     "default_mrp": 12180,
     "base_resale_value": 5900,
@@ -19832,8 +19830,7 @@
       "12GB"
     ],
     "storage_options": [
-      "128 GB",
-      "256 GB"
+      "128 GB"
     ],
     "default_mrp": 30525,
     "base_resale_value": 20350,
