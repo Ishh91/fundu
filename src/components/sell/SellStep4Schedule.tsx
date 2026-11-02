@@ -189,13 +189,12 @@ export default function SellStep4Schedule({
                   value={form.pincode}
                   onChange={(e) => handlePincodeChange(e.target.value)}
                   placeholder="6-digit PIN (e.g. 226010)"
-                  className={`input text-xs sm:text-sm font-semibold tracking-wider ${
-                    verifiedLoc?.valid
+                  className={`input text-xs sm:text-sm font-semibold tracking-wider ${verifiedLoc?.valid
                       ? 'border-emerald-500 bg-emerald-50/20 text-gray-900'
                       : pinError
-                      ? 'border-rose-400 bg-rose-50/20 text-rose-900'
-                      : 'focus:border-[#6A859F]'
-                  }`}
+                        ? 'border-rose-400 bg-rose-50/20 text-rose-900'
+                        : 'focus:border-[#6A859F]'
+                    }`}
                 />
                 {verifyingPin && (
                   <RefreshCw className="h-3.5 w-3.5 text-[#344257] animate-spin absolute right-3 top-1/2 -translate-y-1/2" />
@@ -244,11 +243,10 @@ export default function SellStep4Schedule({
                       key={po}
                       type="button"
                       onClick={() => setForm((prev: any) => ({ ...prev, locality: po }))}
-                      className={`text-[10px] px-1.5 py-0.5 rounded border transition ${
-                        form.locality === po
+                      className={`text-[10px] px-1.5 py-0.5 rounded border transition ${form.locality === po
                           ? 'bg-[#344257] text-white border-[#344257]'
                           : 'bg-white hover:bg-gray-100 text-gray-700 border-gray-200'
-                      }`}
+                        }`}
                     >
                       {po}
                     </button>
@@ -350,7 +348,7 @@ export default function SellStep4Schedule({
                 <AlertCircle className="h-4 w-4" /> Service Not Available at Pincode
               </>
             ) : submitting ? (
-              'Auto-Assigning Agent...'
+              'Confirm Pickup'
             ) : (
               <>
                 Confirm Pickup Booking <CheckCircle2 className="h-4 w-4" />
