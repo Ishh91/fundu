@@ -285,10 +285,41 @@ export const RAW_MODEL_EXACT_RENDERS: Array<{ keyword: string; url: string }> = 
   { keyword: 'oneplus nord', url: 'https://fdn2.gsmarena.com/vv/bigpic/oneplus-nord-.jpg' },
 
   // Realme
+  { keyword: 'realme 14 pro+', url: 'https://fdn2.gsmarena.com/vv/bigpic/realme-14-pro-plus-5g.jpg' },
+  { keyword: 'realme 14 pro plus', url: 'https://fdn2.gsmarena.com/vv/bigpic/realme-14-pro-plus-5g.jpg' },
+  { keyword: 'realme 14 pro', url: 'https://fdn2.gsmarena.com/vv/bigpic/realme-14-pro-5g.jpg' },
   { keyword: 'realme 13 pro+', url: 'https://fdn2.gsmarena.com/vv/bigpic/realme-13-pro-plus.jpg' },
+  { keyword: 'realme 13 pro plus', url: 'https://fdn2.gsmarena.com/vv/bigpic/realme-13-pro-plus.jpg' },
   { keyword: 'realme 13 pro', url: 'https://fdn2.gsmarena.com/vv/bigpic/realme-13-pro.jpg' },
+  { keyword: 'realme 13+', url: 'https://fdn2.gsmarena.com/vv/bigpic/realme-13-plus-5g.jpg' },
+  { keyword: 'realme 13 plus', url: 'https://fdn2.gsmarena.com/vv/bigpic/realme-13-plus-5g.jpg' },
+  { keyword: 'realme 13', url: 'https://api.mobileapi.dev/devices/13814/thumb.png' },
   { keyword: 'realme 12 pro+', url: 'https://fdn2.gsmarena.com/vv/bigpic/realme-12-pro-plus.jpg' },
+  { keyword: 'realme 12 pro plus', url: 'https://fdn2.gsmarena.com/vv/bigpic/realme-12-pro-plus.jpg' },
   { keyword: 'realme 12 pro', url: 'https://fdn2.gsmarena.com/vv/bigpic/realme-12-pro.jpg' },
+  { keyword: 'realme 12+', url: 'https://fdn2.gsmarena.com/vv/bigpic/realme-12-plus-5g.jpg' },
+  { keyword: 'realme 12 plus', url: 'https://fdn2.gsmarena.com/vv/bigpic/realme-12-plus-5g.jpg' },
+  { keyword: 'realme 12x', url: 'https://api.mobileapi.dev/devices/13726/thumb.png' },
+  { keyword: 'realme 12', url: 'https://api.mobileapi.dev/devices/13728/thumb.png' },
+  { keyword: 'realme 11 pro+', url: 'https://fdn2.gsmarena.com/vv/bigpic/realme-11-pro-plus.jpg' },
+  { keyword: 'realme 11 pro plus', url: 'https://fdn2.gsmarena.com/vv/bigpic/realme-11-pro-plus.jpg' },
+  { keyword: 'realme 11 pro', url: 'https://fdn2.gsmarena.com/vv/bigpic/realme-11-pro.jpg' },
+  { keyword: 'realme 11x', url: 'https://api.mobileapi.dev/devices/13739/thumb.png' },
+  { keyword: 'realme 11', url: 'https://api.mobileapi.dev/devices/13819/thumb.png' },
+  { keyword: 'realme 10 pro+', url: 'https://fdn2.gsmarena.com/vv/bigpic/realme-10-pro-plus-5g.jpg' },
+  { keyword: 'realme 10 pro plus', url: 'https://fdn2.gsmarena.com/vv/bigpic/realme-10-pro-plus-5g.jpg' },
+  { keyword: 'realme 10 pro', url: 'https://api.mobileapi.dev/devices/13760/thumb.png' },
+  { keyword: 'realme 10', url: 'https://api.mobileapi.dev/devices/13759/thumb.png' },
+  { keyword: 'realme 9 pro+', url: 'https://fdn2.gsmarena.com/vv/bigpic/realme-9-pro-plus.jpg' },
+  { keyword: 'realme 9 pro plus', url: 'https://fdn2.gsmarena.com/vv/bigpic/realme-9-pro-plus.jpg' },
+  { keyword: 'realme 9 pro', url: 'https://fdn2.gsmarena.com/vv/bigpic/realme-9-pro.jpg' },
+  { keyword: 'realme 9', url: 'https://fdn2.gsmarena.com/vv/bigpic/realme-9.jpg' },
+  { keyword: 'realme 8 pro', url: 'https://fdn2.gsmarena.com/vv/bigpic/realme-8-pro.jpg' },
+  { keyword: 'realme 8', url: 'https://fdn2.gsmarena.com/vv/bigpic/realme-8.jpg' },
+  { keyword: 'realme 7 pro', url: 'https://fdn2.gsmarena.com/vv/bigpic/realme-7-pro.jpg' },
+  { keyword: 'realme 7', url: 'https://fdn2.gsmarena.com/vv/bigpic/realme-7-asia.jpg' },
+  { keyword: 'realme 6 pro', url: 'https://fdn2.gsmarena.com/vv/bigpic/realme-6-pro.jpg' },
+  { keyword: 'realme 6', url: 'https://fdn2.gsmarena.com/vv/bigpic/realme-6.jpg' },
   { keyword: 'realme gt 6t', url: 'https://fdn2.gsmarena.com/vv/bigpic/realme-gt-6t.jpg' },
   { keyword: 'realme gt 6', url: 'https://fdn2.gsmarena.com/vv/bigpic/realme-gt6.jpg' },
   { keyword: 'narzo 70 pro', url: 'https://fdn2.gsmarena.com/vv/bigpic/realme-narzo-70-pro.jpg' },
@@ -917,7 +948,9 @@ function computeCleanPhoneImage(brand?: string, model?: string, fallbackUrl?: st
     if (isAppleRender && b && b !== 'apple' && !fullText.includes('iphone') && !fullText.includes('apple')) {
       continue;
     }
-    if (fullText.includes(item.keyword) || modelNorm.includes(item.keyword)) {
+    const escaped = item.keyword.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const wordReg = new RegExp(`(^|\\s)${escaped}(\\s|$)`, 'i');
+    if (wordReg.test(fullText) || wordReg.test(modelNorm)) {
       return cleanUrl(item.url, b);
     }
   }
@@ -930,10 +963,19 @@ function computeCleanPhoneImage(brand?: string, model?: string, fallbackUrl?: st
     return cleanUrl(MOBILE_API_THUMBS[modelNorm], b);
   }
 
-  // 4. Intelligent substring match in deviceImageDictionary
+  // 4. If a valid verified catalog/database image URL was passed, use it before fuzzy substring matching!
+  if (!isInvalidUrl && (rawUrl.includes('gsmarena.com') || rawUrl.includes('api.mobileapi.dev'))) {
+    return rawUrl;
+  }
+
+  // 5. Intelligent word-boundary match in deviceImageDictionary (strictly word boundaries to prevent single-digit hijacking!)
   for (const k of SORTED_THUMB_KEYS) {
-    if (k.length >= 5 && (fullText.includes(k) || modelNorm.includes(k))) {
-      return cleanUrl(MOBILE_API_THUMBS[k], b);
+    if (k.length >= 4) {
+      const escaped = k.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      const wordReg = new RegExp(`(^|\\s)${escaped}(\\s|$)`, 'i');
+      if (wordReg.test(fullText) || wordReg.test(modelNorm)) {
+        return cleanUrl(MOBILE_API_THUMBS[k], b);
+      }
     }
   }
 
