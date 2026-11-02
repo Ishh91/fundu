@@ -537,6 +537,10 @@ export function isBrandImageMismatch(brand = '', model = '', url = ''): boolean 
     ) {
       return true;
     }
+    // Any GSMArena render for an Apple device MUST contain 'apple-'
+    if (u.includes('gsmarena.com/vv/bigpic/') && !u.includes('apple-')) {
+      return true;
+    }
   }
 
   // 2. Hard rejection: Samsung device receiving non-Samsung render
@@ -613,6 +617,47 @@ function cleanOversizedStorageOnBoot() {
           return true;
         });
         localStorage.setItem('fundu_live_master_phones_v2', JSON.stringify(filteredLive));
+      }
+    }
+
+    // 3. Purge cross-brand mismatched images and deleted models from all cached brand catalogs
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      if (key && key.startsWith('fundu_brand_catalog_')) {
+        const rawCatalog = localStorage.getItem(key);
+        if (rawCatalog) {
+          try {
+            const parsed = JSON.parse(rawCatalog);
+            if (Array.isArray(parsed)) {
+              let modified = false;
+              const sanitized = parsed.filter((item: any) => {
+                if (!item || !item.brand) return false;
+                const bLow = String(item.brand).toLowerCase();
+                const mLow = String(item.model || '').toLowerCase();
+                if ((bLow === 'poco' || bLow === 'xiaomi') && /(x3\s*gt|x4\s*gt|f3\s*gt|f4\s*gt)/i.test(mLow)) {
+                  modified = true;
+                  return false;
+                }
+                if (bLow === 'infinix' && /(hot\s*20i|hot\s*20s|hot\s*20\s*s)/i.test(mLow)) {
+                  modified = true;
+                  return false;
+                }
+                return true;
+              }).map((item: any) => {
+                if (item && item.brand && item.model && item.image) {
+                  if (isBrandImageMismatch(item.brand, item.model, item.image)) {
+                    modified = true;
+                    return { ...item, image: getCleanPhoneImage(item.brand, item.model) };
+                  }
+                }
+                return item;
+              });
+              if (modified) {
+                localStorage.setItem(key, JSON.stringify(sanitized));
+              }
+            }
+          } catch {}
+        }
       }
     }
   } catch (err) {
@@ -995,6 +1040,16 @@ function computeCleanPhoneImage(brand?: string, model?: string, fallbackUrl?: st
   const fullText = `${b} ${m}`.toLowerCase().replace(/[^a-z0-9]/g, ' ').replace(/\s+/g, ' ').trim();
   const modelNorm = m.toLowerCase().replace(/[^a-z0-9]/g, ' ').replace(/\s+/g, ' ').trim();
   const rawUrl = cleanUrl((fallbackUrl || '').trim(), b);
+
+  const isApple = b.includes('apple') || b.includes('iphone') || fullText.includes('iphone');
+  // Hard Priority: Apple iPhone 17 Series flagships always map to verified authentic studio renders
+  if (isApple && /\b(17\s*pro\s*max|17\s*pro|17\s*air|17e|17)\b/i.test(m)) {
+    if (/\bpro\s*max\b/i.test(m)) return 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-16-pro-max.jpg';
+    if (/\bpro\b/i.test(m)) return 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-16-pro.jpg';
+    if (/\b(17\s*air|air)\b/i.test(m)) return 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-air.jpg';
+    if (/\b17e\b/i.test(m)) return 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-17e.jpg';
+    return 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-16.jpg';
+  }
 
   // 0. Priority 0: Admin custom image override for this specific brand & model
   const customImages = getCustomModelImages();

@@ -375,9 +375,10 @@ router.get('/mobile/search', async (req, res) => {
     }
 
     const result = await fetchMobileApiSearch(query || brand, brand, page);
+    const filteredDevices = (result.devices || []).filter((p) => !isBlockedPhone(p.brand || brand, p.model || p.name));
     return res.json({
-      data: result.devices,
-      total: result.total,
+      data: filteredDevices,
+      total: filteredDevices.length,
       page: result.page,
       provider: 'https://mobileapi.dev/',
     });
@@ -430,9 +431,10 @@ router.get('/mobile/devices', async (req, res) => {
     const page = Math.max(Number(req.query.page) || 1, 1);
 
     const result = await fetchMobileApiSearch(query || brand, brand, page);
+    const filteredDevices = (result.devices || []).filter((p) => !isBlockedPhone(p.brand || brand, p.model || p.name));
     return res.json({
-      data: result.devices,
-      total: result.total,
+      data: filteredDevices,
+      total: filteredDevices.length,
       page: result.page,
       provider: 'https://mobileapi.dev/',
     });

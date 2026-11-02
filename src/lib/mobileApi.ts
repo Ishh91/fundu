@@ -82,7 +82,7 @@ const modelCache = new Map<string, PhoneModelOption[]>();
 import { LOOKUP_BRANDS, getModelsForBrand } from '../data/phoneLookup';
 import { ALL_INDIAN_PHONES_CATALOG } from '../data/indianPhonesCatalog';
 import { MASTER_MODEL_CATALOG } from '../data/masterModelCatalog';
-import { getCleanPhoneImage } from './phoneImages';
+import { getCleanPhoneImage, isBrandImageMismatch } from './phoneImages';
 
 export type CatalogModelItem = {
   brand: string;
@@ -891,7 +891,16 @@ export function getStoredBrandCatalog(brand: string): CatalogModelItem[] | null 
     const raw = localStorage.getItem(`${BRAND_CATALOG_STORAGE_PREFIX}${cleanBrand}`);
     if (raw) {
       const parsed = JSON.parse(raw);
-      if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        return parsed.map((item: CatalogModelItem) => {
+          if (item && item.brand && item.model && item.image) {
+            if (isBrandImageMismatch(item.brand, item.model, item.image)) {
+              return { ...item, image: getCleanPhoneImage(item.brand, item.model) };
+            }
+          }
+          return item;
+        });
+      }
     }
   } catch {}
   return null;

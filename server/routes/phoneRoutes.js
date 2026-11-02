@@ -116,11 +116,11 @@ router.get('/mobileapi/search', async (req, res) => {
     }
 
     const searchRes = await fetchMobileApiSearch(query || brand, brand, Math.max(Number(page) || 1, 1));
-    const devices = searchRes.devices || [];
+    const devices = (searchRes.devices || []).filter((p) => !isBlockedPhone(p.brand || brand, p.model || p.name));
 
     return res.json({
       data: devices,
-      total: searchRes.total || devices.length,
+      total: devices.length,
       page: searchRes.page || 1,
       provider: 'https://mobileapi.dev/',
     });
