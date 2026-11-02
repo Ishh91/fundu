@@ -16604,30 +16604,6 @@
   },
   {
     "brand": "Vivo",
-    "model": "Y19e",
-    "release_year": 2022,
-    "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
-    ],
-    "storage_options": [
-      "64 GB",
-      "256 GB"
-    ],
-    "default_mrp": 10905,
-    "base_resale_value": 7270,
-    "image_url": "https://fdn2.gsmarena.com/vv/bigpic/vivo-y19e.jpg",
-    "popular_tag": "Vivo Official Model",
-    "processor": "High-Efficiency Processor",
-    "camera_spec": "50MP OIS Camera",
-    "battery_spec": "5000 mAh Fast Charging",
-    "display_spec": "6.7\" AMOLED 120Hz",
-    "is_5g": false,
-    "is_active": true
-  },
-  {
-    "brand": "Vivo",
     "model": "Y19s 5G",
     "release_year": 2022,
     "ram_options": [
@@ -20709,29 +20685,6 @@
   },
   {
     "brand": "Vivo",
-    "model": "X21 UD",
-    "release_year": 2018,
-    "ram_options": [
-      "6GB",
-      "8GB"
-    ],
-    "storage_options": [
-      "128 GB",
-      "256 GB"
-    ],
-    "default_mrp": 35990,
-    "base_resale_value": 5750,
-    "image_url": null,
-    "popular_tag": "Vivo Bestseller",
-    "processor": "Octa-core Processor",
-    "camera_spec": "50MP Camera",
-    "battery_spec": "5000 mAh",
-    "display_spec": "AMOLED Display",
-    "is_5g": true,
-    "is_active": true
-  },
-  {
-    "brand": "Vivo",
     "model": "X9 / X9s",
     "release_year": 2017,
     "ram_options": [
@@ -21444,30 +21397,6 @@
   },
   {
     "brand": "Vivo",
-    "model": "Y11 (2019)",
-    "release_year": 2019,
-    "ram_options": [
-      "6GB",
-      "8GB"
-    ],
-    "storage_options": [
-      "128 GB",
-      "256 GB"
-    ],
-    "default_mrp": 8990,
-    "base_resale_value": 3100,
-    "image_url": null,
-    "popular_tag": "Vivo Bestseller",
-    "processor": "Octa-core Processor",
-    "camera_spec": "50MP Camera",
-    "battery_spec": "5000 mAh",
-    "display_spec": "AMOLED Display",
-    "is_5g": true,
-    "is_active": true,
-    "price": 3100
-  },
-  {
-    "brand": "Vivo",
     "model": "Y95 / Y93 / Y91",
     "release_year": 2018,
     "ram_options": [
@@ -21535,30 +21464,6 @@
     "display_spec": "AMOLED Display",
     "is_5g": true,
     "is_active": true
-  },
-  {
-    "brand": "Vivo",
-    "model": "Y55L / Y55s / Y53",
-    "release_year": 2016,
-    "ram_options": [
-      "6GB",
-      "8GB"
-    ],
-    "storage_options": [
-      "128 GB",
-      "256 GB"
-    ],
-    "default_mrp": 11980,
-    "base_resale_value": 2060,
-    "image_url": null,
-    "popular_tag": "Vivo Bestseller",
-    "processor": "Octa-core Processor",
-    "camera_spec": "50MP Camera",
-    "battery_spec": "5000 mAh",
-    "display_spec": "AMOLED Display",
-    "is_5g": true,
-    "is_active": true,
-    "price": 2060
   },
   {
     "brand": "Vivo",
@@ -23585,52 +23490,6 @@
     "is_active": true,
     "base_resale_value": 6500,
     "price": 6500
-  },
-  {
-    "brand": "Vivo",
-    "model": "Vivo Y03",
-    "release_year": 2024,
-    "ram_options": [
-      "4 GB",
-      "8GB",
-      "12GB"
-    ],
-    "storage_options": [
-      "64 GB",
-      "256 GB"
-    ],
-    "default_mrp": null,
-    "image_url": "https://fdn2.gsmarena.com/vv/bigpic/vivo-x100-pro.jpg",
-    "popular_tag": "Vivo Official Model",
-    "processor": "High-Performance Processor",
-    "camera_spec": "50MP OIS Camera",
-    "battery_spec": "5000 mAh Fast Charging",
-    "display_spec": "6.78\" AMOLED 120Hz",
-    "is_5g": false,
-    "is_active": true
-  },
-  {
-    "brand": "Vivo",
-    "model": "Vivo Y03t",
-    "release_year": 2024,
-    "ram_options": [
-      "4 GB",
-      "8GB",
-      "12GB"
-    ],
-    "storage_options": [
-      "64 GB",
-      "256 GB"
-    ],
-    "default_mrp": null,
-    "image_url": "https://fdn2.gsmarena.com/vv/bigpic/vivo-x100-pro.jpg",
-    "popular_tag": "Vivo Official Model",
-    "processor": "High-Performance Processor",
-    "camera_spec": "50MP OIS Camera",
-    "battery_spec": "5000 mAh Fast Charging",
-    "display_spec": "6.78\" AMOLED 120Hz",
-    "is_5g": false,
-    "is_active": true
   },
   {
     "brand": "Vivo",

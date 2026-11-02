@@ -1,3 +1,5 @@
+import type { MasterPhone } from '../types';
+
 export const ALL_INDIAN_PHONES_CATALOG: MasterPhone[] = [
   {
     "id": "oneplus-nord-2",
@@ -2320,28 +2322,6 @@ export const ALL_INDIAN_PHONES_CATALOG: MasterPhone[] = [
     "camera_spec": "48MP Triple + 32MP Pop-up Front",
     "battery_spec": "4000 mAh Fast Charge",
     "display_spec": "6.7\" Super AMOLED Ultra FullView",
-    "is_5g": false,
-    "is_active": true
-  },
-  {
-    "id": "vivo-x21",
-    "brand": "Vivo",
-    "model": "Vivo X21 UD",
-    "release_year": 2018,
-    "ram_options": [
-      "6GB"
-    ],
-    "storage_options": [
-      "128GB"
-    ],
-    "default_mrp": 35990,
-    "base_resale_value": 5750,
-    "image_url": "https://images.unsplash.com/photo-1546054454-aa26e2b734c7?w=800&auto=format&fit=crop&q=80",
-    "popular_tag": "1st In-Display Fingerprint Phone",
-    "processor": "Snapdragon 660 AIE",
-    "camera_spec": "12MP Dual Pixel + 5MP Rear / 12MP Selfie",
-    "battery_spec": "3200 mAh Fast Charging",
-    "display_spec": "6.28\" Super AMOLED Notch Display",
     "is_5g": false,
     "is_active": true
   },
@@ -6551,7 +6531,8 @@ export const ALL_INDIAN_PHONES_CATALOG: MasterPhone[] = [
   }
 ];
 
-export function getIndianPhoneByModel(modelName: string): MasterPhone | undefined {
-  const norm = modelName.toLowerCase().trim();
-  return ALL_INDIAN_PHONES_CATALOG.find((p) => `${p.brand} ${p.model}`.toLowerCase() === norm || p.model.toLowerCase() === norm);
-}
+export const getIndianPhoneByModel = (modelName: string): MasterPhone | undefined => {
+  if (!modelName) return undefined;
+  const clean = modelName.trim().toLowerCase();
+  return ALL_INDIAN_PHONES_CATALOG.find((p) => p.model.toLowerCase() === clean || `${p.brand} ${p.model}`.toLowerCase() === clean);
+};

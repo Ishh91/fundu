@@ -831,66 +831,284 @@ const MODEL_HARDWARE_RULES: Array<{
     // ONEPLUS (Strict Storage-Dependent RAM Tiers)
     // ==========================================
     {
-      pattern: /oneplus\s*nord\s*4\b/i,
+      pattern: /\boneplus(?:\s+oneplus)?\s+13\b(?!\s*[rRsS])/i,
       variants: [
-        { storage: '128 GB', rams: ['8 GB'] },
-        { storage: '256 GB', rams: ['8 GB', '12 GB'] },
+        { storage: '256 GB', rams: ['12 GB', '16 GB'] },
+        { storage: '512 GB', rams: ['16 GB'] },
+        { storage: '1 TB', rams: ['24 GB'] },
       ],
     },
     {
-      pattern: /oneplus\s*(12r|11r)\b/i,
+      pattern: /\boneplus(?:\s+oneplus)?\s+13r\b/i,
+      variants: [
+        { storage: '128 GB', rams: ['8 GB'] },
+        { storage: '256 GB', rams: ['12 GB', '16 GB'] },
+        { storage: '512 GB', rams: ['16 GB'] },
+      ],
+    },
+    {
+      pattern: /\boneplus(?:\s+oneplus)?\s+12r\b/i,
       variants: [
         { storage: '128 GB', rams: ['8 GB'] },
         { storage: '256 GB', rams: ['8 GB', '16 GB'] },
       ],
     },
     {
-      pattern: /oneplus\s*(13|12)\b/i,
+      pattern: /\boneplus(?:\s+oneplus)?\s+12\b(?!\s*[rR])/i,
       variants: [
-        { storage: '256 GB', rams: ['12 GB'] },
+        { storage: '256 GB', rams: ['12 GB', '16 GB'] },
         { storage: '512 GB', rams: ['16 GB'] },
       ],
     },
     {
-      pattern: /oneplus\s*11\b/i,
+      pattern: /\boneplus(?:\s+oneplus)?\s+11r\b/i,
+      variants: [
+        { storage: '128 GB', rams: ['8 GB'] },
+        { storage: '256 GB', rams: ['8 GB', '16 GB'] },
+        { storage: '512 GB', rams: ['18 GB'] },
+      ],
+    },
+    {
+      pattern: /\boneplus(?:\s+oneplus)?\s+11\b(?!\s*[rR])/i,
       variants: [
         { storage: '128 GB', rams: ['8 GB'] },
         { storage: '256 GB', rams: ['16 GB'] },
       ],
     },
     {
-      pattern: /oneplus\s*10\s*pro/i,
+      pattern: /\boneplus(?:\s+oneplus)?\s+10r(\s*5g)?\b/i,
       variants: [
         { storage: '128 GB', rams: ['8 GB'] },
         { storage: '256 GB', rams: ['12 GB'] },
       ],
     },
     {
-      pattern: /oneplus\s*10t/i,
+      pattern: /\boneplus(?:\s+oneplus)?\s+10\s*pro\b/i,
+      variants: [
+        { storage: '128 GB', rams: ['8 GB'] },
+        { storage: '256 GB', rams: ['12 GB'] },
+      ],
+    },
+    {
+      pattern: /\boneplus(?:\s+oneplus)?\s+10t\b/i,
       variants: [
         { storage: '128 GB', rams: ['8 GB'] },
         { storage: '256 GB', rams: ['12 GB', '16 GB'] },
       ],
     },
     {
-      pattern: /oneplus\s*nord\s*ce\s*4\b/i,
+      pattern: /\boneplus(?:\s+oneplus)?\s+9rt\b/i,
+      variants: [
+        { storage: '128 GB', rams: ['8 GB'] },
+        { storage: '256 GB', rams: ['12 GB'] },
+      ],
+    },
+    {
+      pattern: /\boneplus(?:\s+oneplus)?\s+9r\b(?!\s*t)/i,
+      variants: [
+        { storage: '128 GB', rams: ['8 GB'] },
+        { storage: '256 GB', rams: ['12 GB'] },
+      ],
+    },
+    {
+      pattern: /\boneplus(?:\s+oneplus)?\s+9\s*pro\b/i,
+      variants: [
+        { storage: '128 GB', rams: ['8 GB'] },
+        { storage: '256 GB', rams: ['12 GB'] },
+      ],
+    },
+    {
+      pattern: /\boneplus(?:\s+oneplus)?\s+9\b(?!\s*[rRpP])/i,
+      variants: [
+        { storage: '128 GB', rams: ['8 GB'] },
+        { storage: '256 GB', rams: ['12 GB'] },
+      ],
+    },
+    {
+      pattern: /\boneplus(?:\s+oneplus)?\s+8t\b/i,
+      variants: [
+        { storage: '128 GB', rams: ['8 GB'] },
+        { storage: '256 GB', rams: ['12 GB'] },
+      ],
+    },
+    {
+      pattern: /\boneplus(?:\s+oneplus)?\s+8\s*pro\b/i,
+      variants: [
+        { storage: '128 GB', rams: ['8 GB'] },
+        { storage: '256 GB', rams: ['12 GB'] },
+      ],
+    },
+    {
+      pattern: /\boneplus(?:\s+oneplus)?\s+8\b(?!\s*[tTpP])/i,
+      variants: [
+        { storage: '128 GB', rams: ['6 GB', '8 GB'] },
+        { storage: '256 GB', rams: ['12 GB'] },
+      ],
+    },
+    {
+      pattern: /\boneplus(?:\s+oneplus)?\s+7t\s*pro\b/i,
+      variants: [
+        { storage: '256 GB', rams: ['8 GB', '12 GB'] },
+      ],
+    },
+    {
+      pattern: /\boneplus(?:\s+oneplus)?\s+7t\b(?!\s*pro)/i,
       variants: [
         { storage: '128 GB', rams: ['8 GB'] },
         { storage: '256 GB', rams: ['8 GB'] },
       ],
     },
     {
-      pattern: /oneplus\s*nord\s*ce\s*4\s*lite/i,
+      pattern: /\boneplus(?:\s+oneplus)?\s+7\s*pro\b/i,
+      variants: [
+        { storage: '128 GB', rams: ['6 GB', '8 GB'] },
+        { storage: '256 GB', rams: ['8 GB', '12 GB'] },
+      ],
+    },
+    {
+      pattern: /\boneplus(?:\s+oneplus)?\s+7\b(?!\s*[tTpP])/i,
+      variants: [
+        { storage: '128 GB', rams: ['6 GB', '8 GB'] },
+        { storage: '256 GB', rams: ['8 GB'] },
+      ],
+    },
+    {
+      pattern: /\boneplus(?:\s+oneplus)?\s+6t\b/i,
+      variants: [
+        { storage: '128 GB', rams: ['6 GB', '8 GB'] },
+        { storage: '256 GB', rams: ['8 GB'] },
+      ],
+    },
+    {
+      pattern: /\boneplus(?:\s+oneplus)?\s+6\b(?!\s*t)/i,
+      variants: [
+        { storage: '64 GB', rams: ['6 GB'] },
+        { storage: '128 GB', rams: ['8 GB'] },
+        { storage: '256 GB', rams: ['8 GB'] },
+      ],
+    },
+    {
+      pattern: /\boneplus(?:\s+oneplus)?\s+5t\b/i,
+      variants: [
+        { storage: '64 GB', rams: ['6 GB'] },
+        { storage: '128 GB', rams: ['8 GB'] },
+      ],
+    },
+    {
+      pattern: /\boneplus(?:\s+oneplus)?\s+5\b(?!\s*t)/i,
+      variants: [
+        { storage: '64 GB', rams: ['6 GB'] },
+        { storage: '128 GB', rams: ['8 GB'] },
+      ],
+    },
+    {
+      pattern: /\boneplus(?:\s+oneplus)?\s+3t?\b/i,
+      variants: [
+        { storage: '64 GB', rams: ['6 GB'] },
+      ],
+    },
+    {
+      pattern: /nord\s*2\s*5g\b/i,
+      variants: [
+        { storage: '128 GB', rams: ['6 GB', '8 GB'] },
+      ],
+    },
+    {
+      pattern: /nord\s*2t\b/i,
+      variants: [
+        { storage: '128 GB', rams: ['8 GB'] },
+        { storage: '256 GB', rams: ['12 GB'] },
+      ],
+    },
+    {
+      pattern: /nord\s*ce\s*5\b/i,
+      variants: [
+        { storage: '128 GB', rams: ['6 GB', '8 GB'] },
+        { storage: '256 GB', rams: ['12 GB'] },
+      ],
+    },
+    {
+      pattern: /nord\s*ce\s*4\s*lite/i,
       variants: [
         { storage: '128 GB', rams: ['8 GB'] },
         { storage: '256 GB', rams: ['8 GB'] },
       ],
     },
     {
-      pattern: /oneplus\s*nord\s*3\b/i,
+      pattern: /nord\s*ce\s*4\b/i,
+      variants: [
+        { storage: '128 GB', rams: ['8 GB'] },
+        { storage: '256 GB', rams: ['8 GB'] },
+      ],
+    },
+    {
+      pattern: /nord\s*ce\s*3\s*lite/i,
+      variants: [
+        { storage: '128 GB', rams: ['8 GB'] },
+        { storage: '256 GB', rams: ['8 GB'] },
+      ],
+    },
+    {
+      pattern: /nord\s*ce\s*3\b/i,
+      variants: [
+        { storage: '128 GB', rams: ['8 GB'] },
+        { storage: '256 GB', rams: ['12 GB'] },
+      ],
+    },
+    {
+      pattern: /nord\s*ce\s*2\s*lite/i,
+      variants: [
+        { storage: '128 GB', rams: ['6 GB', '8 GB'] },
+      ],
+    },
+    {
+      pattern: /nord\s*ce\s*2\b/i,
+      variants: [
+        { storage: '128 GB', rams: ['8 GB'] },
+      ],
+    },
+    {
+      pattern: /nord\s*ce\b/i,
+      variants: [
+        { storage: '128 GB', rams: ['6 GB', '8 GB'] },
+        { storage: '256 GB', rams: ['12 GB'] },
+      ],
+    },
+    {
+      pattern: /nord\s*6\b/i,
+      variants: [
+        { storage: '256 GB', rams: ['8 GB', '12 GB'] },
+        { storage: '512 GB', rams: ['16 GB'] },
+      ],
+    },
+    {
+      pattern: /nord\s*5\b/i,
+      variants: [
+        { storage: '128 GB', rams: ['8 GB'] },
+        { storage: '256 GB', rams: ['12 GB'] },
+      ],
+    },
+    {
+      pattern: /nord\s*4\b/i,
+      variants: [
+        { storage: '128 GB', rams: ['8 GB'] },
+        { storage: '256 GB', rams: ['8 GB', '12 GB'] },
+        { storage: '512 GB', rams: ['12 GB'] },
+      ],
+    },
+    {
+      pattern: /nord\s*3\b/i,
       variants: [
         { storage: '128 GB', rams: ['8 GB'] },
         { storage: '256 GB', rams: ['16 GB'] },
+      ],
+    },
+    {
+      pattern: /oneplus\s*nord\b(?!\s*(?:2|3|4|5|6|ce|n))/i,
+      variants: [
+        { storage: '64 GB', rams: ['6 GB'] },
+        { storage: '128 GB', rams: ['8 GB'] },
+        { storage: '256 GB', rams: ['12 GB'] },
       ],
     },
     {
@@ -1366,6 +1584,33 @@ const MODEL_HARDWARE_RULES: Array<{
     // VIVO & iQOO
     // ==========================================
     {
+      pattern: /(?:vivo\s+)?x300\b/i,
+      variants: [
+        { storage: '256 GB', rams: ['12 GB'] },
+        { storage: '512 GB', rams: ['12 GB', '16 GB'] },
+      ],
+    },
+    {
+      pattern: /(?:vivo\s+)?x200t\b/i,
+      variants: [
+        { storage: '256 GB', rams: ['12 GB', '16 GB'] },
+        { storage: '512 GB', rams: ['12 GB', '16 GB'] },
+      ],
+    },
+    {
+      pattern: /(?:vivo\s+)?x9\b(?!\s*(?:0|s|plus|pro))/i,
+      variants: [
+        { storage: '64 GB', rams: ['4 GB'] },
+        { storage: '128 GB', rams: ['4 GB'] },
+      ],
+    },
+    {
+      pattern: /(?:vivo\s+)?x1\b(?!\s*(?:0|fold))/i,
+      variants: [
+        { storage: '16 GB', rams: ['1 GB'] },
+      ],
+    },
+    {
       pattern: /vivo\s*x(200|100|90|80|70)\b/i,
       variants: [
         { storage: '256 GB', rams: ['8 GB', '12 GB'] },
@@ -1751,136 +1996,6 @@ const MODEL_HARDWARE_RULES: Array<{
     {
       pattern: /7t\s*pro.*mclaren|mclaren.*7t\s*pro/i,
       variants: [
-        { storage: '256 GB', rams: ['12 GB'] },
-      ],
-    },
-    {
-      pattern: /oneplus\s*13s\b/i,
-      variants: [
-        { storage: '256 GB', rams: ['12 GB', '16 GB'] },
-        { storage: '512 GB', rams: ['16 GB'] },
-      ],
-    },
-    {
-      pattern: /oneplus\s*13\b/i,
-      variants: [
-        { storage: '256 GB', rams: ['12 GB', '16 GB'] },
-        { storage: '512 GB', rams: ['16 GB'] },
-        { storage: '1 TB', rams: ['24 GB'] },
-      ],
-    },
-    {
-      pattern: /oneplus\s*13r\b/i,
-      variants: [
-        { storage: '128 GB', rams: ['8 GB'] },
-        { storage: '256 GB', rams: ['12 GB', '16 GB'] },
-        { storage: '512 GB', rams: ['16 GB'] },
-      ],
-    },
-    {
-      pattern: /oneplus\s*12\b/i,
-      variants: [
-        { storage: '256 GB', rams: ['12 GB', '16 GB'] },
-        { storage: '512 GB', rams: ['16 GB'] },
-      ],
-    },
-    {
-      pattern: /oneplus\s*12r\b/i,
-      variants: [
-        { storage: '128 GB', rams: ['8 GB'] },
-        { storage: '256 GB', rams: ['8 GB', '16 GB'] },
-      ],
-    },
-    {
-      pattern: /nord\s*ce\s*3\s*lite|nord\s*ce3\s*lite/i,
-      variants: [
-        { storage: '128 GB', rams: ['8 GB'] },
-        { storage: '256 GB', rams: ['8 GB'] },
-      ],
-    },
-    {
-      pattern: /nord\s*ce\s*3\b|nord\s*ce3\b/i,
-      variants: [
-        { storage: '128 GB', rams: ['8 GB'] },
-        { storage: '256 GB', rams: ['12 GB'] },
-      ],
-    },
-    {
-      pattern: /nord\s*ce\s*4\s*lite|nord\s*ce4\s*lite/i,
-      variants: [
-        { storage: '128 GB', rams: ['8 GB'] },
-        { storage: '256 GB', rams: ['8 GB'] },
-      ],
-    },
-    {
-      pattern: /nord\s*ce\s*4\b|nord\s*ce4\b/i,
-      variants: [
-        { storage: '128 GB', rams: ['8 GB'] },
-        { storage: '256 GB', rams: ['8 GB'] },
-      ],
-    },
-    {
-      pattern: /oneplus.*nord\s*4\b/i,
-      variants: [
-        { storage: '128 GB', rams: ['8 GB'] },
-        { storage: '256 GB', rams: ['8 GB', '12 GB'] },
-        { storage: '512 GB', rams: ['12 GB'] },
-      ],
-    },
-    {
-      pattern: /oneplus\s*6t\b/i,
-      variants: [
-        { storage: '128 GB', rams: ['6 GB', '8 GB'] },
-        { storage: '256 GB', rams: ['8 GB'] },
-      ],
-    },
-    {
-      pattern: /nord\s*6\b/i,
-      variants: [
-        { storage: '128 GB', rams: ['8 GB'] },
-        { storage: '256 GB', rams: ['12 GB'] },
-        { storage: '512 GB', rams: ['16 GB'] },
-      ],
-    },
-    {
-      pattern: /nord\s*5\b/i,
-      variants: [
-        { storage: '128 GB', rams: ['8 GB'] },
-        { storage: '256 GB', rams: ['12 GB'] },
-      ],
-    },
-    {
-      pattern: /nord\s*ce\s*5\b|nord\s*ce5\b/i,
-      variants: [
-        { storage: '128 GB', rams: ['8 GB'] },
-        { storage: '256 GB', rams: ['12 GB'] },
-      ],
-    },
-    {
-      pattern: /nord\s*ce\s*2\s*lite|nord\s*ce2\s*lite/i,
-      variants: [
-        { storage: '128 GB', rams: ['6 GB', '8 GB'] },
-      ],
-    },
-    {
-      pattern: /oneplus\s*6\b/i,
-      variants: [
-        { storage: '64 GB', rams: ['6 GB'] },
-        { storage: '128 GB', rams: ['8 GB'] },
-        { storage: '256 GB', rams: ['8 GB'] },
-      ],
-    },
-    {
-      pattern: /oneplus\s*10r(\s*5g)?/i,
-      variants: [
-        { storage: '128 GB', rams: ['8 GB'] },
-        { storage: '256 GB', rams: ['8 GB', '12 GB'] },
-      ],
-    },
-    {
-      pattern: /oneplus\s*8(\s*5g)?(\s*uw)?/i,
-      variants: [
-        { storage: '128 GB', rams: ['8 GB'] },
         { storage: '256 GB', rams: ['12 GB'] },
       ],
     },
@@ -3127,9 +3242,9 @@ export function is512GBValidForModel(brand = '', model = ''): boolean {
     return false; // All other Samsung (A, M, F, base S20/S21/S22/S23, other FE) max out at 256GB
   }
 
-  // 3. OnePlus: Strictly OnePlus 12, 13, Open (Nord series, 11R, 12R never had 512GB in India)
+  // 3. OnePlus: Strictly OnePlus 12, 13, 11R, 13R, Nord 6, Open (Nord series, 12R never had 512GB in India)
   if (b.includes('oneplus')) {
-    if (/\b(12|13|open)\b/i.test(m) && !/12r|nord/i.test(m)) return true;
+    if (/\b(11r|12|13|13r|open|nord\s*6)\b/i.test(m) && !/\b12r\b/i.test(m)) return true;
     return false;
   }
 
@@ -3139,9 +3254,9 @@ export function is512GBValidForModel(brand = '', model = ''): boolean {
     return false;
   }
 
-  // 5. Vivo / iQOO: Strictly Vivo X series flagships (X70-X200, Pro), V30/V40 Pro & iQOO 11/12/13/15
+  // 5. Vivo / iQOO: Strictly Vivo X series flagships (X70-X300, X200T, Pro), V30/V40 Pro & iQOO 11/12/13/15
   if (b.includes('vivo') || b.includes('iqoo')) {
-    if (/vivo\s*x(70|80|90|100|200)|v(30|40)\s*pro|iqoo\s*(11|12|13|15)/i.test(m)) return true;
+    if (/vivo\s*x(70|80|90|100|200|300)|x200t|v(30|40)\s*pro|iqoo\s*(11|12|13|15)/i.test(m)) return true;
     return false; // Vivo V series standard and Y series never had 512GB in India
   }
 
@@ -3227,6 +3342,46 @@ export function isStorageAllowedForModel(brand = '', model = '', storageStr = ''
 
   // Oppo Find X9 Pro: remove only 128/256 variant (allow 512 GB and 1 TB)
   if (/find\s*x9\s*pro\b/i.test(full)) {
+    if (gb === 128 || gb === 256) return false;
+  }
+
+  // Vivo X9: remove 256GB (allowed: 64GB, 128GB)
+  if (/\bx9\b(?!\s*(?:0|s|plus|pro))/i.test(m) && (b.includes('vivo') || m.includes('vivo'))) {
+    if (gb === 256) return false;
+  }
+
+  // Vivo X300: remove 64GB and 128GB completely (allowed: 256GB, 512GB)
+  if (/\bx300\b/i.test(m) && (b.includes('vivo') || m.includes('vivo'))) {
+    if (gb === 64 || gb === 128) return false;
+  }
+
+  // Vivo X200T: remove 64GB and 128GB (allowed: 256GB, 512GB)
+  if (/\bx200t\b/i.test(m) && (b.includes('vivo') || m.includes('vivo'))) {
+    if (gb === 64 || gb === 128) return false;
+  }
+
+  // Vivo X1 (Legacy Pioneer): remove 128GB and 256GB (allowed: 16GB)
+  if (/\bx1\b(?!\s*(?:0|fold))/i.test(m) && (b.includes('vivo') || m.includes('vivo'))) {
+    if (gb === 128 || gb === 256) return false;
+  }
+
+  // OnePlus Nord 2 5G: remove 256GB (allowed: 128GB)
+  if (/nord\s*2\s*5g\b/i.test(m) && (b.includes('oneplus') || m.includes('oneplus'))) {
+    if (gb === 256) return false;
+  }
+
+  // OnePlus Nord 6: remove 128GB (allowed: 256GB, 512GB)
+  if (/nord\s*6\b/i.test(m) && (b.includes('oneplus') || m.includes('oneplus'))) {
+    if (gb === 128) return false;
+  }
+
+  // OnePlus 5 & 5T: remove 256GB (allowed: 64GB, 128GB)
+  if (/oneplus\s*5t?\b/i.test(m) || (/^5t?\b/i.test(m) && b.includes('oneplus'))) {
+    if (gb === 256) return false;
+  }
+
+  // OnePlus 3: remove 128GB & 256GB (allowed: 64GB only)
+  if (/oneplus\s*3\b(?!\s*t)/i.test(m) || (/^3\b(?!\s*t)/i.test(m) && b.includes('oneplus'))) {
     if (gb === 128 || gb === 256) return false;
   }
 
@@ -3351,7 +3506,7 @@ export function isStorageAllowedForModel(brand = '', model = '', storageStr = ''
     return true;
   }
 
-  // 5. Tier: <= 32 GB (Only allowed on classic Apple devices: iPhone 6/6s/6 Plus, iPhone 7/7 Plus, iPhone SE 1st Gen)
+  // 5. Tier: <= 32 GB (Only allowed on classic Apple devices: iPhone 6/6s/6 Plus, iPhone 7/7 Plus, iPhone SE 1st Gen, or classic Vivo X1)
   if (gb <= 32) {
     if (b.includes('apple') || m.includes('iphone')) {
       if (gb === 32) {
@@ -3360,6 +3515,9 @@ export function isStorageAllowedForModel(brand = '', model = '', storageStr = ''
       if (gb === 16) {
         return /iphone\s*(?:6s?|6\s*plus|se\b(?!\s*(?:2|3|202)))\b/i.test(m);
       }
+    }
+    if ((b.includes('vivo') || m.includes('vivo')) && /\bx1\b(?!\s*(?:0|fold))/i.test(m)) {
+      return gb === 16;
     }
     return false;
   }

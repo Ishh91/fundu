@@ -34,6 +34,20 @@ export const BLOCKED_PHONE_PATTERNS = [
 
   // Vivo (Requested removals)
   { brand: 'vivo', pattern: /\bnex\s*dual\s*display\b/i, label: 'Vivo NEX Dual Display Edition' },
+  { brand: 'vivo', pattern: /\b(?:vivo\s+)?y\s*65\b/i, label: 'Vivo Y65' },
+  { brand: 'vivo', pattern: /\b(?:vivo\s+)?y\s*55\s*l\b/i, label: 'Vivo Y55L' },
+  { brand: 'vivo', pattern: /\b(?:vivo\s+)?y\s*55\b(?!\s*s\s*5g)/i, label: 'Vivo Y55' },
+  { brand: 'vivo', pattern: /\b(?:vivo\s+)?y\s*51\s*l\b/i, label: 'Vivo Y51L' },
+  { brand: 'vivo', pattern: /\b(?:vivo\s+)?y\s*31\s*l\b/i, label: 'Vivo Y31L' },
+  { brand: 'vivo', pattern: /\b(?:vivo\s+)?y\s*27\s*l\b/i, label: 'Vivo Y27L' },
+  { brand: 'vivo', pattern: /\b(?:vivo\s+)?y\s*25\b/i, label: 'Vivo Y25' },
+  { brand: 'vivo', pattern: /\b(?:vivo\s+)?y\s*21\s*l\b/i, label: 'Vivo Y21L' },
+  { brand: 'vivo', pattern: /\b(?:vivo\s+)?y\s*19\s*e\b/i, label: 'Vivo Y19e' },
+  { brand: 'vivo', pattern: /\b(?:vivo\s+)?y\s*15\s*[sc]\b/i, label: 'Vivo Y15s / Y15c' },
+  { brand: 'vivo', pattern: /\b(?:vivo\s+)?y\s*11\b(?!\s*5g)/i, label: 'Vivo Y11 original' },
+  { brand: 'vivo', pattern: /\b(?:vivo\s+)?y\s*03[t]?\b/i, label: 'Vivo Y03 / Y03t' },
+  { brand: 'vivo', pattern: /\b(?:vivo\s+)?y\s*02[sa]\b/i, label: 'Vivo Y02s / Y02a' },
+  { brand: 'vivo', pattern: /\b(?:vivo\s+)?x\s*21\s*ud\b/i, label: 'Vivo X21 UD' },
 
   // Poco / Xiaomi (Requested removals)
   { brand: 'poco', pattern: /x3\s*gt/i, label: 'POCO X3 GT' },

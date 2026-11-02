@@ -6380,14 +6380,6 @@ export const MASTER_MODEL_CATALOG = [
   {
     "brand": "Vivo",
     "series": "Vivo Series",
-    "model": "Vivo Y19e",
-    "storage": "64 GB",
-    "price": 7270,
-    "image": "https://fdn2.gsmarena.com/vv/bigpic/vivo-y19e.jpg"
-  },
-  {
-    "brand": "Vivo",
-    "series": "Vivo Series",
     "model": "Vivo Y19s 5G",
     "storage": "64 GB",
     "price": 9780,
