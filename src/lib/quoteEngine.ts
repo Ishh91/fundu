@@ -84,26 +84,7 @@ export interface InspectionRecalculateResponse {
  * Gracefully falls back to local deterministic calculation if server is offline.
  */
 export async function getFunduPhoneQuote(params: FunduQuoteRequest): Promise<FunduQuoteResponse> {
-  try {
-    const res = await fetch(`${API_BASE}/phones/quote`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(params),
-    });
-
-    if (res.ok) {
-      const json = await res.json();
-      if (json && json.data) {
-        return json.data as FunduQuoteResponse;
-      }
-    }
-  } catch (_err) {
-    // Server connection fallback: run deterministic quote algorithm locally
-  }
-
-  // Local fallback execution using the exact same formula, grounded in database price if available
+  // Precompute authoritative local calculation grounded in database/catalog prices (0.01 ms instant)
   const dbPrice = getEffectivePrice(params.brand, params.model, 0, params.storage);
   const quoteOptions = dbPrice > 0 ? {
     catalogPrice: dbPrice,
@@ -115,6 +96,31 @@ export async function getFunduPhoneQuote(params: FunduQuoteRequest): Promise<Fun
   };
   const localResult = quotePhone(params, quoteOptions);
   const { _internalAudit, ...publicQuote } = localResult as any;
+
+  // Race server valuation with a tight 1200ms abort controller timeout (never block the user for 5-10s)
+  try {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 1200);
+
+    const res = await fetch(`${API_BASE}/phones/quote`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(params),
+      signal: controller.signal,
+    }).finally(() => clearTimeout(timeoutId));
+
+    if (res.ok) {
+      const json = await res.json();
+      if (json && json.data) {
+        return json.data as FunduQuoteResponse;
+      }
+    }
+  } catch (_err) {
+    // Server timeout or offline: use instant local quote computed above
+  }
+
   return publicQuote as FunduQuoteResponse;
 }
 

@@ -30,7 +30,7 @@ import {
   User,
   Phone,
 } from 'lucide-react';
-import { computeDetailedResaleValuation, fetchSellPriceConfig, fetchPhoneModels, searchMobileApiDev, calculateMarketPriceComparison, getDynamicFallbackConfig, type SellPriceConfig } from '../lib/mobileApi';
+import { computeDetailedResaleValuation, fetchSellPriceConfig, getStoredPriceConfig, fetchPhoneModels, searchMobileApiDev, calculateMarketPriceComparison, getDynamicFallbackConfig, type SellPriceConfig } from '../lib/mobileApi';
 import { getFunduPhoneQuote, calculatePhoneAgingFactor, type FunduQuoteResponse } from '../lib/quoteEngine';
 import { db, formatINR, formatMaskedPrice, formatDisplayPrice } from '../lib/db';
 import { useAuth } from '../context/AuthContext';
@@ -538,7 +538,9 @@ export default function SellPhone() {
           );
         };
 
+        const unified = getUnifiedCatalog(foundBrand);
         const matched =
+          unified.find((p) => matchCandidate(p.model, p.brand)) ||
           ALL_INDIAN_PHONES_CATALOG.find((p) => matchCandidate(p.model, p.brand)) ||
           MASTER_MODEL_CATALOG.find((m) => matchCandidate(m.model, m.brand));
 
@@ -674,9 +676,15 @@ export default function SellPhone() {
       return;
     }
 
+    // Instant LocalStorage recovery (0ms) so customer never sees "Calculating..."
+    const cachedConfig = getStoredPriceConfig(form.brand, form.model, form.storage);
+    if (cachedConfig) {
+      setPricingConfig(cachedConfig);
+    }
+
     fetchSellPriceConfig(form.brand, form.model, form.storage)
       .then((config) => {
-        if (active) {
+        if (active && config) {
           setPricingConfig(config);
           if (config?.base_price && config.base_price > 0) {
             savePriceOverride(form.brand, form.model, config.base_price, form.storage);
@@ -684,7 +692,7 @@ export default function SellPhone() {
         }
       })
       .catch(() => {
-        if (active) setPricingConfig(null);
+        if (active && !cachedConfig) setPricingConfig(null);
       });
 
     return () => {

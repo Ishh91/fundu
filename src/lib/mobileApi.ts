@@ -390,17 +390,74 @@ export async function fetchMarketValuation(brand: string, model: string, storage
 }
 export const fetchCashifyValuation = fetchMarketValuation;
 
-export async function fetchSellPriceConfig(brand: string, model: string, storage: string) {
-  const query = new URLSearchParams({
-    brand,
-    model,
-  });
+const priceConfigCache = new Map<string, SellPriceConfig | null>();
+const PRICE_CONFIG_STORAGE_PREFIX = 'fundu_price_config_';
 
+export function getStoredPriceConfig(brand: string, model: string, storage = ''): SellPriceConfig | null {
+  if (typeof window === 'undefined') return null;
+  const b = (brand || '').trim().toLowerCase();
+  const m = (model || '').trim().toLowerCase();
+  const s = (storage || '').trim().toLowerCase().replace(/\s+/g, '');
+  const key = `${PRICE_CONFIG_STORAGE_PREFIX}${b}:${m}:${s}`;
+  try {
+    const raw = localStorage.getItem(key);
+    if (raw) return JSON.parse(raw);
+  } catch {}
+  return null;
+}
+
+export function saveStoredPriceConfig(brand: string, model: string, storage = '', config: SellPriceConfig): void {
+  if (typeof window === 'undefined' || !config) return;
+  const b = (brand || '').trim().toLowerCase();
+  const m = (model || '').trim().toLowerCase();
+  const s = (storage || '').trim().toLowerCase().replace(/\s+/g, '');
+  const key = `${PRICE_CONFIG_STORAGE_PREFIX}${b}:${m}:${s}`;
+  try {
+    localStorage.setItem(key, JSON.stringify(config));
+  } catch {}
+}
+
+export async function fetchSellPriceConfig(brand: string, model: string, storage: string): Promise<SellPriceConfig | null> {
+  const b = (brand || '').trim().toLowerCase();
+  const m = (model || '').trim().toLowerCase();
+  const s = (storage || '').trim().toLowerCase().replace(/\s+/g, '');
+  const cacheKey = `${b}:${m}:${s}`;
+
+  if (priceConfigCache.has(cacheKey)) {
+    return priceConfigCache.get(cacheKey) || null;
+  }
+
+  // 1. Instant LocalStorage retrieval (<0.001 ms)
+  const stored = getStoredPriceConfig(brand, model, storage);
+  if (stored) {
+    priceConfigCache.set(cacheKey, stored);
+    // Silent background refresh with 1500ms timeout
+    const query = new URLSearchParams({ brand, model });
+    if (storage) query.set('storage', storage);
+    fetchWithTimeout(() => fetchApi<SellPriceConfig | null>(`/sell-pricing/config?${query.toString()}`), 1500)
+      .then((fresh) => {
+        if (fresh) {
+          priceConfigCache.set(cacheKey, fresh);
+          saveStoredPriceConfig(brand, model, storage, fresh);
+        }
+      })
+      .catch(() => null);
+    return stored;
+  }
+
+  // 2. Fetch with tight 1500ms timeout
+  const query = new URLSearchParams({ brand, model });
   if (storage) query.set('storage', storage);
 
   try {
-    return await fetchApi<SellPriceConfig | null>(`/sell-pricing/config?${query.toString()}`);
+    const config = await fetchWithTimeout(() => fetchApi<SellPriceConfig | null>(`/sell-pricing/config?${query.toString()}`), 1500);
+    priceConfigCache.set(cacheKey, config);
+    if (config) {
+      saveStoredPriceConfig(brand, model, storage, config);
+    }
+    return config;
   } catch {
+    priceConfigCache.set(cacheKey, null);
     return null;
   }
 }
@@ -819,6 +876,28 @@ export function detectSeries(brand: string, modelName: string): string {
 }
 
 const catalogCache = new Map<string, CatalogModelItem[]>();
+const BRAND_CATALOG_STORAGE_PREFIX = 'fundu_brand_catalog_';
+
+export function getStoredBrandCatalog(brand: string): CatalogModelItem[] | null {
+  if (typeof window === 'undefined') return null;
+  const cleanBrand = (brand || '').trim().toLowerCase();
+  try {
+    const raw = localStorage.getItem(`${BRAND_CATALOG_STORAGE_PREFIX}${cleanBrand}`);
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+    }
+  } catch {}
+  return null;
+}
+
+export function saveStoredBrandCatalog(brand: string, items: CatalogModelItem[]): void {
+  if (typeof window === 'undefined' || !Array.isArray(items) || items.length === 0) return;
+  const cleanBrand = (brand || '').trim().toLowerCase();
+  try {
+    localStorage.setItem(`${BRAND_CATALOG_STORAGE_PREFIX}${cleanBrand}`, JSON.stringify(items));
+  } catch {}
+}
 
 export async function fetchBrandCatalogFromApi(brand: string): Promise<CatalogModelItem[]> {
   const cleanBrand = brand.trim().toLowerCase();
@@ -826,13 +905,36 @@ export async function fetchBrandCatalogFromApi(brand: string): Promise<CatalogMo
     return catalogCache.get(cleanBrand)!;
   }
 
-  // 1. PRIMARY: MobileAPI.dev Live Integration (Using purchased MobileAPI key)
+  // 0. Instant LocalStorage retrieval (<0.001 ms)
+  const stored = getStoredBrandCatalog(cleanBrand);
+  if (stored && stored.length > 0) {
+    catalogCache.set(cleanBrand, stored);
+    // Silent background refresh with 2000ms timeout
+    fetchWithTimeout(async () => {
+      const result = await fetchApi<MobileApiDevice[]>(`/mobile/devices?brand=${encodeURIComponent(brand)}`);
+      if (Array.isArray(result) && result.length > 0) {
+        const mapped: CatalogModelItem[] = result.map((dev) => ({
+          brand: dev.brand || brand,
+          series: detectSeries(dev.brand || brand, dev.model),
+          model: dev.model,
+          storage: dev.storage_options?.[0] || '128 GB',
+          price: dev.base_resale_value || Math.round((dev.default_mrp || 30000) * 0.55),
+          image: getCleanPhoneImage(dev.brand || brand, dev.model, dev.image_url),
+        }));
+        catalogCache.set(cleanBrand, mapped);
+        saveStoredBrandCatalog(cleanBrand, mapped);
+      }
+    }, 2000).catch(() => null);
+    return stored;
+  }
+
+  // 1. PRIMARY: MobileAPI.dev Live Integration (Using purchased MobileAPI key with fast 2000ms timeout)
   try {
     const apiDevices = await fetchWithTimeout(async () => {
       const result = await fetchApi<MobileApiDevice[]>(`/mobile/devices?brand=${encodeURIComponent(brand)}`);
       if (Array.isArray(result) && result.length > 0) return result;
       throw new Error('NO_API_DEVICES');
-    }, 10000).catch(() => null);
+    }, 2000).catch(() => null);
 
     if (apiDevices && apiDevices.length > 0) {
       const mapped: CatalogModelItem[] = apiDevices.map((dev) => ({
@@ -844,13 +946,14 @@ export async function fetchBrandCatalogFromApi(brand: string): Promise<CatalogMo
         image: getCleanPhoneImage(dev.brand || brand, dev.model, dev.image_url),
       }));
       catalogCache.set(cleanBrand, mapped);
+      saveStoredBrandCatalog(cleanBrand, mapped);
       return mapped;
     }
   } catch {
     // fallback to local catalog
   }
 
-  // 2. FALLBACK: Curated Indian Phone Catalog
+  // 2. FALLBACK: Curated Indian Phone Catalog (Instant 0ms)
   const localMatches = ALL_INDIAN_PHONES_CATALOG.filter(
     (p) => p.brand.toLowerCase() === cleanBrand
   );
@@ -865,6 +968,7 @@ export async function fetchBrandCatalogFromApi(brand: string): Promise<CatalogMo
       image: getCleanPhoneImage(p.brand, p.model, p.image_url || undefined),
     }));
     catalogCache.set(cleanBrand, mapped);
+    saveStoredBrandCatalog(cleanBrand, mapped);
     return mapped;
   }
 

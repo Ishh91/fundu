@@ -39,10 +39,10 @@ export function getStoredLiveMasterPhones(): any[] {
   if (memoryLivePhones.length > 0) return memoryLivePhones;
   if (typeof window === 'undefined') return [];
   try {
-    const raw = sessionStorage.getItem(LIVE_MASTER_PHONES_STORAGE_KEY) || localStorage.getItem(LIVE_MASTER_PHONES_STORAGE_KEY);
+    const raw = localStorage.getItem(LIVE_MASTER_PHONES_STORAGE_KEY) || sessionStorage.getItem(LIVE_MASTER_PHONES_STORAGE_KEY);
     if (raw) {
       const parsed = JSON.parse(raw);
-      if (Array.isArray(parsed)) {
+      if (Array.isArray(parsed) && parsed.length > 0) {
         memoryLivePhones = parsed;
         return parsed;
       }
@@ -73,6 +73,7 @@ export async function pullLiveMasterPhonesFromDb(): Promise<any[]> {
         }
       });
       try {
+        localStorage.setItem(LIVE_MASTER_PHONES_STORAGE_KEY, JSON.stringify(data));
         sessionStorage.setItem(LIVE_MASTER_PHONES_STORAGE_KEY, JSON.stringify(data));
       } catch {}
       window.dispatchEvent(new CustomEvent('fundu_catalog_synced', { detail: { count: data.length } }));

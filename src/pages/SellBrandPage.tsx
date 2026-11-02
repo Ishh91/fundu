@@ -26,7 +26,7 @@ import { getCleanPhoneImage, getCleanBrandLogo, BRAND_FRONT_FALLBACKS, getGeneri
 import { usePriceSync, applyPriceOverrides, isModelDeleted, getEffectivePrice } from '../lib/priceSync';
 import { MASTER_MODEL_CATALOG } from '../data/masterModelCatalog';
 import { getUnifiedCatalog } from '../lib/modelCatalogSync';
-import { fetchBrandCatalogFromApi, getDynamicFallbackConfig, calculateMarketPriceComparison, type CatalogModelItem } from '../lib/mobileApi';
+import { fetchBrandCatalogFromApi, getStoredBrandCatalog, getDynamicFallbackConfig, calculateMarketPriceComparison, type CatalogModelItem } from '../lib/mobileApi';
 import { ALL_INDIAN_PHONES_CATALOG } from '../data/indianPhonesCatalog';
 import {
   groupModelsBySeries,
@@ -218,9 +218,11 @@ export default function SellBrandPage() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }, [brandSlug, effectiveSeriesSlug]);
 
-  // Dynamic API Models Catalog State
-  const [apiModels, setApiModels] = useState<CatalogModelItem[]>([]);
-  const [isLoadingApi, setIsLoadingApi] = useState<boolean>(true);
+  // Dynamic API Models Catalog State (initialized instantly from LocalStorage in 0ms)
+  const [apiModels, setApiModels] = useState<CatalogModelItem[]>(() => {
+    return getStoredBrandCatalog(brandCanonicalKey) || [];
+  });
+  const [isLoadingApi, setIsLoadingApi] = useState<boolean>(() => !getStoredBrandCatalog(brandCanonicalKey));
   const [imageVersion, setImageVersion] = useState<number>(0);
 
   // Sync custom images live from database on mount & listen for admin updates
@@ -233,16 +235,19 @@ export default function SellBrandPage() {
     return () => window.removeEventListener('fundu_model_image_updated', handleModelImageUpdate);
   }, []);
 
-  // Fetch models dynamically from API when brand changes
+  // Fetch models dynamically from API when brand changes (instant 0ms if cached, background sync)
   useEffect(() => {
     let isSubscribed = true;
-    setIsLoadingApi(true);
+    const cached = getStoredBrandCatalog(brandCanonicalKey);
+    if (!cached || cached.length === 0) {
+      setIsLoadingApi(true);
+    }
     fetchBrandCatalogFromApi(brandCanonicalKey)
       .then((models) => {
         if (isSubscribed) setApiModels(models);
       })
       .catch(() => {
-        if (isSubscribed) setApiModels([]);
+        if (isSubscribed && (!cached || cached.length === 0)) setApiModels([]);
       })
       .finally(() => {
         if (isSubscribed) setIsLoadingApi(false);
@@ -795,7 +800,7 @@ export default function SellBrandPage() {
           )}
 
           {/* CATALOG CONTENT: ALL MODELS IN SERIES SEQUENCE */}
-          {isLoadingApi ? (
+          {isLoadingApi && displayedModels.length === 0 ? (
             <div className="py-16 text-center space-y-3">
               <RefreshCw className="h-8 w-8 text-[#6A859F] animate-spin mx-auto" />
               <p className="text-xs font-bold text-gray-500">Fetching live {brandDisplayName} models...</p>
