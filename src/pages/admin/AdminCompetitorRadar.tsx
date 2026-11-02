@@ -28,6 +28,7 @@ import {
   normalizeStorageString,
   calculateHardwareVariantMultiplier,
   getModelHardwareSpecs,
+  getRadarHardwareSpecs,
   calculateRamPriceOffset,
   isStorageAllowedForModel,
 } from '../../lib/deviceSpecs';
@@ -243,31 +244,13 @@ export default function AdminCompetitorRadar() {
     } catch (_e) {}
   }, [selectedBrand, searchModel, selectedStorage, selectedRam]);
 
-  // 1. Hardware Specs (Authentic Storages & RAMs for THIS exact model)
+  // 1. Hardware Specs strictly matched across Radar and User Sell Flow
   const currentDeviceSpecs = useMemo(() => {
-    return getModelHardwareSpecs(selectedBrand, searchModel);
-  }, [selectedBrand, searchModel]);
+    return getRadarHardwareSpecs(selectedBrand, searchModel, selectedStorage, MASTER_MODEL_CATALOG);
+  }, [selectedBrand, searchModel, selectedStorage]);
 
-  // Authentic Storages that realistically exist for this phone (e.g. S24 Ultra -> 256GB, 512GB, 1TB)
-  const availableStorages = useMemo(() => {
-    const isApple = selectedBrand.toLowerCase().includes('apple') || searchModel.toLowerCase().includes('iphone') || /pro\s*max/i.test(searchModel);
-    const catalogStorages = MASTER_MODEL_CATALOG
-      .filter((m) => m.brand.toLowerCase() === selectedBrand.toLowerCase() && m.model.toLowerCase() === searchModel.toLowerCase())
-      .map((m) => m.storage);
-
-    const baseList = isApple
-      ? ['128 GB', '256 GB', '512 GB', '1 TB']
-      : (currentDeviceSpecs.storages.length > 0 ? currentDeviceSpecs.storages : ['128 GB', '256 GB']);
-
-    const combined = Array.from(new Set([...baseList, ...catalogStorages]));
-    const filtered = combined.filter((s) => isStorageAllowedForModel(selectedBrand, searchModel, s));
-    return filtered.length > 0 ? filtered : combined;
-  }, [currentDeviceSpecs, selectedBrand, searchModel]);
-
-  // Authentic RAM options for the currently selected storage
-  const availableRams = useMemo(() => {
-    return currentDeviceSpecs.getRamsForStorage(selectedStorage);
-  }, [currentDeviceSpecs, selectedStorage]);
+  const availableStorages = currentDeviceSpecs.storages;
+  const availableRams = currentDeviceSpecs.rams;
 
   // Synchronize storage if current selection does not exist for this model
   useEffect(() => {

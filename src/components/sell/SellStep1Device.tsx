@@ -26,7 +26,7 @@ import { formatDisplayPrice } from '../../lib/db';
 import { BRAND_TILES, MASTER_MODEL_CATALOG, FAQS_LIST } from '../../data/masterModelCatalog';
 import { isModelDeleted, usePriceSync } from '../../lib/priceSync';
 import { getModelDedupeKey, sortDeviceModelsLatestFirst, inferModelSeries } from '../../data/brandSeriesCatalog';
-import { getModelHardwareSpecs } from '../../lib/deviceSpecs';
+import { getModelHardwareSpecs, getRadarHardwareSpecs } from '../../lib/deviceSpecs';
 import { getUnifiedCatalog } from '../../lib/modelCatalogSync';
 
 interface SellStep1DeviceProps {
@@ -192,7 +192,7 @@ export default function SellStep1Device({
 
                       {/* Storage Selection Pills */}
                       <div className="flex flex-wrap gap-1.5 pt-1">
-                        {getModelHardwareSpecs(m.brand || form.brand, m.model, MASTER_MODEL_CATALOG).storages.map((stg) => (
+                        {getRadarHardwareSpecs(m.brand || form.brand, m.model).storages.map((stg) => (
                           <button
                             key={stg}
                             type="button"

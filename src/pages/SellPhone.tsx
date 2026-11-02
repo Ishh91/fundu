@@ -37,7 +37,7 @@ import { useAuth } from '../context/AuthContext';
 import { ALL_INDIAN_PHONES_CATALOG } from '../data/indianPhonesCatalog';
 import { getCleanPhoneImage, getCleanBrandLogo, BRAND_FRONT_FALLBACKS, getGenericDevicePlaceholder, pullLiveModelImagesFromDb } from '../lib/phoneImages';
 import { usePriceSync, applyPriceOverrides, isModelDeleted, savePriceOverride, getEffectivePrice } from '../lib/priceSync';
-import { getModelHardwareSpecs, calculateHardwareVariantMultiplier, calculateRamPriceOffset, deviceIncludesStylus, getModelReleaseYear, isAmoledDisplay, isObsoleteDeviceHardware } from '../lib/deviceSpecs';
+import { getModelHardwareSpecs, getRadarHardwareSpecs, calculateHardwareVariantMultiplier, calculateRamPriceOffset, deviceIncludesStylus, getModelReleaseYear, isAmoledDisplay, isObsoleteDeviceHardware } from '../lib/deviceSpecs';
 import {
   getPanIndiaLocation,
   searchPanIndiaLocations,
@@ -603,15 +603,15 @@ export default function SellPhone() {
       .finally(() => setLoadingModels(false));
   }, [form.brand, debouncedQuery]);
 
-  // Model-accurate hardware variant specifications (Storage & RAM options)
+  // Model-accurate hardware variant specifications strictly matching Competitor Radar
   const currentDeviceSpecs = useMemo(() => {
-    return getModelHardwareSpecs(form.brand, form.model);
-  }, [form.brand, form.model]);
+    return getRadarHardwareSpecs(form.brand, form.model, form.storage);
+  }, [form.brand, form.model, form.storage]);
 
   // Dynamic RAM options strictly dependent on the CURRENT selected storage
   const availableRams = useMemo(() => {
-    return currentDeviceSpecs.getRamsForStorage(form.storage || currentDeviceSpecs.defaultStorage);
-  }, [currentDeviceSpecs, form.storage]);
+    return currentDeviceSpecs.rams;
+  }, [currentDeviceSpecs]);
 
   // Synchronize form storage & RAM when device model or selected storage changes
   useEffect(() => {

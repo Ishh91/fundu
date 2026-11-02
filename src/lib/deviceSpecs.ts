@@ -3295,3 +3295,58 @@ export function getModelHardwareSpecs(
   // 4. Intelligent Fallback by Brand & Generation Tier
   return sanitizeSpecs(inferTierHardwareSpecs(brand, model));
 }
+
+/**
+ * Authoritative Hardware Specifications for Competitor Radar and User Sell Flow.
+ * Guarantees that user-facing storages and RAM options strictly match Competitor Radar, and nothing else.
+ */
+export function getRadarHardwareSpecs(
+  brand = '',
+  model = '',
+  selectedStorage?: string,
+  catalog?: Array<{ brand: string; model: string; storage: string }>
+): DeviceHardwareSpecs & { activeStorage: string } {
+  const currentDeviceSpecs = getModelHardwareSpecs(brand, model);
+  const bLower = (brand || '').toLowerCase().trim();
+  const mLower = (model || '').toLowerCase().trim();
+  const isApple = bLower.includes('apple') || mLower.includes('iphone') || mLower.includes('ipad') || /pro\s*max/i.test(mLower);
+
+  const catalogStorages = Array.isArray(catalog)
+    ? catalog
+        .filter((m) => m.brand.toLowerCase() === bLower && m.model.toLowerCase() === mLower)
+        .map((m) => m.storage)
+    : [];
+
+  const baseList = isApple
+    ? ['128 GB', '256 GB', '512 GB', '1 TB']
+    : (currentDeviceSpecs.storages.length > 0 ? currentDeviceSpecs.storages : ['128 GB', '256 GB']);
+
+  const combined = Array.from(new Set([...baseList, ...catalogStorages]));
+  const filtered = combined.filter((s) => isStorageAllowedForModel(brand, model, s));
+  const storages = filtered.length > 0 ? filtered : combined;
+
+  const defaultStorage = storages.includes(currentDeviceSpecs.defaultStorage)
+    ? currentDeviceSpecs.defaultStorage
+    : (storages[0] || '128 GB');
+
+  const activeStorage = selectedStorage && storages.includes(selectedStorage)
+    ? selectedStorage
+    : defaultStorage;
+
+  const getRamsForStorage = (stg: string): string[] => {
+    if (isApple) return [];
+    return currentDeviceSpecs.getRamsForStorage(stg);
+  };
+
+  const rams = getRamsForStorage(activeStorage);
+
+  return {
+    ...currentDeviceSpecs,
+    storages,
+    defaultStorage,
+    activeStorage,
+    rams,
+    defaultRam: rams[0] || '',
+    getRamsForStorage,
+  };
+}
