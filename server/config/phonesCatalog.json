@@ -2622,150 +2622,6 @@
   },
   {
     "brand": "Motorola",
-    "model": "Moto G 5G",
-    "release_year": 2022,
-    "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
-    ],
-    "storage_options": [
-      "128 GB",
-      "256 GB"
-    ],
-    "default_mrp": 17175,
-    "base_resale_value": 5900,
-    "image_url": "https://fdn2.gsmarena.com/vv/bigpic/motorola-motorola-moto-g-5g.jpg",
-    "popular_tag": "Motorola Official Model",
-    "processor": "5G Octa-core Processor",
-    "camera_spec": "50MP OIS Camera",
-    "battery_spec": "5000 mAh Fast Charging",
-    "display_spec": "6.7\" AMOLED 120Hz",
-    "is_5g": true,
-    "is_active": true,
-    "price": 5900
-  },
-  {
-    "brand": "Motorola",
-    "model": "Moto G04",
-    "release_year": 2024,
-    "ram_options": [
-      "4GB",
-      "8GB"
-    ],
-    "storage_options": [
-      "64 GB",
-      "128 GB"
-    ],
-    "default_mrp": 8265,
-    "base_resale_value": 5510,
-    "image_url": "https://fdn2.gsmarena.com/vv/bigpic/motorola-motorola-moto-g04.jpg",
-    "popular_tag": "Motorola Official Model",
-    "processor": "High-Efficiency Processor",
-    "camera_spec": "50MP OIS Camera",
-    "battery_spec": "5000 mAh Fast Charging",
-    "display_spec": "6.7\" AMOLED 120Hz",
-    "is_5g": false,
-    "is_active": true
-  },
-  {
-    "brand": "Motorola",
-    "model": "Moto G04s",
-    "release_year": 2024,
-    "ram_options": [
-      "4GB",
-      "8GB"
-    ],
-    "storage_options": [
-      "64 GB",
-      "128 GB"
-    ],
-    "default_mrp": 8640,
-    "base_resale_value": 5760,
-    "image_url": "https://fdn2.gsmarena.com/vv/bigpic/motorola-motorola-moto-g04s.jpg",
-    "popular_tag": "Motorola Official Model",
-    "processor": "High-Efficiency Processor",
-    "camera_spec": "50MP OIS Camera",
-    "battery_spec": "5000 mAh Fast Charging",
-    "display_spec": "6.7\" AMOLED 120Hz",
-    "is_5g": false,
-    "is_active": true
-  },
-  {
-    "brand": "Motorola",
-    "model": "Moto G05",
-    "release_year": 2022,
-    "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
-    ],
-    "storage_options": [
-      "64 GB",
-      "256 GB"
-    ],
-    "default_mrp": 10380,
-    "base_resale_value": 6920,
-    "image_url": "https://fdn2.gsmarena.com/vv/bigpic/motorola-motorola-moto-g05.jpg",
-    "popular_tag": "Motorola Official Model",
-    "processor": "High-Efficiency Processor",
-    "camera_spec": "50MP OIS Camera",
-    "battery_spec": "5000 mAh Fast Charging",
-    "display_spec": "6.7\" AMOLED 120Hz",
-    "is_5g": false,
-    "is_active": true
-  },
-  {
-    "brand": "Motorola",
-    "model": "Moto G06 Power",
-    "release_year": 2016,
-    "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
-    ],
-    "storage_options": [
-      "64 GB",
-      "256 GB"
-    ],
-    "default_mrp": 10695,
-    "base_resale_value": 7130,
-    "image_url": "https://fdn2.gsmarena.com/vv/bigpic/motorola-motorola-moto-g06-power.jpg",
-    "popular_tag": "Motorola Official Model",
-    "processor": "High-Efficiency Processor",
-    "camera_spec": "50MP OIS Camera",
-    "battery_spec": "5000 mAh Fast Charging",
-    "display_spec": "6.7\" AMOLED 120Hz",
-    "is_5g": false,
-    "is_active": true
-  },
-  {
-    "brand": "Motorola",
-    "model": "Moto G10 Power",
-    "release_year": 2022,
-    "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
-    ],
-    "storage_options": [
-      "64 GB",
-      "256 GB"
-    ],
-    "default_mrp": 7575,
-    "base_resale_value": 4400,
-    "image_url": "https://fdn2.gsmarena.com/vv/bigpic/motorola-motorola-moto-g10-power.jpg",
-    "popular_tag": "Motorola Official Model",
-    "processor": "High-Efficiency Processor",
-    "camera_spec": "50MP OIS Camera",
-    "battery_spec": "5000 mAh Fast Charging",
-    "display_spec": "6.7\" AMOLED 120Hz",
-    "is_5g": false,
-    "is_active": true,
-    "price": 4400
-  },
-  {
-    "brand": "Motorola",
     "model": "Moto G13",
     "release_year": 2021,
     "ram_options": [
@@ -3191,30 +3047,6 @@
   },
   {
     "brand": "Motorola",
-    "model": "Moto G6 Plus",
-    "release_year": 2016,
-    "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
-    ],
-    "storage_options": [
-      "64 GB",
-      "256 GB"
-    ],
-    "default_mrp": 5745,
-    "base_resale_value": 3830,
-    "image_url": "https://fdn2.gsmarena.com/vv/bigpic/motorola-motorola-moto-g6-plus.jpg",
-    "popular_tag": "Motorola Official Model",
-    "processor": "5G Octa-core Processor",
-    "camera_spec": "50MP OIS Camera",
-    "battery_spec": "5000 mAh Fast Charging",
-    "display_spec": "6.7\" AMOLED 120Hz",
-    "is_5g": true,
-    "is_active": true
-  },
-  {
-    "brand": "Motorola",
     "model": "Moto G60",
     "release_year": 2022,
     "ram_options": [
@@ -3311,54 +3143,6 @@
   },
   {
     "brand": "Motorola",
-    "model": "Moto G7",
-    "release_year": 2017,
-    "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
-    ],
-    "storage_options": [
-      "64 GB",
-      "256 GB"
-    ],
-    "default_mrp": 5295,
-    "base_resale_value": 3530,
-    "image_url": "https://fdn2.gsmarena.com/vv/bigpic/motorola-motorola-moto-g7.jpg",
-    "popular_tag": "Motorola Official Model",
-    "processor": "High-Efficiency Processor",
-    "camera_spec": "50MP OIS Camera",
-    "battery_spec": "5000 mAh Fast Charging",
-    "display_spec": "6.7\" AMOLED 120Hz",
-    "is_5g": false,
-    "is_active": true
-  },
-  {
-    "brand": "Motorola",
-    "model": "Moto G7 Power",
-    "release_year": 2017,
-    "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
-    ],
-    "storage_options": [
-      "64 GB",
-      "256 GB"
-    ],
-    "default_mrp": 5775,
-    "base_resale_value": 3850,
-    "image_url": "https://fdn2.gsmarena.com/vv/bigpic/motorola-motorola-moto-g7-power.jpg",
-    "popular_tag": "Motorola Official Model",
-    "processor": "High-Efficiency Processor",
-    "camera_spec": "50MP OIS Camera",
-    "battery_spec": "5000 mAh Fast Charging",
-    "display_spec": "6.7\" AMOLED 120Hz",
-    "is_5g": false,
-    "is_active": true
-  },
-  {
-    "brand": "Motorola",
     "model": "Moto G71 5G",
     "release_year": 2022,
     "ram_options": [
@@ -3425,55 +3209,6 @@
     "is_5g": true,
     "is_active": true,
     "price": 8150
-  },
-  {
-    "brand": "Motorola",
-    "model": "Moto G8 Plus",
-    "release_year": 2017,
-    "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
-    ],
-    "storage_options": [
-      "64 GB",
-      "256 GB"
-    ],
-    "default_mrp": 6855,
-    "base_resale_value": 4570,
-    "image_url": "https://fdn2.gsmarena.com/vv/bigpic/motorola-motorola-moto-g8-plus.jpg",
-    "popular_tag": "Motorola Official Model",
-    "processor": "5G Octa-core Processor",
-    "camera_spec": "50MP OIS Camera",
-    "battery_spec": "5000 mAh Fast Charging",
-    "display_spec": "6.7\" AMOLED 120Hz",
-    "is_5g": true,
-    "is_active": true
-  },
-  {
-    "brand": "Motorola",
-    "model": "Moto G8 Power Lite",
-    "release_year": 2017,
-    "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
-    ],
-    "storage_options": [
-      "64 GB",
-      "256 GB"
-    ],
-    "default_mrp": 6855,
-    "base_resale_value": 3400,
-    "image_url": "https://fdn2.gsmarena.com/vv/bigpic/motorola-motorola-moto-g8-power-lite.jpg",
-    "popular_tag": "Motorola Official Model",
-    "processor": "High-Efficiency Processor",
-    "camera_spec": "50MP OIS Camera",
-    "battery_spec": "5000 mAh Fast Charging",
-    "display_spec": "6.7\" AMOLED 120Hz",
-    "is_5g": false,
-    "is_active": true,
-    "price": 3400
   },
   {
     "brand": "Motorola",
@@ -3567,56 +3302,6 @@
     "display_spec": "6.7\" AMOLED 120Hz",
     "is_5g": true,
     "is_active": true
-  },
-  {
-    "brand": "Motorola",
-    "model": "Moto G9",
-    "release_year": 2022,
-    "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
-    ],
-    "storage_options": [
-      "64 GB",
-      "256 GB"
-    ],
-    "default_mrp": 7050,
-    "base_resale_value": 4100,
-    "image_url": "https://fdn2.gsmarena.com/vv/bigpic/motorola-motorola-moto-g9.jpg",
-    "popular_tag": "Motorola Official Model",
-    "processor": "High-Efficiency Processor",
-    "camera_spec": "50MP OIS Camera",
-    "battery_spec": "5000 mAh Fast Charging",
-    "display_spec": "6.7\" AMOLED 120Hz",
-    "is_5g": false,
-    "is_active": true,
-    "price": 4100
-  },
-  {
-    "brand": "Motorola",
-    "model": "Moto G9 Power",
-    "release_year": 2022,
-    "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
-    ],
-    "storage_options": [
-      "64 GB",
-      "256 GB"
-    ],
-    "default_mrp": 7005,
-    "base_resale_value": 4500,
-    "image_url": "https://fdn2.gsmarena.com/vv/bigpic/motorola-motorola-moto-g9-power.jpg",
-    "popular_tag": "Motorola Official Model",
-    "processor": "High-Efficiency Processor",
-    "camera_spec": "50MP OIS Camera",
-    "battery_spec": "5000 mAh Fast Charging",
-    "display_spec": "6.7\" AMOLED 120Hz",
-    "is_5g": false,
-    "is_active": true,
-    "price": 4500
   },
   {
     "brand": "Motorola",

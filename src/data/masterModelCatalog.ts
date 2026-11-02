@@ -1132,54 +1132,6 @@ export const MASTER_MODEL_CATALOG = [
   {
     "brand": "Motorola",
     "series": "Motorola Series",
-    "model": "Motorola Moto G 5G",
-    "storage": "128 GB",
-    "price": 11450,
-    "image": "https://fdn2.gsmarena.com/vv/bigpic/motorola-moto-g-5g.jpg"
-  },
-  {
-    "brand": "Motorola",
-    "series": "Motorola Series",
-    "model": "Motorola Moto G04",
-    "storage": "64 GB",
-    "price": 5510,
-    "image": "https://fdn2.gsmarena.com/vv/bigpic/motorola-moto-g04.jpg"
-  },
-  {
-    "brand": "Motorola",
-    "series": "Motorola Series",
-    "model": "Motorola Moto G04s",
-    "storage": "64 GB",
-    "price": 5760,
-    "image": "https://fdn2.gsmarena.com/vv/bigpic/motorola-moto-g04s.jpg"
-  },
-  {
-    "brand": "Motorola",
-    "series": "Motorola Series",
-    "model": "Motorola Moto G05",
-    "storage": "64 GB",
-    "price": 6920,
-    "image": "https://fdn2.gsmarena.com/vv/bigpic/motorola-moto-g05.jpg"
-  },
-  {
-    "brand": "Motorola",
-    "series": "Motorola Series",
-    "model": "Motorola Moto G06 Power",
-    "storage": "64 GB",
-    "price": 7130,
-    "image": "https://fdn2.gsmarena.com/vv/bigpic/motorola-moto-g06-power.jpg"
-  },
-  {
-    "brand": "Motorola",
-    "series": "Motorola Series",
-    "model": "Motorola Moto G10 Power",
-    "storage": "64 GB",
-    "price": 5050,
-    "image": "https://fdn2.gsmarena.com/vv/bigpic/motorola-moto-g10-power.jpg"
-  },
-  {
-    "brand": "Motorola",
-    "series": "Motorola Series",
     "model": "Motorola Moto G13",
     "storage": "64 GB",
     "price": 4240,
@@ -1324,14 +1276,6 @@ export const MASTER_MODEL_CATALOG = [
   {
     "brand": "Motorola",
     "series": "Motorola Series",
-    "model": "Motorola Moto G6 Plus",
-    "storage": "64 GB",
-    "price": 3830,
-    "image": "https://fdn2.gsmarena.com/vv/bigpic/motorola-moto-g6-plus.jpg"
-  },
-  {
-    "brand": "Motorola",
-    "series": "Motorola Series",
     "model": "Motorola Moto G60",
     "storage": "128 GB",
     "price": 7370,
@@ -1364,22 +1308,6 @@ export const MASTER_MODEL_CATALOG = [
   {
     "brand": "Motorola",
     "series": "Motorola Series",
-    "model": "Motorola Moto G7",
-    "storage": "64 GB",
-    "price": 3530,
-    "image": "https://fdn2.gsmarena.com/vv/bigpic/motorola-moto-g7.jpg"
-  },
-  {
-    "brand": "Motorola",
-    "series": "Motorola Series",
-    "model": "Motorola Moto G7 Power",
-    "storage": "64 GB",
-    "price": 3850,
-    "image": "https://fdn2.gsmarena.com/vv/bigpic/motorola-moto-g7-power.jpg"
-  },
-  {
-    "brand": "Motorola",
-    "series": "Motorola Series",
     "model": "Motorola Moto G71 5G",
     "storage": "128 GB",
     "price": 9010,
@@ -1400,22 +1328,6 @@ export const MASTER_MODEL_CATALOG = [
     "storage": "128 GB",
     "price": 9880,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/motorola-moto-g73.jpg"
-  },
-  {
-    "brand": "Motorola",
-    "series": "Motorola Series",
-    "model": "Motorola Moto G8 Plus",
-    "storage": "64 GB",
-    "price": 4570,
-    "image": "https://fdn2.gsmarena.com/vv/bigpic/motorola-moto-g8-plus.jpg"
-  },
-  {
-    "brand": "Motorola",
-    "series": "Motorola Series",
-    "model": "Motorola Moto G8 Power Lite",
-    "storage": "64 GB",
-    "price": 4570,
-    "image": "https://fdn2.gsmarena.com/vv/bigpic/motorola-moto-g8-power-lite.jpg"
   },
   {
     "brand": "Motorola",
@@ -1448,22 +1360,6 @@ export const MASTER_MODEL_CATALOG = [
     "storage": "128 GB",
     "price": 14320,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/motorola-moto-g86-power-5g.jpg"
-  },
-  {
-    "brand": "Motorola",
-    "series": "Motorola Series",
-    "model": "Motorola Moto G9",
-    "storage": "64 GB",
-    "price": 4700,
-    "image": "https://fdn2.gsmarena.com/vv/bigpic/motorola-moto-g9.jpg"
-  },
-  {
-    "brand": "Motorola",
-    "series": "Motorola Series",
-    "model": "Motorola Moto G9 Power",
-    "storage": "64 GB",
-    "price": 4670,
-    "image": "https://fdn2.gsmarena.com/vv/bigpic/motorola-moto-g9-power.jpg"
   },
   {
     "brand": "Motorola",

@@ -26,6 +26,7 @@ export const BLOCKED_PHONE_PATTERNS = [
   { brand: 'oneplus', pattern: /nord\s*n30/i, label: 'OnePlus nord n30' },
 
   // Motorola
+  { brand: 'motorola', pattern: /\b(?:moto\s*)?g\s*(?:0?[1-9]s?|10)\b|\bmoto\s*g\b(?!\s*(?:1[1-9]|[2-9]\d|\d{3}))/i, label: 'Motorola Moto G10 and below' },
   { brand: 'motorola', pattern: /razr\s*60/i, label: 'Motorola razr 60' },
   { brand: 'motorola', pattern: /razr\s*50\s*ultra/i, label: 'Motorola razr 50 ultra' },
   { brand: 'motorola', pattern: /razr\s*40\s*ultra/i, label: 'Motorola razr 40 ultra' },
