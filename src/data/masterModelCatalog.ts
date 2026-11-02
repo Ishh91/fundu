@@ -2988,14 +2988,6 @@ export const MASTER_MODEL_CATALOG = [
   {
     "brand": "Poco",
     "series": "POCO F Series",
-    "model": "POCO F3 GT",
-    "storage": "128 GB",
-    "price": 9900,
-    "image": "https://fdn2.gsmarena.com/vv/bigpic/poco-poco-f3-gt.jpg"
-  },
-  {
-    "brand": "Poco",
-    "series": "POCO F Series",
     "model": "POCO F4 5G",
     "storage": "128 GB",
     "price": 8960,
@@ -6932,26 +6924,10 @@ export const MASTER_MODEL_CATALOG = [
   {
     "brand": "Poco",
     "series": "POCO F Series",
-    "model": "POCO F3 GT",
-    "storage": "128 GB",
-    "price": 12300,
-    "image": "https://api.mobileapi.dev/devices/15719/thumb.png"
-  },
-  {
-    "brand": "Poco",
-    "series": "POCO F Series",
     "model": "POCO F4 5G",
     "storage": "128 GB",
     "price": 13900,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-poco-f4.jpg"
-  },
-  {
-    "brand": "Poco",
-    "series": "POCO F Series",
-    "model": "POCO F4 GT",
-    "storage": "128 GB",
-    "price": 16000,
-    "image": "https://api.mobileapi.dev/devices/15706/thumb.png"
   },
   {
     "brand": "Poco",

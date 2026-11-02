@@ -598,6 +598,14 @@ function cleanOversizedStorageOnBoot() {
           if (bLow === 'apple' && !mLow.startsWith('iphone') && !mLow.startsWith('ipad') && !mLow.startsWith('apple')) {
             return false;
           }
+          // Purge explicitly removed Poco and Infinix models
+          const isPocoXiaomi = bLow === 'poco' || bLow === 'xiaomi';
+          if (isPocoXiaomi && /(x3\s*gt|x4\s*gt|f3\s*gt|f4\s*gt)/i.test(mLow)) {
+            return false;
+          }
+          if (bLow === 'infinix' && /(hot\s*20i|hot\s*20s|hot\s*20\s*s)/i.test(mLow)) {
+            return false;
+          }
           if (isBrandImageMismatch(p.brand, p.model, p.image_url)) {
             p.image_url = null;
             p.custom_image = false;

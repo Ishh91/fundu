@@ -728,8 +728,6 @@ export const RESALE_BENCHMARKS = [
   { brand: 'Poco', model: "POCO C85 5G", storage: '128 GB', proceeds: 9950, lastUpdated: '2026-10-08' },
   { brand: 'Poco', model: "POCO C85x", storage: '64 GB', proceeds: 9200, lastUpdated: '2026-10-08' },
   { brand: 'Poco', model: "POCO C85x", storage: '128 GB', proceeds: 9750, lastUpdated: '2026-10-08' },
-  { brand: 'Poco', model: "POCO F3 GT", storage: '128 GB', proceeds: 9900, lastUpdated: '2026-10-08' },
-  { brand: 'Poco', model: "POCO F3 GT", storage: '256 GB', proceeds: 11100, lastUpdated: '2026-10-08' },
   { brand: 'Poco', model: "POCO F4 5G", storage: '128 GB', proceeds: 8950, lastUpdated: '2026-10-08' },
   { brand: 'Poco', model: "POCO F4 5G", storage: '256 GB', proceeds: 10050, lastUpdated: '2026-10-08' },
   { brand: 'Poco', model: "POCO F5 5G", storage: '256 GB', proceeds: 16200, lastUpdated: '2026-10-08' },

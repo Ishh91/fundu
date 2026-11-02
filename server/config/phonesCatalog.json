@@ -7206,29 +7206,6 @@
   },
   {
     "brand": "Poco",
-    "model": "F3 GT",
-    "release_year": 2021,
-    "ram_options": [
-      "6GB",
-      "8GB"
-    ],
-    "storage_options": [
-      "128 GB",
-      "256 GB"
-    ],
-    "default_mrp": 14850,
-    "base_resale_value": 9900,
-    "image_url": "https://fdn2.gsmarena.com/vv/bigpic/poco-poco-f3-gt.jpg",
-    "popular_tag": "Poco Official Model",
-    "processor": "High-Efficiency Processor",
-    "camera_spec": "50MP OIS Camera",
-    "battery_spec": "5000 mAh Fast Charging",
-    "display_spec": "6.7\" AMOLED 120Hz",
-    "is_5g": false,
-    "is_active": true
-  },
-  {
-    "brand": "Poco",
     "model": "F4 5G",
     "release_year": 2022,
     "ram_options": [
@@ -18261,30 +18238,6 @@
   },
   {
     "brand": "Xiaomi",
-    "model": "POCO F3 GT",
-    "release_year": 2022,
-    "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
-    ],
-    "storage_options": [
-      "128 GB",
-      "256 GB"
-    ],
-    "default_mrp": 18450,
-    "base_resale_value": 12300,
-    "image_url": "https://api.mobileapi.dev/devices/15719/thumb.png",
-    "popular_tag": "Xiaomi Official Model",
-    "processor": "High-Efficiency Processor",
-    "camera_spec": "50MP OIS Camera",
-    "battery_spec": "5000 mAh Fast Charging",
-    "display_spec": "6.7\" AMOLED 120Hz",
-    "is_5g": false,
-    "is_active": true
-  },
-  {
-    "brand": "Xiaomi",
     "model": "POCO F4 5G",
     "release_year": 2022,
     "ram_options": [
@@ -18305,30 +18258,6 @@
     "battery_spec": "5000 mAh Fast Charging",
     "display_spec": "6.7\" AMOLED 120Hz",
     "is_5g": true,
-    "is_active": true
-  },
-  {
-    "brand": "Xiaomi",
-    "model": "POCO F4 GT",
-    "release_year": 2022,
-    "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
-    ],
-    "storage_options": [
-      "128 GB",
-      "256 GB"
-    ],
-    "default_mrp": 24000,
-    "base_resale_value": 16000,
-    "image_url": "https://api.mobileapi.dev/devices/15706/thumb.png",
-    "popular_tag": "Xiaomi Official Model",
-    "processor": "High-Efficiency Processor",
-    "camera_spec": "50MP OIS Camera",
-    "battery_spec": "5000 mAh Fast Charging",
-    "display_spec": "6.7\" AMOLED 120Hz",
-    "is_5g": false,
     "is_active": true
   },
   {
@@ -27727,28 +27656,6 @@
     "camera_spec": "50MP + AI Lens",
     "battery_spec": "5000 mAh 18W Fast Charging",
     "display_spec": "6.82\" HD+ 90Hz",
-    "is_5g": false,
-    "is_active": true
-  },
-  {
-    "brand": "Infinix",
-    "model": "Hot 20i",
-    "release_year": 2022,
-    "ram_options": [
-      "4GB"
-    ],
-    "storage_options": [
-      "64GB"
-    ],
-    "default_mrp": 9999,
-    "base_resale_value": 4200,
-    "price": 4200,
-    "popular_tag": "Hot Performance Series",
-    "image_url": "https://fdn2.gsmarena.com/vv/bigpic/infinix-hot-20i.jpg",
-    "processor": "MediaTek Helio G25",
-    "camera_spec": "13MP AI Triple Camera",
-    "battery_spec": "5000 mAh Power Monster",
-    "display_spec": "6.6\" HD+ IPS LCD",
     "is_5g": false,
     "is_active": true
   },

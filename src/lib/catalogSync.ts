@@ -144,7 +144,20 @@ export function restoreModel(brand: string, model: string) {
 }
 
 export const PERMANENTLY_BLOCKED_TARGETS = [
-  // Infinix
+  // Poco / Xiaomi GT models requested for complete removal
+  { brand: 'poco', pattern: /x3\s*gt/i, label: 'POCO X3 GT' },
+  { brand: 'poco', pattern: /x4\s*gt/i, label: 'POCO X4 GT' },
+  { brand: 'poco', pattern: /f3\s*gt/i, label: 'POCO F3 GT' },
+  { brand: 'poco', pattern: /f4\s*gt/i, label: 'POCO F4 GT' },
+  { brand: 'xiaomi', pattern: /x3\s*gt/i, label: 'Xiaomi POCO X3 GT' },
+  { brand: 'xiaomi', pattern: /x4\s*gt/i, label: 'Xiaomi POCO X4 GT' },
+  { brand: 'xiaomi', pattern: /f3\s*gt/i, label: 'Xiaomi POCO F3 GT' },
+  { brand: 'xiaomi', pattern: /f4\s*gt/i, label: 'Xiaomi POCO F4 GT' },
+
+  // Infinix models requested for complete removal
+  { brand: 'infinix', pattern: /hot\s*20i/i, label: 'Infinix Hot 20i' },
+  { brand: 'infinix', pattern: /hot\s*20s/i, label: 'Infinix Hot 20s' },
+  { brand: 'infinix', pattern: /hot\s*20\s*s/i, label: 'Infinix Hot 20 S' },
   { brand: 'infinix', pattern: /zero\s*30/i, label: 'Infinix zero 30' },
   { brand: 'infinix', pattern: /hot\s*40\s*pro/i, label: 'Infinix hot 40 pro' },
   { brand: 'infinix', pattern: /hot\s*50i/i, label: 'Infinix hot 50i' },
@@ -179,7 +192,9 @@ export function isPermanentlyBlockedModel(brand?: string, model?: string): boole
   const b = (brand || '').toLowerCase().trim();
   const m = (model || '').toLowerCase().trim();
   for (const t of PERMANENTLY_BLOCKED_TARGETS) {
-    const brandMatches = !b || b.includes(t.brand) || (t.brand === 'motorola' && (b === 'moto' || b.includes('motorola')));
+    const isPocoXiaomi = (t.brand === 'poco' || t.brand === 'xiaomi') && (b === 'poco' || b === 'xiaomi' || b.includes('poco') || b.includes('xiaomi'));
+    const isMoto = t.brand === 'motorola' && (b === 'moto' || b.includes('motorola'));
+    const brandMatches = !b || isPocoXiaomi || isMoto || b.includes(t.brand) || t.brand.includes(b);
     if (brandMatches && t.pattern.test(m)) {
       return true;
     }

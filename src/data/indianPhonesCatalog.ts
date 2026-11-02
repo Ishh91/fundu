@@ -5403,28 +5403,6 @@ export const ALL_INDIAN_PHONES_CATALOG: MasterPhone[] = [
     "is_active": true
   },
   {
-    "id": "infinix-hot20i",
-    "brand": "Infinix",
-    "model": "Infinix Hot 20i",
-    "release_year": 2022,
-    "ram_options": [
-      "4GB"
-    ],
-    "storage_options": [
-      "64GB"
-    ],
-    "default_mrp": 9999,
-    "base_resale_value": 4200,
-    "popular_tag": "Hot Performance Series",
-    "image_url": "https://fdn2.gsmarena.com/vv/bigpic/infinix-hot-20i.jpg",
-    "processor": "MediaTek Helio G25",
-    "camera_spec": "13MP AI Triple Camera",
-    "battery_spec": "5000 mAh Power Monster",
-    "display_spec": "6.6\" HD+ IPS LCD",
-    "is_5g": false,
-    "is_active": true
-  },
-  {
     "id": "infinix-hot12pro",
     "brand": "Infinix",
     "model": "Infinix Hot 12 Pro",

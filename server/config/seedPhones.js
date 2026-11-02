@@ -64,6 +64,27 @@ export async function ensureMasterPhonesSeeded(force = true) {
       console.log(`[AutoSync] 🧼 Reset ${fixedAppleImgs.modifiedCount} Apple phones with cross-brand/Samsung image URLs.`);
     }
 
+    // 0c. Delete explicitly removed Poco and Infinix models
+    const purgedDeletedModels = await MasterPhone.deleteMany({
+      $or: [
+        { brand: /^(poco|xiaomi)$/i, model: /(x3\s*gt|x4\s*gt|f3\s*gt|f4\s*gt)/i },
+        { brand: /^infinix$/i, model: /(hot\s*20i|hot\s*20s|hot\s*20\s*s)/i },
+      ],
+    });
+    if (purgedDeletedModels.deletedCount > 0) {
+      console.log(`[AutoSync] 🗑️ Deleted ${purgedDeletedModels.deletedCount} removed Poco/Infinix models from MasterPhone.`);
+    }
+
+    const purgedDeletedConfigs = await SellPriceConfig.deleteMany({
+      $or: [
+        { brand: /^(poco|xiaomi)$/i, model: /(x3\s*gt|x4\s*gt|f3\s*gt|f4\s*gt)/i },
+        { brand: /^infinix$/i, model: /(hot\s*20i|hot\s*20s|hot\s*20\s*s)/i },
+      ],
+    });
+    if (purgedDeletedConfigs.deletedCount > 0) {
+      console.log(`[AutoSync] 🗑️ Deleted ${purgedDeletedConfigs.deletedCount} removed Poco/Infinix models from SellPriceConfig.`);
+    }
+
     // Fetch any phones where an admin set a custom image so we NEVER wipe custom uploads
     const customPhones = await MasterPhone.find(
       {
