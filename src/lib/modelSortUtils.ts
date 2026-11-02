@@ -255,3 +255,4 @@ export function sortDeviceModelsLatestFirst<
     return nameA.localeCompare(nameB);
   });
 }
+

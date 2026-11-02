@@ -5,11 +5,17 @@ export function getApiThumb(brand: string, query: string, fallback?: string): st
   return getCleanPhoneImage(brand, query, fallback);
 }
 
-export {
+import {
   getModelDedupeKey,
   getDeviceRecencyScore,
   sortDeviceModelsLatestFirst,
 } from '../lib/modelSortUtils';
+
+export {
+  getModelDedupeKey,
+  getDeviceRecencyScore,
+  sortDeviceModelsLatestFirst,
+};
 
 export function inferModelSeries(
   brand: string,
