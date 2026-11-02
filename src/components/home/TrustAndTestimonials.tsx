@@ -162,7 +162,7 @@ export default function TrustAndTestimonials() {
 
   return (
     <section className="container-page py-8">
-      <div className="rounded-3xl border border-slate-700/60 bg-slate-900/95 p-6 sm:p-8 md:p-10 shadow-[0_20px_50px_rgba(15,23,42,0.18)] backdrop-blur-xl text-white overflow-hidden">
+      <div className="rounded-3xl border border-slate-700/60 bg-slate-900 p-6 sm:p-8 md:p-10 shadow-[0_20px_50px_rgba(15,23,42,0.18)] text-white overflow-hidden">
         {/* Header & Stats Strip */}
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 border-b border-gray-800 pb-8">
           <div>

@@ -276,12 +276,12 @@ export function usePriceSync() {
 
     pullPriceRules();
 
-    // Background auto-polling every 8 seconds
+    // Background auto-polling every 60 seconds (realtime events handle instant updates)
     const interval = setInterval(() => {
       if (document.visibilityState === 'visible') {
         pullPriceRules();
       }
-    }, 8000);
+    }, 60000);
 
     const handleFocus = () => {
       pullPriceRules();

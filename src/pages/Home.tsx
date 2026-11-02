@@ -76,12 +76,12 @@ export default function Home() {
     window.addEventListener('fundu_product_updated', handleProductChange);
     window.addEventListener('fundu_product_deleted', handleProductChange);
 
-    // Auto-polling every 8 seconds
+    // Auto-polling every 60 seconds (realtime events handle instant updates)
     const interval = setInterval(() => {
       if (document.visibilityState === 'visible') {
         loadHomeProducts();
       }
-    }, 8000);
+    }, 60000);
 
     const handleFocus = () => loadHomeProducts();
     window.addEventListener('focus', handleFocus);

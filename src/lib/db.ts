@@ -124,9 +124,9 @@ const apiRequest = async <T>(path: string, init: RequestInit = {}, useAuth = tru
   };
 };
 
-// Client-Side In-Memory SWR Cache for Instant 0ms Read Queries
+// Client-Side In-Memory + SessionStorage SWR Cache for Instant 0ms Read Queries
 const clientQueryCache = new Map<string, { data: unknown; timestamp: number }>();
-const CLIENT_CACHE_TTL_MS = 45 * 1000; // 45 seconds fresh
+const CLIENT_CACHE_TTL_MS = 60 * 1000; // 60 seconds fresh in memory
 const CLIENT_CACHEABLE_TABLES = new Set([
   'products',
   'site_content',
@@ -139,10 +139,47 @@ const CLIENT_CACHEABLE_TABLES = new Set([
   'reviews',
 ]);
 
+const getSessionCacheKey = (key: string) => `fundu_swr_${key.replace(/[^a-zA-Z0-9_]/g, '_').slice(0, 80)}`;
+
+function readQueryCache(cacheKey: string): { data: unknown; timestamp: number } | null {
+  const inMem = clientQueryCache.get(cacheKey);
+  if (inMem) return inMem;
+  if (typeof window === 'undefined') return null;
+  try {
+    const raw = window.sessionStorage.getItem(getSessionCacheKey(cacheKey));
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (parsed && parsed.data !== undefined) {
+        clientQueryCache.set(cacheKey, parsed);
+        return parsed;
+      }
+    }
+  } catch {}
+  return null;
+}
+
+function writeQueryCache(cacheKey: string, data: unknown) {
+  const entry = { data, timestamp: Date.now() };
+  clientQueryCache.set(cacheKey, entry);
+  if (typeof window === 'undefined') return;
+  try {
+    // Only cache moderate payloads in sessionStorage to avoid quota issues
+    const serialized = JSON.stringify(entry);
+    if (serialized.length < 500000) {
+      window.sessionStorage.setItem(getSessionCacheKey(cacheKey), serialized);
+    }
+  } catch {}
+}
+
 export function invalidateClientTableCache(table: string) {
   for (const key of clientQueryCache.keys()) {
     if (key.startsWith(`${table}:`)) {
       clientQueryCache.delete(key);
+      try {
+        if (typeof window !== 'undefined') {
+          window.sessionStorage.removeItem(getSessionCacheKey(key));
+        }
+      } catch {}
     }
   }
 }
@@ -244,15 +281,15 @@ class QueryBuilder<T = unknown> implements PromiseLike<QueryResponse<T>> {
       const cacheKey = `${this.table}:${params.toString()}`;
       const isCacheable = CLIENT_CACHEABLE_TABLES.has(this.table);
 
-      // Fast SWR Memory Cache (Instant 0ms UI load)
+      // Fast SWR Cache (Instant 0ms UI load from Memory or SessionStorage)
       if (isCacheable) {
-        const cached = clientQueryCache.get(cacheKey);
-        if (cached && Date.now() - cached.timestamp < CLIENT_CACHE_TTL_MS) {
-          // Revalidate in background if older than 15 seconds
-          if (Date.now() - cached.timestamp > 15 * 1000) {
-            apiRequest<T>(`/db/${this.table}?${params.toString()}`, { method: 'GET' }, true).then((fresh) => {
+        const cached = readQueryCache(cacheKey);
+        if (cached && cached.data !== undefined) {
+          // If cached data is older than 20 seconds, revalidate in background silently
+          if (Date.now() - cached.timestamp > 20 * 1000) {
+            apiRequest<T>(`/db/${this.table}?${params.toString()}`, { method: 'GET' }, false).then((fresh) => {
               if (fresh && fresh.data && !fresh.error) {
-                clientQueryCache.set(cacheKey, { data: fresh.data, timestamp: Date.now() });
+                writeQueryCache(cacheKey, fresh.data);
               }
             }).catch(() => {});
           }
@@ -260,9 +297,10 @@ class QueryBuilder<T = unknown> implements PromiseLike<QueryResponse<T>> {
         }
       }
 
-      const res = await apiRequest<T>(`/db/${this.table}?${params.toString()}`, { method: 'GET' }, true);
+      // Public reads do not need user authorization headers, enabling fast server caching & CDN
+      const res = await apiRequest<T>(`/db/${this.table}?${params.toString()}`, { method: 'GET' }, !isCacheable);
       if (isCacheable && res.data && !res.error) {
-        clientQueryCache.set(cacheKey, { data: res.data, timestamp: Date.now() });
+        writeQueryCache(cacheKey, res.data);
       }
       return res;
     }

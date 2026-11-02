@@ -39,7 +39,7 @@ export function getStoredLiveMasterPhones(): any[] {
   if (memoryLivePhones.length > 0) return memoryLivePhones;
   if (typeof window === 'undefined') return [];
   try {
-    const raw = localStorage.getItem(LIVE_MASTER_PHONES_STORAGE_KEY);
+    const raw = sessionStorage.getItem(LIVE_MASTER_PHONES_STORAGE_KEY) || localStorage.getItem(LIVE_MASTER_PHONES_STORAGE_KEY);
     if (raw) {
       const parsed = JSON.parse(raw);
       if (Array.isArray(parsed)) {
@@ -59,7 +59,9 @@ export async function pullLiveMasterPhonesFromDb(): Promise<any[]> {
   if (typeof window === 'undefined' || isPullingPhones) return memoryLivePhones;
   isPullingPhones = true;
   try {
-    const { data, error } = await db.from('master_phones').select('*').limit(5000);
+    const { data, error } = await db.from('master_phones')
+      .select('brand, model, is_active, release_year, default_mrp, image_url')
+      .limit(2000);
     if (!error && Array.isArray(data) && data.length > 0) {
       memoryLivePhones = data;
       // Auto-sync deleted/inactive flags into local deleted models set
@@ -71,7 +73,7 @@ export async function pullLiveMasterPhonesFromDb(): Promise<any[]> {
         }
       });
       try {
-        localStorage.setItem(LIVE_MASTER_PHONES_STORAGE_KEY, JSON.stringify(data));
+        sessionStorage.setItem(LIVE_MASTER_PHONES_STORAGE_KEY, JSON.stringify(data));
       } catch {}
       window.dispatchEvent(new CustomEvent('fundu_catalog_synced', { detail: { count: data.length } }));
       return data;

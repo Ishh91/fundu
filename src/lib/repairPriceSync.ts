@@ -627,12 +627,12 @@ export function useRepairPriceSync() {
     window.addEventListener('fundu_repair_price_updated', handleUpdate);
     window.addEventListener('storage', handleStorage);
 
-    // Auto-polling every 10 seconds when tab is active
+    // Auto-polling every 60 seconds when tab is active (realtime events handle instant updates)
     const interval = setInterval(() => {
       if (document.visibilityState === 'visible') {
         fetchConfigs();
       }
-    }, 10000);
+    }, 60000);
 
     const handleFocus = () => {
       fetchConfigs();

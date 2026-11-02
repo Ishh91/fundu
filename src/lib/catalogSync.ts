@@ -374,12 +374,12 @@ export function useCatalogSync() {
 
     refreshDeletedModelsFromDb().then(handleSync);
 
-    // Auto-fetch polling every 10 seconds + on window focus
+    // Auto-fetch polling every 60 seconds (realtime events handle instant updates)
     const interval = setInterval(() => {
       if (document.visibilityState === 'visible') {
         refreshDeletedModelsFromDb().then(handleSync);
       }
-    }, 10000);
+    }, 60000);
 
     const handleFocus = () => {
       refreshDeletedModelsFromDb().then(handleSync);

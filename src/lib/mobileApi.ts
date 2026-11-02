@@ -155,39 +155,7 @@ export async function fetchPhoneModels(
   const cacheKey = `${provider}:${brand.trim().toLowerCase()}:${query.trim().toLowerCase()}`;
   if (modelCache.has(cacheKey)) return modelCache.get(cacheKey) ?? [];
 
-  // Primary Call: MobileAPI (15s Timeout)
-  const primaryPromise = fetchWithTimeout(async () => {
-    const models = await fetchApi<PhoneModelOption[]>(
-      `/mobile/models?brand=${encodeURIComponent(brand)}&query=${encodeURIComponent(query)}&provider=${provider}`
-    );
-    if (Array.isArray(models) && models.length > 0) return models;
-    throw new Error('NO_DATA');
-  }, 15000).catch(() => null);
-
-  // Secondary Call: GSMArena Unofficial API (15s Timeout)
-  const secondaryPromise = fetchWithTimeout(async () => {
-    const gsmModels = await fetchGsmArenaBrandModels(brand.toLowerCase());
-    if (Array.isArray(gsmModels) && gsmModels.length > 0) {
-      let filtered = gsmModels;
-      if (query.trim()) {
-        const q = query.toLowerCase();
-        filtered = gsmModels.filter((m) => m.phone_name.toLowerCase().includes(q));
-      }
-      return filtered.map((item) => ({
-        name: item.phone_name,
-        storages: ['64 GB', '128 GB', '256 GB', '512 GB'],
-      }));
-    }
-    throw new Error('NO_DATA');
-  }, 15000).catch(() => null);
-
-  // Await responses from both APIs within 15 seconds
-  const [resMobileApi, resGsmArena] = await Promise.all([primaryPromise, secondaryPromise]);
-
-  // Pick the BEST response from remote APIs
-  const bestResult = evaluateBestModelList(resMobileApi || [], resGsmArena || []);
-
-  // Tier 3: Local Indian Phone Catalog (Comprehensive 1,260+ models)
+  // Instant Tier: Local Indian Phone Catalog (Comprehensive 1,260+ models) - 0ms immediate
   const fallbackNames = getModelsForBrand(brand);
   let filteredFallback = fallbackNames;
   if (query.trim()) {
@@ -199,31 +167,48 @@ export async function fetchPhoneModels(
     storages: ['64 GB', '128 GB', '256 GB', '512 GB'],
   }));
 
-  // Merge remote bestResult with comprehensive local catalog so no model is ever missing
-  const combinedMap = new Map<string, PhoneModelOption>();
-  const normKey = (n: string) => n.trim().toLowerCase();
-
-  // 1. Populate comprehensive local catalog first
-  fallbackOptions.forEach((opt) => combinedMap.set(normKey(opt.name), opt));
-
-  // 2. Overlay remote results (preserving their specific storages if available)
-  (bestResult || []).forEach((opt) => {
-    const k = normKey(opt.name);
-    if (!combinedMap.has(k)) {
-      combinedMap.set(k, opt);
-    } else {
-      const existing = combinedMap.get(k)!;
-      if (opt.storages && opt.storages.length > 0) {
-        existing.storages = Array.from(new Set([...existing.storages, ...opt.storages]));
-      }
-    }
-  });
-
-  const finalResults = Array.from(combinedMap.values());
-  if (finalResults.length > 0) {
-    modelCache.set(cacheKey, finalResults);
-    return finalResults;
+  // If local catalog already has matches, cache it immediately so UI never blocks
+  if (fallbackOptions.length > 0) {
+    modelCache.set(cacheKey, fallbackOptions);
   }
+
+  // Fast Cloud Sync: MobileAPI with tight 2.5s timeout (never hang the user)
+  try {
+    const remotePromise = fetchWithTimeout(async () => {
+      const models = await fetchApi<PhoneModelOption[]>(
+        `/mobile/models?brand=${encodeURIComponent(brand)}&query=${encodeURIComponent(query)}&provider=${provider}`
+      );
+      if (Array.isArray(models) && models.length > 0) return models;
+      throw new Error('NO_DATA');
+    }, 2500);
+
+    const remoteModels = await remotePromise.catch(() => null);
+
+    if (remoteModels && remoteModels.length > 0) {
+      const combinedMap = new Map<string, PhoneModelOption>();
+      const normKey = (n: string) => n.trim().toLowerCase();
+
+      fallbackOptions.forEach((opt) => combinedMap.set(normKey(opt.name), opt));
+      remoteModels.forEach((opt) => {
+        const k = normKey(opt.name);
+        if (!combinedMap.has(k)) {
+          combinedMap.set(k, opt);
+        } else {
+          const existing = combinedMap.get(k)!;
+          if (opt.storages && opt.storages.length > 0) {
+            existing.storages = Array.from(new Set([...existing.storages, ...opt.storages]));
+          }
+        }
+      });
+
+      const finalResults = Array.from(combinedMap.values());
+      modelCache.set(cacheKey, finalResults);
+      return finalResults;
+    }
+  } catch {
+    // Return instant fallback on timeout or offline
+  }
+
   return fallbackOptions;
 }
 

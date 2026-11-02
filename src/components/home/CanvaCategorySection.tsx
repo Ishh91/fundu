@@ -38,7 +38,7 @@ export default function CanvaCategorySection() {
             <Link
               key={idx}
               to={cat.href}
-              className="canva-arch-card group flex flex-col overflow-hidden bg-white/90 backdrop-blur-md transition-all duration-300 hover:shadow-2xl"
+              className="canva-arch-card group flex flex-col overflow-hidden bg-white transition-all duration-300 hover:shadow-2xl"
             >
               {/* Dark Photographic Top Section */}
               <div className="relative aspect-square w-full overflow-hidden bg-black">

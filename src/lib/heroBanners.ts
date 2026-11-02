@@ -147,12 +147,12 @@ export const useHeroPosters = () => {
     window.addEventListener(EVENT_NAME, handleUpdate);
     window.addEventListener('storage', handleStorage);
 
-    // Auto-polling every 12 seconds
+    // Auto-polling every 120 seconds
     const interval = setInterval(() => {
       if (document.visibilityState === 'visible') {
         loadFromDb();
       }
-    }, 12000);
+    }, 120000);
 
     const handleFocus = () => loadFromDb();
     window.addEventListener('focus', handleFocus);
