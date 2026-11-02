@@ -80,11 +80,10 @@ export interface InspectionRecalculateResponse {
 }
 
 /**
- * Request an official Fundu smartphone buyback quote from the server.
- * Gracefully falls back to local deterministic calculation if server is offline.
+ * Synchronously computes an instant, authoritative Fundu buyback quote (0.01 ms).
+ * Used to immediately update UI on variant or condition changes before network request resolves.
  */
-export async function getFunduPhoneQuote(params: FunduQuoteRequest): Promise<FunduQuoteResponse> {
-  // Precompute authoritative local calculation grounded in database/catalog prices (0.01 ms instant)
+export function getInstantFunduQuote(params: FunduQuoteRequest): FunduQuoteResponse {
   const dbPrice = getEffectivePrice(params.brand, params.model, 0, params.storage);
   const quoteOptions = dbPrice > 0 ? {
     catalogPrice: dbPrice,
@@ -96,6 +95,16 @@ export async function getFunduPhoneQuote(params: FunduQuoteRequest): Promise<Fun
   };
   const localResult = quotePhone(params, quoteOptions);
   const { _internalAudit, ...publicQuote } = localResult as any;
+  return publicQuote as FunduQuoteResponse;
+}
+
+/**
+ * Request an official Fundu smartphone buyback quote from the server.
+ * Gracefully falls back to local deterministic calculation if server is offline.
+ */
+export async function getFunduPhoneQuote(params: FunduQuoteRequest): Promise<FunduQuoteResponse> {
+  // Precompute authoritative local calculation grounded in database/catalog prices (0.01 ms instant)
+  const publicQuote = getInstantFunduQuote(params);
 
   // Race server valuation with a tight 1200ms abort controller timeout (never block the user for 5-10s)
   try {

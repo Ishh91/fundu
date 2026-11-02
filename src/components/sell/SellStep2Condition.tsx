@@ -124,7 +124,12 @@ export default function SellStep2Condition({
     ? baseModelPrice
     : ((pricingConfig?.base_price || 0) > 0 ? (pricingConfig?.base_price || 0) + ramOffset : 0);
 
-  const rawOffer = funduQuote?.offerAmount ?? estimate;
+  const isQuoteMatched = funduQuote?.deviceSummary?.storage
+    ? funduQuote.deviceSummary.storage.replace(/\s+/g, '').toLowerCase() === form.storage.replace(/\s+/g, '').toLowerCase() &&
+      (form.ram ? (funduQuote.deviceSummary.ram || '').toLowerCase() === form.ram.toLowerCase() : true)
+    : true;
+
+  const rawOffer = (isQuoteMatched && funduQuote?.offerAmount) ? funduQuote.offerAmount : estimate;
   const currentLiveOffer = Math.min(effectiveBasePrice > 0 ? effectiveBasePrice : 180000, Math.max(500, rawOffer));
   const totalDeductions = effectiveBasePrice > 0 ? Math.max(0, effectiveBasePrice - currentLiveOffer) : 0;
 

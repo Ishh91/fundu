@@ -671,8 +671,8 @@ router.get('/sell-pricing/config', async (req, res, next) => {
       const normDoc = normalizeDoc(config);
       const isExplicitMatch = !storage || (normDoc.storage && normDoc.storage.replace(/\s+/g, '').toLowerCase() === storage.replace(/\s+/g, '').toLowerCase());
 
-      // If document was explicitly set/locked by admin OR exact storage matched, PRESERVE exact price without any mutation!
-      if (isExplicitMatch || normDoc.manual_override || normDoc.is_locked) {
+      // If exact storage matched, PRESERVE exact price without any mutation!
+      if (isExplicitMatch) {
         if (storage) normDoc.storage = storage;
         res.json({ data: normDoc, source: 'admin_database' });
         return;

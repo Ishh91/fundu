@@ -31,7 +31,7 @@ import {
   Phone,
 } from 'lucide-react';
 import { computeDetailedResaleValuation, fetchSellPriceConfig, getStoredPriceConfig, fetchPhoneModels, searchMobileApiDev, calculateMarketPriceComparison, getDynamicFallbackConfig, type SellPriceConfig } from '../lib/mobileApi';
-import { getFunduPhoneQuote, calculatePhoneAgingFactor, type FunduQuoteResponse } from '../lib/quoteEngine';
+import { getFunduPhoneQuote, getInstantFunduQuote, calculatePhoneAgingFactor, type FunduQuoteResponse } from '../lib/quoteEngine';
 import { db, formatINR, formatMaskedPrice, formatDisplayPrice } from '../lib/db';
 import { useAuth } from '../context/AuthContext';
 import { ALL_INDIAN_PHONES_CATALOG } from '../data/indianPhonesCatalog';
@@ -707,8 +707,7 @@ export default function SellPhone() {
       return;
     }
 
-    setLoadingQuote(true);
-    getFunduPhoneQuote({
+    const quoteParams = {
       brand: form.brand,
       model: form.model,
       storage: form.storage || currentDeviceSpecs.defaultStorage,
@@ -726,9 +725,16 @@ export default function SellPhone() {
       under_warranty: form.underWarranty,
       age_period: form.agePeriod,
       stylus_available: form.stylusAvailable !== false,
-    })
+    };
+
+    // Instant local quote calculation (0.01 ms) ensures variant changes sync in 0ms without delay
+    const instantQuote = getInstantFunduQuote(quoteParams);
+    setFunduQuote(instantQuote);
+
+    setLoadingQuote(true);
+    getFunduPhoneQuote(quoteParams)
       .then((quote) => {
-        if (active) setFunduQuote(quote);
+        if (active && quote) setFunduQuote(quote);
       })
       .catch(() => {
         if (active) setFunduQuote(null);
@@ -773,8 +779,8 @@ export default function SellPhone() {
       const normFormStorage = (form.storage || '').replace(/\s+/g, '').toUpperCase();
       const ramOffset = calculateRamPriceOffset(form.ram, availableRams, form.brand);
 
-      // If exact storage matches OR was explicitly locked by admin, preserve exact price + authentic RAM offset!
-      if (!normConfigStorage || normConfigStorage === normFormStorage || pricingConfig.is_locked || pricingConfig.manual_override) {
+      // If exact storage matches, preserve exact price + authentic RAM offset!
+      if (!normConfigStorage || normConfigStorage === normFormStorage) {
         return pricingConfig.base_price + ramOffset;
       }
 
@@ -839,7 +845,17 @@ export default function SellPhone() {
 
   // Guaranteed non-zero smartphone valuation estimate
   const estimate = useMemo(() => {
-    if (funduQuote?.offerAmount && funduQuote.offerAmount > 0) {
+    const quoteStorage = funduQuote?.deviceSummary?.storage;
+    const formStorage = form.storage;
+    const isStorageMatch = !quoteStorage || !formStorage ||
+      quoteStorage.replace(/\s+/g, '').toLowerCase() === formStorage.replace(/\s+/g, '').toLowerCase();
+
+    const quoteRam = funduQuote?.deviceSummary?.ram;
+    const formRam = form.ram;
+    const isRamMatch = !quoteRam || !formRam ||
+      quoteRam.replace(/\s+/g, '').toLowerCase() === formRam.replace(/\s+/g, '').toLowerCase();
+
+    if (isStorageMatch && isRamMatch && funduQuote?.offerAmount && funduQuote.offerAmount > 0) {
       return funduQuote.offerAmount;
     }
 

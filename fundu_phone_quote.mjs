@@ -2099,6 +2099,39 @@ export function computeDynamicBenchmarkProceeds(brand = '', model = '', storage 
 }
 
 /**
+ * Calculates authentic RAM tier price offset for devices with multiple RAM options on the same storage.
+ * e.g. 6GB RAM -> +0 (baseline), 8GB RAM -> +1,000, 12GB RAM -> +2,000, 16GB RAM -> +2,500
+ */
+export function calculateRamPriceOffset(selectedRam = '', availableRams = [], brand = '') {
+  const isApple = String(brand || '').toLowerCase().includes('apple');
+  if (isApple || !selectedRam) return 0;
+  const norm = (r) => parseInt(String(r || '').replace(/\D/g, ''), 10) || 0;
+  const targetGb = norm(selectedRam);
+  if (targetGb <= 0) return 0;
+
+  let baseGb = 6;
+  if (Array.isArray(availableRams) && availableRams.length > 0) {
+    const validRams = availableRams.map(norm).filter((g) => g > 0).sort((a, b) => a - b);
+    if (validRams.length > 0) {
+      baseGb = validRams[0];
+      if (validRams.length > 1) {
+        const stepIdx = validRams.indexOf(targetGb);
+        if (stepIdx > 0) return stepIdx * 1000;
+        if (stepIdx === 0) return 0;
+      }
+    }
+  }
+
+  // Fallback heuristic if availableRams not supplied:
+  if (targetGb >= 24) return 3500;
+  if (targetGb >= 16) return 2500;
+  if (targetGb >= 12) return 2000;
+  if (targetGb >= 8) return 1000;
+  if (targetGb <= 4) return -1000;
+  return 0;
+}
+
+/**
  * Calculates deterministic dynamic price multiplier based on RAM + Storage combination.
  * Standard baseline: 6GB RAM + 128GB Storage = 1.000x multiplier.
  */
@@ -2159,17 +2192,10 @@ export function lookupResaleBenchmark(brand, model, storage, options = {}) {
       adjustedProceeds = Math.max(500, Math.round((options.catalogPrice * ratio) / 50) * 50);
     }
 
-    // Apply RAM tier offset for Android devices (only when not an exact direct buyback price, or if explicitly upgrading)
-    if (ram && !normBrand.includes('apple') && !options.isDirectBuybackPrice) {
-      const ramMatch = String(ram).match(/(\d+)/);
-      if (ramMatch) {
-        const r = parseInt(ramMatch[1], 10);
-        if (r >= 8) {
-          adjustedProceeds += (r >= 12 ? 2000 : 1000);
-        } else if (r <= 4) {
-          adjustedProceeds = Math.max(500, adjustedProceeds - 1000);
-        }
-      }
+    // Apply RAM tier offset for Android / non-Apple devices
+    if (ram && !normBrand.includes('apple')) {
+      const ramOffset = calculateRamPriceOffset(ram, options.availableRams || [], brand);
+      adjustedProceeds = Math.max(500, adjustedProceeds + ramOffset);
     }
 
     return {
@@ -2234,17 +2260,10 @@ export function lookupResaleBenchmark(brand, model, storage, options = {}) {
     };
   }
 
-  // 4. Variant adjustments for RAM (ensure authentic minimum ₹1,000 difference for 8GB over 6GB on Android)
+  // 4. Variant adjustments for RAM on Android devices
   if (ram && !normBrand.includes('apple') && benchmark && benchmark.proceeds) {
-    const ramMatch = String(ram).match(/(\d+)/);
-    if (ramMatch) {
-      const r = parseInt(ramMatch[1], 10);
-      if (r >= 8) {
-        benchmark.proceeds += (r >= 12 ? 2000 : 1000);
-      } else if (r <= 4) {
-        benchmark.proceeds = Math.max(500, benchmark.proceeds - 800);
-      }
-    }
+    const ramOffset = calculateRamPriceOffset(ram, options.availableRams || [], brand);
+    benchmark.proceeds = Math.max(500, benchmark.proceeds + ramOffset);
   }
 
   return {
@@ -2772,22 +2791,8 @@ export function quotePhone(input = {}, options = {}) {
   // - 3 to 6 months: 93.45% (0.9345)
   // - 6 to 11 months: 90.78% (0.9078)
   // - > 11 months (out of warranty): 80% (0.80)
-  let ramOffsetAmount = 0;
-  if (ram && !String(brand || '').toLowerCase().includes('apple')) {
-    const ramMatch = String(ram).match(/(\d+)/);
-    if (ramMatch) {
-      const r = parseInt(ramMatch[1], 10);
-      if (r >= 8) ramOffsetAmount = r >= 12 ? 2000 : 1000;
-      else if (r <= 4) ramOffsetAmount = -1000;
-    }
-  }
-
   const agingFactor = calculatePhoneAgingFactor(brand, model, under_warranty, agePeriod);
-  let baseP = Math.round(expectedResaleProceeds * agingFactor);
-  if (ramOffsetAmount > 0 && agingFactor < 1.0) {
-    const baselineWithoutRam = Math.max(500, expectedResaleProceeds - ramOffsetAmount);
-    baseP = Math.round(baselineWithoutRam * agingFactor) + ramOffsetAmount;
-  }
+  const baseP = Math.round(expectedResaleProceeds * agingFactor);
   const condP = Math.round(baseP * cosmeticMultiplier);
 
   // Note age status in condition reasons for full transparency

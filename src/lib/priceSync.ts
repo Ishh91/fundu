@@ -159,6 +159,34 @@ export function getEffectivePrice(brand: string, model: string, defaultPrice: nu
     }
   }
 
+  // 3. Dynamic sibling storage scaling (derive price from any known sibling variant)
+  if (storage) {
+    const b = (brand || '').trim().toLowerCase();
+    const m = (model || '').trim().toLowerCase();
+    const cleanM = b && m.startsWith(b) ? m.slice(b.length).trim() : m;
+    const targetMult = calculateHardwareVariantMultiplier(storage, '', brand);
+
+    for (const [key, val] of Object.entries(overrides)) {
+      if (typeof val === 'number' && val > 0 && val <= 500000) {
+        const parts = key.split(':');
+        if (parts.length >= 2) {
+          const keyStorage = parts[parts.length - 1];
+          const keyModel = parts.length === 3 ? parts[1] : parts[0];
+          const keyBrand = parts.length === 3 ? parts[0] : '';
+
+          if (
+            (keyModel === m || keyModel === cleanM || m.includes(keyModel) || keyModel.includes(m)) &&
+            (!keyBrand || keyBrand === b)
+          ) {
+            const siblingMult = calculateHardwareVariantMultiplier(keyStorage, '', brand);
+            const ratio = siblingMult > 0 ? targetMult / siblingMult : 1.0;
+            return Math.max(500, Math.round((val * ratio) / 50) * 50);
+          }
+        }
+      }
+    }
+  }
+
   return defaultPrice;
 }
 

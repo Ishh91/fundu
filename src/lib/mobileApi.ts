@@ -391,7 +391,7 @@ export async function fetchMarketValuation(brand: string, model: string, storage
 export const fetchCashifyValuation = fetchMarketValuation;
 
 const priceConfigCache = new Map<string, SellPriceConfig | null>();
-const PRICE_CONFIG_STORAGE_PREFIX = 'fundu_price_config_';
+const PRICE_CONFIG_STORAGE_PREFIX = 'fundu_price_config_v2_';
 
 export function getStoredPriceConfig(brand: string, model: string, storage = ''): SellPriceConfig | null {
   if (typeof window === 'undefined') return null;
@@ -401,7 +401,13 @@ export function getStoredPriceConfig(brand: string, model: string, storage = '')
   const key = `${PRICE_CONFIG_STORAGE_PREFIX}${b}:${m}:${s}`;
   try {
     const raw = localStorage.getItem(key);
-    if (raw) return JSON.parse(raw);
+    if (raw) {
+      const cfg = JSON.parse(raw);
+      if (storage && cfg?.storage && cfg.storage.replace(/\s+/g, '').toLowerCase() !== s) {
+        return null;
+      }
+      return cfg;
+    }
   } catch {}
   return null;
 }
