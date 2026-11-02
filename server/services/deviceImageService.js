@@ -27,7 +27,10 @@ export async function resolveDeviceImage(brand, model) {
         model: new RegExp(`^${cleanModel}$`, 'i'),
         image_url: { $exists: true, $ne: null, $ne: '' }
       });
-      if (dbPhone && dbPhone.image_url && !dbPhone.image_url.includes('unsplash.com')) {
+      const isApple = cleanBrand.toLowerCase().includes('apple') || cleanModel.toLowerCase().includes('iphone');
+      const u = String(dbPhone?.image_url || '').toLowerCase();
+      const isMismatch = isApple && (u.includes('samsung') || u.includes('galaxy') || u.includes('oneplus') || u.includes('xiaomi') || u.includes('redmi') || u.includes('oppo') || u.includes('vivo'));
+      if (dbPhone && dbPhone.image_url && !dbPhone.image_url.includes('unsplash.com') && !isMismatch) {
         setCachedValue(cacheKey, dbPhone.image_url);
         return { imageUrl: dbPhone.image_url, source: 'db_cache' };
       }

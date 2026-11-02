@@ -34,6 +34,36 @@ export async function ensureMasterPhonesSeeded(force = true) {
 
     console.log(`[AutoSync] Synchronizing ${currentCatalog.length} models into database masterphones & sellpriceconfigs...`);
 
+    // 0. Auto-clean rogue cross-brand rows in MasterPhone
+    console.log('[AutoSync] 🧹 Sanitizing MasterPhone catalog to eliminate cross-brand rogue records...');
+    
+    // 0a. Delete non-Apple models falsely tagged as Apple (e.g. Galaxy, OnePlus, Poco, Redmi with brand: 'Apple')
+    const purgedRogue = await MasterPhone.deleteMany({
+      brand: /^apple$/i,
+      model: /^(galaxy|oneplus|redmi|poco|vivo|oppo|realme|pixel|moto|cmf|infinix|tecno|itel|honor|xiaomi|v\d|y\d|f\d|r\d|a\d|note\s*\d|s\d)/i,
+    });
+    if (purgedRogue.deletedCount > 0) {
+      console.log(`[AutoSync] 🗑️ Deleted ${purgedRogue.deletedCount} non-Apple models falsely tagged as Apple in MasterPhone.`);
+    }
+
+    // 0b. Reset any Apple phone that has a Samsung / cross-brand image URL
+    const fixedAppleImgs = await MasterPhone.updateMany(
+      {
+        brand: /^apple$/i,
+        image_url: /samsung|galaxy|oneplus|xiaomi|redmi|poco|vivo|oppo|realme|motorola|pixel/i,
+      },
+      {
+        $set: {
+          image_url: null,
+          custom_image: false,
+          updated_at: new Date(),
+        },
+      }
+    );
+    if (fixedAppleImgs.modifiedCount > 0) {
+      console.log(`[AutoSync] 🧼 Reset ${fixedAppleImgs.modifiedCount} Apple phones with cross-brand/Samsung image URLs.`);
+    }
+
     // Fetch any phones where an admin set a custom image so we NEVER wipe custom uploads
     const customPhones = await MasterPhone.find(
       {
@@ -50,6 +80,15 @@ export async function ensureMasterPhonesSeeded(force = true) {
     customPhones.forEach((p) => {
       const b = (p.brand || '').toLowerCase().trim();
       const m = (p.model || '').toLowerCase().trim();
+      const u = String(p.image_url || '').toLowerCase();
+      const isApple = b.includes('apple') || m.includes('iphone');
+      // Strictly ignore corrupt cross-brand images
+      if (isApple && (u.includes('samsung') || u.includes('galaxy') || u.includes('oneplus') || u.includes('redmi') || u.includes('xiaomi') || u.includes('vivo') || u.includes('oppo'))) {
+        return;
+      }
+      if (!isApple && b.includes('samsung') && u.includes('apple-iphone')) {
+        return;
+      }
       let strippedM = m;
       if (b && strippedM.startsWith(b)) {
         strippedM = strippedM.slice(b.length).trim();
@@ -194,6 +233,28 @@ export async function ensureMasterPhonesSeeded(force = true) {
       const chunk = masterBulkOps.slice(i, i + 200);
       await MasterPhone.bulkWrite(chunk, { ordered: false });
     }
+
+    // 1b. Guarantee accurate flagship renders for unreleased next-gen Apple iPhone 17 models
+    await MasterPhone.updateMany(
+      { brand: /^apple$/i, model: /iphone 17 pro max/i },
+      { $set: { image_url: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-16-pro-max.jpg', custom_image: true, updated_at: new Date() } }
+    );
+    await MasterPhone.updateMany(
+      { brand: /^apple$/i, model: /iphone 17 pro$/i },
+      { $set: { image_url: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-16-pro.jpg', custom_image: true, updated_at: new Date() } }
+    );
+    await MasterPhone.updateMany(
+      { brand: /^apple$/i, model: /iphone 17 air/i },
+      { $set: { image_url: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-air.jpg', custom_image: true, updated_at: new Date() } }
+    );
+    await MasterPhone.updateMany(
+      { brand: /^apple$/i, model: /iphone 17$/i },
+      { $set: { image_url: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-16.jpg', custom_image: true, updated_at: new Date() } }
+    );
+    await MasterPhone.updateMany(
+      { brand: /^apple$/i, model: /iphone 17e/i },
+      { $set: { image_url: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-17e.jpg', custom_image: true, updated_at: new Date() } }
+    );
 
     // 2. Clean up any un-locked dummy seed records from SellPriceConfig
     // SellPriceConfig is ONLY for real Admin-configured/locked price overrides.

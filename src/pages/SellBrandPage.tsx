@@ -22,7 +22,7 @@ import {
   Layers,
 } from 'lucide-react';
 import { formatINR } from '../lib/db';
-import { getCleanPhoneImage, getCleanBrandLogo, BRAND_FRONT_FALLBACKS, getGenericDevicePlaceholder, pullLiveModelImagesFromDb } from '../lib/phoneImages';
+import { getCleanPhoneImage, getCleanBrandLogo, BRAND_FRONT_FALLBACKS, getGenericDevicePlaceholder, pullLiveModelImagesFromDb, isBrandImageMismatch } from '../lib/phoneImages';
 import { usePriceSync, applyPriceOverrides, isModelDeleted, getEffectivePrice } from '../lib/priceSync';
 import { MASTER_MODEL_CATALOG } from '../data/masterModelCatalog';
 import { getUnifiedCatalog } from '../lib/modelCatalogSync';
@@ -317,7 +317,7 @@ export default function SellBrandPage() {
         series: p.series || inferModelSeries(p.brand, p.model).seriesName,
         storage: p.storage_options?.[0] || '128 GB',
         price: p.base_resale_value || 12000,
-        image: p.image_url || getCleanPhoneImage(p.brand, p.model),
+        image: (p.image_url && !isBrandImageMismatch(p.brand, p.model, p.image_url)) ? p.image_url : getCleanPhoneImage(p.brand, p.model),
         base_resale_value: p.base_resale_value || 12000,
       });
     });

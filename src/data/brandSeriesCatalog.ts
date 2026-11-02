@@ -472,8 +472,12 @@ export const BRAND_SERIES_DEFINITIONS: Record<string, BrandSeriesDefinition[]> =
       description: 'iPhone 17 Pro Max, 17 Pro, 17 Air, 17',
       pattern: /\biphone\s*17([a-z0-9]|\b)|\biphone\s*air\b/i,
       defaultModels: [
+        { brand: 'Apple', series: 'iPhone 17 Series', model: 'Apple iPhone 17 Pro Max', storage: '256 GB', price: 119200, image: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-16-pro-max.jpg' },
+        { brand: 'Apple', series: 'iPhone 17 Series', model: 'Apple iPhone 17 Pro', storage: '128 GB', price: 108500, image: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-16-pro.jpg' },
         { brand: 'Apple', series: 'iPhone 17 Series', model: 'Apple iPhone 17 Air', storage: '256 GB', price: 82000, image: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-air.jpg' },
         { brand: 'Apple', series: 'iPhone 17 Series', model: 'Apple iPhone Air', storage: '256 GB', price: 82000, image: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-air.jpg' },
+        { brand: 'Apple', series: 'iPhone 17 Series', model: 'Apple iPhone 17', storage: '128 GB', price: 80450, image: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-16.jpg' },
+        { brand: 'Apple', series: 'iPhone 17 Series', model: 'Apple iPhone 17e', storage: '128 GB', price: 69500, image: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-17e.jpg' },
       ],
     },
     {

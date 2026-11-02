@@ -10,7 +10,7 @@ import {
   getModelDedupeKey,
   inferModelSeries,
 } from '../data/brandSeriesCatalog';
-import { getCleanPhoneImage } from './phoneImages';
+import { getCleanPhoneImage, isBrandImageMismatch } from './phoneImages';
 import { getLocalPriceOverrides, getPriceLookupKeys } from './priceSync';
 import { markModelAsDeleted, restoreModel, isModelDeleted } from './catalogSync';
 import { normalizeStorageString, getModelHardwareSpecs, isObsoleteDeviceHardware } from './deviceSpecs';
@@ -180,6 +180,15 @@ export function getUnifiedCatalog(brandFilter?: string): UnifiedCatalogModel[] {
     const cleanBrand = normalizeCanonicalBrand(brand);
     const cleanModel = getCleanModelName(cleanBrand, model);
 
+    // CRITICAL: Reject rogue cross-brand database pollutions
+    const mLow = cleanModel.toLowerCase();
+    if (cleanBrand === 'Apple' && !mLow.startsWith('iphone') && !mLow.startsWith('ipad') && !mLow.startsWith('apple')) {
+      return;
+    }
+    if (cleanBrand === 'Samsung' && (mLow.startsWith('iphone') || mLow.startsWith('oneplus') || mLow.startsWith('pixel'))) {
+      return;
+    }
+
     // Brand filter matching
     if (targetBrandNorm) {
       const bLow = cleanBrand.toLowerCase();
@@ -210,8 +219,9 @@ export function getUnifiedCatalog(brandFilter?: string): UnifiedCatalogModel[] {
     if (seenKeys.has(fullKey)) return;
     seenKeys.add(fullKey);
 
-    // Custom image resolution
-    const finalImage = getCleanPhoneImage(cleanBrand, cleanModel, rawImage);
+    // Custom image resolution (strictly reject cross-brand mismatched raw images)
+    const safeRawImage = isBrandImageMismatch(cleanBrand, cleanModel, rawImage) ? undefined : rawImage;
+    const finalImage = getCleanPhoneImage(cleanBrand, cleanModel, safeRawImage);
 
     // Price override resolution
     const lookupKeys = getPriceLookupKeys(cleanBrand, cleanModel, defaultStorage);

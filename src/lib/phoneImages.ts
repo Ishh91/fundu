@@ -33,6 +33,14 @@ export const BRAND_OFFICIAL_LOGOS: Record<string, string> = {
 
 // Model-Specific Official Studio Renders (sorted longest keyword first)
 export const RAW_MODEL_EXACT_RENDERS: Array<{ keyword: string; url: string }> = [
+  // Apple iPhone 17 Series Flagships & Air
+  { keyword: 'iphone 17 pro max', url: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-16-pro-max.jpg' },
+  { keyword: 'iphone 17 pro', url: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-16-pro.jpg' },
+  { keyword: 'iphone 17 air', url: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-air.jpg' },
+  { keyword: 'iphone 17e', url: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-17e.jpg' },
+  { keyword: 'iphone 17', url: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-16.jpg' },
+  { keyword: 'iphone air', url: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-air.jpg' },
+
   // Apple iPhone Pro Max / Pro / Plus / Mini / SE / iPad
   { keyword: 'iphone 16 pro max', url: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-16-pro-max.jpg' },
   { keyword: 'iphone 16 pro', url: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-16-pro.jpg' },
@@ -493,42 +501,110 @@ export function isStockImageUrl(url?: string): boolean {
 }
 
 // Self-healing boot check: free up browser quota immediately if previous sessions bloated localStorage
+export function isBrandImageMismatch(brand = '', model = '', url = ''): boolean {
+  if (!url) return false;
+  const b = String(brand || '').toLowerCase().trim();
+  const m = String(model || '').toLowerCase().trim();
+  const u = String(url || '').toLowerCase().trim();
+
+  // Data URIs, blobs, and generic SVG placeholders are brand-neutral
+  if (u.startsWith('data:') || u.startsWith('blob:') || u.includes('<svg')) return false;
+
+  const isApple = b.includes('apple') || b.includes('iphone') || m.includes('iphone') || m.includes('ipad');
+  const isSamsung = b.includes('samsung') || m.includes('galaxy') || /\b(s\d{2}|z\s*flip|z\s*fold)\b/i.test(m);
+  const isOnePlus = b.includes('oneplus') || m.includes('oneplus') || m.includes('nord');
+  const isXiaomi = b.includes('xiaomi') || b.includes('redmi') || b.includes('poco') || m.includes('redmi') || m.includes('poco');
+  const isRealme = b.includes('realme') || m.includes('realme') || m.includes('narzo');
+  const isVivo = b.includes('vivo') || b.includes('iqoo') || m.includes('iqoo');
+  const isOppo = b.includes('oppo') || m.includes('oppo');
+  const isMotorola = b.includes('motorola') || b.includes('moto') || m.includes('moto');
+  const isGoogle = b.includes('google') || b.includes('pixel') || m.includes('pixel');
+
+  // 1. Hard rejection: Apple device receiving non-Apple render
+  if (isApple) {
+    if (
+      u.includes('samsung') ||
+      u.includes('galaxy') ||
+      u.includes('oneplus') ||
+      u.includes('xiaomi') ||
+      u.includes('redmi') ||
+      u.includes('poco') ||
+      u.includes('realme') ||
+      u.includes('vivo') ||
+      u.includes('oppo') ||
+      u.includes('motorola') ||
+      u.includes('pixel')
+    ) {
+      return true;
+    }
+  }
+
+  // 2. Hard rejection: Samsung device receiving non-Samsung render
+  if (isSamsung) {
+    if (u.includes('apple-iphone') || u.includes('apple-') || u.includes('oneplus') || u.includes('pixel')) {
+      return true;
+    }
+  }
+
+  // 3. Hard rejection: Other brands receiving Apple or Samsung renders
+  if ((isOnePlus || isRealme || isXiaomi || isVivo || isOppo || isMotorola || isGoogle) && (u.includes('apple-iphone') || u.includes('samsung-galaxy'))) {
+    return true;
+  }
+
+  return false;
+}
+
 function cleanOversizedStorageOnBoot() {
   if (typeof window === 'undefined') return;
   try {
+    // 1. Purge poisoned keys from CUSTOM_MODEL_IMAGES_KEY
     const raw = localStorage.getItem(CUSTOM_MODEL_IMAGES_KEY);
-    if (!raw) return;
-
-    let needsClean = false;
-    // If total storage > 500KB or has huge uncompressed images, clean safely
-    if (raw.length > 500_000) {
-      needsClean = true;
-    }
-
-    if (needsClean) {
+    if (raw) {
       const parsed = JSON.parse(raw);
       const cleaned: Record<string, string> = {};
+      let modified = false;
       for (const [k, v] of Object.entries(parsed)) {
         if (typeof v === 'string') {
-          // Allow compressed images (<60KB) and http/https URLs, skip huge blobs
-          if (v.startsWith('blob:') || (v.startsWith('data:') && v.length > 60000)) continue;
+          const kLow = k.toLowerCase();
+          const vLow = v.toLowerCase();
+          const isAppleKey = kLow.includes('apple') || kLow.includes('iphone') || kLow.includes('ipad');
+          if (isAppleKey && (vLow.includes('samsung') || vLow.includes('galaxy') || vLow.includes('oneplus') || vLow.includes('redmi') || vLow.includes('xiaomi') || vLow.includes('oppo') || vLow.includes('vivo'))) {
+            modified = true;
+            continue; // Dropped poisoned cross-brand image entry
+          }
+          if (v.startsWith('blob:') || (v.startsWith('data:') && v.length > 60000)) {
+            modified = true;
+            continue;
+          }
           if (v.startsWith('http://') || v.startsWith('https://') || v.startsWith('data:')) {
             cleaned[k] = v;
           }
         }
       }
-      const serialized = JSON.stringify(cleaned);
-      if (serialized.length > 350_000) {
-        // Prune to only canonical keys (e.g. "brand:model")
-        const minimal: Record<string, string> = {};
-        for (const [k, v] of Object.entries(cleaned)) {
-          if (k.includes(':')) {
-            minimal[k] = v;
+      if (modified || raw.length > 350_000) {
+        localStorage.setItem(CUSTOM_MODEL_IMAGES_KEY, JSON.stringify(cleaned));
+      }
+    }
+
+    // 2. Purge poisoned records from fundu_live_master_phones_v2
+    const rawLive = localStorage.getItem('fundu_live_master_phones_v2');
+    if (rawLive) {
+      const parsedLive = JSON.parse(rawLive);
+      if (Array.isArray(parsedLive)) {
+        const filteredLive = parsedLive.filter((p: any) => {
+          if (!p || !p.brand) return false;
+          const bLow = String(p.brand).toLowerCase();
+          const mLow = String(p.model || '').toLowerCase();
+          if (bLow === 'apple' && !mLow.startsWith('iphone') && !mLow.startsWith('ipad') && !mLow.startsWith('apple')) {
+            return false;
           }
-        }
-        localStorage.setItem(CUSTOM_MODEL_IMAGES_KEY, JSON.stringify(minimal));
-      } else {
-        localStorage.setItem(CUSTOM_MODEL_IMAGES_KEY, serialized);
+          if (isBrandImageMismatch(p.brand, p.model, p.image_url)) {
+            p.image_url = null;
+            p.custom_image = false;
+          }
+          return true;
+        });
+        localStorage.setItem('fundu_live_master_phones_v2', JSON.stringify(filteredLive));
       }
     }
   } catch (err) {
@@ -601,6 +677,7 @@ export function syncCustomImagesFromDatabase(
     if (!p.brand || !p.model || !p.image_url) return;
     const url = cleanUrl(String(p.image_url).trim(), p.brand);
     if (!url || url.includes('777/thumb')) return;
+    if (isBrandImageMismatch(p.brand, p.model, url)) return;
 
     const isCustom = Boolean(p.custom_image) || !isStockImageUrl(url);
     if (isCustom) {
@@ -613,6 +690,7 @@ export function syncCustomImagesFromDatabase(
     if (!p.brand || !p.model || !p.image_url) return;
     const url = cleanUrl(String(p.image_url).trim(), p.brand);
     if (!url || url.includes('777/thumb')) return;
+    if (isBrandImageMismatch(p.brand, p.model, url)) return;
 
     const isCustom = Boolean(p.custom_image) || !isStockImageUrl(url);
     if (!isCustom) {
@@ -795,6 +873,11 @@ function cleanUrl(url: string, brandHint?: string): string {
     return '';
   }
 
+  // Reject cross-brand contaminated URLs
+  if (brandHint && isBrandImageMismatch(brandHint, '', cleaned)) {
+    return '';
+  }
+
   // Remove doubled brand prefixes in GSMArena URLs
   cleaned = cleaned.replace(/\/vv\/bigpic\/([a-z0-9]+)-\1-/gi, '/vv/bigpic/$1-');
   cleaned = cleaned.replace(/\/vv\/bigpic\/motorola-motorola-/gi, '/vv/bigpic/motorola-');
@@ -913,7 +996,8 @@ function computeCleanPhoneImage(brand?: string, model?: string, fallbackUrl?: st
       customImages[k] &&
       !customImages[k].includes('unsplash.com') &&
       !customImages[k].includes('pexels.com') &&
-      !customImages[k].includes('777/thumb')
+      !customImages[k].includes('777/thumb') &&
+      !isBrandImageMismatch(brand, model, customImages[k])
     ) {
       return cleanUrl(customImages[k], b);
     }
@@ -925,7 +1009,8 @@ function computeCleanPhoneImage(brand?: string, model?: string, fallbackUrl?: st
     rawUrl.includes('unsplash.com') ||
     rawUrl.includes('pexels.com') ||
     rawUrl.includes('pixabay.com') ||
-    rawUrl.includes('777/thumb');
+    rawUrl.includes('777/thumb') ||
+    isBrandImageMismatch(brand, model, rawUrl);
 
   if (
     !isInvalidUrl &&
@@ -938,6 +1023,9 @@ function computeCleanPhoneImage(brand?: string, model?: string, fallbackUrl?: st
 
   // 2. Try high-resolution flagship & classic renders (sorted longest keyword first)
   for (const item of MODEL_EXACT_RENDERS) {
+    if (isBrandImageMismatch(brand, model, item.url)) {
+      continue;
+    }
     // Prevent non-Samsung brands (e.g. Itel S23, Vivo S20) from matching generic Samsung S-series renders
     const isSamsungRender = item.url.includes('samsung-galaxy');
     if (isSamsungRender && b && b !== 'samsung' && !fullText.includes('galaxy') && !fullText.includes('samsung')) {
@@ -956,21 +1044,24 @@ function computeCleanPhoneImage(brand?: string, model?: string, fallbackUrl?: st
   }
 
   // 3. Exact dictionary lookup from verified 4,000+ device catalog
-  if (MOBILE_API_THUMBS[fullText]) {
+  if (MOBILE_API_THUMBS[fullText] && !isBrandImageMismatch(brand, model, MOBILE_API_THUMBS[fullText])) {
     return cleanUrl(MOBILE_API_THUMBS[fullText], b);
   }
-  if (MOBILE_API_THUMBS[modelNorm]) {
+  if (MOBILE_API_THUMBS[modelNorm] && !isBrandImageMismatch(brand, model, MOBILE_API_THUMBS[modelNorm])) {
     return cleanUrl(MOBILE_API_THUMBS[modelNorm], b);
   }
 
   // 4. If a valid verified catalog/database image URL was passed, use it before fuzzy substring matching!
-  if (!isInvalidUrl && (rawUrl.includes('gsmarena.com') || rawUrl.includes('api.mobileapi.dev'))) {
+  if (!isInvalidUrl && (rawUrl.includes('gsmarena.com') || rawUrl.includes('api.mobileapi.dev')) && !isBrandImageMismatch(brand, model, rawUrl)) {
     return rawUrl;
   }
 
   // 5. Intelligent word-boundary match in deviceImageDictionary (strictly word boundaries to prevent single-digit hijacking!)
   for (const k of SORTED_THUMB_KEYS) {
     if (k.length >= 4) {
+      if (isBrandImageMismatch(brand, model, MOBILE_API_THUMBS[k])) {
+        continue;
+      }
       const escaped = k.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
       const wordReg = new RegExp(`(^|\\s)${escaped}(\\s|$)`, 'i');
       if (wordReg.test(fullText) || wordReg.test(modelNorm)) {
