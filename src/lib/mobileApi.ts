@@ -79,9 +79,7 @@ type ApiEnvelope<T> = {
 const brandCache: { value: string[] | null } = { value: null };
 const modelCache = new Map<string, PhoneModelOption[]>();
 
-import { LOOKUP_BRANDS, getModelsForBrand } from '../data/phoneLookup';
-import { ALL_INDIAN_PHONES_CATALOG } from '../data/indianPhonesCatalog';
-import { MASTER_MODEL_CATALOG } from '../data/masterModelCatalog';
+import { LOOKUP_BRANDS } from '../data/brandNames';
 import { getCleanPhoneImage, isBrandImageMismatch } from './phoneImages';
 
 export type CatalogModelItem = {
@@ -156,6 +154,7 @@ export async function fetchPhoneModels(
   if (modelCache.has(cacheKey)) return modelCache.get(cacheKey) ?? [];
 
   // Instant Tier: Local Indian Phone Catalog (Comprehensive 1,260+ models) - 0ms immediate
+  const { getModelsForBrand } = await import('../data/phoneLookup');
   const fallbackNames = getModelsForBrand(brand);
   let filteredFallback = fallbackNames;
   if (query.trim()) {
@@ -285,6 +284,10 @@ export async function searchMobileApiDev(
   }
 
   // 2. Search local Indian Phones & Master Catalog (Comprehensive 1,260+ models)
+  const [{ ALL_INDIAN_PHONES_CATALOG }, { MASTER_MODEL_CATALOG }] = await Promise.all([
+    import('../data/indianPhonesCatalog'),
+    import('../data/masterModelCatalog'),
+  ]);
   const localMatches = ALL_INDIAN_PHONES_CATALOG.filter((p) => {
     const matchBrand = !brandClean || p.brand.toLowerCase() === brandClean;
     const matchQuery = !q || `${p.brand} ${p.model} ${p.processor || ''}`.toLowerCase().includes(q);
@@ -969,6 +972,7 @@ export async function fetchBrandCatalogFromApi(brand: string): Promise<CatalogMo
   }
 
   // 2. FALLBACK: Curated Indian Phone Catalog (Instant 0ms)
+  const { ALL_INDIAN_PHONES_CATALOG } = await import('../data/indianPhonesCatalog');
   const localMatches = ALL_INDIAN_PHONES_CATALOG.filter(
     (p) => p.brand.toLowerCase() === cleanBrand
   );

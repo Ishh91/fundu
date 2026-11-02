@@ -18,6 +18,32 @@ declare global {
   }
 }
 
+let recaptchaLoadingPromise: Promise<void> | null = null;
+
+function ensureRecaptchaScript(): Promise<void> {
+  if (typeof window === 'undefined') return Promise.resolve();
+  if (window.grecaptcha) return Promise.resolve();
+  if (recaptchaLoadingPromise) return recaptchaLoadingPromise;
+
+  recaptchaLoadingPromise = new Promise<void>((resolve) => {
+    const existing = document.getElementById('recaptcha-enterprise-script');
+    if (existing) {
+      resolve();
+      return;
+    }
+    const script = document.createElement('script');
+    script.id = 'recaptcha-enterprise-script';
+    script.src = `https://www.google.com/recaptcha/enterprise.js?render=${RECAPTCHA_SITE_KEY}`;
+    script.async = true;
+    script.defer = true;
+    script.onload = () => resolve();
+    script.onerror = () => resolve();
+    document.head.appendChild(script);
+  });
+
+  return recaptchaLoadingPromise;
+}
+
 /**
  * Executes reCAPTCHA Enterprise for a designated action (e.g. 'LOGIN', 'SEND_OTP')
  * and returns the generated token, or null if reCAPTCHA is unavailable/blocked.
@@ -26,6 +52,7 @@ export async function executeRecaptchaEnterprise(action = 'LOGIN'): Promise<stri
   if (typeof window === 'undefined') return null;
 
   try {
+    await ensureRecaptchaScript();
     const grecaptcha = window.grecaptcha;
     if (!grecaptcha) return null;
 

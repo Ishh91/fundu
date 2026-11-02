@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { LOOKUP_BRANDS } from '../../data/phoneLookup';
+import { LOOKUP_BRANDS } from '../../data/brandNames';
 import { getCleanPhoneImage } from '../../lib/phoneImages';
 
 const BRAND_DATA: Record<
@@ -134,6 +134,8 @@ export default function PopularBrands() {
                     src={data.image}
                     alt={`${brand} phone`}
                     className="h-full w-full object-contain"
+                    loading="lazy"
+                    decoding="async"
                     onError={(e) => {
                       (e.target as HTMLImageElement).src = getCleanPhoneImage(brand, data.popularModel);
                     }}

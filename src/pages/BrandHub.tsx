@@ -1,5 +1,5 @@
 import { Smartphone, Wrench, BadgeIndianRupee } from 'lucide-react';
-import { LOOKUP_BRANDS } from '../data/phoneLookup';
+import { LOOKUP_BRANDS } from '../data/brandNames';
 
 export default function BrandHub() {
   return (

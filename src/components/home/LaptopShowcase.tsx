@@ -150,6 +150,7 @@ export default function LaptopShowcase({ customLaptops }: LaptopShowcaseProps) {
                     alt={laptop.title}
                     className="max-h-full max-w-full object-contain drop-shadow-md"
                     loading="lazy"
+                    decoding="async"
                   />
                 </Link>
 

@@ -203,6 +203,8 @@ export default function BestDeals({ products, loading }: BestDealsProps) {
                       src={getCleanPhoneImage(item.brand, item.title || item.model, item.images?.[0])}
                       alt={item.title}
                       className="h-full w-auto object-contain transition group-hover:scale-105"
+                      loading="lazy"
+                      decoding="async"
                       onError={(e) => {
                         (e.target as HTMLImageElement).src = getCleanPhoneImage(item.brand, item.title || item.model, '');
                       }}

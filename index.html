@@ -19,13 +19,15 @@
     <meta name="robots" content="index, follow" />
     <link rel="canonical" href="https://thefundu.com/" />
 
-    <!-- Performance: Preconnect & DNS-Prefetch for 0ms Font & Asset Handshakes -->
+    <!-- Performance: Preconnect & Non-Blocking Font Loading for 0ms First Paint -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link rel="preconnect" href="https://fdn2.gsmarena.com" crossorigin />
     <link rel="dns-prefetch" href="https://fdn2.gsmarena.com" />
     <link rel="dns-prefetch" href="https://fundu-1.onrender.com" />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Sora:wght@500;600;700;800&display=swap" />
+    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Sora:wght@500;600;700;800&display=swap" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Sora:wght@500;600;700;800&display=swap" media="print" onload="this.media='all'" />
+    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Sora:wght@500;600;700;800&display=swap" /></noscript>
 
     <!-- Open Graph / Social Sharing Meta Tags -->
     <meta property="og:type" content="website" />
@@ -86,8 +88,6 @@
       }
     </script>
 
-    <!-- Google reCAPTCHA Enterprise -->
-    <script src="https://www.google.com/recaptcha/enterprise.js?render=6LcNjsctAAAAAFX11zXYA0zSoYzPtFcgFY0u9_Ui" async defer></script>
   </head>
   <body>
     <div id="root"></div>

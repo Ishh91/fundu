@@ -33,7 +33,7 @@ import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
 import { formatINR } from '../lib/db';
 import BrandLogo from './BrandLogo';
-import { getModelDedupeKey, sortDeviceModelsLatestFirst } from '../data/brandSeriesCatalog';
+import { getModelDedupeKey, sortDeviceModelsLatestFirst } from '../lib/modelSortUtils';
 import { fetchBrandCatalogFromApi, fetchDeviceAutocomplete } from '../lib/mobileApi';
 import {
   getPanIndiaLocation,

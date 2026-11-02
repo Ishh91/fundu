@@ -52,24 +52,8 @@ const buildPhoneLookupCatalog = (): PhoneLookupEntry[] => {
 
 export const PHONE_LOOKUP_CATALOG: PhoneLookupEntry[] = buildPhoneLookupCatalog();
 
-export const LOOKUP_BRANDS = [
-  'Apple',
-  'Samsung',
-  'OnePlus',
-  'Xiaomi',
-  'Realme',
-  'Vivo',
-  'Oppo',
-  'Google',
-  'Nothing',
-  'Motorola',
-  'Poco',
-  'iQOO',
-  'Infinix',
-  'Tecno',
-  'Itel',
-  'Micromax',
-];
+import { LOOKUP_BRANDS } from './brandNames';
+export { LOOKUP_BRANDS };
 
 export function getModelsForBrand(brand: string): string[] {
   const bLower = (brand || '').toLowerCase().trim();

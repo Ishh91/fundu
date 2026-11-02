@@ -114,6 +114,8 @@ export default function HeroSection() {
                         alt={poster.title || 'Fundu Poster'}
                         className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.01] mx-auto block"
                         loading={index === 0 ? 'eager' : 'lazy'}
+                        fetchPriority={index === 0 ? 'high' : 'auto'}
+                        decoding={index === 0 ? 'sync' : 'async'}
                         onError={(e) => {
                           (e.target as HTMLImageElement).src =
                             'https://placehold.co/1400x550?text=Fundu+Poster+Banner';
