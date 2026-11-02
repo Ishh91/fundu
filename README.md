@@ -70,12 +70,6 @@ fundu/
 │   ├── routes/                   # REST API routes (/api/orders, /api/quotes, /api/auth)
 │   └── index.js                  # Express application entry point
 │
-├── archive/                      # Archived Legacy Files & Offline Reports (Kept for Reference)
-│   ├── legacy_nextjs/            # Old Next.js app router & components prior to Vite migration
-│   ├── catalogs_pdf/             # Generated PDF benchmark catalogs & price lists
-│   ├── scratch/                  # Maintenance scratch scripts
-│   └── docs/                     # Internal architecture notes
-│
 ├── public/                       # Static public assets (Favicon, logos, sound assets)
 ├── dist/                         # Production compiled bundle output (`npm run build`)
 ├── fundu_phone_quote.mjs         # Self-contained buyback valuation engine
