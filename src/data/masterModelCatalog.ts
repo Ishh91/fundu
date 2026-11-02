@@ -1517,7 +1517,7 @@ export const MASTER_MODEL_CATALOG = [
     "brand": "Motorola",
     "series": "Motorola Series",
     "model": "Motorola One Action",
-    "storage": "128 GB",
+    "storage": "64 GB",
     "price": 3600,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/motorola-one-action.jpg"
   },
@@ -1525,7 +1525,7 @@ export const MASTER_MODEL_CATALOG = [
     "brand": "Motorola",
     "series": "Motorola Series",
     "model": "Motorola One Fusion Plus",
-    "storage": "128 GB",
+    "storage": "64 GB",
     "price": 4890,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/motorola-one-fusion-plus.jpg"
   },
@@ -1549,7 +1549,7 @@ export const MASTER_MODEL_CATALOG = [
     "brand": "Motorola",
     "series": "Motorola Series",
     "model": "Motorola One Vision",
-    "storage": "128 GB",
+    "storage": "64 GB",
     "price": 3700,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/motorola-one-vision.jpg"
   },

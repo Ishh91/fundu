@@ -416,6 +416,7 @@ export function inferModelSeries(
   if (bLower === 'motorola' || bLower === 'moto') {
     if (/\b(razr)\b/i.test(mLower)) return { seriesName: 'Motorola Razr Series', seriesSlug: 'motorola-razr-series' };
     if (/\b(edge)\b/i.test(mLower)) return { seriesName: 'Motorola Edge Series', seriesSlug: 'motorola-edge-series' };
+    if (/\b(one)\b/i.test(mLower)) return { seriesName: 'Motorola One Series', seriesSlug: 'motorola-one-series' };
     if (/\b(g\d+|g\s*\d+|moto\s*g)\b/i.test(mLower)) return { seriesName: 'Motorola Moto G Series', seriesSlug: 'motorola-moto-g-series' };
     if (/\b(e\d+|e\s*\d+|moto\s*e)\b/i.test(mLower)) return { seriesName: 'Motorola Moto E Series', seriesSlug: 'motorola-moto-e-series' };
     return { seriesName: 'Motorola Moto G Series', seriesSlug: 'motorola-moto-g-series' };
@@ -1633,6 +1634,23 @@ export const BRAND_SERIES_DEFINITIONS: Record<string, BrandSeriesDefinition[]> =
         { brand: 'Motorola', series: 'Moto G & E Series', model: 'Motorola Moto G62 5G', storage: '128 GB', price: 7200, image: 'https://fdn2.gsmarena.com/vv/bigpic/motorola-moto-g62-5g.jpg' },
         { brand: 'Motorola', series: 'Moto G & E Series', model: 'Motorola Moto E13', storage: '64 GB', price: 5050, image: 'https://api.mobileapi.dev/devices/195/thumb.png' },
         { brand: 'Motorola', series: 'Moto G & E Series', model: 'Motorola Moto E22s', storage: '64 GB', price: 4350, image: 'https://api.mobileapi.dev/devices/199/thumb.png' },
+      ],
+    },
+    {
+      id: 'moto-one',
+      slug: 'moto-one-series',
+      name: 'Moto One Series',
+      brand: 'Motorola',
+      image: 'https://fdn2.gsmarena.com/vv/bigpic/motorola-moto-one.jpg',
+      description: 'Motorola Moto One, One Power, One Action, One Fusion+, One Vision, One Macro',
+      pattern: /\b(one)\b/i,
+      defaultModels: [
+        { brand: 'Motorola', series: 'Moto One Series', model: 'Motorola Moto One', storage: '64 GB', price: 3900, image: 'https://fdn2.gsmarena.com/vv/bigpic/motorola-moto-one.jpg' },
+        { brand: 'Motorola', series: 'Moto One Series', model: 'Motorola One Power', storage: '64 GB', price: 2800, image: 'https://fdn2.gsmarena.com/vv/bigpic/motorola-one-power.jpg' },
+        { brand: 'Motorola', series: 'Moto One Series', model: 'Motorola One Action', storage: '64 GB', price: 3600, image: 'https://fdn2.gsmarena.com/vv/bigpic/motorola-one-action.jpg' },
+        { brand: 'Motorola', series: 'Moto One Series', model: 'Motorola One Fusion Plus', storage: '64 GB', price: 4890, image: 'https://fdn2.gsmarena.com/vv/bigpic/motorola-one-fusion-plus.jpg' },
+        { brand: 'Motorola', series: 'Moto One Series', model: 'Motorola One Macro', storage: '64 GB', price: 3850, image: 'https://fdn2.gsmarena.com/vv/bigpic/motorola-one-macro.jpg' },
+        { brand: 'Motorola', series: 'Moto One Series', model: 'Motorola One Vision', storage: '64 GB', price: 3700, image: 'https://fdn2.gsmarena.com/vv/bigpic/motorola-one-vision.jpg' },
       ],
     },
   ],

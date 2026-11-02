@@ -2876,6 +2876,13 @@ const MODEL_HARDWARE_RULES: Array<{
         { storage: '128 GB', rams: ['8 GB'] },
       ],
     },
+    // Motorola Moto One Series (Strictly Only 4 GB RAM / 64 GB Storage)
+    {
+      pattern: /(?:motorola|moto)\s*one\b|motorola\s*one\s*(?:power|action|vision|macro|fusion(?:\s*plus|\+)?|hyper|zoom|ace|5g)?\b|one\s*(?:power|action|vision|macro|fusion(?:\s*plus|\+)?|hyper|zoom)\b/i,
+      variants: [
+        { storage: '64 GB', rams: ['4 GB'] },
+      ],
+    },
 
     // ==========================================
     // ITEL SMARTPHONES
@@ -3136,6 +3143,11 @@ export function isStorageAllowedForModel(brand = '', model = '', storageStr = ''
   const b = String(brand || '').toLowerCase().trim();
   const m = String(model || '').toLowerCase().trim();
   const full = `${b} ${m}`;
+
+  // Motorola Moto One Series: Strictly ONLY 64 GB allowed across all platforms
+  if ((b.includes('motorola') || b.includes('moto')) && (/(?:moto\s*one|motorola\s*one)\b/i.test(full) || /\bone\s*(?:power|action|vision|macro|fusion(?:\s*plus|\+)?|hyper|zoom|ace|5g)?\b/i.test(full))) {
+    return gb === 64;
+  }
 
   // 1. Tier: 512 GB / 1 TB / 2 TB (Strict Flagships Only)
   if (gb >= 512) {
