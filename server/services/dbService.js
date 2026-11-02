@@ -220,8 +220,16 @@ export const preparePayload = (table, action, input, auth) => {
         payload.user_id = `guest_${Date.now()}`;
       }
 
-      // Server-side quote validation & audit enforcement (do not trust client-supplied prices)
-      if (payload.brand && payload.model) {
+      // Preserve exact price shown to customer on their screen (do not overwrite client's accepted quote)
+      const rawPrice = payload.estimated_price ?? payload.valuation_price;
+      const clientPrice = rawPrice != null && rawPrice !== '' ? Number(rawPrice) : NaN;
+      const hasValidClientPrice = !isNaN(clientPrice) && clientPrice > 0;
+
+      if (hasValidClientPrice) {
+        payload.estimated_price = Math.round(clientPrice);
+        payload.valuation_price = Math.round(clientPrice);
+      } else if (action === 'insert' && payload.brand && payload.model) {
+        // Fallback calculation only when no valid price was submitted by customer
         const quoteInputs = {
           brand: payload.brand,
           model: payload.model,
@@ -243,9 +251,9 @@ export const preparePayload = (table, action, input, auth) => {
         if (serverQuote.status === 'quoted') {
           payload.estimated_price = serverQuote.offerAmount;
           payload.valuation_price = serverQuote.offerAmount;
-          payload.policy_version = serverQuote.policyVersion;
-          payload.quote_id = serverQuote.quoteId;
-          payload.condition_summary = serverQuote.conditionSummary;
+          if (!payload.policy_version) payload.policy_version = serverQuote.policyVersion;
+          if (!payload.quote_id) payload.quote_id = serverQuote.quoteId;
+          if (!payload.condition_summary || !payload.condition_summary.length) payload.condition_summary = serverQuote.conditionSummary;
         } else if (serverQuote.status === 'requires_manual_review') {
           payload.status = 'requires_manual_review';
           payload.estimated_price = null;

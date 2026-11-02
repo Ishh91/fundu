@@ -1239,7 +1239,7 @@ export default function SellPhone() {
           model: form.model,
           storage: form.storage,
           condition: form.cosmeticCondition,
-          offeredPrice: funduQuote?.offerAmount || 15000,
+          offeredPrice: estimate,
           pickupAddress: [form.pickupAddress, resolvedPickupArea].filter(Boolean).join(', '),
           pickupDate: form.pickupDate,
           pickupSlot: form.pickupSlot,
