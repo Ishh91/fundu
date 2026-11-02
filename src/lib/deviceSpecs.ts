@@ -2065,33 +2065,379 @@ const MODEL_HARDWARE_RULES: Array<{
     // ==========================================
     // REALME
     // ==========================================
+    // 1. Realme GT Series
     {
-      pattern: /realme\s*gt\s*6\b/i,
+      pattern: /realme.*gt\s*7\b/i,
+      variants: [
+        { storage: '256 GB', rams: ['12 GB', '16 GB'] },
+        { storage: '512 GB', rams: ['16 GB'] },
+      ],
+    },
+    {
+      pattern: /realme.*gt\s*6\b/i,
       variants: [
         { storage: '256 GB', rams: ['8 GB', '12 GB'] },
         { storage: '512 GB', rams: ['16 GB'] },
       ],
     },
     {
-      pattern: /realme\s*12\s*pro\+/i,
+      pattern: /realme.*gt\s*6t\b/i,
+      variants: [
+        { storage: '128 GB', rams: ['8 GB'] },
+        { storage: '256 GB', rams: ['8 GB', '12 GB'] },
+        { storage: '512 GB', rams: ['12 GB'] },
+      ],
+    },
+    {
+      pattern: /realme.*gt\s*2\s*pro\b/i,
+      variants: [
+        { storage: '128 GB', rams: ['8 GB'] },
+        { storage: '256 GB', rams: ['12 GB'] },
+      ],
+    },
+    {
+      pattern: /realme.*gt\s*neo\s*3\b/i,
       variants: [
         { storage: '128 GB', rams: ['8 GB'] },
         { storage: '256 GB', rams: ['8 GB', '12 GB'] },
       ],
     },
     {
-      pattern: /realme\s*11\s*pro\+/i,
+      pattern: /realme.*gt\s*neo\s*2\b/i,
       variants: [
+        { storage: '128 GB', rams: ['8 GB'] },
+        { storage: '256 GB', rams: ['12 GB'] },
+      ],
+    },
+    {
+      pattern: /realme.*gt\s*master\b/i,
+      variants: [
+        { storage: '128 GB', rams: ['6 GB', '8 GB'] },
+        { storage: '256 GB', rams: ['8 GB'] },
+      ],
+    },
+    {
+      pattern: /realme.*gt\b/i,
+      variants: [
+        { storage: '128 GB', rams: ['8 GB'] },
+        { storage: '256 GB', rams: ['12 GB'] },
+      ],
+    },
+
+    // 2. Realme 14 Series
+    {
+      pattern: /realme.*14\s*pro\s*(\+|plus)/i,
+      variants: [
+        { storage: '128 GB', rams: ['8 GB'] },
+        { storage: '256 GB', rams: ['8 GB', '12 GB'] },
+        { storage: '512 GB', rams: ['12 GB'] },
+      ],
+    },
+    {
+      pattern: /realme.*14\s*pro\b/i,
+      variants: [
+        { storage: '128 GB', rams: ['8 GB'] },
+        { storage: '256 GB', rams: ['8 GB', '12 GB'] },
+        { storage: '512 GB', rams: ['12 GB'] },
+      ],
+    },
+    {
+      pattern: /realme.*14[xt]\b/i,
+      variants: [
+        { storage: '128 GB', rams: ['6 GB', '8 GB'] },
+        { storage: '256 GB', rams: ['8 GB'] },
+      ],
+    },
+
+    // 3. Realme 13 Series
+    {
+      pattern: /realme.*13\s*pro\s*(?:\+|plus)/i,
+      variants: [
+        { storage: '256 GB', rams: ['8 GB', '12 GB'] },
+        { storage: '512 GB', rams: ['12 GB'] },
+      ],
+    },
+    {
+      pattern: /realme.*13\s*pro(?!\s*(?:\+|plus))/i,
+      variants: [
+        { storage: '128 GB', rams: ['8 GB'] },
+        { storage: '256 GB', rams: ['8 GB'] },
+        { storage: '512 GB', rams: ['12 GB'] },
+      ],
+    },
+    {
+      pattern: /realme.*13\s*(?:\+|plus)/i,
+      variants: [
+        { storage: '128 GB', rams: ['8 GB'] },
         { storage: '256 GB', rams: ['8 GB', '12 GB'] },
       ],
     },
     {
-      pattern: /realme\s*12\s*plus|realme\s*12\+/i,
+      pattern: /realme.*13(?!\s*(?:\+|plus|pro))/i,
       variants: [
         { storage: '128 GB', rams: ['8 GB'] },
         { storage: '256 GB', rams: ['8 GB'] },
       ],
     },
+
+    // 4. Realme 12 Series
+    {
+      pattern: /realme.*12\s*pro\s*(?:\+|plus)/i,
+      variants: [
+        { storage: '128 GB', rams: ['8 GB'] },
+        { storage: '256 GB', rams: ['8 GB', '12 GB'] },
+        { storage: '512 GB', rams: ['12 GB'] },
+      ],
+    },
+    {
+      pattern: /realme.*12\s*pro(?!\s*(?:\+|plus))/i,
+      variants: [
+        { storage: '128 GB', rams: ['8 GB'] },
+        { storage: '256 GB', rams: ['8 GB'] },
+      ],
+    },
+    {
+      pattern: /realme.*12\s*(?:\+|plus)/i,
+      variants: [
+        { storage: '128 GB', rams: ['8 GB'] },
+        { storage: '256 GB', rams: ['8 GB'] },
+      ],
+    },
+    {
+      pattern: /realme.*12x\b/i,
+      variants: [
+        { storage: '128 GB', rams: ['4 GB', '6 GB', '8 GB'] },
+      ],
+    },
+    {
+      pattern: /realme.*12(?!\s*(?:\+|plus|pro|x))/i,
+      variants: [
+        { storage: '128 GB', rams: ['6 GB', '8 GB'] },
+        { storage: '256 GB', rams: ['8 GB'] },
+      ],
+    },
+
+    // 5. Realme 11 Series
+    {
+      pattern: /realme.*11\s*pro\s*(?:\+|plus)/i,
+      variants: [
+        { storage: '256 GB', rams: ['8 GB', '12 GB'] },
+      ],
+    },
+    {
+      pattern: /realme.*11\s*pro(?!\s*(?:\+|plus))/i,
+      variants: [
+        { storage: '128 GB', rams: ['8 GB'] },
+        { storage: '256 GB', rams: ['8 GB', '12 GB'] },
+      ],
+    },
+    {
+      pattern: /realme.*11x\b/i,
+      variants: [
+        { storage: '128 GB', rams: ['6 GB', '8 GB'] },
+      ],
+    },
+    {
+      pattern: /realme.*11(?!\s*(?:\+|plus|pro|x))/i,
+      variants: [
+        { storage: '128 GB', rams: ['8 GB'] },
+        { storage: '256 GB', rams: ['8 GB'] },
+      ],
+    },
+
+    // 6. Realme 10 Series
+    {
+      pattern: /realme.*10\s*pro\s*(?:\+|plus)/i,
+      variants: [
+        { storage: '128 GB', rams: ['6 GB', '8 GB'] },
+        { storage: '256 GB', rams: ['8 GB'] },
+      ],
+    },
+    {
+      pattern: /realme.*10\s*pro(?!\s*(?:\+|plus))/i,
+      variants: [
+        { storage: '128 GB', rams: ['6 GB', '8 GB'] },
+        { storage: '256 GB', rams: ['8 GB'] },
+      ],
+    },
+    {
+      pattern: /realme.*10(?!\s*(?:\+|plus|pro))/i,
+      variants: [
+        { storage: '64 GB', rams: ['4 GB'] },
+        { storage: '128 GB', rams: ['8 GB'] },
+      ],
+    },
+
+    // 7. Realme 9 Series
+    {
+      pattern: /realme.*9\s*pro\s*(?:\+|plus)/i,
+      variants: [
+        { storage: '128 GB', rams: ['6 GB', '8 GB'] },
+        { storage: '256 GB', rams: ['8 GB'] },
+      ],
+    },
+    {
+      pattern: /realme.*9\s*pro(?!\s*(?:\+|plus))/i,
+      variants: [
+        { storage: '128 GB', rams: ['6 GB', '8 GB'] },
+        { storage: '256 GB', rams: ['8 GB'] },
+      ],
+    },
+    {
+      pattern: /realme.*9\s*5g\s*speed/i,
+      variants: [
+        { storage: '128 GB', rams: ['6 GB', '8 GB'] },
+      ],
+    },
+    {
+      pattern: /realme.*9i\b/i,
+      variants: [
+        { storage: '64 GB', rams: ['4 GB'] },
+        { storage: '128 GB', rams: ['4 GB', '6 GB'] },
+      ],
+    },
+    {
+      pattern: /realme.*9(?!\s*(?:\+|plus|pro|i|5g\s*speed))/i,
+      variants: [
+        { storage: '64 GB', rams: ['4 GB'] },
+        { storage: '128 GB', rams: ['6 GB', '8 GB'] },
+      ],
+    },
+
+    // 8. Realme 8 Series
+    {
+      pattern: /realme.*8\s*pro\b/i,
+      variants: [
+        { storage: '128 GB', rams: ['6 GB', '8 GB'] },
+      ],
+    },
+    {
+      pattern: /realme.*8s\b/i,
+      variants: [
+        { storage: '128 GB', rams: ['6 GB', '8 GB'] },
+      ],
+    },
+    {
+      pattern: /realme.*8i\b/i,
+      variants: [
+        { storage: '64 GB', rams: ['4 GB'] },
+        { storage: '128 GB', rams: ['6 GB'] },
+      ],
+    },
+    {
+      pattern: /realme.*8\s*5g\b/i,
+      variants: [
+        { storage: '64 GB', rams: ['4 GB'] },
+        { storage: '128 GB', rams: ['4 GB', '8 GB'] },
+      ],
+    },
+    {
+      pattern: /realme.*8(?!\s*(?:pro|s|i|5g))/i,
+      variants: [
+        { storage: '128 GB', rams: ['4 GB', '6 GB', '8 GB'] },
+      ],
+    },
+
+    // 9. Realme 7 Series
+    {
+      pattern: /realme.*7\s*pro\b/i,
+      variants: [
+        { storage: '128 GB', rams: ['6 GB', '8 GB'] },
+      ],
+    },
+    {
+      pattern: /realme.*7i\b/i,
+      variants: [
+        { storage: '64 GB', rams: ['4 GB'] },
+        { storage: '128 GB', rams: ['4 GB'] },
+      ],
+    },
+    {
+      pattern: /realme.*7(?!\s*(?:pro|i))/i,
+      variants: [
+        { storage: '64 GB', rams: ['6 GB'] },
+        { storage: '128 GB', rams: ['8 GB'] },
+      ],
+    },
+
+    // 10. Realme 6 Series
+    {
+      pattern: /realme.*6\s*pro\b/i,
+      variants: [
+        { storage: '64 GB', rams: ['6 GB'] },
+        { storage: '128 GB', rams: ['6 GB', '8 GB'] },
+      ],
+    },
+    {
+      pattern: /realme.*6i\b/i,
+      variants: [
+        { storage: '64 GB', rams: ['4 GB', '6 GB'] },
+      ],
+    },
+    {
+      pattern: /realme.*6(?!\s*(?:pro|i))/i,
+      variants: [
+        { storage: '64 GB', rams: ['4 GB', '6 GB'] },
+        { storage: '128 GB', rams: ['6 GB', '8 GB'] },
+      ],
+    },
+
+    // 11. Realme 5 Series
+    {
+      pattern: /realme.*5\s*pro\b/i,
+      variants: [
+        { storage: '64 GB', rams: ['4 GB', '6 GB'] },
+        { storage: '128 GB', rams: ['8 GB'] },
+      ],
+    },
+    {
+      pattern: /realme.*5[si]?\b(?!\s*pro)/i,
+      variants: [
+        { storage: '32 GB', rams: ['4 GB'] },
+        { storage: '64 GB', rams: ['4 GB'] },
+        { storage: '128 GB', rams: ['4 GB'] },
+      ],
+    },
+
+    // 12. Realme 3, 2, 1 Series
+    {
+      pattern: /realme.*3\s*pro\b/i,
+      variants: [
+        { storage: '64 GB', rams: ['4 GB', '6 GB'] },
+        { storage: '128 GB', rams: ['6 GB'] },
+      ],
+    },
+    {
+      pattern: /realme.*3i?\b(?!\s*pro)/i,
+      variants: [
+        { storage: '32 GB', rams: ['4 GB'] },
+        { storage: '64 GB', rams: ['4 GB'] },
+      ],
+    },
+    {
+      pattern: /realme.*2\s*pro\b/i,
+      variants: [
+        { storage: '64 GB', rams: ['4 GB', '6 GB'] },
+        { storage: '128 GB', rams: ['8 GB'] },
+      ],
+    },
+    {
+      pattern: /realme.*2\b(?!\s*pro)/i,
+      variants: [
+        { storage: '32 GB', rams: ['4 GB'] },
+        { storage: '64 GB', rams: ['4 GB'] },
+      ],
+    },
+    {
+      pattern: /realme.*1\b/i,
+      variants: [
+        { storage: '32 GB', rams: ['4 GB'] },
+        { storage: '64 GB', rams: ['4 GB'] },
+        { storage: '128 GB', rams: ['4 GB'] },
+      ],
+    },
+
+    // 13. Realme Narzo & C Series
     {
       pattern: /narzo\s*80\s*lite/i,
       variants: [
@@ -2100,16 +2446,16 @@ const MODEL_HARDWARE_RULES: Array<{
       ],
     },
     {
-      pattern: /realme\s*c19\b/i,
+      pattern: /realme.*c19\b/i,
       variants: [
         { storage: '64 GB', rams: ['4 GB'] },
         { storage: '128 GB', rams: ['4 GB', '6 GB'] },
       ],
     },
     {
-      pattern: /realme\s*c(55|53|35|33|31|30|25|21|15|12|11)\b/i,
+      pattern: /realme.*c(55|53|35|33|31|30|25|21|15|12|11)\b/i,
       variants: [
-        { storage: '32 GB', rams: ['3 GB', '4 GB'] },
+        { storage: '32 GB', rams: ['4 GB'] },
         { storage: '64 GB', rams: ['4 GB'] },
         { storage: '128 GB', rams: ['4 GB', '6 GB', '8 GB'] },
       ],
@@ -2741,9 +3087,9 @@ export function is512GBValidForModel(brand = '', model = ''): boolean {
     return false; // Vivo V series standard and Y series never had 512GB in India
   }
 
-  // 6. Realme: Strictly GT 6 / GT 7 / GT 2 Pro
+  // 6. Realme: GT 6/7/2 Pro and 12/13/14 Pro / Pro+
   if (b.includes('realme')) {
-    if (/gt\s*(6|7|2\s*pro)/i.test(m)) return true;
+    if (/gt\s*(6|7|2\s*pro)|(12|13|14)\s*pro/i.test(m)) return true;
     return false;
   }
 
@@ -2841,10 +3187,11 @@ export function isStorageAllowedForModel(brand = '', model = '', storageStr = ''
       return true;
     }
 
-    // Realme: Budget C and Narzo lines NEVER had 256GB
+    // Realme: Budget C, Narzo, and older 1-7 series budget models NEVER had 256GB
     if (b.includes('realme')) {
       if (/realme\s*c(1|2|3|11|12|15|20|21|25|30|31|33|35)\b/i.test(m)) return false;
       if (/narzo\s*([1-5]0i|[1-5]0a)\b/i.test(m)) return false;
+      if (/(?:realme\s*)?(1|2|3|3i|5|5s|5i|6|6i|7|7i)\b(?!\s*pro)/i.test(m)) return false;
       return true;
     }
 
