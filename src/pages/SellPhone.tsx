@@ -1049,18 +1049,20 @@ export default function SellPhone() {
     navigate(`/sell/${slug}`);
   };
 
-  const handleQuickModelSelect = (item?: { brand?: string; model?: string; storage?: string }) => {
+  const handleQuickModelSelect = (item?: { brand?: string; model?: string; storage?: string; ram?: string }) => {
     if (!item || !item.model) return;
     const targetBrand = item.brand || form.brand || 'Apple';
     const brandSlugClean = (targetBrand || 'smartphone').toLowerCase().replace(/\s+/g, '-');
     const modelSlugClean = (item.model || '').toLowerCase().replace(/\s+/g, '-');
     const targetStorage = item.storage || form.storage || '128 GB';
+    const targetRam = item.ram !== undefined ? item.ram : form.ram;
 
     setForm((f) => ({
       ...f,
       brand: targetBrand,
       model: item.model!,
       storage: targetStorage,
+      ram: targetRam,
     }));
     setStep(2);
     navigate(`/sell/${brandSlugClean}/${modelSlugClean}?step=2`);

@@ -3296,6 +3296,18 @@ export function getModelHardwareSpecs(
   return sanitizeSpecs(inferTierHardwareSpecs(brand, model));
 }
 
+export type HardwareVariantOption = {
+  storage: string;
+  ram: string;
+  label: string;
+  key: string;
+};
+
+export type RadarHardwareSpecs = DeviceHardwareSpecs & {
+  activeStorage: string;
+  combinedVariants: HardwareVariantOption[];
+};
+
 /**
  * Authoritative Hardware Specifications for Competitor Radar and User Sell Flow.
  * Guarantees that user-facing storages and RAM options strictly match Competitor Radar, and nothing else.
@@ -3305,7 +3317,7 @@ export function getRadarHardwareSpecs(
   model = '',
   selectedStorage?: string,
   catalog?: Array<{ brand: string; model: string; storage: string }>
-): DeviceHardwareSpecs & { activeStorage: string } {
+): RadarHardwareSpecs {
   const currentDeviceSpecs = getModelHardwareSpecs(brand, model);
   const bLower = (brand || '').toLowerCase().trim();
   const mLower = (model || '').toLowerCase().trim();
@@ -3340,6 +3352,28 @@ export function getRadarHardwareSpecs(
 
   const rams = getRamsForStorage(activeStorage);
 
+  const combinedVariants: HardwareVariantOption[] = [];
+  storages.forEach((stg) => {
+    const ramsForStg = isApple ? [] : currentDeviceSpecs.getRamsForStorage(stg);
+    if (!isApple && ramsForStg && ramsForStg.length > 0) {
+      ramsForStg.forEach((r) => {
+        combinedVariants.push({
+          storage: stg,
+          ram: r,
+          label: `${r}/${stg}`,
+          key: `${r}-${stg}`,
+        });
+      });
+    } else {
+      combinedVariants.push({
+        storage: stg,
+        ram: '',
+        label: stg,
+        key: stg,
+      });
+    }
+  });
+
   return {
     ...currentDeviceSpecs,
     storages,
@@ -3348,5 +3382,6 @@ export function getRadarHardwareSpecs(
     rams,
     defaultRam: rams[0] || '',
     getRamsForStorage,
+    combinedVariants,
   };
 }

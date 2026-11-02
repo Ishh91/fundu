@@ -35,7 +35,7 @@ interface SellStep1DeviceProps {
   brandSlug?: string;
   modelSlug?: string;
   handleBrandSelect: (brand: string) => void;
-  handleQuickModelSelect: (item?: { brand?: string; model?: string; storage?: string }) => void;
+  handleQuickModelSelect: (item?: { brand?: string; model?: string; storage?: string; ram?: string }) => void;
   selectedSeries: string;
   setSelectedSeries: (series: string) => void;
   brandSeriesList: string[];
@@ -190,30 +190,39 @@ export default function SellStep1Device({
                         </div>
                       </div>
 
-                      {/* Storage Selection Pills */}
+                      {/* Variant Selection Pills (Unified RAM/Storage) */}
                       <div className="flex flex-wrap gap-1.5 pt-1">
-                        {getRadarHardwareSpecs(m.brand || form.brand, m.model).storages.map((stg) => (
-                          <button
-                            key={stg}
-                            type="button"
-                            onClick={() => {
-                              handleQuickModelSelect({ brand: form.brand || m.brand, model: m.model, storage: stg });
-                            }}
-                            className={`px-2.5 py-1 rounded-lg text-xs font-bold transition ${
-                              form.model === m.model && form.storage === stg
-                                ? 'bg-[#344257] text-white shadow-xs'
-                                : 'bg-[#F0F0F5] text-[#47576E] hover:bg-[#E4E7F0] hover:text-[#344257]'
-                            }`}
-                          >
-                            {stg}
-                          </button>
-                        ))}
+                        {getRadarHardwareSpecs(m.brand || form.brand, m.model).combinedVariants.map((v) => {
+                          const isSelected = form.model === m.model && form.storage === v.storage && (!v.ram || form.ram === v.ram);
+                          return (
+                            <button
+                              key={v.key}
+                              type="button"
+                              onClick={() => {
+                                handleQuickModelSelect({ brand: form.brand || m.brand, model: m.model, storage: v.storage, ram: v.ram });
+                              }}
+                              className={`px-2.5 py-1 rounded-lg text-xs font-bold transition ${
+                                isSelected
+                                  ? 'bg-[#344257] text-white shadow-xs'
+                                  : 'bg-[#F0F0F5] text-[#47576E] hover:bg-[#E4E7F0] hover:text-[#344257]'
+                              }`}
+                            >
+                              {v.label}
+                            </button>
+                          );
+                        })}
                       </div>
 
                       <button
                         type="button"
                         onClick={() => {
-                          handleQuickModelSelect({ brand: form.brand, model: m.model, storage: form.storage || '128 GB' });
+                          const defaultV = getRadarHardwareSpecs(form.brand || m.brand, m.model).combinedVariants[0];
+                          handleQuickModelSelect({
+                            brand: form.brand || m.brand,
+                            model: m.model,
+                            storage: form.storage || defaultV?.storage || '128 GB',
+                            ram: form.ram || defaultV?.ram || '',
+                          });
                         }}
                         className="btn-primary w-full text-xs py-2 flex items-center justify-center gap-1 font-bold shadow-xs"
                       >
