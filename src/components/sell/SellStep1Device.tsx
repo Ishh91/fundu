@@ -59,6 +59,36 @@ export default function SellStep1Device({
   const navigate = useNavigate();
   const { version: _imageSyncVersion } = usePriceSync();
   const [openFaqIndex, setOpenFaqIndex] = React.useState<number | null>(0);
+
+  // Memoized series models list (prevents re-filtering and re-running catalog inference on every render)
+  const seriesModels = React.useMemo(() => {
+    if (!form.brand) return [];
+    const unifiedList = getUnifiedCatalog(form.brand);
+    return unifiedList.filter((m) => {
+      if (selectedSeries === 'All') return true;
+      if (m.series === selectedSeries) return true;
+      const inferred = inferModelSeries(m.brand || form.brand, m.model, m.series);
+      return inferred.seriesName.toLowerCase() === selectedSeries.toLowerCase();
+    });
+  }, [form.brand, selectedSeries, _imageSyncVersion]);
+
+  // Memoized popular models
+  const popularModels = React.useMemo(() => {
+    const targetBrands = ['Apple', 'Samsung', 'OnePlus', 'Xiaomi', 'Realme', 'Vivo'];
+    const picked: typeof MASTER_MODEL_CATALOG[0][] = [];
+    for (const b of targetBrands) {
+      const item = MASTER_MODEL_CATALOG.find(
+        (m) =>
+          m.brand.toLowerCase() === b.toLowerCase() &&
+          !isModelDeleted(m.brand, m.model) &&
+          !m.model.includes('2007') &&
+          !m.model.includes('3G')
+      );
+      if (item) picked.push(item);
+    }
+    return picked.length >= 4 ? picked : MASTER_MODEL_CATALOG.slice(0, 6);
+  }, [_imageSyncVersion]);
+
   return (
           <div className="space-y-8 animate-fade-in">
             {/* BRAND SELECTION GRID */}
@@ -141,95 +171,91 @@ export default function SellStep1Device({
 
                 {/* Brand Models Image Cards Grid */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {(() => {
-                    const unifiedList = getUnifiedCatalog(form.brand);
-                    const rawList = unifiedList.filter((m) => {
-                      if (selectedSeries === 'All') return true;
-                      if (m.series === selectedSeries) return true;
-                      const inferred = inferModelSeries(m.brand || form.brand, m.model, m.series);
-                      return inferred.seriesName.toLowerCase() === selectedSeries.toLowerCase();
-                    });
-                    return rawList;
-                  })().map((m) => (
-                    <div
-                      key={`${m.brand}-${m.model}`}
-                      className="p-4 rounded-2xl border border-gray-200 bg-white hover:border-[#6A859F] hover:shadow-lg transition-all duration-300 space-y-3 cursor-pointer group"
-                    >
-                      <div className="flex items-center gap-3">
-                        <div className="h-16 w-16 shrink-0 overflow-hidden rounded-xl bg-white p-1 border border-gray-100 flex items-center justify-center">
-                          <img
-                            src={getCleanPhoneImage(m.brand, m.model, m.image)}
-                            alt={m.model}
-                            className="h-full w-full object-contain group-hover:scale-105 transition-transform drop-shadow-xs"
-                            referrerPolicy="no-referrer"
-                            onError={(e) => {
-                              const target = e.currentTarget;
-                              const bSlug = (m.brand || form.brand || '').toLowerCase().replace(/[^a-z0-9]/g, '');
-                              if (!target.dataset.triedBrandFallback) {
-                                target.dataset.triedBrandFallback = 'true';
-                                const fallback = BRAND_FRONT_FALLBACKS[bSlug] || BRAND_FRONT_FALLBACKS.apple;
-                                if (target.src !== fallback) {
-                                  target.src = fallback;
-                                  return;
+                  {seriesModels.map((m) => {
+                    const cardSpecs = getRadarHardwareSpecs(m.brand || form.brand, m.model);
+                    const variants = cardSpecs.combinedVariants;
+                    const defaultV = variants[0];
+
+                    return (
+                      <div
+                        key={`${m.brand}-${m.model}`}
+                        className="p-4 rounded-2xl border border-gray-200 bg-white hover:border-[#6A859F] hover:shadow-lg transition-all duration-300 space-y-3 cursor-pointer group"
+                      >
+                        <div className="flex items-center gap-3">
+                          <div className="h-16 w-16 shrink-0 overflow-hidden rounded-xl bg-white p-1 border border-gray-100 flex items-center justify-center">
+                            <img
+                              src={getCleanPhoneImage(m.brand, m.model, m.image)}
+                              alt={m.model}
+                              className="h-full w-full object-contain group-hover:scale-105 transition-transform drop-shadow-xs"
+                              referrerPolicy="no-referrer"
+                              onError={(e) => {
+                                const target = e.currentTarget;
+                                const bSlug = (m.brand || form.brand || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+                                if (!target.dataset.triedBrandFallback) {
+                                  target.dataset.triedBrandFallback = 'true';
+                                  const fallback = BRAND_FRONT_FALLBACKS[bSlug] || BRAND_FRONT_FALLBACKS.apple;
+                                  if (target.src !== fallback) {
+                                    target.src = fallback;
+                                    return;
+                                  }
                                 }
-                              }
-                              target.src = getGenericDevicePlaceholder(m.brand || form.brand, m.model);
-                            }}
-                          />
-                        </div>
-                        <div>
-                          <p className="font-extrabold text-sm text-gray-900 group-hover:text-[#344257] transition-colors">{m.model}</p>
-                          <div className="flex items-center gap-1.5 mt-1 flex-wrap">
-                            <span className="badge bg-[#F0F0F5] text-[#344257] border border-[#C0C8D8] font-extrabold text-[11px]">
-                              Select Condition for Quote
-                            </span>
-                            <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200">
-                              Best Resale Price
-                            </span>
+                                target.src = getGenericDevicePlaceholder(m.brand || form.brand, m.model);
+                              }}
+                            />
+                          </div>
+                          <div>
+                            <p className="font-extrabold text-sm text-gray-900 group-hover:text-[#344257] transition-colors">{m.model}</p>
+                            <div className="flex items-center gap-1.5 mt-1 flex-wrap">
+                              <span className="badge bg-[#F0F0F5] text-[#344257] border border-[#C0C8D8] font-extrabold text-[11px]">
+                                Select Condition for Quote
+                              </span>
+                              <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200">
+                                Best Resale Price
+                              </span>
+                            </div>
                           </div>
                         </div>
-                      </div>
 
-                      {/* Variant Selection Pills (Unified RAM/Storage) */}
-                      <div className="flex flex-wrap gap-1.5 pt-1">
-                        {getRadarHardwareSpecs(m.brand || form.brand, m.model).combinedVariants.map((v) => {
-                          const isSelected = form.model === m.model && form.storage === v.storage && (!v.ram || form.ram === v.ram);
-                          return (
-                            <button
-                              key={v.key}
-                              type="button"
-                              onClick={() => {
-                                handleQuickModelSelect({ brand: form.brand || m.brand, model: m.model, storage: v.storage, ram: v.ram });
-                              }}
-                              className={`px-2.5 py-1 rounded-lg text-xs font-bold transition ${
-                                isSelected
-                                  ? 'bg-[#344257] text-white shadow-xs'
-                                  : 'bg-[#F0F0F5] text-[#47576E] hover:bg-[#E4E7F0] hover:text-[#344257]'
-                              }`}
-                            >
-                              {v.label}
-                            </button>
-                          );
-                        })}
-                      </div>
+                        {/* Variant Selection Pills (Unified RAM/Storage) */}
+                        <div className="flex flex-wrap gap-1.5 pt-1">
+                          {variants.map((v) => {
+                            const isSelected = form.model === m.model && form.storage === v.storage && (!v.ram || form.ram === v.ram);
+                            return (
+                              <button
+                                key={v.key}
+                                type="button"
+                                onClick={() => {
+                                  handleQuickModelSelect({ brand: form.brand || m.brand, model: m.model, storage: v.storage, ram: v.ram });
+                                }}
+                                className={`px-2.5 py-1 rounded-lg text-xs font-bold transition ${
+                                  isSelected
+                                    ? 'bg-[#344257] text-white shadow-xs'
+                                    : 'bg-[#F0F0F5] text-[#47576E] hover:bg-[#E4E7F0] hover:text-[#344257]'
+                                }`}
+                              >
+                                {v.label}
+                              </button>
+                            );
+                          })}
+                        </div>
 
-                      <button
-                        type="button"
-                        onClick={() => {
-                          const defaultV = getRadarHardwareSpecs(form.brand || m.brand, m.model).combinedVariants[0];
-                          handleQuickModelSelect({
-                            brand: form.brand || m.brand,
-                            model: m.model,
-                            storage: form.storage || defaultV?.storage || '128 GB',
-                            ram: form.ram || defaultV?.ram || '',
-                          });
-                        }}
-                        className="btn-primary w-full text-xs py-2 flex items-center justify-center gap-1 font-bold shadow-xs"
-                      >
-                        Get Instant Price Quote <ArrowRight className="h-3.5 w-3.5" />
-                      </button>
-                    </div>
-                  ))}
+                        <button
+                          type="button"
+                          onClick={() => {
+                            handleQuickModelSelect({
+                              brand: form.brand || m.brand,
+                              model: m.model,
+                              storage: form.storage || defaultV?.storage || '128 GB',
+                              ram: form.ram || defaultV?.ram || '',
+                            });
+                          }}
+                          className="btn-primary w-full text-xs py-2 flex items-center justify-center gap-1 font-bold shadow-xs"
+                        >
+                          Get Instant Price Quote <ArrowRight className="h-3.5 w-3.5" />
+                        </button>
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
             )}
@@ -246,57 +272,40 @@ export default function SellStep1Device({
               </div>
 
               <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
-                {(() => {
-                  const targetBrands = ['Apple', 'Samsung', 'OnePlus', 'Xiaomi', 'Realme', 'Vivo'];
-                  const picked: typeof MASTER_MODEL_CATALOG[0][] = [];
-                  for (const b of targetBrands) {
-                    const item = MASTER_MODEL_CATALOG.find(
-                      (m) =>
-                        m.brand.toLowerCase() === b.toLowerCase() &&
-                        !isModelDeleted(m.brand, m.model) &&
-                        !m.model.includes('2007') &&
-                        !m.model.includes('3G')
-                    );
-                    if (item) picked.push(item);
-                  }
-                  const displayList = picked.length >= 4 ? picked : MASTER_MODEL_CATALOG.slice(0, 6);
-                  return displayList.map((item) => {
-                    return (
-                      <button
-                        key={`${item.brand}-${item.model}`}
-                        type="button"
-                        onClick={() => handleQuickModelSelect(item)}
-                        className="p-3.5 rounded-2xl border border-gray-200 bg-white hover:border-[#6A859F] hover:shadow-lg transition-all duration-300 flex flex-col items-center text-center cursor-pointer group"
-                      >
-                        <div className="h-20 w-full overflow-hidden rounded-xl p-1 bg-white flex items-center justify-center">
-                          <img
-                            src={getCleanPhoneImage(item.brand, item.model, item.image)}
-                            alt={item.model}
-                            className="h-full w-full object-contain group-hover:scale-105 transition-transform"
-                            referrerPolicy="no-referrer"
-                            onError={(e) => {
-                              const target = e.currentTarget;
-                              const bSlug = (item.brand || '').toLowerCase().replace(/[^a-z0-9]/g, '');
-                              if (!target.dataset.triedBrandFallback) {
-                                target.dataset.triedBrandFallback = 'true';
-                                const fallback = BRAND_FRONT_FALLBACKS[bSlug] || BRAND_FRONT_FALLBACKS.apple;
-                                if (target.src !== fallback) {
-                                  target.src = fallback;
-                                  return;
-                                }
-                              }
-                              target.src = getGenericDevicePlaceholder(item.brand, item.model);
-                            }}
-                          />
-                        </div>
-                        <p className="mt-2 text-xs font-extrabold text-gray-900 group-hover:text-[#344257] transition-colors truncate w-full">{item.model}</p>
-                        <span className="mt-1 badge bg-[#F0F0F5] text-[#344257] border border-[#C0C8D8] font-extrabold text-[10px]">
-                          Evaluate Condition →
-                        </span>
-                      </button>
-                    );
-                  });
-                })()}
+                {popularModels.map((item) => (
+                  <button
+                    key={`${item.brand}-${item.model}`}
+                    type="button"
+                    onClick={() => handleQuickModelSelect(item)}
+                    className="p-3.5 rounded-2xl border border-gray-200 bg-white hover:border-[#6A859F] hover:shadow-lg transition-all duration-300 flex flex-col items-center text-center cursor-pointer group"
+                  >
+                    <div className="h-20 w-full overflow-hidden rounded-xl p-1 bg-white flex items-center justify-center">
+                      <img
+                        src={getCleanPhoneImage(item.brand, item.model, item.image)}
+                        alt={item.model}
+                        className="h-full w-full object-contain group-hover:scale-105 transition-transform"
+                        referrerPolicy="no-referrer"
+                        onError={(e) => {
+                          const target = e.currentTarget;
+                          const bSlug = (item.brand || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+                          if (!target.dataset.triedBrandFallback) {
+                            target.dataset.triedBrandFallback = 'true';
+                            const fallback = BRAND_FRONT_FALLBACKS[bSlug] || BRAND_FRONT_FALLBACKS.apple;
+                            if (target.src !== fallback) {
+                              target.src = fallback;
+                              return;
+                            }
+                          }
+                          target.src = getGenericDevicePlaceholder(item.brand, item.model);
+                        }}
+                      />
+                    </div>
+                    <p className="mt-2 text-xs font-extrabold text-gray-900 group-hover:text-[#344257] transition-colors truncate w-full">{item.model}</p>
+                    <span className="mt-1 badge bg-[#F0F0F5] text-[#344257] border border-[#C0C8D8] font-extrabold text-[10px]">
+                      Evaluate Condition →
+                    </span>
+                  </button>
+                ))}
               </div>
             </div>
 

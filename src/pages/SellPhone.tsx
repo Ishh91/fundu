@@ -1003,11 +1003,15 @@ export default function SellPhone() {
     });
 
     if (localMatches.length > 0) {
-      return applyPriceOverrides(localMatches);
+      return applyPriceOverrides(localMatches.slice(0, 30));
     }
 
     // Fallback to MobileAPI search results if local database has 0 matches
-    return applyPriceOverrides(apiSearchResults.filter((d) => !isModelDeleted(d.brand, d.model) && !isObsoleteDeviceHardware(d)));
+    return applyPriceOverrides(
+      apiSearchResults
+        .filter((d) => !isModelDeleted(d.brand, d.model) && !isObsoleteDeviceHardware(d))
+        .slice(0, 30)
+    );
   }, [debouncedQuery, apiSearchResults, version, catalogVer]);
 
   // Available Series List for Selected Brand (in exact defined chronological order)

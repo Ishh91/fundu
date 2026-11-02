@@ -3456,6 +3456,15 @@ export function inferTierHardwareSpecs(
   };
 }
 
+// In-memory memoization caches to eliminate repeated regex loops across thousands of models
+const specsCache = new Map<string, DeviceHardwareSpecs>();
+const radarSpecsCache = new Map<string, RadarHardwareSpecs>();
+
+export function clearDeviceSpecsCache(): void {
+  specsCache.clear();
+  radarSpecsCache.clear();
+}
+
 /**
  * Returns exact model-accurate storage and RAM variant options.
  * Guarantees that invalid storage tiers and invalid RAM tiers
@@ -3469,6 +3478,12 @@ export function getModelHardwareSpecs(
   let normBrand = (brand || '').toLowerCase().trim();
   if (normBrand === 'techno') normBrand = 'tecno';
   const normModel = (model || '').toLowerCase().trim();
+  const cacheKey = `${normBrand}:::${normModel}`;
+
+  if (!customCatalog && specsCache.has(cacheKey)) {
+    return specsCache.get(cacheKey)!;
+  }
+
   const fullText = `${normBrand} ${normModel}`;
   const isApple = normBrand.includes('apple') || normModel.includes('iphone') || normModel.includes('ipad');
 
@@ -3501,6 +3516,14 @@ export function getModelHardwareSpecs(
     };
   };
 
+  const returnAndCache = (raw: DeviceHardwareSpecs): DeviceHardwareSpecs => {
+    const clean = sanitizeSpecs(raw);
+    if (!customCatalog) {
+      specsCache.set(cacheKey, clean);
+    }
+    return clean;
+  };
+
   // 1. Check Explicit Hardware Rules with Exact Storage <-> RAM Pairing
   for (const rule of MODEL_HARDWARE_RULES) {
     if (rule.pattern.test(fullText) || rule.pattern.test(normModel)) {
@@ -3519,7 +3542,7 @@ export function getModelHardwareSpecs(
 
         const defaultRams = getRamsForStorage(defaultStorage);
 
-        return sanitizeSpecs({
+        return returnAndCache({
           storages,
           rams: defaultRams,
           defaultStorage,
@@ -3587,7 +3610,7 @@ export function getModelHardwareSpecs(
 
       const defaultRams = getRamsForStorage(defaultStorage);
 
-      return sanitizeSpecs({
+      return returnAndCache({
         storages: dbStorages,
         rams: defaultRams,
         defaultStorage,
@@ -3597,7 +3620,7 @@ export function getModelHardwareSpecs(
     }
 
     // If database has incomplete options (e.g. only 1 storage or empty RAM), enhance with tier specs
-    return sanitizeSpecs(inferTierHardwareSpecs(brand, model, dbStorages, dbRams));
+    return returnAndCache(inferTierHardwareSpecs(brand, model, dbStorages, dbRams));
   }
 
   // 3. Check customCatalog variants if provided (e.g. MASTER_MODEL_CATALOG)
@@ -3635,12 +3658,12 @@ export function getModelHardwareSpecs(
     if (catalogVariants.length > 0) {
       const seedStorages = Array.from(new Set(catalogVariants.map((v) => normalizeStorageString(v.storage))))
         .filter(isValidStorageTier);
-      return sanitizeSpecs(inferTierHardwareSpecs(brand, model, seedStorages, []));
+      return returnAndCache(inferTierHardwareSpecs(brand, model, seedStorages, []));
     }
   }
 
   // 4. Intelligent Fallback by Brand & Generation Tier
-  return sanitizeSpecs(inferTierHardwareSpecs(brand, model));
+  return returnAndCache(inferTierHardwareSpecs(brand, model));
 }
 
 export type HardwareVariantOption = {
@@ -3665,9 +3688,15 @@ export function getRadarHardwareSpecs(
   selectedStorage?: string,
   catalog?: Array<{ brand: string; model: string; storage: string }>
 ): RadarHardwareSpecs {
-  const currentDeviceSpecs = getModelHardwareSpecs(brand, model);
   const bLower = (brand || '').toLowerCase().trim();
   const mLower = (model || '').toLowerCase().trim();
+  const radarKey = `${bLower}:::${mLower}:::${selectedStorage || ''}`;
+
+  if (!catalog && radarSpecsCache.has(radarKey)) {
+    return radarSpecsCache.get(radarKey)!;
+  }
+
+  const currentDeviceSpecs = getModelHardwareSpecs(brand, model);
   const isApple = bLower.includes('apple') || mLower.includes('iphone') || mLower.includes('ipad') || /pro\s*max/i.test(mLower);
 
   const catalogStorages = Array.isArray(catalog)
@@ -3721,7 +3750,7 @@ export function getRadarHardwareSpecs(
     }
   });
 
-  return {
+  const finalRadarSpecs: RadarHardwareSpecs = {
     ...currentDeviceSpecs,
     storages,
     defaultStorage,
@@ -3731,4 +3760,10 @@ export function getRadarHardwareSpecs(
     getRamsForStorage,
     combinedVariants,
   };
+
+  if (!catalog) {
+    radarSpecsCache.set(radarKey, finalRadarSpecs);
+  }
+
+  return finalRadarSpecs;
 }

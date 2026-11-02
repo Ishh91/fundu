@@ -132,11 +132,33 @@ export function getCleanModelName(brand: string, rawModel: string): string {
   return trimmed;
 }
 
+// In-memory unified catalog cache to prevent massive re-allocations on renders
+const unifiedCatalogCache = new Map<string, UnifiedCatalogModel[]>();
+
+export function clearUnifiedCatalogCache(): void {
+  unifiedCatalogCache.clear();
+}
+
+if (typeof window !== 'undefined') {
+  const clear = () => unifiedCatalogCache.clear();
+  window.addEventListener('fundu_catalog_synced', clear);
+  window.addEventListener('fundu_model_image_updated', clear);
+  window.addEventListener('fundu_price_updated', clear);
+  window.addEventListener('fundu_model_deleted', clear);
+  window.addEventListener('fundu_model_restored', clear);
+  window.addEventListener('storage', clear);
+}
+
 /**
  * Returns the complete unified list of models, reactive to admin updates, DB master_phones,
  * custom prices, custom images, and deleted model flags.
  */
 export function getUnifiedCatalog(brandFilter?: string): UnifiedCatalogModel[] {
+  const cacheKey = (brandFilter || '__ALL__').toLowerCase().trim();
+  if (unifiedCatalogCache.has(cacheKey)) {
+    return unifiedCatalogCache.get(cacheKey)!;
+  }
+
   const overrides = getLocalPriceOverrides();
   const dbPhones = getStoredLiveMasterPhones();
 
@@ -284,19 +306,18 @@ export function getUnifiedCatalog(brandFilter?: string): UnifiedCatalogModel[] {
     );
   });
 
-  // Sort latest/flagship devices first
-  if (brandFilter) {
-    return sortDeviceModelsLatestFirst(normalizeCanonicalBrand(brandFilter), results);
-  }
+  // Sort latest/flagship devices first and store in memory cache
+  const finalSorted = brandFilter
+    ? sortDeviceModelsLatestFirst(normalizeCanonicalBrand(brandFilter), results)
+    : results.sort((a, b) => {
+        const scoreB = getDeviceRecencyScore(b.brand, b.model);
+        const scoreA = getDeviceRecencyScore(a.brand, a.model);
+        if (scoreB !== scoreA) return scoreB - scoreA;
+        return a.model.localeCompare(b.model);
+      });
 
-  results.sort((a, b) => {
-    const scoreB = getDeviceRecencyScore(b.brand, b.model);
-    const scoreA = getDeviceRecencyScore(a.brand, a.model);
-    if (scoreB !== scoreA) return scoreB - scoreA;
-    return a.model.localeCompare(b.model);
-  });
-
-  return results;
+  unifiedCatalogCache.set(cacheKey, finalSorted);
+  return finalSorted;
 }
 
 /**
