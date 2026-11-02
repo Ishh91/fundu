@@ -422,34 +422,38 @@ export default function Admin() {
       // INSTANTLY UNBLOCK THE ADMIN DASHBOARD! (< 1 second load time)
       setDataLoading(false);
 
-      // 2. BACKGROUND HYDRATION: Fetch secondary management tables non-blockingly
-      Promise.all([
-        db.from('spare_parts').select('*').limit(60).sort({ field: 'created_at', ascending: false }),
-        db.from('profiles').select('*').limit(60).sort({ field: 'created_at', ascending: false }),
-        db.from('reviews').select('*').limit(60).sort({ field: 'created_at', ascending: false }),
-        db.from('repair_price_configs').select('*').limit(200).sort({ field: 'created_at', ascending: false }),
-      ]).then(([partsRes, profilesRes, reviewsRes, repairPricingRes]) => {
-        if (partsRes.data) setParts(partsRes.data as SparePart[]);
-        if (profilesRes.data) setProfiles(profilesRes.data as any[]);
-        if (reviewsRes.data) setReviews(reviewsRes.data as Review[]);
-        if (repairPricingRes?.data) {
-          setRepairPriceConfigs(repairPricingRes.data as RepairPriceConfig[]);
-          saveLocalRepairConfigs(repairPricingRes.data as RepairPriceConfig[]);
-        }
-      }).catch((e) => console.warn('[Admin] Background secondary fetch notice:', e));
+      // 2. BACKGROUND HYDRATION: Fetch secondary management tables non-blockingly (after primary render)
+      setTimeout(() => {
+        Promise.all([
+          db.from('spare_parts').select('*').limit(60).sort({ field: 'created_at', ascending: false }),
+          db.from('profiles').select('*').limit(60).sort({ field: 'created_at', ascending: false }),
+          db.from('reviews').select('*').limit(60).sort({ field: 'created_at', ascending: false }),
+          db.from('repair_price_configs').select('*').limit(200).sort({ field: 'created_at', ascending: false }),
+        ]).then(([partsRes, profilesRes, reviewsRes, repairPricingRes]) => {
+          if (partsRes.data) setParts(partsRes.data as SparePart[]);
+          if (profilesRes.data) setProfiles(profilesRes.data as any[]);
+          if (reviewsRes.data) setReviews(reviewsRes.data as Review[]);
+          if (repairPricingRes?.data) {
+            setRepairPriceConfigs(repairPricingRes.data as RepairPriceConfig[]);
+            saveLocalRepairConfigs(repairPricingRes.data as RepairPriceConfig[]);
+          }
+        }).catch((e) => console.warn('[Admin] Background secondary fetch notice:', e));
+      }, 300);
 
-      // 3. BACKGROUND CATALOG & PRICING: Ingest master devices & custom pricing in the background
-      Promise.all([
-        db.from('master_phones').select('*').limit(5000).sort({ field: 'release_year', ascending: false }),
-        db.from('sell_price_configs').select('*').limit(5000).sort({ field: 'updated_at', ascending: false }),
-      ]).then(([masterPhonesRes, pricingRes]) => {
-        if (Array.isArray(masterPhonesRes.data) && masterPhonesRes.data.length > 0) {
-          setMasterPhones(masterPhonesRes.data as MasterPhone[]);
-        }
-        if (pricingRes.data) {
-          setSellPriceConfigs(pricingRes.data as SellPriceConfig[]);
-        }
-      }).catch((e) => console.warn('[Admin] Background catalog fetch notice:', e));
+      // 3. BACKGROUND CATALOG & PRICING: Ingest master devices & custom pricing in the background after UI settles
+      setTimeout(() => {
+        Promise.all([
+          db.from('master_phones').select('*').limit(5000).sort({ field: 'release_year', ascending: false }),
+          db.from('sell_price_configs').select('*').limit(5000).sort({ field: 'updated_at', ascending: false }),
+        ]).then(([masterPhonesRes, pricingRes]) => {
+          if (Array.isArray(masterPhonesRes.data) && masterPhonesRes.data.length > 0) {
+            setMasterPhones(masterPhonesRes.data as MasterPhone[]);
+          }
+          if (pricingRes.data) {
+            setSellPriceConfigs(pricingRes.data as SellPriceConfig[]);
+          }
+        }).catch((e) => console.warn('[Admin] Background catalog fetch notice:', e));
+      }, 1500);
 
     } catch (err) {
       const msg = err instanceof Error ? err.message : 'Network error — unable to connect to backend server.';

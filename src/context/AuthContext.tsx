@@ -53,7 +53,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setSession(currentSession);
       setUser(currentSession?.user ?? null);
       if (currentSession?.user) {
-        fetchProfile(currentSession.user.id).finally(() => setLoading(false));
+        setLoading(false);
+        fetchProfile(currentSession.user.id);
       } else {
         setLoading(false);
       }

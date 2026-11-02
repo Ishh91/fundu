@@ -354,17 +354,20 @@ export const queryTable = async (table, { auth, filters, sort, select, single, l
   // Auto-enrich customer contact info for sell_requests, repair_bookings, orders if missing
   if ((table === 'sell_requests' || table === 'repair_bookings' || table === 'orders') && normalized) {
     const list = Array.isArray(normalized) ? normalized : [normalized];
-    const userIds = [...new Set(list.map((d) => d.user_id).filter((id) => id && !id.startsWith('guest_')))];
+    const userIds = [...new Set(list.map((d) => d.user_id).filter((id) => id && !String(id).startsWith('guest_')))];
     if (userIds.length > 0) {
       try {
-        const users = await User.find({ _id: { $in: userIds } }).select('_id full_name phone email');
-        const userMap = new Map(users.map((u) => [u._id.toString(), u]));
-        for (const item of list) {
-          if (item.user_id && userMap.has(item.user_id)) {
-            const u = userMap.get(item.user_id);
-            if (!item.customer_name) item.customer_name = u.full_name || item.delivery_name || item.pickup_person_name;
-            if (!item.customer_phone) item.customer_phone = u.phone || item.delivery_phone || item.pickup_person_phone;
-            if (!item.customer_email) item.customer_email = u.email;
+        const validUserIds = userIds.filter((id) => Types.ObjectId.isValid(id)).map((id) => new Types.ObjectId(id));
+        if (validUserIds.length > 0) {
+          const users = await User.find({ _id: { $in: validUserIds } }).select('_id full_name phone email').lean();
+          const userMap = new Map(users.map((u) => [u._id.toString(), u]));
+          for (const item of list) {
+            if (item.user_id && userMap.has(String(item.user_id))) {
+              const u = userMap.get(String(item.user_id));
+              if (!item.customer_name) item.customer_name = u.full_name || item.delivery_name || item.pickup_person_name;
+              if (!item.customer_phone) item.customer_phone = u.phone || item.delivery_phone || item.pickup_person_phone;
+              if (!item.customer_email) item.customer_email = u.email;
+            }
           }
         }
       } catch (e) {
@@ -378,26 +381,23 @@ export const queryTable = async (table, { auth, filters, sort, select, single, l
       if (vendorIds.length > 0) {
         try {
           const validObjIds = vendorIds.filter((id) => Types.ObjectId.isValid(id)).map((id) => new Types.ObjectId(id));
-          const vendors = await User.find({
-            $or: [
-              { _id: { $in: validObjIds } },
-              { id: { $in: vendorIds } },
-            ],
-          }).select('_id id full_name business_name phone email address');
-          const vMap = new Map();
-          vendors.forEach((v) => {
-            if (v._id) vMap.set(v._id.toString(), v);
-            if (v.id) vMap.set(String(v.id), v);
-          });
-          for (const item of list) {
-            if (item.assigned_vendor_id && vMap.has(String(item.assigned_vendor_id))) {
-              const v = vMap.get(String(item.assigned_vendor_id));
-              const shopName = v.business_name || v.full_name;
-              if (shopName && (!item.assigned_vendor_name || item.assigned_vendor_name === 'Partner Store' || item.assigned_vendor_name === 'Assigned Partner Store')) {
-                item.assigned_vendor_name = shopName;
+          if (validObjIds.length > 0) {
+            const vendors = await User.find({ _id: { $in: validObjIds } }).select('_id id full_name business_name phone email address').lean();
+            const vMap = new Map();
+            vendors.forEach((v) => {
+              if (v._id) vMap.set(v._id.toString(), v);
+              if (v.id) vMap.set(String(v.id), v);
+            });
+            for (const item of list) {
+              if (item.assigned_vendor_id && vMap.has(String(item.assigned_vendor_id))) {
+                const v = vMap.get(String(item.assigned_vendor_id));
+                const shopName = v.business_name || v.full_name;
+                if (shopName && (!item.assigned_vendor_name || item.assigned_vendor_name === 'Partner Store' || item.assigned_vendor_name === 'Assigned Partner Store')) {
+                  item.assigned_vendor_name = shopName;
+                }
+                if (!item.vendor_phone) item.vendor_phone = v.phone;
+                if (!item.vendor_business_name) item.vendor_business_name = v.business_name;
               }
-              if (!item.vendor_phone) item.vendor_phone = v.phone;
-              if (!item.vendor_business_name) item.vendor_business_name = v.business_name;
             }
           }
         } catch (e) {
