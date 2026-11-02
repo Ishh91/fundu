@@ -245,7 +245,7 @@ export const MASTER_MODEL_CATALOG = [
     "brand": "Apple",
     "series": "iPhone 17 Series",
     "model": "Apple iPhone 17 Pro",
-    "storage": "128 GB",
+    "storage": "256 GB",
     "price": 108500,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-16-pro.jpg"
   },
@@ -309,7 +309,7 @@ export const MASTER_MODEL_CATALOG = [
     "brand": "Apple",
     "series": "iPhone 6 Series",
     "model": "Apple iPhone 6 Plus",
-    "storage": "64 GB",
+    "storage": "128 GB",
     "price": 2500,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-6-plus.jpg"
   },
@@ -2416,14 +2416,6 @@ export const MASTER_MODEL_CATALOG = [
     "storage": "256 GB",
     "price": 28000,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/oppo-find-x5-pro.jpg"
-  },
-  {
-    "brand": "Oppo",
-    "series": "Oppo Find Series",
-    "model": "Oppo Find X7 Ultra",
-    "storage": "256 GB",
-    "price": 59000,
-    "image": "https://fdn2.gsmarena.com/vv/bigpic/oppo-find-x7-ultra.jpg"
   },
   {
     "brand": "Oppo",
@@ -5555,14 +5547,6 @@ export const MASTER_MODEL_CATALOG = [
   },
   {
     "brand": "Vivo",
-    "series": "iQOO Flagship & Neo Series",
-    "model": "iQOO Z9 Turbo",
-    "storage": "256 GB",
-    "price": 18450,
-    "image": "https://fdn2.gsmarena.com/vv/bigpic/vivo-iqoo-z9-turbo.jpg"
-  },
-  {
-    "brand": "Vivo",
     "series": "Vivo Series",
     "model": "Vivo NEX",
     "storage": "128 GB",
@@ -7618,22 +7602,6 @@ export const MASTER_MODEL_CATALOG = [
     "image": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-mi11x-pro.jpg"
   },
   {
-    "brand": "Apple",
-    "series": "Apple iPad & Tablet Series",
-    "model": "iPad Pro 13",
-    "storage": "256 GB",
-    "price": 92900,
-    "image": "https://fdn2.gsmarena.com/vv/bigpic/apple-ipad-pro-13-2024.jpg"
-  },
-  {
-    "brand": "Apple",
-    "series": "Apple iPad & Tablet Series",
-    "model": "iPad 10.9",
-    "storage": "64 GB",
-    "price": 29000,
-    "image": "https://fdn2.gsmarena.com/vv/bigpic/apple-ipad-109-2022.jpg"
-  },
-  {
     "brand": "OnePlus",
     "series": "OnePlus 10 Series",
     "model": "OnePlus 10R 5G",
@@ -7789,7 +7757,7 @@ export const MASTER_MODEL_CATALOG = [
     "brand": "Apple",
     "series": "iPhone 18 Series",
     "model": "Apple iPhone 18 Pro",
-    "storage": "128 GB",
+    "storage": "256 GB",
     "price": 152000,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-16-pro.jpg"
   },

@@ -855,7 +855,7 @@ export default function SellPhone() {
     const isRamMatch = !quoteRam || !formRam ||
       quoteRam.replace(/\s+/g, '').toLowerCase() === formRam.replace(/\s+/g, '').toLowerCase();
 
-    if (isStorageMatch && isRamMatch && funduQuote?.offerAmount && funduQuote.offerAmount > 0) {
+    if (funduQuote?.offerAmount && funduQuote.offerAmount > 0) {
       return funduQuote.offerAmount;
     }
 
@@ -985,6 +985,9 @@ export default function SellPhone() {
     form.underWarranty,
     form.defects,
     form.accessories,
+    form.storage,
+    form.ram,
+    funduQuote,
   ]);
 
   // Complete diagnostic valuation breakdown

@@ -15,6 +15,8 @@ export {
   FUNDU_SERVICE_LOCALITIES,
 };
 import { getEffectivePrice } from './priceSync';
+import { MASTER_MODEL_CATALOG } from '../data/masterModelCatalog';
+import { ALL_INDIAN_PHONES_CATALOG } from '../data/indianPhonesCatalog';
 
 export interface FunduQuoteRequest {
   brand: string;
@@ -84,10 +86,35 @@ export interface InspectionRecalculateResponse {
  * Used to immediately update UI on variant or condition changes before network request resolves.
  */
 export function getInstantFunduQuote(params: FunduQuoteRequest): FunduQuoteResponse {
-  const dbPrice = getEffectivePrice(params.brand, params.model, 0, params.storage);
+  let dbPrice = getEffectivePrice(params.brand, params.model, 0, params.storage);
+  let catalogStorage = params.storage || '128 GB';
+
+  if (!dbPrice || dbPrice <= 0) {
+    const mNorm = (params.model || '').toLowerCase().trim();
+    const bNorm = (params.brand || '').toLowerCase().trim();
+    const master = MASTER_MODEL_CATALOG.find((m) =>
+      m.model.toLowerCase() === mNorm ||
+      `${m.brand} ${m.model}`.toLowerCase() === `${bNorm} ${mNorm}` ||
+      m.model.toLowerCase().includes(mNorm)
+    );
+    if (master?.price) {
+      dbPrice = master.price;
+      catalogStorage = master.storage || '128 GB';
+    } else {
+      const indian = ALL_INDIAN_PHONES_CATALOG.find((p) =>
+        p.model.toLowerCase() === mNorm ||
+        `${p.brand} ${p.model}`.toLowerCase() === `${bNorm} ${mNorm}`
+      );
+      if (indian?.base_resale_value) {
+        dbPrice = indian.base_resale_value;
+        catalogStorage = indian.storage_options?.[0] || '128 GB';
+      }
+    }
+  }
+
   const quoteOptions = dbPrice > 0 ? {
     catalogPrice: dbPrice,
-    catalogStorage: params.storage || '128 GB',
+    catalogStorage,
     isDirectBuybackPrice: true,
     ram: params.ram || '',
   } : {

@@ -3841,30 +3841,6 @@ export const ALL_INDIAN_PHONES_CATALOG: MasterPhone[] = [
     "is_active": true
   },
   {
-    "id": "iqoo-z9p",
-    "brand": "iQOO",
-    "model": "iQOO Z9 Turbo 5G",
-    "release_year": 2024,
-    "ram_options": [
-      "8GB",
-      "12GB"
-    ],
-    "storage_options": [
-      "128GB",
-      "256GB"
-    ],
-    "default_mrp": 21999,
-    "base_resale_value": 14900,
-    "image_url": "https://images.unsplash.com/photo-1598327105666-5b89351aff97?w=800&auto=format&fit=crop&q=80",
-    "popular_tag": "Fastest in Segment",
-    "processor": "Snapdragon 7s Gen 3 / Dimensity 7200",
-    "camera_spec": "50MP Sony OIS Camera",
-    "battery_spec": "5000 mAh 44W",
-    "display_spec": "6.67\" 120Hz Ultra Bright AMOLED",
-    "is_5g": true,
-    "is_active": true
-  },
-  {
     "id": "iqoo-z6-5g",
     "brand": "iQOO",
     "model": "iQOO Z6 5G",
@@ -3934,28 +3910,6 @@ export const ALL_INDIAN_PHONES_CATALOG: MasterPhone[] = [
     "camera_spec": "64MP Triple Camera",
     "battery_spec": "4700 mAh 66W FlashCharge",
     "display_spec": "6.44\" AMOLED 90Hz HDR10+",
-    "is_5g": true,
-    "is_active": true
-  },
-  {
-    "id": "oppo-findx7u",
-    "brand": "Oppo",
-    "model": "Find X7 Ultra 5G",
-    "release_year": 2024,
-    "ram_options": [
-      "16GB"
-    ],
-    "storage_options": [
-      "512GB"
-    ],
-    "default_mrp": 89999,
-    "base_resale_value": 59000,
-    "image_url": "https://images.unsplash.com/photo-1598327105666-5b89351aff97?w=800&auto=format&fit=crop&q=80",
-    "popular_tag": "Dual Periscope Camera Master",
-    "processor": "Snapdragon 8 Gen 3 (4nm)",
-    "camera_spec": "50MP Sony LYT-900 1-inch + 50MP 3x + 50MP 6x Periscope + 50MP UW Hasselblad",
-    "battery_spec": "5000 mAh 100W SuperVOOC",
-    "display_spec": "6.82\" 2K 120Hz LTPO ProXDR",
     "is_5g": true,
     "is_active": true
   },
@@ -5951,53 +5905,6 @@ export const ALL_INDIAN_PHONES_CATALOG: MasterPhone[] = [
     "camera_spec": "108MP Ultra Sensing Camera",
     "battery_spec": "6000 mAh 70W Ultra Charge",
     "display_spec": "6.78\" 120Hz AMOLED Dynamic Light",
-    "is_5g": true,
-    "is_active": true
-  },
-  {
-    "id": "apple-ipad-pro-13",
-    "brand": "Apple",
-    "model": "iPad Pro 13",
-    "release_year": 2024,
-    "ram_options": [
-      "8GB",
-      "16GB"
-    ],
-    "storage_options": [
-      "256GB",
-      "512GB"
-    ],
-    "default_mrp": 129900,
-    "base_resale_value": 92900,
-    "image_url": "https://fdn2.gsmarena.com/vv/bigpic/apple-ipad-pro-13-2024.jpg",
-    "popular_tag": "M4 OLED Flagship Tablet",
-    "processor": "Apple M4 Chip",
-    "camera_spec": "12MP Wide + LiDAR Scanner",
-    "battery_spec": "38.99 Wh Lithium-Polymer",
-    "display_spec": "13.0\" Ultra Retina XDR Tandem OLED 120Hz",
-    "is_5g": true,
-    "is_active": true
-  },
-  {
-    "id": "apple-ipad-10-9",
-    "brand": "Apple",
-    "model": "iPad 10.9",
-    "release_year": 2022,
-    "ram_options": [
-      "4GB"
-    ],
-    "storage_options": [
-      "64GB",
-      "256GB"
-    ],
-    "default_mrp": 39900,
-    "base_resale_value": 29000,
-    "image_url": "https://fdn2.gsmarena.com/vv/bigpic/apple-ipad-109-2022.jpg",
-    "popular_tag": "All-Screen Liquid Retina",
-    "processor": "Apple A14 Bionic",
-    "camera_spec": "12MP Wide + 12MP Ultra Wide Front",
-    "battery_spec": "28.6 Wh Lithium-Polymer",
-    "display_spec": "10.9\" Liquid Retina IPS Display",
     "is_5g": true,
     "is_active": true
   },

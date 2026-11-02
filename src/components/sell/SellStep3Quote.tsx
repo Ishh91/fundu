@@ -48,8 +48,7 @@ export default function SellStep3Quote({
   const phoneDisplayName = cleanModelForDisplay.toLowerCase().startsWith(form.brand.toLowerCase())
     ? cleanModelForDisplay
     : `${form.brand} ${cleanModelForDisplay}`;
-  const rawInspectionOffer = funduQuote?.offerAmount || estimate;
-  const safeInspectionOffer = Math.min(180000, Math.max(500, rawInspectionOffer));
+  const safeInspectionOffer = Math.min(180000, Math.max(500, estimate));
 
   return (
     <div className="max-w-2xl mx-auto space-y-6 animate-fade-in">
@@ -189,7 +188,7 @@ export default function SellStep3Quote({
               Estimated Buyback Offer
             </p>
             {(() => {
-              const rawAmt = funduQuote?.offerAmount ?? estimate;
+              const rawAmt = estimate;
               const safeAmt = Math.min(180000, Math.max(500, rawAmt));
               return (
                 <div className="font-display text-4xl sm:text-5xl font-black text-white">
@@ -233,7 +232,7 @@ export default function SellStep3Quote({
 
           {/* Dedicated Fundu Price Match (+5% Extra Cash Guaranteed) Widget */}
           {(() => {
-            const rawAmt = funduQuote?.offerAmount ?? estimate;
+            const rawAmt = estimate;
             const finalAmt = Math.min(180000, Math.max(500, rawAmt));
             const comparison = calculateMarketPriceComparison(finalAmt);
             return (

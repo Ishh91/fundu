@@ -11,6 +11,23 @@ export const BLOCKED_PHONE_PATTERNS = [
   { brand: 'poco', pattern: /f3\s*gt/i, label: 'POCO F3 GT' },
   { brand: 'poco', pattern: /f4\s*gt/i, label: 'POCO F4 GT' },
   { brand: 'xiaomi', pattern: /poco\s*(x3\s*gt|x4\s*gt|f3\s*gt|f4\s*gt)/i, label: 'Xiaomi POCO GT' },
+  { brand: 'xiaomi', pattern: /note\s*12\s*turbo/i, label: 'Redmi Note 12 Turbo' },
+  { brand: 'redmi', pattern: /note\s*12\s*turbo/i, label: 'Redmi Note 12 Turbo' },
+  { brand: 'xiaomi', pattern: /discovery\s*edition/i, label: 'Redmi Note 12 Discovery Edition' },
+  { brand: 'redmi', pattern: /discovery\s*edition/i, label: 'Redmi Note 12 Discovery Edition' },
+  { brand: 'xiaomi', pattern: /note\s*10\s*je\b/i, label: 'Redmi Note 10 JE' },
+  { brand: 'redmi', pattern: /note\s*10\s*je\b/i, label: 'Redmi Note 10 JE' },
+
+  // iQOO / Vivo (Requested removals)
+  { brand: 'iqoo', pattern: /z9\s*turbo/i, label: 'iQOO Z9 Turbo' },
+  { brand: 'vivo', pattern: /z9\s*turbo/i, label: 'Vivo iQOO Z9 Turbo' },
+
+  // Oppo (Requested removals)
+  { brand: 'oppo', pattern: /find\s*x7\s*ultra/i, label: 'Oppo Find X7 Ultra' },
+
+  // Apple (Antique / Obsolete classic models and oversized iPads requested for removal)
+  { brand: 'apple', pattern: /\b(?:apple\s*)?iphone\s*(?:(?:[1-5]|2g|3g|3gs)[sc]?|original)\b/i, label: 'iPhone 5s and older classic series' },
+  { brand: 'apple', pattern: /\bipad\s*(?:pro\s*13|air\s*13|10\.9)\b/i, label: 'iPad Pro 13, iPad Air 13, iPad 10.9' },
 
   // Infinix (Requested removals)
   { brand: 'infinix', pattern: /hot\s*20i/i, label: 'Infinix Hot 20i' },

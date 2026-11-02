@@ -589,7 +589,15 @@ const MODEL_HARDWARE_RULES: Array<{
       ],
     },
     {
-      pattern: /(?:apple\s*(?:iphone\s*)?|iphone\s*)(?:1[3-9]|[2-9]\d)\s*pro(?!\s*max)\b/i,
+      pattern: /(?:apple\s*(?:iphone\s*)?|iphone\s*)(?:1[7-9]|[2-9]\d)\s*pro(?!\s*max)\b/i,
+      variants: [
+        { storage: '256 GB', rams: [] },
+        { storage: '512 GB', rams: [] },
+        { storage: '1 TB', rams: [] },
+      ],
+    },
+    {
+      pattern: /(?:apple\s*(?:iphone\s*)?|iphone\s*)(?:1[3-6])\s*pro(?!\s*max)\b/i,
       variants: [
         { storage: '128 GB', rams: [] },
         { storage: '256 GB', rams: [] },
@@ -605,7 +613,14 @@ const MODEL_HARDWARE_RULES: Array<{
       ],
     },
     {
-      pattern: /(?:apple\s*(?:iphone\s*)?|iphone\s*)(?:1[3-9]|[2-9]\d)\s*(?:plus|air|\b)(?!\s*(?:pro|max|mini))/i,
+      pattern: /(?:apple\s*(?:iphone\s*)?|iphone\s*)(?:17|18|[2-9]\d)\s*air\b/i,
+      variants: [
+        { storage: '256 GB', rams: [] },
+        { storage: '512 GB', rams: [] },
+      ],
+    },
+    {
+      pattern: /(?:apple\s*(?:iphone\s*)?|iphone\s*)(?:1[3-9]|[2-9]\d)\s*(?:plus|\b)(?!\s*(?:pro|max|mini|air))/i,
       variants: [
         { storage: '128 GB', rams: [] },
         { storage: '256 GB', rams: [] },
@@ -754,7 +769,6 @@ const MODEL_HARDWARE_RULES: Array<{
       variants: [
         { storage: '16 GB', rams: [] },
         { storage: '32 GB', rams: [] },
-        { storage: '64 GB', rams: [] },
         { storage: '128 GB', rams: [] },
       ],
     },
@@ -1530,6 +1544,13 @@ const MODEL_HARDWARE_RULES: Array<{
     // ==========================================
     // Find Series
     {
+      pattern: /oppo\s*find\s*x9s\b/i,
+      variants: [
+        { storage: '256 GB', rams: ['12 GB'] },
+        { storage: '512 GB', rams: ['12 GB'] },
+      ],
+    },
+    {
       pattern: /oppo\s*find\s*n3\b(?!\s*flip)/i,
       variants: [
         { storage: '512 GB', rams: ['16 GB'] },
@@ -1583,7 +1604,13 @@ const MODEL_HARDWARE_RULES: Array<{
     },
     // F Series
     {
-      pattern: /oppo\s*f(?:27\s*pro\+|27\b|25\s*pro|19\s*pro\+|19\s*pro\b)/i,
+      pattern: /oppo\s*f19\s*pro\s*\+/i,
+      variants: [
+        { storage: '128 GB', rams: ['8 GB'] },
+      ],
+    },
+    {
+      pattern: /oppo\s*f(?:27\s*pro\+|27\b|25\s*pro|19\s*pro\b)/i,
       variants: [
         { storage: '128 GB', rams: ['8 GB'] },
         { storage: '256 GB', rams: ['8 GB'] },
@@ -3149,6 +3176,26 @@ export function isStorageAllowedForModel(brand = '', model = '', storageStr = ''
     return gb === 64;
   }
 
+  // iPhone 18 Pro/Pro Max, 17 Pro/Pro Max, 17 Air: 128 GB is completely disallowed (Starts at 256 GB)
+  if (/iphone\s*(?:18\s*pro(?:\s*max)?|17\s*pro(?:\s*max)?|17\s*air)\b/i.test(m)) {
+    if (gb === 128) return false;
+  }
+
+  // iPhone 6 Plus: 64 GB is disallowed
+  if (/iphone\s*6\s*plus\b/i.test(m)) {
+    if (gb === 64) return false;
+  }
+
+  // Oppo F19 Pro+: 256 GB is disallowed (Only 128 GB allowed)
+  if (/f19\s*pro\s*\+/i.test(full)) {
+    if (gb === 256) return false;
+  }
+
+  // Oppo Find X9s: 128 GB is disallowed (Only 256 GB and 512 GB allowed)
+  if (/find\s*x9s\b/i.test(full)) {
+    if (gb === 128) return false;
+  }
+
   // 1. Tier: 512 GB / 1 TB / 2 TB (Strict Flagships Only)
   if (gb >= 512) {
     return is512GBValidForModel(brand, model);
@@ -3287,16 +3334,29 @@ export function inferTierHardwareSpecs(
   if (isApple) {
     let storages = ['128 GB', '256 GB', '512 GB'];
     if (/pro\s*max/i.test(mLower)) {
-      storages = ['128 GB', '256 GB', '512 GB', '1 TB'];
+      if (/(?:1[5-9]|[2-9]\d)\s*pro\s*max/i.test(mLower)) {
+        storages = ['256 GB', '512 GB', '1 TB'];
+      } else {
+        storages = ['128 GB', '256 GB', '512 GB', '1 TB'];
+      }
     } else if (/\bpro\b/i.test(mLower)) {
-      if (/1[12]/i.test(mLower)) storages = /11/i.test(mLower) ? ['64 GB', '256 GB', '512 GB'] : ['128 GB', '256 GB', '512 GB'];
-      else storages = ['128 GB', '256 GB', '512 GB', '1 TB'];
+      if (/(?:1[7-9]|[2-9]\d)\s*pro/i.test(mLower)) {
+        storages = ['256 GB', '512 GB', '1 TB'];
+      } else if (/1[12]/i.test(mLower)) {
+        storages = /11/i.test(mLower) ? ['64 GB', '256 GB', '512 GB'] : ['128 GB', '256 GB', '512 GB'];
+      } else {
+        storages = ['128 GB', '256 GB', '512 GB', '1 TB'];
+      }
+    } else if (/\bair\b/i.test(mLower)) {
+      storages = ['256 GB', '512 GB'];
     } else if (/\b(11|12|xr|xs|x\b|8\b|8\s*plus|se\b)/i.test(mLower)) {
       if (/xs/i.test(mLower)) storages = ['64 GB', '256 GB', '512 GB'];
       else if (/x\b/i.test(mLower)) storages = ['64 GB', '256 GB'];
       else storages = ['64 GB', '128 GB', '256 GB'];
     } else if (/\b(7)\b/i.test(mLower)) {
       storages = ['32 GB', '128 GB', '256 GB'];
+    } else if (/iphone\s*6\s*plus/i.test(mLower)) {
+      storages = ['16 GB', '32 GB', '128 GB'];
     } else if (/\b(6s|6)\b/i.test(mLower)) {
       storages = ['16 GB', '32 GB', '64 GB', '128 GB'];
     } else if (/\b(5s|5c|5)\b/i.test(mLower)) {
@@ -3325,6 +3385,20 @@ export function inferTierHardwareSpecs(
     '256 GB': ['8 GB', '12 GB'],
   };
   let allRams = ['6 GB', '8 GB', '12 GB'];
+
+  // Strict Model Hardware Overrides
+  if (/f19\s*pro\s*\+/i.test(fullText)) {
+    tierStorages = ['128 GB'];
+    tierRamMap = { '128 GB': ['8 GB'] };
+    allRams = ['8 GB'];
+  } else if (/find\s*x9s/i.test(fullText)) {
+    tierStorages = ['256 GB', '512 GB'];
+    tierRamMap = {
+      '256 GB': ['12 GB'],
+      '512 GB': ['12 GB'],
+    };
+    allRams = ['12 GB'];
+  } else
 
   // 1. Ultra / Fold / Flip / Top Flagships
   if (

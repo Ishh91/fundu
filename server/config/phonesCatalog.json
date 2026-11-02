@@ -14665,29 +14665,6 @@
   },
   {
     "brand": "Vivo",
-    "model": "iQOO Z9 Turbo",
-    "release_year": 2022,
-    "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
-    ],
-    "storage_options": [
-      "256 GB"
-    ],
-    "default_mrp": 27675,
-    "base_resale_value": 18450,
-    "image_url": "https://fdn2.gsmarena.com/vv/bigpic/vivo-iqoo-z9-turbo.jpg",
-    "popular_tag": "Vivo Official Model",
-    "processor": "High-Efficiency Processor",
-    "camera_spec": "50MP OIS Camera",
-    "battery_spec": "5000 mAh Fast Charging",
-    "display_spec": "6.7\" AMOLED 120Hz",
-    "is_5g": false,
-    "is_active": true
-  },
-  {
-    "brand": "Vivo",
     "model": "NEX",
     "release_year": 2018,
     "ram_options": [
@@ -21861,53 +21838,6 @@
     "price": 5200
   },
   {
-    "brand": "iQOO",
-    "model": "Z9 Turbo 5G",
-    "release_year": 2024,
-    "ram_options": [
-      "6GB",
-      "8GB"
-    ],
-    "storage_options": [
-      "128 GB",
-      "256 GB"
-    ],
-    "default_mrp": 21999,
-    "base_resale_value": 14900,
-    "image_url": null,
-    "popular_tag": "iQOO Bestseller",
-    "processor": "Octa-core Processor",
-    "camera_spec": "50MP Camera",
-    "battery_spec": "5000 mAh",
-    "display_spec": "AMOLED Display",
-    "is_5g": true,
-    "is_active": true
-  },
-  {
-    "brand": "Oppo",
-    "model": "Find X7 Ultra 5G",
-    "release_year": 2024,
-    "ram_options": [
-      "12GB",
-      "16GB"
-    ],
-    "storage_options": [
-      "256 GB",
-      "512 GB"
-    ],
-    "default_mrp": 84999,
-    "base_resale_value": 59000,
-    "image_url": null,
-    "popular_tag": "Oppo Bestseller",
-    "processor": "Octa-core Processor",
-    "camera_spec": "50MP Camera",
-    "battery_spec": "5000 mAh",
-    "display_spec": "AMOLED Display",
-    "is_5g": true,
-    "is_active": true,
-    "price": 59000
-  },
-  {
     "brand": "Nothing",
     "model": "CMF Phone 1",
     "release_year": 2024,
@@ -22383,59 +22313,6 @@
     "price": 14500,
     "basePrice": 14500,
     "mrp": 39999
-  },
-  {
-    "brand": "Apple",
-    "series": "Apple iPad & Tablet Series",
-    "model": "iPad Pro 13",
-    "release_year": 2024,
-    "storage": "256 GB",
-    "storage_options": [
-      "256 GB",
-      "512 GB"
-    ],
-    "ram_options": [
-      "8GB",
-      "16GB"
-    ],
-    "default_mrp": 129900,
-    "base_resale_value": 92900,
-    "price": 92900,
-    "image": "https://fdn2.gsmarena.com/vv/bigpic/apple-ipad-pro-13-2024.jpg",
-    "image_url": "https://fdn2.gsmarena.com/vv/bigpic/apple-ipad-pro-13-2024.jpg",
-    "popular_tag": "M4 OLED Flagship Tablet",
-    "processor": "Apple M4 Chip",
-    "camera_spec": "12MP Wide + LiDAR Scanner",
-    "battery_spec": "38.99 Wh Lithium-Polymer",
-    "display_spec": "13.0\" Ultra Retina XDR Tandem OLED 120Hz",
-    "is_5g": true,
-    "is_active": true
-  },
-  {
-    "brand": "Apple",
-    "series": "Apple iPad & Tablet Series",
-    "model": "iPad 10.9",
-    "release_year": 2022,
-    "storage": "64 GB",
-    "storage_options": [
-      "64 GB",
-      "256 GB"
-    ],
-    "ram_options": [
-      "4GB"
-    ],
-    "default_mrp": 39900,
-    "base_resale_value": 29000,
-    "price": 29000,
-    "image": "https://fdn2.gsmarena.com/vv/bigpic/apple-ipad-109-2022.jpg",
-    "image_url": "https://fdn2.gsmarena.com/vv/bigpic/apple-ipad-109-2022.jpg",
-    "popular_tag": "All-Screen Liquid Retina",
-    "processor": "Apple A14 Bionic",
-    "camera_spec": "12MP Wide + 12MP Ultra Wide Front",
-    "battery_spec": "28.6 Wh Lithium-Polymer",
-    "display_spec": "10.9\" Liquid Retina IPS Display",
-    "is_5g": true,
-    "is_active": true
   },
   {
     "brand": "OnePlus",
@@ -24415,30 +24292,6 @@
   },
   {
     "brand": "Xiaomi",
-    "model": "Redmi Note 12 Turbo",
-    "release_year": 2024,
-    "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
-    ],
-    "storage_options": [
-      "256 GB"
-    ],
-    "default_mrp": null,
-    "image_url": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-14.jpg",
-    "popular_tag": "Xiaomi Official Model",
-    "processor": "Snapdragon / MediaTek Dimensity",
-    "camera_spec": "50MP OIS Camera",
-    "battery_spec": "5000 mAh Fast Charging",
-    "display_spec": "AMOLED 120Hz Display",
-    "is_5g": true,
-    "is_active": true,
-    "base_resale_value": 13800,
-    "price": 13800
-  },
-  {
-    "brand": "Xiaomi",
     "model": "Redmi Note 12R Pro",
     "release_year": 2024,
     "ram_options": [
@@ -24489,30 +24342,6 @@
   },
   {
     "brand": "Xiaomi",
-    "model": "Redmi Note 12 Discovery Edition",
-    "release_year": 2024,
-    "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
-    ],
-    "storage_options": [
-      "256 GB"
-    ],
-    "default_mrp": null,
-    "image_url": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-14.jpg",
-    "popular_tag": "Xiaomi Official Model",
-    "processor": "Snapdragon / MediaTek Dimensity",
-    "camera_spec": "50MP OIS Camera",
-    "battery_spec": "5000 mAh Fast Charging",
-    "display_spec": "AMOLED 120Hz Display",
-    "is_5g": true,
-    "is_active": true,
-    "base_resale_value": 15000,
-    "price": 15000
-  },
-  {
-    "brand": "Xiaomi",
     "model": "Redmi Note 11 4G",
     "release_year": 2024,
     "ram_options": [
@@ -24535,31 +24364,6 @@
     "is_active": true,
     "base_resale_value": 5500,
     "price": 5500
-  },
-  {
-    "brand": "Xiaomi",
-    "model": "Redmi Note 10 JE",
-    "release_year": 2024,
-    "ram_options": [
-      "6GB",
-      "8GB",
-      "12GB"
-    ],
-    "storage_options": [
-      "64 GB",
-      "256 GB"
-    ],
-    "default_mrp": null,
-    "image_url": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-14.jpg",
-    "popular_tag": "Xiaomi Official Model",
-    "processor": "Snapdragon / MediaTek Dimensity",
-    "camera_spec": "50MP OIS Camera",
-    "battery_spec": "5000 mAh Fast Charging",
-    "display_spec": "AMOLED 120Hz Display",
-    "is_5g": false,
-    "is_active": true,
-    "base_resale_value": 4800,
-    "price": 4800
   },
   {
     "brand": "Xiaomi",
@@ -25802,138 +25606,6 @@
     "is_active": true,
     "price": 2800,
     "basePrice": 2800
-  },
-  {
-    "brand": "Apple",
-    "model": "iPhone 5s",
-    "release_year": 2013,
-    "ram_options": [
-      "1GB"
-    ],
-    "storage_options": [
-      "64 GB"
-    ],
-    "default_mrp": 12900,
-    "base_resale_value": 1400,
-    "image_url": "https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-5s.jpg",
-    "popular_tag": "Apple Official Model",
-    "processor": "Apple A7",
-    "camera_spec": "8MP Camera",
-    "battery_spec": "1560 mAh",
-    "display_spec": "4.0\" Retina IPS LCD",
-    "is_5g": false,
-    "is_active": true,
-    "price": 1400,
-    "basePrice": 1400
-  },
-  {
-    "brand": "Apple",
-    "model": "iPhone 5c",
-    "release_year": 2013,
-    "ram_options": [
-      "1GB"
-    ],
-    "storage_options": [],
-    "default_mrp": 9900,
-    "base_resale_value": 1000,
-    "image_url": "https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-5c.jpg",
-    "popular_tag": "Apple Official Model",
-    "processor": "Apple A6",
-    "camera_spec": "8MP Camera",
-    "battery_spec": "1510 mAh",
-    "display_spec": "4.0\" Retina IPS LCD",
-    "is_5g": false,
-    "is_active": false,
-    "price": 1000,
-    "basePrice": 1000
-  },
-  {
-    "brand": "Apple",
-    "model": "iPhone 5",
-    "release_year": 2012,
-    "ram_options": [
-      "1GB"
-    ],
-    "storage_options": [
-      "64 GB"
-    ],
-    "default_mrp": 9900,
-    "base_resale_value": 900,
-    "image_url": "https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-5.jpg",
-    "popular_tag": "Apple Official Model",
-    "processor": "Apple A6",
-    "camera_spec": "8MP Camera",
-    "battery_spec": "1440 mAh",
-    "display_spec": "4.0\" Retina IPS LCD",
-    "is_5g": false,
-    "is_active": true,
-    "price": 900,
-    "basePrice": 900
-  },
-  {
-    "brand": "Apple",
-    "model": "iPhone 4s",
-    "release_year": 2011,
-    "ram_options": [
-      "512MB"
-    ],
-    "storage_options": [
-      "64 GB"
-    ],
-    "default_mrp": 7900,
-    "base_resale_value": 700,
-    "image_url": "https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-4s.jpg",
-    "popular_tag": "Apple Official Model",
-    "processor": "Apple A5",
-    "camera_spec": "8MP Camera",
-    "battery_spec": "1432 mAh",
-    "display_spec": "3.5\" Retina IPS LCD",
-    "is_5g": false,
-    "is_active": true,
-    "price": 700,
-    "basePrice": 700
-  },
-  {
-    "brand": "Apple",
-    "model": "iPhone 4",
-    "release_year": 2010,
-    "ram_options": [
-      "512MB"
-    ],
-    "storage_options": [],
-    "default_mrp": 5900,
-    "base_resale_value": 600,
-    "image_url": "https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-4.jpg",
-    "popular_tag": "Apple Official Model",
-    "processor": "Apple A4",
-    "camera_spec": "5MP Camera",
-    "battery_spec": "1420 mAh",
-    "display_spec": "3.5\" Retina IPS LCD",
-    "is_5g": false,
-    "is_active": false,
-    "price": 600,
-    "basePrice": 600
-  },
-  {
-    "brand": "Apple",
-    "model": "iPhone 1 (Original 2007)",
-    "release_year": 2007,
-    "ram_options": [
-      "128MB"
-    ],
-    "storage_options": [],
-    "default_mrp": 4900,
-    "base_resale_value": 1200,
-    "image_url": "https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-3gs.jpg",
-    "popular_tag": "Apple Official Model",
-    "processor": "Samsung 32-bit RISC ARM",
-    "camera_spec": "2MP Camera",
-    "battery_spec": "1400 mAh",
-    "display_spec": "3.5\" TFT",
-    "is_5g": false,
-    "is_active": false,
-    "price": 1200,
-    "basePrice": 1200
   },
   {
     "brand": "Google",

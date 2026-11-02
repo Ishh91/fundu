@@ -182,7 +182,6 @@ export const RESALE_BENCHMARKS = [
   { brand: 'Apple', model: "Apple iPhone XS Max", storage: '64 GB', proceeds: 12750, lastUpdated: '2026-10-08' },
   { brand: 'Apple', model: "Apple iPhone XS Max", storage: '512 GB', proceeds: 18250, lastUpdated: '2026-10-08' },
   { brand: 'Apple', model: "iPhone 17", storage: '128 GB', proceeds: 74500, lastUpdated: '2025-02-15' },
-  { brand: 'Apple', model: "iPhone 17 Air", storage: '128 GB', proceeds: 82000, lastUpdated: '2025-02-15' },
   { brand: 'Apple', model: "iPhone SE (2020)", storage: '64 GB', proceeds: 11200, lastUpdated: '2025-01-05' },
   { brand: 'Apple', model: "iPhone SE (2022)", storage: '64 GB', proceeds: 18000, lastUpdated: '2025-01-05' },
   { brand: 'Google', model: "Google Pixel 10", storage: '256 GB', proceeds: 49850, lastUpdated: '2026-10-08' },
