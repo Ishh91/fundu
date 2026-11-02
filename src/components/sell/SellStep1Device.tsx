@@ -109,6 +109,8 @@ export default function SellStep1Device({
                       key={item.name}
                       type="button"
                       onClick={() => handleBrandSelect(item.name)}
+                      onMouseEnter={() => getUnifiedCatalog(item.name)}
+                      onTouchStart={() => getUnifiedCatalog(item.name)}
                       className="group relative flex flex-col items-center justify-center p-5 rounded-2xl border border-gray-200/90 bg-white hover:border-[#6A859F] hover:bg-[#F0F0F5] hover:shadow-xl transition-all duration-300 active:scale-95 cursor-pointer"
                     >
                       <div className="h-12 w-12 flex items-center justify-center rounded-xl p-2 bg-gray-50 group-hover:bg-white transition-all">
@@ -186,6 +188,8 @@ export default function SellStep1Device({
                             <img
                               src={getCleanPhoneImage(m.brand, m.model, m.image)}
                               alt={m.model}
+                              loading="lazy"
+                              decoding="async"
                               className="h-full w-full object-contain group-hover:scale-105 transition-transform drop-shadow-xs"
                               referrerPolicy="no-referrer"
                               onError={(e) => {
@@ -283,6 +287,8 @@ export default function SellStep1Device({
                       <img
                         src={getCleanPhoneImage(item.brand, item.model, item.image)}
                         alt={item.model}
+                        loading="lazy"
+                        decoding="async"
                         className="h-full w-full object-contain group-hover:scale-105 transition-transform"
                         referrerPolicy="no-referrer"
                         onError={(e) => {

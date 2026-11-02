@@ -636,6 +636,7 @@ export function syncCustomImagesFromDatabase(
       console.warn('[phoneImages] Failed to write db sync to localStorage:', e);
     }
 
+    clearPhoneImageCache();
     window.dispatchEvent(new CustomEvent('fundu_model_image_updated', { detail: { count: phones.length } }));
   }
 
@@ -719,6 +720,7 @@ export function saveCustomModelImage(brand: string, model: string, imageUrl: str
     }
 
     safeSetLocalStorage(CUSTOM_MODEL_IMAGES_KEY, current);
+    clearPhoneImageCache();
   } catch (err) {
     console.warn('[phoneImages] Safe fallback: skipped localStorage write:', err);
   }
@@ -844,7 +846,28 @@ export function getGenericDevicePlaceholder(brand?: string, model?: string): str
   return `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`;
 }
 
+// In-memory phone image cache to avoid repeating regex and substring loops
+const phoneImageCache = new Map<string, string>();
+
+export function clearPhoneImageCache(): void {
+  phoneImageCache.clear();
+}
+
 export function getCleanPhoneImage(brand?: string, model?: string, fallbackUrl?: string): string {
+  const b = (brand || '').toLowerCase().trim();
+  const m = (model || '').toLowerCase().trim();
+  const cacheKey = `${b}:::${m}:::${fallbackUrl || ''}`;
+
+  if (phoneImageCache.has(cacheKey)) {
+    return phoneImageCache.get(cacheKey)!;
+  }
+
+  const result = computeCleanPhoneImage(brand, model, fallbackUrl);
+  phoneImageCache.set(cacheKey, result);
+  return result;
+}
+
+function computeCleanPhoneImage(brand?: string, model?: string, fallbackUrl?: string): string {
   const b = (brand || '').toLowerCase().trim();
   const m = (model || '').toLowerCase().trim();
   const fullText = `${b} ${m}`.toLowerCase().replace(/[^a-z0-9]/g, ' ').replace(/\s+/g, ' ').trim();
