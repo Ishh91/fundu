@@ -1346,6 +1346,8 @@ export default function Admin() {
         setMasterPhones((prev) => [inserted as MasterPhone, ...prev]);
       }
     }
+
+    broadcastSync('MODEL_IMAGE_UPDATE', 'master_phones', 'update', { brand, model, imageUrl: url });
   };
 
   const openAddProductModal = (initialData?: Partial<typeof productForm> | 'smartphone' | 'laptop') => {

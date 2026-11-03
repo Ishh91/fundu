@@ -29,6 +29,31 @@ let broadcastChannel: BroadcastChannel | null = null;
 if (typeof window !== 'undefined' && 'BroadcastChannel' in window) {
   try {
     broadcastChannel = new BroadcastChannel(SYNC_CHANNEL_NAME);
+    // Automatically relay all cross-tab broadcasts to current window events
+    broadcastChannel.addEventListener('message', (event: MessageEvent<RealtimeSyncPayload>) => {
+      const payload = event?.data;
+      if (!payload?.action) return;
+
+      window.dispatchEvent(new CustomEvent('fundu_realtime_sync', { detail: payload }));
+      if (payload.action === 'MODEL_IMAGE_UPDATE') {
+        window.dispatchEvent(new CustomEvent('fundu_model_image_updated', { detail: payload.data || payload }));
+      }
+      if (payload.table === 'products' || payload.action === 'PRODUCT_UPDATE') {
+        window.dispatchEvent(new CustomEvent('fundu_product_updated', { detail: payload }));
+      }
+      if (payload.table === 'sell_price_configs' || payload.action === 'PRICE_UPDATE') {
+        window.dispatchEvent(new CustomEvent('fundu_price_updated', { detail: payload }));
+      }
+      if (payload.table === 'repair_price_configs' || payload.action === 'REPAIR_UPDATE') {
+        window.dispatchEvent(new CustomEvent('fundu_repair_price_updated', { detail: payload }));
+      }
+      if (payload.table === 'site_content' || payload.table === 'hero_posters' || payload.action === 'HERO_UPDATE') {
+        window.dispatchEvent(new CustomEvent('fundu_hero_posters_updated', { detail: payload }));
+      }
+      if (payload.table === 'reviews' || payload.action === 'REVIEW_UPDATE') {
+        window.dispatchEvent(new CustomEvent('fundu_reviews_updated', { detail: payload }));
+      }
+    });
   } catch (err) {
     console.warn('Notice initializing BroadcastChannel:', err);
     broadcastChannel = null;

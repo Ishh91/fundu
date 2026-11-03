@@ -4,7 +4,7 @@
  */
 
 import { MOBILE_API_THUMBS } from '../data/deviceImageDictionary.ts';
-import { broadcastSync } from './realtimeSync';
+import { broadcastSync, subscribeToRealtimeSync } from './realtimeSync';
 import { db } from './db';
 
 // Official Brand Vector Logos
@@ -726,27 +726,17 @@ export function syncCustomImagesFromDatabase(
 
   const trueCustomEntries: Array<{ brand: string; model: string; url: string }> = [];
 
+  // 1. Separate true admin uploads from default/stock entries
   phones.forEach((p) => {
-    if (!p.brand || !p.model || !p.image_url) return;
+    if (!p || !p.brand || !p.model || !p.image_url) return;
     const url = cleanUrl(String(p.image_url).trim(), p.brand);
     if (!url || url.includes('777/thumb')) return;
     if (isBrandImageMismatch(p.brand, p.model, url)) return;
 
-    const isCustom = Boolean(p.custom_image) || !isStockImageUrl(url);
+    const isCustom = Boolean(p.custom_image) || (!isStockImageUrl(url) && !url.includes('unsplash.com') && !url.includes('pexels.com'));
     if (isCustom) {
       trueCustomEntries.push({ brand: p.brand, model: p.model, url });
-    }
-  });
-
-  // 1. Process all stock phone images: never overwrite a key if already occupied by a custom image
-  phones.forEach((p) => {
-    if (!p.brand || !p.model || !p.image_url) return;
-    const url = cleanUrl(String(p.image_url).trim(), p.brand);
-    if (!url || url.includes('777/thumb')) return;
-    if (isBrandImageMismatch(p.brand, p.model, url)) return;
-
-    const isCustom = Boolean(p.custom_image) || !isStockImageUrl(url);
-    if (!isCustom) {
+    } else {
       const keys = generateModelLookupKeys(p.brand, p.model);
       keys.forEach((k) => {
         const existing = memoryCustomCache[k];
@@ -762,7 +752,11 @@ export function syncCustomImagesFromDatabase(
 
   // 2. Process true custom entries: they take absolute priority in memory and get persisted
   const customToPersist: Record<string, string> = {};
-  trueCustomEntries.forEach(({ brand, model, url }) => {
+  trueCustomEntries.forEach((entry) => {
+    const brand = entry.brand;
+    const model = entry.model;
+    const url = entry.url;
+
     const keys = generateModelLookupKeys(brand, model);
     keys.forEach((k) => {
       if (memoryCustomCache[k] !== url) {
@@ -807,15 +801,22 @@ export function syncCustomImagesFromDatabase(
 
 let isPullingImages = false;
 /**
- * Pulls custom photos from database master_phones to ensure any visitor sees images updated by admin
+ * Pulls custom photos from database (master_phones + sell_price_configs)
+ * to ensure any visitor on any device sees images updated by admin within seconds.
  */
-export async function pullLiveModelImagesFromDb(): Promise<boolean> {
+export async function pullLiveModelImagesFromDb(force = false): Promise<boolean> {
   if (typeof window === 'undefined' || isPullingImages) return false;
   isPullingImages = true;
   try {
-    const { data, error } = await db.from('master_phones').select('*').limit(5000);
-    if (!error && Array.isArray(data) && data.length > 0) {
-      return syncCustomImagesFromDatabase(data as any);
+    const [mpRes, spRes] = await Promise.all([
+      db.from('master_phones').select('brand,model,image_url,custom_image').limit(5000),
+      db.from('sell_price_configs').select('brand,model,image_url,custom_image').limit(5000),
+    ]);
+    const merged: any[] = [];
+    if (!mpRes.error && Array.isArray(mpRes.data)) merged.push(...mpRes.data);
+    if (!spRes.error && Array.isArray(spRes.data)) merged.push(...spRes.data);
+    if (merged.length > 0) {
+      return syncCustomImagesFromDatabase(merged);
     }
   } catch (err) {
     // Fail silently on offline/network errors
@@ -825,13 +826,46 @@ export async function pullLiveModelImagesFromDb(): Promise<boolean> {
   return false;
 }
 
-// Auto-trigger database pull in background without blocking initial paint
+// Fast startup and continuous real-time synchronization
 if (typeof window !== 'undefined') {
-  if ('requestIdleCallback' in window) {
-    (window as any).requestIdleCallback(() => pullLiveModelImagesFromDb(), { timeout: 2500 });
-  } else {
-    setTimeout(() => pullLiveModelImagesFromDb(), 1500);
-  }
+  // Listen for real-time broadcasts across all tabs
+  subscribeToRealtimeSync((payload) => {
+    if (payload.action === 'MODEL_IMAGE_UPDATE') {
+      const { brand, model, imageUrl } = payload.data || {};
+      if (brand && model) {
+        const val = imageUrl ? String(imageUrl).trim() : '';
+        const keys = generateModelLookupKeys(brand, model);
+        if (val) {
+          keys.forEach((k) => { memoryCustomCache[k] = val; });
+        } else {
+          keys.forEach((k) => { delete memoryCustomCache[k]; });
+        }
+        clearPhoneImageCache();
+        window.dispatchEvent(new CustomEvent('fundu_model_image_updated', { detail: payload.data }));
+      } else {
+        pullLiveModelImagesFromDb(true);
+      }
+    }
+  });
+
+  // Pull immediately on boot
+  pullLiveModelImagesFromDb();
+
+  // Fast re-check on tab focus / visibilitychange
+  window.addEventListener('focus', () => {
+    pullLiveModelImagesFromDb(true);
+  });
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible') {
+      pullLiveModelImagesFromDb(true);
+    }
+  });
+
+  // Fast background polling interval (every 5 seconds)
+  // Ensures external visitor devices see admin updates within seconds without refreshing
+  setInterval(() => {
+    pullLiveModelImagesFromDb();
+  }, 5000);
 }
 
 export function saveCustomModelImage(brand: string, model: string, imageUrl: string) {
@@ -1041,17 +1075,7 @@ function computeCleanPhoneImage(brand?: string, model?: string, fallbackUrl?: st
   const modelNorm = m.toLowerCase().replace(/[^a-z0-9]/g, ' ').replace(/\s+/g, ' ').trim();
   const rawUrl = cleanUrl((fallbackUrl || '').trim(), b);
 
-  const isApple = b.includes('apple') || b.includes('iphone') || fullText.includes('iphone');
-  // Hard Priority: Apple iPhone 17 Series flagships always map to verified authentic studio renders
-  if (isApple && /\b(17\s*pro\s*max|17\s*pro|17\s*air|17e|17)\b/i.test(m)) {
-    if (/\bpro\s*max\b/i.test(m)) return 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-16-pro-max.jpg';
-    if (/\bpro\b/i.test(m)) return 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-16-pro.jpg';
-    if (/\b(17\s*air|air)\b/i.test(m)) return 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-air.jpg';
-    if (/\b17e\b/i.test(m)) return 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-17e.jpg';
-    return 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-16.jpg';
-  }
-
-  // 0. Priority 0: Admin custom image override for this specific brand & model
+  // 0. Priority 0: Admin custom image override for this specific brand & model (ABSOLUTE PRIORITY)
   const customImages = getCustomModelImages();
   const lookupKeys = generateModelLookupKeys(brand, model);
   for (const k of lookupKeys) {
@@ -1082,6 +1106,16 @@ function computeCleanPhoneImage(brand?: string, model?: string, fallbackUrl?: st
       !isStockImageUrl(rawUrl))
   ) {
     return rawUrl;
+  }
+
+  const isApple = b.includes('apple') || b.includes('iphone') || fullText.includes('iphone');
+  // Default authentic studio renders for iPhone 17 (when no custom admin photo exists)
+  if (isApple && /\b(17\s*pro\s*max|17\s*pro|17\s*air|17e|17)\b/i.test(m)) {
+    if (/\bpro\s*max\b/i.test(m)) return 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-16-pro-max.jpg';
+    if (/\bpro\b/i.test(m)) return 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-16-pro.jpg';
+    if (/\b(17\s*air|air)\b/i.test(m)) return 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-air.jpg';
+    if (/\b17e\b/i.test(m)) return 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-17e.jpg';
+    return 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-16.jpg';
   }
 
   // 2. Try high-resolution flagship & classic renders (sorted longest keyword first)
