@@ -211,25 +211,48 @@ export default function AdminCatalog({
     return Array.from(map.values());
   }, [masterPhones]);
 
-  const filteredCatalog = allCatalogPhones.filter((mp) => {
+  const [displayLimit, setDisplayLimit] = useState(60);
+
+  React.useEffect(() => {
+    setDisplayLimit(60);
+  }, [search, brandFilter]);
+
+  const listedModelNames = useMemo(() => {
+    const set = new Set<string>();
+    products.forEach((p) => {
+      if (p.model) set.add(p.model.toLowerCase().trim());
+    });
+    return set;
+  }, [products]);
+
+  const filteredCatalog = useMemo(() => {
+    const sLower = search.trim().toLowerCase();
     const bLower = brandFilter.toLowerCase();
-    const mpBLower = mp.brand.toLowerCase();
-    let matchesBrand = brandFilter === 'All' || mpBLower === bLower;
-    if (!matchesBrand) {
-      if (bLower === 'xiaomi' && (mpBLower === 'redmi' || mpBLower === 'poco')) matchesBrand = true;
-      if (bLower === 'poco' && (mpBLower === 'xiaomi' || mpBLower === 'poco') && /poco/i.test(mp.model)) matchesBrand = true;
-      if (bLower === 'redmi' && (mpBLower === 'xiaomi' || mpBLower === 'redmi') && /redmi/i.test(mp.model)) matchesBrand = true;
-      if (bLower === 'vivo' && mpBLower === 'iqoo') matchesBrand = true;
-      if (bLower === 'iqoo' && (mpBLower === 'vivo' || mpBLower === 'iqoo') && /iqoo/i.test(mp.model)) matchesBrand = true;
-      if (bLower === 'motorola' && (mpBLower === 'moto' || mpBLower === 'motorola')) matchesBrand = true;
-      if (bLower === 'moto' && (mpBLower === 'moto' || mpBLower === 'motorola')) matchesBrand = true;
-      if (bLower === 'apple' && (mpBLower === 'apple' || /iphone/i.test(mp.model))) matchesBrand = true;
-    }
-    const matchesSearch = `${mp.brand} ${mp.model} ${mp.release_year} ${mp.popular_tag || ''}`
-      .toLowerCase()
-      .includes(search.toLowerCase());
-    return matchesBrand && matchesSearch;
-  });
+
+    return allCatalogPhones.filter((mp) => {
+      const mpBLower = mp.brand.toLowerCase();
+      let matchesBrand = brandFilter === 'All' || mpBLower === bLower;
+      if (!matchesBrand) {
+        if (bLower === 'xiaomi' && (mpBLower === 'redmi' || mpBLower === 'poco')) matchesBrand = true;
+        if (bLower === 'poco' && (mpBLower === 'xiaomi' || mpBLower === 'poco') && /poco/i.test(mp.model)) matchesBrand = true;
+        if (bLower === 'redmi' && (mpBLower === 'xiaomi' || mpBLower === 'redmi') && /redmi/i.test(mp.model)) matchesBrand = true;
+        if (bLower === 'vivo' && mpBLower === 'iqoo') matchesBrand = true;
+        if (bLower === 'iqoo' && (mpBLower === 'vivo' || mpBLower === 'iqoo') && /iqoo/i.test(mp.model)) matchesBrand = true;
+        if (bLower === 'motorola' && (mpBLower === 'moto' || mpBLower === 'motorola')) matchesBrand = true;
+        if (bLower === 'moto' && (mpBLower === 'moto' || mpBLower === 'motorola')) matchesBrand = true;
+        if (bLower === 'apple' && (mpBLower === 'apple' || /iphone/i.test(mp.model))) matchesBrand = true;
+      }
+      if (!matchesBrand) return false;
+      if (!sLower) return true;
+      return `${mp.brand} ${mp.model} ${mp.release_year} ${mp.popular_tag || ''}`
+        .toLowerCase()
+        .includes(sLower);
+    });
+  }, [allCatalogPhones, brandFilter, search]);
+
+  const visibleCatalog = useMemo(() => {
+    return filteredCatalog.slice(0, displayLimit);
+  }, [filteredCatalog, displayLimit]);
 
   const selectedPhone = allCatalogPhones.find((p) => p.id === selectedPhoneId) || filteredCatalog[0] || null;
 
@@ -387,63 +410,78 @@ export default function AdminCatalog({
                 </button>
               </div>
             ) : (
-              filteredCatalog.map((mp) => {
-                const isSelected = selectedPhone?.id === mp.id;
-                const isAlreadyListed = products.some(
-                  (p) => p.model.toLowerCase() === mp.model.toLowerCase()
-                );
+              <>
+                {visibleCatalog.map((mp) => {
+                  const isSelected = selectedPhone?.id === mp.id;
+                  const isAlreadyListed = listedModelNames.has(mp.model.toLowerCase().trim());
 
-                return (
-                  <div
-                    key={mp.id}
-                    onClick={() => onSelectPhone(mp.id)}
-                    className={`card p-3.5 rounded-2xl cursor-pointer transition-all ${
-                      isSelected
-                        ? 'border-brand-600 bg-brand-50/60 shadow-md ring-2 ring-brand-500/20'
-                        : 'bg-white hover:border-brand-300 hover:shadow-xs'
-                    }`}
-                  >
-                    <div className="flex items-center gap-3">
-                      <div className="h-11 w-11 shrink-0 rounded-xl bg-white border border-slate-200/90 p-1 grid place-items-center overflow-hidden shadow-xs">
-                        <img
-                          src={getCleanPhoneImage(mp.brand, mp.model, mp.image_url || undefined)}
-                          alt=""
-                          className="h-full w-full object-contain"
-                          loading="lazy"
-                        />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center justify-between gap-1">
-                          <p className="font-bold text-sm text-ink-900 truncate">
-                            {mp.brand} {mp.model}
-                          </p>
-                          {isAlreadyListed ? (
-                            <span className="badge bg-nature-50 text-nature-700 text-[10px] font-bold shrink-0">
-                              ✓ In Store
-                            </span>
-                          ) : (
-                            <span className="badge bg-brand-50 text-brand-700 text-[10px] font-bold shrink-0">
-                              Ready to List
-                            </span>
-                          )}
+                  return (
+                    <div
+                      key={mp.id}
+                      onClick={() => onSelectPhone(mp.id)}
+                      className={`card p-3.5 rounded-2xl cursor-pointer transition-all ${
+                        isSelected
+                          ? 'border-brand-600 bg-brand-50/60 shadow-md ring-2 ring-brand-500/20'
+                          : 'bg-white hover:border-brand-300 hover:shadow-xs'
+                      }`}
+                    >
+                      <div className="flex items-center gap-3">
+                        <div className="h-11 w-11 shrink-0 rounded-xl bg-white border border-slate-200/90 p-1 grid place-items-center overflow-hidden shadow-xs">
+                          <img
+                            src={getCleanPhoneImage(mp.brand, mp.model, mp.image_url || undefined)}
+                            alt=""
+                            className="h-full w-full object-contain"
+                            loading="lazy"
+                          />
                         </div>
-                        <p className="text-xs text-ink-500">
-                          {mp.release_year} · {mp.storage_options?.join(', ') || '128GB'}
-                        </p>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center justify-between gap-1">
+                            <p className="font-bold text-sm text-ink-900 truncate">
+                              {mp.brand} {mp.model}
+                            </p>
+                            {isAlreadyListed ? (
+                              <span className="badge bg-nature-50 text-nature-700 text-[10px] font-bold shrink-0">
+                                ✓ In Store
+                              </span>
+                            ) : (
+                              <span className="badge bg-brand-50 text-brand-700 text-[10px] font-bold shrink-0">
+                                Ready to List
+                              </span>
+                            )}
+                          </div>
+                          <p className="text-xs text-ink-500">
+                            {mp.release_year} · {mp.storage_options?.join(', ') || '128GB'}
+                          </p>
+                        </div>
+                      </div>
+
+                      <div className="mt-2 flex items-center justify-between text-xs pt-2 border-t border-ink-100/60">
+                        <span className="font-extrabold text-emerald-700">
+                          Resale: {formatINR(mp.base_resale_value)}
+                        </span>
+                        <span className="text-ink-400 font-mono text-[11px]">
+                          MRP: {formatINR(mp.default_mrp)}
+                        </span>
                       </div>
                     </div>
+                  );
+                })}
 
-                    <div className="mt-2 flex items-center justify-between text-xs pt-2 border-t border-ink-100/60">
-                      <span className="font-extrabold text-emerald-700">
-                        Resale: {formatINR(mp.base_resale_value)}
-                      </span>
-                      <span className="text-ink-400 font-mono text-[11px]">
-                        MRP: {formatINR(mp.default_mrp)}
-                      </span>
-                    </div>
+                {filteredCatalog.length > displayLimit && (
+                  <div className="pt-2 text-center pb-2">
+                    <button
+                      type="button"
+                      onClick={() => setDisplayLimit((prev) => prev + 60)}
+                      className="w-full py-2.5 px-4 text-xs font-bold text-brand-700 bg-brand-50/60 hover:bg-brand-100/80 border border-brand-200 rounded-xl transition shadow-xs"
+                    >
+                      Load More (+60 Models) · {filteredCatalog.length - displayLimit} remaining
+                    </button>
+                    <p className="text-[11px] text-ink-400 font-medium mt-1">
+                      Showing {displayLimit} of {filteredCatalog.length} models
+                    </p>
                   </div>
-                );
-              })
+                )}
+              </>
             )}
           </div>
         </div>

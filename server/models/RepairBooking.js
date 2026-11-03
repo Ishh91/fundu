@@ -53,4 +53,13 @@ const repairBookingSchema = createSchema({
   delivery_otp_verified_by: { type: String, default: null },
 }, { timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' } });
 
+// High-performance operational indexes for Admin queries & live notification polling
+repairBookingSchema.index({ created_at: -1 });
+repairBookingSchema.index({ status: 1, created_at: -1 });
+repairBookingSchema.index({ quotation_status: 1 });
+repairBookingSchema.index({ user_id: 1, created_at: -1 });
+repairBookingSchema.index({ assigned_vendor_id: 1, created_at: -1 });
+repairBookingSchema.index({ assigned_agent_id: 1, created_at: -1 });
+repairBookingSchema.index({ brand: 1, model: 1 });
+
 export const RepairBooking = mongoose.models.RepairBooking || mongoose.model('RepairBooking', repairBookingSchema);

@@ -75,4 +75,14 @@ const sellRequestSchema = createSchema({
   delivery_otp_verified_by: { type: String, default: null },
 }, { timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' } });
 
+// High-performance operational indexes for Admin queries & live notification polling
+sellRequestSchema.index({ created_at: -1 });
+sellRequestSchema.index({ status: 1, created_at: -1 });
+sellRequestSchema.index({ vendor_quote_status: 1 });
+sellRequestSchema.index({ rider_acceptance_status: 1 });
+sellRequestSchema.index({ user_id: 1, created_at: -1 });
+sellRequestSchema.index({ assigned_vendor_id: 1, created_at: -1 });
+sellRequestSchema.index({ assigned_agent_id: 1, created_at: -1 });
+sellRequestSchema.index({ brand: 1, model: 1 });
+
 export const SellRequest = mongoose.models.SellRequest || mongoose.model('SellRequest', sellRequestSchema);

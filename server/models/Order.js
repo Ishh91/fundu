@@ -45,4 +45,10 @@ const orderSchema = createSchema({
   delivery_otp_verified_by: { type: String, default: null },
 }, { timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' } });
 
+// High-performance operational indexes for Admin queries & live notification polling
+orderSchema.index({ created_at: -1 });
+orderSchema.index({ status: 1, created_at: -1 });
+orderSchema.index({ user_id: 1, created_at: -1 });
+orderSchema.index({ assigned_agent_id: 1, created_at: -1 });
+
 export const Order = mongoose.models.Order || mongoose.model('Order', orderSchema);

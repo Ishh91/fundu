@@ -26,8 +26,8 @@ const PUBLIC_CACHE_TABLES = new Set([
   'reviews',
 ]);
 
-function getCacheKey(table, query) {
-  return `${table}:${JSON.stringify(query)}`;
+function getCacheKey(table, query, role = 'public') {
+  return `${table}:${role}:${JSON.stringify(query)}`;
 }
 
 export function clearTableCache(table) {
@@ -41,14 +41,19 @@ export function clearTableCache(table) {
 router.get('/:table', async (req, res, next) => {
   try {
     const table = req.params.table;
-    const isPublicCacheable = PUBLIC_CACHE_TABLES.has(table) && !req.auth;
+    const isCacheable = PUBLIC_CACHE_TABLES.has(table);
+    const role = req.auth?.role || (req.auth ? 'user' : 'public');
 
-    // Fast In-Memory Cache Lookup for Public Reads (returns in <1ms)
-    if (isPublicCacheable) {
-      const cacheKey = getCacheKey(table, req.query);
+    // Fast In-Memory Cache Lookup (returns in <1ms)
+    if (isCacheable) {
+      const cacheKey = getCacheKey(table, req.query, role);
       const cached = routeCache.get(cacheKey);
       if (cached && Date.now() - cached.timestamp < CACHE_TTL_MS) {
-        res.setHeader('Cache-Control', 'public, max-age=60, s-maxage=120, stale-while-revalidate=300');
+        if (!req.auth) {
+          res.setHeader('Cache-Control', 'public, max-age=60, s-maxage=120, stale-while-revalidate=300');
+        } else {
+          res.setHeader('Cache-Control', 'private, no-cache, no-store, must-revalidate');
+        }
         res.setHeader('X-Cache', 'HIT');
         return res.json({ data: cached.data });
       }
@@ -71,10 +76,12 @@ router.get('/:table', async (req, res, next) => {
       limit,
     });
 
-    if (isPublicCacheable && data) {
-      const cacheKey = getCacheKey(table, req.query);
+    if (isCacheable && data) {
+      const cacheKey = getCacheKey(table, req.query, role);
       routeCache.set(cacheKey, { data, timestamp: Date.now() });
-      res.setHeader('Cache-Control', 'public, max-age=60, s-maxage=120, stale-while-revalidate=300');
+      if (!req.auth) {
+        res.setHeader('Cache-Control', 'public, max-age=60, s-maxage=120, stale-while-revalidate=300');
+      }
       res.setHeader('X-Cache', 'MISS');
     }
 

@@ -391,6 +391,24 @@ export default function AdminSellPricing({
       });
     });
 
+    // Pre-index equivalence keys for O(1) instant matching of configs to catalog models
+    const equivMap = new Map<string, UnifiedSellModel>();
+    const normEquiv = (s: string) =>
+      (s || '')
+        .toLowerCase()
+        .replace(/^apple\s+/i, '')
+        .replace(/^samsung\s+/i, '')
+        .replace(/[^a-z0-9]/g, '')
+        .replace(/5g$/i, '');
+
+    for (const item of modelMap.values()) {
+      const bNorm = item.brand.trim().toLowerCase();
+      const cleanEq = normEquiv(item.model);
+      if (cleanEq && !equivMap.has(`${bNorm}:${cleanEq}`)) {
+        equivMap.set(`${bNorm}:${cleanEq}`, item);
+      }
+    }
+
     // 4. Overlay Explicit Database Sell Price Configs (Absolute Single Source of Truth)
     configs.forEach((cfg) => {
       const cleanM = getCleanModelName(cfg.brand, cfg.model);
@@ -399,16 +417,13 @@ export default function AdminSellPricing({
       const cfgPrice = Number(cfg.base_price);
       if (isNaN(cfgPrice) || cfgPrice <= 0) return; // Ignore any broken/invalid price configs
 
-      // Match directly or find equivalent model
+      // Match directly or find equivalent model via O(1) map lookup
       let existing = modelMap.get(key);
       if (!existing) {
         const bNorm = (cfg.brand || '').trim().toLowerCase();
-        for (const item of modelMap.values()) {
-          const itemBNorm = item.brand.trim().toLowerCase();
-          if (itemBNorm === bNorm && areModelsEquivalent(item.model, cfg.model)) {
-            existing = item;
-            break;
-          }
+        const cfgCleanEq = normEquiv(cfg.model);
+        if (cfgCleanEq) {
+          existing = equivMap.get(`${bNorm}:${cfgCleanEq}`);
         }
       }
 
