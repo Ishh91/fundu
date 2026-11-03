@@ -6,101 +6,6 @@ import { API_BASE } from '../config/apiConfig';
 const DELETED_MODELS_STORAGE_KEY = 'fundu_deleted_models_v2';
 const DELETED_PRODUCTS_STORAGE_KEY = 'fundu_deleted_products_v2';
 
-// High-speed In-Memory Snapshots to avoid repetitive synchronous JSON.parse & localStorage overhead
-let cachedDeletedModelKeys: Set<string> | null = null;
-let cachedDeletedProductKeys: Set<string> | null = null;
-let cachedLivePhonesMap: Map<string, boolean> | null = null;
-let cachedPriceOverrides: Record<string, number> | null = null;
-let lastSyncCacheRefresh = 0;
-
-export function invalidateCatalogSyncCache() {
-  cachedDeletedModelKeys = null;
-  cachedDeletedProductKeys = null;
-  cachedLivePhonesMap = null;
-  cachedPriceOverrides = null;
-  lastSyncCacheRefresh = 0;
-}
-
-if (typeof window !== 'undefined') {
-  window.addEventListener('storage', (e) => {
-    if (
-      !e.key ||
-      e.key === DELETED_MODELS_STORAGE_KEY ||
-      e.key === DELETED_PRODUCTS_STORAGE_KEY ||
-      e.key === 'fundu_live_master_phones_v2' ||
-      e.key === 'fundu_price_overrides_v1'
-    ) {
-      invalidateCatalogSyncCache();
-    }
-  });
-  window.addEventListener('fundu_model_deleted', () => invalidateCatalogSyncCache());
-  window.addEventListener('fundu_model_restored', () => invalidateCatalogSyncCache());
-  window.addEventListener('fundu_price_updated', () => invalidateCatalogSyncCache());
-}
-
-function ensureSyncCachesLoaded() {
-  const now = Date.now();
-  if (cachedDeletedModelKeys && now - lastSyncCacheRefresh < 15000) {
-    return;
-  }
-
-  if (typeof window === 'undefined') {
-    cachedDeletedModelKeys = new Set();
-    cachedDeletedProductKeys = new Set();
-    cachedLivePhonesMap = new Map();
-    cachedPriceOverrides = {};
-    return;
-  }
-
-  try {
-    const rawDeleted = localStorage.getItem(DELETED_MODELS_STORAGE_KEY);
-    cachedDeletedModelKeys = rawDeleted ? new Set(JSON.parse(rawDeleted)) : new Set();
-  } catch {
-    cachedDeletedModelKeys = new Set();
-  }
-
-  try {
-    const rawProd = localStorage.getItem(DELETED_PRODUCTS_STORAGE_KEY);
-    cachedDeletedProductKeys = rawProd ? new Set(JSON.parse(rawProd)) : new Set();
-  } catch {
-    cachedDeletedProductKeys = new Set();
-  }
-
-  try {
-    const rawLive = localStorage.getItem('fundu_live_master_phones_v2');
-    const liveMap = new Map<string, boolean>();
-    if (rawLive) {
-      const parsed = JSON.parse(rawLive);
-      if (Array.isArray(parsed)) {
-        parsed.forEach((p: any) => {
-          if (p && p.brand && p.model && p.is_active !== undefined) {
-            const pb = (p.brand || '').toLowerCase().trim();
-            const pm = (p.model || '').toLowerCase().trim();
-            liveMap.set(`${pb}:${pm}`, Boolean(p.is_active));
-            let strippedM = pm;
-            if (pb && strippedM.startsWith(pb)) {
-              strippedM = strippedM.slice(pb.length).trim();
-              liveMap.set(`${pb}:${strippedM}`, Boolean(p.is_active));
-            }
-          }
-        });
-      }
-    }
-    cachedLivePhonesMap = liveMap;
-  } catch {
-    cachedLivePhonesMap = new Map();
-  }
-
-  try {
-    const rawOverrides = localStorage.getItem('fundu_price_overrides_v1');
-    cachedPriceOverrides = rawOverrides ? JSON.parse(rawOverrides) : {};
-  } catch {
-    cachedPriceOverrides = {};
-  }
-
-  lastSyncCacheRefresh = now;
-}
-
 /**
  * Normalizes brand and model names for consistent key lookups
  */
@@ -150,19 +55,29 @@ export function getModelKeyVariants(brand?: string, model?: string): string[] {
 }
 
 /**
- * Reads the list of deleted model keys from LocalStorage (with in-memory cache)
+ * Reads the list of deleted model keys from LocalStorage
  */
 export function getDeletedModelKeys(): Set<string> {
-  ensureSyncCachesLoaded();
-  return cachedDeletedModelKeys || new Set();
+  if (typeof window === 'undefined') return new Set();
+  try {
+    const raw = localStorage.getItem(DELETED_MODELS_STORAGE_KEY);
+    return raw ? new Set(JSON.parse(raw)) : new Set();
+  } catch {
+    return new Set();
+  }
 }
 
 /**
- * Reads the list of deleted product IDs / titles from LocalStorage (with in-memory cache)
+ * Reads the list of deleted product IDs / titles from LocalStorage
  */
 export function getDeletedProductKeys(): Set<string> {
-  ensureSyncCachesLoaded();
-  return cachedDeletedProductKeys || new Set();
+  if (typeof window === 'undefined') return new Set();
+  try {
+    const raw = localStorage.getItem(DELETED_PRODUCTS_STORAGE_KEY);
+    return raw ? new Set(JSON.parse(raw)) : new Set();
+  } catch {
+    return new Set();
+  }
 }
 
 /**
@@ -174,7 +89,6 @@ export function markModelAsDeleted(brand: string, model: string) {
   const variants = getModelKeyVariants(brand, model);
 
   variants.forEach((v) => current.add(v));
-  cachedDeletedModelKeys = current;
   localStorage.setItem(DELETED_MODELS_STORAGE_KEY, JSON.stringify(Array.from(current)));
 
   // Also clean up any lingering local price overrides for this model
@@ -213,7 +127,6 @@ export function restoreModel(brand: string, model: string) {
   const variants = getModelKeyVariants(brand, model);
 
   variants.forEach((v) => current.delete(v));
-  cachedDeletedModelKeys = current;
   localStorage.setItem(DELETED_MODELS_STORAGE_KEY, JSON.stringify(Array.from(current)));
 
   const fullKey = normalizeModelKey(brand, model);
@@ -359,43 +272,54 @@ export function isPermanentlyBlockedModel(brand?: string, model?: string): boole
 }
 
 /**
- * Checks if a specific model has been deleted or disabled by an admin (O(1) in-memory lookup)
+ * Checks if a specific model has been deleted or disabled by an admin
  */
 export function isModelDeleted(brand?: string, model?: string): boolean {
   if (!model) return false;
   if (isPermanentlyBlockedModel(brand, model)) return true;
 
-  ensureSyncCachesLoaded();
-
   // 1. If phone is actively verified in live master_phones cache with is_active: true, it cannot be blocked by stale keys
-  if (cachedLivePhonesMap && cachedLivePhonesMap.size > 0) {
-    const cleanB = (brand || '').toLowerCase().trim();
-    const cleanM = (model || '').toLowerCase().trim();
-    let strippedM = cleanM;
-    if (cleanB && strippedM.startsWith(cleanB)) {
-      strippedM = strippedM.slice(cleanB.length).trim();
-    }
-    const isActiveDirect = cachedLivePhonesMap.get(`${cleanB}:${cleanM}`);
-    const isActiveStripped = strippedM ? cachedLivePhonesMap.get(`${cleanB}:${strippedM}`) : undefined;
-    const activeStatus = isActiveDirect !== undefined ? isActiveDirect : isActiveStripped;
+  if (typeof window !== 'undefined') {
+    try {
+      const raw = localStorage.getItem('fundu_live_master_phones_v2');
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        if (Array.isArray(parsed)) {
+          const cleanB = (brand || '').toLowerCase().trim();
+          const cleanM = (model || '').toLowerCase().trim();
+          const match = parsed.find((p: any) => {
+            const pb = (p.brand || '').toLowerCase().trim();
+            const pm = (p.model || '').toLowerCase().trim();
+            return (
+              (pb === cleanB || cleanB.includes(pb)) &&
+              (pm === cleanM || cleanM.includes(pm) || pm.includes(cleanM))
+            );
+          });
+          if (match) {
+            if (match.is_active === false) return true;
+            if (match.is_active === true) return false;
+          }
+        }
+      }
 
-    if (activeStatus === false) return true;
-    if (activeStatus === true) return false;
+      // 2. Also check if admin has an explicit active price override for this model
+      const rawOverrides = localStorage.getItem('fundu_price_overrides_v1');
+      if (rawOverrides) {
+        const overrides = JSON.parse(rawOverrides);
+        const variants = getModelKeyVariants(brand, model);
+        const hasActiveOverride = variants.some((v) => typeof overrides[v] === 'number' && overrides[v] > 0);
+        if (hasActiveOverride) {
+          return false;
+        }
+      }
+    } catch {}
   }
 
-  // 2. Also check if admin has an explicit active price override for this model
-  if (cachedPriceOverrides && Object.keys(cachedPriceOverrides).length > 0) {
-    const variants = getModelKeyVariants(brand, model);
-    const hasActiveOverride = variants.some((v) => typeof cachedPriceOverrides![v] === 'number' && cachedPriceOverrides![v] > 0);
-    if (hasActiveOverride) {
-      return false;
-    }
-  }
-
-  if (!cachedDeletedModelKeys || cachedDeletedModelKeys.size === 0) return false;
+  const current = getDeletedModelKeys();
+  if (current.size === 0) return false;
 
   const variants = getModelKeyVariants(brand, model);
-  return variants.some((v) => cachedDeletedModelKeys!.has(v));
+  return variants.some((v) => current.has(v));
 }
 
 /**
@@ -406,7 +330,6 @@ export function markProductAsDeleted(productId: string, title?: string) {
   const current = getDeletedProductKeys();
   current.add(productId);
   if (title) current.add(normalizeName(title));
-  cachedDeletedProductKeys = current;
 
   localStorage.setItem(DELETED_PRODUCTS_STORAGE_KEY, JSON.stringify(Array.from(current)));
 

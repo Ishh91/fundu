@@ -472,8 +472,6 @@ export default function Admin() {
     soundNotifier.requestPermission().catch(() => {});
 
     const pollInterval = setInterval(async () => {
-      // Skip background polling if tab is in the background or minimized to preserve browser performance
-      if (typeof document !== 'undefined' && document.hidden) return;
       try {
         const [
           sellsRes,

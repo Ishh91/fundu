@@ -702,29 +702,7 @@ function safeSetLocalStorage(key: string, data: Record<string, string>) {
   }
 }
 
-// In-memory cache for getCustomModelImages to avoid repeated synchronous JSON.parse & localStorage reads
-let cachedCustomImagesSnapshot: Record<string, string> | null = null;
-let lastCustomImagesReadTime = 0;
-
-export function invalidateCustomImagesCache() {
-  cachedCustomImagesSnapshot = null;
-  lastCustomImagesReadTime = 0;
-}
-
-if (typeof window !== 'undefined') {
-  window.addEventListener('storage', (e) => {
-    if (!e.key || e.key === CUSTOM_MODEL_IMAGES_KEY) {
-      invalidateCustomImagesCache();
-    }
-  });
-}
-
 export function getCustomModelImages(): Record<string, string> {
-  const now = Date.now();
-  if (cachedCustomImagesSnapshot && now - lastCustomImagesReadTime < 15000) {
-    return cachedCustomImagesSnapshot;
-  }
-
   let stored: Record<string, string> = {};
   if (typeof window !== 'undefined') {
     try {
@@ -734,9 +712,7 @@ export function getCustomModelImages(): Record<string, string> {
       stored = {};
     }
   }
-  cachedCustomImagesSnapshot = { ...stored, ...memoryCustomCache };
-  lastCustomImagesReadTime = now;
-  return cachedCustomImagesSnapshot;
+  return { ...stored, ...memoryCustomCache };
 }
 
 /**
@@ -1042,7 +1018,6 @@ const phoneImageCache = new Map<string, string>();
 
 export function clearPhoneImageCache(): void {
   phoneImageCache.clear();
-  invalidateCustomImagesCache();
 }
 
 export function getCleanPhoneImage(brand?: string, model?: string, fallbackUrl?: string): string {

@@ -25,9 +25,4 @@ const deliveryAgentSchema = createSchema({
   current_locality: { type: String, default: 'Gomti Nagar' },
 }, { timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' } });
 
-// High-performance operational indexes for Admin rider assignment
-deliveryAgentSchema.index({ status: 1, is_active: 1 });
-deliveryAgentSchema.index({ phone: 1 });
-deliveryAgentSchema.index({ created_at: -1 });
-
 export const DeliveryAgent = mongoose.models.DeliveryAgent || mongoose.model('DeliveryAgent', deliveryAgentSchema);

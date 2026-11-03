@@ -23,10 +23,4 @@ const productSchema = createSchema({
   seller_id: { type: String, default: null },
 }, { timestamps: { createdAt: 'created_at', updatedAt: false } });
 
-// High-performance operational indexes for Admin queries & store searches
-productSchema.index({ created_at: -1 });
-productSchema.index({ is_approved: 1, created_at: -1 });
-productSchema.index({ brand: 1, model: 1 });
-productSchema.index({ seller_id: 1 });
-
 export const Product = mongoose.models.Product || mongoose.model('Product', productSchema);
