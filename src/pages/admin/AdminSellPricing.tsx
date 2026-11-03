@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useRef } from 'react';
 import {
   TrendingUp,
   Search,
@@ -23,6 +23,9 @@ import {
   Info,
   DollarSign,
   Layers,
+  Download,
+  FileSpreadsheet,
+  AlertCircle,
 } from 'lucide-react';
 import type { SellPriceConfig, MasterPhone } from './adminTypes';
 import { db, formatINR } from '../../lib/db';
@@ -42,6 +45,8 @@ import {
   markModelAsDeleted,
   restoreModel,
 } from '../../lib/priceSync';
+import { broadcastSync } from '../../lib/realtimeSync';
+import { exportSellPricesToExcel, parsePricesFromExcelFile, type PriceExcelRow } from '../../lib/priceExcelUtils';
 import { ALL_INDIAN_PHONES_CATALOG } from '../../data/indianPhonesCatalog';
 import { MASTER_MODEL_CATALOG } from '../../data/masterModelCatalog';
 import { BRAND_SERIES_DEFINITIONS } from '../../data/brandSeriesCatalog';
@@ -187,6 +192,18 @@ export default function AdminSellPricing({
   // Quick Inline Base Price Editing on Right Detail Panel
   const [inlinePrice, setInlinePrice] = useState<string>('');
   const [inlineSaving, setInlineSaving] = useState(false);
+
+  // Excel Import / Export State
+  const [importModal, setImportModal] = useState<{
+    fileName: string;
+    validRows: PriceExcelRow[];
+    totalRows: number;
+    skippedCount: number;
+    errors: string[];
+  } | null>(null);
+  const [importing, setImporting] = useState(false);
+  const [importProgress, setImportProgress] = useState<{ current: number; total: number } | null>(null);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   // Track version updates for custom images & price overrides
   const [refreshVer, setRefreshVer] = useState(0);
@@ -868,6 +885,102 @@ export default function AdminSellPricing({
     }
   };
 
+  // Excel Export Handler
+  const handleExportExcel = () => {
+    const targetModels = selectedBrand === 'All' ? unifiedModels : filteredModels;
+    if (targetModels.length === 0) {
+      alert('No models available to export.');
+      return;
+    }
+    const brandLabel = selectedBrand !== 'All' ? selectedBrand.toLowerCase().replace(/[^a-z0-9]/g, '_') : 'all_brands';
+    const now = new Date();
+    const dateStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+    const filename = `fundu_sell_prices_${brandLabel}_${dateStr}.xlsx`;
+
+    exportSellPricesToExcel(targetModels, filename);
+  };
+
+  // Excel Import Handler
+  const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    try {
+      const result = await parsePricesFromExcelFile(file);
+      if (result.validRows.length === 0) {
+        alert(`No valid price rows found in "${file.name}". Make sure the sheet has Brand, Model, and Base Price columns.`);
+        return;
+      }
+      setImportModal({
+        fileName: file.name,
+        validRows: result.validRows,
+        totalRows: result.totalRows,
+        skippedCount: result.skippedCount,
+        errors: result.errors,
+      });
+    } catch (err: any) {
+      alert(`Error reading file: ${err.message || err}`);
+    } finally {
+      if (fileInputRef.current) fileInputRef.current.value = '';
+    }
+  };
+
+  // Confirm and Apply Excel Import
+  const handleConfirmImport = async () => {
+    if (!importModal || importModal.validRows.length === 0) return;
+    setImporting(true);
+    const rows = importModal.validRows;
+    const total = rows.length;
+    setImportProgress({ current: 0, total });
+
+    try {
+      // 1. Optimistic Local Update & Broadcast for all rows instantly
+      rows.forEach((r) => {
+        savePriceOverride(r.brand, r.model, r.base_price, r.storage);
+      });
+      setRefreshVer((v) => v + 1);
+
+      // 2. Persist to MongoDB in chunks of 25
+      const chunkSize = 25;
+      for (let i = 0; i < total; i += chunkSize) {
+        const chunk = rows.slice(i, i + chunkSize);
+        await Promise.all(
+          chunk.map(async (row) => {
+            const payload = {
+              brand: row.brand,
+              model: row.model,
+              storage: row.storage || null,
+              base_price: row.base_price,
+              default_mrp: row.default_mrp || null,
+              excellent_multiplier: row.excellent_multiplier ?? 1.0,
+              good_multiplier: row.good_multiplier ?? 0.70,
+              fair_multiplier: row.fair_multiplier ?? 0.55,
+              box_bonus: row.box_bonus ?? 0,
+              charger_bonus: row.charger_bonus ?? 0,
+              is_active: row.is_active !== false,
+              is_locked: true,
+              manual_override: true,
+              image_url: row.image_url || null,
+            };
+            return db.from('sell_price_configs').upsert(payload);
+          })
+        );
+        setImportProgress({ current: Math.min(i + chunkSize, total), total });
+      }
+
+      broadcastSync('PRICE_UPDATE', 'sell_price_configs', 'upsert', { count: total });
+      const importedCount = total;
+      const fileName = importModal.fileName;
+      setImportModal(null);
+      alert(`🎉 Successfully imported and updated ${importedCount.toLocaleString()} price rules from "${fileName}"! Changes are live across customer sell pages.`);
+    } catch (err: any) {
+      console.error('[AdminSellPricing] Bulk import error:', err);
+      alert(`Failed to save price rules: ${err.message || 'Database error'}`);
+    } finally {
+      setImporting(false);
+      setImportProgress(null);
+    }
+  };
+
   // Analytics stats
   const totalModelsCount = unifiedModels.length;
   const customPricedCount = unifiedModels.filter((m) => m.hasCustomPrice).length;
@@ -905,18 +1018,41 @@ export default function AdminSellPricing({
           <button
             type="button"
             onClick={() => setAddModalOpen(true)}
-            className="btn bg-blue-600 hover:bg-blue-500 text-white font-extrabold text-xs px-4 py-2.5 rounded-2xl flex items-center gap-1.5 shadow-lg transition cursor-pointer"
+            className="btn bg-blue-600 hover:bg-blue-500 text-white font-extrabold text-xs px-3.5 py-2.5 rounded-2xl flex items-center gap-1.5 shadow-lg transition cursor-pointer"
           >
-            <Plus className="h-4 w-4" /> Add Sell Model
+            <Plus className="h-4 w-4" /> Add Model
           </button>
+          <button
+            type="button"
+            onClick={handleExportExcel}
+            className="btn bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold text-xs px-3.5 py-2.5 rounded-2xl flex items-center gap-1.5 shadow-lg transition cursor-pointer"
+            title="Download prices as an Excel sheet (.xlsx)"
+          >
+            <Download className="h-4 w-4" /> Export Excel
+          </button>
+          <button
+            type="button"
+            onClick={() => fileInputRef.current?.click()}
+            className="btn bg-indigo-600 hover:bg-indigo-500 text-white font-extrabold text-xs px-3.5 py-2.5 rounded-2xl flex items-center gap-1.5 shadow-lg transition cursor-pointer"
+            title="Upload price updates from an Excel or CSV file"
+          >
+            <Upload className="h-4 w-4" /> Import Excel
+          </button>
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept=".xlsx,.xls,.csv"
+            onChange={handleFileSelect}
+            className="hidden"
+          />
           <button
             type="button"
             onClick={onAutoGenerateRules}
             disabled={generatingRules}
-            className="btn bg-emerald-700 hover:bg-emerald-600 text-white font-extrabold text-xs px-4 py-2.5 rounded-2xl flex items-center gap-1.5 shadow-lg transition cursor-pointer"
+            className="btn bg-slate-800 hover:bg-slate-700 text-white font-extrabold text-xs px-3.5 py-2.5 rounded-2xl flex items-center gap-1.5 shadow-lg border border-slate-600 transition cursor-pointer"
           >
             <Zap className={`h-4 w-4 ${generatingRules ? 'animate-spin' : ''}`} />
-            {generatingRules ? 'Generating...' : '⚡ Bulk Sync Indian Rules'}
+            {generatingRules ? 'Generating...' : '⚡ Sync Rules'}
           </button>
         </div>
       </div>
@@ -1872,6 +2008,149 @@ export default function AdminSellPricing({
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* MODAL 4: EXCEL IMPORT PREVIEW & CONFIRMATION MODAL */}
+      {importModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-4 overflow-y-auto animate-fade-in">
+          <div className="card w-full max-w-2xl p-6 my-4 space-y-5 max-h-[90vh] overflow-y-auto bg-white shadow-2xl rounded-3xl border border-gray-200">
+            <div className="flex items-center justify-between pb-3 border-b border-gray-100">
+              <div className="flex items-center gap-2.5">
+                <div className="h-10 w-10 rounded-2xl bg-emerald-50 border border-emerald-200 flex items-center justify-center text-emerald-600">
+                  <FileSpreadsheet className="h-5 w-5" />
+                </div>
+                <div>
+                  <span className="badge bg-emerald-50 text-emerald-700 font-extrabold text-[10px]">
+                    Excel Bulk Price Import
+                  </span>
+                  <h3 className="font-display text-lg font-black text-gray-900 mt-0.5">
+                    Review & Apply Pricing from "{importModal.fileName}"
+                  </h3>
+                </div>
+              </div>
+              {!importing && (
+                <button
+                  type="button"
+                  onClick={() => setImportModal(null)}
+                  className="text-gray-400 hover:text-gray-700 p-1 rounded-xl"
+                >
+                  <X className="h-5 w-5" />
+                </button>
+              )}
+            </div>
+
+            {/* Summary statistics badges */}
+            <div className="grid grid-cols-3 gap-3">
+              <div className="p-3.5 rounded-2xl bg-gray-50 border border-gray-200/80">
+                <p className="text-[11px] font-bold text-gray-400 uppercase tracking-wider">Total Rows</p>
+                <p className="text-xl font-black text-gray-800 mt-0.5">{importModal.totalRows.toLocaleString()}</p>
+              </div>
+              <div className="p-3.5 rounded-2xl bg-emerald-50 border border-emerald-200/80">
+                <p className="text-[11px] font-bold text-emerald-600 uppercase tracking-wider">Valid Price Rules</p>
+                <p className="text-xl font-black text-emerald-700 mt-0.5">{importModal.validRows.length.toLocaleString()}</p>
+              </div>
+              <div className="p-3.5 rounded-2xl bg-amber-50 border border-amber-200/80">
+                <p className="text-[11px] font-bold text-amber-600 uppercase tracking-wider">Skipped / Headers</p>
+                <p className="text-xl font-black text-amber-700 mt-0.5">{importModal.skippedCount.toLocaleString()}</p>
+              </div>
+            </div>
+
+            {/* Preview Table of First 6 Rows */}
+            <div className="space-y-2">
+              <div className="flex items-center justify-between text-xs font-bold text-gray-600">
+                <span>Preview (First {Math.min(6, importModal.validRows.length)} of {importModal.validRows.length}):</span>
+                <span className="text-[11px] text-gray-400">All prices will be applied instantly</span>
+              </div>
+              <div className="border border-gray-200 rounded-2xl overflow-hidden">
+                <div className="overflow-x-auto max-h-56">
+                  <table className="w-full text-left text-xs">
+                    <thead className="bg-gray-50 border-b border-gray-200 text-gray-500 font-bold sticky top-0">
+                      <tr>
+                        <th className="py-2.5 px-3">Brand</th>
+                        <th className="py-2.5 px-3">Model</th>
+                        <th className="py-2.5 px-3">Storage</th>
+                        <th className="py-2.5 px-3 text-right">Base Buyback Price</th>
+                        <th className="py-2.5 px-3 text-center">Multipliers</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-gray-100">
+                      {importModal.validRows.slice(0, 6).map((r, idx) => (
+                        <tr key={idx} className="hover:bg-gray-50/80">
+                          <td className="py-2.5 px-3 font-bold text-gray-800">{r.brand}</td>
+                          <td className="py-2.5 px-3 font-semibold text-gray-700">{r.model}</td>
+                          <td className="py-2.5 px-3 text-gray-500 font-mono">{r.storage}</td>
+                          <td className="py-2.5 px-3 text-right font-black text-emerald-600">
+                            {formatINR(r.base_price)}
+                          </td>
+                          <td className="py-2.5 px-3 text-center text-[11px] text-gray-500">
+                            {Math.round((r.excellent_multiplier ?? 1) * 100)}% / {Math.round((r.good_multiplier ?? 0.7) * 100)}% / {Math.round((r.fair_multiplier ?? 0.55) * 100)}%
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+
+            {/* Warnings list if any rows were skipped */}
+            {importModal.errors.length > 0 && (
+              <div className="p-3.5 rounded-2xl bg-amber-50/70 border border-amber-200/70 text-xs text-amber-800 space-y-1">
+                <div className="flex items-center gap-1.5 font-bold text-amber-900">
+                  <AlertCircle className="h-4 w-4 shrink-0 text-amber-600" />
+                  <span>{importModal.errors.length} rows skipped (missing data or invalid price):</span>
+                </div>
+                <ul className="list-disc list-inside text-[11px] text-amber-700 max-h-20 overflow-y-auto pl-1">
+                  {importModal.errors.slice(0, 5).map((err, i) => (
+                    <li key={i}>{err}</li>
+                  ))}
+                  {importModal.errors.length > 5 && (
+                    <li className="font-semibold">+ {importModal.errors.length - 5} more...</li>
+                  )}
+                </ul>
+              </div>
+            )}
+
+            {/* Progress Bar during saving */}
+            {importing && importProgress && (
+              <div className="space-y-1.5 p-3.5 rounded-2xl bg-blue-50 border border-blue-200">
+                <div className="flex justify-between text-xs font-bold text-blue-900">
+                  <span>Applying and syncing pricing...</span>
+                  <span>{Math.round((importProgress.current / importProgress.total) * 100)}%</span>
+                </div>
+                <div className="w-full bg-blue-200 rounded-full h-2.5 overflow-hidden">
+                  <div
+                    className="bg-blue-600 h-2.5 rounded-full transition-all duration-300"
+                    style={{ width: `${(importProgress.current / importProgress.total) * 100}%` }}
+                  />
+                </div>
+                <p className="text-[11px] text-blue-600 text-right">
+                  {importProgress.current} of {importProgress.total} rules saved to database
+                </p>
+              </div>
+            )}
+
+            <div className="flex justify-end gap-2.5 pt-3 border-t border-gray-100">
+              <button
+                type="button"
+                disabled={importing}
+                onClick={() => setImportModal(null)}
+                className="btn-outline text-xs py-2 px-4 rounded-xl cursor-pointer"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                disabled={importing}
+                onClick={handleConfirmImport}
+                className="btn bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs py-2 px-5 rounded-xl shadow-md cursor-pointer flex items-center gap-1.5"
+              >
+                <Check className="h-4 w-4" />
+                {importing ? 'Applying Prices...' : `Confirm & Apply ${importModal.validRows.length.toLocaleString()} Prices`}
+              </button>
+            </div>
           </div>
         </div>
       )}
