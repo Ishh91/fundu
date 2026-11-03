@@ -222,6 +222,19 @@ export type SeriesGroup = {
 export const BRAND_SERIES_DEFINITIONS: Record<string, BrandSeriesDefinition[]> = {
   apple: [
     {
+      id: 'iphone-18',
+      slug: 'iphone-18-series',
+      name: 'iPhone 18 Series',
+      brand: 'Apple',
+      image: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-16-pro-max.jpg',
+      description: 'iPhone 18 Pro Max, 18 Pro',
+      pattern: /\biphone\s*18([a-z0-9]|\b)/i,
+      defaultModels: [
+        { brand: 'Apple', series: 'iPhone 18 Series', model: 'Apple iPhone 18 Pro Max', storage: '256 GB', price: 160000, image: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-16-pro-max.jpg' },
+        { brand: 'Apple', series: 'iPhone 18 Series', model: 'Apple iPhone 18 Pro', storage: '256 GB', price: 152000, image: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-16-pro.jpg' },
+      ],
+    },
+    {
       id: 'iphone-17',
       slug: 'iphone-17-series',
       name: 'iPhone 17 Series',
@@ -365,8 +378,8 @@ export const BRAND_SERIES_DEFINITIONS: Record<string, BrandSeriesDefinition[]> =
       description: 'iPhone 7 Plus, iPhone 7',
       pattern: /\biphone\s*7\b/i,
       defaultModels: [
-        { brand: 'Apple', series: 'iPhone 7 Series', model: 'Apple iPhone 7 Plus', storage: '64 GB', price: 5400, image: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-7r4.jpg' },
-        { brand: 'Apple', series: 'iPhone 7 Series', model: 'Apple iPhone 7', storage: '64 GB', price: 3600, image: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-7r4.jpg' },
+        { brand: 'Apple', series: 'iPhone 7 Series', model: 'Apple iPhone 7 Plus', storage: '32 GB', price: 5400, image: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-7r4.jpg' },
+        { brand: 'Apple', series: 'iPhone 7 Series', model: 'Apple iPhone 7', storage: '32 GB', price: 3600, image: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-7r4.jpg' },
       ],
     },
     {

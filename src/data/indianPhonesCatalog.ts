@@ -153,7 +153,9 @@ export const ALL_INDIAN_PHONES_CATALOG: MasterPhone[] = [
     ],
     "storage_options": [
       "256GB",
-      "512GB"
+      "512GB",
+      "1TB",
+      "2TB"
     ],
     "default_mrp": 159900,
     "base_resale_value": 126000,
@@ -176,7 +178,9 @@ export const ALL_INDIAN_PHONES_CATALOG: MasterPhone[] = [
     ],
     "storage_options": [
       "256GB",
-      "512GB"
+      "512GB",
+      "1TB",
+      "2TB"
     ],
     "default_mrp": 134900,
     "base_resale_value": 104000,
@@ -198,9 +202,9 @@ export const ALL_INDIAN_PHONES_CATALOG: MasterPhone[] = [
       "8GB"
     ],
     "storage_options": [
-      "128GB",
       "256GB",
-      "512GB"
+      "512GB",
+      "1TB"
     ],
     "default_mrp": 99900,
     "base_resale_value": 82000,
@@ -6437,10 +6441,10 @@ export const ALL_INDIAN_PHONES_CATALOG: MasterPhone[] = [
     "model": "Apple iPhone 18 Pro Max",
     "release_year": 2026,
     "storage_options": [
-      "128 GB",
       "256 GB",
       "512 GB",
-      "1 TB"
+      "1 TB",
+      "2 TB"
     ],
     "ram_options": [],
     "default_storage": "256 GB",
@@ -6462,13 +6466,13 @@ export const ALL_INDIAN_PHONES_CATALOG: MasterPhone[] = [
     "model": "Apple iPhone 18 Pro",
     "release_year": 2026,
     "storage_options": [
-      "128 GB",
       "256 GB",
       "512 GB",
-      "1 TB"
+      "1 TB",
+      "2 TB"
     ],
     "ram_options": [],
-    "default_storage": "128 GB",
+    "default_storage": "256 GB",
     "default_ram": "",
     "default_mrp": 139900,
     "base_resale_value": 152000,
