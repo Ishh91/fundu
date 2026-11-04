@@ -22,7 +22,7 @@ import {
   Layers,
 } from 'lucide-react';
 import { formatINR } from '../lib/db';
-import { getCleanPhoneImage, getCleanBrandLogo, BRAND_FRONT_FALLBACKS, getGenericDevicePlaceholder, pullLiveModelImagesFromDb, isBrandImageMismatch } from '../lib/phoneImages';
+import { getCleanPhoneImage, getCleanBrandLogo, BRAND_FRONT_FALLBACKS, getGenericDevicePlaceholder, pullLiveModelImagesFromDb, isBrandImageMismatch, clearPhoneImageCache } from '../lib/phoneImages';
 import { usePriceSync, applyPriceOverrides, isModelDeleted, getEffectivePrice } from '../lib/priceSync';
 import { MASTER_MODEL_CATALOG } from '../data/masterModelCatalog';
 import { getUnifiedCatalog } from '../lib/modelCatalogSync';
@@ -229,10 +229,15 @@ export default function SellBrandPage() {
   useEffect(() => {
     pullLiveModelImagesFromDb();
     const handleModelImageUpdate = () => {
+      clearPhoneImageCache();
       setImageVersion((v) => v + 1);
     };
     window.addEventListener('fundu_model_image_updated', handleModelImageUpdate);
-    return () => window.removeEventListener('fundu_model_image_updated', handleModelImageUpdate);
+    window.addEventListener('fundu_catalog_synced', handleModelImageUpdate);
+    return () => {
+      window.removeEventListener('fundu_model_image_updated', handleModelImageUpdate);
+      window.removeEventListener('fundu_catalog_synced', handleModelImageUpdate);
+    };
   }, []);
 
   // Fetch models dynamically from API when brand changes (instant 0ms if cached, background sync)

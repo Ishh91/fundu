@@ -18,6 +18,8 @@ import {
   Eye,
   Info,
   ChevronDown,
+  Download,
+  FileText,
 } from 'lucide-react';
 import { formatINR } from '../../lib/db';
 import { API_BASE } from '../../config/apiConfig';
@@ -576,15 +578,26 @@ export default function AdminCompetitorRadar() {
           </p>
         </div>
 
-        <button
-          type="button"
-          onClick={() => fetchRadar(selectedBrand, searchModel, selectedStorage)}
-          disabled={loading}
-          className="btn bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-xs px-5 py-3 rounded-2xl flex items-center gap-2 shadow-lg cursor-pointer transition shrink-0"
-        >
-          <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
-          {loading ? 'Scanning Market...' : 'Refresh Live Rates'}
-        </button>
+        <div className="flex items-center gap-2.5 shrink-0 flex-wrap">
+          <a
+            href="/fundu_vs_cashify_5_phone_comparison.pdf"
+            download="Fundu_vs_Cashify_Condition_Benchmark.pdf"
+            className="btn bg-blue-600 hover:bg-blue-500 text-white font-black text-xs px-4 py-3 rounded-2xl flex items-center gap-2 shadow-lg cursor-pointer transition shrink-0"
+            title="Download Complete 5-Phone Condition Benchmark PDF Report"
+          >
+            <Download className="h-4 w-4" /> Download Cashify Benchmark PDF
+          </a>
+
+          <button
+            type="button"
+            onClick={() => fetchRadar(selectedBrand, searchModel, selectedStorage)}
+            disabled={loading}
+            className="btn bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-xs px-5 py-3 rounded-2xl flex items-center gap-2 shadow-lg cursor-pointer transition shrink-0"
+          >
+            <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
+            {loading ? 'Scanning Market...' : 'Refresh Live Rates'}
+          </button>
+        </div>
       </div>
 
       {/* Top 10 High-Volume Indian Watchlist Shortcuts */}

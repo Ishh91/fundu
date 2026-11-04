@@ -841,7 +841,12 @@ if (typeof window !== 'undefined') {
           keys.forEach((k) => { delete memoryCustomCache[k]; });
         }
         clearPhoneImageCache();
+        const b = String(brand || '').toLowerCase().trim();
+        if (b) {
+          try { localStorage.removeItem(`fundu_brand_catalog_${b}`); } catch {}
+        }
         window.dispatchEvent(new CustomEvent('fundu_model_image_updated', { detail: payload.data }));
+        window.dispatchEvent(new CustomEvent('fundu_catalog_synced', { detail: payload.data }));
       } else {
         pullLiveModelImagesFromDb(true);
       }
@@ -883,6 +888,9 @@ export function saveCustomModelImage(brand: string, model: string, imageUrl: str
     });
   }
 
+  // Clear in-memory image cache immediately so fresh image computes on next render
+  clearPhoneImageCache();
+
   // Persist safely to localStorage with auto-pruning & quota protection
   try {
     let current: Record<string, string> = {};
@@ -916,7 +924,36 @@ export function saveCustomModelImage(brand: string, model: string, imageUrl: str
     }
 
     safeSetLocalStorage(CUSTOM_MODEL_IMAGES_KEY, current);
-    clearPhoneImageCache();
+
+    // Evict cached brand catalog so frontend pulls fresh image
+    if (b) {
+      try {
+        localStorage.removeItem(`fundu_brand_catalog_${b}`);
+      } catch {}
+    }
+
+    // Also update LIVE_MASTER_PHONES_STORAGE_KEY cache in localStorage if present
+    try {
+      const rawLive = localStorage.getItem('fundu_live_master_phones_v2');
+      if (rawLive) {
+        const parsed = JSON.parse(rawLive);
+        if (Array.isArray(parsed)) {
+          let updated = false;
+          const updatedLive = parsed.map((p: any) => {
+            const pb = (p.brand || '').toLowerCase().trim();
+            const pm = (p.model || '').toLowerCase().trim();
+            if (pb === b && (pm === strippedM || pm === (model || '').toLowerCase().trim() || pm.includes(strippedM))) {
+              updated = true;
+              return { ...p, image_url: val, custom_image: Boolean(val) };
+            }
+            return p;
+          });
+          if (updated) {
+            localStorage.setItem('fundu_live_master_phones_v2', JSON.stringify(updatedLive));
+          }
+        }
+      }
+    } catch {}
   } catch (err) {
     console.warn('[phoneImages] Safe fallback: skipped localStorage write:', err);
   }
@@ -927,6 +964,7 @@ export function saveCustomModelImage(brand: string, model: string, imageUrl: str
 
   try {
     window.dispatchEvent(new CustomEvent('fundu_model_image_updated', { detail: { brand, model, imageUrl: val } }));
+    window.dispatchEvent(new CustomEvent('fundu_catalog_synced', { detail: { brand, model } }));
   } catch {}
 }
 
