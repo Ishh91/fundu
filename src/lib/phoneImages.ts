@@ -5,7 +5,8 @@
 
 import { MOBILE_API_THUMBS } from '../data/deviceImageDictionary.ts';
 import { broadcastSync, subscribeToRealtimeSync } from './realtimeSync';
-import { db } from './db';
+import { db, readSession, invalidateClientTableCache } from './db';
+import { API_BASE } from '../config/apiConfig';
 
 // Official Brand Vector Logos
 export const BRAND_OFFICIAL_LOGOS: Record<string, string> = {
@@ -808,6 +809,23 @@ export async function pullLiveModelImagesFromDb(force = false): Promise<boolean>
   if (typeof window === 'undefined' || isPullingImages) return false;
   isPullingImages = true;
   try {
+    // 1. Fast direct un-cached fetch from dedicated endpoint
+    try {
+      const liveRes = await fetch(`${API_BASE}/phones/live-images?_t=${Date.now()}`, {
+        cache: 'no-store',
+        headers: { 'Cache-Control': 'no-cache' },
+      });
+      if (liveRes.ok) {
+        const json = await liveRes.json();
+        if (Array.isArray(json?.data) && json.data.length > 0) {
+          return syncCustomImagesFromDatabase(json.data);
+        }
+      }
+    } catch (_liveErr) {
+      // fallback to db.from
+    }
+
+    // 2. Fallback to standard DB table queries
     const [mpRes, spRes] = await Promise.all([
       db.from('master_phones').select('brand,model,image_url,custom_image').limit(5000),
       db.from('sell_price_configs').select('brand,model,image_url,custom_image').limit(5000),
@@ -824,6 +842,76 @@ export async function pullLiveModelImagesFromDb(force = false): Promise<boolean>
     isPullingImages = false;
   }
   return false;
+}
+
+/**
+ * Direct persistence of custom phone image into MongoDB (MasterPhone + SellPriceConfig)
+ * Guarantees immediate database update, cache invalidation, and real-time UI synchronization.
+ */
+export async function saveModelImageToDatabase(
+  brand: string,
+  model: string,
+  imageUrl: string
+): Promise<{ success: boolean; data?: any; error?: string }> {
+  const b = (brand || '').trim();
+  const m = (model || '').trim();
+  const url = (imageUrl || '').trim();
+
+  // 1. Immediately apply to in-memory cache and localStorage for 0ms instant local rendering
+  saveCustomModelImage(b, m, url);
+
+  // 2. Direct persistence into MongoDB via backend API
+  try {
+    const session = readSession();
+    const res = await fetch(`${API_BASE}/phones/model-image`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        ...(session?.access_token ? { Authorization: `Bearer ${session.access_token}` } : {}),
+      },
+      body: JSON.stringify({
+        brand: b,
+        model: m,
+        image_url: url,
+      }),
+    });
+
+    const json = await res.json().catch(() => null);
+    if (!res.ok) {
+      const errMsg = json?.error?.message || json?.message || 'Failed to save image into database';
+      throw new Error(errMsg);
+    }
+
+    // 3. Invalidate client caches
+    invalidateClientTableCache('master_phones');
+    invalidateClientTableCache('sell_price_configs');
+    clearPhoneImageCache();
+    const bLow = b.toLowerCase();
+    if (bLow) {
+      try { localStorage.removeItem(`fundu_brand_catalog_${bLow}`); } catch {}
+    }
+
+    // 4. Broadcast realtime event
+    broadcastSync('MODEL_IMAGE_UPDATE', 'master_phones', 'update', {
+      brand: b,
+      model: m,
+      imageUrl: url,
+    });
+
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent('fundu_model_image_updated', {
+        detail: { brand: b, model: m, imageUrl: url },
+      }));
+      window.dispatchEvent(new CustomEvent('fundu_catalog_synced', {
+        detail: { brand: b, model: m, imageUrl: url },
+      }));
+    }
+
+    return { success: true, data: json?.data };
+  } catch (err: any) {
+    console.error('[phoneImages] saveModelImageToDatabase error:', err);
+    return { success: false, error: err?.message || 'Database save failed' };
+  }
 }
 
 // Fast startup and continuous real-time synchronization

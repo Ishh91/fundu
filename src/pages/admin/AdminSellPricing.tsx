@@ -32,6 +32,7 @@ import { db, formatINR } from '../../lib/db';
 import {
   getCleanPhoneImage,
   saveCustomModelImage,
+  saveModelImageToDatabase,
   resetCustomModelImage,
   hasCustomModelImage,
   getCustomModelImages,
@@ -662,6 +663,8 @@ export default function AdminSellPricing({
           },
           urlToSave
         );
+      } else {
+        await saveModelImageToDatabase(activeImageModel.brand, activeImageModel.model, urlToSave);
       }
 
       activeImageModel.image_url = urlToSave;
@@ -698,6 +701,8 @@ export default function AdminSellPricing({
           },
           ''
         );
+      } else {
+        await saveModelImageToDatabase(activeImageModel.brand, activeImageModel.model, '');
       }
 
       activeImageModel.image_url = '';

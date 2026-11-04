@@ -814,6 +814,33 @@ export const upsertTable = async (table, { auth, values, single }) => {
     return normalizeDoc(doc);
   }
 
+  if (table === 'master_phones' || table === 'phones') {
+    requireAuth(auth);
+    if (!isAdmin(auth)) throw createHttpError(403, 'Admin access required.');
+    const Model = getModel(table);
+    const payload = preparePayload(table, 'upsert', values, auth);
+    const rawBrand = (payload.brand || '').trim();
+    let rawModel = (payload.model || '').trim();
+    if (rawBrand && rawModel.toLowerCase().startsWith(rawBrand.toLowerCase())) {
+      rawModel = rawModel.slice(rawBrand.length).trim();
+    }
+    const brandRegex = new RegExp(`^${rawBrand}$`, 'i');
+    const modelEscaped = rawModel.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const modelRegex = new RegExp(`^(${modelEscaped}|${rawBrand}\\s+${modelEscaped})$`, 'i');
+    const match = {
+      brand: brandRegex,
+      model: modelRegex,
+    };
+    payload.updated_at = new Date();
+    const doc = await Model.findOneAndUpdate(match, payload, {
+      new: true,
+      upsert: true,
+      runValidators: false,
+      setDefaultsOnInsert: true,
+    });
+    return normalizeDoc(doc);
+  }
+
   return insertIntoTable(table, { auth, values, single });
 };
 

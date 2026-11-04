@@ -25,6 +25,7 @@ import { MASTER_MODEL_CATALOG } from '../../data/masterModelCatalog';
 import {
   getCleanPhoneImage,
   saveCustomModelImage,
+  saveModelImageToDatabase,
   resetCustomModelImage,
   getCustomModelImages,
   hasCustomModelImage,
@@ -112,11 +113,11 @@ export default function AdminCatalog({
       }
       saveCustomModelImage(editingPhone.brand, editingPhone.model, urlToSave);
 
-      // Also call parent prop if present (handles Mongo ObjectId resolution & insertion)
+      // Guaranteed persistence directly into MongoDB via dedicated endpoint
       if (onUpdatePhoneImage) {
         await onUpdatePhoneImage(editingPhone, urlToSave);
-      } else if (editingPhone.id && /^[0-9a-fA-F]{24}$/.test(editingPhone.id)) {
-        await db.from('master_phones').update({ image_url: urlToSave }).eq('id', editingPhone.id);
+      } else {
+        await saveModelImageToDatabase(editingPhone.brand, editingPhone.model, urlToSave);
       }
 
       editingPhone.image_url = urlToSave;
@@ -138,8 +139,8 @@ export default function AdminCatalog({
       resetCustomModelImage(editingPhone.brand, editingPhone.model);
       if (onUpdatePhoneImage) {
         await onUpdatePhoneImage(editingPhone, '');
-      } else if (editingPhone.id && /^[0-9a-fA-F]{24}$/.test(editingPhone.id)) {
-        await db.from('master_phones').update({ image_url: null }).eq('id', editingPhone.id);
+      } else {
+        await saveModelImageToDatabase(editingPhone.brand, editingPhone.model, '');
       }
       editingPhone.image_url = '';
       setCustomImagesVer((v) => v + 1);

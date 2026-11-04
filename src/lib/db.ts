@@ -38,7 +38,7 @@ const authListeners = new Set<AuthChangeHandler>();
 
 const createError = (message: string): QueryError => ({ message });
 
-const readSession = (): Session | null => {
+export const readSession = (): Session | null => {
   if (typeof window === 'undefined') return null;
 
   const raw = window.localStorage.getItem(SESSION_KEY);

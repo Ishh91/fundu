@@ -47,7 +47,7 @@ import {
 } from '../lib/mobileApi';
 import { soundNotifier } from '../lib/soundAlert';
 import AdminLiveNotifier, { LiveNotification } from '../components/admin/AdminLiveNotifier';
-import { saveCustomModelImage } from '../lib/phoneImages';
+import { saveCustomModelImage, saveModelImageToDatabase } from '../lib/phoneImages';
 import { isStorageAllowedForModel } from '../lib/deviceSpecs';
 
 // Sub-page modular components
@@ -1249,105 +1249,44 @@ export default function Admin() {
     const model = (phone.model || '').trim();
     const url = (newImageUrl || '').trim();
 
-    saveCustomModelImage(brand, model, url);
+    // 1. Persist directly into MongoDB (MasterPhone & SellPriceConfig) with zero lag
+    const saveResult = await saveModelImageToDatabase(brand, model, url);
+    if (!saveResult.success) {
+      throw new Error(saveResult.error || 'Failed to save image into database');
+    }
 
     const bNorm = brand.toLowerCase();
     const mNorm = model.toLowerCase();
 
-    // Check if an ID is a valid 24-character hexadecimal MongoDB ObjectId
-    const isMongoId = (id?: string) => Boolean(id && /^[0-9a-fA-F]{24}$/.test(id));
+    // 2. Immediately update in-memory masterPhones state
+    setMasterPhones((prev) =>
+      prev.map((p) => {
+        const pb = (p.brand || '').toLowerCase().trim();
+        const pm = (p.model || '').toLowerCase().trim();
+        const isMatch =
+          pb === bNorm &&
+          (pm === mNorm ||
+            pm.replace(/[^a-z0-9]/g, '') === mNorm.replace(/[^a-z0-9]/g, '') ||
+            (mNorm.startsWith(bNorm) && pm === mNorm.slice(bNorm.length).trim()) ||
+            (pm.startsWith(pb) && pm.slice(pb.length).trim() === mNorm));
+        return isMatch ? { ...p, image_url: url, custom_image: Boolean(url) } : p;
+      })
+    );
 
-    // Find ALL matching records in masterPhones (both full model name and stripped variant, e.g. "OnePlus 12R" & "12R")
-    const matchingPhones = masterPhones.filter((p) => {
-      if (phone.id && isMongoId(phone.id) && p.id === phone.id) return true;
-      const pb = (p.brand || '').toLowerCase().trim();
-      const pm = (p.model || '').toLowerCase().trim();
-      return (
-        pb === bNorm &&
-        (pm === mNorm ||
-         pm.replace(/[^a-z0-9]/g, '') === mNorm.replace(/[^a-z0-9]/g, '') ||
-         (mNorm.startsWith(bNorm) && pm === mNorm.slice(bNorm.length).trim()) ||
-         (pm.startsWith(pb) && pm.slice(pb.length).trim() === mNorm))
-      );
-    });
-
-    const targetIds = matchingPhones
-      .map((p) => p.id)
-      .filter((id): id is string => Boolean(id && isMongoId(id)));
-
-    if (phone.id && isMongoId(phone.id) && !targetIds.includes(phone.id)) {
-      targetIds.push(phone.id);
-    }
-
-    if (targetIds.length === 0) {
-      // Check if existing record is already in DB before creating duplicate
-      try {
-        const existingInDb = await db.from('master_phones').select('id').eq('brand', brand).eq('model', model).maybeSingle();
-        const foundId = (existingInDb.data as any)?.id;
-        if (foundId && isMongoId(foundId)) {
-          targetIds.push(foundId);
-        }
-      } catch {}
-    }
-
-    // Always update sell_price_configs so custom photo is reflected in pricing tables
-    try {
-      await db.from('sell_price_configs').update({
-        image_url: url || null,
-        custom_image: Boolean(url),
-      }).eq('brand', brand).eq('model', model);
-    } catch {}
-
-    if (targetIds.length > 0) {
-      // Update all matching variant records in database
-      await Promise.all(
-        targetIds.map((id) =>
-          db.from('master_phones').update({ image_url: url || null, custom_image: Boolean(url) }).eq('id', id)
-        )
-      );
-
-      // Also ensure exact brand/model match in master_phones is updated
-      try {
-        await db.from('master_phones').update({
-          image_url: url || null,
-          custom_image: Boolean(url),
-        }).eq('brand', brand).eq('model', model);
-      } catch {}
-
-      setMasterPhones((prev) =>
-        prev.map((p) => (targetIds.includes(p.id) || (p.brand === brand && p.model === model) ? { ...p, image_url: url, custom_image: Boolean(url) } : p))
-      );
-    } else {
-      // Create new record in master_phones so it persists in the database for all visitors
-      const res = await db
-        .from('master_phones')
-        .insert({
-          brand,
-          model,
-          image_url: url || null,
-          custom_image: Boolean(url),
-          base_resale_value: phone.base_resale_value || 12000,
-          default_mrp: phone.default_mrp || 18000,
-          release_year: phone.release_year || new Date().getFullYear(),
-          ram_options: phone.ram_options || ['8GB'],
-          storage_options: phone.storage_options || ['128GB'],
-          is_active: true,
-        })
-        .select('*')
-        .single();
-
-      if (res.error) {
-        console.error('[Admin] Failed to insert new phone into master_phones:', res.error);
-        throw new Error(`Database error: ${res.error.message}`);
-      }
-
-      const inserted = Array.isArray(res.data) ? res.data[0] : res.data;
-      if (inserted) {
-        setMasterPhones((prev) => [inserted as MasterPhone, ...prev]);
-      }
-    }
-
-    broadcastSync('MODEL_IMAGE_UPDATE', 'master_phones', 'update', { brand, model, imageUrl: url });
+    // 3. Immediately update in-memory sellPriceConfigs state
+    setSellPriceConfigs((prev) =>
+      prev.map((c) => {
+        const cb = (c.brand || '').toLowerCase().trim();
+        const cm = (c.model || '').toLowerCase().trim();
+        const isMatch =
+          cb === bNorm &&
+          (cm === mNorm ||
+            cm.replace(/[^a-z0-9]/g, '') === mNorm.replace(/[^a-z0-9]/g, '') ||
+            (mNorm.startsWith(bNorm) && cm === mNorm.slice(bNorm.length).trim()) ||
+            (cm.startsWith(cb) && cm.slice(cb.length).trim() === mNorm));
+        return isMatch ? { ...c, image_url: url, custom_image: Boolean(url) } : c;
+      })
+    );
   };
 
   const openAddProductModal = (initialData?: Partial<typeof productForm> | 'smartphone' | 'laptop') => {

@@ -1,6 +1,7 @@
 import { Router } from 'express';
-import { MasterPhone, SellPriceConfig } from '../models/index.js';
+import { MasterPhone, SellPriceConfig, SellRequest as SellRequestModel } from '../models/index.js';
 import { normalizeDoc } from '../utils/dbHelpers.js';
+import { clearTableCache } from './dbRoutes.js';
 import { INDIAN_MARKET_PHONES_LAST_10_YEARS, ensureMasterPhonesSeeded } from '../config/seedPhones.js';
 import { isBlockedPhone } from '../utils/blockedModels.js';
 import {
@@ -417,6 +418,154 @@ router.post('/quote/accept-revised', async (req, res) => {
       return res.json({ data: normalizeDoc(doc), message: 'Revised offer declined. Device return initiated.' });
     }
   } catch (error) {
+    return res.status(500).json({ error: { message: error.message } });
+  }
+});
+
+/**
+ * Update Phone Model Image directly in Database (MasterPhone + SellPriceConfig)
+ * POST /api/phones/model-image
+ */
+router.post('/model-image', async (req, res) => {
+  try {
+    const { brand, model, image_url } = req.body;
+    if (!brand || !model) {
+      return res.status(400).json({ error: { message: 'Brand and Model are required' } });
+    }
+
+    const rawBrand = String(brand).trim();
+    let rawModel = String(model).trim();
+    const cleanImageUrl = typeof image_url === 'string' ? image_url.trim() : '';
+
+    // Strip brand prefix if redundant
+    if (rawBrand && rawModel.toLowerCase().startsWith(rawBrand.toLowerCase())) {
+      rawModel = rawModel.slice(rawBrand.length).trim();
+    }
+
+    const isPoco = rawBrand.toLowerCase() === 'poco' || rawModel.toLowerCase().startsWith('poco');
+    const isXiaomi = rawBrand.toLowerCase() === 'xiaomi';
+    const brandRegex = (isPoco || isXiaomi)
+      ? /^(poco|xiaomi)$/i
+      : new RegExp(`^${rawBrand}$`, 'i');
+
+    const cleanModelName = rawModel.replace(/^(poco|xiaomi)\s+/i, '').trim();
+    const cleanNo5g = cleanModelName.replace(/\s*5g$/i, '').trim();
+    const modelEscaped = rawModel.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const cleanEscaped = cleanModelName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const cleanNo5gEscaped = cleanNo5g.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const modelRegex = new RegExp(`^(${modelEscaped}|${rawBrand}\\s+${modelEscaped}|${cleanEscaped}|poco\\s+${cleanEscaped}|xiaomi\\s+${cleanEscaped}|${cleanNo5gEscaped}|poco\\s+${cleanNo5gEscaped}|xiaomi\\s+${cleanNo5gEscaped})(?:\\s*5g)?$`, 'i');
+
+    const canonicalBrand = isPoco ? 'Poco' : rawBrand;
+
+    // 1. Update or upsert MasterPhone in MongoDB
+    const mpUpdate = {
+      image_url: cleanImageUrl || null,
+      custom_image: Boolean(cleanImageUrl),
+      updated_at: new Date(),
+    };
+
+    let updatedMp = await MasterPhone.findOneAndUpdate(
+      { brand: brandRegex, model: modelRegex },
+      { $set: mpUpdate },
+      { new: true }
+    );
+
+    if (!updatedMp) {
+      // If not present in DB, create it permanently with sensible defaults
+      updatedMp = await MasterPhone.create({
+        brand: canonicalBrand,
+        model: rawModel,
+        release_year: new Date().getFullYear(),
+        ram_options: ['6GB', '8GB', '12GB'],
+        storage_options: ['128GB', '256GB'],
+        default_mrp: 29999,
+        base_resale_value: 14000,
+        image_url: cleanImageUrl || null,
+        custom_image: Boolean(cleanImageUrl),
+        popular_tag: `${canonicalBrand} 5G Device`,
+        is_active: true,
+      });
+    } else {
+      // Also update any other variant docs with this brand and model regex
+      await MasterPhone.updateMany(
+        { brand: brandRegex, model: modelRegex },
+        { $set: mpUpdate }
+      );
+    }
+
+    // 2. Also update in SellPriceConfig
+    const spUpdate = {
+      image_url: cleanImageUrl || null,
+      custom_image: Boolean(cleanImageUrl),
+      updated_at: new Date(),
+    };
+    await SellPriceConfig.updateMany(
+      { brand: brandRegex, model: modelRegex },
+      { $set: spUpdate }
+    );
+
+    // 3. Clear server in-memory route cache so next read is 100% fresh
+    clearTableCache('master_phones');
+    clearTableCache('sell_price_configs');
+
+    return res.json({
+      success: true,
+      message: `Image for ${canonicalBrand} ${rawModel} successfully saved directly to database`,
+      data: {
+        brand: canonicalBrand,
+        model: rawModel,
+        image_url: cleanImageUrl || null,
+        custom_image: Boolean(cleanImageUrl),
+        id: updatedMp._id.toString(),
+      },
+    });
+  } catch (error) {
+    console.error('[phoneRoutes] Failed to update model image:', error);
+    return res.status(500).json({ error: { message: error.message } });
+  }
+});
+
+/**
+ * Fast endpoint to fetch all models with custom or database images
+ * GET /api/phones/live-images
+ */
+router.get('/live-images', async (_req, res) => {
+  try {
+    res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate');
+
+    const [mpDocs, spDocs] = await Promise.all([
+      MasterPhone.find(
+        { is_active: { $ne: false }, image_url: { $ne: null } },
+        'brand model image_url custom_image'
+      ).lean(),
+      SellPriceConfig.find(
+        { is_active: { $ne: false }, image_url: { $ne: null } },
+        'brand model image_url custom_image'
+      ).lean(),
+    ]);
+
+    const items = [];
+    const seen = new Set();
+
+    const addDoc = (d) => {
+      if (!d || !d.brand || !d.model || !d.image_url) return;
+      const key = `${d.brand.toLowerCase().trim()}:${d.model.toLowerCase().trim()}`;
+      if (seen.has(key)) return;
+      seen.add(key);
+      items.push({
+        brand: d.brand,
+        model: d.model,
+        image_url: d.image_url,
+        custom_image: Boolean(d.custom_image),
+      });
+    };
+
+    mpDocs.forEach(addDoc);
+    spDocs.forEach(addDoc);
+
+    return res.json({ data: items, count: items.length, timestamp: Date.now() });
+  } catch (error) {
+    console.error('[phoneRoutes] Failed to fetch live images:', error);
     return res.status(500).json({ error: { message: error.message } });
   }
 });
