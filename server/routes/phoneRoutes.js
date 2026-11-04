@@ -345,7 +345,6 @@ import {
   FUNDU_POLICY,
   FUNDU_SERVICE_LOCALITIES,
 } from '../services/quoteService.js';
-import { SellRequest as SellRequestModel } from '../models/SellRequest.js';
 
 /**
  * Generate official Fundu buyback quote

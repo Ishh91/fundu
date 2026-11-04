@@ -89,26 +89,27 @@ export async function resolveDeviceImage(brand, model) {
         );
         if (!best) best = candidateList[0];
 
-      if (best && best.id) {
-        const thumbUrl = `https://api.mobileapi.dev/devices/${best.id}/thumb.png`;
-        setCachedValue(cacheKey, thumbUrl);
+        if (best && best.id) {
+          const thumbUrl = `https://api.mobileapi.dev/devices/${best.id}/thumb.png`;
+          setCachedValue(cacheKey, thumbUrl);
 
-        // Update database in background for permanent persistence (only if admin hasn't set a custom image)
-        MasterPhone.updateOne(
-          { 
-            brand: new RegExp(`^${cleanBrand}$`, 'i'), 
-            model: new RegExp(`^${cleanModel}$`, 'i'),
-            custom_image: { $ne: true }
-          },
-          { $set: { image_url: thumbUrl } }
-        ).catch(() => {});
+          // Update database in background for permanent persistence (only if admin hasn't set a custom image)
+          MasterPhone.updateOne(
+            { 
+              brand: new RegExp(`^${cleanBrand}$`, 'i'), 
+              model: new RegExp(`^${cleanModel}$`, 'i'),
+              custom_image: { $ne: true }
+            },
+            { $set: { image_url: thumbUrl } }
+          ).catch(() => {});
 
-        return { 
-          imageUrl: thumbUrl, 
-          source: 'option_a_mobileapi', 
-          deviceId: best.id, 
-          title: best.full_name || best.name 
-        };
+          return { 
+            imageUrl: thumbUrl, 
+            source: 'option_a_mobileapi', 
+            deviceId: best.id, 
+            title: best.full_name || best.name 
+          };
+        }
       }
     }
   } catch (err) {
