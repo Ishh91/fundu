@@ -896,7 +896,6 @@ export async function pullLiveModelImagesFromDb(force = false): Promise<boolean>
     try {
       const liveRes = await fetch(`${API_BASE}/phones/live-images?_t=${Date.now()}`, {
         cache: 'no-store',
-        headers: { 'Cache-Control': 'no-cache' },
       });
       if (liveRes.ok) {
         const json = await liveRes.json();
