@@ -40,6 +40,8 @@ import {
   Droplets,
   AlertCircle,
   Info,
+  MapPin,
+  RefreshCw,
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { DOORSTEP_AREAS } from '../types';
