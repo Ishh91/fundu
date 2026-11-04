@@ -7758,7 +7758,15 @@ export const MASTER_MODEL_CATALOG = [
     "series": "Spark Series",
     "model": "Tecno Spark 10 Pro",
     "storage": "128 GB",
-    "price": 7100,
+    "price": 5800,
+    "image": "https://fdn2.gsmarena.com/vv/bigpic/tecno-spark-10-pro.jpg"
+  },
+  {
+    "brand": "Tecno",
+    "series": "Spark Series",
+    "model": "Tecno Spark 10 Pro",
+    "storage": "256 GB",
+    "price": 6500,
     "image": "https://fdn2.gsmarena.com/vv/bigpic/tecno-spark-10-pro.jpg"
   },
   {

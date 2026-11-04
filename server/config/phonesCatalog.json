@@ -26972,5 +26972,29 @@
     "display_spec": "6.82\" HD+ Display",
     "is_5g": false,
     "is_active": false
+  },
+  {
+    "brand": "Tecno",
+    "model": "Spark 10 Pro",
+    "release_year": 2023,
+    "ram_options": [
+      "8GB"
+    ],
+    "storage_options": [
+      "128 GB",
+      "256 GB"
+    ],
+    "default_mrp": 12499,
+    "base_resale_value": 5800,
+    "price": 5800,
+    "basePrice": 5800,
+    "image_url": "https://fdn2.gsmarena.com/vv/bigpic/tecno-spark-10-pro.jpg",
+    "popular_tag": "Tecno Spark Official Model",
+    "processor": "MediaTek Helio G88",
+    "camera_spec": "50MP AI Dual Camera",
+    "battery_spec": "5000 mAh 18W Fast Charging",
+    "display_spec": "6.78\" FHD+ 90Hz Display",
+    "is_5g": false,
+    "is_active": true
   }
 ]

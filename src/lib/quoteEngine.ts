@@ -92,11 +92,27 @@ export function getInstantFunduQuote(params: FunduQuoteRequest): FunduQuoteRespo
   if (!dbPrice || dbPrice <= 0) {
     const mNorm = (params.model || '').toLowerCase().trim();
     const bNorm = (params.brand || '').toLowerCase().trim();
-    const master = MASTER_MODEL_CATALOG.find((m) =>
-      m.model.toLowerCase() === mNorm ||
-      `${m.brand} ${m.model}`.toLowerCase() === `${bNorm} ${mNorm}` ||
-      m.model.toLowerCase().includes(mNorm)
-    );
+    const cleanStr = (s: string) => (s || '')
+      .toLowerCase()
+      .replace(/^(apple|samsung|oneplus|xiaomi|poco|vivo|iqoo|oppo|realme|motorola|moto|google|pixel|nothing|cmf|tecno|techno|itel|infinix|lava|honor)\s+/i, '')
+      .replace(/[\s-]+/g, ' ')
+      .trim();
+
+    const cleanMNorm = cleanStr(mNorm);
+    const master = MASTER_MODEL_CATALOG.find((m) => {
+      const cleanTarget = cleanStr(m.model);
+      const mBrandNorm = (m.brand || '').toLowerCase().trim();
+      const isBrandEq = !bNorm || mBrandNorm === bNorm || (bNorm === 'techno' && mBrandNorm === 'tecno');
+      if (!isBrandEq) return false;
+      return (
+        cleanTarget === cleanMNorm ||
+        cleanTarget.includes(cleanMNorm) ||
+        cleanMNorm.includes(cleanTarget) ||
+        m.model.toLowerCase() === mNorm ||
+        m.model.toLowerCase().includes(mNorm) ||
+        mNorm.includes(m.model.toLowerCase())
+      );
+    });
     if (master?.price) {
       dbPrice = master.price;
       catalogStorage = master.storage || '128 GB';

@@ -1721,6 +1721,56 @@ export const RESALE_BENCHMARKS = [
   { brand: 'Xiaomi', model: "Xiaomi Redmi Note 9 Pro Max", storage: '128 GB', proceeds: 13750, lastUpdated: '2026-10-08' },
   { brand: 'Xiaomi', model: "Xiaomi Redmi Note 9 Pro Max", storage: '64 GB', proceeds: 12100, lastUpdated: '2026-10-08' },
   { brand: 'Xiaomi', model: "Xiaomi Redmi Turbo 5", storage: '256 GB', proceeds: 29750, lastUpdated: '2026-10-08' },
+
+  // Tecno
+  { brand: 'Tecno', model: "Tecno Spark 10 Pro", storage: '128 GB', proceeds: 5800, lastUpdated: '2026-10-24' },
+  { brand: 'Tecno', model: "Tecno Spark 10 Pro", storage: '256 GB', proceeds: 6500, lastUpdated: '2026-10-24' },
+  { brand: 'Tecno', model: "Tecno Spark 10 5G", storage: '64 GB', proceeds: 5200, lastUpdated: '2026-10-24' },
+  { brand: 'Tecno', model: "Tecno Spark 10 5G", storage: '128 GB', proceeds: 5800, lastUpdated: '2026-10-24' },
+  { brand: 'Tecno', model: "Tecno Spark 10", storage: '64 GB', proceeds: 4600, lastUpdated: '2026-10-24' },
+  { brand: 'Tecno', model: "Tecno Spark 10", storage: '128 GB', proceeds: 5100, lastUpdated: '2026-10-24' },
+  { brand: 'Tecno', model: "Tecno Spark 20", storage: '128 GB', proceeds: 6500, lastUpdated: '2026-10-24' },
+  { brand: 'Tecno', model: "Tecno Spark 20 Pro+", storage: '256 GB', proceeds: 8500, lastUpdated: '2026-10-24' },
+  { brand: 'Tecno', model: "Tecno Spark Go 2024", storage: '64 GB', proceeds: 3800, lastUpdated: '2026-10-24' },
+  { brand: 'Tecno', model: "Tecno Spark Go 2024", storage: '128 GB', proceeds: 4300, lastUpdated: '2026-10-24' },
+  { brand: 'Tecno', model: "Tecno Spark 9", storage: '64 GB', proceeds: 3500, lastUpdated: '2026-10-24' },
+  { brand: 'Tecno', model: "Tecno Spark 9", storage: '128 GB', proceeds: 3900, lastUpdated: '2026-10-24' },
+  { brand: 'Tecno', model: "Tecno Camon 30 5G", storage: '256 GB', proceeds: 11000, lastUpdated: '2026-10-24' },
+  { brand: 'Tecno', model: "Tecno Camon 30 Premier 5G", storage: '512 GB', proceeds: 15000, lastUpdated: '2026-10-24' },
+  { brand: 'Tecno', model: "Tecno Camon 30 Pro 5G", storage: '256 GB', proceeds: 13000, lastUpdated: '2026-10-24' },
+  { brand: 'Tecno', model: "Tecno Camon 20 Pro 5G", storage: '128 GB', proceeds: 8500, lastUpdated: '2026-10-24' },
+  { brand: 'Tecno', model: "Tecno Camon 20 Pro 5G", storage: '256 GB', proceeds: 9500, lastUpdated: '2026-10-24' },
+  { brand: 'Tecno', model: "Tecno Pova 6 Pro 5G", storage: '128 GB', proceeds: 9500, lastUpdated: '2026-10-24' },
+  { brand: 'Tecno', model: "Tecno Pova 6 Pro 5G", storage: '256 GB', proceeds: 10500, lastUpdated: '2026-10-24' },
+  { brand: 'Tecno', model: "Tecno Pova 5 Pro 5G", storage: '128 GB', proceeds: 7500, lastUpdated: '2026-10-24' },
+  { brand: 'Tecno', model: "Tecno Pova 5 Pro 5G", storage: '256 GB', proceeds: 8200, lastUpdated: '2026-10-24' },
+  { brand: 'Tecno', model: "Tecno Phantom V Fold 5G", storage: '256 GB', proceeds: 26000, lastUpdated: '2026-10-24' },
+  { brand: 'Tecno', model: "Tecno Phantom V Fold 5G", storage: '512 GB', proceeds: 29000, lastUpdated: '2026-10-24' },
+  { brand: 'Tecno', model: "Tecno Phantom V Flip 5G", storage: '256 GB', proceeds: 17500, lastUpdated: '2026-10-24' },
+  { brand: 'Tecno', model: "Tecno Phantom X2 Pro 5G", storage: '256 GB', proceeds: 15500, lastUpdated: '2026-10-24' },
+
+  // Infinix
+  { brand: 'Infinix', model: "Infinix GT 20 Pro", storage: '256 GB', proceeds: 13500, lastUpdated: '2026-10-24' },
+  { brand: 'Infinix', model: "Infinix GT 10 Pro", storage: '128 GB', proceeds: 10500, lastUpdated: '2026-10-24' },
+  { brand: 'Infinix', model: "Infinix Note 40 Pro 5G", storage: '256 GB', proceeds: 11000, lastUpdated: '2026-10-24' },
+  { brand: 'Infinix', model: "Infinix Note 30 5G", storage: '128 GB', proceeds: 7800, lastUpdated: '2026-10-24' },
+  { brand: 'Infinix', model: "Infinix Note 30 5G", storage: '256 GB', proceeds: 8600, lastUpdated: '2026-10-24' },
+  { brand: 'Infinix', model: "Infinix Hot 40", storage: '128 GB', proceeds: 5800, lastUpdated: '2026-10-24' },
+  { brand: 'Infinix', model: "Infinix Hot 30 5G", storage: '128 GB', proceeds: 5200, lastUpdated: '2026-10-24' },
+  { brand: 'Infinix', model: "Infinix Smart 8", storage: '64 GB', proceeds: 3400, lastUpdated: '2026-10-24' },
+  { brand: 'Infinix', model: "Infinix Smart 8", storage: '128 GB', proceeds: 3800, lastUpdated: '2026-10-24' },
+
+  // Itel
+  { brand: 'Itel', model: "Itel Color Pro 5G", storage: '128 GB', proceeds: 5200, lastUpdated: '2026-10-24' },
+  { brand: 'Itel', model: "Itel S23 Plus", storage: '128 GB', proceeds: 5200, lastUpdated: '2026-10-24' },
+  { brand: 'Itel', model: "Itel S23 Plus", storage: '256 GB', proceeds: 5800, lastUpdated: '2026-10-24' },
+  { brand: 'Itel', model: "Itel S23", storage: '128 GB', proceeds: 4100, lastUpdated: '2026-10-24' },
+  { brand: 'Itel', model: "Itel P55 5G", storage: '64 GB', proceeds: 4200, lastUpdated: '2026-10-24' },
+  { brand: 'Itel', model: "Itel P55 5G", storage: '128 GB', proceeds: 4600, lastUpdated: '2026-10-24' },
+  { brand: 'Itel', model: "Itel P55+", storage: '256 GB', proceeds: 5100, lastUpdated: '2026-10-24' },
+  { brand: 'Itel', model: "Itel A70", storage: '64 GB', proceeds: 3100, lastUpdated: '2026-10-24' },
+  { brand: 'Itel', model: "Itel A70", storage: '128 GB', proceeds: 3400, lastUpdated: '2026-10-24' },
+  { brand: 'Itel', model: "Itel A70", storage: '256 GB', proceeds: 3800, lastUpdated: '2026-10-24' },
 ];
 
 // Configured Repair Costs Catalog (From scripts/seed_repair_catalog.cjs & RepairPriceCatalog)
@@ -1849,7 +1899,7 @@ export function computeDynamicBenchmarkProceeds(brand = '', model = '', storage 
   const normModel = normalizeKey(model);
   const normStorage = normalizeStorage(storage);
 
-  let base = 16000;
+  let base = 7000;
 
   // Apple iPhones
   if (normBrand.includes('apple') || normModel.includes('iphone')) {
@@ -2061,6 +2111,70 @@ export function computeDynamicBenchmarkProceeds(brand = '', model = '', storage 
     else if (normModel.includes('cmf phone 1')) base = 11500;
     else base = 18000;
   }
+  // Tecno
+  else if (normBrand.includes('tecno') || normBrand.includes('techno')) {
+    if (normModel.includes('phantom v fold')) base = 28000;
+    else if (normModel.includes('phantom v flip')) base = 18000;
+    else if (normModel.includes('phantom x2 pro')) base = 16000;
+    else if (normModel.includes('camon 30 premier')) base = 15000;
+    else if (normModel.includes('camon 30 pro')) base = 13000;
+    else if (normModel.includes('camon 30')) base = 10500;
+    else if (normModel.includes('camon 20 pro')) base = 9000;
+    else if (normModel.includes('camon 20')) base = 7500;
+    else if (normModel.includes('pova 6 pro')) base = 10500;
+    else if (normModel.includes('pova 5 pro')) base = 8000;
+    else if (normModel.includes('spark 20 pro+')) base = 8500;
+    else if (normModel.includes('spark 20')) base = 6500;
+    else if (normModel.includes('spark 10 pro')) base = 5800;
+    else if (normModel.includes('spark 10 5g')) base = 5600;
+    else if (normModel.includes('spark 10')) base = 5000;
+    else if (normModel.includes('spark go')) base = 3800;
+    else if (normModel.includes('spark 9')) base = 3600;
+    else base = 5500;
+  }
+  // Infinix
+  else if (normBrand.includes('infinix')) {
+    if (normModel.includes('zero ultra')) base = 14000;
+    else if (normModel.includes('zero 30')) base = 12000;
+    else if (normModel.includes('gt 20 pro')) base = 13500;
+    else if (normModel.includes('gt 10 pro')) base = 11000;
+    else if (normModel.includes('note 40 pro')) base = 11000;
+    else if (normModel.includes('note 30')) base = 8000;
+    else if (normModel.includes('hot 40')) base = 6000;
+    else if (normModel.includes('hot 30')) base = 5200;
+    else if (normModel.includes('smart 8')) base = 3600;
+    else if (normModel.includes('smart 7')) base = 3200;
+    else base = 5000;
+  }
+  // Itel
+  else if (normBrand.includes('itel')) {
+    if (normModel.includes('color pro')) base = 5200;
+    else if (normModel.includes('s23+')) base = 5500;
+    else if (normModel.includes('s23')) base = 4200;
+    else if (normModel.includes('p55')) base = 4500;
+    else if (normModel.includes('p40')) base = 3500;
+    else if (normModel.includes('a70')) base = 3200;
+    else if (normModel.includes('a60')) base = 2800;
+    else base = 3500;
+  }
+  // Lava
+  else if (normBrand.includes('lava')) {
+    if (normModel.includes('agni 3')) base = 13000;
+    else if (normModel.includes('agni 2')) base = 10500;
+    else if (normModel.includes('blaze curve')) base = 8500;
+    else if (normModel.includes('blaze pro')) base = 6000;
+    else if (normModel.includes('yuva')) base = 4000;
+    else base = 4500;
+  }
+  // Honor
+  else if (normBrand.includes('honor')) {
+    if (normModel.includes('magic 6 pro')) base = 45000;
+    else if (normModel.includes('200 pro')) base = 26000;
+    else if (normModel.includes('200')) base = 19000;
+    else if (normModel.includes('90')) base = 14000;
+    else if (normModel.includes('x9b')) base = 12000;
+    else base = 10000;
+  }
 
   // Apply unified Hardware Multiplier for Storage and RAM
   const mult = calculateHardwareVariantMultiplier(normStorage, ram, brand);
@@ -2076,24 +2190,34 @@ export function computeDynamicBenchmarkProceeds(brand = '', model = '', storage 
 export function calculateRamPriceOffset(selectedRam = '', availableRams = [], brand = '') {
   const isApple = String(brand || '').toLowerCase().includes('apple');
   if (isApple || !selectedRam) return 0;
+  const isBudgetBrand = /tecno|techno|itel|infinix|lava/i.test(brand);
   const norm = (r) => parseInt(String(r || '').replace(/\D/g, ''), 10) || 0;
   const targetGb = norm(selectedRam);
   if (targetGb <= 0) return 0;
 
-  let baseGb = 6;
+  let baseGb = isBudgetBrand ? 4 : 6;
+  const stepAmount = isBudgetBrand ? 400 : 1000;
+
   if (Array.isArray(availableRams) && availableRams.length > 0) {
     const validRams = availableRams.map(norm).filter((g) => g > 0).sort((a, b) => a - b);
     if (validRams.length > 0) {
       baseGb = validRams[0];
       if (validRams.length > 1) {
         const stepIdx = validRams.indexOf(targetGb);
-        if (stepIdx > 0) return stepIdx * 1000;
+        if (stepIdx > 0) return stepIdx * stepAmount;
         if (stepIdx === 0) return 0;
       }
     }
   }
 
   // Fallback heuristic if availableRams not supplied:
+  if (isBudgetBrand) {
+    if (targetGb >= 12) return 800;
+    if (targetGb >= 8) return 400;
+    if (targetGb <= 4) return -400;
+    return 0;
+  }
+
   if (targetGb >= 24) return 3500;
   if (targetGb >= 16) return 2500;
   if (targetGb >= 12) return 2000;
@@ -2820,11 +2944,13 @@ export function quotePhone(input = {}, options = {}) {
     };
   }
 
-  // Clean rounding to nearest ₹50 for professional consumer pricing (preserves exact base price if flawless/no deductions)
-  const isExactBaseProceeds = Math.abs(rawOffer - expectedResaleProceeds) < 1 || (options.catalogPrice && Math.abs(rawOffer - options.catalogPrice) < 1);
+  // Clean rounding to nearest ₹50 for professional consumer pricing
+  // Absolute benchmark ceiling: customer quote can NEVER exceed the 100% flawless starting benchmark
+  const ceiling = options.catalogPrice && options.catalogPrice > 0 ? options.catalogPrice : expectedResaleProceeds;
+  const isExactBaseProceeds = Math.abs(rawOffer - ceiling) < 1;
   const finalOfferAmount = isExactBaseProceeds
-    ? rawOffer
-    : Math.min(180000, Math.max(FUNDU_POLICY.minOfferFloor, Math.round(rawOffer / 50) * 50));
+    ? Math.min(ceiling, rawOffer)
+    : Math.min(ceiling, Math.max(FUNDU_POLICY.minOfferFloor, Math.round(rawOffer / 50) * 50));
 
   const quoteId = `FND-Q-${Date.now().toString(36).toUpperCase()}-${Math.floor(1000 + Math.random() * 9000)}`;
 

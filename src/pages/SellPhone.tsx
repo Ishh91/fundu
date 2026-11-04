@@ -799,11 +799,27 @@ export default function SellPhone() {
       return directEffective + ramOffset;
     }
 
-    const master = MASTER_MODEL_CATALOG.find((m) =>
-      m.model.toLowerCase() === modelNorm ||
-      `${m.brand} ${m.model}`.toLowerCase() === `${brandNorm} ${modelNorm}` ||
-      m.model.toLowerCase().includes(modelNorm)
-    );
+    const cleanStr = (s: string) => (s || '')
+      .toLowerCase()
+      .replace(/^(apple|samsung|oneplus|xiaomi|poco|vivo|iqoo|oppo|realme|motorola|moto|google|pixel|nothing|cmf|tecno|techno|itel|infinix|lava|honor)\s+/i, '')
+      .replace(/[\s-]+/g, ' ')
+      .trim();
+
+    const cleanModelNorm = cleanStr(modelNorm);
+    const master = MASTER_MODEL_CATALOG.find((m) => {
+      const cleanTarget = cleanStr(m.model);
+      const mBrandNorm = (m.brand || '').toLowerCase().trim();
+      const isBrandEq = !brandNorm || mBrandNorm === brandNorm || (brandNorm === 'techno' && mBrandNorm === 'tecno');
+      if (!isBrandEq) return false;
+      return (
+        cleanTarget === cleanModelNorm ||
+        cleanTarget.includes(cleanModelNorm) ||
+        cleanModelNorm.includes(cleanTarget) ||
+        m.model.toLowerCase() === modelNorm ||
+        m.model.toLowerCase().includes(modelNorm) ||
+        modelNorm.includes(m.model.toLowerCase())
+      );
+    });
 
     let rawBase = 0;
     let catalogStorage = '128 GB';
@@ -856,6 +872,9 @@ export default function SellPhone() {
       quoteRam.replace(/\s+/g, '').toLowerCase() === formRam.replace(/\s+/g, '').toLowerCase();
 
     if (funduQuote?.offerAmount && funduQuote.offerAmount > 0) {
+      if (baseModelPrice > 0) {
+        return Math.min(baseModelPrice, funduQuote.offerAmount);
+      }
       return funduQuote.offerAmount;
     }
 

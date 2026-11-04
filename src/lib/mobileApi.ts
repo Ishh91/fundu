@@ -477,7 +477,7 @@ import { calculateHardwareVariantMultiplier } from './deviceSpecs';
 
 export function getDynamicFallbackConfig(brand: string, model: string, storage: string, ram: string = ''): SellPriceConfig {
   const indianPhone = getIndianPhoneByModel(model) || getIndianPhoneByModel(`${brand} ${model}`);
-  let basePrice = indianPhone?.base_resale_value || 16000;
+  let basePrice = indianPhone?.base_resale_value || 7000;
 
   const brandLower = brand.toLowerCase();
   const modelLower = model.toLowerCase();
@@ -503,6 +503,27 @@ export function getDynamicFallbackConfig(brand: string, model: string, storage: 
       if (modelLower.includes('9') || modelLower.includes('8 pro')) basePrice = 52000;
       else if (modelLower.includes('8') || modelLower.includes('7a')) basePrice = 28000;
       else basePrice = 20000;
+    } else if (brandLower.includes('tecno') || brandLower.includes('techno')) {
+      if (modelLower.includes('phantom v fold')) basePrice = 26000;
+      else if (modelLower.includes('camon 30 premier')) basePrice = 15000;
+      else if (modelLower.includes('camon 30')) basePrice = 10500;
+      else if (modelLower.includes('spark 20 pro+')) basePrice = 8500;
+      else if (modelLower.includes('spark 10 pro')) basePrice = 5800;
+      else if (modelLower.includes('spark 10')) basePrice = 5000;
+      else if (modelLower.includes('spark go') || modelLower.includes('spark 9')) basePrice = 3800;
+      else basePrice = 5500;
+    } else if (brandLower.includes('infinix')) {
+      if (modelLower.includes('gt 20 pro') || modelLower.includes('zero')) basePrice = 12000;
+      else if (modelLower.includes('note 40')) basePrice = 10000;
+      else if (modelLower.includes('smart')) basePrice = 3500;
+      else basePrice = 5000;
+    } else if (brandLower.includes('itel')) {
+      basePrice = 3500;
+    } else if (brandLower.includes('lava')) {
+      if (modelLower.includes('agni')) basePrice = 11000;
+      else basePrice = 4500;
+    } else {
+      basePrice = 7000;
     }
   }
 

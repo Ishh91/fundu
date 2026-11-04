@@ -503,12 +503,15 @@ export function calculateRamPriceOffset(selectedRam = '', availableRams: string[
   if (isApple || !selectedRam) {
     return 0;
   }
+  const isBudgetBrand = /tecno|techno|itel|infinix|lava/i.test(brand);
   const norm = (r: string) => parseInt(String(r || '').replace(/\D/g, ''), 10) || 0;
   const targetGb = norm(selectedRam);
   if (targetGb <= 0) return 0;
 
   // Determine baseline RAM for this model/storage
-  let baseGb = 6; // Standard modern Android baseline RAM for 64GB/128GB phones
+  let baseGb = isBudgetBrand ? 4 : 6;
+  const stepAmount = isBudgetBrand ? 400 : 1000;
+
   if (Array.isArray(availableRams) && availableRams.length > 0) {
     const validRams = availableRams.map(norm).filter((g) => g > 0).sort((a, b) => a - b);
     if (validRams.length > 0) {
@@ -516,8 +519,7 @@ export function calculateRamPriceOffset(selectedRam = '', availableRams: string[
       if (validRams.length > 1) {
         const stepIdx = validRams.indexOf(targetGb);
         if (stepIdx > 0) {
-          // Exactly step * 1000 (e.g. 6GB -> 0, 8GB -> +1000, 12GB -> +2000)
-          return stepIdx * 1000;
+          return stepIdx * stepAmount;
         }
         if (stepIdx === 0) {
           return 0;
@@ -530,13 +532,9 @@ export function calculateRamPriceOffset(selectedRam = '', availableRams: string[
   if (targetGb === baseGb) return 0;
   if (targetGb > baseGb) {
     const gbDiff = targetGb - baseGb;
-    // Guaranteed minimum 1,000 for any higher RAM tier (e.g. 8GB over 6GB)
-    return Math.max(1000, Math.round(gbDiff / 2) * 1000);
+    return Math.max(stepAmount, Math.round(gbDiff / 2) * stepAmount);
   }
-  if (targetGb < baseGb) {
-    return -1000;
-  }
-  return 0;
+  return -stepAmount;
 }
 
 // Explicit Authentic Hardware Variant Rules with Exact Storage <-> RAM Pairing
@@ -3317,6 +3315,34 @@ const MODEL_HARDWARE_RULES: Array<{
       ],
     },
     {
+      pattern: /spark\s*10\s*pro/i,
+      variants: [
+        { storage: '128 GB', rams: ['8 GB'] },
+        { storage: '256 GB', rams: ['8 GB'] },
+      ],
+    },
+    {
+      pattern: /spark\s*10\s*5g/i,
+      variants: [
+        { storage: '64 GB', rams: ['4 GB'] },
+        { storage: '128 GB', rams: ['8 GB'] },
+      ],
+    },
+    {
+      pattern: /spark\s*10\b/i,
+      variants: [
+        { storage: '64 GB', rams: ['4 GB'] },
+        { storage: '128 GB', rams: ['8 GB'] },
+      ],
+    },
+    {
+      pattern: /spark\s*9/i,
+      variants: [
+        { storage: '64 GB', rams: ['4 GB', '6 GB'] },
+        { storage: '128 GB', rams: ['6 GB'] },
+      ],
+    },
+    {
       pattern: /spark\s*go/i,
       variants: [
         { storage: '64 GB', rams: ['4 GB'] },
@@ -3810,6 +3836,7 @@ export function inferTierHardwareSpecs(
     }
     // 2. Upper Mid-Range / Pro / Performance / Neo / GT / Edge / Reno / V series (Indian market caps out at 256 GB)
     else if (
+      !/spark|smart|pova|itel|hot\s*\d|yuva/i.test(fullText) &&
       /pro\+|pro\s*plus|\bpro\b|neo|turbo|gt|plus|\+|fe|nord|reno|iqoo\s*z\s*(?:pro|s|turbo|\d{2})|poco\s*(f|x)|note.*pro|a5\d|a7\d|m5\d|f5\d|edge|v\d+/i.test(fullText)
     ) {
       tierStorages = ['128 GB', '256 GB'];
