@@ -179,6 +179,10 @@ export default function SellBrandPage() {
   const brandDisplayName = useMemo(() => {
     if (brandCleanKey === 'xiaomi') return 'Xiaomi';
     if (brandCleanKey === 'apple' || brandCleanKey === 'iphone') return 'Apple';
+    if (brandCleanKey === 'oneplus') return 'OnePlus';
+    if (brandCleanKey === 'iqoo') return 'iQOO';
+    if (brandCleanKey === 'oppo') return 'Oppo';
+    if (brandCleanKey === 'realme') return 'Realme';
     return brandCleanKey.charAt(0).toUpperCase() + brandCleanKey.slice(1);
   }, [brandCleanKey]);
 

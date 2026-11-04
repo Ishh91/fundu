@@ -442,7 +442,7 @@ export function generateModelLookupKeys(brand?: string, model?: string): string[
 
   if (!b && !m) return [];
 
-  // Strip brand prefix if present (e.g. "Apple iPhone 16" -> "iPhone 16")
+  // Strip brand prefix if present (e.g. "Apple iPhone 16" -> "iPhone 16", "Oppo Reno 12" -> "Reno 12")
   let strippedM = m;
   if (b && strippedM.startsWith(b)) {
     strippedM = strippedM.slice(b.length).trim();
@@ -461,27 +461,52 @@ export function generateModelLookupKeys(brand?: string, model?: string): string[
     .replace(/\s+/g, ' ')
     .trim();
 
+  // Helper: adds brand-scoped keys. Only adds bare key if it explicitly contains the brand name
   const addCombos = (val: string) => {
     if (!val) return;
-    keys.add(val);
+    const v = val.trim();
+    if (!v) return;
+
     if (b) {
-      keys.add(`${b}:${val}`);
-      keys.add(`${b} ${val}`);
+      keys.add(`${b}:${v}`);
+      keys.add(`${b} ${v}`);
+    }
+
+    // Bare key is ONLY safe if it includes the brand name (e.g. "iphone 16", "oneplus 12", "oppo reno 12")
+    // Never allow ambiguous bare numbers or tokens like "12", "pro", "reno 12" to be looked up globally without brand!
+    if (v.startsWith(b) || v.includes(` ${b}`) || v.includes('iphone') || v.includes('galaxy')) {
+      keys.add(v);
     }
   };
 
-  addCombos(strippedM);
-  addCombos(m);
-  addCombos(strippedNorm);
-  addCombos(modelNorm);
+  // Helper to add letter-digit boundary variations (e.g. "reno12" <-> "reno 12", "findx8" <-> "find x8", "gt8" <-> "gt 8")
+  const addVariations = (val: string) => {
+    if (!val) return;
+    addCombos(val);
+    // 1. Insert space at letter-digit boundaries ("reno12" -> "reno 12", "gt8" -> "gt 8")
+    const spaced = val.replace(/([a-zA-Z])(\d)/g, '$1 $2').replace(/(\d)([a-zA-Z])/g, '$1 $2').replace(/\s+/g, ' ').trim();
+    if (spaced !== val) {
+      addCombos(spaced);
+    }
+    // 2. Remove all spaces ("reno 12" -> "reno12")
+    const compact = val.replace(/\s+/g, '').trim();
+    if (compact !== val) {
+      addCombos(compact);
+    }
+  };
+
+  addVariations(strippedM);
+  addVariations(m);
+  addVariations(strippedNorm);
+  addVariations(modelNorm);
   if (cleanBase && cleanBase !== strippedNorm) {
-    addCombos(cleanBase);
+    addVariations(cleanBase);
   }
 
-  // Also strip "galaxy", "phone" if model is like "Galaxy S22" -> "s22"
+  // Also strip series tags like "galaxy", "phone", "narzo"
   const shortCode = cleanBase.replace(/^(galaxy|phone|redmi|poco|nord|iqoo|narzo)\s+/i, '').trim();
   if (shortCode && shortCode !== cleanBase && shortCode.length >= 2) {
-    addCombos(shortCode);
+    addVariations(shortCode);
   }
 
   return Array.from(keys);
@@ -516,29 +541,19 @@ export function isBrandImageMismatch(brand = '', model = '', url = ''): boolean 
   const isOnePlus = b.includes('oneplus') || m.includes('oneplus') || m.includes('nord');
   const isXiaomi = b.includes('xiaomi') || b.includes('redmi') || b.includes('poco') || m.includes('redmi') || m.includes('poco');
   const isRealme = b.includes('realme') || m.includes('realme') || m.includes('narzo');
-  const isVivo = b.includes('vivo') || b.includes('iqoo') || m.includes('iqoo');
+  const isIqoo = b === 'iqoo' || m.includes('iqoo');
+  const isVivo = (b.includes('vivo') || m.includes('vivo')) && !isIqoo;
   const isOppo = b.includes('oppo') || m.includes('oppo');
   const isMotorola = b.includes('motorola') || b.includes('moto') || m.includes('moto');
   const isGoogle = b.includes('google') || b.includes('pixel') || m.includes('pixel');
 
+  const hasToken = (tokens: string[]) => tokens.some((t) => u.includes(t));
+
   // 1. Hard rejection: Apple device receiving non-Apple render
   if (isApple) {
-    if (
-      u.includes('samsung') ||
-      u.includes('galaxy') ||
-      u.includes('oneplus') ||
-      u.includes('xiaomi') ||
-      u.includes('redmi') ||
-      u.includes('poco') ||
-      u.includes('realme') ||
-      u.includes('vivo') ||
-      u.includes('oppo') ||
-      u.includes('motorola') ||
-      u.includes('pixel')
-    ) {
+    if (hasToken(['samsung', 'galaxy', 'oneplus', 'xiaomi', 'redmi', 'poco', 'realme', 'vivo', 'iqoo', 'oppo', 'motorola', 'moto', 'pixel'])) {
       return true;
     }
-    // Any GSMArena render for an Apple device MUST contain 'apple-'
     if (u.includes('gsmarena.com/vv/bigpic/') && !u.includes('apple-')) {
       return true;
     }
@@ -546,14 +561,77 @@ export function isBrandImageMismatch(brand = '', model = '', url = ''): boolean 
 
   // 2. Hard rejection: Samsung device receiving non-Samsung render
   if (isSamsung) {
-    if (u.includes('apple-iphone') || u.includes('apple-') || u.includes('oneplus') || u.includes('pixel')) {
+    if (hasToken(['apple-iphone', 'apple-', 'oneplus', 'xiaomi', 'redmi', 'poco', 'realme', 'vivo', 'iqoo', 'oppo', 'motorola', 'moto', 'pixel'])) {
+      return true;
+    }
+    if (u.includes('gsmarena.com/vv/bigpic/') && !u.includes('samsung-')) {
       return true;
     }
   }
 
-  // 3. Hard rejection: Other brands receiving Apple or Samsung renders
-  if ((isOnePlus || isRealme || isXiaomi || isVivo || isOppo || isMotorola || isGoogle) && (u.includes('apple-iphone') || u.includes('samsung-galaxy'))) {
-    return true;
+  // 3. Hard rejection: OnePlus receiving other brands (specifically iQOO, Vivo, Oppo, Realme, etc.)
+  if (isOnePlus) {
+    if (hasToken(['apple-iphone', 'apple-', 'samsung', 'galaxy', 'xiaomi', 'redmi', 'poco', 'realme', 'vivo', 'iqoo', 'oppo', 'motorola', 'moto', 'pixel'])) {
+      return true;
+    }
+    if (u.includes('gsmarena.com/vv/bigpic/') && !u.includes('oneplus-')) {
+      return true;
+    }
+  }
+
+  // 4. Hard rejection: Oppo receiving other brands
+  if (isOppo) {
+    if (hasToken(['apple-iphone', 'apple-', 'samsung', 'galaxy', 'oneplus', 'xiaomi', 'redmi', 'poco', 'realme', 'vivo', 'iqoo', 'motorola', 'moto', 'pixel'])) {
+      return true;
+    }
+    if (u.includes('gsmarena.com/vv/bigpic/') && !u.includes('oppo-')) {
+      return true;
+    }
+  }
+
+  // 5. Hard rejection: Realme receiving other brands
+  if (isRealme) {
+    if (hasToken(['apple-iphone', 'apple-', 'samsung', 'galaxy', 'oneplus', 'xiaomi', 'redmi', 'poco', 'vivo', 'iqoo', 'oppo', 'motorola', 'moto', 'pixel'])) {
+      return true;
+    }
+    if (u.includes('gsmarena.com/vv/bigpic/') && !u.includes('realme-')) {
+      return true;
+    }
+  }
+
+  // 6. Hard rejection: Vivo receiving other brands
+  if (isVivo) {
+    if (hasToken(['apple-iphone', 'apple-', 'samsung', 'galaxy', 'oneplus', 'xiaomi', 'redmi', 'poco', 'realme', 'oppo', 'motorola', 'moto', 'pixel', 'vivo-iqoo', 'iqoo-'])) {
+      return true;
+    }
+  }
+
+  // 7. Hard rejection: iQOO receiving other brands
+  if (isIqoo) {
+    if (hasToken(['apple-iphone', 'apple-', 'samsung', 'galaxy', 'oneplus', 'xiaomi', 'redmi', 'poco', 'realme', 'oppo', 'motorola', 'moto', 'pixel'])) {
+      return true;
+    }
+  }
+
+  // 8. Hard rejection: Xiaomi/Redmi/Poco receiving other brands
+  if (isXiaomi) {
+    if (hasToken(['apple-iphone', 'apple-', 'samsung', 'galaxy', 'oneplus', 'realme', 'vivo', 'iqoo', 'oppo', 'motorola', 'moto', 'pixel'])) {
+      return true;
+    }
+  }
+
+  // 9. Hard rejection: Motorola receiving other brands
+  if (isMotorola) {
+    if (hasToken(['apple-iphone', 'apple-', 'samsung', 'galaxy', 'oneplus', 'xiaomi', 'redmi', 'poco', 'realme', 'vivo', 'iqoo', 'oppo', 'pixel'])) {
+      return true;
+    }
+  }
+
+  // 10. Hard rejection: Google Pixel receiving other brands
+  if (isGoogle) {
+    if (hasToken(['apple-iphone', 'apple-', 'samsung', 'galaxy', 'oneplus', 'xiaomi', 'redmi', 'poco', 'realme', 'vivo', 'iqoo', 'oppo', 'motorola', 'moto'])) {
+      return true;
+    }
   }
 
   return false;
@@ -562,7 +640,7 @@ export function isBrandImageMismatch(brand = '', model = '', url = ''): boolean 
 function cleanOversizedStorageOnBoot() {
   if (typeof window === 'undefined') return;
   try {
-    // 1. Purge poisoned keys from CUSTOM_MODEL_IMAGES_KEY
+    // 1. Purge poisoned keys and bare un-scoped keys from CUSTOM_MODEL_IMAGES_KEY
     const raw = localStorage.getItem(CUSTOM_MODEL_IMAGES_KEY);
     if (raw) {
       const parsed = JSON.parse(raw);
@@ -570,10 +648,15 @@ function cleanOversizedStorageOnBoot() {
       let modified = false;
       for (const [k, v] of Object.entries(parsed)) {
         if (typeof v === 'string') {
-          const kLow = k.toLowerCase();
-          const vLow = v.toLowerCase();
-          const isAppleKey = kLow.includes('apple') || kLow.includes('iphone') || kLow.includes('ipad');
-          if (isAppleKey && (vLow.includes('samsung') || vLow.includes('galaxy') || vLow.includes('oneplus') || vLow.includes('redmi') || vLow.includes('xiaomi') || vLow.includes('oppo') || vLow.includes('vivo'))) {
+          const kLow = k.toLowerCase().trim();
+          // Drop bare un-scoped keys (keys without ":" like "12", "11", "pro", "13")
+          if (!kLow.includes(':')) {
+            modified = true;
+            continue;
+          }
+          const [brandPart, ...modelParts] = kLow.split(':');
+          const modelPart = modelParts.join(':');
+          if (isBrandImageMismatch(brandPart, modelPart, v)) {
             modified = true;
             continue; // Dropped poisoned cross-brand image entry
           }
@@ -1001,7 +1084,8 @@ export function saveCustomModelImage(brand: string, model: string, imageUrl: str
       // Persist http URLs and compressed images under 60KB to localStorage for instant load across reloads
       if (!val.startsWith('blob:') && (!val.startsWith('data:') || val.length < 60000)) {
         current[primaryKey] = val;
-        if (secondaryKey) {
+        // ONLY save secondaryKey if it is explicitly brand-qualified (never bare numbers like "12")
+        if (secondaryKey && (secondaryKey.includes(b) || secondaryKey.includes('iphone') || secondaryKey.includes('galaxy'))) {
           current[secondaryKey] = val;
         }
       }

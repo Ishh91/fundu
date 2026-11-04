@@ -453,7 +453,16 @@ router.post('/model-image', async (req, res) => {
     const modelEscaped = rawModel.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     const cleanEscaped = cleanModelName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     const cleanNo5gEscaped = cleanNo5g.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-    const modelRegex = new RegExp(`^(${modelEscaped}|${rawBrand}\\s+${modelEscaped}|${cleanEscaped}|poco\\s+${cleanEscaped}|xiaomi\\s+${cleanEscaped}|${cleanNo5gEscaped}|poco\\s+${cleanNo5gEscaped}|xiaomi\\s+${cleanNo5gEscaped})(?:\\s*5g)?$`, 'i');
+
+    // Flexible pattern that bridges "Reno 12" <-> "Reno12", "GT 8" <-> "GT8", "Find X8" <-> "FindX8"
+    const flexPattern = cleanNo5g
+      .replace(/([a-zA-Z])(\d)/g, '$1\\s*$2')
+      .replace(/(\d)([a-zA-Z])/g, '$1\\s*$2')
+      .split(/\s+/)
+      .map((p) => p.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'))
+      .join('\\s*');
+
+    const modelRegex = new RegExp(`^(${modelEscaped}|${rawBrand}\\s+${modelEscaped}|${cleanEscaped}|poco\\s+${cleanEscaped}|xiaomi\\s+${cleanEscaped}|${cleanNo5gEscaped}|poco\\s+${cleanNo5gEscaped}|xiaomi\\s+${cleanNo5gEscaped}|(?:${rawBrand}\\s+)?${flexPattern})(?:\\s*5g)?$`, 'i');
 
     const canonicalBrand = isPoco ? 'Poco' : rawBrand;
 

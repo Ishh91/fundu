@@ -1829,6 +1829,18 @@ export function groupModelsBySeries(brand: string, allModels: CatalogModelItem[]
       if (defBrandLower === 'oneplus' && /\b(iphone|apple|samsung|galaxy|xiaomi|redmi|poco|vivo|iqoo|oppo|realme|motorola|pixel)\b/i.test(mModelLower)) {
         return false;
       }
+      if (defBrandLower === 'oppo' && /\b(iphone|apple|samsung|galaxy|oneplus|xiaomi|redmi|poco|vivo|iqoo|realme|motorola|pixel)\b/i.test(mModelLower)) {
+        return false;
+      }
+      if (defBrandLower === 'realme' && /\b(iphone|apple|samsung|galaxy|oneplus|xiaomi|redmi|poco|vivo|iqoo|oppo|motorola|pixel)\b/i.test(mModelLower)) {
+        return false;
+      }
+      if (defBrandLower === 'vivo' && /\b(iphone|apple|samsung|galaxy|oneplus|xiaomi|redmi|poco|realme|oppo|motorola|pixel)\b/i.test(mModelLower)) {
+        return false;
+      }
+      if (defBrandLower === 'iqoo' && /\b(iphone|apple|samsung|galaxy|oneplus|xiaomi|redmi|poco|realme|oppo|motorola|pixel)\b/i.test(mModelLower)) {
+        return false;
+      }
 
       const mSeriesStr = typeof m.series === 'string'
         ? m.series

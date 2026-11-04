@@ -27,9 +27,20 @@ export async function resolveDeviceImage(brand, model) {
         model: new RegExp(`^${cleanModel}$`, 'i'),
         image_url: { $exists: true, $ne: null, $ne: '' }
       });
-      const isApple = cleanBrand.toLowerCase().includes('apple') || cleanModel.toLowerCase().includes('iphone');
+      const bLow = cleanBrand.toLowerCase();
       const u = String(dbPhone?.image_url || '').toLowerCase();
-      const isMismatch = isApple && (u.includes('samsung') || u.includes('galaxy') || u.includes('oneplus') || u.includes('xiaomi') || u.includes('redmi') || u.includes('oppo') || u.includes('vivo'));
+      let isMismatch = false;
+      if (bLow.includes('apple')) {
+        isMismatch = ['samsung', 'galaxy', 'oneplus', 'xiaomi', 'redmi', 'poco', 'realme', 'vivo', 'iqoo', 'oppo', 'motorola', 'moto', 'pixel'].some((t) => u.includes(t));
+      } else if (bLow.includes('samsung')) {
+        isMismatch = ['apple-iphone', 'apple-', 'oneplus', 'xiaomi', 'redmi', 'poco', 'realme', 'vivo', 'iqoo', 'oppo', 'motorola', 'moto', 'pixel'].some((t) => u.includes(t));
+      } else if (bLow.includes('oneplus')) {
+        isMismatch = ['apple-iphone', 'apple-', 'samsung', 'galaxy', 'xiaomi', 'redmi', 'poco', 'realme', 'vivo', 'iqoo', 'oppo', 'motorola', 'moto', 'pixel'].some((t) => u.includes(t));
+      } else if (bLow.includes('oppo')) {
+        isMismatch = ['apple-iphone', 'apple-', 'samsung', 'galaxy', 'oneplus', 'xiaomi', 'redmi', 'poco', 'realme', 'vivo', 'iqoo', 'motorola', 'moto', 'pixel'].some((t) => u.includes(t));
+      } else if (bLow.includes('realme')) {
+        isMismatch = ['apple-iphone', 'apple-', 'samsung', 'galaxy', 'oneplus', 'xiaomi', 'redmi', 'poco', 'vivo', 'iqoo', 'oppo', 'motorola', 'moto', 'pixel'].some((t) => u.includes(t));
+      }
       if (dbPhone && dbPhone.image_url && !dbPhone.image_url.includes('unsplash.com') && !isMismatch) {
         setCachedValue(cacheKey, dbPhone.image_url);
         return { imageUrl: dbPhone.image_url, source: 'db_cache' };
@@ -53,12 +64,30 @@ export async function resolveDeviceImage(brand, model) {
 
     const results = Array.isArray(payload) ? payload : (payload?.value || []);
     if (results.length > 0) {
-      const modelLower = cleanModel.toLowerCase();
-      let best = results.find(r => 
-        (r.name && r.name.toLowerCase() === modelLower) || 
-        (r.full_name && r.full_name.toLowerCase().includes(modelLower))
-      );
-      if (!best) best = results[0];
+      const brandLower = cleanBrand.toLowerCase();
+      const brandMatchedResults = results.filter((r) => {
+        const cand = `${r.manufacturer || ''} ${r.brand || ''} ${r.full_name || ''} ${r.name || ''}`.toLowerCase();
+        if (brandLower === 'apple') return cand.includes('apple') || cand.includes('iphone');
+        if (brandLower === 'samsung') return cand.includes('samsung') || cand.includes('galaxy');
+        if (brandLower === 'oneplus') return cand.includes('oneplus') && !cand.includes('iqoo') && !cand.includes('vivo');
+        if (brandLower === 'oppo') return cand.includes('oppo') && !cand.includes('vivo') && !cand.includes('oneplus');
+        if (brandLower === 'realme') return cand.includes('realme');
+        if (brandLower === 'vivo') return cand.includes('vivo') && !cand.includes('oneplus') && !cand.includes('oppo');
+        if (brandLower === 'iqoo') return cand.includes('iqoo');
+        if (brandLower === 'xiaomi' || brandLower === 'redmi' || brandLower === 'poco') {
+          return cand.includes('xiaomi') || cand.includes('redmi') || cand.includes('poco');
+        }
+        return cand.includes(brandLower);
+      });
+
+      const candidateList = brandMatchedResults.length > 0 ? brandMatchedResults : [];
+      if (candidateList.length > 0) {
+        const modelLower = cleanModel.toLowerCase();
+        let best = candidateList.find(r => 
+          (r.name && r.name.toLowerCase() === modelLower) || 
+          (r.full_name && r.full_name.toLowerCase().includes(modelLower))
+        );
+        if (!best) best = candidateList[0];
 
       if (best && best.id) {
         const thumbUrl = `https://api.mobileapi.dev/devices/${best.id}/thumb.png`;

@@ -50,7 +50,7 @@ export async function ensureMasterPhonesSeeded(force = true) {
     const fixedAppleImgs = await MasterPhone.updateMany(
       {
         brand: /^apple$/i,
-        image_url: /samsung|galaxy|oneplus|xiaomi|redmi|poco|vivo|oppo|realme|motorola|pixel/i,
+        image_url: /samsung|galaxy|oneplus|xiaomi|redmi|poco|vivo|iqoo|oppo|realme|motorola|pixel/i,
       },
       {
         $set: {
@@ -62,6 +62,68 @@ export async function ensureMasterPhonesSeeded(force = true) {
     );
     if (fixedAppleImgs.modifiedCount > 0) {
       console.log(`[AutoSync] 🧼 Reset ${fixedAppleImgs.modifiedCount} Apple phones with cross-brand/Samsung image URLs.`);
+    }
+
+    // 0b1. Reset any OnePlus phone with iQOO / Vivo / cross-brand image URLs
+    const fixedOnePlusImgs = await MasterPhone.updateMany(
+      {
+        brand: /^oneplus$/i,
+        image_url: /iqoo|vivo|oppo|realme|xiaomi|samsung|apple|pixel/i,
+      },
+      {
+        $set: {
+          image_url: null,
+          custom_image: false,
+          updated_at: new Date(),
+        },
+      }
+    );
+    await SellPriceConfig.updateMany(
+      {
+        brand: /^oneplus$/i,
+        image_url: /iqoo|vivo|oppo|realme|xiaomi|samsung|apple|pixel/i,
+      },
+      {
+        $set: {
+          image_url: null,
+          custom_image: false,
+          updated_at: new Date(),
+        },
+      }
+    );
+    if (fixedOnePlusImgs.modifiedCount > 0) {
+      console.log(`[AutoSync] 🧼 Reset ${fixedOnePlusImgs.modifiedCount} OnePlus phones with cross-brand/iQOO image URLs.`);
+    }
+
+    // 0b2. Reset any Oppo phone with cross-brand image URLs
+    const fixedOppoImgs = await MasterPhone.updateMany(
+      {
+        brand: /^oppo$/i,
+        image_url: /iqoo|vivo|oneplus|realme|xiaomi|samsung|apple|pixel/i,
+      },
+      {
+        $set: {
+          image_url: null,
+          custom_image: false,
+          updated_at: new Date(),
+        },
+      }
+    );
+    await SellPriceConfig.updateMany(
+      {
+        brand: /^oppo$/i,
+        image_url: /iqoo|vivo|oneplus|realme|xiaomi|samsung|apple|pixel/i,
+      },
+      {
+        $set: {
+          image_url: null,
+          custom_image: false,
+          updated_at: new Date(),
+        },
+      }
+    );
+    if (fixedOppoImgs.modifiedCount > 0) {
+      console.log(`[AutoSync] 🧼 Reset ${fixedOppoImgs.modifiedCount} Oppo phones with cross-brand image URLs.`);
     }
 
     // 0c. Delete explicitly removed Poco and Infinix models

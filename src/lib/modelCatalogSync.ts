@@ -185,7 +185,13 @@ export function getUnifiedCatalog(brandFilter?: string): UnifiedCatalogModel[] {
     if (cleanBrand === 'Apple' && !mLow.startsWith('iphone') && !mLow.startsWith('ipad') && !mLow.startsWith('apple')) {
       return;
     }
-    if (cleanBrand === 'Samsung' && (mLow.startsWith('iphone') || mLow.startsWith('oneplus') || mLow.startsWith('pixel'))) {
+    if (cleanBrand === 'Samsung' && (mLow.startsWith('iphone') || mLow.startsWith('oneplus') || mLow.startsWith('pixel') || mLow.startsWith('iqoo') || mLow.startsWith('vivo'))) {
+      return;
+    }
+    if (cleanBrand === 'OnePlus' && (mLow.startsWith('iphone') || mLow.startsWith('galaxy') || mLow.startsWith('vivo') || mLow.startsWith('iqoo') || mLow.startsWith('oppo') || mLow.startsWith('realme') || mLow.startsWith('redmi') || mLow.startsWith('pixel'))) {
+      return;
+    }
+    if (cleanBrand === 'Oppo' && (mLow.startsWith('iphone') || mLow.startsWith('galaxy') || mLow.startsWith('oneplus') || mLow.startsWith('vivo') || mLow.startsWith('iqoo') || mLow.startsWith('realme') || mLow.startsWith('pixel'))) {
       return;
     }
 
