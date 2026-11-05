@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import mongoose from 'mongoose';
 import { MasterPhone, SellPriceConfig, SellRequest as SellRequestModel } from '../models/index.js';
 import { normalizeDoc } from '../utils/dbHelpers.js';
 import { clearTableCache } from './dbRoutes.js';
@@ -541,6 +542,10 @@ router.get('/live-images', async (_req, res) => {
   try {
     res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate');
 
+    if (mongoose.connection.readyState !== 1) {
+      return res.json({ data: [], count: 0, status: 'standalone', timestamp: Date.now() });
+    }
+
     const [mpDocs, spDocs] = await Promise.all([
       MasterPhone.find(
         { is_active: { $ne: false }, image_url: { $ne: null } },
@@ -573,8 +578,8 @@ router.get('/live-images', async (_req, res) => {
 
     return res.json({ data: items, count: items.length, timestamp: Date.now() });
   } catch (error) {
-    console.error('[phoneRoutes] Failed to fetch live images:', error);
-    return res.status(500).json({ error: { message: error.message } });
+    console.warn('[phoneRoutes] Live images fallback:', error?.message || error);
+    return res.json({ data: [], count: 0, error: error.message, timestamp: Date.now() });
   }
 });
 

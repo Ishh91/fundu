@@ -1,6 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import mongoose from 'mongoose';
 import {
   quotePhone,
   recalculateInspectedQuote,
@@ -102,73 +103,75 @@ export async function createPhoneQuote(input, options = {}) {
   const enrichedOptions = { ...options, ram: input.ram || options.ram || '' };
   const enrichedInput = { ...input, model: cleanModel, ram: input.ram || options.ram || '' };
 
-  // 1. Authoritative Admin Pricing: Check MongoDB SellPriceConfig first
-  try {
-    const inputBrandStr = (input.brand || '').trim();
-    const isPoco = inputBrandStr.toLowerCase() === 'poco';
-    const isXiaomi = inputBrandStr.toLowerCase() === 'xiaomi';
-    const brandRegex = (isPoco || isXiaomi)
-      ? /^(poco|xiaomi)$/i
-      : new RegExp(`^${inputBrandStr}$`, 'i');
-
-    const cleanModelName = cleanModel.replace(/^(poco|xiaomi)\s+/i, '').trim();
-    const modelEscaped = cleanModel.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-    const cleanEscaped = cleanModelName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-    const modelRegex = new RegExp(`^(${modelEscaped}|${inputBrandStr}\\s+${modelEscaped}|${cleanEscaped}|poco\\s+${cleanEscaped}|xiaomi\\s+${cleanEscaped})$`, 'i');
-
-    let dbConfig = null;
-    if (input.storage) {
-      const storageClean = input.storage.replace(/\s+/g, '\\s*');
-      dbConfig = await SellPriceConfig.findOne({
-        brand: brandRegex,
-        model: modelRegex,
-        storage: new RegExp(`^${storageClean}$`, 'i'),
-        is_active: { $ne: false },
-      }).sort({ manual_override: -1, is_locked: -1, updated_at: -1, _id: -1 }).lean();
-    }
-
-    if (!dbConfig) {
-      dbConfig = await SellPriceConfig.findOne({
-        brand: brandRegex,
-        model: modelRegex,
-        is_active: { $ne: false },
-      }).sort({ manual_override: -1, is_locked: -1, updated_at: -1, _id: -1 }).lean();
-    }
-
-    if (dbConfig && dbConfig.base_price > 0) {
-      enrichedOptions.catalogPrice = dbConfig.base_price;
-      enrichedOptions.catalogStorage = dbConfig.storage || '128 GB';
-      enrichedOptions.isDirectBuybackPrice = true;
-      enrichedOptions.cleanedModel = dbConfig.model;
-      enrichedOptions.ram = input.ram || '';
-      enrichedOptions.cosmeticMultipliers = {
-        flawless: dbConfig.excellent_multiplier != null ? Number(dbConfig.excellent_multiplier) : 1.0,
-        good: dbConfig.good_multiplier != null ? Number(dbConfig.good_multiplier) : 0.85,
-        fair: dbConfig.fair_multiplier != null ? Number(dbConfig.fair_multiplier) : 0.70,
-      };
-    }
-  } catch (_dbErr) {
-    // Graceful fallback if database is offline or model unconfigured
-  }
-
-  // 2. Check MasterPhone in MongoDB if no SellPriceConfig
-  if (!enrichedOptions.catalogPrice) {
+  // 1. Authoritative Admin Pricing: Check MongoDB SellPriceConfig first (if connected)
+  if (mongoose.connection.readyState === 1) {
     try {
-      const brandRegex = new RegExp(`^${(input.brand || '').trim()}$`, 'i');
+      const inputBrandStr = (input.brand || '').trim();
+      const isPoco = inputBrandStr.toLowerCase() === 'poco';
+      const isXiaomi = inputBrandStr.toLowerCase() === 'xiaomi';
+      const brandRegex = (isPoco || isXiaomi)
+        ? /^(poco|xiaomi)$/i
+        : new RegExp(`^${inputBrandStr}$`, 'i');
+
+      const cleanModelName = cleanModel.replace(/^(poco|xiaomi)\s+/i, '').trim();
       const modelEscaped = cleanModel.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-      const modelRegex = new RegExp(`^(${modelEscaped}|${(input.brand || '').trim()}\\s+${modelEscaped})$`, 'i');
-      const mp = await MasterPhone.findOne({
-        brand: brandRegex,
-        model: modelRegex,
-      }).lean();
-      if (mp && mp.base_resale_value > 0) {
-        enrichedOptions.catalogPrice = mp.base_resale_value;
-        enrichedOptions.catalogStorage = mp.storage_options?.[0] || '128 GB';
-        enrichedOptions.isDirectBuybackPrice = true;
-        enrichedOptions.cleanedModel = mp.model;
+      const cleanEscaped = cleanModelName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      const modelRegex = new RegExp(`^(${modelEscaped}|${inputBrandStr}\\s+${modelEscaped}|${cleanEscaped}|poco\\s+${cleanEscaped}|xiaomi\\s+${cleanEscaped})$`, 'i');
+
+      let dbConfig = null;
+      if (input.storage) {
+        const storageClean = input.storage.replace(/\s+/g, '\\s*');
+        dbConfig = await SellPriceConfig.findOne({
+          brand: brandRegex,
+          model: modelRegex,
+          storage: new RegExp(`^${storageClean}$`, 'i'),
+          is_active: { $ne: false },
+        }).sort({ manual_override: -1, is_locked: -1, updated_at: -1, _id: -1 }).lean();
       }
-    } catch (_mpErr) {
-      // Continue to static catalog
+
+      if (!dbConfig) {
+        dbConfig = await SellPriceConfig.findOne({
+          brand: brandRegex,
+          model: modelRegex,
+          is_active: { $ne: false },
+        }).sort({ manual_override: -1, is_locked: -1, updated_at: -1, _id: -1 }).lean();
+      }
+
+      if (dbConfig && dbConfig.base_price > 0) {
+        enrichedOptions.catalogPrice = dbConfig.base_price;
+        enrichedOptions.catalogStorage = dbConfig.storage || '128 GB';
+        enrichedOptions.isDirectBuybackPrice = true;
+        enrichedOptions.cleanedModel = dbConfig.model;
+        enrichedOptions.ram = input.ram || '';
+        enrichedOptions.cosmeticMultipliers = {
+          flawless: dbConfig.excellent_multiplier != null ? Number(dbConfig.excellent_multiplier) : 1.0,
+          good: dbConfig.good_multiplier != null ? Number(dbConfig.good_multiplier) : 0.85,
+          fair: dbConfig.fair_multiplier != null ? Number(dbConfig.fair_multiplier) : 0.70,
+        };
+      }
+    } catch (_dbErr) {
+      // Graceful fallback if database query fails or model unconfigured
+    }
+
+    // 2. Check MasterPhone in MongoDB if no SellPriceConfig
+    if (!enrichedOptions.catalogPrice) {
+      try {
+        const brandRegex = new RegExp(`^${(input.brand || '').trim()}$`, 'i');
+        const modelEscaped = cleanModel.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        const modelRegex = new RegExp(`^(${modelEscaped}|${(input.brand || '').trim()}\\s+${modelEscaped})$`, 'i');
+        const mp = await MasterPhone.findOne({
+          brand: brandRegex,
+          model: modelRegex,
+        }).lean();
+        if (mp && mp.base_resale_value > 0) {
+          enrichedOptions.catalogPrice = mp.base_resale_value;
+          enrichedOptions.catalogStorage = mp.storage_options?.[0] || '128 GB';
+          enrichedOptions.isDirectBuybackPrice = true;
+          enrichedOptions.cleanedModel = mp.model;
+        }
+      } catch (_mpErr) {
+        // Continue to static catalog
+      }
     }
   }
 

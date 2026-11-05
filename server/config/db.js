@@ -338,6 +338,9 @@ export const seedDatabase = async () => {
 };
 
 export const connectDB = async () => {
+  // Disable command buffering so queries fail immediately or fallback when DB is disconnected
+  mongoose.set('bufferCommands', false);
+
   const MONGODB_URI = process.env.MONGODB_URI || process.env.VITE_MONGODB_URI;
   const MONGODB_DB_NAME = process.env.MONGODB_DB_NAME || 'fundu';
 
