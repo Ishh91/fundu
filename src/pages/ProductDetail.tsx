@@ -125,6 +125,13 @@ export default function ProductDetail() {
   });
   const [reviewSubmitting, setReviewSubmitting] = useState(false);
 
+  // Automatically start playing phone video on user side if available
+  useEffect(() => {
+    if (product?.video_url) {
+      setShowVideo(true);
+    }
+  }, [product?.id, product?.video_url]);
+
   useEffect(() => {
     db.from('reviews')
       .select('*')
@@ -482,30 +489,35 @@ return (
             )}
 
             {product.video_url && (
-              <button
-                type="button"
-                onClick={() => setShowVideo(!showVideo)}
-                className={`mb-3 px-3 py-1.5 rounded-full text-xs font-bold transition flex items-center gap-1.5 shadow-xs cursor-pointer ${
-                  showVideo
-                    ? 'bg-purple-600 text-white'
-                    : 'bg-purple-50 text-purple-700 hover:bg-purple-100 border border-purple-200'
-                }`}
-              >
-                {showVideo ? (
-                  <>
-                    <Camera className="h-3.5 w-3.5" /> View Photos
-                  </>
-                ) : (
-                  <>
-                    <Play className="h-3.5 w-3.5 fill-purple-600 text-purple-600" /> Watch Phone Video
-                  </>
-                )}
-              </button>
+              <div className="mb-3 flex items-center justify-between w-full">
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-purple-100 text-purple-900 border border-purple-200 shadow-xs">
+                  <span className="relative flex h-2 w-2">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-purple-400 opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-2 w-2 bg-purple-600"></span>
+                  </span>
+                  🎬 Showcase Video Live
+                </span>
+                <button
+                  type="button"
+                  onClick={() => setShowVideo(!showVideo)}
+                  className="text-xs font-bold text-ink-700 hover:text-purple-700 flex items-center gap-1 cursor-pointer transition px-2.5 py-1 rounded-lg hover:bg-purple-50 border border-transparent hover:border-purple-200"
+                >
+                  {showVideo ? (
+                    <>
+                      <Camera className="h-3.5 w-3.5 text-ink-500" /> View Photos
+                    </>
+                  ) : (
+                    <>
+                      <Play className="h-3.5 w-3.5 fill-purple-600 text-purple-600" /> Watch Video
+                    </>
+                  )}
+                </button>
+              </div>
             )}
 
             {showVideo && product.video_url ? (
               <div className="w-full h-80 rounded-2xl overflow-hidden shadow-sm flex items-center justify-center bg-black">
-                <PhoneVideoPlayer url={product.video_url} title={product.title} autoPlay={true} />
+                <PhoneVideoPlayer url={product.video_url} title={product.title} autoPlay={true} muted={true} loop={true} />
               </div>
             ) : (
               <img
@@ -530,6 +542,27 @@ return (
           {/* Gallery Thumbnail Strip */}
           {(images.length > 1 || product.video_url) && (
             <div className="flex items-center gap-3 overflow-x-auto pb-1 scrollbar-hide">
+              {/* Show Video Thumbnail First when video is present */}
+              {product.video_url && (
+                <button
+                  type="button"
+                  onClick={() => setShowVideo(true)}
+                  className={`rounded-2xl border-2 p-2 transition cursor-pointer shrink-0 flex flex-col items-center justify-center h-20 w-20 relative overflow-hidden ${
+                    showVideo
+                      ? 'border-purple-600 bg-purple-50 ring-2 ring-purple-500/20 scale-105 text-purple-700'
+                      : 'border-ink-200 bg-white hover:border-purple-300 text-ink-600'
+                  }`}
+                  title="Watch Video"
+                >
+                  <span className="absolute top-1.5 right-1.5 flex h-2 w-2">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-purple-400 opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-2 w-2 bg-purple-600"></span>
+                  </span>
+                  <Film className="h-6 w-6 text-purple-600 mb-1" />
+                  <span className="text-[10px] font-extrabold">{showVideo ? 'Playing' : 'Video'}</span>
+                </button>
+              )}
+
               {images.map((imgUrl, idx) => (
                 <button
                   key={idx}
@@ -546,22 +579,6 @@ return (
                   <img src={imgUrl} alt={`Thumbnail ${idx}`} className="h-16 w-16 object-contain rounded-lg" />
                 </button>
               ))}
-
-              {product.video_url && (
-                <button
-                  type="button"
-                  onClick={() => setShowVideo(true)}
-                  className={`rounded-2xl border-2 p-2 transition cursor-pointer shrink-0 flex flex-col items-center justify-center h-20 w-20 ${
-                    showVideo
-                      ? 'border-purple-600 bg-purple-50 ring-2 ring-purple-500/20 scale-105 text-purple-700'
-                      : 'border-ink-200 bg-white hover:border-purple-300 text-ink-600'
-                  }`}
-                  title="Watch Video"
-                >
-                  <Film className="h-6 w-6 text-purple-600 mb-1" />
-                  <span className="text-[10px] font-extrabold">Video</span>
-                </button>
-              )}
             </div>
           )}
 

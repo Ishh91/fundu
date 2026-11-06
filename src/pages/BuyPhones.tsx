@@ -29,6 +29,8 @@ import {
   Check,
   ArrowRight,
   ShieldAlert,
+  Play,
+  Film,
 } from 'lucide-react';
 import { useSearchParams, useNavigate, Link } from 'react-router-dom';
 import { db, formatINR } from '../lib/db';
@@ -783,11 +785,18 @@ export default function BuyPhones() {
                           </span>
 
                           {/* Discount / Offer Tag */}
-                          {product.discount_percent ? (
-                            <span className="absolute top-3.5 right-3.5 z-10 text-[10px] font-black bg-gradient-to-r from-amber-500 to-orange-600 text-white px-2.5 py-0.5 rounded-lg shadow-xs flex items-center gap-1">
-                              <Tag className="h-3 w-3" /> {product.discount_percent}% OFF
-                            </span>
-                          ) : null}
+                          <div className="absolute top-3.5 right-3.5 z-10 flex flex-col items-end gap-1">
+                            {product.discount_percent ? (
+                              <span className="text-[10px] font-black bg-gradient-to-r from-amber-500 to-orange-600 text-white px-2.5 py-0.5 rounded-lg shadow-xs flex items-center gap-1">
+                                <Tag className="h-3 w-3" /> {product.discount_percent}% OFF
+                              </span>
+                            ) : null}
+                            {product.video_url ? (
+                              <span className="text-[9px] font-black bg-purple-600/90 text-white px-2 py-0.5 rounded-md shadow-xs flex items-center gap-1 backdrop-blur-xs">
+                                <Play className="h-2 w-2 fill-white" /> Video
+                              </span>
+                            ) : null}
+                          </div>
 
                           <Link to={`/product/${product.id}`} className="block my-3">
                             <img

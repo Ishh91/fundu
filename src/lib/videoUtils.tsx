@@ -1,9 +1,11 @@
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
+import { Volume2, VolumeX } from 'lucide-react';
 
 export type ParsedVideo = {
   type: 'youtube' | 'vimeo' | 'direct' | 'unknown';
   embedUrl: string | null;
   rawUrl: string;
+  videoId?: string;
 };
 
 /**
@@ -27,8 +29,9 @@ export function parseVideoUrl(url?: string | null): ParsedVideo {
     const videoId = ytMatch[1];
     return {
       type: 'youtube',
-      embedUrl: `https://www.youtube-nocookie.com/embed/${videoId}?rel=0`,
+      embedUrl: `https://www.youtube-nocookie.com/embed/${videoId}`,
       rawUrl: trimmed,
+      videoId,
     };
   }
 
@@ -36,10 +39,12 @@ export function parseVideoUrl(url?: string | null): ParsedVideo {
   const vimeoRegex = /(?:vimeo\.com\/)(\d+)/i;
   const vimeoMatch = trimmed.match(vimeoRegex);
   if (vimeoMatch && vimeoMatch[1]) {
+    const videoId = vimeoMatch[1];
     return {
       type: 'vimeo',
-      embedUrl: `https://player.vimeo.com/video/${vimeoMatch[1]}`,
+      embedUrl: `https://player.vimeo.com/video/${videoId}`,
       rawUrl: trimmed,
+      videoId,
     };
   }
 
@@ -67,11 +72,12 @@ export function parseVideoUrl(url?: string | null): ParsedVideo {
 export function isVideoUrl(url?: string | null): boolean {
   if (!url || typeof url !== 'string') return false;
   const trimmed = url.trim();
-  return trimmed.length > 5 && (
-    trimmed.startsWith('http://') ||
-    trimmed.startsWith('https://') ||
-    trimmed.startsWith('data:video/') ||
-    trimmed.startsWith('blob:')
+  return (
+    trimmed.length > 5 &&
+    (trimmed.startsWith('http://') ||
+      trimmed.startsWith('https://') ||
+      trimmed.startsWith('data:video/') ||
+      trimmed.startsWith('blob:'))
   );
 }
 
@@ -89,12 +95,35 @@ export const PhoneVideoPlayer: React.FC<PhoneVideoPlayerProps> = ({
   url,
   className = 'w-full h-full rounded-2xl overflow-hidden',
   title = 'Phone Video Showcase',
-  autoPlay = false,
+  autoPlay = true,
   muted = true,
   controls = true,
-  loop = false,
+  loop = true,
 }) => {
   const parsed = parseVideoUrl(url);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const [isMuted, setIsMuted] = useState(muted);
+
+  // Guarantee HTML5 video autoplays automatically across all browsers
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video || parsed.type === 'youtube' || parsed.type === 'vimeo') return;
+
+    video.defaultMuted = isMuted;
+    video.muted = isMuted;
+
+    if (autoPlay) {
+      const playPromise = video.play();
+      if (playPromise !== undefined) {
+        playPromise.catch(() => {
+          // If browser policy prevents unmuted autoplay, mute and retry immediately
+          video.muted = true;
+          setIsMuted(true);
+          video.play().catch(() => {});
+        });
+      }
+    }
+  }, [autoPlay, parsed.embedUrl, parsed.type, isMuted]);
 
   if (!parsed.embedUrl) {
     return (
@@ -104,8 +133,24 @@ export const PhoneVideoPlayer: React.FC<PhoneVideoPlayerProps> = ({
     );
   }
 
+  // 1. YouTube & Vimeo Autoplay Handler
   if (parsed.type === 'youtube' || parsed.type === 'vimeo') {
-    const finalUrl = `${parsed.embedUrl}${parsed.embedUrl.includes('?') ? '&' : '?'}autoplay=${autoPlay ? 1 : 0}&mute=${muted ? 1 : 0}`;
+    const params = new URLSearchParams();
+
+    if (autoPlay) {
+      params.set('autoplay', '1');
+      params.set('mute', isMuted ? '1' : '0');
+      params.set('playsinline', '1');
+    }
+    if (loop && parsed.videoId) {
+      params.set('loop', '1');
+      params.set('playlist', parsed.videoId);
+    }
+    params.set('rel', '0');
+    params.set('modestbranding', '1');
+
+    const finalUrl = `${parsed.embedUrl}?${params.toString()}`;
+
     return (
       <div className={`relative aspect-video w-full overflow-hidden bg-black ${className}`}>
         <iframe
@@ -115,17 +160,30 @@ export const PhoneVideoPlayer: React.FC<PhoneVideoPlayerProps> = ({
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
           allowFullScreen
         />
+        {/* Sound toggle overlay for YouTube */}
+        {autoPlay && isMuted && (
+          <button
+            type="button"
+            onClick={() => setIsMuted(false)}
+            className="absolute bottom-3 right-3 z-20 flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-black/70 hover:bg-black/90 text-white text-[11px] font-bold backdrop-blur-xs transition shadow-md cursor-pointer"
+            title="Unmute audio"
+          >
+            <VolumeX className="h-3.5 w-3.5 text-amber-400" /> Click to Unmute
+          </button>
+        )}
       </div>
     );
   }
 
+  // 2. Direct MP4 / WebM / Video Element
   return (
-    <div className={`relative aspect-video w-full overflow-hidden bg-black ${className}`}>
+    <div className={`relative aspect-video w-full overflow-hidden bg-black group ${className}`}>
       <video
+        ref={videoRef}
         src={parsed.embedUrl}
         controls={controls}
         autoPlay={autoPlay}
-        muted={muted}
+        muted={isMuted}
         loop={loop}
         playsInline
         className="h-full w-full object-contain"
@@ -133,7 +191,30 @@ export const PhoneVideoPlayer: React.FC<PhoneVideoPlayerProps> = ({
         <source src={parsed.embedUrl} />
         Your browser does not support the video tag.
       </video>
+
+      {/* Interactive Unmute / Mute Button for HTML5 Video */}
+      <button
+        type="button"
+        onClick={() => {
+          if (videoRef.current) {
+            const nextMuted = !videoRef.current.muted;
+            videoRef.current.muted = nextMuted;
+            setIsMuted(nextMuted);
+          }
+        }}
+        className="absolute top-3 right-3 z-20 flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-black/60 hover:bg-black/80 text-white text-[10px] font-bold backdrop-blur-xs transition shadow-md cursor-pointer"
+        title={isMuted ? 'Unmute Audio' : 'Mute Audio'}
+      >
+        {isMuted ? (
+          <>
+            <VolumeX className="h-3 w-3 text-amber-400" /> Tap for Sound
+          </>
+        ) : (
+          <>
+            <Volume2 className="h-3 w-3 text-emerald-400" /> Sound On
+          </>
+        )}
+      </button>
     </div>
   );
 };
-
