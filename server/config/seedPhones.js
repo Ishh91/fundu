@@ -182,6 +182,23 @@ export async function ensureMasterPhonesSeeded(force = true) {
       }
     });
 
+    // Fetch any phones where an admin set a custom video so we NEVER wipe custom videos
+    const customVideos = await MasterPhone.find(
+      { video_url: { $ne: null } },
+      { brand: 1, model: 1, video_url: 1 }
+    ).lean();
+    const customPhoneVideoMap = new Map();
+    customVideos.forEach((p) => {
+      const b = (p.brand || '').toLowerCase().trim();
+      const m = (p.model || '').toLowerCase().trim();
+      if (p.video_url) {
+        customPhoneVideoMap.set(`${b}:${m}`, p.video_url);
+        let strippedM = m;
+        if (b && strippedM.startsWith(b)) strippedM = strippedM.slice(b.length).trim();
+        if (strippedM) customPhoneVideoMap.set(`${b}:${strippedM}`, p.video_url);
+      }
+    });
+
     // 0. Pre-fetch all Admin Locked / Custom Prices so seed NEVER overwrites them!
     const lockedConfigs = await SellPriceConfig.find(
       { $or: [{ manual_override: true }, { is_locked: true }, { updated_at: { $exists: true } }] },
@@ -293,6 +310,11 @@ export async function ensureMasterPhonesSeeded(force = true) {
           ...(updateFields.$setOnInsert || {}),
           image_url: phone.image_url || null,
         };
+      }
+
+      const existingCustomVideo = customPhoneVideoMap.get(key) || customPhoneVideoMap.get(strippedKey) || phone.video_url;
+      if (existingCustomVideo) {
+        updateFields.video_url = existingCustomVideo;
       }
 
       const setPayload = { ...updateFields };

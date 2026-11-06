@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { Store, Search, Plus, Edit2, Trash2, Smartphone, Laptop, Tag, ExternalLink, ShieldCheck, CheckCircle2, Cpu, Monitor, BatteryCharging, Star } from 'lucide-react';
+import { Store, Search, Plus, Edit2, Trash2, Smartphone, Laptop, Tag, ExternalLink, ShieldCheck, CheckCircle2, Cpu, Monitor, BatteryCharging, Star, Film, Play } from 'lucide-react';
 import type { Product } from './adminTypes';
 import { formatINR } from '../../lib/db';
 import { getCleanPhoneImage } from '../../lib/phoneImages';
+import { PhoneVideoPlayer } from '../../lib/videoUtils';
 
 type AdminProductsProps = {
   products: Product[];
@@ -225,6 +226,11 @@ export default function AdminProducts({
                               </span>
                             )
                           )}
+                          {p.video_url && (
+                            <span className="text-[9px] font-extrabold px-1.5 py-0.5 rounded-full bg-purple-100 text-purple-900 border border-purple-200 shrink-0" title="Has Showcase Video">
+                              🎬 Video
+                            </span>
+                          )}
                           <span
                             className={`text-[9px] font-extrabold px-1.5 py-0.5 rounded-full shrink-0 ${
                               p.is_approved
@@ -443,6 +449,26 @@ export default function AdminProducts({
                   className="h-52 w-auto object-contain"
                 />
               </div>
+
+              {/* Phone Showcase Video */}
+              {selectedProduct.video_url && (
+                <div className="space-y-3 p-4 rounded-2xl bg-purple-50/60 border border-purple-200">
+                  <div className="flex items-center justify-between">
+                    <h4 className="text-xs font-extrabold text-purple-950 flex items-center gap-1.5">
+                      <Film className="h-4 w-4 text-purple-700" /> Phone Showcase Video
+                    </h4>
+                    <span className="badge bg-purple-100 text-purple-800 text-[10px] font-bold">
+                      Live on Store
+                    </span>
+                  </div>
+                  <div className="rounded-xl overflow-hidden shadow-xs border border-purple-200 max-h-64">
+                    <PhoneVideoPlayer url={selectedProduct.video_url} title={selectedProduct.title} />
+                  </div>
+                  <p className="text-[11px] text-purple-900 font-mono truncate">
+                    {selectedProduct.video_url}
+                  </p>
+                </div>
+              )}
             </div>
           ) : (
             <div className="card p-12 text-center bg-white rounded-[28px] border border-[#dce5e8]">

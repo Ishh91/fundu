@@ -22,6 +22,8 @@ import {
   Building2,
   AlertCircle,
   Award,
+  Film,
+  Play,
 } from 'lucide-react';
 import { db, formatINR } from '../lib/db';
 import { useAuth } from '../context/AuthContext';
@@ -32,6 +34,7 @@ import { getModelHardwareSpecs, normalizeStorageString, isStorageAllowedForModel
 import { findSampleProductById, SAMPLE_PRODUCTS_MAP } from '../data/sampleProducts';
 import { findSampleLaptopById } from '../data/sampleLaptops';
 import { verifyPanIndiaPincode } from '../lib/locationService';
+import { PhoneVideoPlayer } from '../lib/videoUtils';
 
 // Doorstep PIN code to Area mapping dictionary
 const DOORSTEP_PINCODE_MAP: Record<string, string> = {
@@ -106,6 +109,7 @@ export default function ProductDetail() {
 
   // Variant States
   const [selectedImage, setSelectedImage] = useState<string>('');
+  const [showVideo, setShowVideo] = useState(false);
   const [selectedGrade, setSelectedGrade] = useState<string>('Superb');
   const [selectedStorage, setSelectedStorage] = useState<string>('128 GB');
   const [selectedColor, setSelectedColor] = useState<string>('');
@@ -477,18 +481,46 @@ return (
               </span>
             )}
 
-            <img
-              src={getCleanPhoneImage(product.brand, product.model || product.title, selectedImage || images[0])}
-              alt={product.title}
-              className="h-80 w-auto object-contain transition-transform duration-300 group-hover:scale-105 drop-shadow-md"
-              onError={(e) => {
-                const target = e.target as HTMLImageElement;
-                if (!target.dataset.triedFallback) {
-                  target.dataset.triedFallback = '1';
-                  target.src = getCleanPhoneImage(product.brand, product.model || product.title, '');
-                }
-              }}
-            />
+            {product.video_url && (
+              <button
+                type="button"
+                onClick={() => setShowVideo(!showVideo)}
+                className={`mb-3 px-3 py-1.5 rounded-full text-xs font-bold transition flex items-center gap-1.5 shadow-xs cursor-pointer ${
+                  showVideo
+                    ? 'bg-purple-600 text-white'
+                    : 'bg-purple-50 text-purple-700 hover:bg-purple-100 border border-purple-200'
+                }`}
+              >
+                {showVideo ? (
+                  <>
+                    <Camera className="h-3.5 w-3.5" /> View Photos
+                  </>
+                ) : (
+                  <>
+                    <Play className="h-3.5 w-3.5 fill-purple-600 text-purple-600" /> Watch Phone Video
+                  </>
+                )}
+              </button>
+            )}
+
+            {showVideo && product.video_url ? (
+              <div className="w-full h-80 rounded-2xl overflow-hidden shadow-sm flex items-center justify-center bg-black">
+                <PhoneVideoPlayer url={product.video_url} title={product.title} autoPlay={true} />
+              </div>
+            ) : (
+              <img
+                src={getCleanPhoneImage(product.brand, product.model || product.title, selectedImage || images[0])}
+                alt={product.title}
+                className="h-80 w-auto object-contain transition-transform duration-300 group-hover:scale-105 drop-shadow-md"
+                onError={(e) => {
+                  const target = e.target as HTMLImageElement;
+                  if (!target.dataset.triedFallback) {
+                    target.dataset.triedFallback = '1';
+                    target.src = getCleanPhoneImage(product.brand, product.model || product.title, '');
+                  }
+                }}
+              />
+            )}
 
             <div className="mt-4 flex items-center gap-2 text-xs font-bold text-ink-500 bg-ink-50 px-3 py-1 rounded-full">
               <Sparkles className="h-3.5 w-3.5 text-brand-600" /> 32-Point Fundu Quality Certified
@@ -496,14 +528,17 @@ return (
           </div>
 
           {/* Gallery Thumbnail Strip */}
-          {images.length > 1 && (
+          {(images.length > 1 || product.video_url) && (
             <div className="flex items-center gap-3 overflow-x-auto pb-1 scrollbar-hide">
               {images.map((imgUrl, idx) => (
                 <button
                   key={idx}
                   type="button"
-                  onClick={() => setSelectedImage(imgUrl)}
-                  className={`rounded-2xl border-2 p-2 bg-white transition cursor-pointer shrink-0 ${(selectedImage || images[0]) === imgUrl
+                  onClick={() => {
+                    setSelectedImage(imgUrl);
+                    setShowVideo(false);
+                  }}
+                  className={`rounded-2xl border-2 p-2 bg-white transition cursor-pointer shrink-0 ${!showVideo && (selectedImage || images[0]) === imgUrl
                       ? 'border-brand-600 ring-2 ring-brand-500/20 scale-105'
                       : 'border-ink-200 hover:border-brand-300'
                     }`}
@@ -511,6 +546,22 @@ return (
                   <img src={imgUrl} alt={`Thumbnail ${idx}`} className="h-16 w-16 object-contain rounded-lg" />
                 </button>
               ))}
+
+              {product.video_url && (
+                <button
+                  type="button"
+                  onClick={() => setShowVideo(true)}
+                  className={`rounded-2xl border-2 p-2 transition cursor-pointer shrink-0 flex flex-col items-center justify-center h-20 w-20 ${
+                    showVideo
+                      ? 'border-purple-600 bg-purple-50 ring-2 ring-purple-500/20 scale-105 text-purple-700'
+                      : 'border-ink-200 bg-white hover:border-purple-300 text-ink-600'
+                  }`}
+                  title="Watch Video"
+                >
+                  <Film className="h-6 w-6 text-purple-600 mb-1" />
+                  <span className="text-[10px] font-extrabold">Video</span>
+                </button>
+              )}
             </div>
           )}
 

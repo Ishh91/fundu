@@ -16,6 +16,9 @@ import {
   Link2,
   RotateCcw,
   Check,
+  Film,
+  Play,
+  Video as VideoIcon,
 } from 'lucide-react';
 import type { MasterPhone, Product } from './adminTypes';
 import { db, formatINR } from '../../lib/db';
@@ -26,12 +29,14 @@ import {
   getCleanPhoneImage,
   saveCustomModelImage,
   saveModelImageToDatabase,
+  saveModelVideoToDatabase,
   resetCustomModelImage,
   getCustomModelImages,
   hasCustomModelImage,
 } from '../../lib/phoneImages';
 import { compressImage } from '../../lib/imageUtils';
 import { isObsoleteDeviceHardware } from '../../lib/deviceSpecs';
+import { PhoneVideoPlayer, isVideoUrl } from '../../lib/videoUtils';
 
 type AdminCatalogProps = {
   masterPhones: MasterPhone[];
@@ -150,6 +155,56 @@ export default function AdminCatalog({
       alert(err?.message || 'Failed to reset image');
     } finally {
       setImageSaving(false);
+    }
+  };
+
+  // Model Video Changer Modal State
+  const [videoModalOpen, setVideoModalOpen] = useState(false);
+  const [newVideoUrl, setNewVideoUrl] = useState('');
+  const [videoSaving, setVideoSaving] = useState(false);
+
+  const handleOpenVideoModal = (phone: MasterPhone) => {
+    setEditingPhone(phone);
+    setNewVideoUrl(phone.video_url || '');
+    setVideoModalOpen(true);
+  };
+
+  const handleSaveVideo = async () => {
+    if (!editingPhone) return;
+    setVideoSaving(true);
+    try {
+      const urlToSave = newVideoUrl.trim();
+      const res = await saveModelVideoToDatabase(editingPhone.brand, editingPhone.model, urlToSave);
+      if (!res.success) throw new Error(res.error || 'Failed to save phone video');
+
+      editingPhone.video_url = urlToSave || null;
+      setCustomImagesVer((v) => v + 1);
+      setVideoModalOpen(false);
+      alert(`🎉 Model video saved for ${editingPhone.brand} ${editingPhone.model}! Live in database.`);
+    } catch (err: any) {
+      alert(err?.message || 'Failed to save video');
+    } finally {
+      setVideoSaving(false);
+    }
+  };
+
+  const handleResetVideo = async () => {
+    if (!editingPhone) return;
+    if (!confirm(`Remove showcase video for ${editingPhone.brand} ${editingPhone.model}?`)) return;
+    setVideoSaving(true);
+    try {
+      const res = await saveModelVideoToDatabase(editingPhone.brand, editingPhone.model, '');
+      if (!res.success) throw new Error(res.error || 'Failed to remove video');
+
+      editingPhone.video_url = null;
+      setNewVideoUrl('');
+      setCustomImagesVer((v) => v + 1);
+      setVideoModalOpen(false);
+      alert(`✅ Video removed for ${editingPhone.brand} ${editingPhone.model}.`);
+    } catch (err: any) {
+      alert(err?.message || 'Failed to remove video');
+    } finally {
+      setVideoSaving(false);
     }
   };
 
@@ -418,15 +473,22 @@ export default function AdminCatalog({
                           <p className="font-bold text-sm text-ink-900 truncate">
                             {mp.brand} {mp.model}
                           </p>
-                          {isAlreadyListed ? (
-                            <span className="badge bg-nature-50 text-nature-700 text-[10px] font-bold shrink-0">
-                              ✓ In Store
-                            </span>
-                          ) : (
-                            <span className="badge bg-brand-50 text-brand-700 text-[10px] font-bold shrink-0">
-                              Ready to List
-                            </span>
-                          )}
+                          <div className="flex items-center gap-1 shrink-0">
+                            {mp.video_url && (
+                              <span className="badge bg-purple-50 text-purple-700 text-[9px] font-bold shrink-0 flex items-center gap-0.5" title="Has Showcase Video">
+                                🎬 Video
+                              </span>
+                            )}
+                            {isAlreadyListed ? (
+                              <span className="badge bg-nature-50 text-nature-700 text-[10px] font-bold shrink-0">
+                                ✓ In Store
+                              </span>
+                            ) : (
+                              <span className="badge bg-brand-50 text-brand-700 text-[10px] font-bold shrink-0">
+                                Ready to List
+                              </span>
+                            )}
+                          </div>
                         </div>
                         <p className="text-xs text-ink-500">
                           {mp.release_year} · {mp.storage_options?.join(', ') || '128GB'}
@@ -612,6 +674,85 @@ export default function AdminCatalog({
                     </div>
                   </div>
                 </div>
+              </div>
+
+              {/* Phone Showcase Video Section */}
+              <div className="space-y-4 pt-4 border-t border-ink-100">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h4 className="font-display font-bold text-sm text-ink-900 flex items-center gap-2">
+                      <Film className="h-4 w-4 text-purple-600" />
+                      Phone Model Showcase Video
+                    </h4>
+                    <p className="text-[11px] text-ink-500 mt-0.5">
+                      Demonstration or review video linked to this model across Fundu store and buy pages.
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    {selectedPhone.video_url ? (
+                      <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold bg-purple-100 text-purple-800">
+                        <Play className="h-3 w-3" /> Live Video
+                      </span>
+                    ) : (
+                      <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold bg-gray-100 text-gray-600">
+                        No Video Added
+                      </span>
+                    )}
+                  </div>
+                </div>
+
+                {selectedPhone.video_url ? (
+                  <div className="p-4 rounded-xl bg-purple-50/50 border border-purple-200 space-y-3">
+                    <div className="rounded-xl overflow-hidden shadow-xs border border-purple-200 max-h-64">
+                      <PhoneVideoPlayer url={selectedPhone.video_url} title={`${selectedPhone.brand} ${selectedPhone.model} Video`} />
+                    </div>
+                    <div className="flex items-center justify-between gap-2 pt-1">
+                      <p className="text-[11px] text-purple-900 font-mono truncate max-w-xs">
+                        {selectedPhone.video_url}
+                      </p>
+                      <div className="flex items-center gap-2 shrink-0">
+                        <button
+                          type="button"
+                          onClick={() => handleOpenVideoModal(selectedPhone)}
+                          className="btn-primary text-xs py-1.5 px-3 flex items-center gap-1.5 shadow-sm bg-purple-600 hover:bg-purple-700"
+                        >
+                          <Film className="h-3.5 w-3.5" />
+                          Change Video
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setEditingPhone(selectedPhone);
+                            handleResetVideo();
+                          }}
+                          className="btn-outline text-xs py-1.5 px-3 flex items-center gap-1 text-red-600 hover:bg-red-50"
+                        >
+                          <Trash2 className="h-3.5 w-3.5" />
+                          Remove
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="flex items-center justify-between p-4 rounded-xl bg-ink-50 border border-ink-100">
+                    <div className="flex items-center gap-3">
+                      <div className="h-10 w-10 rounded-xl bg-purple-100 text-purple-700 grid place-items-center shrink-0">
+                        <Film className="h-5 w-5" />
+                      </div>
+                      <div>
+                        <p className="text-xs font-bold text-ink-900">No Showcase Video Attached</p>
+                        <p className="text-[11px] text-ink-500">Add YouTube link or MP4 clip to display with this phone.</p>
+                      </div>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => handleOpenVideoModal(selectedPhone)}
+                      className="btn-primary text-xs py-2 px-3.5 flex items-center gap-1.5 bg-purple-600 hover:bg-purple-700 font-bold shrink-0"
+                    >
+                      <Plus className="h-3.5 w-3.5" /> Add Phone Video
+                    </button>
+                  </div>
+                )}
               </div>
             </div>
           ) : (
@@ -942,6 +1083,155 @@ export default function AdminCatalog({
                   ) : (
                     <>
                       <Check className="h-3.5 w-3.5" /> Save & Apply Live
+                    </>
+                  )}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ========================================================================= */}
+      {/* MODAL: CHANGE OR ADD MODEL SHOWCASE VIDEO                                */}
+      {/* ========================================================================= */}
+      {videoModalOpen && editingPhone && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-ink-900/60 backdrop-blur-xs p-4 overflow-y-auto animate-in fade-in">
+          <div className="card w-full max-w-lg p-6 my-4 space-y-5 bg-white shadow-2xl rounded-3xl border border-ink-100">
+            <div className="flex items-center justify-between pb-3 border-b border-ink-100">
+              <div className="flex items-center gap-2.5">
+                <div className="grid h-9 w-9 place-items-center rounded-xl bg-purple-100 text-purple-700">
+                  <Film className="h-5 w-5" />
+                </div>
+                <div>
+                  <h3 className="font-display text-base font-bold text-ink-900">
+                    Model Showcase Video
+                  </h3>
+                  <p className="text-xs text-ink-500">
+                    {editingPhone.brand} {editingPhone.model}
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setVideoModalOpen(false)}
+                className="p-1 rounded-lg hover:bg-ink-100 text-ink-400 hover:text-ink-700"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+
+            {/* Video Input Box */}
+            <div className="space-y-3">
+              <div>
+                <label className="block text-xs font-bold text-ink-700 mb-1">
+                  Video URL (YouTube Watch / Shorts or direct MP4 link)
+                </label>
+                <div className="relative">
+                  <input
+                    type="url"
+                    value={newVideoUrl}
+                    onChange={(e) => setNewVideoUrl(e.target.value)}
+                    placeholder="https://www.youtube.com/watch?v=... or .mp4 link"
+                    className="input-text text-xs pl-8 pr-3 py-2.5 font-mono w-full"
+                  />
+                  <Link2 className="absolute left-2.5 top-3 h-3.5 w-3.5 text-ink-400" />
+                </div>
+                <p className="text-[11px] text-ink-400 mt-1">
+                  Tip: YouTube links (both standard and shorts) or direct MP4 links are fully supported.
+                </p>
+              </div>
+
+              {/* Upload video file option */}
+              <div className="flex items-center justify-between pt-1">
+                <span className="text-xs text-ink-600 font-medium">Or upload video clip from device:</span>
+                <label className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-purple-50 hover:bg-purple-100 text-purple-800 border border-purple-200 text-xs font-bold cursor-pointer transition">
+                  <Upload className="h-3.5 w-3.5" /> Upload Video File
+                  <input
+                    type="file"
+                    accept="video/mp4,video/webm,video/quicktime,video/*"
+                    className="hidden"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (!file) return;
+                      if (file.size > 25 * 1024 * 1024) {
+                        alert('Video file is larger than 25MB. Please provide a YouTube link or hosted video URL.');
+                        return;
+                      }
+                      const reader = new FileReader();
+                      reader.onloadend = () => {
+                        setNewVideoUrl(reader.result as string);
+                      };
+                      reader.readAsDataURL(file);
+                    }}
+                  />
+                </label>
+              </div>
+            </div>
+
+            {/* Video Live Player Preview */}
+            <div className="p-4 rounded-2xl bg-gradient-to-b from-purple-50/50 to-purple-100/30 border border-purple-200/80 space-y-2">
+              <div className="flex items-center justify-between text-xs font-bold text-purple-900">
+                <span className="flex items-center gap-1">
+                  <Play className="h-3.5 w-3.5 text-purple-600" /> Live Player Preview
+                </span>
+                {newVideoUrl ? (
+                  <span className="text-[10px] text-purple-700 font-bold bg-purple-100 px-2 py-0.5 rounded-full">
+                    Ready to Save
+                  </span>
+                ) : null}
+              </div>
+
+              <div className="flex items-center justify-center p-2 bg-white rounded-xl border border-purple-100 min-h-[160px] overflow-hidden">
+                {newVideoUrl ? (
+                  <div className="w-full rounded-lg overflow-hidden">
+                    <PhoneVideoPlayer url={newVideoUrl} title="Preview Video" />
+                  </div>
+                ) : (
+                  <div className="text-center text-ink-400 py-6">
+                    <Film className="h-8 w-8 mx-auto stroke-1" />
+                    <p className="text-xs mt-1">Paste or upload a video to preview</p>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Action Buttons */}
+            <div className="flex items-center justify-between pt-2 border-t border-ink-100">
+              {editingPhone.video_url ? (
+                <button
+                  type="button"
+                  onClick={handleResetVideo}
+                  disabled={videoSaving}
+                  className="text-xs font-bold text-rose-600 hover:text-rose-800 flex items-center gap-1 transition px-2 py-1.5"
+                >
+                  <Trash2 className="h-3.5 w-3.5" />
+                  Remove Video
+                </button>
+              ) : <div />}
+
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => setVideoModalOpen(false)}
+                  disabled={videoSaving}
+                  className="btn-outline text-xs px-3 py-2"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  onClick={handleSaveVideo}
+                  disabled={videoSaving || !newVideoUrl.trim()}
+                  className="btn-primary text-xs px-4 py-2 font-bold bg-purple-600 hover:bg-purple-700 flex items-center gap-1.5 shadow-sm"
+                >
+                  {videoSaving ? (
+                    <>
+                      <RefreshCw className="h-3.5 w-3.5 animate-spin" /> Saving...
+                    </>
+                  ) : (
+                    <>
+                      <Check className="h-3.5 w-3.5" /> Save to Database
                     </>
                   )}
                 </button>

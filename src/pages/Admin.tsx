@@ -21,7 +21,11 @@ import {
   Trash2,
   Sparkles,
   Image as ImageIcon,
+  Film,
+  Play,
+  Video as VideoIcon,
 } from 'lucide-react';
+import { PhoneVideoPlayer, isVideoUrl } from '../lib/videoUtils';
 import { useAuth } from '../context/AuthContext';
 import type {
   Product,
@@ -47,7 +51,7 @@ import {
 } from '../lib/mobileApi';
 import { soundNotifier } from '../lib/soundAlert';
 import AdminLiveNotifier, { LiveNotification } from '../components/admin/AdminLiveNotifier';
-import { saveCustomModelImage, saveModelImageToDatabase } from '../lib/phoneImages';
+import { saveCustomModelImage, saveModelImageToDatabase, saveModelVideoToDatabase } from '../lib/phoneImages';
 import { isStorageAllowedForModel } from '../lib/deviceSpecs';
 
 // Sub-page modular components
@@ -283,6 +287,7 @@ export default function Admin() {
     stock: '2',
     description: '',
     images: '',
+    video_url: '',
   });
   const [listPhoneSaving, setListPhoneSaving] = useState(false);
 
@@ -310,6 +315,7 @@ export default function Admin() {
     warranty_months: '6',
     description: '',
     images: '',
+    video_url: '',
     is_approved: true,
     is_featured: false,
     show_all_grades: true,
@@ -330,6 +336,7 @@ export default function Admin() {
     storage_options: '128GB, 256GB, 512GB',
     default_mrp: '69999',
     base_resale_value: '38000',
+    video_url: '',
     popular_tag: 'Indian 5G Smartphone',
     processor: 'Octa-core 5G Processor',
     camera_spec: '50MP OIS Camera',
@@ -904,6 +911,7 @@ export default function Admin() {
       stock: '2',
       description: `Certified refurbished ${phone.brand} ${phone.model}. Powered by ${phone.processor || 'high performance processor'}. Camera: ${phone.camera_spec || '50MP camera'}. Battery: ${phone.battery_spec || '5000mAh'}. 32-point inspection passed with 6-month Fundu warranty.`,
       images: phone.image_url || 'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=800&auto=format&fit=crop&q=80',
+      video_url: phone.video_url || '',
     });
     setListPhoneModal({ phone });
   };
@@ -926,6 +934,7 @@ export default function Admin() {
         warranty_months: Number(listPhoneForm.warranty_months) || 6,
         description: listPhoneForm.description || null,
         images: listPhoneForm.images.split('\n').map((s) => s.trim()).filter(Boolean),
+        video_url: listPhoneForm.video_url.trim() || null,
         is_approved: true,
         is_featured: true,
         stock: Number(listPhoneForm.stock) || 1,
@@ -1317,6 +1326,7 @@ export default function Admin() {
       warranty_months: dataObj.warranty_months || '6',
       description: dataObj.description || '',
       images: dataObj.images || '',
+      video_url: (dataObj as any).video_url || '',
       is_approved: dataObj.is_approved ?? true,
       is_featured: dataObj.is_featured ?? false,
       show_all_grades: dataObj.show_all_grades ?? true,
@@ -1353,6 +1363,7 @@ export default function Admin() {
         warranty_months: Number(productForm.warranty_months) || 6,
         description: productForm.description || null,
         images: productForm.images.split('\n').map((s) => s.trim()).filter(Boolean),
+        video_url: productForm.video_url.trim() || null,
         is_approved: productForm.is_approved,
         is_featured: productForm.is_featured,
         show_all_grades: productForm.show_all_grades,
@@ -1586,6 +1597,7 @@ export default function Admin() {
         storage_options: customPhoneForm.storage_options.split(',').map((s) => s.trim()).filter(Boolean),
         default_mrp: Number(customPhoneForm.default_mrp),
         base_resale_value: Number(customPhoneForm.base_resale_value),
+        video_url: customPhoneForm.video_url.trim() || null,
         popular_tag: customPhoneForm.popular_tag.trim(),
         processor: customPhoneForm.processor.trim(),
         camera_spec: customPhoneForm.camera_spec.trim(),
@@ -2212,6 +2224,7 @@ export default function Admin() {
                     warranty_months: String(product.warranty_months),
                     description: product.description ?? '',
                     images: (product.images || []).join('\n'),
+                    video_url: product.video_url ?? '',
                     is_approved: product.is_approved,
                     is_featured: product.is_featured,
                     show_all_grades: product.show_all_grades !== false,
@@ -2526,6 +2539,62 @@ export default function Admin() {
                   <p className="text-[10px] text-gray-400 mt-1">
                     Upload your own custom photos above or paste image URLs line by line.
                   </p>
+                </div>
+
+                {/* 🎬 PHONE SHOWCASE VIDEO OPTION */}
+                <div className="space-y-2 pt-2 border-t border-gray-100">
+                  <div className="flex items-center justify-between">
+                    <label className="label text-xs font-bold text-gray-900 flex items-center gap-1.5">
+                      <Film className="h-4 w-4 text-purple-600" /> Phone Showcase Video (Optional)
+                    </label>
+                    <label className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-purple-50 hover:bg-purple-100 text-purple-800 border border-purple-200 text-xs font-bold cursor-pointer transition">
+                      <Upload className="h-3.5 w-3.5" /> Upload Video File
+                      <input
+                        type="file"
+                        accept="video/mp4,video/webm,video/quicktime,video/*"
+                        className="hidden"
+                        onChange={(e) => {
+                          const file = e.target.files?.[0];
+                          if (!file) return;
+                          if (file.size > 25 * 1024 * 1024) {
+                            alert('Video file is larger than 25MB. Please provide a YouTube link or direct video URL.');
+                            return;
+                          }
+                          const reader = new FileReader();
+                          reader.onloadend = () => {
+                            setListPhoneForm((prev) => ({ ...prev, video_url: reader.result as string }));
+                          };
+                          reader.readAsDataURL(file);
+                        }}
+                      />
+                    </label>
+                  </div>
+                  <input
+                    type="text"
+                    value={listPhoneForm.video_url}
+                    onChange={(e) => setListPhoneForm({ ...listPhoneForm, video_url: e.target.value })}
+                    placeholder="Paste YouTube link (e.g. https://youtu.be/...) or direct MP4 URL"
+                    className="input text-xs font-mono"
+                  />
+                  {listPhoneForm.video_url && (
+                    <div className="mt-2 rounded-2xl border border-purple-200 bg-purple-50/50 p-2 space-y-1.5">
+                      <div className="flex items-center justify-between text-xs font-bold text-purple-900">
+                        <span className="flex items-center gap-1">
+                          <Play className="h-3.5 w-3.5 text-purple-600" /> Video Live Preview:
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => setListPhoneForm({ ...listPhoneForm, video_url: '' })}
+                          className="text-[11px] text-red-600 hover:underline"
+                        >
+                          Remove Video
+                        </button>
+                      </div>
+                      <div className="rounded-xl overflow-hidden max-h-48 border border-purple-200">
+                        <PhoneVideoPlayer url={listPhoneForm.video_url} title="Phone Video Preview" />
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
@@ -3251,6 +3320,65 @@ export default function Admin() {
                     Upload your own custom photos above or paste image URLs line by line.
                   </p>
                 </div>
+
+                {/* 🎬 PHONE SHOWCASE VIDEO OPTION */}
+                <div className="space-y-2 pt-2 border-t border-gray-100">
+                  <div className="flex items-center justify-between">
+                    <label className="label text-xs font-bold text-gray-900 flex items-center gap-1.5">
+                      <Film className="h-4 w-4 text-purple-600" /> Phone Showcase Video (YouTube, MP4, or Video Link)
+                    </label>
+                    <label className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-purple-50 hover:bg-purple-100 text-purple-800 border border-purple-200 text-xs font-bold cursor-pointer transition">
+                      <Upload className="h-3.5 w-3.5" /> Upload Video Clip
+                      <input
+                        type="file"
+                        accept="video/mp4,video/webm,video/quicktime,video/*"
+                        className="hidden"
+                        onChange={(e) => {
+                          const file = e.target.files?.[0];
+                          if (!file) return;
+                          if (file.size > 25 * 1024 * 1024) {
+                            alert('Video file is larger than 25MB. For best speed and streaming, paste a YouTube link or hosted MP4 URL.');
+                            return;
+                          }
+                          const reader = new FileReader();
+                          reader.onloadend = () => {
+                            setProductForm((prev) => ({ ...prev, video_url: reader.result as string }));
+                          };
+                          reader.readAsDataURL(file);
+                        }}
+                      />
+                    </label>
+                  </div>
+                  <input
+                    type="text"
+                    value={productForm.video_url}
+                    onChange={(e) => setProductForm({ ...productForm, video_url: e.target.value })}
+                    placeholder="e.g. https://www.youtube.com/watch?v=... or https://youtu.be/... or .mp4 video link"
+                    className="input text-xs font-mono"
+                  />
+                  <p className="text-[10px] text-gray-400">
+                    Add a YouTube link, video URL, or upload a clip. Customers can watch the video directly on the phone detail page.
+                  </p>
+                  {productForm.video_url && (
+                    <div className="mt-2 rounded-2xl border border-purple-200 bg-purple-50/50 p-2.5 space-y-1.5">
+                      <div className="flex items-center justify-between text-xs font-bold text-purple-900">
+                        <span className="flex items-center gap-1.5">
+                          <Play className="h-3.5 w-3.5 text-purple-600" /> Video Live Player Preview:
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => setProductForm({ ...productForm, video_url: '' })}
+                          className="text-[11px] text-red-600 hover:underline font-semibold"
+                        >
+                          Remove Video
+                        </button>
+                      </div>
+                      <div className="rounded-xl overflow-hidden max-h-56 border border-purple-200">
+                        <PhoneVideoPlayer url={productForm.video_url} title="Phone Video Live Preview" />
+                      </div>
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
 
@@ -3448,6 +3576,19 @@ export default function Admin() {
                     className="input text-xs font-black text-emerald-700"
                   />
                 </div>
+              </div>
+
+              <div>
+                <label className="label text-xs font-bold text-gray-900 flex items-center gap-1.5">
+                  <Film className="h-4 w-4 text-purple-600" /> Phone Showcase Video URL (Optional)
+                </label>
+                <input
+                  type="text"
+                  value={customPhoneForm.video_url}
+                  onChange={(e) => setCustomPhoneForm({ ...customPhoneForm, video_url: e.target.value })}
+                  placeholder="e.g. YouTube link or direct MP4 video link"
+                  className="input text-xs font-mono"
+                />
               </div>
             </div>
 

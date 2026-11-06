@@ -996,6 +996,66 @@ export async function saveModelImageToDatabase(
   }
 }
 
+/**
+ * Direct persistence of custom phone video into MongoDB (MasterPhone + SellPriceConfig)
+ * Saves the video URL to the phone record, updates caches and dispatches live update events.
+ */
+export async function saveModelVideoToDatabase(
+  brand: string,
+  model: string,
+  videoUrl: string
+): Promise<{ success: boolean; data?: any; error?: string }> {
+  const b = (brand || '').trim();
+  const m = (model || '').trim();
+  const url = (videoUrl || '').trim();
+
+  try {
+    const session = readSession();
+    const res = await fetch(`${API_BASE}/phones/model-video`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        ...(session?.access_token ? { Authorization: `Bearer ${session.access_token}` } : {}),
+      },
+      body: JSON.stringify({
+        brand: b,
+        model: m,
+        video_url: url,
+      }),
+    });
+
+    const json = await res.json().catch(() => null);
+    if (!res.ok) {
+      const errMsg = json?.error?.message || json?.message || 'Failed to save phone video into database';
+      throw new Error(errMsg);
+    }
+
+    // Invalidate client caches
+    invalidateClientTableCache('master_phones');
+    invalidateClientTableCache('sell_price_configs');
+
+    // Broadcast realtime event
+    broadcastSync('MODEL_VIDEO_UPDATE', 'master_phones', 'update', {
+      brand: b,
+      model: m,
+      videoUrl: url,
+    });
+
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(
+        new CustomEvent('fundu_model_video_updated', {
+          detail: { brand: b, model: m, videoUrl: url },
+        })
+      );
+    }
+
+    return { success: true, data: json?.data };
+  } catch (err: any) {
+    console.error('[phoneImages] saveModelVideoToDatabase error:', err);
+    return { success: false, error: err?.message || 'Database save failed' };
+  }
+}
+
 // Fast startup and continuous real-time synchronization
 if (typeof window !== 'undefined') {
   // Listen for real-time broadcasts across all tabs

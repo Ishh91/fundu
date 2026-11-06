@@ -305,6 +305,7 @@ router.post('/custom', async (req, res) => {
       default_mrp: Number(body.default_mrp) || 29999,
       base_resale_value: Number(body.base_resale_value) || 16000,
       image_url: body.image_url || 'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=800&auto=format&fit=crop&q=80',
+      video_url: body.video_url ? String(body.video_url).trim() : null,
       popular_tag: body.popular_tag || 'Latest Launch',
       processor: body.processor || 'Octa-core 5G Processor',
       camera_spec: body.camera_spec || '50MP OIS Camera',
@@ -530,6 +531,114 @@ router.post('/model-image', async (req, res) => {
     });
   } catch (error) {
     console.error('[phoneRoutes] Failed to update model image:', error);
+    return res.status(500).json({ error: { message: error.message } });
+  }
+});
+
+/**
+ * Update Phone Model Video directly in Database (MasterPhone + SellPriceConfig)
+ * POST /api/phones/model-video
+ */
+router.post('/model-video', async (req, res) => {
+  try {
+    const { brand, model, video_url } = req.body;
+    if (!brand || !model) {
+      return res.status(400).json({ error: { message: 'Brand and Model are required' } });
+    }
+
+    const rawBrand = String(brand).trim();
+    let rawModel = String(model).trim();
+    const cleanVideoUrl = typeof video_url === 'string' ? video_url.trim() : '';
+
+    // Strip brand prefix if redundant
+    if (rawBrand && rawModel.toLowerCase().startsWith(rawBrand.toLowerCase())) {
+      rawModel = rawModel.slice(rawBrand.length).trim();
+    }
+
+    const isPoco = rawBrand.toLowerCase() === 'poco' || rawModel.toLowerCase().startsWith('poco');
+    const isXiaomi = rawBrand.toLowerCase() === 'xiaomi';
+    const brandRegex = (isPoco || isXiaomi)
+      ? /^(poco|xiaomi)$/i
+      : new RegExp(`^${rawBrand}$`, 'i');
+
+    const cleanModelName = rawModel.replace(/^(poco|xiaomi)\s+/i, '').trim();
+    const cleanNo5g = cleanModelName.replace(/\s*5g$/i, '').trim();
+    const modelEscaped = rawModel.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const cleanEscaped = cleanModelName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const cleanNo5gEscaped = cleanNo5g.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
+    // Flexible pattern that bridges "Reno 12" <-> "Reno12", "GT 8" <-> "GT8", "Find X8" <-> "FindX8"
+    const flexPattern = cleanNo5g
+      .replace(/([a-zA-Z])(\d)/g, '$1\\s*$2')
+      .replace(/(\d)([a-zA-Z])/g, '$1\\s*$2')
+      .split(/\s+/)
+      .map((p) => p.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'))
+      .join('\\s*');
+
+    const modelRegex = new RegExp(`^(${modelEscaped}|${rawBrand}\\s+${modelEscaped}|${cleanEscaped}|poco\\s+${cleanEscaped}|xiaomi\\s+${cleanEscaped}|${cleanNo5gEscaped}|poco\\s+${cleanNo5gEscaped}|xiaomi\\s+${cleanNo5gEscaped}|(?:${rawBrand}\\s+)?${flexPattern})(?:\\s*5g)?$`, 'i');
+
+    const canonicalBrand = isPoco ? 'Poco' : rawBrand;
+
+    // 1. Update or upsert MasterPhone in MongoDB
+    const mpUpdate = {
+      video_url: cleanVideoUrl || null,
+      updated_at: new Date(),
+    };
+
+    let updatedMp = await MasterPhone.findOneAndUpdate(
+      { brand: brandRegex, model: modelRegex },
+      { $set: mpUpdate },
+      { new: true }
+    );
+
+    if (!updatedMp) {
+      // If not present in DB, create it permanently with sensible defaults
+      updatedMp = await MasterPhone.create({
+        brand: canonicalBrand,
+        model: rawModel,
+        release_year: new Date().getFullYear(),
+        ram_options: ['6GB', '8GB', '12GB'],
+        storage_options: ['128GB', '256GB'],
+        default_mrp: 29999,
+        base_resale_value: 14000,
+        image_url: null,
+        video_url: cleanVideoUrl || null,
+        popular_tag: `${canonicalBrand} 5G Device`,
+        is_active: true,
+      });
+    } else {
+      await MasterPhone.updateMany(
+        { brand: brandRegex, model: modelRegex },
+        { $set: mpUpdate }
+      );
+    }
+
+    // 2. Also update in SellPriceConfig
+    const spUpdate = {
+      video_url: cleanVideoUrl || null,
+      updated_at: new Date(),
+    };
+    await SellPriceConfig.updateMany(
+      { brand: brandRegex, model: modelRegex },
+      { $set: spUpdate }
+    );
+
+    // 3. Clear server in-memory route cache so next read is 100% fresh
+    clearTableCache('master_phones');
+    clearTableCache('sell_price_configs');
+
+    return res.json({
+      success: true,
+      message: `Video for ${canonicalBrand} ${rawModel} successfully saved to database`,
+      data: {
+        brand: canonicalBrand,
+        model: rawModel,
+        video_url: cleanVideoUrl || null,
+        id: updatedMp._id.toString(),
+      },
+    });
+  } catch (error) {
+    console.error('[phoneRoutes] Failed to update model video:', error);
     return res.status(500).json({ error: { message: error.message } });
   }
 });

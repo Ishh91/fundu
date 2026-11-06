@@ -166,13 +166,13 @@ export default function SellPhone() {
     navigate('/sell');
     try {
       window.scrollTo({ top: 0, behavior: 'smooth' });
-    } catch {}
+    } catch { }
   };
 
   const handleGoToLoginForExactPrice = (targetStep: number = 3) => {
     try {
       sessionStorage.setItem('fundu_sell_form', JSON.stringify(form));
-    } catch {}
+    } catch { }
     const cleanBrand = (brandSlug || form.brand || '').replace(/^sell-/, '').toLowerCase();
     const cleanModel = (modelSlug || form.model || '').toLowerCase().replace(/\s+/g, '-');
     const targetPath = cleanBrand && cleanModel
@@ -323,7 +323,7 @@ export default function SellPhone() {
           }));
         }
       }
-    } catch {}
+    } catch { }
   }, [brandSlug, modelSlug, searchParams, location.pathname]);
 
   // Sync condition questionnaire answers to sessionStorage
@@ -331,7 +331,7 @@ export default function SellPhone() {
     if (form.brand || form.model) {
       try {
         sessionStorage.setItem('fundu_sell_form', JSON.stringify(form));
-      } catch {}
+      } catch { }
     }
   }, [form]);
 
@@ -501,7 +501,7 @@ export default function SellPhone() {
       const cleanBrandKey = brandSlug.replace(/^sell-/, '').toLowerCase();
       const foundBrand = BRAND_TILES.find((b) => b.name.toLowerCase() === cleanBrandKey)?.name ||
         (cleanBrandKey.charAt(0).toUpperCase() + cleanBrandKey.slice(1));
-      
+
       setForm((cur) => ({ ...cur, brand: foundBrand }));
 
       if (modelSlug) {
@@ -852,9 +852,9 @@ export default function SellPhone() {
     } else {
       const indian = Array.isArray(ALL_INDIAN_PHONES_CATALOG)
         ? ALL_INDIAN_PHONES_CATALOG.find((p) =>
-            p.model.toLowerCase() === modelNorm ||
-            `${p.brand} ${p.model}`.toLowerCase() === `${brandNorm} ${modelNorm}`
-          )
+          p.model.toLowerCase() === modelNorm ||
+          `${p.brand} ${p.model}`.toLowerCase() === `${brandNorm} ${modelNorm}`
+        )
         : null;
       if (indian?.base_resale_value) {
         rawBase = indian.base_resale_value;
@@ -1399,154 +1399,152 @@ export default function SellPhone() {
       {/* Hero Banner with Prominent Debounced Search (Hidden on Model Evaluation Page) */}
       {!modelSlug && !form.model && step === 1 && (
         <section className="py-6 px-4">
-        <div className="max-w-7xl mx-auto rounded-3xl bg-[#F0F0F5] border border-[#C0C8D8] p-6 md:p-10 flex flex-col md:flex-row items-center justify-between gap-8 relative shadow-xs">
-          <div className="flex-1 space-y-4 max-w-xl">
-            <div className="inline-flex items-center gap-1.5 rounded-full bg-white px-3 py-1 text-xs font-bold text-[#344257] border border-[#C0C8D8]">
-              <Zap className="h-3.5 w-3.5 text-amber-500" /> Instant Spot Cash · Doorstep Pickup At Your Doorstep
-            </div>
-            <h1 className="font-display text-3xl md:text-4xl font-extrabold text-[#344257] leading-tight">
-              {form.brand ? `Sell Old ${form.brand} Mobile Phone Online At Best Price` : 'Sell Old Mobile Phone for Instant Cash'}
-            </h1>
-            <p className="text-xs md:text-sm text-gray-600">
-              Free doorstep pickup across all active service zones!
-            </p>
+          <div className="max-w-7xl mx-auto rounded-3xl bg-[#F0F0F5] border border-[#C0C8D8] p-6 md:p-10 flex flex-col md:flex-row items-center justify-between gap-8 relative shadow-xs">
+            <div className="flex-1 space-y-4 max-w-xl">
+              <div className="inline-flex items-center gap-1.5 rounded-full bg-white px-3 py-1 text-xs font-bold text-[#344257] border border-[#C0C8D8]">
+                <Zap className="h-3.5 w-3.5 text-amber-500" /> Instant Spot Cash · Doorstep Pickup At Your Doorstep
+              </div>
+              <h1 className="font-display text-3xl md:text-4xl font-extrabold text-[#344257] leading-tight">
+                {form.brand ? `Sell Old ${form.brand} Mobile Phone Online At Best Price` : 'Sell Old Mobile Phone for Instant Cash'}
+              </h1>
+              <p className="text-xs md:text-sm text-gray-600">
+                Free doorstep pickup across all active service zones!
+              </p>
 
-            {/* Checkmark Feature Pills */}
-            <div className="flex flex-wrap items-center gap-3 text-xs font-bold text-[#344257]">
-              <span className="flex items-center gap-1 text-[#344257]">
-                <Check className="h-4 w-4 text-[#344257]" /> Maximum Value
-              </span>
-              <span className="flex items-center gap-1 text-[#344257]">
-                <Check className="h-4 w-4 text-[#344257]" /> Safe & Hassle-free
-              </span>
-              <span className="flex items-center gap-1 text-[#344257]">
-                <Check className="h-4 w-4 text-[#344257]" /> Free Doorstep Pickup
-              </span>
-            </div>
+              {/* Checkmark Feature Pills */}
+              <div className="flex flex-wrap items-center gap-3 text-xs font-bold text-[#344257]">
+                <span className="flex items-center gap-1 text-[#344257]">
+                  <Check className="h-4 w-4 text-[#344257]" /> Maximum Value
+                </span>
+                <span className="flex items-center gap-1 text-[#344257]">
+                  <Check className="h-4 w-4 text-[#344257]" /> Safe & Hassle-free
+                </span>
+                <span className="flex items-center gap-1 text-[#344257]">
+                  <Check className="h-4 w-4 text-[#344257]" /> Free Doorstep Pickup
+                </span>
+              </div>
 
-            {/* PROMINENT DEBOUNCED SEARCH BAR COMPONENT */}
-            <div className="relative w-full pt-2">
-              <div className="relative">
-                <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
-                <input
-                  ref={searchInputRef}
-                  type="text"
-                  value={rawSearchQuery}
-                  onChange={(e) => setRawSearchQuery(e.target.value)}
-                  onKeyDown={handleKeyDown}
-                  placeholder="Search any mobile phone (e.g. iPhone 13, Galaxy S23, OnePlus 11)..."
-                  className="w-full pl-12 pr-10 py-3.5 rounded-2xl bg-white border border-[#C0C8D8] text-sm font-medium shadow-sm focus:border-[#6A859F] focus:ring-4 focus:ring-[#6A859F]/15 outline-none transition text-[#344257] placeholder:text-gray-400"
-                />
-                {isSearching && (
-                  <RefreshCw className="absolute right-4 top-1/2 -translate-y-1/2 h-4 w-4 text-[#6A859F] animate-spin" />
+              {/* PROMINENT DEBOUNCED SEARCH BAR COMPONENT */}
+              <div className="relative w-full pt-2">
+                <div className="relative">
+                  <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+                  <input
+                    ref={searchInputRef}
+                    type="text"
+                    value={rawSearchQuery}
+                    onChange={(e) => setRawSearchQuery(e.target.value)}
+                    onKeyDown={handleKeyDown}
+                    placeholder="Search any mobile phone (e.g. iPhone 13, Galaxy S23, OnePlus 11)..."
+                    className="w-full pl-12 pr-10 py-3.5 rounded-2xl bg-white border border-[#C0C8D8] text-sm font-medium shadow-sm focus:border-[#6A859F] focus:ring-4 focus:ring-[#6A859F]/15 outline-none transition text-[#344257] placeholder:text-gray-400"
+                  />
+                  {isSearching && (
+                    <RefreshCw className="absolute right-4 top-1/2 -translate-y-1/2 h-4 w-4 text-[#6A859F] animate-spin" />
+                  )}
+                </div>
+
+                {/* Autocomplete Dropdown with Highlighted Text & Keyboard Nav */}
+                {rawSearchQuery.trim() !== '' && (
+                  <div
+                    ref={searchDropdownRef}
+                    className="absolute left-0 right-0 top-full mt-2 bg-white rounded-2xl shadow-2xl border border-gray-200 z-50 overflow-hidden max-h-80 overflow-y-auto animate-fade-in"
+                  >
+                    {searchResults.length > 0 ? (
+                      <>
+                        <div className="p-2 text-[10px] font-extrabold text-gray-400 uppercase tracking-wider border-b border-gray-100 px-4 py-2 flex items-center justify-between">
+                          <span>Matching Models ({searchResults.length})</span>
+                          <span className="text-[9px] text-gray-400 font-normal">Use ↑ ↓ arrows & Enter to select</span>
+                        </div>
+                        {searchResults.map((item, idx) => (
+                          <button
+                            key={`${item.brand}-${item.model}`}
+                            type="button"
+                            onClick={() => {
+                              handleQuickModelSelect(item);
+                              setRawSearchQuery('');
+                            }}
+                            className={`w-full flex items-center justify-between p-3 transition border-b border-gray-50 text-left cursor-pointer ${focusedSearchIndex === idx ? 'bg-[#F0F0F5] border-l-4 border-l-[#344257]' : 'hover:bg-[#F7F7FA]'
+                              }`}
+                          >
+                            <div className="flex items-center gap-3">
+                              <img src={getCleanPhoneImage(item.brand, item.model, item.image)} alt="" className="h-10 w-10 object-contain rounded-lg bg-gray-50 p-0.5" />
+                              <div>
+                                <p className="font-extrabold text-sm text-gray-900">
+                                  {highlightMatch(`${item.brand} ${item.model}`, debouncedQuery)}
+                                </p>
+                                <p className="text-xs text-gray-500">{item.storage}</p>
+                              </div>
+                            </div>
+                            <div className="flex flex-col items-end gap-0.5 shrink-0">
+                              <span className="badge bg-[#344257] text-white font-extrabold text-xs px-2.5 py-1 rounded-lg">
+                                Evaluate Device →
+                              </span>
+                              <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200">
+                                Instant Cash Quote
+                              </span>
+                            </div>
+                          </button>
+                        ))}
+                      </>
+                    ) : isSearchingApi ? (
+                      <div className="p-6 text-center space-y-2">
+                        <RefreshCw className="h-6 w-6 text-[#6A859F] animate-spin mx-auto" />
+                        <p className="font-bold text-sm text-gray-900">Searching MobileAPI live catalog for "{rawSearchQuery}"...</p>
+                      </div>
+                    ) : (
+                      <div className="p-6 text-center space-y-2">
+                        <AlertCircle className="h-6 w-6 text-rose-500 mx-auto" />
+                        <p className="font-bold text-sm text-gray-900">No models found for "{rawSearchQuery}"</p>
+                        <p className="text-xs text-gray-500">
+                          Try searching for popular brands like <span className="font-bold text-[#344257]">Apple, Samsung, OnePlus</span> or call our helpline <span className="font-bold text-gray-800">+91-9839122345</span>.
+                        </p>
+                      </div>
+                    )}
+                  </div>
                 )}
               </div>
 
-              {/* Autocomplete Dropdown with Highlighted Text & Keyboard Nav */}
-              {rawSearchQuery.trim() !== '' && (
-                <div
-                  ref={searchDropdownRef}
-                  className="absolute left-0 right-0 top-full mt-2 bg-white rounded-2xl shadow-2xl border border-gray-200 z-50 overflow-hidden max-h-80 overflow-y-auto animate-fade-in"
-                >
-                  {searchResults.length > 0 ? (
-                    <>
-                      <div className="p-2 text-[10px] font-extrabold text-gray-400 uppercase tracking-wider border-b border-gray-100 px-4 py-2 flex items-center justify-between">
-                        <span>Matching Models ({searchResults.length})</span>
-                        <span className="text-[9px] text-gray-400 font-normal">Use ↑ ↓ arrows & Enter to select</span>
-                      </div>
-                      {searchResults.map((item, idx) => (
-                        <button
-                          key={`${item.brand}-${item.model}`}
-                          type="button"
-                          onClick={() => {
-                            handleQuickModelSelect(item);
-                            setRawSearchQuery('');
-                          }}
-                          className={`w-full flex items-center justify-between p-3 transition border-b border-gray-50 text-left cursor-pointer ${
-                            focusedSearchIndex === idx ? 'bg-[#F0F0F5] border-l-4 border-l-[#344257]' : 'hover:bg-[#F7F7FA]'
-                          }`}
-                        >
-                          <div className="flex items-center gap-3">
-                            <img src={getCleanPhoneImage(item.brand, item.model, item.image)} alt="" className="h-10 w-10 object-contain rounded-lg bg-gray-50 p-0.5" />
-                            <div>
-                              <p className="font-extrabold text-sm text-gray-900">
-                                {highlightMatch(`${item.brand} ${item.model}`, debouncedQuery)}
-                              </p>
-                              <p className="text-xs text-gray-500">{item.storage}</p>
-                            </div>
-                          </div>
-                          <div className="flex flex-col items-end gap-0.5 shrink-0">
-                            <span className="badge bg-[#344257] text-white font-extrabold text-xs px-2.5 py-1 rounded-lg">
-                              Evaluate Device →
-                            </span>
-                            <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200">
-                              Instant Cash Quote
-                            </span>
-                          </div>
-                        </button>
-                      ))}
-                    </>
-                  ) : isSearchingApi ? (
-                    <div className="p-6 text-center space-y-2">
-                      <RefreshCw className="h-6 w-6 text-[#6A859F] animate-spin mx-auto" />
-                      <p className="font-bold text-sm text-gray-900">Searching MobileAPI live catalog for "{rawSearchQuery}"...</p>
-                    </div>
-                  ) : (
-                    <div className="p-6 text-center space-y-2">
-                      <AlertCircle className="h-6 w-6 text-rose-500 mx-auto" />
-                      <p className="font-bold text-sm text-gray-900">No models found for "{rawSearchQuery}"</p>
-                      <p className="text-xs text-gray-500">
-                        Try searching for popular brands like <span className="font-bold text-[#344257]">Apple, Samsung, OnePlus</span> or call our helpline <span className="font-bold text-gray-800">+91-9839122345</span>.
-                      </p>
-                    </div>
-                  )}
+              {/* Quick Brand Pills */}
+              <div className="pt-2 space-y-2">
+                <div className="flex items-center gap-3 text-xs font-bold text-gray-400">
+                  <span className="h-px bg-gray-200 flex-1" />
+                  <span>Or select a brand</span>
+                  <span className="h-px bg-gray-200 flex-1" />
                 </div>
-              )}
+                <div className="flex flex-wrap gap-2">
+                  {BRAND_TILES.map((b) => (
+                    <button
+                      key={b.name}
+                      type="button"
+                      onClick={() => handleBrandSelect(b.name)}
+                      className={`px-3.5 py-1.5 rounded-xl border text-xs font-bold transition flex items-center gap-1.5 ${form.brand === b.name
+                          ? 'border-[#344257] bg-[#F0F0F5] text-[#344257] ring-2 ring-[#344257]/20'
+                          : 'border-gray-200 bg-white text-gray-800 hover:border-[#6A859F] hover:bg-[#F0F0F5]'
+                        }`}
+                    >
+                      <img src={b.logo} alt="" className="h-4 w-4 object-contain rounded-full" />
+                      <span>{b.name}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
             </div>
 
-            {/* Quick Brand Pills */}
-            <div className="pt-2 space-y-2">
-              <div className="flex items-center gap-3 text-xs font-bold text-gray-400">
-                <span className="h-px bg-gray-200 flex-1" />
-                <span>Or select a brand</span>
-                <span className="h-px bg-gray-200 flex-1" />
-              </div>
-              <div className="flex flex-wrap gap-2">
-                {BRAND_TILES.map((b) => (
-                  <button
-                    key={b.name}
-                    type="button"
-                    onClick={() => handleBrandSelect(b.name)}
-                    className={`px-3.5 py-1.5 rounded-xl border text-xs font-bold transition flex items-center gap-1.5 ${
-                      form.brand === b.name
-                        ? 'border-[#344257] bg-[#F0F0F5] text-[#344257] ring-2 ring-[#344257]/20'
-                        : 'border-gray-200 bg-white text-gray-800 hover:border-[#6A859F] hover:bg-[#F0F0F5]'
-                    }`}
-                  >
-                    <img src={b.logo} alt="" className="h-4 w-4 object-contain rounded-full" />
-                    <span>{b.name}</span>
-                  </button>
-                ))}
+            {/* Hero Visual Graphic */}
+            <div className="shrink-0 hidden md:block">
+              <div className="relative w-80 h-72 rounded-3xl overflow-hidden shadow-xl border border-[#C0C8D8] bg-gradient-to-br from-[#F0F0F5] to-[#E4E7F0] p-1 flex items-center justify-center group">
+                <img
+                  src="/sell-hero-3d.jpg"
+                  alt="Instant Mobile Cash Best Deals"
+                  className="w-full h-full object-cover rounded-2xl group-hover:scale-105 transition-transform duration-500"
+                />
+                <div className="absolute bottom-3 left-1/2 -translate-x-1/2 bg-white/95 backdrop-blur-md rounded-2xl shadow-xl px-4 py-2 border border-[#C0C8D8] flex items-center gap-2 whitespace-nowrap">
+                  <BadgeIndianRupee className="h-5 w-5 text-[#47576E]" />
+                  <span className="font-extrabold text-xs text-gray-900">Spot Cash at Doorstep</span>
+                </div>
               </div>
             </div>
           </div>
-
-          {/* Hero Visual Graphic */}
-          <div className="shrink-0 hidden md:block">
-            <div className="relative w-80 h-72 rounded-3xl overflow-hidden shadow-xl border border-[#C0C8D8] bg-gradient-to-br from-[#F0F0F5] to-[#E4E7F0] p-1 flex items-center justify-center group">
-              <img
-                src="/sell-hero-3d.jpg"
-                alt="Instant Mobile Cash Best Deals"
-                className="w-full h-full object-cover rounded-2xl group-hover:scale-105 transition-transform duration-500"
-              />
-              <div className="absolute bottom-3 left-1/2 -translate-x-1/2 bg-white/95 backdrop-blur-md rounded-2xl shadow-xl px-4 py-2 border border-[#C0C8D8] flex items-center gap-2 whitespace-nowrap">
-                <BadgeIndianRupee className="h-5 w-5 text-[#47576E]" />
-                <span className="font-extrabold text-xs text-gray-900">Spot Cash at Doorstep</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+        </section>
       )}
 
       {/* STICKY 4-STEP PROGRESS INDICATOR BAR */}
@@ -1570,13 +1568,12 @@ export default function SellPhone() {
                     }
                   }
                 }}
-                className={`flex items-center gap-1.5 sm:gap-2 rounded-full px-3.5 py-1.5 text-xs font-bold transition-all duration-200 ${
-                  step === s
+                className={`flex items-center gap-1.5 sm:gap-2 rounded-full px-3.5 py-1.5 text-xs font-bold transition-all duration-200 ${step === s
                     ? 'bg-gradient-to-r from-[#344257] to-[#47576E] text-white shadow-md'
                     : step > s
-                    ? 'bg-[#F0F0F5] text-[#344257] hover:bg-[#E4E7F0] border border-[#C0C8D8] cursor-pointer'
-                    : 'bg-[#F7F7FA] text-gray-400 cursor-not-allowed border border-transparent'
-                }`}
+                      ? 'bg-[#F0F0F5] text-[#344257] hover:bg-[#E4E7F0] border border-[#C0C8D8] cursor-pointer'
+                      : 'bg-[#F7F7FA] text-gray-400 cursor-not-allowed border border-transparent'
+                  }`}
               >
                 <span className={`grid h-5 w-5 place-items-center rounded-full text-xs font-black ${step === s ? 'bg-white/20 text-white' : step > s ? 'bg-[#344257] text-white' : 'bg-gray-200 text-gray-500'}`}>
                   {step > s ? <Check className="h-3 w-3" /> : s}
