@@ -15,6 +15,7 @@ const sellPriceConfigSchema = createSchema({
   is_locked: { type: Boolean, default: false },
   manual_override: { type: Boolean, default: false },
   image_url: { type: String, default: null },
+  video_url: { type: String, default: null },
   custom_image: { type: Boolean, default: false, index: true },
 }, { timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' } });
 

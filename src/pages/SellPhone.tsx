@@ -679,14 +679,29 @@ export default function SellPhone() {
     const cachedConfig = getStoredPriceConfig(form.brand, form.model, form.storage);
     if (cachedConfig) {
       setPricingConfig(cachedConfig);
+    } else {
+      setPricingConfig(null);
     }
 
     fetchSellPriceConfig(form.brand, form.model, form.storage)
       .then((config) => {
         if (active && config) {
-          setPricingConfig(config);
-          if (config?.base_price && config.base_price > 0) {
-            savePriceOverride(form.brand, form.model, config.base_price, form.storage);
+          const normBrand = (form.brand || '').toLowerCase().trim();
+          const normConfigBrand = (config.brand || '').toLowerCase().trim();
+          const isBrandEq = !normConfigBrand || normConfigBrand === normBrand ||
+            (normBrand === 'poco' && normConfigBrand === 'xiaomi') ||
+            (normBrand === 'xiaomi' && normConfigBrand === 'poco');
+
+          const cleanModel = (form.model || '').toLowerCase().replace(/^(apple|samsung|oneplus|xiaomi|poco|vivo|iqoo|oppo|realme|motorola|moto|google|pixel|nothing|cmf|tecno|techno|itel|infinix|lava|honor)\s+/i, '').replace(/[^a-z0-9]/g, '');
+          const cleanConfigModel = (config.model || '').toLowerCase().replace(/^(apple|samsung|oneplus|xiaomi|poco|vivo|iqoo|oppo|realme|motorola|moto|google|pixel|nothing|cmf|tecno|techno|itel|infinix|lava|honor)\s+/i, '').replace(/[^a-z0-9]/g, '');
+
+          const isModelMatch = cleanModel && cleanConfigModel && (cleanModel === cleanConfigModel || cleanModel.includes(cleanConfigModel) || cleanConfigModel.includes(cleanModel));
+
+          if (isBrandEq && isModelMatch) {
+            setPricingConfig(config);
+            if (config?.base_price && config.base_price > 0) {
+              savePriceOverride(form.brand, form.model, config.base_price, form.storage);
+            }
           }
         }
       })
@@ -775,21 +790,28 @@ export default function SellPhone() {
 
     // 1. Authoritative Admin Pricing: Use live pricingConfig from database if available
     if (pricingConfig && pricingConfig.base_price > 0) {
-      const normConfigStorage = (pricingConfig.storage || '').replace(/\s+/g, '').toUpperCase();
-      const normFormStorage = (form.storage || '').replace(/\s+/g, '').toUpperCase();
-      const ramOffset = calculateRamPriceOffset(form.ram, availableRams, form.brand);
+      const normConfigBrand = (pricingConfig.brand || '').toLowerCase().trim();
+      const isBrandEq = !normConfigBrand || normConfigBrand === brandNorm ||
+        (brandNorm === 'poco' && normConfigBrand === 'xiaomi') ||
+        (brandNorm === 'xiaomi' && normConfigBrand === 'poco');
 
-      // If exact storage matches, preserve exact price + authentic RAM offset!
-      if (!normConfigStorage || normConfigStorage === normFormStorage) {
-        return pricingConfig.base_price + ramOffset;
+      if (isBrandEq) {
+        const normConfigStorage = (pricingConfig.storage || '').replace(/\s+/g, '').toUpperCase();
+        const normFormStorage = (form.storage || '').replace(/\s+/g, '').toUpperCase();
+        const ramOffset = calculateRamPriceOffset(form.ram, availableRams, form.brand);
+
+        // If exact storage matches, preserve exact price + authentic RAM offset!
+        if (!normConfigStorage || normConfigStorage === normFormStorage) {
+          return pricingConfig.base_price + ramOffset;
+        }
+
+        // Only scale if the admin configured a different baseline storage and this variant has no explicit record
+        const baseMult = calculateHardwareVariantMultiplier(pricingConfig.storage || '128 GB', '', form.brand);
+        const targetMult = calculateHardwareVariantMultiplier(form.storage, '', form.brand);
+        const ratio = baseMult > 0 ? targetMult / baseMult : 1.0;
+        const scaled = Math.round((pricingConfig.base_price * ratio) / 50) * 50;
+        return scaled + ramOffset;
       }
-
-      // Only scale if the admin configured a different baseline storage and this variant has no explicit record
-      const baseMult = calculateHardwareVariantMultiplier(pricingConfig.storage || '128 GB', '', form.brand);
-      const targetMult = calculateHardwareVariantMultiplier(form.storage, '', form.brand);
-      const ratio = baseMult > 0 ? targetMult / baseMult : 1.0;
-      const scaled = Math.round((pricingConfig.base_price * ratio) / 50) * 50;
-      return scaled + ramOffset;
     }
 
     // 2. Check dynamic database synced price from priceSync
@@ -871,11 +893,20 @@ export default function SellPhone() {
     const isRamMatch = !quoteRam || !formRam ||
       quoteRam.replace(/\s+/g, '').toLowerCase() === formRam.replace(/\s+/g, '').toLowerCase();
 
-    if (funduQuote?.offerAmount && funduQuote.offerAmount > 0) {
-      if (baseModelPrice > 0) {
-        return Math.min(baseModelPrice, funduQuote.offerAmount);
-      }
-      return funduQuote.offerAmount;
+    const quoteBrand = funduQuote?.deviceSummary?.brand;
+    const isBrandMatch = !quoteBrand || !form.brand ||
+      quoteBrand.trim().toLowerCase() === form.brand.trim().toLowerCase();
+
+    const maxAllowedCeiling = baseModelPrice > 0 ? baseModelPrice : 180000;
+
+    if (
+      funduQuote?.offerAmount &&
+      funduQuote.offerAmount > 0 &&
+      isStorageMatch &&
+      isRamMatch &&
+      isBrandMatch
+    ) {
+      return Math.min(maxAllowedCeiling, funduQuote.offerAmount);
     }
 
     if (baseModelPrice > 0) {
@@ -970,7 +1001,7 @@ export default function SellPhone() {
       if (baseModelPrice > 0 && Math.abs(val - baseModelPrice) < 1) {
         return baseModelPrice;
       }
-      return Math.max(800, Math.round(val / 50) * 50);
+      return Math.min(baseModelPrice, Math.max(800, Math.round(val / 50) * 50));
     }
 
     return 5000;
@@ -1605,6 +1636,7 @@ export default function SellPhone() {
             form={form}
             setForm={setForm}
             estimate={estimate}
+            baseModelPrice={baseModelPrice}
             funduQuote={funduQuote}
             user={user}
             handleGoToLoginForExactPrice={handleGoToLoginForExactPrice}

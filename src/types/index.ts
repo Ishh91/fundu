@@ -14,6 +14,7 @@ export type Product = {
   offer_tag?: string | null;
   description: string | null;
   images: string[];
+  video_url?: string | null;
   is_approved: boolean;
   is_featured: boolean;
   stock: number;
@@ -197,6 +198,7 @@ export type SparePart = {
   stock: number;
   description: string | null;
   images: string[];
+  video_url?: string | null;
   is_approved: boolean;
   created_at: string;
 };
@@ -273,6 +275,7 @@ export type MasterPhone = {
   default_mrp: number;
   base_resale_value: number;
   image_url: string | null;
+  video_url?: string | null;
   popular_tag: string | null;
   processor: string | null;
   camera_spec: string | null;

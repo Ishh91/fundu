@@ -99,16 +99,32 @@ export function getInstantFunduQuote(params: FunduQuoteRequest): FunduQuoteRespo
       .trim();
 
     const cleanMNorm = cleanStr(mNorm);
-    const master = MASTER_MODEL_CATALOG.find((m) => {
+    const normStorage = (params.storage || '').trim().toLowerCase();
+
+    const exactMasterWithStorage = MASTER_MODEL_CATALOG.find((m) => {
+      const cleanTarget = cleanStr(m.model);
+      const mBrandNorm = (m.brand || '').toLowerCase().trim();
+      const isBrandEq = !bNorm || mBrandNorm === bNorm || (bNorm === 'techno' && mBrandNorm === 'tecno');
+      const isModelEq = cleanTarget === cleanMNorm || m.model.toLowerCase() === mNorm;
+      const isStorageEq = (m.storage || '').trim().toLowerCase() === normStorage;
+      return isBrandEq && isModelEq && isStorageEq;
+    });
+
+    const exactMaster = exactMasterWithStorage || MASTER_MODEL_CATALOG.find((m) => {
+      const cleanTarget = cleanStr(m.model);
+      const mBrandNorm = (m.brand || '').toLowerCase().trim();
+      const isBrandEq = !bNorm || mBrandNorm === bNorm || (bNorm === 'techno' && mBrandNorm === 'tecno');
+      return isBrandEq && (cleanTarget === cleanMNorm || m.model.toLowerCase() === mNorm);
+    });
+
+    const master = exactMaster || MASTER_MODEL_CATALOG.find((m) => {
       const cleanTarget = cleanStr(m.model);
       const mBrandNorm = (m.brand || '').toLowerCase().trim();
       const isBrandEq = !bNorm || mBrandNorm === bNorm || (bNorm === 'techno' && mBrandNorm === 'tecno');
       if (!isBrandEq) return false;
       return (
-        cleanTarget === cleanMNorm ||
         cleanTarget.includes(cleanMNorm) ||
         cleanMNorm.includes(cleanTarget) ||
-        m.model.toLowerCase() === mNorm ||
         m.model.toLowerCase().includes(mNorm) ||
         mNorm.includes(m.model.toLowerCase())
       );

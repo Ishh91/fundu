@@ -22,7 +22,33 @@ export function getLocalPriceOverrides(): Record<string, number> {
   if (typeof window === 'undefined') return {};
   try {
     const raw = localStorage.getItem(OVERRIDES_STORAGE_KEY);
-    return raw ? JSON.parse(raw) : {};
+    if (!raw) return {};
+    const parsed = JSON.parse(raw);
+    if (!parsed || typeof parsed !== 'object') return {};
+
+    let cleaned = false;
+    const cleanMap: Record<string, number> = {};
+    for (const [k, v] of Object.entries(parsed)) {
+      if (typeof v !== 'number' || v <= 0) {
+        cleaned = true;
+        continue;
+      }
+      const parts = k.split(':');
+      if (parts.length < 2) {
+        cleaned = true;
+        continue;
+      }
+      // Sanity filter: purge legacy cross-brand contaminated keys
+      if (parts[0] === 'tecno' && parts[1]?.includes('spark 10 pro') && v > 10000) {
+        cleaned = true;
+        continue;
+      }
+      cleanMap[k] = v;
+    }
+    if (cleaned) {
+      localStorage.setItem(OVERRIDES_STORAGE_KEY, JSON.stringify(cleanMap));
+    }
+    return cleanMap;
   } catch {
     return {};
   }
@@ -50,8 +76,9 @@ export function getPriceStorageKeys(brand: string, model: string, storage: strin
   brands.forEach((br) => {
     models.forEach((mod) => {
       storageVariants.forEach((stg) => {
-        if (br) keys.push(`${br}:${mod}:${stg}`);
-        keys.push(`${mod}:${stg}`);
+        if (br) {
+          keys.push(`${br}:${mod}:${stg}`);
+        }
       });
     });
   });
@@ -77,8 +104,9 @@ export function getPriceModelKeys(brand: string, model: string): string[] {
 
   brands.forEach((br) => {
     models.forEach((mod) => {
-      if (br) keys.push(`${br}:${mod}`);
-      keys.push(mod);
+      if (br) {
+        keys.push(`${br}:${mod}`);
+      }
     });
   });
 
@@ -159,25 +187,26 @@ export function getEffectivePrice(brand: string, model: string, defaultPrice: nu
     }
   }
 
-  // 3. Dynamic sibling storage scaling (derive price from any known sibling variant)
+  // 3. Dynamic sibling storage scaling (derive price only from an EXACT model match of the same brand)
   if (storage) {
     const b = (brand || '').trim().toLowerCase();
     const m = (model || '').trim().toLowerCase();
     const cleanM = b && m.startsWith(b) ? m.slice(b.length).trim() : m;
+    const normTargetM = cleanM.replace(/[^a-z0-9]/g, '');
     const targetMult = calculateHardwareVariantMultiplier(storage, '', brand);
 
     for (const [key, val] of Object.entries(overrides)) {
       if (typeof val === 'number' && val > 0 && val <= 500000) {
         const parts = key.split(':');
-        if (parts.length >= 2) {
-          const keyStorage = parts[parts.length - 1];
-          const keyModel = parts.length === 3 ? parts[1] : parts[0];
-          const keyBrand = parts.length === 3 ? parts[0] : '';
+        // Only accept fully-qualified 3-part keys: brand:model:storage
+        if (parts.length === 3) {
+          const [keyBrand, keyModel, keyStorage] = parts;
+          if (keyBrand.toLowerCase() !== b) continue;
 
-          if (
-            (keyModel === m || keyModel === cleanM || m.includes(keyModel) || keyModel.includes(m)) &&
-            (!keyBrand || keyBrand === b)
-          ) {
+          const normKeyM = keyModel.toLowerCase().trim().replace(/[^a-z0-9]/g, '');
+          const isExactModel = normKeyM === normTargetM || keyModel.toLowerCase() === m || keyModel.toLowerCase() === cleanM;
+
+          if (isExactModel) {
             const siblingMult = calculateHardwareVariantMultiplier(keyStorage, '', brand);
             const ratio = siblingMult > 0 ? targetMult / siblingMult : 1.0;
             return Math.max(500, Math.round((val * ratio) / 50) * 50);

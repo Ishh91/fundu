@@ -29,6 +29,7 @@ interface SellStep3QuoteProps {
   };
   setForm: React.Dispatch<React.SetStateAction<any>>;
   estimate: number;
+  baseModelPrice?: number;
   funduQuote: FunduQuoteResponse | null;
   user: any;
   handleGoToLoginForExactPrice: (targetStep?: number) => void;
@@ -39,6 +40,7 @@ export default function SellStep3Quote({
   form,
   setForm,
   estimate,
+  baseModelPrice,
   funduQuote,
   user,
   handleGoToLoginForExactPrice,
@@ -48,7 +50,8 @@ export default function SellStep3Quote({
   const phoneDisplayName = cleanModelForDisplay.toLowerCase().startsWith(form.brand.toLowerCase())
     ? cleanModelForDisplay
     : `${form.brand} ${cleanModelForDisplay}`;
-  const safeInspectionOffer = Math.min(180000, Math.max(500, estimate));
+  const maxAllowedCeiling = baseModelPrice && baseModelPrice > 0 ? baseModelPrice : 180000;
+  const safeInspectionOffer = Math.min(maxAllowedCeiling, Math.max(500, estimate));
 
   return (
     <div className="max-w-2xl mx-auto space-y-6 animate-fade-in">
@@ -189,7 +192,7 @@ export default function SellStep3Quote({
             </p>
             {(() => {
               const rawAmt = estimate;
-              const safeAmt = Math.min(180000, Math.max(500, rawAmt));
+              const safeAmt = Math.min(maxAllowedCeiling, Math.max(500, rawAmt));
               return (
                 <div className="font-display text-4xl sm:text-5xl font-black text-white">
                   {user ? formatINR(safeAmt) : formatMaskedPrice(safeAmt)}
@@ -233,7 +236,7 @@ export default function SellStep3Quote({
           {/* Dedicated Fundu Price Match (+5% Extra Cash Guaranteed) Widget */}
           {(() => {
             const rawAmt = estimate;
-            const finalAmt = Math.min(180000, Math.max(500, rawAmt));
+            const finalAmt = Math.min(maxAllowedCeiling, Math.max(500, rawAmt));
             const comparison = calculateMarketPriceComparison(finalAmt);
             return (
               <div className="rounded-2xl border-2 border-emerald-500/40 bg-gradient-to-br from-emerald-50/80 via-white to-teal-50/60 p-5 text-left space-y-3.5 shadow-sm">

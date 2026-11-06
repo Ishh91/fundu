@@ -16,6 +16,7 @@ const productSchema = createSchema({
   offer_tag: { type: String, default: null },
   description: { type: String, default: null },
   images: { type: [String], default: [] },
+  video_url: { type: String, default: null },
   is_approved: { type: Boolean, default: false },
   is_featured: { type: Boolean, default: false },
   stock: { type: Number, default: 1 },

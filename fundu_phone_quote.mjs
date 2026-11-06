@@ -2946,7 +2946,7 @@ export function quotePhone(input = {}, options = {}) {
 
   // Clean rounding to nearest ₹50 for professional consumer pricing
   // Absolute benchmark ceiling: customer quote can NEVER exceed the 100% flawless starting benchmark
-  const ceiling = options.catalogPrice && options.catalogPrice > 0 ? options.catalogPrice : expectedResaleProceeds;
+  const ceiling = expectedResaleProceeds;
   const isExactBaseProceeds = Math.abs(rawOffer - ceiling) < 1;
   const finalOfferAmount = isExactBaseProceeds
     ? Math.min(ceiling, rawOffer)
