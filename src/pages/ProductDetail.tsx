@@ -35,6 +35,7 @@ import { findSampleProductById, SAMPLE_PRODUCTS_MAP } from '../data/sampleProduc
 import { findSampleLaptopById } from '../data/sampleLaptops';
 import { verifyPanIndiaPincode } from '../lib/locationService';
 import { PhoneVideoPlayer } from '../lib/videoUtils';
+import { usePageSeo } from '../lib/usePageSeo';
 
 // Doorstep PIN code to Area mapping dictionary
 const DOORSTEP_PINCODE_MAP: Record<string, string> = {
@@ -104,6 +105,18 @@ export default function ProductDetail() {
 
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
+
+  // Product-specific search title/description once the product has loaded;
+  // a product that does not exist is kept out of search results.
+  usePageSeo(
+    product
+      ? {
+          title: `Buy ${product.title} (Refurbished) | Fundu`,
+          description: `Buy certified refurbished ${product.title} in ${product.condition} condition with 6 months warranty, 32-point quality check and doorstep delivery from Fundu.`,
+        }
+      : { noindex: !loading },
+  );
+
   const [quantity, setQuantity] = useState(1);
   const [addedToast, setAddedToast] = useState(false);
 

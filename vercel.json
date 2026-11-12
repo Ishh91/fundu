@@ -1,7 +1,7 @@
 {
   "rewrites": [
     {
-      "source": "/(.*)",
+      "source": "/:route(about|admin|admin-login|articles|brand|buy|buy-laptop|buy-laptops|cart|checkout|contact|dashboard|delivery|delivery-login|demo-condition-filter|doorstep-mobile-repair|festival|fleet-desk|login|mobile-repair|order-success|partner|payment|product|profile|recycle|register|repair|rider|rider-login|search|sell|sell-old-mobile-phone|spare-parts|store|vendor|vendor-login|wholesaler|wholesaler-login)/:path*",
       "destination": "/index.html"
     }
   ],
@@ -9,15 +9,27 @@
     {
       "source": "/index.html",
       "headers": [
-        { "key": "Cache-Control", "value": "no-cache, no-store, must-revalidate" },
-        { "key": "Pragma", "value": "no-cache" },
-        { "key": "Expires", "value": "0" }
+        {
+          "key": "Cache-Control",
+          "value": "no-cache, no-store, must-revalidate"
+        },
+        {
+          "key": "Pragma",
+          "value": "no-cache"
+        },
+        {
+          "key": "Expires",
+          "value": "0"
+        }
       ]
     },
     {
       "source": "/assets/(.*)",
       "headers": [
-        { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
       ]
     }
   ]

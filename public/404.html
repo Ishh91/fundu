@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex, follow" />
+    <title>Page Not Found | Fundu</title>
+    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+    <style>
+      :root {
+        --ink: #1f2937;
+        --muted: #64748b;
+        --brand: #344257;
+        --surface: #f4f7f8;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        min-height: 100vh;
+        display: grid;
+        place-items: center;
+        padding: 24px;
+        background: var(--surface);
+        color: var(--ink);
+        font-family: 'Plus Jakarta Sans', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+        text-align: center;
+      }
+      main {
+        max-width: 440px;
+      }
+      .code {
+        margin: 0;
+        font-size: 96px;
+        font-weight: 800;
+        line-height: 1;
+        color: var(--brand);
+      }
+      h1 {
+        margin: 16px 0 8px;
+        font-size: 24px;
+      }
+      p {
+        margin: 0;
+        color: var(--muted);
+        line-height: 1.6;
+      }
+      nav {
+        margin-top: 28px;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 12px;
+      }
+      a {
+        padding: 12px 20px;
+        border-radius: 999px;
+        border: 1px solid var(--brand);
+        color: var(--brand);
+        font-weight: 700;
+        text-decoration: none;
+      }
+      a.primary {
+        background: var(--brand);
+        color: #ffffff;
+      }
+      a:focus-visible {
+        outline: 3px solid #38bdf8;
+        outline-offset: 2px;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <p class="code">404</p>
+      <h1>Page not found</h1>
+      <p>The page you are looking for does not exist or has been moved.</p>
+      <nav aria-label="Helpful links">
+        <a class="primary" href="/">Go to Fundu home</a>
+        <a href="/sell">Sell your phone</a>
+        <a href="/buy">Buy refurbished</a>
+        <a href="/repair">Book a repair</a>
+      </nav>
+    </main>
+  </body>
+</html>
