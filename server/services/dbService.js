@@ -8,7 +8,7 @@ import {
   parseSelect,
   parseSort,
 } from '../utils/dbHelpers.js';
-import { isAdmin, isWholesaler, requireAuth } from '../middleware/auth.js';
+import { isAdmin, isWholesaler, requireAdmin, requireAuth } from '../middleware/auth.js';
 import { autoAssignDeliveryAgent } from './dispatchService.js';
 import { triggerEventNotification } from './notificationService.js';
 import { quotePhone } from '../../fundu_phone_quote.mjs';
@@ -18,13 +18,12 @@ export const getReadScope = async (table, auth, filters, select) => {
   const baseFilter = buildMongoFilter(filters);
 
   switch (table) {
-    case 'profiles':
+    case 'profiles': {
+      requireAuth(auth);
       if (isAdmin(auth)) return baseFilter;
-      if (auth?.sub) {
-        const profileId = Types.ObjectId.isValid(auth.sub) ? new Types.ObjectId(auth.sub) : auth.sub;
-        return combineFilters(baseFilter, { $or: [{ _id: profileId }, { id: auth.sub }] });
-      }
-      return baseFilter;
+      const profileId = Types.ObjectId.isValid(auth.sub) ? new Types.ObjectId(auth.sub) : auth.sub;
+      return combineFilters(baseFilter, { $or: [{ _id: profileId }, { id: auth.sub }] });
+    }
     case 'products':
     case 'spare_parts':
       if (isAdmin(auth)) return baseFilter;
@@ -33,7 +32,7 @@ export const getReadScope = async (table, auth, filters, select) => {
     case 'sell_requests':
     case 'repair_bookings':
     case 'orders': {
-      if (!auth?.sub) return baseFilter;
+      requireAuth(auth);
       if (isAdmin(auth)) return baseFilter;
       const userMatch = Types.ObjectId.isValid(auth.sub)
         ? {
@@ -60,7 +59,7 @@ export const getReadScope = async (table, auth, filters, select) => {
       }
       return combineFilters(baseFilter, { is_active: true });
     case 'dispatches': {
-      if (!auth?.sub) return baseFilter;
+      requireAuth(auth);
       if (isAdmin(auth)) return baseFilter;
       const orders = await Order.find({ user_id: auth.sub }).select('_id');
       const orderIds = orders.map((order) => order._id.toString());
@@ -75,18 +74,18 @@ export const getReadScope = async (table, auth, filters, select) => {
     case 'wholesale_inventory':
       return baseFilter;
     case 'wholesale_orders':
-      if (!auth?.sub) return baseFilter;
+      requireAuth(auth);
       if (isAdmin(auth)) return baseFilter;
       return combineFilters(baseFilter, { vendor_id: auth.sub });
     case 'vendor_ledgers':
     case 'vendor_ledger':
-      if (!auth?.sub) return baseFilter;
+      requireAuth(auth);
       if (isAdmin(auth)) return baseFilter;
       return combineFilters(baseFilter, { vendor_id: auth.sub });
     case 'support_tickets':
     case 'contact_messages':
     case 'contact_queries':
-      if (!auth?.sub) return baseFilter;
+      requireAuth(auth);
       return isAdmin(auth) ? baseFilter : combineFilters(baseFilter, { user_id: auth.sub });
     case 'reviews':
       if (isAdmin(auth)) return baseFilter;
@@ -115,7 +114,7 @@ export const getWriteScope = async (table, auth, filters) => {
     case 'sell_requests':
     case 'repair_bookings':
     case 'orders': {
-      if (!auth?.sub) return baseFilter;
+      requireAuth(auth);
       if (isAdmin(auth)) return baseFilter;
       const userMatch = Types.ObjectId.isValid(auth.sub)
         ? {
@@ -135,6 +134,7 @@ export const getWriteScope = async (table, auth, filters) => {
     case 'wholesale_inventories':
     case 'wholesale_inventory':
       requireAuth(auth);
+      if (!isAdmin(auth) && !isWholesaler(auth)) throw createHttpError(403, 'Vendor access required.');
       return baseFilter;
     case 'vendor_ledgers':
     case 'vendor_ledger':
@@ -153,13 +153,11 @@ export const getWriteScope = async (table, auth, filters) => {
       return baseFilter;
     case 'site_content':
     case 'banners':
-      return baseFilter;
     case 'support_tickets':
     case 'contact_messages':
     case 'contact_queries':
-      return baseFilter;
     case 'reviews':
-      if (isAdmin(auth)) return baseFilter;
+      requireAdmin(auth);
       return baseFilter;
     default:
       throw createHttpError(404, `Unknown table: ${table}`);
@@ -202,6 +200,8 @@ export const preparePayload = (table, action, input, auth) => {
       return payload;
     case 'wholesale_inventories':
     case 'wholesale_inventory':
+      requireAuth(auth);
+      if (!isAdmin(auth) && !isWholesaler(auth)) throw createHttpError(403, 'Vendor access required.');
       return payload;
     case 'wholesale_orders':
       requireAuth(auth);
@@ -211,7 +211,7 @@ export const preparePayload = (table, action, input, auth) => {
       return payload;
     case 'vendor_ledgers':
     case 'vendor_ledger':
-      requireAuth(auth);
+      requireAdmin(auth);
       return payload;
     case 'sell_requests': {
       if (auth?.sub) {
@@ -288,6 +288,7 @@ export const preparePayload = (table, action, input, auth) => {
     case 'phones':
     case 'site_content':
     case 'banners':
+      requireAdmin(auth);
       return payload;
     case 'orders':
       if (action === 'insert' || action === 'upsert') {

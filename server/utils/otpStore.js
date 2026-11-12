@@ -5,13 +5,15 @@
  * Clears on server restart — swap to Redis for production persistence.
  */
 
+import { randomInt } from 'crypto';
+
 const OTP_TTL_MS = 10 * 60 * 1000; // 10 minutes
 const MAX_ATTEMPTS = 5;
 
 const store = new Map();
 
-/** Generate a cryptographically-weak but sufficient 6-digit OTP */
-const generateOtp = () => String(Math.floor(100000 + Math.random() * 900000));
+/** Generate a cryptographically secure 6-digit OTP */
+const generateOtp = () => String(randomInt(100000, 1000000));
 
 /**
  * Save a new OTP for the given phone number.

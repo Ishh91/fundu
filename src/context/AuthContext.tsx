@@ -128,8 +128,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (window.confirmationResult) {
       try {
         const fbVerify = await verifyFirebasePhoneOtp(otp);
-        if (fbVerify.success) {
-          const { data, error } = await db.auth.verifyFirebaseSession(cleanPhone, options?.fullName, options?.email);
+        if (fbVerify.success && fbVerify.idToken) {
+          const { data, error } = await db.auth.verifyFirebaseSession(fbVerify.idToken, cleanPhone, options?.fullName, options?.email);
           if (error) return { error: error.message };
           if (!data?.session) return { error: 'Login failed. Please try again.' };
           return { error: null, isNewUser: data.isNewUser };

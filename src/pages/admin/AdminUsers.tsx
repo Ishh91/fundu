@@ -19,7 +19,7 @@ import {
   Clock,
 } from 'lucide-react';
 import type { Order, SellRequest, RepairBooking } from './adminTypes';
-import { db, formatINR } from '../../lib/db';
+import { db, formatINR, authHeaders } from '../../lib/db';
 import CustomerDetailsModal from '../../components/CustomerDetailsModal';
 import { sendEmailOtpCode } from '../../lib/freeNotifyService';
 
@@ -105,11 +105,15 @@ export default function AdminUsers({
       const baseUrl = API_BASE;
       const targetUrl = `${baseUrl.replace(/\/$/, '')}/auth/delete-user`;
 
-      await fetch(targetUrl, {
+      const deleteRes = await fetch(targetUrl, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', ...authHeaders() },
         body: JSON.stringify({ userId }),
       });
+      if (!deleteRes.ok) {
+        const deleteJson = await deleteRes.json().catch(() => null);
+        throw new Error(deleteJson?.error || 'Failed to delete user');
+      }
 
       await db.from('profiles').delete().eq('id', userId);
 
@@ -144,7 +148,7 @@ export default function AdminUsers({
 
       const response = await fetch(targetUrl, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', ...authHeaders() },
         body: JSON.stringify({
           email: cleanEmail,
           password: addUserForm.password || 'User@123456',

@@ -61,6 +61,12 @@ const writeSession = (session: Session | null) => {
   }
 };
 
+/** Authorization header for the signed-in session (empty when signed out). */
+export const authHeaders = (): Record<string, string> => {
+  const session = readSession();
+  return session?.access_token ? { Authorization: `Bearer ${session.access_token}` } : {};
+};
+
 const notifyAuthChange = (event: 'SIGNED_IN' | 'SIGNED_OUT' | 'TOKEN_REFRESHED', session: Session | null) => {
   authListeners.forEach((listener) => listener(event, session));
 };
@@ -379,7 +385,7 @@ type AuthApi = {
   /** Verify OTP and log in (auto-creates account if new user). */
   verifyOtp: (phone: string, otp: string, options?: { fullName?: string; email?: string; password?: string }) => AuthResponse<{ session: Session; user: User; isNewUser: boolean }>;
   /** Verify Firebase-authenticated phone and issue backend session */
-  verifyFirebaseSession: (phone: string, fullName?: string, email?: string) => AuthResponse<{ session: Session; user: User; isNewUser: boolean }>;
+  verifyFirebaseSession: (idToken: string, phone: string, fullName?: string, email?: string) => AuthResponse<{ session: Session; user: User; isNewUser: boolean }>;
 };
 
 export const auth: AuthApi = {
@@ -509,12 +515,12 @@ export const auth: AuthApi = {
     };
   },
 
-  async verifyFirebaseSession(phone, fullName, email) {
+  async verifyFirebaseSession(idToken, phone, fullName, email) {
     const response = await apiRequest<{ session: Session; profile: unknown; isNewUser: boolean }>(
       '/auth/otp/verify-firebase',
       {
         method: 'POST',
-        body: JSON.stringify({ phone, fullName, email }),
+        body: JSON.stringify({ idToken, phone, fullName, email }),
       },
       false,
     );

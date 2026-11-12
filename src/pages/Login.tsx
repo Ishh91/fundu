@@ -17,7 +17,6 @@ import {
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import BrandLogo from '../components/BrandLogo';
-import { sendEmailOtpCode } from '../lib/freeNotifyService';
 import { API_BASE } from '../config/apiConfig';
 
 export default function Login() {
@@ -51,7 +50,6 @@ export default function Login() {
   const [resetStep, setResetStep] = useState<1 | 2>(1); // 1: Send OTP, 2: Verify & New Password
   const [resetEmail, setResetEmail] = useState('');
   const [resetOtpInput, setResetOtpInput] = useState('');
-  const [generatedOtp, setGeneratedOtp] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [resetLoading, setResetLoading] = useState(false);
   const [resetError, setResetError] = useState<string | null>(null);
@@ -255,7 +253,7 @@ export default function Login() {
     }
   };
 
-  /* ── Step 1: Send Reset Password EmailJS OTP ── */
+  /* ── Step 1: Ask the server to email a reset OTP ── */
   const handleSendResetOtp = async (e: React.FormEvent) => {
     e.preventDefault();
     const cleanEmail = resetEmail.trim().toLowerCase();
@@ -283,14 +281,19 @@ export default function Login() {
         return;
       }
 
-      // 2. Generate 6-digit Reset OTP
-      const otpCode = Math.floor(100000 + Math.random() * 900000).toString();
-      setGeneratedOtp(otpCode);
+      // 2. Server generates the reset OTP and emails it (the code never reaches this browser)
+      const requestRes = await fetch(`${baseUrl.replace(/\/$/, '')}/auth/reset-password/request`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: cleanEmail }),
+      });
+      const requestJson = await requestRes.json().catch(() => null);
+      if (!requestRes.ok) {
+        setResetError(requestJson?.error || 'Failed to send reset OTP. Please try again.');
+        return;
+      }
 
-      // 3. Dispatch EmailJS Reset OTP (ONLY to user's email inbox)
-      await sendEmailOtpCode(cleanEmail, otpCode, 'User Account');
-
-      // 4. Set UI Success message without revealing numeric OTP code
+      // 3. Set UI Success message
       setResetSuccess(`📧 Verification OTP code sent to ${cleanEmail} via Email. Please check your email inbox.`);
       setResetStep(2);
     } catch (err: any) {
@@ -304,8 +307,8 @@ export default function Login() {
   /* ── Step 2: Verify OTP & Submit New Password ── */
   const handleResetPasswordSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (resetOtpInput.trim() !== generatedOtp.trim()) {
-      setResetError('❌ Invalid OTP Code! Please enter the correct 6-digit code sent to your email.');
+    if (resetOtpInput.trim().length !== 6) {
+      setResetError('❌ Please enter the 6-digit code sent to your email.');
       return;
     }
     if (!newPassword || newPassword.length < 6) {
@@ -324,6 +327,7 @@ export default function Login() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           email: resetEmail.trim().toLowerCase(),
+          otp: resetOtpInput.trim(),
           newPassword: newPassword,
         }),
       });

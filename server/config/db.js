@@ -280,10 +280,15 @@ export const seedDatabase = async () => {
   }
 
   const adminEmail = (process.env.ADMIN_EMAIL || 'admin@fundu.in').toLowerCase().trim();
-  const adminPassword = process.env.ADMIN_PASSWORD || 'Admin@123456';
+  const adminPassword = (process.env.ADMIN_PASSWORD || '').trim();
   const admin = await User.findOne({ email: adminEmail });
 
-  if (!admin) {
+  if (!adminPassword) {
+    // Never fall back to a publicly known default password.
+    if (!admin || !admin.passwordHash) {
+      console.warn(`ADMIN_PASSWORD is not set; skipping admin account setup for ${adminEmail}. Set ADMIN_PASSWORD in the environment.`);
+    }
+  } else if (!admin) {
     await User.create({
       email: adminEmail,
       passwordHash: await bcrypt.hash(adminPassword, 10),
