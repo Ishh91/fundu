@@ -1,5 +1,7 @@
 type QueryError = {
   message: string;
+  /** HTTP status of the failed request, when the server answered. */
+  status?: number;
 };
 
 export type User = {
@@ -36,7 +38,9 @@ const SESSION_KEY = 'fundu_mongo_session';
 
 const authListeners = new Set<AuthChangeHandler>();
 
-const createError = (message: string): QueryError => ({ message });
+const createError = (message: string, status?: number): QueryError => ({ message, status });
+
+const HTTP_UNAUTHORIZED = 401;
 
 export const readSession = (): Session | null => {
   if (typeof window === 'undefined') return null;
@@ -73,6 +77,18 @@ const notifyAuthChange = (event: 'SIGNED_IN' | 'SIGNED_OUT' | 'TOKEN_REFRESHED',
 
 const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
+/**
+ * The server rejected the stored token (expired, or signed with an old
+ * secret). Drop it and tell the app, so the user is sent to sign in again
+ * instead of staying on a page where every save silently fails with 401.
+ */
+const expireSession = (rejectedToken: string) => {
+  // Ignore a late reply for a token that has already been replaced by a new sign-in.
+  if (readSession()?.access_token !== rejectedToken) return;
+  writeSession(null);
+  notifyAuthChange('SIGNED_OUT', null);
+};
+
 const apiRequest = async <T>(path: string, init: RequestInit = {}, useAuth = true, retryCount = 1): Promise<QueryResponse<T>> => {
   const session = readSession();
   const headers = new Headers(init.headers || {});
@@ -107,7 +123,10 @@ const apiRequest = async <T>(path: string, init: RequestInit = {}, useAuth = tru
           typeof payload?.error === 'string'
             ? payload.error
             : payload?.error?.message || payload?.message || 'Authentication failed.';
-        return { data: null, error: createError(errorMessage) };
+        if (response.status === HTTP_UNAUTHORIZED && useAuth && session?.access_token) {
+          expireSession(session.access_token);
+        }
+        return { data: null, error: createError(errorMessage, response.status) };
       }
 
       return { data: (payload?.data ?? null) as T | null, error: null };
@@ -400,8 +419,8 @@ export const auth: AuthApi = {
         return { data: { session: response.data.session }, error: null };
       }
 
-      const errMsg = response.error?.message?.toLowerCase() || '';
-      if (errMsg.includes('401') || errMsg.includes('expired') || errMsg.includes('invalid')) {
+      // The server no longer accepts this token: the user is signed out.
+      if (response.error?.status === HTTP_UNAUTHORIZED) {
         writeSession(null);
         return { data: { session: null }, error: null };
       }
