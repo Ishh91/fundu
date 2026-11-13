@@ -3,7 +3,7 @@ import mongoose from 'mongoose';
 import { MasterPhone, SellPriceConfig, SellRequest as SellRequestModel } from '../models/index.js';
 import { normalizeDoc } from '../utils/dbHelpers.js';
 import { clearTableCache } from './dbRoutes.js';
-import { buildLiveImagesResponse, getLiveImages } from '../utils/liveImagesCache.js';
+import { buildLiveImagesResponse, getLiveImages, invalidateLiveImages } from '../utils/liveImagesCache.js';
 import { INDIAN_MARKET_PHONES_LAST_10_YEARS, ensureMasterPhonesSeeded } from '../config/seedPhones.js';
 import { isBlockedPhone } from '../utils/blockedModels.js';
 import {
@@ -518,6 +518,7 @@ router.post('/model-image', async (req, res) => {
     // 3. Clear server in-memory route cache so next read is 100% fresh
     clearTableCache('master_phones');
     clearTableCache('sell_price_configs');
+    invalidateLiveImages();
 
     return res.json({
       success: true,
@@ -627,6 +628,7 @@ router.post('/model-video', async (req, res) => {
     // 3. Clear server in-memory route cache so next read is 100% fresh
     clearTableCache('master_phones');
     clearTableCache('sell_price_configs');
+    invalidateLiveImages();
 
     return res.json({
       success: true,

@@ -210,6 +210,8 @@ export default function ProductDetail() {
   useEffect(() => {
     if (!id) return;
     setLoading(true);
+    setProduct(null);
+    setSelectedImage('');
 
     const sample = findSampleProductById(id) || findSampleLaptopById(id);
     if (sample) {
@@ -222,43 +224,28 @@ export default function ProductDetail() {
       return;
     }
 
-      db.from('products')
-        .select('*')
-        .eq('id', id)
-        .single()
-        .then(({ data, error }) => {
-          if (!error && data) {
-            const p = data as Product;
-            setProduct(p);
-            setSelectedImage(p.images?.[0] || getCleanPhoneImage(p.brand, p.model || p.title));
-            setSelectedStorage(normalizeStorageString(p.storage || '128 GB'));
-            setSelectedColor(p.color || 'Default');
-            setSelectedGrade(p.condition === 'Excellent' ? 'Superb' : p.condition || 'Superb');
-          } else {
-            // Fallback sample product if DB not responding or item not found
-            const fallback = findSampleProductById('sample-1') || findSampleProductById('sample-apple-13');
-            if (fallback) {
-              setProduct(fallback);
-              setSelectedImage(fallback.images?.[0] || getCleanPhoneImage(fallback.brand, fallback.model || fallback.title));
-              setSelectedStorage(normalizeStorageString(fallback.storage || '128 GB'));
-              setSelectedColor(fallback.color || 'Starlight');
-              setSelectedGrade(fallback.condition || 'Superb');
-            }
-          }
-          setLoading(false);
-    })
-    .catch(() => {
-      const fallback = findSampleProductById('sample-1') || findSampleProductById('sample-apple-13');
-      if (fallback) {
-        setProduct(fallback);
-        setSelectedImage(fallback.images?.[0] || getCleanPhoneImage(fallback.brand, fallback.model || fallback.title));
-        setSelectedStorage(normalizeStorageString(fallback.storage || '128 GB'));
-        setSelectedColor(fallback.color || 'Starlight');
-        setSelectedGrade(fallback.condition || 'Superb');
-      }
-      setLoading(false);
-    });
-}, [id]);
+    db.from('products')
+      .select('*')
+      .eq('id', id)
+      .single()
+      .then(({ data, error }) => {
+        if (!error && data) {
+          const p = data as Product;
+          setProduct(p);
+          setSelectedImage(p.images?.[0] || getCleanPhoneImage(p.brand, p.model || p.title));
+          setSelectedStorage(normalizeStorageString(p.storage || '128 GB'));
+          setSelectedColor(p.color || 'Default');
+          setSelectedGrade(p.condition === 'Excellent' ? 'Superb' : p.condition || 'Superb');
+        } else {
+          setProduct(null);
+        }
+        setLoading(false);
+      })
+      .catch(() => {
+        setProduct(null);
+        setLoading(false);
+      });
+  }, [id]);
 
 // Handle PIN Code Auto Location Lookup
 const handleCheckPincode = async (codeToTest?: string) => {

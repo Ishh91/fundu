@@ -134,7 +134,7 @@ function MainLayout() {
           <Route path="/" element={<Home />} />
           <Route path="/buy" element={<BuyPhones />} />
           <Route path="/search" element={<SearchActionPage />} />
-          <Route path="/product/:id" element={<ProductDetail />} />
+          <Route path="/product/:id" element={<ProductDetail key={location.pathname} />} />
           <Route path="/demo-condition-filter" element={<DemoConditionFilter />} />
           {/* Multi-Page Sell Ecosystem: Brand -> Series -> Sub-Models -> Step 2 Valuation */}
           <Route path="/sell" element={<SellPhone />} />

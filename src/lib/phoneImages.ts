@@ -820,17 +820,6 @@ export function syncCustomImagesFromDatabase(
     const isCustom = Boolean(p.custom_image) || (!isStockImageUrl(url) && !url.includes('unsplash.com') && !url.includes('pexels.com'));
     if (isCustom) {
       trueCustomEntries.push({ brand: p.brand, model: p.model, url });
-    } else {
-      const keys = generateModelLookupKeys(p.brand, p.model);
-      keys.forEach((k) => {
-        const existing = memoryCustomCache[k];
-        if (!existing || isStockImageUrl(existing)) {
-          if (existing !== url) {
-            memoryCustomCache[k] = url;
-            changed = true;
-          }
-        }
-      });
     }
   });
 
@@ -1369,20 +1358,12 @@ function computeCleanPhoneImage(brand?: string, model?: string, fallbackUrl?: st
     }
   }
 
-  // 1. If explicit custom image (uploaded by admin, data URI, blob, or custom host), use it immediately!
-  const isInvalidUrl =
-    !rawUrl ||
-    rawUrl.includes('unsplash.com') ||
-    rawUrl.includes('pexels.com') ||
-    rawUrl.includes('pixabay.com') ||
-    rawUrl.includes('777/thumb') ||
-    isBrandImageMismatch(brand, model, rawUrl);
-
+  // 1. If an explicit image URL is passed for this specific item (e.g. product.images[0]), use it directly!
   if (
-    !isInvalidUrl &&
-    (rawUrl.startsWith('data:image/') ||
-      rawUrl.startsWith('blob:') ||
-      !isStockImageUrl(rawUrl))
+    rawUrl &&
+    !rawUrl.includes('777/thumb') &&
+    !rawUrl.includes('placeholder') &&
+    !isBrandImageMismatch(brand, model, rawUrl)
   ) {
     return rawUrl;
   }

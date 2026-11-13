@@ -55,6 +55,7 @@ import { soundNotifier } from '../lib/soundAlert';
 import AdminLiveNotifier, { LiveNotification } from '../components/admin/AdminLiveNotifier';
 import { saveCustomModelImage, saveModelImageToDatabase, saveModelVideoToDatabase } from '../lib/phoneImages';
 import { isStorageAllowedForModel } from '../lib/deviceSpecs';
+import { getCachedPhones, setCachedPhones } from '../lib/productsCache';
 
 // Sub-page modular components
 import AdminSidebar from './admin/AdminSidebar';
@@ -1439,6 +1440,11 @@ export default function Admin() {
 
         const saved = { ...original, ...payload } as Product;
         setProducts((prev) => prev.map((p) => (p.id === original.id ? saved : p)));
+        try {
+          const cached = getCachedPhones();
+          const updatedCache = cached.map((p) => (p.id === saved.id ? saved : p));
+          setCachedPhones(updatedCache);
+        } catch {}
         broadcastSync('PRODUCT_UPDATE', 'products', 'update', { id: saved.id });
       } else {
         const sizeProblem = describeOversizedSave(payload);
@@ -1452,6 +1458,10 @@ export default function Admin() {
         const saved = data as Product;
         setProducts((prev) => [saved, ...prev]);
         setSelectedProductId(saved.id);
+        try {
+          const cached = getCachedPhones();
+          setCachedPhones([saved, ...cached]);
+        } catch {}
         broadcastSync('PRODUCT_UPDATE', 'products', 'insert', saved);
       }
       if (payload.images && payload.images.length > 0 && payload.images[0]) {
