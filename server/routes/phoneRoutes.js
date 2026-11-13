@@ -3,6 +3,7 @@ import mongoose from 'mongoose';
 import { MasterPhone, SellPriceConfig, SellRequest as SellRequestModel } from '../models/index.js';
 import { normalizeDoc } from '../utils/dbHelpers.js';
 import { clearTableCache } from './dbRoutes.js';
+import { buildLiveImagesResponse, getLiveImages } from '../utils/liveImagesCache.js';
 import { INDIAN_MARKET_PHONES_LAST_10_YEARS, ensureMasterPhonesSeeded } from '../config/seedPhones.js';
 import { isBlockedPhone } from '../utils/blockedModels.js';
 import {
@@ -647,7 +648,40 @@ router.post('/model-video', async (req, res) => {
  * Fast endpoint to fetch all models with custom or database images
  * GET /api/phones/live-images
  */
-router.get('/live-images', async (_req, res) => {
+async function loadLiveImageItems() {
+  const [mpDocs, spDocs] = await Promise.all([
+    MasterPhone.find(
+      { is_active: { $ne: false }, image_url: { $ne: null } },
+      'brand model image_url custom_image'
+    ).lean(),
+    SellPriceConfig.find(
+      { is_active: { $ne: false }, image_url: { $ne: null } },
+      'brand model image_url custom_image'
+    ).lean(),
+  ]);
+
+  const items = [];
+  const seen = new Set();
+
+  const addDoc = (d) => {
+    if (!d || !d.brand || !d.model || !d.image_url) return;
+    const key = `${d.brand.toLowerCase().trim()}:${d.model.toLowerCase().trim()}`;
+    if (seen.has(key)) return;
+    seen.add(key);
+    items.push({
+      brand: d.brand,
+      model: d.model,
+      image_url: d.image_url,
+      custom_image: Boolean(d.custom_image),
+    });
+  };
+
+  mpDocs.forEach(addDoc);
+  spDocs.forEach(addDoc);
+  return items;
+}
+
+router.get('/live-images', async (req, res) => {
   try {
     res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate');
 
@@ -655,40 +689,13 @@ router.get('/live-images', async (_req, res) => {
       return res.json({ data: [], count: 0, status: 'standalone', timestamp: Date.now() });
     }
 
-    const [mpDocs, spDocs] = await Promise.all([
-      MasterPhone.find(
-        { is_active: { $ne: false }, image_url: { $ne: null } },
-        'brand model image_url custom_image'
-      ).lean(),
-      SellPriceConfig.find(
-        { is_active: { $ne: false }, image_url: { $ne: null } },
-        'brand model image_url custom_image'
-      ).lean(),
-    ]);
-
-    const items = [];
-    const seen = new Set();
-
-    const addDoc = (d) => {
-      if (!d || !d.brand || !d.model || !d.image_url) return;
-      const key = `${d.brand.toLowerCase().trim()}:${d.model.toLowerCase().trim()}`;
-      if (seen.has(key)) return;
-      seen.add(key);
-      items.push({
-        brand: d.brand,
-        model: d.model,
-        image_url: d.image_url,
-        custom_image: Boolean(d.custom_image),
-      });
-    };
-
-    mpDocs.forEach(addDoc);
-    spDocs.forEach(addDoc);
-
-    return res.json({ data: items, count: items.length, timestamp: Date.now() });
+    // Cached in memory: the database is read at most once a minute no matter
+    // how many browser tabs are polling, and writes invalidate it right away.
+    const snapshot = await getLiveImages(loadLiveImageItems);
+    return res.json({ ...buildLiveImagesResponse(snapshot, req.query.v), timestamp: Date.now() });
   } catch (error) {
     console.warn('[phoneRoutes] Live images fallback:', error?.message || error);
-    return res.json({ data: [], count: 0, error: error.message, timestamp: Date.now() });
+    return res.json({ data: [], count: 0, error: 'Live images are temporarily unavailable.', timestamp: Date.now() });
   }
 });
 

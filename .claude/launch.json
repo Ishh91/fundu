@@ -1,0 +1,22 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "fundu-web",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": [
+        "run",
+        "dev"
+      ],
+      "port": 5173
+    },
+    {
+      "name": "fundu-web-mock-api",
+      "runtimeExecutable": "node",
+      "runtimeArgs": [
+        "C:/Users/user/AppData/Local/Temp/claude/7cf16664b8ec297f/9d494b16-62a3-4239-9f76-63271fab9e5b/scratchpad/dev_mock.mjs"
+      ],
+      "port": 5174
+    }
+  ]
+}

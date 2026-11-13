@@ -1,8 +1,15 @@
 const mongoose = require('mongoose');
+const path = require('path');
+require('dotenv').config({ path: path.join(__dirname, '..', '.env') });
+
+if (!process.env.MONGODB_URI) {
+  console.error('MONGODB_URI is not set. Add it to the .env file in the project root.');
+  process.exit(1);
+}
 
 async function backfillVendors() {
   console.log('Connecting to MongoDB...');
-  await mongoose.connect('mongodb+srv://trustiqueassist0003_db_user:r1BrCdYiCcPgBxK6@cluster0.w56fxzj.mongodb.net/?appName=Cluster0', {
+  await mongoose.connect(process.env.MONGODB_URI, {
     dbName: 'fundu',
     serverSelectionTimeoutMS: 8000,
   });

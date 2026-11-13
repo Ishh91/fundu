@@ -7,7 +7,6 @@ Allow: /spare-parts
 Allow: /about
 Allow: /contact
 Allow: /articles
-Allow: /document-doctor
 Allow: /partner
 Allow: /store
 Allow: /brand
@@ -26,5 +25,14 @@ Disallow: /delivery-login
 Disallow: /fleet-desk
 Disallow: /rider
 Disallow: /rider-login
+Disallow: /vendor
+Disallow: /vendor-login
+Disallow: /dashboard
+Disallow: /profile
+Disallow: /cart
+Disallow: /checkout
+Disallow: /payment
+Disallow: /order-success
+Disallow: /demo-condition-filter
 
-Sitemap: https://thefundu.com/sitemap.xml
+Sitemap: https://www.thefundu.com/sitemap.xml

@@ -70,9 +70,11 @@ app.use((err, req, res, _next) => {
   res.setHeader('Access-Control-Allow-Credentials', 'true');
 
   const status = err.status || err.statusCode || 500;
-  res.status(status).json({
-    error: err.message || 'Internal Server Error',
-  });
+  // express.json() rejects bodies over its limit before any route runs.
+  const message = err.type === 'entity.too.large'
+    ? 'This is too large to save (the limit is 10 MB). Use fewer or smaller photos, and a YouTube link instead of an uploaded video.'
+    : err.message || 'Internal Server Error';
+  res.status(status).json({ error: message });
 });
 
 async function startServer() {

@@ -8,7 +8,9 @@ export type Profile = {
   phone: string | null;
   email?: string | null;
   address?: string | null;
-  role: 'customer' | 'wholesaler' | 'admin' | 'delivery' | 'rider' | 'vendor';
+  role: 'customer' | 'wholesaler' | 'admin' | 'staff' | 'delivery' | 'rider' | 'vendor';
+  /** Admin-panel sections a staff user may manage (empty for every other role). */
+  permissions?: string[];
   business_name: string | null;
   vendor_location?: string | null;
   gst_number?: string | null;
@@ -128,8 +130,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (window.confirmationResult) {
       try {
         const fbVerify = await verifyFirebasePhoneOtp(otp);
-        if (fbVerify.success) {
-          const { data, error } = await db.auth.verifyFirebaseSession(cleanPhone, options?.fullName, options?.email);
+        if (fbVerify.success && fbVerify.idToken) {
+          const { data, error } = await db.auth.verifyFirebaseSession(fbVerify.idToken, cleanPhone, options?.fullName, options?.email);
           if (error) return { error: error.message };
           if (!data?.session) return { error: 'Login failed. Please try again.' };
           return { error: null, isNewUser: data.isNewUser };

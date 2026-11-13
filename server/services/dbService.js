@@ -1,4 +1,4 @@
-import { Types } from 'mongoose';
+import mongoose, { Types } from 'mongoose';
 import { getModel, Order, User, VendorLedger, WholesaleOrder, WholesaleInventory, Product } from '../models/index.js';
 import { createHttpError } from '../utils/error.js';
 import {
@@ -8,7 +8,8 @@ import {
   parseSelect,
   parseSort,
 } from '../utils/dbHelpers.js';
-import { isAdmin, isWholesaler, requireAuth } from '../middleware/auth.js';
+import { canAdminTable, isWholesaler, requireAuth, requireTableAdmin } from '../middleware/auth.js';
+import { STAFF_ROLE, sanitizePermissions } from '../config/permissions.js';
 import { autoAssignDeliveryAgent } from './dispatchService.js';
 import { triggerEventNotification } from './notificationService.js';
 import { quotePhone } from '../../fundu_phone_quote.mjs';
@@ -18,23 +19,22 @@ export const getReadScope = async (table, auth, filters, select) => {
   const baseFilter = buildMongoFilter(filters);
 
   switch (table) {
-    case 'profiles':
-      if (isAdmin(auth)) return baseFilter;
-      if (auth?.sub) {
-        const profileId = Types.ObjectId.isValid(auth.sub) ? new Types.ObjectId(auth.sub) : auth.sub;
-        return combineFilters(baseFilter, { $or: [{ _id: profileId }, { id: auth.sub }] });
-      }
-      return baseFilter;
+    case 'profiles': {
+      requireAuth(auth);
+      if (canAdminTable(auth, table)) return baseFilter;
+      const profileId = Types.ObjectId.isValid(auth.sub) ? new Types.ObjectId(auth.sub) : auth.sub;
+      return combineFilters(baseFilter, { $or: [{ _id: profileId }, { id: auth.sub }] });
+    }
     case 'products':
     case 'spare_parts':
-      if (isAdmin(auth)) return baseFilter;
+      if (canAdminTable(auth, table)) return baseFilter;
       if (!auth?.sub) return combineFilters(baseFilter, { is_approved: true });
       return combineFilters(baseFilter, { $or: [{ is_approved: true }, { seller_id: auth.sub }] });
     case 'sell_requests':
     case 'repair_bookings':
     case 'orders': {
-      if (!auth?.sub) return baseFilter;
-      if (isAdmin(auth)) return baseFilter;
+      requireAuth(auth);
+      if (canAdminTable(auth, table)) return baseFilter;
       const userMatch = Types.ObjectId.isValid(auth.sub)
         ? {
             $or: [
@@ -49,7 +49,7 @@ export const getReadScope = async (table, auth, filters, select) => {
     case 'sell_price_configs':
     case 'repair_price_configs':
     case 'repair_catalogs':
-      if (isAdmin(auth)) return baseFilter;
+      if (canAdminTable(auth, table)) return baseFilter;
       // If client explicitly requested is_active filter (e.g. is_active=false to sync deleted/disabled models), respect it
       if (filters && Array.isArray(filters) && filters.some((f) => f.field === 'is_active')) {
         return baseFilter;
@@ -60,8 +60,8 @@ export const getReadScope = async (table, auth, filters, select) => {
       }
       return combineFilters(baseFilter, { is_active: true });
     case 'dispatches': {
-      if (!auth?.sub) return baseFilter;
-      if (isAdmin(auth)) return baseFilter;
+      requireAuth(auth);
+      if (canAdminTable(auth, table)) return baseFilter;
       const orders = await Order.find({ user_id: auth.sub }).select('_id');
       const orderIds = orders.map((order) => order._id.toString());
       return combineFilters(baseFilter, { order_id: { $in: orderIds } });
@@ -75,21 +75,21 @@ export const getReadScope = async (table, auth, filters, select) => {
     case 'wholesale_inventory':
       return baseFilter;
     case 'wholesale_orders':
-      if (!auth?.sub) return baseFilter;
-      if (isAdmin(auth)) return baseFilter;
+      requireAuth(auth);
+      if (canAdminTable(auth, table)) return baseFilter;
       return combineFilters(baseFilter, { vendor_id: auth.sub });
     case 'vendor_ledgers':
     case 'vendor_ledger':
-      if (!auth?.sub) return baseFilter;
-      if (isAdmin(auth)) return baseFilter;
+      requireAuth(auth);
+      if (canAdminTable(auth, table)) return baseFilter;
       return combineFilters(baseFilter, { vendor_id: auth.sub });
     case 'support_tickets':
     case 'contact_messages':
     case 'contact_queries':
-      if (!auth?.sub) return baseFilter;
-      return isAdmin(auth) ? baseFilter : combineFilters(baseFilter, { user_id: auth.sub });
+      requireAuth(auth);
+      return canAdminTable(auth, table) ? baseFilter : combineFilters(baseFilter, { user_id: auth.sub });
     case 'reviews':
-      if (isAdmin(auth)) return baseFilter;
+      if (canAdminTable(auth, table)) return baseFilter;
       return combineFilters(baseFilter, { is_approved: true });
     default:
       throw createHttpError(404, `Unknown table: ${table}`);
@@ -103,11 +103,11 @@ export const getWriteScope = async (table, auth, filters) => {
     case 'profiles':
       requireAuth(auth);
       const profileId = Types.ObjectId.isValid(auth.sub) ? new Types.ObjectId(auth.sub) : auth.sub;
-      return isAdmin(auth) ? baseFilter : combineFilters(baseFilter, { _id: profileId });
+      return canAdminTable(auth, table) ? baseFilter : combineFilters(baseFilter, { _id: profileId });
     case 'products':
     case 'spare_parts':
       requireAuth(auth);
-      if (!isAdmin(auth)) {
+      if (!canAdminTable(auth, table)) {
         if (!isWholesaler(auth)) throw createHttpError(403, 'Wholesaler access required.');
         return combineFilters(baseFilter, { seller_id: auth.sub });
       }
@@ -115,8 +115,8 @@ export const getWriteScope = async (table, auth, filters) => {
     case 'sell_requests':
     case 'repair_bookings':
     case 'orders': {
-      if (!auth?.sub) return baseFilter;
-      if (isAdmin(auth)) return baseFilter;
+      requireAuth(auth);
+      if (canAdminTable(auth, table)) return baseFilter;
       const userMatch = Types.ObjectId.isValid(auth.sub)
         ? {
             $or: [
@@ -130,16 +130,17 @@ export const getWriteScope = async (table, auth, filters) => {
     }
     case 'wholesale_orders':
       requireAuth(auth);
-      if (isAdmin(auth)) return baseFilter;
+      if (canAdminTable(auth, table)) return baseFilter;
       return combineFilters(baseFilter, { vendor_id: auth.sub });
     case 'wholesale_inventories':
     case 'wholesale_inventory':
       requireAuth(auth);
+      if (!canAdminTable(auth, table) && !isWholesaler(auth)) throw createHttpError(403, 'Vendor access required.');
       return baseFilter;
     case 'vendor_ledgers':
     case 'vendor_ledger':
       requireAuth(auth);
-      if (!isAdmin(auth)) throw createHttpError(403, 'Admin access required.');
+      if (!canAdminTable(auth, table)) throw createHttpError(403, 'Admin access required.');
       return baseFilter;
     case 'sell_price_configs':
     case 'repair_price_configs':
@@ -149,21 +150,33 @@ export const getWriteScope = async (table, auth, filters) => {
     case 'phones':
     case 'dispatches':
       requireAuth(auth);
-      if (!isAdmin(auth)) throw createHttpError(403, 'Admin access required.');
+      if (!canAdminTable(auth, table)) throw createHttpError(403, 'Admin access required.');
       return baseFilter;
     case 'site_content':
     case 'banners':
-      return baseFilter;
     case 'support_tickets':
     case 'contact_messages':
     case 'contact_queries':
-      return baseFilter;
     case 'reviews':
-      if (isAdmin(auth)) return baseFilter;
+      requireTableAdmin(auth, table);
       return baseFilter;
     default:
       throw createHttpError(404, `Unknown table: ${table}`);
   }
+};
+
+/**
+ * Only the super admin reaches this for profiles. Permissions are limited to
+ * known keys and only kept on staff accounts, so a role change away from
+ * "staff" always clears them.
+ */
+const withSanitizedPermissions = (payload) => {
+  const touchesAccess = payload.role !== undefined || payload.permissions !== undefined;
+  if (!touchesAccess) return payload;
+  if (payload.role !== undefined && payload.role !== STAFF_ROLE) {
+    return { ...payload, permissions: [] };
+  }
+  return { ...payload, permissions: sanitizePermissions(payload.permissions) };
 };
 
 export const preparePayload = (table, action, input, auth) => {
@@ -174,7 +187,7 @@ export const preparePayload = (table, action, input, auth) => {
   switch (table) {
     case 'profiles':
       requireAuth(auth);
-      if (!isAdmin(auth)) {
+      if (!canAdminTable(auth, table)) {
         const out = {
           full_name: payload.full_name ?? null,
           phone: payload.phone ?? null,
@@ -190,28 +203,30 @@ export const preparePayload = (table, action, input, auth) => {
         }
         return out;
       }
-      return payload;
+      return withSanitizedPermissions(payload);
     case 'products':
     case 'spare_parts':
       requireAuth(auth);
-      if (!isAdmin(auth) && !isWholesaler(auth)) throw createHttpError(403, 'Wholesaler access required.');
-      if (!isAdmin(auth)) {
+      if (!canAdminTable(auth, table) && !isWholesaler(auth)) throw createHttpError(403, 'Wholesaler access required.');
+      if (!canAdminTable(auth, table)) {
         payload.seller_id = auth.sub;
         if (action === 'insert' || action === 'upsert') payload.is_approved = false;
       }
       return payload;
     case 'wholesale_inventories':
     case 'wholesale_inventory':
+      requireAuth(auth);
+      if (!canAdminTable(auth, table) && !isWholesaler(auth)) throw createHttpError(403, 'Vendor access required.');
       return payload;
     case 'wholesale_orders':
       requireAuth(auth);
-      if (!isAdmin(auth) && !payload.vendor_id) {
+      if (!canAdminTable(auth, table) && !payload.vendor_id) {
         payload.vendor_id = auth.sub;
       }
       return payload;
     case 'vendor_ledgers':
     case 'vendor_ledger':
-      requireAuth(auth);
+      requireTableAdmin(auth, table);
       return payload;
     case 'sell_requests': {
       if (auth?.sub) {
@@ -273,13 +288,13 @@ export const preparePayload = (table, action, input, auth) => {
       return payload;
     case 'sell_price_configs':
       requireAuth(auth);
-      if (!isAdmin(auth)) throw createHttpError(403, 'Admin access required.');
+      if (!canAdminTable(auth, table)) throw createHttpError(403, 'Admin access required.');
       payload.storage = payload.storage ? String(payload.storage).trim() : null;
       return payload;
     case 'repair_price_configs':
     case 'repair_catalogs':
       requireAuth(auth);
-      if (!isAdmin(auth)) throw createHttpError(403, 'Admin access required.');
+      if (!canAdminTable(auth, table)) throw createHttpError(403, 'Admin access required.');
       if (payload.brand) payload.brand = String(payload.brand).trim();
       if (payload.model) payload.model = String(payload.model).trim();
       return payload;
@@ -288,6 +303,7 @@ export const preparePayload = (table, action, input, auth) => {
     case 'phones':
     case 'site_content':
     case 'banners':
+      requireTableAdmin(auth, table);
       return payload;
     case 'orders':
       if (action === 'insert' || action === 'upsert') {
@@ -295,20 +311,20 @@ export const preparePayload = (table, action, input, auth) => {
           throw createHttpError(400, 'Delivery name and phone are required.');
         }
       }
-      if (auth?.sub && !isAdmin(auth) && (action === 'insert' || action === 'upsert')) {
+      if (auth?.sub && !canAdminTable(auth, table) && (action === 'insert' || action === 'upsert')) {
         payload.user_id = auth.sub;
       }
       return payload;
     case 'dispatches':
       requireAuth(auth);
-      if (!isAdmin(auth)) throw createHttpError(403, 'Admin access required.');
+      if (!canAdminTable(auth, table)) throw createHttpError(403, 'Admin access required.');
       if (payload.status === 'delivered' && !payload.delivered_at) {
         payload.delivered_at = new Date().toISOString();
       }
       return payload;
     case 'reviews':
       if (auth?.sub) payload.user_id = auth.sub;
-      if (!isAdmin(auth)) {
+      if (!canAdminTable(auth, table)) {
         if (action === 'insert' || action === 'upsert') payload.is_approved = false;
         else delete payload.is_approved;
       }
@@ -319,6 +335,22 @@ export const preparePayload = (table, action, input, auth) => {
     default:
       throw createHttpError(404, `Unknown table: ${table}`);
   }
+};
+
+/**
+ * Product videos uploaded as base64 "data:" URLs are megabytes each. List
+ * pages only need the card image, so those inline videos are left out of list
+ * responses and flagged with `has_video` (the product page still loads the
+ * video by id). People who can edit the product - admins, inventory staff and
+ * its seller - keep the full document so saving an edit never drops the video.
+ */
+export const withoutInlineProductVideos = (table, auth, docs) => {
+  if (table !== 'products' || !Array.isArray(docs) || canAdminTable(auth, table)) return docs;
+
+  const canEdit = (doc) => isWholesaler(auth) && Boolean(auth?.sub) && String(doc?.seller_id) === String(auth.sub);
+  const hasInlineVideo = (doc) => typeof doc?.video_url === 'string' && doc.video_url.startsWith('data:');
+
+  return docs.map((doc) => (hasInlineVideo(doc) && !canEdit(doc) ? { ...doc, video_url: null, has_video: true } : doc));
 };
 
 export const queryTable = async (table, { auth, filters, sort, select, single, limit }) => {
@@ -349,7 +381,7 @@ export const queryTable = async (table, { auth, filters, sort, select, single, l
     console.warn(`Notice querying ${table}:`, e?.message || e);
     return [];
   }
-  const normalized = normalizeDoc(docs);
+  const normalized = withoutInlineProductVideos(table, auth, normalizeDoc(docs));
 
   // Auto-enrich customer contact info for sell_requests, repair_bookings, orders if missing
   if ((table === 'sell_requests' || table === 'repair_bookings' || table === 'orders') && normalized) {
@@ -410,7 +442,22 @@ export const queryTable = async (table, { auth, filters, sort, select, single, l
   return normalized;
 };
 
+const DB_CONNECTED = 1;
+
+/**
+ * Writes must fail cleanly while MongoDB is unreachable. With command
+ * buffering off, Mongoose throws from inside a driver callback when a write
+ * is attempted without a connection, which would crash the whole process
+ * instead of failing the one request.
+ */
+export const assertDatabaseReady = (readyState = mongoose.connection.readyState) => {
+  if (readyState !== DB_CONNECTED) {
+    throw createHttpError(503, 'The database is temporarily unavailable. Nothing was saved - please try again in a minute.');
+  }
+};
+
 export const insertIntoTable = async (table, { auth, values, single }) => {
+  assertDatabaseReady();
   const Model = getModel(table);
   const items = Array.isArray(values) ? values : [values];
   const preparedItems = [];
@@ -618,7 +665,22 @@ export const insertIntoTable = async (table, { auth, values, single }) => {
   return single ? normalized[0] ?? null : normalized;
 };
 
-export const updateTable = async (table, { auth, filters, values, single }) => {
+/**
+ * Trims an update's reply to the columns the client asked for, so saving a
+ * small edit does not send a multi-MB document (photos, video) back down.
+ * "*" or no selection returns the full document as before.
+ */
+export const pickSelectedFields = (doc, select) => {
+  if (!doc || typeof select !== 'string') return doc;
+  const fields = select.split(',').map((field) => field.trim()).filter(Boolean);
+  if (fields.length === 0 || fields.includes('*')) return doc;
+
+  const pick = (item) => Object.fromEntries(fields.filter((field) => field in item).map((field) => [field, item[field]]));
+  return Array.isArray(doc) ? doc.map(pick) : pick(doc);
+};
+
+export const updateTable = async (table, { auth, filters, values, single, select }) => {
+  assertDatabaseReady();
   const Model = getModel(table);
   const scope = await getWriteScope(table, auth, filters);
   const payload = preparePayload(table, 'update', values, auth);
@@ -743,14 +805,15 @@ export const updateTable = async (table, { auth, filters, values, single }) => {
     console.warn('Notice on status change notification:', e);
   }
 
-  return updatedDoc;
+  return pickSelectedFields(updatedDoc, select);
 };
 
 export const upsertTable = async (table, { auth, values, single }) => {
+  assertDatabaseReady();
   if (table === 'profiles') {
     requireAuth(auth);
     const payload = preparePayload(table, 'upsert', values, auth);
-    const targetId = isAdmin(auth) && values?.id ? values.id : auth.sub;
+    const targetId = canAdminTable(auth, table) && values?.id ? values.id : auth.sub;
     const doc = await User.findByIdAndUpdate(targetId, payload, { new: true, upsert: false, runValidators: false });
     return normalizeDoc(doc);
   }
@@ -778,7 +841,7 @@ export const upsertTable = async (table, { auth, values, single }) => {
 
   if (table === 'sell_price_configs') {
     requireAuth(auth);
-    if (!isAdmin(auth)) throw createHttpError(403, 'Admin access required.');
+    if (!canAdminTable(auth, table)) throw createHttpError(403, 'Admin access required.');
     const Model = getModel(table);
     const payload = preparePayload(table, 'upsert', values, auth);
     const rawBrand = (payload.brand || '').trim();
@@ -816,7 +879,7 @@ export const upsertTable = async (table, { auth, values, single }) => {
 
   if (table === 'master_phones' || table === 'phones') {
     requireAuth(auth);
-    if (!isAdmin(auth)) throw createHttpError(403, 'Admin access required.');
+    if (!canAdminTable(auth, table)) throw createHttpError(403, 'Admin access required.');
     const Model = getModel(table);
     const payload = preparePayload(table, 'upsert', values, auth);
     const rawBrand = (payload.brand || '').trim();
@@ -845,6 +908,7 @@ export const upsertTable = async (table, { auth, values, single }) => {
 };
 
 export const deleteFromTable = async (table, { auth, filters }) => {
+  assertDatabaseReady();
   const Model = getModel(table);
   const scope = await getWriteScope(table, auth, filters);
   const result = await Model.deleteMany(scope);

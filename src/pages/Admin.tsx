@@ -24,6 +24,7 @@ import {
   Film,
   Play,
   Video as VideoIcon,
+  Users,
 } from 'lucide-react';
 import { PhoneVideoPlayer, isVideoUrl } from '../lib/videoUtils';
 import { useAuth } from '../context/AuthContext';
@@ -41,7 +42,8 @@ import type {
 import type { AdminTab } from './admin/adminTypes';
 import { savePriceOverride } from '../lib/priceSync';
 import { DOORSTEP_AREAS } from '../types';
-import { db, formatINR } from '../lib/db';
+import { db, formatINR, authHeaders } from '../lib/db';
+import { canAccessAdminPanel, getAllowedAdminTabs } from '../lib/adminPermissions';
 import { API_BASE } from '../config/apiConfig';
 import { broadcastSync, subscribeToRealtimeSync } from '../lib/realtimeSync';
 import { ALL_INDIAN_PHONES_CATALOG } from '../data/indianPhonesCatalog';
@@ -84,6 +86,9 @@ import {
   restoreModel,
 } from '../lib/catalogSync';
 import type { RepairPriceConfig } from '../types';
+import { describeOversizedSave, MAX_INLINE_VIDEO_FILE_BYTES, VIDEO_TOO_LARGE_MESSAGE } from '../lib/uploadLimits';
+import { readProductPhotos } from '../lib/productPhotoUpload';
+import { changedFields } from '../lib/objectDiff';
 
 export default function Admin() {
   const { user, profile, loading, signIn, signOut } = useAuth();
@@ -140,7 +145,26 @@ export default function Admin() {
   };
 
   // Tab state derived from URL or params or saved session
-  const [tab, setTab] = useState<AdminTab>(getInitialAdminTab);
+  const [requestedTab, setTab] = useState<AdminTab>(getInitialAdminTab);
+
+  // Keep tab state synchronized when URL subtab or search params change
+  useEffect(() => {
+    const nextTab = getInitialAdminTab();
+    if (nextTab && nextTab !== requestedTab) {
+      setTab(nextTab);
+    }
+  }, [subtab, searchParams]);
+
+  // Staff only see the sections they were granted; a tab they cannot open
+  // (from the URL or a saved session) falls back to the overview.
+  const isKnownAdminEmail = user?.email?.toLowerCase() === 'admin@fundu.in';
+  const panelRole = profile?.role || user?.role || (isKnownAdminEmail ? 'admin' : 'customer');
+  const allowedTabs = getAllowedAdminTabs(panelRole, profile?.permissions);
+  const isSuperAdmin = panelRole === 'admin';
+  // Allow super admins full access; always allow 'users' tab so that permissions or access guidance are visible
+  const tab: AdminTab = allowedTabs.includes(requestedTab)
+    ? requestedTab
+    : (requestedTab === 'users' ? 'users' : 'overview');
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
 
   const handleTabChange = (newTab: AdminTab) => {
@@ -153,6 +177,7 @@ export default function Admin() {
       competitor_radar: 'competitor-radar',
       repair_pricing: 'repair-pricing',
       pincodes: 'pincodes',
+      users: 'users',
     };
     const slug = slugMap[newTab] !== undefined ? slugMap[newTab] : newTab;
     const targetPath = slug ? `/admin/${slug}` : '/admin';
@@ -189,6 +214,7 @@ export default function Admin() {
       full_name: string | null;
       phone: string | null;
       role: string;
+      permissions?: string[];
       business_name: string | null;
       is_verified: boolean;
       created_at: string;
@@ -382,12 +408,12 @@ export default function Admin() {
   // Initial Data Fetch
   useEffect(() => {
     const activeRole = profile?.role || user?.role || 'customer';
-    if (!loading && (!user || activeRole !== 'admin')) {
+    if (!loading && (!user || !canAccessAdminPanel(activeRole))) {
       navigate('/admin-login');
       return;
     }
 
-    if (user && activeRole === 'admin') {
+    if (user && canAccessAdminPanel(activeRole)) {
       loadAllData();
     }
   }, [user, profile, loading, navigate]);
@@ -473,7 +499,7 @@ export default function Admin() {
   // Real-time Background Lead Listener with Audio Chimes & Desktop System Notifications
   useEffect(() => {
     const activeRole = profile?.role || user?.role || 'customer';
-    if (!user || activeRole !== 'admin') return;
+    if (!user || !canAccessAdminPanel(activeRole)) return;
 
     // Auto-request desktop system notification permissions on Admin mount
     soundNotifier.requestPermission().catch(() => {});
@@ -940,7 +966,17 @@ export default function Admin() {
         stock: Number(listPhoneForm.stock) || 1,
       };
 
+      // The server rejects save requests over 10 MB; explain that up front
+      // instead of failing with "request entity too large".
+      const sizeProblem = describeOversizedSave(payload);
+      if (sizeProblem) {
+        alert(sizeProblem);
+        return;
+      }
+
       const { data, error } = await db.from('products').insert(payload).select('*').single();
+      // A failed save must be reported, not shown as a product that only exists in this browser.
+      if (error) throw error;
       const newProduct: Product = (data as Product) || {
         id: 'prod-' + Date.now(),
         ...payload,
@@ -957,7 +993,6 @@ export default function Admin() {
       }
       setListPhoneModal(null);
 
-      if (error) console.warn('Product insert notice:', error.message);
       alert(`🎉 ${payload.title} successfully listed in Buy Store!`);
     } catch (err: any) {
       alert(err?.message || 'Failed to publish phone to store');
@@ -1062,7 +1097,7 @@ export default function Admin() {
         const apiBase = import.meta.env.VITE_API_URL || '/api';
         await fetch(`${apiBase}/sell-pricing/config`, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: { 'Content-Type': 'application/json', ...authHeaders() },
           body: JSON.stringify({
             ...payload,
             is_locked: true,
@@ -1375,17 +1410,40 @@ export default function Admin() {
       };
 
       if (productModal?.product) {
-        const { data, error } = await db
-          .from('products')
-          .update(payload)
-          .eq('id', productModal.product.id)
-          .select('*')
-          .single();
-        if (error) throw error;
-        const saved = (data as Product) || { ...productModal.product, ...payload };
-        setProducts((prev) => prev.map((p) => (p.id === productModal.product?.id ? saved : p)));
-        broadcastSync('PRODUCT_UPDATE', 'products', 'update', saved);
+        const original = productModal.product;
+        // Send only what changed. Re-uploading unchanged photos and video
+        // (several MB) on every edit is what made saving an edit slow.
+        const { updated_at, ...editable } = payload;
+        const changes = changedFields(original as unknown as Record<string, unknown>, editable);
+
+        // The server rejects save requests over 10 MB; explain that up front
+        // instead of failing with "request entity too large".
+        const sizeProblem = describeOversizedSave(changes);
+        if (sizeProblem) {
+          alert(sizeProblem);
+          return;
+        }
+
+        if (Object.keys(changes).length > 0) {
+          const { error } = await db
+            .from('products')
+            .update({ ...changes, updated_at })
+            .eq('id', original.id)
+            .select('id')
+            .single();
+          if (error) throw error;
+        }
+
+        const saved = { ...original, ...payload } as Product;
+        setProducts((prev) => prev.map((p) => (p.id === original.id ? saved : p)));
+        broadcastSync('PRODUCT_UPDATE', 'products', 'update', { id: saved.id });
       } else {
+        const sizeProblem = describeOversizedSave(payload);
+        if (sizeProblem) {
+          alert(sizeProblem);
+          return;
+        }
+
         const { data, error } = await db.from('products').insert(payload).select('*').single();
         if (error) throw error;
         const saved = data as Product;
@@ -1454,14 +1512,25 @@ export default function Admin() {
   };
 
   // User actions
-  const updateUserRole = async (userId: string, role: string) => {
+  const updateUserPermissions = async (userId: string, permissions: string[]): Promise<boolean> => {
+    const { error } = await db.from('profiles').update({ role: 'staff', permissions }).eq('id', userId);
+    if (error) {
+      alert(error.message);
+      return false;
+    }
+    setProfiles((prev) => prev.map((p) => (p.id === userId ? { ...p, role: 'staff', permissions } : p)));
+    return true;
+  };
+
+  const updateUserRole = async (userId: string, role: string): Promise<boolean> => {
     const { error } = await db.from('profiles').update({ role }).eq('id', userId);
     if (error) {
       alert(error.message);
-      return;
+      return false;
     }
     setProfiles((prev) => {
-      const updated = prev.map((p) => (p.id === userId ? { ...p, role } : p));
+      // A role change always starts from no staff permissions (the server clears them too).
+      const updated = prev.map((p) => (p.id === userId ? { ...p, role, permissions: [] } : p));
       if (role === 'admin') {
         const target = updated.find((p) => p.id === userId);
         if (target?.phone) {
@@ -1477,6 +1546,7 @@ export default function Admin() {
       }
       return updated;
     });
+    return true;
   };
 
   const toggleUserVerification = async (userId: string, current: boolean) => {
@@ -1654,7 +1724,7 @@ export default function Admin() {
 
   // 2. ADMIN AUTHENTICATION GATE (If not logged in as Admin)
   const activeRole = profile?.role || user?.role || 'customer';
-  if (!user || activeRole !== 'admin') {
+  if (!user || !canAccessAdminPanel(activeRole)) {
     return (
       <div className="min-h-screen bg-slate-950 text-white flex flex-col items-center justify-center p-4 font-sans">
         <div className="w-full max-w-md bg-slate-900 border border-slate-800 rounded-3xl p-8 shadow-2xl space-y-6 animate-fade-in">
@@ -1746,6 +1816,8 @@ export default function Admin() {
       {/* 1. Persistent Sidebar Navigation */}
       <AdminSidebar
         activeTab={tab}
+        allowedTabs={allowedTabs}
+        isSuperAdmin={isSuperAdmin}
         onSelectTab={handleTabChange}
         onOpenAddProduct={(cat) => openAddProductModal(cat)}
         counts={{
@@ -1812,8 +1884,8 @@ export default function Admin() {
 
             <div className="flex items-center gap-2">
               <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full bg-ink-100 text-ink-700 text-xs font-semibold">
-                <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
-                <span>Admin: {user?.email}</span>
+                <span className={`h-2 w-2 rounded-full ${isSuperAdmin ? 'bg-purple-600' : 'bg-blue-500'} animate-pulse`} />
+                <span>{isSuperAdmin ? '👑 Super Admin' : 'Staff Access'}: {user?.email}</span>
               </div>
               <button
                 type="button"
@@ -1840,12 +1912,23 @@ export default function Admin() {
           <div className="flex items-center gap-2 flex-wrap">
             <button
               type="button"
+              onClick={() => handleTabChange('users')}
+              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-indigo-600 via-purple-600 to-indigo-700 hover:from-indigo-500 hover:to-purple-500 text-white text-xs font-black shadow-md transition cursor-pointer"
+            >
+              <Users className="h-3.5 w-3.5" /> Staff & Permissions
+            </button>
+
+            {allowedTabs.includes('products') && (
+            <button
+              type="button"
               onClick={() => openAddProductModal()}
               className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white text-xs font-black shadow-md transition cursor-pointer"
             >
               <Plus className="h-3.5 w-3.5" /> + Add Inventory (Phone / Laptop)
             </button>
+            )}
 
+            {allowedTabs.includes('catalog') && (
             <button
               type="button"
               onClick={() => {
@@ -1856,7 +1939,9 @@ export default function Admin() {
             >
               <Plus className="h-3.5 w-3.5" /> Add Phone to Catalog
             </button>
+            )}
 
+            {allowedTabs.includes('agents') && (
             <button
               type="button"
               onClick={() => {
@@ -1867,7 +1952,9 @@ export default function Admin() {
             >
               <Plus className="h-3.5 w-3.5" /> Add Delivery Agent
             </button>
+            )}
 
+            {allowedTabs.includes('parts') && (
             <button
               type="button"
               onClick={() => {
@@ -1889,6 +1976,7 @@ export default function Admin() {
             >
               <Plus className="h-3.5 w-3.5" /> Add Spare Part
             </button>
+            )}
           </div>
         </div>
 
@@ -2024,7 +2112,7 @@ export default function Admin() {
                 try {
                   const res = await fetch(`${API_BASE}/sell-pricing/config`, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: { 'Content-Type': 'application/json', ...authHeaders() },
                     body: JSON.stringify({
                       ...payload,
                       brand: rawBrand,
@@ -2318,7 +2406,11 @@ export default function Admin() {
               sells={sells}
               repairs={repairs}
               onUpdateRole={updateUserRole}
+              onUpdatePermissions={updateUserPermissions}
               onToggleVerification={toggleUserVerification}
+              isSuperAdmin={isSuperAdmin}
+              currentUserRole={panelRole}
+              currentUserEmail={user?.email || undefined}
             />
           )}
 
@@ -2477,23 +2569,17 @@ export default function Admin() {
                       accept="image/*"
                       multiple
                       className="hidden"
-                      onChange={(e) => {
-                        const files = Array.from(e.target.files || []);
-                        files.forEach((file) => {
-                          if (file.size > 5 * 1024 * 1024) {
-                            alert(`File ${file.name} is too large (>5MB)`);
-                            return;
-                          }
-                          const reader = new FileReader();
-                          reader.onloadend = () => {
-                            const b64 = reader.result as string;
-                            setListPhoneForm((prev) => {
-                              const existing = prev.images ? prev.images.split('\n').filter(Boolean) : [];
-                              return { ...prev, images: [...existing, b64].join('\n') };
-                            });
-                          };
-                          reader.readAsDataURL(file);
-                        });
+                      onChange={async (e) => {
+                        const input = e.target;
+                        const { photos, errors } = await readProductPhotos(Array.from(input.files || []));
+                        input.value = '';
+                        if (photos.length > 0) {
+                          setListPhoneForm((prev) => {
+                            const existing = prev.images ? prev.images.split('\n').filter(Boolean) : [];
+                            return { ...prev, images: [...existing, ...photos].join('\n') };
+                          });
+                        }
+                        if (errors.length > 0) alert(errors.join('\n'));
                       }}
                     />
                   </label>
@@ -2556,8 +2642,9 @@ export default function Admin() {
                         onChange={(e) => {
                           const file = e.target.files?.[0];
                           if (!file) return;
-                          if (file.size > 25 * 1024 * 1024) {
-                            alert('Video file is larger than 25MB. Please provide a YouTube link or direct video URL.');
+                          if (file.size > MAX_INLINE_VIDEO_FILE_BYTES) {
+                            alert(VIDEO_TOO_LARGE_MESSAGE);
+                            e.target.value = '';
                             return;
                           }
                           const reader = new FileReader();
@@ -3257,23 +3344,17 @@ export default function Admin() {
                       accept="image/*"
                       multiple
                       className="hidden"
-                      onChange={(e) => {
-                        const files = Array.from(e.target.files || []);
-                        files.forEach((file) => {
-                          if (file.size > 5 * 1024 * 1024) {
-                            alert(`File ${file.name} is too large (>5MB)`);
-                            return;
-                          }
-                          const reader = new FileReader();
-                          reader.onloadend = () => {
-                            const b64 = reader.result as string;
-                            setProductForm((prev) => {
-                              const existing = prev.images ? prev.images.split('\n').filter(Boolean) : [];
-                              return { ...prev, images: [...existing, b64].join('\n') };
-                            });
-                          };
-                          reader.readAsDataURL(file);
-                        });
+                      onChange={async (e) => {
+                        const input = e.target;
+                        const { photos, errors } = await readProductPhotos(Array.from(input.files || []));
+                        input.value = '';
+                        if (photos.length > 0) {
+                          setProductForm((prev) => {
+                            const existing = prev.images ? prev.images.split('\n').filter(Boolean) : [];
+                            return { ...prev, images: [...existing, ...photos].join('\n') };
+                          });
+                        }
+                        if (errors.length > 0) alert(errors.join('\n'));
                       }}
                     />
                   </label>
@@ -3336,8 +3417,9 @@ export default function Admin() {
                         onChange={(e) => {
                           const file = e.target.files?.[0];
                           if (!file) return;
-                          if (file.size > 25 * 1024 * 1024) {
-                            alert('Video file is larger than 25MB. For best speed and streaming, paste a YouTube link or hosted MP4 URL.');
+                          if (file.size > MAX_INLINE_VIDEO_FILE_BYTES) {
+                            alert(VIDEO_TOO_LARGE_MESSAGE);
+                            e.target.value = '';
                             return;
                           }
                           const reader = new FileReader();

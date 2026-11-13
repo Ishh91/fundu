@@ -31,7 +31,7 @@ import {
   Filter,
 } from 'lucide-react';
 import type { Profile, WholesaleInventory, WholesaleOrder, SellRequest, RepairBooking, VendorLedger } from '../../types';
-import { db, formatINR } from '../../lib/db';
+import { db, formatINR, authHeaders } from '../../lib/db';
 import { statusColors } from './adminTypes';
 import { sendEmailOtpCode } from '../../lib/freeNotifyService';
 
@@ -136,7 +136,7 @@ export default function AdminVendors() {
     try {
       const response = await fetch(`${API_BASE.replace(/\/$/, '')}/auth/register`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', ...authHeaders() },
         body: JSON.stringify({
           email: addVendorForm.email.trim(),
           password: addVendorForm.password || 'Vendor@123456',

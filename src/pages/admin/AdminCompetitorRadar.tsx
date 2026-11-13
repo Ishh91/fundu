@@ -21,7 +21,7 @@ import {
   Download,
   FileText,
 } from 'lucide-react';
-import { formatINR } from '../../lib/db';
+import { formatINR, authHeaders } from '../../lib/db';
 import { API_BASE } from '../../config/apiConfig';
 import { getCleanPhoneImage, BRAND_FRONT_FALLBACKS, getGenericDevicePlaceholder } from '../../lib/phoneImages';
 import { savePriceOverride } from '../../lib/priceSync';
@@ -540,7 +540,7 @@ export default function AdminCompetitorRadar() {
 
       const res = await fetch(`${API_BASE}/sell-pricing/config`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', ...authHeaders() },
         body: JSON.stringify(payload),
       });
 

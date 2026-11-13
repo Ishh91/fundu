@@ -26,6 +26,9 @@ import type { AdminTab } from './adminTypes';
 
 type AdminSidebarProps = {
   activeTab: AdminTab;
+  /** Tabs this user may open; everything else is hidden from the menu. */
+  allowedTabs: AdminTab[];
+  isSuperAdmin: boolean;
   onSelectTab: (tab: AdminTab) => void;
   onOpenAddProduct?: (initialCategory?: 'smartphone' | 'laptop') => void;
   counts: {
@@ -42,6 +45,8 @@ type AdminSidebarProps = {
 
 export default function AdminSidebar({
   activeTab,
+  allowedTabs,
+  isSuperAdmin,
   onSelectTab,
   onOpenAddProduct,
   counts,
@@ -80,6 +85,19 @@ export default function AdminSidebar({
           badge: counts.sells > 0 ? String(counts.sells) : undefined,
           badgeColor: 'bg-amber-500 text-white',
           path: '/admin/sells',
+        },
+      ],
+    },
+    {
+      title: 'TEAM & PERMISSIONS',
+      items: [
+        {
+          id: 'users' as AdminTab,
+          label: 'Users & Permissions',
+          icon: Users,
+          badge: isSuperAdmin ? 'Roles' : 'Admin Only',
+          badgeColor: isSuperAdmin ? 'bg-indigo-600 text-white' : 'bg-slate-700 text-slate-200',
+          path: '/admin/users',
         },
       ],
     },
@@ -126,7 +144,7 @@ export default function AdminSidebar({
           badgeColor: 'bg-emerald-600 text-white',
           path: '/admin/repair-pricing',
         },
-        { id: 'parts' as AdminTab, label: 'Spare Parts Stock', icon: Wrench, path: '/admin?tab=parts' },
+        { id: 'parts' as AdminTab, label: 'Spare Parts Stock', icon: Wrench, path: '/admin/parts' },
       ],
     },
     {
@@ -156,7 +174,6 @@ export default function AdminSidebar({
           badgeColor: 'bg-[#344257] text-white',
           path: '/admin/wholesalers',
         },
-        { id: 'users' as AdminTab, label: 'Users & Roles', icon: Users, path: '/admin?tab=users' },
       ],
     },
     {
@@ -170,8 +187,8 @@ export default function AdminSidebar({
           badgeColor: 'bg-[#344257] text-white',
           path: '/admin/banners',
         },
-        { id: 'reviews' as AdminTab, label: 'Customer Reviews', icon: MessageSquare, path: '/admin?tab=reviews' },
-        { id: 'contact' as AdminTab, label: 'Contact Queries', icon: Mail, path: '/admin?tab=contact' },
+        { id: 'reviews' as AdminTab, label: 'Customer Reviews', icon: MessageSquare, path: '/admin/reviews' },
+        { id: 'contact' as AdminTab, label: 'Contact Queries', icon: Mail, path: '/admin/contact' },
       ],
     },
   ];
@@ -199,7 +216,7 @@ export default function AdminSidebar({
             <div>
               <span className="font-display text-lg font-black tracking-tight text-ink-900">Fundu Admin</span>
               <p className="text-[10px] font-bold text-brand-600 flex items-center gap-1">
-                <MapPin className="h-3 w-3 text-emerald-600" /> Service Hub
+                <MapPin className="h-3 w-3 text-emerald-600" /> {isSuperAdmin ? 'Super Admin' : 'Staff Access'}
               </p>
             </div>
           </Link>
@@ -211,6 +228,7 @@ export default function AdminSidebar({
         </div>
 
         {/* Dedicated Add Inventory Quick Action */}
+        {allowedTabs.includes('products') && (
         <div className="pt-0.5">
           <button
             type="button"
@@ -225,12 +243,15 @@ export default function AdminSidebar({
             <span>+ Add Inventory (Stock)</span>
           </button>
         </div>
+        )}
 
         {/* Categorized Menu Groups */}
         <div className="space-y-4">
           {menuGroups.map((group) => {
-            const filteredItems = group.items.filter((item) =>
-              !navFilter.trim() || item.label.toLowerCase().includes(navFilter.toLowerCase().trim())
+            const filteredItems = group.items.filter(
+              (item) =>
+                (allowedTabs.includes(item.id) || item.id === 'users') &&
+                (!navFilter.trim() || item.label.toLowerCase().includes(navFilter.toLowerCase().trim())),
             );
             if (filteredItems.length === 0) return null;
 
@@ -285,20 +306,24 @@ export default function AdminSidebar({
           <span>View Public Store</span>
           <ExternalLink className="h-3.5 w-3.5" />
         </Link>
-        <Link
-          to="/delivery"
-          className="flex items-center justify-between rounded-xl px-3 py-2 text-xs font-bold text-[#344257] bg-[#F0F0F5] hover:bg-[#E2E8F0]"
-        >
-          <span>Field Rider Portal</span>
-          <ExternalLink className="h-3.5 w-3.5" />
-        </Link>
-        <Link
-          to="/vendor"
-          className="flex items-center justify-between rounded-xl px-3 py-2 text-xs font-bold text-purple-700 bg-purple-50 hover:bg-purple-100"
-        >
-          <span>Vendor Partner Hub</span>
-          <ExternalLink className="h-3.5 w-3.5" />
-        </Link>
+        {isSuperAdmin && (
+          <>
+            <Link
+              to="/delivery"
+              className="flex items-center justify-between rounded-xl px-3 py-2 text-xs font-bold text-[#344257] bg-[#F0F0F5] hover:bg-[#E2E8F0]"
+            >
+              <span>Field Rider Portal</span>
+              <ExternalLink className="h-3.5 w-3.5" />
+            </Link>
+            <Link
+              to="/vendor"
+              className="flex items-center justify-between rounded-xl px-3 py-2 text-xs font-bold text-purple-700 bg-purple-50 hover:bg-purple-100"
+            >
+              <span>Vendor Partner Hub</span>
+              <ExternalLink className="h-3.5 w-3.5" />
+            </Link>
+          </>
+        )}
         <button
           onClick={() => {
             signOut();
@@ -307,7 +332,7 @@ export default function AdminSidebar({
           className="flex w-full items-center justify-between rounded-xl px-3 py-2 text-xs font-bold text-rose-700 bg-rose-50 hover:bg-rose-100 border border-rose-200/60 transition mt-1 cursor-pointer"
         >
           <span className="flex items-center gap-1.5">
-            <LogOut className="h-3.5 w-3.5" /> Sign Out Admin
+            <LogOut className="h-3.5 w-3.5" /> Sign Out
           </span>
         </button>
       </div>

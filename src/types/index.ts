@@ -7,6 +7,8 @@ export type Product = {
   storage: string | null;
   color: string | null;
   condition: 'Superb' | 'Excellent' | 'Good' | 'Fair';
+  /** True when a list response left out a large inline video; the product page still loads it. */
+  has_video?: boolean;
   price: number;
   original_price: number | null;
   discount_percent: number;
@@ -317,7 +319,9 @@ export type Profile = {
   phone: string | null;
   email?: string | null;
   address?: string | null;
-  role: 'customer' | 'vendor' | 'wholesaler' | 'admin' | 'delivery' | 'rider';
+  role: 'customer' | 'vendor' | 'wholesaler' | 'admin' | 'staff' | 'delivery' | 'rider';
+  /** Admin-panel sections a staff user may manage (empty for every other role). */
+  permissions?: string[];
   business_name: string | null;
   vendor_location?: string | null;
   gst_number?: string | null;

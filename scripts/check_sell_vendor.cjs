@@ -1,7 +1,14 @@
 const mongoose = require('mongoose');
+const path = require('path');
+require('dotenv').config({ path: path.join(__dirname, '..', '.env') });
+
+if (!process.env.MONGODB_URI) {
+  console.error('MONGODB_URI is not set. Add it to the .env file in the project root.');
+  process.exit(1);
+}
 
 async function run() {
-  await mongoose.connect('mongodb+srv://trustiqueassist0003_db_user:r1BrCdYiCcPgBxK6@cluster0.w56fxzj.mongodb.net/?appName=Cluster0', { dbName: 'fundu' });
+  await mongoose.connect(process.env.MONGODB_URI, { dbName: 'fundu' });
   const Sell = mongoose.model('SellRequest', new mongoose.Schema({}, { strict: false }));
   const docs = await Sell.find({}).sort({ _id: -1 }).limit(10).lean();
   console.log('Recent 10 sell requests:');

@@ -4,10 +4,16 @@ import mongoose from 'mongoose';
 import { User } from '../models/index.js';
 import { createHttpError } from '../utils/error.js';
 import { normalizeDoc } from '../utils/dbHelpers.js';
-import { issueSession, requireAuth } from '../middleware/auth.js';
+import { issueSession, isAdmin, requireAdmin, requireAuth } from '../middleware/auth.js';
 import { createOtp, verifyOtp as checkOtp, hasActiveOtp, otpTtlSeconds } from '../utils/otpStore.js';
 import { sendOtp } from '../services/smsService.js';
 import { sendViaNodemailer } from './emailRoutes.js';
+import { verifyFirebasePhoneToken } from '../utils/firebaseToken.js';
+import { STAFF_ROLE, sanitizePermissions } from '../config/permissions.js';
+
+const MIN_PASSWORD_LENGTH = 6;
+const RESET_RESEND_COOLDOWN_TTL_SECONDS = 540; // OTP TTL is 600s, so >540 means <60s old
+const resetOtpKey = (email) => `reset:${email}`;
 
 const router = Router();
 const inMemoryUsers = new Map();
@@ -123,13 +129,21 @@ router.post('/check-phone', async (req, res, next) => {
    ────────────────────────────────────────────────────────────── */
 router.post('/delete-user', async (req, res, next) => {
   try {
+    requireAdmin(req.auth);
     const { userId } = req.body;
     if (!userId) {
       throw createHttpError(400, 'User ID is required.');
     }
 
-    if (mongoose.connection.readyState === 1) {
-      await User.deleteOne({ $or: [{ _id: userId }, { id: userId }] });
+    if (typeof userId !== 'string') {
+      throw createHttpError(400, 'User ID must be a string.');
+    }
+    if (userId === req.auth.sub) {
+      throw createHttpError(400, 'You cannot delete your own admin account.');
+    }
+
+    if (mongoose.connection.readyState === 1 && mongoose.Types.ObjectId.isValid(userId)) {
+      await User.deleteOne({ _id: userId });
     }
     inMemoryUsers.delete(userId);
 
@@ -146,6 +160,7 @@ router.post('/delete-user', async (req, res, next) => {
    ────────────────────────────────────────────────────────────── */
 router.post('/clean-test-users', async (req, res, next) => {
   try {
+    requireAdmin(req.auth);
     const adminEmail = (process.env.ADMIN_EMAIL || 'admin@fundu.in').toLowerCase().trim();
     const result = await User.deleteMany({
       email: { $ne: adminEmail },
@@ -298,15 +313,14 @@ router.post('/otp/verify', async (req, res, next) => {
 
     const cleanEmail = email ? String(email).toLowerCase().trim() : null;
 
-    // Find or create user
-    let user = null;
-    if (cleanEmail) {
-      user = await User.findOne({ $or: [{ phone }, { email: cleanEmail }] });
-    } else {
-      user = await User.findOne({ phone });
-    }
+    // Find or create user. The OTP only proves ownership of the phone number,
+    // so the account must be looked up by phone alone (never by email).
+    let user = await User.findOne({ phone });
 
     if (!user) {
+      if (cleanEmail && (await User.findOne({ email: cleanEmail }))) {
+        throw createHttpError(409, 'This email address is already registered with another account.');
+      }
       user = await User.create({
         phone,
         email: cleanEmail || null,
@@ -318,7 +332,7 @@ router.post('/otp/verify', async (req, res, next) => {
     } else {
       if (!user.is_verified) user.is_verified = true;
       if (fullName && !user.full_name) user.full_name = String(fullName).trim();
-      if (cleanEmail && !user.email) user.email = cleanEmail;
+      if (cleanEmail && !user.email && !(await User.findOne({ email: cleanEmail }))) user.email = cleanEmail;
       if (password && !user.passwordHash) user.passwordHash = await bcrypt.hash(String(password), 10);
       await user.save();
     }
@@ -337,8 +351,10 @@ router.post('/otp/verify', async (req, res, next) => {
 
 /* ────────────────────────────────────────────────────────────────
    POST /auth/otp/verify-firebase
-   Body: { phone, fullName?, email? }
+   Body: { idToken, phone, fullName?, email? }
    Called after client-side Firebase Phone Auth verification succeeds.
+   The Firebase ID token is verified server-side; a phone number in the
+   request body is never trusted on its own.
    Finds or creates MongoDB user and issues standard session JWT.
    ────────────────────────────────────────────────────────────── */
 router.post('/otp/verify-firebase', async (req, res, next) => {
@@ -351,6 +367,11 @@ router.post('/otp/verify-firebase', async (req, res, next) => {
     const phone = normalisePhone(rawPhone);
     if (!isValidPhone(phone)) {
       throw createHttpError(400, 'Invalid phone number format.');
+    }
+
+    const verifiedPhone = await verifyFirebasePhoneToken(req.body.idToken);
+    if (verifiedPhone !== phone) {
+      throw createHttpError(401, 'Phone verification does not match this mobile number.');
     }
 
     const { fullName } = req.body;
@@ -441,14 +462,23 @@ router.post('/register', async (req, res, next) => {
       }
     }
 
+    // Only a signed-in admin may create staff/vendor accounts or set credit terms.
+    // Public self-registration is always a plain customer account.
+    const createdByAdmin = isAdmin(req.auth);
+    const requestedRole = role ? String(role) : 'customer';
+    if (requestedRole !== 'customer' && !createdByAdmin) {
+      throw createHttpError(403, 'Only an admin can create non-customer accounts.');
+    }
+
     const user = await safeCreateUser({
       email: cleanEmail,
       passwordHash: password ? await bcrypt.hash(String(password), 10) : null,
       full_name: String(fullName).trim(),
       phone: cleanPhone,
-      role: role || 'customer',
+      role: requestedRole,
       business_name: businessName || null,
-      credit_limit: creditLimit ? Number(creditLimit) : 200000,
+      credit_limit: createdByAdmin && creditLimit ? Number(creditLimit) : 200000,
+      permissions: requestedRole === STAFF_ROLE ? sanitizePermissions(req.body.permissions) : [],
       gst_number: gstNumber || null,
       is_verified: true,
     });
@@ -513,30 +543,82 @@ router.post('/login', async (req, res, next) => {
 });
 
 /* ────────────────────────────────────────────────────────────────
+   POST /auth/reset-password/request
+   Body: { email }
+   Generates a reset OTP on the server and emails it to the account.
+   The OTP never leaves the server except through that email.
+   ────────────────────────────────────────────────────────────── */
+router.post('/reset-password/request', async (req, res, next) => {
+  try {
+    const cleanEmail = String(req.body.email || '').toLowerCase().trim();
+    if (!cleanEmail || !cleanEmail.includes('@')) {
+      throw createHttpError(400, 'Please enter your registered email address.');
+    }
+
+    const key = resetOtpKey(cleanEmail);
+    if (hasActiveOtp(key) && otpTtlSeconds(key) > RESET_RESEND_COOLDOWN_TTL_SECONDS) {
+      throw createHttpError(429, 'Please wait a minute before requesting another reset code.');
+    }
+
+    const user = await safeFindUser({ email: cleanEmail });
+    if (!user) {
+      throw createHttpError(404, `⚠️ Account Not Found: No registered account with "${cleanEmail}".`);
+    }
+
+    const otp = createOtp(key);
+    const mailRes = await sendViaNodemailer({
+      to: cleanEmail,
+      subject: 'Fundu Password Reset Code',
+      html: `
+        <div style="font-family: Arial, sans-serif; padding: 24px; color: #0f172a; max-width: 480px; margin: 0 auto; border: 1px solid #e2e8f0; border-radius: 16px;">
+          <h2 style="margin: 0 0 12px;">Fundu Password Reset</h2>
+          <p>Use this code to reset your Fundu password:</p>
+          <div style="background-color: #f8fafc; border: 2px dashed #cbd5e1; border-radius: 12px; padding: 16px; text-align: center; margin: 20px 0;">
+            <span style="font-family: monospace; font-size: 32px; font-weight: bold; color: #0284c7; letter-spacing: 8px;">${otp}</span>
+          </div>
+          <p style="font-size: 12px; color: #64748b;">This code expires in 10 minutes. If you did not request it, ignore this email.</p>
+        </div>
+      `,
+    });
+
+    if (!mailRes.success) {
+      console.error('Password reset email failed:', mailRes.error);
+      throw createHttpError(503, 'Could not send the reset code right now. Please try again later or contact support.');
+    }
+
+    res.json({ data: { success: true, message: `Reset code sent to ${cleanEmail}.` } });
+  } catch (error) {
+    next(error);
+  }
+});
+
+/* ────────────────────────────────────────────────────────────────
    POST /auth/reset-password
-   Resets password for an existing registered account.
+   Body: { email, otp, newPassword }
+   Resets the password only after the emailed reset OTP is verified.
    ────────────────────────────────────────────────────────────── */
 router.post('/reset-password', async (req, res, next) => {
   try {
-    const { email, phone, newPassword } = req.body;
-    const identifier = String(email || phone || '').toLowerCase().trim();
+    const cleanEmail = String(req.body.email || '').toLowerCase().trim();
+    const otp = String(req.body.otp || '').trim();
+    const newPassword = req.body.newPassword ? String(req.body.newPassword) : '';
 
-    if (!identifier || !newPassword) {
-      throw createHttpError(400, 'Mobile/Email and new password are required.');
+    if (!cleanEmail || !otp || !newPassword) {
+      throw createHttpError(400, 'Email, reset code and new password are required.');
+    }
+    if (newPassword.length < MIN_PASSWORD_LENGTH) {
+      throw createHttpError(400, `Password must be at least ${MIN_PASSWORD_LENGTH} characters long.`);
     }
 
-    const cleanPhone = normalisePhone(identifier);
-    const queryConditions = [{ email: identifier }];
-    if (isValidPhone(cleanPhone)) {
-      queryConditions.push({ phone: cleanPhone });
-    }
+    const { valid, reason } = checkOtp(resetOtpKey(cleanEmail), otp);
+    if (!valid) throw createHttpError(400, reason);
 
-    const user = await safeFindUser({ $or: queryConditions });
+    const user = await safeFindUser({ email: cleanEmail });
     if (!user) {
-      throw createHttpError(404, `⚠️ Account Not Found: No registered account with "${identifier}".`);
+      throw createHttpError(404, `⚠️ Account Not Found: No registered account with "${cleanEmail}".`);
     }
 
-    const newHash = await bcrypt.hash(String(newPassword), 10);
+    const newHash = await bcrypt.hash(newPassword, 10);
     if (mongoose.connection.readyState === 1 && user._id) {
       await User.updateOne({ _id: user._id }, { $set: { passwordHash: newHash } });
     }
@@ -546,7 +628,7 @@ router.post('/reset-password', async (req, res, next) => {
     res.json({
       data: {
         success: true,
-        message: `Password reset successfully for ${user.email || user.phone}. Please sign in with your new password.`,
+        message: 'Password reset successfully. Please sign in with your new password.',
       },
     });
   } catch (error) {
