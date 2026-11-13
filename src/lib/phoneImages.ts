@@ -660,6 +660,10 @@ function cleanOversizedStorageOnBoot() {
             modified = true;
             continue; // Dropped poisoned cross-brand image entry
           }
+          if (isStockImageUrl(v) || v.includes('unsplash.com') || v.includes('pexels.com') || v.includes('777/thumb')) {
+            modified = true;
+            continue; // Dropped stock/placeholder entry from custom images
+          }
           if (v.startsWith('blob:') || (v.startsWith('data:') && v.length > 60000)) {
             modified = true;
             continue;
@@ -796,7 +800,14 @@ export function getCustomModelImages(): Record<string, string> {
       stored = {};
     }
   }
-  return { ...stored, ...memoryCustomCache };
+  const combined = { ...stored, ...memoryCustomCache };
+  const clean: Record<string, string> = {};
+  for (const [k, v] of Object.entries(combined)) {
+    if (v && typeof v === 'string' && !isStockImageUrl(v) && !v.includes('unsplash.com') && !v.includes('pexels.com') && !v.includes('777/thumb')) {
+      clean[k] = v;
+    }
+  }
+  return clean;
 }
 
 /**
@@ -810,7 +821,7 @@ export function syncCustomImagesFromDatabase(
 
   const trueCustomEntries: Array<{ brand: string; model: string; url: string }> = [];
 
-  // 1. Separate true admin uploads from default/stock entries
+  // 1. Ingest ONLY true custom images uploaded by admin (stock/gsmarena must NEVER enter memoryCustomCache)
   phones.forEach((p) => {
     if (!p || !p.brand || !p.model || !p.image_url) return;
     const url = cleanUrl(String(p.image_url).trim(), p.brand);
@@ -820,17 +831,6 @@ export function syncCustomImagesFromDatabase(
     const isCustom = Boolean(p.custom_image) || (!isStockImageUrl(url) && !url.includes('unsplash.com') && !url.includes('pexels.com'));
     if (isCustom) {
       trueCustomEntries.push({ brand: p.brand, model: p.model, url });
-    } else {
-      const keys = generateModelLookupKeys(p.brand, p.model);
-      keys.forEach((k) => {
-        const existing = memoryCustomCache[k];
-        if (!existing || isStockImageUrl(existing)) {
-          if (existing !== url) {
-            memoryCustomCache[k] = url;
-            changed = true;
-          }
-        }
-      });
     }
   });
 
@@ -1116,9 +1116,10 @@ if (typeof window !== 'undefined') {
 export function saveCustomModelImage(brand: string, model: string, imageUrl: string) {
   if (typeof window === 'undefined') return;
   const val = imageUrl ? imageUrl.trim() : '';
+  const isStock = isStockImageUrl(val) || val.includes('unsplash.com') || val.includes('pexels.com') || val.includes('777/thumb');
   const keys = generateModelLookupKeys(brand, model);
 
-  if (val) {
+  if (val && !isStock) {
     keys.forEach((k) => {
       memoryCustomCache[k] = val;
     });
@@ -1354,22 +1355,8 @@ function computeCleanPhoneImage(brand?: string, model?: string, fallbackUrl?: st
   const modelNorm = m.toLowerCase().replace(/[^a-z0-9]/g, ' ').replace(/\s+/g, ' ').trim();
   const rawUrl = cleanUrl((fallbackUrl || '').trim(), b);
 
-  // 0. Priority 0: Admin custom image override for this specific brand & model (ABSOLUTE PRIORITY)
-  const customImages = getCustomModelImages();
-  const lookupKeys = generateModelLookupKeys(brand, model);
-  for (const k of lookupKeys) {
-    if (
-      customImages[k] &&
-      !customImages[k].includes('unsplash.com') &&
-      !customImages[k].includes('pexels.com') &&
-      !customImages[k].includes('777/thumb') &&
-      !isBrandImageMismatch(brand, model, customImages[k])
-    ) {
-      return cleanUrl(customImages[k], b);
-    }
-  }
-
-  // 1. If explicit custom image (uploaded by admin, data URI, blob, or custom host), use it immediately!
+  // 1. If explicit custom image (uploaded by admin/vendor for this product, data URI, blob, or custom host), USE IT IMMEDIATELY!
+  // A specific product's photo must NEVER be overwritten by a generic catalog render.
   const isInvalidUrl =
     !rawUrl ||
     rawUrl.includes('unsplash.com') ||
@@ -1384,6 +1371,27 @@ function computeCleanPhoneImage(brand?: string, model?: string, fallbackUrl?: st
       rawUrl.startsWith('blob:') ||
       !isStockImageUrl(rawUrl))
   ) {
+    return rawUrl;
+  }
+
+  // 2. Admin custom image override for this specific brand & model (from database/admin panel)
+  const customImages = getCustomModelImages();
+  const lookupKeys = generateModelLookupKeys(brand, model);
+  for (const k of lookupKeys) {
+    if (
+      customImages[k] &&
+      !isStockImageUrl(customImages[k]) &&
+      !customImages[k].includes('unsplash.com') &&
+      !customImages[k].includes('pexels.com') &&
+      !customImages[k].includes('777/thumb') &&
+      !isBrandImageMismatch(brand, model, customImages[k])
+    ) {
+      return cleanUrl(customImages[k], b);
+    }
+  }
+
+  // 3. If explicit rawUrl was a valid stock image (e.g. gsmarena) and not a mismatch, use it
+  if (!isInvalidUrl && isStockImageUrl(rawUrl)) {
     return rawUrl;
   }
 

@@ -209,6 +209,8 @@ export default function ProductDetail() {
 
   useEffect(() => {
     if (!id) return;
+    setProduct(null);
+    setSelectedImage('');
     setLoading(true);
 
     const sample = findSampleProductById(id) || findSampleLaptopById(id);
@@ -222,43 +224,28 @@ export default function ProductDetail() {
       return;
     }
 
-      db.from('products')
-        .select('*')
-        .eq('id', id)
-        .single()
-        .then(({ data, error }) => {
-          if (!error && data) {
-            const p = data as Product;
-            setProduct(p);
-            setSelectedImage(p.images?.[0] || getCleanPhoneImage(p.brand, p.model || p.title));
-            setSelectedStorage(normalizeStorageString(p.storage || '128 GB'));
-            setSelectedColor(p.color || 'Default');
-            setSelectedGrade(p.condition === 'Excellent' ? 'Superb' : p.condition || 'Superb');
-          } else {
-            // Fallback sample product if DB not responding or item not found
-            const fallback = findSampleProductById('sample-1') || findSampleProductById('sample-apple-13');
-            if (fallback) {
-              setProduct(fallback);
-              setSelectedImage(fallback.images?.[0] || getCleanPhoneImage(fallback.brand, fallback.model || fallback.title));
-              setSelectedStorage(normalizeStorageString(fallback.storage || '128 GB'));
-              setSelectedColor(fallback.color || 'Starlight');
-              setSelectedGrade(fallback.condition || 'Superb');
-            }
-          }
-          setLoading(false);
-    })
-    .catch(() => {
-      const fallback = findSampleProductById('sample-1') || findSampleProductById('sample-apple-13');
-      if (fallback) {
-        setProduct(fallback);
-        setSelectedImage(fallback.images?.[0] || getCleanPhoneImage(fallback.brand, fallback.model || fallback.title));
-        setSelectedStorage(normalizeStorageString(fallback.storage || '128 GB'));
-        setSelectedColor(fallback.color || 'Starlight');
-        setSelectedGrade(fallback.condition || 'Superb');
-      }
-      setLoading(false);
-    });
-}, [id]);
+    db.from('products')
+      .select('*')
+      .eq('id', id)
+      .single()
+      .then(({ data, error }) => {
+        if (!error && data) {
+          const p = data as Product;
+          setProduct(p);
+          setSelectedImage(p.images?.[0] || getCleanPhoneImage(p.brand, p.model || p.title));
+          setSelectedStorage(normalizeStorageString(p.storage || '128 GB'));
+          setSelectedColor(p.color || 'Default');
+          setSelectedGrade(p.condition === 'Excellent' ? 'Superb' : p.condition || 'Superb');
+        } else {
+          setProduct(null);
+        }
+        setLoading(false);
+      })
+      .catch(() => {
+        setProduct(null);
+        setLoading(false);
+      });
+  }, [id]);
 
 // Handle PIN Code Auto Location Lookup
 const handleCheckPincode = async (codeToTest?: string) => {
@@ -534,7 +521,7 @@ return (
               </div>
             ) : (
               <img
-                src={getCleanPhoneImage(product.brand, product.model || product.title, selectedImage || images[0])}
+                src={selectedImage || images[0] || getCleanPhoneImage(product.brand, product.model || product.title, '')}
                 alt={product.title}
                 className="h-80 w-auto object-contain transition-transform duration-300 group-hover:scale-105 drop-shadow-md"
                 onError={(e) => {
@@ -1161,7 +1148,7 @@ return (
         <div className="container-page flex items-center justify-between gap-4 max-w-5xl mx-auto">
           <div className="flex items-center gap-3 shrink-0">
             <img
-              src={getCleanPhoneImage(product.brand, product.model || product.title, images[0])}
+              src={images[0] || getCleanPhoneImage(product.brand, product.model || product.title, '')}
               alt={product.title}
               className="h-10 w-10 object-contain rounded-lg hidden sm:block"
             />
