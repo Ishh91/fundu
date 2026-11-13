@@ -3,6 +3,7 @@ import mongoose from 'mongoose';
 import { SellPriceConfig, MasterPhone } from '../models/index.js';
 import { createHttpError } from '../utils/error.js';
 import { requirePermission } from '../middleware/auth.js';
+import { clearTableCache } from './dbRoutes.js';
 import { normalizeDoc } from '../utils/dbHelpers.js';
 import {
   DEFAULT_PHONE_BRANDS,
@@ -809,6 +810,11 @@ router.get('/sell/disabled-models', async (req, res, next) => {
 router.post('/sell-pricing/config', async (req, res, next) => {
   try {
     requirePermission(req.auth, 'sell_pricing');
+    // The handler writes prices and catalog rows; refresh cached reads once it is done.
+    res.on('finish', () => {
+      clearTableCache('sell_price_configs');
+      clearTableCache('master_phones');
+    });
     const {
       brand,
       model,

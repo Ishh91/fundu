@@ -337,6 +337,22 @@ export const preparePayload = (table, action, input, auth) => {
   }
 };
 
+/**
+ * Product videos uploaded as base64 "data:" URLs are megabytes each. List
+ * pages only need the card image, so those inline videos are left out of list
+ * responses and flagged with `has_video` (the product page still loads the
+ * video by id). People who can edit the product - admins, inventory staff and
+ * its seller - keep the full document so saving an edit never drops the video.
+ */
+export const withoutInlineProductVideos = (table, auth, docs) => {
+  if (table !== 'products' || !Array.isArray(docs) || canAdminTable(auth, table)) return docs;
+
+  const canEdit = (doc) => isWholesaler(auth) && Boolean(auth?.sub) && String(doc?.seller_id) === String(auth.sub);
+  const hasInlineVideo = (doc) => typeof doc?.video_url === 'string' && doc.video_url.startsWith('data:');
+
+  return docs.map((doc) => (hasInlineVideo(doc) && !canEdit(doc) ? { ...doc, video_url: null, has_video: true } : doc));
+};
+
 export const queryTable = async (table, { auth, filters, sort, select, single, limit }) => {
   const Model = getModel(table);
   const scope = await getReadScope(table, auth, filters, select);
@@ -365,7 +381,7 @@ export const queryTable = async (table, { auth, filters, sort, select, single, l
     console.warn(`Notice querying ${table}:`, e?.message || e);
     return [];
   }
-  const normalized = normalizeDoc(docs);
+  const normalized = withoutInlineProductVideos(table, auth, normalizeDoc(docs));
 
   // Auto-enrich customer contact info for sell_requests, repair_bookings, orders if missing
   if ((table === 'sell_requests' || table === 'repair_bookings' || table === 'orders') && normalized) {

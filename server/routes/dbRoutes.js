@@ -8,6 +8,7 @@ import {
   updateTable,
   upsertTable,
 } from '../services/dbService.js';
+import { invalidateLiveImages } from '../utils/liveImagesCache.js';
 
 const router = Router();
 
@@ -30,7 +31,14 @@ function getCacheKey(table, query) {
   return `${table}:${JSON.stringify(query)}`;
 }
 
+const LIVE_IMAGE_TABLES = new Set(['master_phones', 'phones', 'sell_price_configs']);
+
+/**
+ * Drops cached reads for a table. Call it after a write has finished: clearing
+ * before the write lets a concurrent read re-cache the old data.
+ */
 export function clearTableCache(table) {
+  if (LIVE_IMAGE_TABLES.has(table)) invalidateLiveImages();
   for (const key of routeCache.keys()) {
     if (key.startsWith(`${table}:`)) {
       routeCache.delete(key);
@@ -91,8 +99,6 @@ router.post('/:table', async (req, res, next) => {
     const { action = 'insert', values, single = false } = req.body;
     if (!values) throw createHttpError(400, 'values is required.');
 
-    clearTableCache(req.params.table);
-
     const data = action === 'upsert'
       ? await upsertTable(req.params.table, { auth: req.auth, values, single })
       : await insertIntoTable(req.params.table, { auth: req.auth, values, single });
@@ -100,6 +106,8 @@ router.post('/:table', async (req, res, next) => {
     res.status(201).json({ data });
   } catch (error) {
     next(error);
+  } finally {
+    clearTableCache(req.params.table);
   }
 });
 
@@ -107,8 +115,6 @@ router.patch('/:table', async (req, res, next) => {
   try {
     const { filters = [], values, single = false } = req.body;
     if (!values) throw createHttpError(400, 'values is required.');
-
-    clearTableCache(req.params.table);
 
     const data = await updateTable(req.params.table, {
       auth: req.auth,
@@ -120,13 +126,14 @@ router.patch('/:table', async (req, res, next) => {
     res.json({ data });
   } catch (error) {
     next(error);
+  } finally {
+    clearTableCache(req.params.table);
   }
 });
 
 router.delete('/:table', async (req, res, next) => {
   try {
     const { filters = [] } = req.body;
-    clearTableCache(req.params.table);
 
     const data = await deleteFromTable(req.params.table, {
       auth: req.auth,
@@ -136,6 +143,8 @@ router.delete('/:table', async (req, res, next) => {
     res.json({ data });
   } catch (error) {
     next(error);
+  } finally {
+    clearTableCache(req.params.table);
   }
 });
 

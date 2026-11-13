@@ -294,7 +294,7 @@ export function usePriceSync() {
     // Function to pull latest sell_price_configs from database
     const pullPriceRules = () => {
       db.from('sell_price_configs')
-        .select('*')
+        .select('brand,model,storage,base_price,updated_at,created_at')
         .limit(5000)
         .then(({ data }) => {
           if (Array.isArray(data) && data.length > 0) {

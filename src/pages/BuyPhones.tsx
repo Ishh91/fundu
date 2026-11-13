@@ -791,7 +791,7 @@ export default function BuyPhones() {
                                 <Tag className="h-3 w-3" /> {product.discount_percent}% OFF
                               </span>
                             ) : null}
-                            {product.video_url ? (
+                            {product.video_url || product.has_video ? (
                               <span className="text-[9px] font-black bg-purple-600/90 text-white px-2 py-0.5 rounded-md shadow-xs flex items-center gap-1 backdrop-blur-xs">
                                 <Play className="h-2 w-2 fill-white" /> Video
                               </span>

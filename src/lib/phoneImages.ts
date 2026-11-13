@@ -884,6 +884,9 @@ export function syncCustomImagesFromDatabase(
 }
 
 let isPullingImages = false;
+/** Version of the live-image payload this tab already applied (sent back so the server can reply "unchanged"). */
+let liveImagesVersion = '';
+const LIVE_IMAGES_POLL_INTERVAL_MS = 60 * 1000;
 /**
  * Pulls custom photos from database (master_phones + sell_price_configs)
  * to ensure any visitor on any device sees images updated by admin within seconds.
@@ -894,12 +897,16 @@ export async function pullLiveModelImagesFromDb(force = false): Promise<boolean>
   try {
     // 1. Fast direct un-cached fetch from dedicated endpoint
     try {
-      const liveRes = await fetch(`${API_BASE}/phones/live-images?_t=${Date.now()}`, {
+      const versionQuery = liveImagesVersion ? `?v=${encodeURIComponent(liveImagesVersion)}` : '';
+      const liveRes = await fetch(`${API_BASE}/phones/live-images${versionQuery}`, {
         cache: 'no-store',
       });
       if (liveRes.ok) {
         const json = await liveRes.json();
+        // Nothing changed since the last pull: skip the multi-MB download entirely.
+        if (json?.unchanged) return false;
         if (Array.isArray(json?.data) && json.data.length > 0) {
+          if (typeof json.version === 'string') liveImagesVersion = json.version;
           return syncCustomImagesFromDatabase(json.data);
         }
       }
@@ -1096,11 +1103,14 @@ if (typeof window !== 'undefined') {
     }
   });
 
-  // Fast background polling interval (every 5 seconds)
-  // Ensures external visitor devices see admin updates within seconds without refreshing
+  // Background polling once a minute, only while the tab is visible. Each poll
+  // is a tiny version check unless an image actually changed; focus and
+  // realtime events above still refresh immediately.
   setInterval(() => {
-    pullLiveModelImagesFromDb();
-  }, 5000);
+    if (document.visibilityState === 'visible') {
+      pullLiveModelImagesFromDb();
+    }
+  }, LIVE_IMAGES_POLL_INTERVAL_MS);
 }
 
 export function saveCustomModelImage(brand: string, model: string, imageUrl: string) {

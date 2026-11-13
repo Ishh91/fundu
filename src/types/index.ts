@@ -7,6 +7,8 @@ export type Product = {
   storage: string | null;
   color: string | null;
   condition: 'Superb' | 'Excellent' | 'Good' | 'Fair';
+  /** True when a list response left out a large inline video; the product page still loads it. */
+  has_video?: boolean;
   price: number;
   original_price: number | null;
   discount_percent: number;
