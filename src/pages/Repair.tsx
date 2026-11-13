@@ -273,8 +273,11 @@ export default function Repair() {
         const fallbackLoc: VerifiedLocation = {
           valid: true,
           city: serviceCheck.city || 'Hub',
+          district: serviceCheck.city || 'Hub',
           state: serviceCheck.state || 'India',
           pincode: clean,
+          postOffices: [],
+          displayLabel: `${serviceCheck.city || 'Hub'}, ${serviceCheck.state || 'India'}`,
         };
         setVerifiedLocation(fallbackLoc);
         setPincodeError(null);

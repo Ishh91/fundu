@@ -96,8 +96,11 @@ export default function SellStep4Schedule({
           const fallbackLoc: VerifiedLocation = {
             valid: true,
             city: serviceCheck.city || 'Service Hub',
+            district: serviceCheck.city || 'Service Hub',
             state: serviceCheck.state || 'India',
             pincode: clean,
+            postOffices: [],
+            displayLabel: `${serviceCheck.city || 'Service Hub'}, ${serviceCheck.state || 'India'}`,
           };
           setVerifiedLoc(fallbackLoc);
           setPinError(null);

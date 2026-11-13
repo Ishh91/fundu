@@ -61,7 +61,7 @@ export default function AdminRepairs({
       .in('role', ['vendor', 'wholesaler', 'admin'])
       .order('created_at', { ascending: false })
       .then(({ data }) => {
-        if (data) setVendors(data);
+        if (data) setVendors(data as any[]);
       });
   }, []);
 

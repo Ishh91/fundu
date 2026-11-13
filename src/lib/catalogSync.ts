@@ -364,7 +364,7 @@ export async function refreshDeletedModelsFromDb(): Promise<void> {
       fetch(`${API_BASE}/sell/disabled-models`).then((r) => r.json()).catch(() => ({ disabledModels: [] })),
     ]);
 
-    const records = [...(sellRes.data || []), ...(masterRes.data || [])];
+    const records = [...((sellRes.data as any[] | null) || []), ...((masterRes.data as any[] | null) || [])];
     const serverDisabled = disabledRes?.disabledModels || [];
     const current = getDeletedModelKeys();
     let changed = false;

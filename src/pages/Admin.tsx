@@ -90,6 +90,9 @@ import { describeOversizedSave, MAX_INLINE_VIDEO_FILE_BYTES, VIDEO_TOO_LARGE_MES
 import { readProductPhotos } from '../lib/productPhotoUpload';
 import { changedFields } from '../lib/objectDiff';
 
+// The Users page searches and filters this list in the browser, so it needs every account.
+const ADMIN_USERS_PAGE_LIMIT = 5000;
+
 export default function Admin() {
   const { user, profile, loading, signIn, signOut } = useAuth();
   const navigate = useNavigate();
@@ -459,7 +462,7 @@ export default function Admin() {
       setTimeout(() => {
         Promise.all([
           db.from('spare_parts').select('*').limit(60).sort({ field: 'created_at', ascending: false }),
-          db.from('profiles').select('*').limit(60).sort({ field: 'created_at', ascending: false }),
+          db.from('profiles').select('*').limit(ADMIN_USERS_PAGE_LIMIT).sort({ field: 'created_at', ascending: false }),
           db.from('reviews').select('*').limit(60).sort({ field: 'created_at', ascending: false }),
           db.from('repair_price_configs').select('*').limit(200).sort({ field: 'created_at', ascending: false }),
         ]).then(([partsRes, profilesRes, reviewsRes, repairPricingRes]) => {

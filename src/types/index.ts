@@ -40,6 +40,7 @@ export type Product = {
 
 export type SellRequest = {
   id: string;
+  rider_inspection_status?: string | null;
   user_id: string;
   customer_name?: string | null;
   customer_phone?: string | null;
@@ -317,6 +318,9 @@ export type Profile = {
   id: string;
   full_name: string | null;
   phone: string | null;
+  /** Older records carry the Mongo id and a legacy phone field. */
+  _id?: string;
+  mobile?: string | null;
   email?: string | null;
   address?: string | null;
   role: 'customer' | 'vendor' | 'wholesaler' | 'admin' | 'staff' | 'delivery' | 'rider';

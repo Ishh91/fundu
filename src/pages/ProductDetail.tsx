@@ -278,7 +278,7 @@ const handleCheckPincode = async (codeToTest?: string) => {
       setPincodeError(null);
     } else {
       setPincodeError(verified.error || 'PIN code not found in Indian postal registry.');
-      setLocationName(null);
+      setLocationName('');
     }
   } catch {
     setLocationName(`Serviceable PIN (${targetPin}), India`);

@@ -145,7 +145,7 @@ function NotificationToastItem({
 }: {
   notif: LiveNotification;
   onDismiss: (id: string) => void;
-  onNavigateTab: (tab: 'sells' | 'repairs' | 'orders', itemId?: string) => void;
+  onNavigateTab: (tab: 'sells' | 'repairs' | 'orders' | 'wholesalers' | 'agents', itemId?: string) => void;
 }) {
   const [isHovered, setIsHovered] = useState(false);
   const [progress, setProgress] = useState(100);

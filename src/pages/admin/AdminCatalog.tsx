@@ -212,7 +212,7 @@ export default function AdminCatalog({
   const allCatalogPhones = useMemo<MasterPhone[]>(() => {
     const map = new Map<string, MasterPhone>();
     const normKey = (brand: string, model: string) => {
-      let b = (brand || '').toLowerCase().trim();
+      const b = (brand || '').toLowerCase().trim();
       let m = (model || '').toLowerCase().trim();
       if (m.startsWith(b)) m = m.slice(b.length).trim();
       return `${b}:${m}`;

@@ -46,6 +46,18 @@ export function clearTableCache(table) {
   }
 }
 
+const HTTP_UNAUTHORIZED = 401;
+
+/**
+ * True when a private read failed because the caller sent a login token the
+ * server did not accept (expired, or signed with an old secret). Replying 401
+ * lets the app sign the user out; an empty list would look like "no data".
+ */
+export function isRejectedSessionRead(req, error) {
+  const sentToken = String(req.headers?.authorization || '').startsWith('Bearer ');
+  return error?.status === HTTP_UNAUTHORIZED && sentToken && !req.auth;
+}
+
 router.get('/:table', async (req, res, next) => {
   try {
     const table = req.params.table;
@@ -88,6 +100,10 @@ router.get('/:table', async (req, res, next) => {
 
     res.json({ data });
   } catch (error) {
+    if (isRejectedSessionRead(req, error)) {
+      res.status(HTTP_UNAUTHORIZED).json({ error: 'Session expired. Please sign in again.' });
+      return;
+    }
     console.warn(`Notice database GET query notice for ${req.params.table}:`, error?.message || error);
     const single = req.query.single === 'true' || req.query.maybeSingle === 'true';
     res.json({ data: single ? null : [] });

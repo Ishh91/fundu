@@ -603,7 +603,7 @@ export default function AdminDeliveryAgents({
                               onClick={() => setPhotoPreview(p.url as string)}
                               className="group relative h-16 rounded-xl overflow-hidden border border-gray-200 bg-gray-100 cursor-pointer"
                             >
-                              <img src={p.url} alt={p.label} className="w-full h-full object-cover group-hover:scale-105 transition" />
+                              <img src={p.url ?? undefined} alt={p.label} className="w-full h-full object-cover group-hover:scale-105 transition" />
                               <span className="absolute bottom-0 inset-x-0 bg-black/60 text-white text-[9px] text-center py-0.5 truncate font-medium">
                                 {p.label}
                               </span>
