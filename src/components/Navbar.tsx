@@ -653,7 +653,7 @@ export default function Navbar() {
     setActiveDropdown((prev) => (prev === name ? null : name));
   };
 
-  const isAdminRole = profile?.role === 'admin';
+  const isAdminRole = profile?.role === 'admin' || profile?.role === 'staff';
   const isVendorRole = profile?.role === 'vendor' || profile?.role === 'wholesaler';
   const isDeliveryRole = profile?.role === 'delivery' || profile?.role === 'rider';
 

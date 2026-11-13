@@ -8,7 +8,8 @@ import {
   parseSelect,
   parseSort,
 } from '../utils/dbHelpers.js';
-import { isAdmin, isWholesaler, requireAdmin, requireAuth } from '../middleware/auth.js';
+import { canAdminTable, isWholesaler, requireAuth, requireTableAdmin } from '../middleware/auth.js';
+import { STAFF_ROLE, sanitizePermissions } from '../config/permissions.js';
 import { autoAssignDeliveryAgent } from './dispatchService.js';
 import { triggerEventNotification } from './notificationService.js';
 import { quotePhone } from '../../fundu_phone_quote.mjs';
@@ -20,20 +21,20 @@ export const getReadScope = async (table, auth, filters, select) => {
   switch (table) {
     case 'profiles': {
       requireAuth(auth);
-      if (isAdmin(auth)) return baseFilter;
+      if (canAdminTable(auth, table)) return baseFilter;
       const profileId = Types.ObjectId.isValid(auth.sub) ? new Types.ObjectId(auth.sub) : auth.sub;
       return combineFilters(baseFilter, { $or: [{ _id: profileId }, { id: auth.sub }] });
     }
     case 'products':
     case 'spare_parts':
-      if (isAdmin(auth)) return baseFilter;
+      if (canAdminTable(auth, table)) return baseFilter;
       if (!auth?.sub) return combineFilters(baseFilter, { is_approved: true });
       return combineFilters(baseFilter, { $or: [{ is_approved: true }, { seller_id: auth.sub }] });
     case 'sell_requests':
     case 'repair_bookings':
     case 'orders': {
       requireAuth(auth);
-      if (isAdmin(auth)) return baseFilter;
+      if (canAdminTable(auth, table)) return baseFilter;
       const userMatch = Types.ObjectId.isValid(auth.sub)
         ? {
             $or: [
@@ -48,7 +49,7 @@ export const getReadScope = async (table, auth, filters, select) => {
     case 'sell_price_configs':
     case 'repair_price_configs':
     case 'repair_catalogs':
-      if (isAdmin(auth)) return baseFilter;
+      if (canAdminTable(auth, table)) return baseFilter;
       // If client explicitly requested is_active filter (e.g. is_active=false to sync deleted/disabled models), respect it
       if (filters && Array.isArray(filters) && filters.some((f) => f.field === 'is_active')) {
         return baseFilter;
@@ -60,7 +61,7 @@ export const getReadScope = async (table, auth, filters, select) => {
       return combineFilters(baseFilter, { is_active: true });
     case 'dispatches': {
       requireAuth(auth);
-      if (isAdmin(auth)) return baseFilter;
+      if (canAdminTable(auth, table)) return baseFilter;
       const orders = await Order.find({ user_id: auth.sub }).select('_id');
       const orderIds = orders.map((order) => order._id.toString());
       return combineFilters(baseFilter, { order_id: { $in: orderIds } });
@@ -75,20 +76,20 @@ export const getReadScope = async (table, auth, filters, select) => {
       return baseFilter;
     case 'wholesale_orders':
       requireAuth(auth);
-      if (isAdmin(auth)) return baseFilter;
+      if (canAdminTable(auth, table)) return baseFilter;
       return combineFilters(baseFilter, { vendor_id: auth.sub });
     case 'vendor_ledgers':
     case 'vendor_ledger':
       requireAuth(auth);
-      if (isAdmin(auth)) return baseFilter;
+      if (canAdminTable(auth, table)) return baseFilter;
       return combineFilters(baseFilter, { vendor_id: auth.sub });
     case 'support_tickets':
     case 'contact_messages':
     case 'contact_queries':
       requireAuth(auth);
-      return isAdmin(auth) ? baseFilter : combineFilters(baseFilter, { user_id: auth.sub });
+      return canAdminTable(auth, table) ? baseFilter : combineFilters(baseFilter, { user_id: auth.sub });
     case 'reviews':
-      if (isAdmin(auth)) return baseFilter;
+      if (canAdminTable(auth, table)) return baseFilter;
       return combineFilters(baseFilter, { is_approved: true });
     default:
       throw createHttpError(404, `Unknown table: ${table}`);
@@ -102,11 +103,11 @@ export const getWriteScope = async (table, auth, filters) => {
     case 'profiles':
       requireAuth(auth);
       const profileId = Types.ObjectId.isValid(auth.sub) ? new Types.ObjectId(auth.sub) : auth.sub;
-      return isAdmin(auth) ? baseFilter : combineFilters(baseFilter, { _id: profileId });
+      return canAdminTable(auth, table) ? baseFilter : combineFilters(baseFilter, { _id: profileId });
     case 'products':
     case 'spare_parts':
       requireAuth(auth);
-      if (!isAdmin(auth)) {
+      if (!canAdminTable(auth, table)) {
         if (!isWholesaler(auth)) throw createHttpError(403, 'Wholesaler access required.');
         return combineFilters(baseFilter, { seller_id: auth.sub });
       }
@@ -115,7 +116,7 @@ export const getWriteScope = async (table, auth, filters) => {
     case 'repair_bookings':
     case 'orders': {
       requireAuth(auth);
-      if (isAdmin(auth)) return baseFilter;
+      if (canAdminTable(auth, table)) return baseFilter;
       const userMatch = Types.ObjectId.isValid(auth.sub)
         ? {
             $or: [
@@ -129,17 +130,17 @@ export const getWriteScope = async (table, auth, filters) => {
     }
     case 'wholesale_orders':
       requireAuth(auth);
-      if (isAdmin(auth)) return baseFilter;
+      if (canAdminTable(auth, table)) return baseFilter;
       return combineFilters(baseFilter, { vendor_id: auth.sub });
     case 'wholesale_inventories':
     case 'wholesale_inventory':
       requireAuth(auth);
-      if (!isAdmin(auth) && !isWholesaler(auth)) throw createHttpError(403, 'Vendor access required.');
+      if (!canAdminTable(auth, table) && !isWholesaler(auth)) throw createHttpError(403, 'Vendor access required.');
       return baseFilter;
     case 'vendor_ledgers':
     case 'vendor_ledger':
       requireAuth(auth);
-      if (!isAdmin(auth)) throw createHttpError(403, 'Admin access required.');
+      if (!canAdminTable(auth, table)) throw createHttpError(403, 'Admin access required.');
       return baseFilter;
     case 'sell_price_configs':
     case 'repair_price_configs':
@@ -149,7 +150,7 @@ export const getWriteScope = async (table, auth, filters) => {
     case 'phones':
     case 'dispatches':
       requireAuth(auth);
-      if (!isAdmin(auth)) throw createHttpError(403, 'Admin access required.');
+      if (!canAdminTable(auth, table)) throw createHttpError(403, 'Admin access required.');
       return baseFilter;
     case 'site_content':
     case 'banners':
@@ -157,11 +158,25 @@ export const getWriteScope = async (table, auth, filters) => {
     case 'contact_messages':
     case 'contact_queries':
     case 'reviews':
-      requireAdmin(auth);
+      requireTableAdmin(auth, table);
       return baseFilter;
     default:
       throw createHttpError(404, `Unknown table: ${table}`);
   }
+};
+
+/**
+ * Only the super admin reaches this for profiles. Permissions are limited to
+ * known keys and only kept on staff accounts, so a role change away from
+ * "staff" always clears them.
+ */
+const withSanitizedPermissions = (payload) => {
+  const touchesAccess = payload.role !== undefined || payload.permissions !== undefined;
+  if (!touchesAccess) return payload;
+  if (payload.role !== undefined && payload.role !== STAFF_ROLE) {
+    return { ...payload, permissions: [] };
+  }
+  return { ...payload, permissions: sanitizePermissions(payload.permissions) };
 };
 
 export const preparePayload = (table, action, input, auth) => {
@@ -172,7 +187,7 @@ export const preparePayload = (table, action, input, auth) => {
   switch (table) {
     case 'profiles':
       requireAuth(auth);
-      if (!isAdmin(auth)) {
+      if (!canAdminTable(auth, table)) {
         const out = {
           full_name: payload.full_name ?? null,
           phone: payload.phone ?? null,
@@ -188,12 +203,12 @@ export const preparePayload = (table, action, input, auth) => {
         }
         return out;
       }
-      return payload;
+      return withSanitizedPermissions(payload);
     case 'products':
     case 'spare_parts':
       requireAuth(auth);
-      if (!isAdmin(auth) && !isWholesaler(auth)) throw createHttpError(403, 'Wholesaler access required.');
-      if (!isAdmin(auth)) {
+      if (!canAdminTable(auth, table) && !isWholesaler(auth)) throw createHttpError(403, 'Wholesaler access required.');
+      if (!canAdminTable(auth, table)) {
         payload.seller_id = auth.sub;
         if (action === 'insert' || action === 'upsert') payload.is_approved = false;
       }
@@ -201,17 +216,17 @@ export const preparePayload = (table, action, input, auth) => {
     case 'wholesale_inventories':
     case 'wholesale_inventory':
       requireAuth(auth);
-      if (!isAdmin(auth) && !isWholesaler(auth)) throw createHttpError(403, 'Vendor access required.');
+      if (!canAdminTable(auth, table) && !isWholesaler(auth)) throw createHttpError(403, 'Vendor access required.');
       return payload;
     case 'wholesale_orders':
       requireAuth(auth);
-      if (!isAdmin(auth) && !payload.vendor_id) {
+      if (!canAdminTable(auth, table) && !payload.vendor_id) {
         payload.vendor_id = auth.sub;
       }
       return payload;
     case 'vendor_ledgers':
     case 'vendor_ledger':
-      requireAdmin(auth);
+      requireTableAdmin(auth, table);
       return payload;
     case 'sell_requests': {
       if (auth?.sub) {
@@ -273,13 +288,13 @@ export const preparePayload = (table, action, input, auth) => {
       return payload;
     case 'sell_price_configs':
       requireAuth(auth);
-      if (!isAdmin(auth)) throw createHttpError(403, 'Admin access required.');
+      if (!canAdminTable(auth, table)) throw createHttpError(403, 'Admin access required.');
       payload.storage = payload.storage ? String(payload.storage).trim() : null;
       return payload;
     case 'repair_price_configs':
     case 'repair_catalogs':
       requireAuth(auth);
-      if (!isAdmin(auth)) throw createHttpError(403, 'Admin access required.');
+      if (!canAdminTable(auth, table)) throw createHttpError(403, 'Admin access required.');
       if (payload.brand) payload.brand = String(payload.brand).trim();
       if (payload.model) payload.model = String(payload.model).trim();
       return payload;
@@ -288,7 +303,7 @@ export const preparePayload = (table, action, input, auth) => {
     case 'phones':
     case 'site_content':
     case 'banners':
-      requireAdmin(auth);
+      requireTableAdmin(auth, table);
       return payload;
     case 'orders':
       if (action === 'insert' || action === 'upsert') {
@@ -296,20 +311,20 @@ export const preparePayload = (table, action, input, auth) => {
           throw createHttpError(400, 'Delivery name and phone are required.');
         }
       }
-      if (auth?.sub && !isAdmin(auth) && (action === 'insert' || action === 'upsert')) {
+      if (auth?.sub && !canAdminTable(auth, table) && (action === 'insert' || action === 'upsert')) {
         payload.user_id = auth.sub;
       }
       return payload;
     case 'dispatches':
       requireAuth(auth);
-      if (!isAdmin(auth)) throw createHttpError(403, 'Admin access required.');
+      if (!canAdminTable(auth, table)) throw createHttpError(403, 'Admin access required.');
       if (payload.status === 'delivered' && !payload.delivered_at) {
         payload.delivered_at = new Date().toISOString();
       }
       return payload;
     case 'reviews':
       if (auth?.sub) payload.user_id = auth.sub;
-      if (!isAdmin(auth)) {
+      if (!canAdminTable(auth, table)) {
         if (action === 'insert' || action === 'upsert') payload.is_approved = false;
         else delete payload.is_approved;
       }
@@ -751,7 +766,7 @@ export const upsertTable = async (table, { auth, values, single }) => {
   if (table === 'profiles') {
     requireAuth(auth);
     const payload = preparePayload(table, 'upsert', values, auth);
-    const targetId = isAdmin(auth) && values?.id ? values.id : auth.sub;
+    const targetId = canAdminTable(auth, table) && values?.id ? values.id : auth.sub;
     const doc = await User.findByIdAndUpdate(targetId, payload, { new: true, upsert: false, runValidators: false });
     return normalizeDoc(doc);
   }
@@ -779,7 +794,7 @@ export const upsertTable = async (table, { auth, values, single }) => {
 
   if (table === 'sell_price_configs') {
     requireAuth(auth);
-    if (!isAdmin(auth)) throw createHttpError(403, 'Admin access required.');
+    if (!canAdminTable(auth, table)) throw createHttpError(403, 'Admin access required.');
     const Model = getModel(table);
     const payload = preparePayload(table, 'upsert', values, auth);
     const rawBrand = (payload.brand || '').trim();
@@ -817,7 +832,7 @@ export const upsertTable = async (table, { auth, values, single }) => {
 
   if (table === 'master_phones' || table === 'phones') {
     requireAuth(auth);
-    if (!isAdmin(auth)) throw createHttpError(403, 'Admin access required.');
+    if (!canAdminTable(auth, table)) throw createHttpError(403, 'Admin access required.');
     const Model = getModel(table);
     const payload = preparePayload(table, 'upsert', values, auth);
     const rawBrand = (payload.brand || '').trim();

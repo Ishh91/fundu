@@ -6,7 +6,7 @@ export type User = {
   id: string;
   email: string;
   phone?: string;
-  role: 'customer' | 'wholesaler' | 'admin' | 'delivery' | 'rider' | 'vendor';
+  role: 'customer' | 'wholesaler' | 'admin' | 'staff' | 'delivery' | 'rider' | 'vendor';
 };
 
 export type Session = {

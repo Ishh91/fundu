@@ -9,6 +9,7 @@ import { createOtp, verifyOtp as checkOtp, hasActiveOtp, otpTtlSeconds } from '.
 import { sendOtp } from '../services/smsService.js';
 import { sendViaNodemailer } from './emailRoutes.js';
 import { verifyFirebasePhoneToken } from '../utils/firebaseToken.js';
+import { STAFF_ROLE, sanitizePermissions } from '../config/permissions.js';
 
 const MIN_PASSWORD_LENGTH = 6;
 const RESET_RESEND_COOLDOWN_TTL_SECONDS = 540; // OTP TTL is 600s, so >540 means <60s old
@@ -477,6 +478,7 @@ router.post('/register', async (req, res, next) => {
       role: requestedRole,
       business_name: businessName || null,
       credit_limit: createdByAdmin && creditLimit ? Number(creditLimit) : 200000,
+      permissions: requestedRole === STAFF_ROLE ? sanitizePermissions(req.body.permissions) : [],
       gst_number: gstNumber || null,
       is_verified: true,
     });

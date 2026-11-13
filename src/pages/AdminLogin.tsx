@@ -10,7 +10,7 @@ export default function AdminLogin() {
   useEffect(() => {
     if (!authLoading && user) {
       const activeRole = profile?.role || user?.role || 'customer';
-      if (activeRole === 'admin') navigate('/admin');
+      if (activeRole === 'admin' || activeRole === 'staff') navigate('/admin');
       else if (activeRole === 'vendor' || activeRole === 'wholesaler') navigate('/vendor');
       else if (activeRole === 'delivery' || activeRole === 'rider') navigate('/delivery');
       else navigate('/dashboard');

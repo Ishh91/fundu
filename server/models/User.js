@@ -24,7 +24,9 @@ const userSchema = createSchema({
     trim: true,
     // index managed manually (sparse unique) — see fixUserIndexes.js
   },
-  role: { type: String, enum: ['customer', 'vendor', 'wholesaler', 'admin', 'delivery', 'rider'], default: 'customer' },
+  role: { type: String, enum: ['customer', 'vendor', 'wholesaler', 'admin', 'staff', 'delivery', 'rider'], default: 'customer' },
+  // Admin-panel sections a "staff" user may manage (see server/config/permissions.js).
+  permissions: { type: [String], default: [] },
   business_name: { type: String, default: null },
   vendor_location: { type: String, default: null },
   gst_number: { type: String, default: null },

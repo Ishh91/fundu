@@ -8,7 +8,9 @@ export type Profile = {
   phone: string | null;
   email?: string | null;
   address?: string | null;
-  role: 'customer' | 'wholesaler' | 'admin' | 'delivery' | 'rider' | 'vendor';
+  role: 'customer' | 'wholesaler' | 'admin' | 'staff' | 'delivery' | 'rider' | 'vendor';
+  /** Admin-panel sections a staff user may manage (empty for every other role). */
+  permissions?: string[];
   business_name: string | null;
   vendor_location?: string | null;
   gst_number?: string | null;

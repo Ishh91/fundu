@@ -204,7 +204,7 @@ function MainLayout() {
           <Route
             path="/admin"
             element={
-              <ProtectedRoute allowedRoles={['admin']} redirectLogin="/admin-login">
+              <ProtectedRoute allowedRoles={['admin', 'staff']} redirectLogin="/admin-login">
                 <Admin />
               </ProtectedRoute>
             }
@@ -212,7 +212,7 @@ function MainLayout() {
           <Route
             path="/admin/:subtab"
             element={
-              <ProtectedRoute allowedRoles={['admin']} redirectLogin="/admin-login">
+              <ProtectedRoute allowedRoles={['admin', 'staff']} redirectLogin="/admin-login">
                 <Admin />
               </ProtectedRoute>
             }

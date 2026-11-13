@@ -2,6 +2,7 @@ import { Router } from 'express';
 import mongoose from 'mongoose';
 import { SellPriceConfig, MasterPhone } from '../models/index.js';
 import { createHttpError } from '../utils/error.js';
+import { requirePermission } from '../middleware/auth.js';
 import { normalizeDoc } from '../utils/dbHelpers.js';
 import {
   DEFAULT_PHONE_BRANDS,
@@ -807,6 +808,7 @@ router.get('/sell/disabled-models', async (req, res, next) => {
  */
 router.post('/sell-pricing/config', async (req, res, next) => {
   try {
+    requirePermission(req.auth, 'sell_pricing');
     const {
       brand,
       model,

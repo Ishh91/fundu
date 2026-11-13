@@ -317,7 +317,9 @@ export type Profile = {
   phone: string | null;
   email?: string | null;
   address?: string | null;
-  role: 'customer' | 'vendor' | 'wholesaler' | 'admin' | 'delivery' | 'rider';
+  role: 'customer' | 'vendor' | 'wholesaler' | 'admin' | 'staff' | 'delivery' | 'rider';
+  /** Admin-panel sections a staff user may manage (empty for every other role). */
+  permissions?: string[];
   business_name: string | null;
   vendor_location?: string | null;
   gst_number?: string | null;

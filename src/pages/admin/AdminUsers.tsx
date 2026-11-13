@@ -22,6 +22,8 @@ import type { Order, SellRequest, RepairBooking } from './adminTypes';
 import { db, formatINR, authHeaders } from '../../lib/db';
 import CustomerDetailsModal from '../../components/CustomerDetailsModal';
 import { sendEmailOtpCode } from '../../lib/freeNotifyService';
+import { STAFF_ROLE, describePermissions } from '../../lib/adminPermissions';
+import StaffPermissionsEditor from './StaffPermissionsEditor';
 
 type UserProfile = {
   id: string;
@@ -29,6 +31,7 @@ type UserProfile = {
   email?: string | null;
   phone: string | null;
   role: string;
+  permissions?: string[];
   business_name: string | null;
   is_verified: boolean;
   created_at: string;
@@ -41,7 +44,8 @@ type AdminUsersProps = {
   orders: Order[];
   sells: SellRequest[];
   repairs: RepairBooking[];
-  onUpdateRole: (userId: string, role: string) => void;
+  onUpdateRole: (userId: string, role: string) => Promise<boolean>;
+  onUpdatePermissions: (userId: string, permissions: string[]) => Promise<boolean>;
   onToggleVerification: (userId: string, current: boolean) => void;
 };
 
@@ -53,6 +57,7 @@ export default function AdminUsers({
   sells,
   repairs,
   onUpdateRole,
+  onUpdatePermissions,
   onToggleVerification,
 }: AdminUsersProps) {
   const [userList, setUserList] = useState<UserProfile[]>(profiles);
@@ -68,8 +73,10 @@ export default function AdminUsers({
     email: '',
     phone: '',
     role: 'customer',
+    permissions: [] as string[],
     password: 'User@123456',
   });
+  const [savingAccessForId, setSavingAccessForId] = useState<string | null>(null);
   const [addUserSubmitting, setAddUserSubmitting] = useState(false);
   const [addUserNotice, setAddUserNotice] = useState<string | null>(null);
   const [resendingEmailId, setResendingEmailId] = useState<string | null>(null);
@@ -86,6 +93,25 @@ export default function AdminUsers({
   });
 
   const selectedUser = activeProfiles.find((u) => u.id === selectedUserId) || filteredUsers[0] || null;
+
+  // This component keeps its own copy of the list, so mirror saved access changes into it.
+  const patchLocalUser = (userId: string, patch: Partial<UserProfile>) => {
+    setUserList((prev) => prev.map((u) => (u.id === userId ? { ...u, ...patch } : u)));
+  };
+
+  const handleRoleChange = async (userId: string, role: string) => {
+    setSavingAccessForId(userId);
+    const saved = await onUpdateRole(userId, role);
+    if (saved) patchLocalUser(userId, { role, permissions: [] });
+    setSavingAccessForId(null);
+  };
+
+  const handlePermissionsChange = async (userId: string, permissions: string[]) => {
+    setSavingAccessForId(userId);
+    const saved = await onUpdatePermissions(userId, permissions);
+    if (saved) patchLocalUser(userId, { permissions });
+    setSavingAccessForId(null);
+  };
 
   const userOrders = selectedUser ? orders.filter((o) => o.user_id === selectedUser.id) : [];
   const userSells = selectedUser ? sells.filter((s) => s.user_id === selectedUser.id) : [];
@@ -155,6 +181,7 @@ export default function AdminUsers({
           fullName: addUserForm.fullName.trim(),
           phone: cleanPhone,
           role: addUserForm.role,
+          permissions: addUserForm.role === STAFF_ROLE ? addUserForm.permissions : [],
           is_verified: false,
         }),
       });
@@ -173,6 +200,7 @@ export default function AdminUsers({
         email: cleanEmail,
         phone: cleanPhone || null,
         role: addUserForm.role,
+        permissions: addUserForm.role === STAFF_ROLE ? addUserForm.permissions : [],
         business_name: null,
         is_verified: false, // Requires email OTP verification
         created_at: new Date().toISOString(),
@@ -263,7 +291,7 @@ export default function AdminUsers({
             </div>
 
             <div className="flex gap-1.5 overflow-x-auto scrollbar-hide py-1 border-t border-ink-100/60">
-              {['All', 'Customer', 'Vendor', 'Wholesaler', 'Admin'].map((r) => (
+              {['All', 'Customer', 'Vendor', 'Wholesaler', 'Staff', 'Admin'].map((r) => (
                 <button
                   key={r}
                   onClick={() => setRoleFilter(r)}
@@ -399,13 +427,16 @@ export default function AdminUsers({
 
                   <select
                     value={selectedUser.role}
-                    onChange={(e) => onUpdateRole(selectedUser.id, e.target.value)}
+                    onChange={(e) => handleRoleChange(selectedUser.id, e.target.value)}
+                    disabled={savingAccessForId === selectedUser.id}
+                    aria-label="Account role"
                     className="input text-xs py-1.5 px-3 bg-white font-bold"
                   >
                     <option value="customer">CUSTOMER</option>
                     <option value="vendor">VENDOR</option>
                     <option value="wholesaler">WHOLESALER</option>
-                    <option value="admin">ADMIN</option>
+                    <option value="staff">STAFF (LIMITED ADMIN)</option>
+                    <option value="admin">ADMIN (FULL ACCESS)</option>
                   </select>
 
                   <button
@@ -426,6 +457,25 @@ export default function AdminUsers({
                   </button>
                 </div>
               </div>
+
+              {/* Staff access: which admin sections this person can manage */}
+              {selectedUser.role === STAFF_ROLE && (
+                <div className="p-4 rounded-2xl border border-[#C0C8D8] bg-[#F8FAFC] space-y-3">
+                  <div>
+                    <p className="text-sm font-black text-ink-900">Staff access</p>
+                    <p className="text-[11px] text-ink-500">
+                      Currently: <strong>{describePermissions(selectedUser.permissions)}</strong>. Changes save
+                      instantly and apply on this person's next click. Only a full Admin can manage users.
+                    </p>
+                  </div>
+                  <StaffPermissionsEditor
+                    idPrefix={`staff-access-${selectedUser.id}`}
+                    value={selectedUser.permissions ?? []}
+                    disabled={savingAccessForId === selectedUser.id}
+                    onChange={(permissions) => handlePermissionsChange(selectedUser.id, permissions)}
+                  />
+                </div>
+              )}
 
               {/* User Financial & Request Stats */}
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
@@ -622,9 +672,18 @@ export default function AdminUsers({
                   <option value="vendor">VENDOR PARTNER</option>
                   <option value="wholesaler">WHOLESALER</option>
                   <option value="delivery">DELIVERY AGENT</option>
-                  <option value="admin">ADMIN</option>
+                  <option value="staff">STAFF (LIMITED ADMIN)</option>
+                  <option value="admin">ADMIN (FULL ACCESS)</option>
                 </select>
               </div>
+
+              {addUserForm.role === STAFF_ROLE && (
+                <StaffPermissionsEditor
+                  idPrefix="new-staff-access"
+                  value={addUserForm.permissions}
+                  onChange={(permissions) => setAddUserForm({ ...addUserForm, permissions })}
+                />
+              )}
 
               <div>
                 <label className="label">Account Password</label>

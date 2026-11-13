@@ -41,7 +41,8 @@ import type {
 import type { AdminTab } from './admin/adminTypes';
 import { savePriceOverride } from '../lib/priceSync';
 import { DOORSTEP_AREAS } from '../types';
-import { db, formatINR } from '../lib/db';
+import { db, formatINR, authHeaders } from '../lib/db';
+import { canAccessAdminPanel, getAllowedAdminTabs } from '../lib/adminPermissions';
 import { API_BASE } from '../config/apiConfig';
 import { broadcastSync, subscribeToRealtimeSync } from '../lib/realtimeSync';
 import { ALL_INDIAN_PHONES_CATALOG } from '../data/indianPhonesCatalog';
@@ -140,7 +141,14 @@ export default function Admin() {
   };
 
   // Tab state derived from URL or params or saved session
-  const [tab, setTab] = useState<AdminTab>(getInitialAdminTab);
+  const [requestedTab, setTab] = useState<AdminTab>(getInitialAdminTab);
+
+  // Staff only see the sections they were granted; a tab they cannot open
+  // (from the URL or a saved session) falls back to the overview.
+  const panelRole = profile?.role || user?.role || 'customer';
+  const allowedTabs = getAllowedAdminTabs(panelRole, profile?.permissions);
+  const isSuperAdmin = panelRole === 'admin';
+  const tab: AdminTab = allowedTabs.includes(requestedTab) ? requestedTab : 'overview';
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
 
   const handleTabChange = (newTab: AdminTab) => {
@@ -189,6 +197,7 @@ export default function Admin() {
       full_name: string | null;
       phone: string | null;
       role: string;
+      permissions?: string[];
       business_name: string | null;
       is_verified: boolean;
       created_at: string;
@@ -382,12 +391,12 @@ export default function Admin() {
   // Initial Data Fetch
   useEffect(() => {
     const activeRole = profile?.role || user?.role || 'customer';
-    if (!loading && (!user || activeRole !== 'admin')) {
+    if (!loading && (!user || !canAccessAdminPanel(activeRole))) {
       navigate('/admin-login');
       return;
     }
 
-    if (user && activeRole === 'admin') {
+    if (user && canAccessAdminPanel(activeRole)) {
       loadAllData();
     }
   }, [user, profile, loading, navigate]);
@@ -473,7 +482,7 @@ export default function Admin() {
   // Real-time Background Lead Listener with Audio Chimes & Desktop System Notifications
   useEffect(() => {
     const activeRole = profile?.role || user?.role || 'customer';
-    if (!user || activeRole !== 'admin') return;
+    if (!user || !canAccessAdminPanel(activeRole)) return;
 
     // Auto-request desktop system notification permissions on Admin mount
     soundNotifier.requestPermission().catch(() => {});
@@ -1062,7 +1071,7 @@ export default function Admin() {
         const apiBase = import.meta.env.VITE_API_URL || '/api';
         await fetch(`${apiBase}/sell-pricing/config`, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: { 'Content-Type': 'application/json', ...authHeaders() },
           body: JSON.stringify({
             ...payload,
             is_locked: true,
@@ -1454,14 +1463,25 @@ export default function Admin() {
   };
 
   // User actions
-  const updateUserRole = async (userId: string, role: string) => {
+  const updateUserPermissions = async (userId: string, permissions: string[]): Promise<boolean> => {
+    const { error } = await db.from('profiles').update({ role: 'staff', permissions }).eq('id', userId);
+    if (error) {
+      alert(error.message);
+      return false;
+    }
+    setProfiles((prev) => prev.map((p) => (p.id === userId ? { ...p, role: 'staff', permissions } : p)));
+    return true;
+  };
+
+  const updateUserRole = async (userId: string, role: string): Promise<boolean> => {
     const { error } = await db.from('profiles').update({ role }).eq('id', userId);
     if (error) {
       alert(error.message);
-      return;
+      return false;
     }
     setProfiles((prev) => {
-      const updated = prev.map((p) => (p.id === userId ? { ...p, role } : p));
+      // A role change always starts from no staff permissions (the server clears them too).
+      const updated = prev.map((p) => (p.id === userId ? { ...p, role, permissions: [] } : p));
       if (role === 'admin') {
         const target = updated.find((p) => p.id === userId);
         if (target?.phone) {
@@ -1477,6 +1497,7 @@ export default function Admin() {
       }
       return updated;
     });
+    return true;
   };
 
   const toggleUserVerification = async (userId: string, current: boolean) => {
@@ -1654,7 +1675,7 @@ export default function Admin() {
 
   // 2. ADMIN AUTHENTICATION GATE (If not logged in as Admin)
   const activeRole = profile?.role || user?.role || 'customer';
-  if (!user || activeRole !== 'admin') {
+  if (!user || !canAccessAdminPanel(activeRole)) {
     return (
       <div className="min-h-screen bg-slate-950 text-white flex flex-col items-center justify-center p-4 font-sans">
         <div className="w-full max-w-md bg-slate-900 border border-slate-800 rounded-3xl p-8 shadow-2xl space-y-6 animate-fade-in">
@@ -1746,6 +1767,8 @@ export default function Admin() {
       {/* 1. Persistent Sidebar Navigation */}
       <AdminSidebar
         activeTab={tab}
+        allowedTabs={allowedTabs}
+        isSuperAdmin={isSuperAdmin}
         onSelectTab={handleTabChange}
         onOpenAddProduct={(cat) => openAddProductModal(cat)}
         counts={{
@@ -1838,6 +1861,7 @@ export default function Admin() {
           </div>
 
           <div className="flex items-center gap-2 flex-wrap">
+            {allowedTabs.includes('products') && (
             <button
               type="button"
               onClick={() => openAddProductModal()}
@@ -1845,7 +1869,9 @@ export default function Admin() {
             >
               <Plus className="h-3.5 w-3.5" /> + Add Inventory (Phone / Laptop)
             </button>
+            )}
 
+            {allowedTabs.includes('catalog') && (
             <button
               type="button"
               onClick={() => {
@@ -1856,7 +1882,9 @@ export default function Admin() {
             >
               <Plus className="h-3.5 w-3.5" /> Add Phone to Catalog
             </button>
+            )}
 
+            {allowedTabs.includes('agents') && (
             <button
               type="button"
               onClick={() => {
@@ -1867,7 +1895,9 @@ export default function Admin() {
             >
               <Plus className="h-3.5 w-3.5" /> Add Delivery Agent
             </button>
+            )}
 
+            {allowedTabs.includes('parts') && (
             <button
               type="button"
               onClick={() => {
@@ -1889,6 +1919,7 @@ export default function Admin() {
             >
               <Plus className="h-3.5 w-3.5" /> Add Spare Part
             </button>
+            )}
           </div>
         </div>
 
@@ -2024,7 +2055,7 @@ export default function Admin() {
                 try {
                   const res = await fetch(`${API_BASE}/sell-pricing/config`, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: { 'Content-Type': 'application/json', ...authHeaders() },
                     body: JSON.stringify({
                       ...payload,
                       brand: rawBrand,
@@ -2318,6 +2349,7 @@ export default function Admin() {
               sells={sells}
               repairs={repairs}
               onUpdateRole={updateUserRole}
+              onUpdatePermissions={updateUserPermissions}
               onToggleVerification={toggleUserVerification}
             />
           )}
