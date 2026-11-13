@@ -339,26 +339,26 @@ export async function ensureMasterPhonesSeeded(force = true) {
       await MasterPhone.bulkWrite(chunk, { ordered: false });
     }
 
-    // 1b. Guarantee accurate flagship renders for unreleased next-gen Apple iPhone 17 models
+    // 1b. Guarantee accurate flagship renders for unreleased next-gen Apple iPhone 17 models (only when admin has not set a custom image)
     await MasterPhone.updateMany(
-      { brand: /^apple$/i, model: /iphone 17 pro max/i },
-      { $set: { image_url: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-16-pro-max.jpg', custom_image: true, updated_at: new Date() } }
+      { brand: /^apple$/i, model: /iphone 17 pro max/i, custom_image: { $ne: true } },
+      { $set: { image_url: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-16-pro-max.jpg', custom_image: false, updated_at: new Date() } }
     );
     await MasterPhone.updateMany(
-      { brand: /^apple$/i, model: /iphone 17 pro$/i },
-      { $set: { image_url: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-16-pro.jpg', custom_image: true, updated_at: new Date() } }
+      { brand: /^apple$/i, model: /iphone 17 pro$/i, custom_image: { $ne: true } },
+      { $set: { image_url: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-16-pro.jpg', custom_image: false, updated_at: new Date() } }
     );
     await MasterPhone.updateMany(
-      { brand: /^apple$/i, model: /iphone 17 air/i },
-      { $set: { image_url: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-air.jpg', custom_image: true, updated_at: new Date() } }
+      { brand: /^apple$/i, model: /iphone 17 air/i, custom_image: { $ne: true } },
+      { $set: { image_url: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-air.jpg', custom_image: false, updated_at: new Date() } }
     );
     await MasterPhone.updateMany(
-      { brand: /^apple$/i, model: /iphone 17$/i },
-      { $set: { image_url: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-16.jpg', custom_image: true, updated_at: new Date() } }
+      { brand: /^apple$/i, model: /iphone 17$/i, custom_image: { $ne: true } },
+      { $set: { image_url: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-16.jpg', custom_image: false, updated_at: new Date() } }
     );
     await MasterPhone.updateMany(
-      { brand: /^apple$/i, model: /iphone 17e/i },
-      { $set: { image_url: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-17e.jpg', custom_image: true, updated_at: new Date() } }
+      { brand: /^apple$/i, model: /iphone 17e/i, custom_image: { $ne: true } },
+      { $set: { image_url: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-17e.jpg', custom_image: false, updated_at: new Date() } }
     );
 
     // 2. Clean up any un-locked dummy seed records from SellPriceConfig

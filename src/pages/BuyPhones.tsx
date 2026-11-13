@@ -756,7 +756,8 @@ export default function BuyPhones() {
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
                 {filteredProducts.map((product) => {
-                  const image = product.images?.[0] || 'https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=600&auto=format&fit=crop&q=80';
+                  const explicitImage = product.images && product.images.length > 0 && product.images[0] ? product.images[0] : '';
+                  const displayImage = explicitImage || getCleanPhoneImage(product.brand, product.title, '');
                   const isSuperb = product.condition === 'Excellent' || product.condition === 'Superb';
                   const savings = product.original_price && product.original_price > product.price
                     ? product.original_price - product.price
@@ -800,7 +801,7 @@ export default function BuyPhones() {
 
                           <Link to={`/product/${product.id}`} className="block my-3">
                             <img
-                              src={getCleanPhoneImage(product.brand, product.title, image)}
+                              src={displayImage}
                               alt={product.title}
                               className="h-44 w-auto max-h-44 object-contain transition-transform duration-300 group-hover:scale-105 drop-shadow-md"
                               loading="lazy"

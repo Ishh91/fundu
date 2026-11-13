@@ -660,9 +660,9 @@ function cleanOversizedStorageOnBoot() {
             modified = true;
             continue; // Dropped poisoned cross-brand image entry
           }
-          if (isStockImageUrl(v) || v.includes('unsplash.com') || v.includes('pexels.com') || v.includes('777/thumb')) {
+          if (v.includes('unsplash.com') || v.includes('pexels.com') || v.includes('pixabay.com') || v.includes('777/thumb')) {
             modified = true;
-            continue; // Dropped stock/placeholder entry from custom images
+            continue; // Dropped placeholder entry from custom images
           }
           if (v.startsWith('blob:') || (v.startsWith('data:') && v.length > 60000)) {
             modified = true;
@@ -803,7 +803,7 @@ export function getCustomModelImages(): Record<string, string> {
   const combined = { ...stored, ...memoryCustomCache };
   const clean: Record<string, string> = {};
   for (const [k, v] of Object.entries(combined)) {
-    if (v && typeof v === 'string' && !isStockImageUrl(v) && !v.includes('unsplash.com') && !v.includes('pexels.com') && !v.includes('777/thumb')) {
+    if (v && typeof v === 'string' && !v.includes('unsplash.com') && !v.includes('pexels.com') && !v.includes('777/thumb') && !v.includes('pixabay.com')) {
       clean[k] = v;
     }
   }
@@ -1116,10 +1116,10 @@ if (typeof window !== 'undefined') {
 export function saveCustomModelImage(brand: string, model: string, imageUrl: string) {
   if (typeof window === 'undefined') return;
   const val = imageUrl ? imageUrl.trim() : '';
-  const isStock = isStockImageUrl(val) || val.includes('unsplash.com') || val.includes('pexels.com') || val.includes('777/thumb');
+  const isPlaceholder = val.includes('unsplash.com') || val.includes('pexels.com') || val.includes('777/thumb') || val.includes('pixabay.com');
   const keys = generateModelLookupKeys(brand, model);
 
-  if (val && !isStock) {
+  if (val && !isPlaceholder) {
     keys.forEach((k) => {
       memoryCustomCache[k] = val;
     });
@@ -1355,7 +1355,7 @@ function computeCleanPhoneImage(brand?: string, model?: string, fallbackUrl?: st
   const modelNorm = m.toLowerCase().replace(/[^a-z0-9]/g, ' ').replace(/\s+/g, ' ').trim();
   const rawUrl = cleanUrl((fallbackUrl || '').trim(), b);
 
-  // 1. If explicit custom image (uploaded by admin/vendor for this product, data URI, blob, or custom host), USE IT IMMEDIATELY!
+  // 1. If explicit product image was provided and valid, USE IT IMMEDIATELY!
   // A specific product's photo must NEVER be overwritten by a generic catalog render.
   const isInvalidUrl =
     !rawUrl ||
@@ -1365,12 +1365,7 @@ function computeCleanPhoneImage(brand?: string, model?: string, fallbackUrl?: st
     rawUrl.includes('777/thumb') ||
     isBrandImageMismatch(brand, model, rawUrl);
 
-  if (
-    !isInvalidUrl &&
-    (rawUrl.startsWith('data:image/') ||
-      rawUrl.startsWith('blob:') ||
-      !isStockImageUrl(rawUrl))
-  ) {
+  if (!isInvalidUrl) {
     return rawUrl;
   }
 
@@ -1380,7 +1375,6 @@ function computeCleanPhoneImage(brand?: string, model?: string, fallbackUrl?: st
   for (const k of lookupKeys) {
     if (
       customImages[k] &&
-      !isStockImageUrl(customImages[k]) &&
       !customImages[k].includes('unsplash.com') &&
       !customImages[k].includes('pexels.com') &&
       !customImages[k].includes('777/thumb') &&
@@ -1388,11 +1382,6 @@ function computeCleanPhoneImage(brand?: string, model?: string, fallbackUrl?: st
     ) {
       return cleanUrl(customImages[k], b);
     }
-  }
-
-  // 3. If explicit rawUrl was a valid stock image (e.g. gsmarena) and not a mismatch, use it
-  if (!isInvalidUrl && isStockImageUrl(rawUrl)) {
-    return rawUrl;
   }
 
   const isApple = b.includes('apple') || b.includes('iphone') || fullText.includes('iphone');

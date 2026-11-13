@@ -993,6 +993,7 @@ export default function Admin() {
       broadcastSync('PRODUCT_UPDATE', 'products', 'insert', newProduct);
       if (payload.images && payload.images.length > 0 && payload.images[0]) {
         saveCustomModelImage(payload.brand, payload.model, payload.images[0]);
+        saveModelImageToDatabase(payload.brand, payload.model, payload.images[0]).catch(() => {});
       }
       setListPhoneModal(null);
 
@@ -1456,6 +1457,7 @@ export default function Admin() {
       }
       if (payload.images && payload.images.length > 0 && payload.images[0]) {
         saveCustomModelImage(payload.brand, payload.model, payload.images[0]);
+        saveModelImageToDatabase(payload.brand, payload.model, payload.images[0]).catch(() => {});
       }
       setProductModal(null);
     } catch (err: any) {
