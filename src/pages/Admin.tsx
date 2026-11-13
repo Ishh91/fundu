@@ -24,6 +24,7 @@ import {
   Film,
   Play,
   Video as VideoIcon,
+  Users,
 } from 'lucide-react';
 import { PhoneVideoPlayer, isVideoUrl } from '../lib/videoUtils';
 import { useAuth } from '../context/AuthContext';
@@ -146,12 +147,24 @@ export default function Admin() {
   // Tab state derived from URL or params or saved session
   const [requestedTab, setTab] = useState<AdminTab>(getInitialAdminTab);
 
+  // Keep tab state synchronized when URL subtab or search params change
+  useEffect(() => {
+    const nextTab = getInitialAdminTab();
+    if (nextTab && nextTab !== requestedTab) {
+      setTab(nextTab);
+    }
+  }, [subtab, searchParams]);
+
   // Staff only see the sections they were granted; a tab they cannot open
   // (from the URL or a saved session) falls back to the overview.
-  const panelRole = profile?.role || user?.role || 'customer';
+  const isKnownAdminEmail = user?.email?.toLowerCase() === 'admin@fundu.in';
+  const panelRole = profile?.role || user?.role || (isKnownAdminEmail ? 'admin' : 'customer');
   const allowedTabs = getAllowedAdminTabs(panelRole, profile?.permissions);
   const isSuperAdmin = panelRole === 'admin';
-  const tab: AdminTab = allowedTabs.includes(requestedTab) ? requestedTab : 'overview';
+  // Allow super admins full access; always allow 'users' tab so that permissions or access guidance are visible
+  const tab: AdminTab = allowedTabs.includes(requestedTab)
+    ? requestedTab
+    : (requestedTab === 'users' ? 'users' : 'overview');
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
 
   const handleTabChange = (newTab: AdminTab) => {
@@ -164,6 +177,7 @@ export default function Admin() {
       competitor_radar: 'competitor-radar',
       repair_pricing: 'repair-pricing',
       pincodes: 'pincodes',
+      users: 'users',
     };
     const slug = slugMap[newTab] !== undefined ? slugMap[newTab] : newTab;
     const targetPath = slug ? `/admin/${slug}` : '/admin';
@@ -1870,8 +1884,8 @@ export default function Admin() {
 
             <div className="flex items-center gap-2">
               <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full bg-ink-100 text-ink-700 text-xs font-semibold">
-                <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
-                <span>Admin: {user?.email}</span>
+                <span className={`h-2 w-2 rounded-full ${isSuperAdmin ? 'bg-purple-600' : 'bg-blue-500'} animate-pulse`} />
+                <span>{isSuperAdmin ? '👑 Super Admin' : 'Staff Access'}: {user?.email}</span>
               </div>
               <button
                 type="button"
@@ -1896,6 +1910,14 @@ export default function Admin() {
           </div>
 
           <div className="flex items-center gap-2 flex-wrap">
+            <button
+              type="button"
+              onClick={() => handleTabChange('users')}
+              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-indigo-600 via-purple-600 to-indigo-700 hover:from-indigo-500 hover:to-purple-500 text-white text-xs font-black shadow-md transition cursor-pointer"
+            >
+              <Users className="h-3.5 w-3.5" /> Staff & Permissions
+            </button>
+
             {allowedTabs.includes('products') && (
             <button
               type="button"
@@ -2386,6 +2408,9 @@ export default function Admin() {
               onUpdateRole={updateUserRole}
               onUpdatePermissions={updateUserPermissions}
               onToggleVerification={toggleUserVerification}
+              isSuperAdmin={isSuperAdmin}
+              currentUserRole={panelRole}
+              currentUserEmail={user?.email || undefined}
             />
           )}
 

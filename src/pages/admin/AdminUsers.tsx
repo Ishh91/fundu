@@ -47,6 +47,9 @@ type AdminUsersProps = {
   onUpdateRole: (userId: string, role: string) => Promise<boolean>;
   onUpdatePermissions: (userId: string, permissions: string[]) => Promise<boolean>;
   onToggleVerification: (userId: string, current: boolean) => void;
+  isSuperAdmin?: boolean;
+  currentUserRole?: string;
+  currentUserEmail?: string;
 };
 
 export default function AdminUsers({
@@ -59,6 +62,9 @@ export default function AdminUsers({
   onUpdateRole,
   onUpdatePermissions,
   onToggleVerification,
+  isSuperAdmin = true,
+  currentUserRole = 'admin',
+  currentUserEmail,
 }: AdminUsersProps) {
   const [userList, setUserList] = useState<UserProfile[]>(profiles);
   const [search, setSearch] = useState('');
@@ -88,7 +94,12 @@ export default function AdminUsers({
     const matchesSearch = `${u.full_name || ''} ${u.email || ''} ${u.phone || ''} ${u.business_name || ''} ${u.role} ${u.id}`
       .toLowerCase()
       .includes(search.toLowerCase());
-    const matchesRole = roleFilter === 'All' || u.role.toLowerCase() === roleFilter.toLowerCase();
+    const matchesRole =
+      roleFilter === 'All'
+        ? true
+        : roleFilter === 'Staff / Admin'
+          ? u.role === 'staff' || u.role === 'admin'
+          : u.role.toLowerCase() === roleFilter.toLowerCase();
     return matchesSearch && matchesRole;
   });
 
@@ -252,22 +263,47 @@ export default function AdminUsers({
       <div className="card p-6 rounded-[28px] bg-gradient-to-r from-indigo-500/10 via-brand-500/10 to-purple-500/10 border border-indigo-200/60 flex flex-wrap items-center justify-between gap-4">
         <div>
           <div className="inline-flex items-center gap-2 rounded-full bg-indigo-100 px-3 py-1 text-xs font-black text-indigo-800">
-            <Users className="h-3.5 w-3.5" /> User & Vendor Management
+            <Users className="h-3.5 w-3.5" /> Staff Roles & Permissions Control
           </div>
-          <h2 className="mt-2 font-display text-2xl font-black text-ink-900">Manage Accounts & Verification</h2>
-          <p className="mt-1 text-xs text-ink-600">
-            Add new users/vendors with EmailJS verification OTPs, manage roles, resend verification emails, or delete test accounts.
+          <h2 className="mt-2 font-display text-2xl font-black text-ink-900">User Accounts & Admin Permissions</h2>
+          <p className="mt-1 text-xs text-ink-600 max-w-2xl leading-relaxed">
+            Select any user below to assign them <strong>Staff permissions</strong> (choose which admin sections they can access) or make them a <strong>Super Admin</strong>.
           </p>
         </div>
 
-        {/* Add User / Vendor Action Button */}
-        <button
-          onClick={() => setAddUserModal(true)}
-          className="btn-primary py-2.5 px-5 text-sm font-extrabold flex items-center gap-2 shadow-md hover:scale-[1.02] transition-transform"
-        >
-          <Plus className="h-4 w-4" /> Add New User / Vendor
-        </button>
+        {/* Action Buttons */}
+        <div className="flex items-center gap-2 flex-wrap">
+          <button
+            onClick={() => setRoleFilter(roleFilter === 'Staff / Admin' ? 'All' : 'Staff / Admin')}
+            className={`py-2 px-3.5 rounded-xl text-xs font-black border transition ${
+              roleFilter === 'Staff / Admin'
+                ? 'bg-indigo-600 text-white border-indigo-600 shadow-sm'
+                : 'bg-white text-indigo-700 border-indigo-200 hover:bg-indigo-50'
+            }`}
+          >
+            👥 Filter Staff & Admins
+          </button>
+          <button
+            onClick={() => setAddUserModal(true)}
+            className="btn-primary py-2.5 px-5 text-sm font-extrabold flex items-center gap-2 shadow-md hover:scale-[1.02] transition-transform"
+          >
+            <Plus className="h-4 w-4" /> Add New User / Staff
+          </button>
+        </div>
       </div>
+
+      {!isSuperAdmin && (
+        <div className="p-4 rounded-2xl bg-amber-50 border border-amber-300 text-amber-900 text-xs flex items-start gap-3 shadow-xs">
+          <AlertCircle className="h-5 w-5 text-amber-600 shrink-0 mt-0.5" />
+          <div>
+            <p className="font-black text-sm">Super Admin Account Required to Change Permissions</p>
+            <p className="mt-0.5 text-amber-800 leading-relaxed">
+              You are currently viewing this screen with role <strong>{currentUserRole}</strong> ({currentUserEmail || 'staff session'}).
+              To grant or modify permissions for staff accounts, please log in with the primary Super Admin account (<strong>admin@fundu.in</strong>).
+            </p>
+          </div>
+        </div>
+      )}
 
       {addUserNotice && (
         <div className="alert-success flex items-center gap-2 p-3 text-sm rounded-xl">
@@ -291,12 +327,13 @@ export default function AdminUsers({
             </div>
 
             <div className="flex gap-1.5 overflow-x-auto scrollbar-hide py-1 border-t border-ink-100/60">
-              {['All', 'Customer', 'Vendor', 'Wholesaler', 'Staff', 'Admin'].map((r) => (
+              {['All', 'Staff / Admin', 'Customer', 'Vendor', 'Wholesaler'].map((r) => (
                 <button
                   key={r}
                   onClick={() => setRoleFilter(r)}
-                  className={`text-[11px] px-2.5 py-1 rounded-lg font-bold shrink-0 transition-colors ${roleFilter === r ? 'bg-ink-900 text-white' : 'bg-ink-50 text-ink-600 hover:bg-ink-100'
-                    }`}
+                  className={`text-[11px] px-2.5 py-1 rounded-lg font-bold shrink-0 transition-colors ${
+                    roleFilter === r ? 'bg-ink-900 text-white' : 'bg-ink-50 text-ink-600 hover:bg-ink-100'
+                  }`}
                 >
                   {r}
                 </button>
@@ -677,7 +714,17 @@ export default function AdminUsers({
               </div>
             </div>
           ) : (
-            <div className="card p-12 text-center text-ink-400">Select a user from the list to view details.</div>
+            <div className="card p-12 text-center text-ink-500 space-y-3 bg-indigo-50/30 border border-indigo-100 rounded-3xl">
+              <div className="h-12 w-12 rounded-2xl bg-indigo-100 text-indigo-700 grid place-items-center mx-auto">
+                <Users className="h-6 w-6" />
+              </div>
+              <h3 className="font-display font-black text-base text-ink-900">
+                Select a User to Assign Permissions
+              </h3>
+              <p className="text-xs text-ink-500 max-w-sm mx-auto leading-relaxed">
+                Click on any user from the left list. You can change their role to <strong>Staff</strong> and toggle specific permissions for Orders, Sells, Repairs, Store Products, Pricing, and Fleet.
+              </p>
+            </div>
           )}
         </div>
       </div>
