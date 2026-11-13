@@ -2617,6 +2617,9 @@ export function calculatePhoneAgingFactor(brand = '', model = '', underWarranty 
  * @param {Object} [options]
  * @returns {Object} Quote result
  */
+const PRICED_DEFECT_KEYS = new Set(['camera', 'charging_port', 'speaker_mic']);
+const UNPRICED_DEFECT_DEDUCTION_RATE = 0.08; // same per-fault rate the sell page uses
+
 export function quotePhone(input = {}, options = {}) {
   const {
     brand,
@@ -2632,7 +2635,7 @@ export function quotePhone(input = {}, options = {}) {
     body_condition = 'flawless',
     battery_health = 'healthy',
     defects = [],
-    accessories = [],
+    accessories,
     under_warranty = false,
     stylus_available = true,
   } = input;
@@ -2855,6 +2858,22 @@ export function quotePhone(input = {}, options = {}) {
     conditionReasons.push('Speaker / audio microphone repair required');
   }
 
+  // Any other declared fault (e.g. biometrics) has no itemised repair price, so
+  // it takes the standard per-fault deduction instead of being ignored.
+  const unpricedDefects = Array.isArray(defects)
+    ? [...new Set(defects.map((d) => String(d || '').trim()).filter((d) => d && !PRICED_DEFECT_KEYS.has(d)))]
+    : [];
+  unpricedDefects.forEach((defectKey) => {
+    const cost = Math.round(expectedResaleProceeds * UNPRICED_DEFECT_DEDUCTION_RATE);
+    configuredRepairsTotal += cost;
+    internalRepairBreakdown.push({ item: defectKey, cost });
+    conditionReasons.push(
+      defectKey === 'biometrics'
+        ? 'Face ID / fingerprint sensor repair required'
+        : 'Additional reported hardware fault to be verified at inspection',
+    );
+  });
+
   // Logistics, Refurbishment, and Inspection Costs (Internal)
   const pickupInspectionCost = FUNDU_POLICY.pickupInspectionRefurbCost;
   conditionReasons.push('Includes free doorstep pickup & certified data wipe');
@@ -2912,8 +2931,10 @@ export function quotePhone(input = {}, options = {}) {
   }
 
   // Missing accessories deductions if not included (box: -300, charger: -300, bill: -200)
+  // A caller that sends no accessories field at all is not penalised; a seller
+  // who declared a list (even an empty one) is charged for every missing item.
   let accessoriesAdjustment = 0;
-  if (Array.isArray(accessories) && accessories.length > 0) {
+  if (Array.isArray(accessories)) {
     const hasBox = accessories.includes('Original Box') || accessories.includes('Box');
     const hasCharger = accessories.includes('Original Charger') || accessories.includes('Charger');
     const hasBill = accessories.includes('Valid Bill') || accessories.includes('Bill');

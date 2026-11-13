@@ -379,6 +379,7 @@ export default function SellPhone() {
     pickup_person_name?: string | null;
     pickup_person_phone?: string | null;
     estimated_arrival_time?: string | null;
+    delivery_otp?: string | null;
   } | null>(null);
 
   // MobileAPI Live Search Fallback Effect when query is not found in local catalog
@@ -621,8 +622,8 @@ export default function SellPhone() {
       let changed = false;
       let nextStorage = cur.storage;
       let nextRam = cur.ram;
-      let nextAgePeriod = cur.agePeriod;
-      let nextUnderWarranty = cur.underWarranty;
+      const nextAgePeriod = cur.agePeriod;
+      const nextUnderWarranty = cur.underWarranty;
       let nextBatteryHealth = cur.batteryHealth;
 
       // 1. Ensure storage is valid for this model

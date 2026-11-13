@@ -432,7 +432,7 @@ export default function SellBrandPage() {
 
   // Models to display based on series filter and search query
   const displayedModels = useMemo(() => {
-    let list = allModelsInSeriesOrder;
+    const list = allModelsInSeriesOrder;
 
     // 1. Search filter (sorted latest first)
     if (debouncedQuery) {

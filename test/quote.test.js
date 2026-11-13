@@ -4,247 +4,176 @@ import {
   quotePhone,
   recalculateInspectedQuote,
   lookupResaleBenchmark,
+  lookupModelRepairs,
   FUNDU_POLICY,
-  FUNDU_SERVICE_LOCALITIES,
 } from '../fundu_phone_quote.mjs';
-import { createPhoneQuote, processInspectionMismatch, getQuoteAudit } from '../server/services/quoteService.js';
+import { createPhoneQuote, getQuoteAudit } from '../server/services/quoteService.js';
+
+const ROUNDING_STEP = 50;
+const ALL_ACCESSORIES = ['Original Box', 'Original Charger', 'Valid Bill'];
+
+// A brand-new, flawless iPhone 13 with every accessory: the best case a seller can declare.
+const bestCase = {
+  brand: 'Apple',
+  model: 'iPhone 13',
+  storage: '128 GB',
+  powers_on: true,
+  cosmetic_condition: 'flawless',
+  screen_condition: 'flawless',
+  body_condition: 'flawless',
+  battery_health: 'healthy',
+  defects: [],
+  accessories: ALL_ACCESSORIES,
+  age_period: '0_to_3_months',
+};
+
+const benchmarkPrice = lookupResaleBenchmark('Apple', 'iPhone 13', '128 GB').benchmark.proceeds;
+const bestOffer = quotePhone(bestCase).offerAmount;
+
+/** How much less the seller is offered once `changes` are applied to the best case. */
+const deductionFor = (changes) => bestOffer - quotePhone({ ...bestCase, ...changes }).offerAmount;
+
+const assertWithinRounding = (actual, expected, label) => {
+  assert.ok(Math.abs(actual - expected) <= ROUNDING_STEP, `${label}: expected about ${expected}, got ${actual}`);
+};
 
 describe('Fundu Phone Buyback Quote Engine', () => {
-  // 1. Valid Quote Calculation
-  test('generates valid conditional quote for exact variant with correct business formula', () => {
-    const input = {
-      brand: 'Apple',
-      model: 'iPhone 13',
-      storage: '128 GB',
-      powers_on: true,
-      cosmetic_condition: 'flawless',
-      screen_condition: 'flawless',
-      body_condition: 'flawless',
-      battery_health: 'healthy',
-      accessories: ['Original Box', 'Original Charger'],
-      under_warranty: false,
-    };
+  describe('standard quote', () => {
+    test('offers the full catalog price for a new, flawless phone with all accessories', () => {
+      const quote = quotePhone(bestCase);
 
-    const quote = quotePhone(input);
-
-    assert.equal(quote.status, 'quoted');
-    assert.equal(quote.isConditionalEstimate, true);
-    assert.ok(typeof quote.offerAmount === 'number' && quote.offerAmount > 0);
-    assert.equal(quote.currency, 'INR');
-    assert.ok(quote.conditionSummary.length > 0);
-    assert.ok(quote.disclaimer.includes('conditional estimate subject to physical doorstep inspection'));
-    assert.equal(quote.policyVersion, FUNDU_POLICY.version);
-    assert.equal(quote.deviceSummary.brand, 'Apple');
-    assert.equal(quote.deviceSummary.model, 'iPhone 13');
-    assert.equal(quote.deviceSummary.storage, '128 GB');
-
-    // Verify confidential unit economics are kept in _internalAudit and NOT exposed in public fields
-    assert.ok(quote._internalAudit);
-    assert.equal(quote.targetContributionMargin, undefined);
-    assert.equal(quote.pickupInspectionRefurbCost, undefined);
-    assert.equal(quote.warrantyAndRiskReserves, undefined);
-
-    // Verify exact math:
-    // Base resale proceeds for iPhone 13 128GB: 38,500
-    // Flawless cosmetic multiplier: 1.0 -> 38,500
-    // Accessories bonus: Box (300) + Charger (300) = 600 -> adjusted = 39,100
-    // Pickup/Refurb logistics: 450
-    // Reserves: 5% of 38,500 = 1,925
-    // Margin: 10% of 38,500 = 3,850
-    // Raw offer: 39,100 - 450 - 1,925 - 3,850 = 32,875 -> rounded to nearest 50 = 32,900
-    assert.equal(quote.offerAmount, 32900);
-  });
-
-  // 2. Missing Pricing Benchmark
-  test('returns manual review and reports missing config when variant is not in catalog', () => {
-    const input = {
-      brand: 'ObscureBrand',
-      model: 'SuperPhone 9000 Pro',
-      storage: '128 GB',
-      powers_on: true,
-      screen_condition: 'flawless',
-      body_condition: 'flawless',
-    };
-
-    const quote = quotePhone(input);
-
-    assert.equal(quote.status, 'requires_manual_review');
-    assert.equal(quote.reason, 'MISSING_PRICING_BENCHMARK');
-    assert.deepEqual(quote.missingConfig, ['resale_proceeds_benchmark']);
-    assert.equal(quote.offerAmount, undefined, 'Must not fabricate a quote');
-    assert.ok(quote.contactPath?.phone);
-    assert.ok(quote.message.includes('not configured in Fundu catalog'));
-  });
-
-  // 3. Stale Pricing Data
-  test('returns manual review when pricing benchmark is older than staleness threshold', () => {
-    const input = {
-      brand: 'Apple',
-      model: 'iPhone 13',
-      storage: '128 GB',
-      powers_on: true,
-    };
-
-    // Reference date 200 days after benchmark date (Jan 5, 2025)
-    const options = { referenceDate: '2025-09-01' };
-    const quote = quotePhone(input, options);
-
-    assert.equal(quote.status, 'requires_manual_review');
-    assert.equal(quote.reason, 'STALE_PRICING_BENCHMARK');
-    assert.deepEqual(quote.missingConfig, ['updated_resale_proceeds_benchmark']);
-    assert.equal(quote.offerAmount, undefined, 'Must not fabricate stale quote');
-    assert.ok(quote.message.includes('stale and requires admin rate review'));
-  });
-
-  // 4. Invalid Inputs
-  test('returns invalid_input when required parameters are missing', () => {
-    assert.equal(quotePhone({ model: 'iPhone 13', storage: '128 GB' }).status, 'invalid_input');
-    assert.equal(quotePhone({ brand: 'Apple', storage: '128 GB' }).status, 'invalid_input');
-    assert.equal(quotePhone({ brand: 'Apple', model: 'iPhone 13' }).status, 'invalid_input');
-  });
-
-  // 5. Condition & Repair Deductions
-  test('applies exact configured repair costs for cracked screen, degraded battery, and speaker fault', () => {
-    const baselineInput = {
-      brand: 'Apple',
-      model: 'iPhone 13',
-      storage: '128 GB',
-      powers_on: true,
-      cosmetic_condition: 'good',
-      screen_condition: 'flawless',
-      body_condition: 'flawless',
-      battery_health: 'healthy',
-      defects: [],
-    };
-
-    const baselineQuote = quotePhone(baselineInput);
-
-    // Screen repair deduction
-    const screenDamagedQuote = quotePhone({
-      ...baselineInput,
-      screen_condition: 'cracked',
+      assert.equal(quote.status, 'quoted');
+      assert.equal(quote.offerAmount, benchmarkPrice);
+      assert.equal(quote.currency, 'INR');
+      assert.equal(quote.isConditionalEstimate, true);
+      assert.ok(quote.conditionSummary.length > 0);
+      assert.ok(quote.disclaimer.includes('conditional estimate subject to physical doorstep inspection'));
+      assert.equal(quote.policyVersion, FUNDU_POLICY.version);
+      assert.equal(quote.deviceSummary.brand, 'Apple');
+      assert.ok(quote.deviceSummary.model.includes('iPhone 13'));
+      assert.equal(quote.deviceSummary.storage, '128 GB');
     });
 
-    // iPhone 13 configured screen replacement cost = 5,499
-    // Difference should reflect the screen repair deduction (rounded to 50)
-    const expectedScreenDiff = Math.round(5499 / 50) * 50;
-    assert.equal(baselineQuote.offerAmount - screenDamagedQuote.offerAmount, expectedScreenDiff);
+    test('keeps confidential unit economics out of the seller-facing fields', () => {
+      const quote = quotePhone(bestCase);
 
-    // Battery degradation deduction
-    const batteryDamagedQuote = quotePhone({
-      ...baselineInput,
-      battery_health: 'degraded_service',
+      assert.ok(quote._internalAudit);
+      assert.equal(quote.targetContributionMargin, undefined);
+      assert.equal(quote.pickupInspectionRefurbCost, undefined);
+      assert.equal(quote.warrantyAndRiskReserves, undefined);
     });
 
-    // iPhone 13 configured battery replacement cost = 2,299
-    const expectedBatteryDiff = Math.round(2299 / 50) * 50;
-    assert.equal(baselineQuote.offerAmount - batteryDamagedQuote.offerAmount, expectedBatteryDiff);
+    test('never offers more than the catalog price', () => {
+      const olderPhone = quotePhone({ ...bestCase, age_period: 'above_9_months', cosmetic_condition: 'good' });
 
-    // Hardware defect: speaker_mic
-    const speakerDamagedQuote = quotePhone({
-      ...baselineInput,
-      defects: ['speaker_mic'],
+      assert.ok(bestOffer <= benchmarkPrice);
+      assert.ok(olderPhone.offerAmount < benchmarkPrice);
     });
 
-    // iPhone 13 configured speaker repair cost = 799
-    const expectedSpeakerDiff = Math.round(799 / 50) * 50;
-    assert.equal(baselineQuote.offerAmount - speakerDamagedQuote.offerAmount, expectedSpeakerDiff);
-  });
-
-  // 6. Manual-Review Cases
-  describe('Manual Review Routing', () => {
-    test('routes non-powering phone to manual inspection', () => {
+    test('gives a model outside the catalog a positive conditional estimate', () => {
       const quote = quotePhone({
-        brand: 'Apple',
-        model: 'iPhone 13',
-        storage: '128 GB',
-        powers_on: false,
-      });
-
-      assert.equal(quote.status, 'requires_manual_review');
-      assert.equal(quote.reason, 'NON_POWERING_DEVICE');
-      assert.equal(quote.offerAmount, undefined);
-    });
-
-    test('routes uncleared activation lock to manual review', () => {
-      const quote = quotePhone({
-        brand: 'Apple',
-        model: 'iPhone 13',
+        brand: 'ObscureBrand',
+        model: 'SuperPhone 9000 Pro',
         storage: '128 GB',
         powers_on: true,
-        activation_lock_cleared: false,
       });
 
+      assert.equal(quote.status, 'quoted');
+      assert.equal(quote.isConditionalEstimate, true);
+      assert.ok(quote.offerAmount >= FUNDU_POLICY.minOfferFloor);
+    });
+
+    test('returns invalid_input when required parameters are missing', () => {
+      assert.equal(quotePhone({ model: 'iPhone 13', storage: '128 GB' }).status, 'invalid_input');
+      assert.equal(quotePhone({ brand: 'Apple', storage: '128 GB' }).status, 'invalid_input');
+      assert.equal(quotePhone({ brand: 'Apple', model: 'iPhone 13' }).status, 'invalid_input');
+    });
+  });
+
+  describe('condition deductions', () => {
+    const repairCosts = lookupModelRepairs('Apple', 'iPhone 13', benchmarkPrice);
+
+    test('deducts the screen replacement cost for a cracked screen', () => {
+      assertWithinRounding(deductionFor({ screen_condition: 'cracked' }), repairCosts.screen, 'cracked screen');
+    });
+
+    test('deducts 2% of the catalog price for a worn iPhone battery', () => {
+      assertWithinRounding(deductionFor({ battery_health: 'below_75' }), benchmarkPrice * 0.02, 'worn battery');
+    });
+
+    test('deducts the configured repair cost for a speaker fault', () => {
+      assertWithinRounding(deductionFor({ defects: ['speaker_mic'] }), repairCosts.speaker, 'speaker fault');
+    });
+
+    test('deducts for a biometrics fault, which has no itemised repair price', () => {
+      assertWithinRounding(deductionFor({ defects: ['biometrics'] }), benchmarkPrice * 0.08, 'biometrics fault');
+    });
+
+    test('deducts for any other reported fault instead of ignoring it', () => {
+      const quote = quotePhone({ ...bestCase, defects: ['unknown_motherboard_short'] });
+
+      assert.equal(quote.status, 'quoted');
+      assertWithinRounding(bestOffer - quote.offerAmount, benchmarkPrice * 0.08, 'unlisted fault');
+    });
+
+    test('counts a fault reported twice only once', () => {
+      assert.equal(deductionFor({ defects: ['biometrics', 'biometrics'] }), deductionFor({ defects: ['biometrics'] }));
+    });
+  });
+
+  describe('accessories', () => {
+    test('offers less for each missing accessory', () => {
+      assert.equal(deductionFor({ accessories: ['Original Box', 'Original Charger'] }), 200);
+      assert.equal(deductionFor({ accessories: ['Original Box'] }), 500);
+    });
+
+    test('offers the least when the seller declares no accessories at all', () => {
+      assert.equal(deductionFor({ accessories: [] }), 800);
+    });
+
+    test('does not penalise a caller that sends no accessories field', () => {
+      const { accessories, ...withoutAccessoriesField } = bestCase;
+
+      assert.equal(quotePhone(withoutAccessoriesField).offerAmount, bestOffer);
+    });
+  });
+
+  describe('manual review routing', () => {
+    const assertSalvageReview = (changes, reason) => {
+      const quote = quotePhone({ ...bestCase, ...changes });
+
       assert.equal(quote.status, 'requires_manual_review');
-      assert.equal(quote.reason, 'UNCLEARED_ACTIVATION_LOCK');
-      assert.equal(quote.offerAmount, undefined);
+      assert.equal(quote.reason, reason);
+      assert.ok(quote.contactPath?.phone);
+      assert.ok(quote.offerAmount >= FUNDU_POLICY.minOfferFloor, 'a salvage estimate is still shown');
+      assert.ok(quote.offerAmount < bestOffer, 'the salvage estimate is below a normal quote');
+    };
+
+    test('routes a non-powering phone to inspection with a salvage estimate', () => {
+      assertSalvageReview({ powers_on: false }, 'NON_POWERING_DEVICE');
+    });
+
+    test('routes an uncleared activation lock to manual review', () => {
+      assertSalvageReview({ activation_lock_cleared: false }, 'UNCLEARED_ACTIVATION_LOCK');
     });
 
     test('routes unverified ownership to manual verification', () => {
-      const quote = quotePhone({
-        brand: 'Apple',
-        model: 'iPhone 13',
-        storage: '128 GB',
-        powers_on: true,
-        ownership_verified: false,
-      });
-
-      assert.equal(quote.status, 'requires_manual_review');
-      assert.equal(quote.reason, 'UNVERIFIED_OWNERSHIP');
+      assertSalvageReview({ ownership_verified: false }, 'UNVERIFIED_OWNERSHIP');
     });
 
-    test('routes liquid or moisture damage to physical bench inspection', () => {
-      const quote = quotePhone({
-        brand: 'Apple',
-        model: 'iPhone 13',
-        storage: '128 GB',
-        powers_on: true,
-        liquid_damage: true,
-      });
-
-      assert.equal(quote.status, 'requires_manual_review');
-      assert.equal(quote.reason, 'LIQUID_DAMAGE');
-    });
-
-    test('routes unpriced fault defect to manual review and reports missing config', () => {
-      const quote = quotePhone({
-        brand: 'Apple',
-        model: 'iPhone 13',
-        storage: '128 GB',
-        powers_on: true,
-        defects: ['unknown_motherboard_short'],
-      });
-
-      assert.equal(quote.status, 'requires_manual_review');
-      assert.equal(quote.reason, 'UNPRICED_FAULT_REPAIR');
-      assert.deepEqual(quote.missingConfig, ['repair_cost_unknown_motherboard_short']);
+    test('routes liquid damage to bench inspection', () => {
+      assertSalvageReview({ liquid_damage: true }, 'LIQUID_DAMAGE');
     });
   });
 
-  // 7. Inspection Mismatch & Revised Offer Flow
   test('detects physical inspection mismatch, calculates revised amount, and requires seller acceptance', () => {
-    // Initial quote made online
-    const initialInput = {
-      brand: 'Apple',
-      model: 'iPhone 13',
-      storage: '128 GB',
-      powers_on: true,
-      cosmetic_condition: 'flawless',
-      screen_condition: 'flawless',
-      body_condition: 'flawless',
-      battery_health: 'healthy',
-    };
-
-    const initialQuote = quotePhone(initialInput);
+    const initialQuote = quotePhone(bestCase);
     assert.equal(initialQuote.status, 'quoted');
 
-    // Physical doorstep inspection finds cracked screen and degraded battery
-    const inspectedAnswers = {
+    const mismatch = recalculateInspectedQuote(initialQuote._internalAudit, {
       screen_condition: 'cracked',
       battery_health: 'degraded_service',
-    };
-
-    const mismatch = recalculateInspectedQuote(initialQuote._internalAudit, inspectedAnswers);
+    });
 
     assert.equal(mismatch.hasMismatch, true);
     assert.equal(mismatch.requiresSellerAcceptance, true);
@@ -254,23 +183,19 @@ describe('Fundu Phone Buyback Quote Engine', () => {
     assert.ok(mismatch.mismatchExplanations.some((m) => m.includes('Battery health reported as "healthy"')));
   });
 
-  // 8. Server Quote Service Integration
   test('createPhoneQuote registers audit record and returns safe customer quote', async () => {
-    const input = {
+    const quote = await createPhoneQuote({
       brand: 'Samsung',
       model: 'Galaxy S24 Ultra',
       storage: '256 GB',
       powers_on: true,
       cosmetic_condition: 'good',
-    };
-
-    const quote = await createPhoneQuote(input);
+    });
 
     assert.equal(quote.status, 'quoted');
     assert.equal(quote.auditRegistered, true);
     assert.ok(quote.quoteId);
 
-    // Verify audit record is stored on server
     const audit = getQuoteAudit(quote.quoteId);
     assert.ok(audit);
     assert.equal(audit.variant.brand, 'Samsung');

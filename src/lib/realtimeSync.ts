@@ -10,6 +10,7 @@ export type RealtimeSyncAction =
   | 'MODEL_DELETE'
   | 'MODEL_RESTORE'
   | 'MODEL_IMAGE_UPDATE'
+  | 'MODEL_VIDEO_UPDATE'
   | 'REPAIR_UPDATE'
   | 'HERO_UPDATE'
   | 'REVIEW_UPDATE'

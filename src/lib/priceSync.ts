@@ -59,7 +59,7 @@ export function getLocalPriceOverrides(): Record<string, number> {
  */
 export function getPriceStorageKeys(brand: string, model: string, storage: string): string[] {
   const b = (brand || '').trim().toLowerCase();
-  let m = (model || '').trim().toLowerCase();
+  const m = (model || '').trim().toLowerCase();
   let cleanM = m;
   if (b && cleanM.startsWith(b)) {
     cleanM = cleanM.slice(b.length).trim();
@@ -91,7 +91,7 @@ export function getPriceStorageKeys(brand: string, model: string, storage: strin
  */
 export function getPriceModelKeys(brand: string, model: string): string[] {
   const b = (brand || '').trim().toLowerCase();
-  let m = (model || '').trim().toLowerCase();
+  const m = (model || '').trim().toLowerCase();
   let cleanM = m;
   if (b && cleanM.startsWith(b)) {
     cleanM = cleanM.slice(b.length).trim();
