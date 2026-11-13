@@ -161,7 +161,14 @@ export default function AdminSidebar({
           badgeColor: 'bg-[#344257] text-white',
           path: '/admin/wholesalers',
         },
-        { id: 'users' as AdminTab, label: 'Users & Roles', icon: Users, path: '/admin?tab=users' },
+        {
+          id: 'users' as AdminTab,
+          label: 'Users & Permissions',
+          icon: Users,
+          badge: 'Roles',
+          badgeColor: 'bg-indigo-600 text-white',
+          path: '/admin?tab=users',
+        },
       ],
     },
     {

@@ -19,11 +19,39 @@ export default function StaffPermissionsEditor({ value, onChange, disabled = fal
     onChange(next);
   };
 
+  const selectAll = () => {
+    onChange(ADMIN_PERMISSION_OPTIONS.map((option) => option.key));
+  };
+
+  const clearAll = () => {
+    onChange([]);
+  };
+
   return (
-    <fieldset disabled={disabled} className="space-y-2 disabled:opacity-60">
-      <legend className="text-[11px] font-black uppercase tracking-wider text-ink-500">
-        Sections this staff member can manage
-      </legend>
+    <fieldset disabled={disabled} className="space-y-2.5 disabled:opacity-60">
+      <div className="flex items-center justify-between flex-wrap gap-2">
+        <legend className="text-[11px] font-black uppercase tracking-wider text-ink-500">
+          Sections this staff member can manage ({granted.size} / {ADMIN_PERMISSION_OPTIONS.length} Granted)
+        </legend>
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={selectAll}
+            disabled={disabled || granted.size === ADMIN_PERMISSION_OPTIONS.length}
+            className="text-[11px] font-bold text-blue-700 hover:text-blue-900 bg-blue-50 hover:bg-blue-100 border border-blue-200 px-2 py-0.5 rounded-lg transition disabled:opacity-50"
+          >
+            ✓ Select All
+          </button>
+          <button
+            type="button"
+            onClick={clearAll}
+            disabled={disabled || granted.size === 0}
+            className="text-[11px] font-bold text-ink-600 hover:text-ink-900 bg-ink-100 hover:bg-ink-200 px-2 py-0.5 rounded-lg transition disabled:opacity-50"
+          >
+            ✕ Clear All
+          </button>
+        </div>
+      </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1">
         {ADMIN_PERMISSION_OPTIONS.map((option) => {
           const inputId = `${idPrefix}-${option.key}`;
