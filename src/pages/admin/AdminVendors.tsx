@@ -470,7 +470,7 @@ export default function AdminVendors() {
       await fetchData();
     } catch (err) {
       alert(err instanceof Error ? err.message : 'Failed to record repayment');
-    } flex: {
+    } finally {
       setPaymentSubmitting(false);
     }
   };

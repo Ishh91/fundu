@@ -25,6 +25,7 @@ interface SellStep2ConditionProps {
     rams: string[];
     colors?: string[];
     getRamsForStorage: (stg: string) => string[];
+    combinedVariants?: { storage: string; ram: string; label: string; key: string }[];
   };
   brandSlug?: string;
   baseModelPrice?: number;

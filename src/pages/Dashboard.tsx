@@ -237,21 +237,21 @@ export default function Dashboard() {
         if (!sell.delivery_otp && !['completed', 'cancelled', 'rejected'].includes(sell.status)) {
           const freshOtp = String(Math.floor(1000 + Math.random() * 9000));
           sell.delivery_otp = freshOtp;
-          db.from('sell_requests').update({ delivery_otp: freshOtp }).eq('id', sell.id).catch(() => {});
+          db.from('sell_requests').update({ delivery_otp: freshOtp }).eq('id', sell.id).then(undefined, () => {});
         }
       });
       rawRepairs.forEach((rep) => {
         if (!rep.delivery_otp && !['delivered', 'cancelled', 'completed'].includes(rep.status)) {
           const freshOtp = String(Math.floor(1000 + Math.random() * 9000));
           rep.delivery_otp = freshOtp;
-          db.from('repair_bookings').update({ delivery_otp: freshOtp }).eq('id', rep.id).catch(() => {});
+          db.from('repair_bookings').update({ delivery_otp: freshOtp }).eq('id', rep.id).then(undefined, () => {});
         }
       });
       rawOrders.forEach((ord) => {
         if (!ord.delivery_otp && !['delivered', 'cancelled'].includes(ord.status)) {
           const freshOtp = String(Math.floor(1000 + Math.random() * 9000));
           ord.delivery_otp = freshOtp;
-          db.from('orders').update({ delivery_otp: freshOtp }).eq('id', ord.id).catch(() => {});
+          db.from('orders').update({ delivery_otp: freshOtp }).eq('id', ord.id).then(undefined, () => {});
         }
       });
 

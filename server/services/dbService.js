@@ -1,4 +1,4 @@
-import { Types } from 'mongoose';
+import mongoose, { Types } from 'mongoose';
 import { getModel, Order, User, VendorLedger, WholesaleOrder, WholesaleInventory, Product } from '../models/index.js';
 import { createHttpError } from '../utils/error.js';
 import {
@@ -14,6 +14,7 @@ import { autoAssignDeliveryAgent } from './dispatchService.js';
 import { triggerEventNotification } from './notificationService.js';
 import { quotePhone } from '../../fundu_phone_quote.mjs';
 import { createPhoneQuote } from './quoteService.js';
+import { postBuybackToLedger, postRepairToLedger, shouldRestoreStock } from './vendorLedgerService.js';
 
 export const getReadScope = async (table, auth, filters, select) => {
   const baseFilter = buildMongoFilter(filters);
@@ -442,7 +443,22 @@ export const queryTable = async (table, { auth, filters, sort, select, single, l
   return normalized;
 };
 
+const DB_CONNECTED = 1;
+
+/**
+ * Writes must fail cleanly while MongoDB is unreachable. With command
+ * buffering off, Mongoose throws from inside a driver callback when a write
+ * is attempted without a connection, which would crash the whole process
+ * instead of failing the one request.
+ */
+export const assertDatabaseReady = (readyState = mongoose.connection.readyState) => {
+  if (readyState !== DB_CONNECTED) {
+    throw createHttpError(503, 'The database is temporarily unavailable. Nothing was saved - please try again in a minute.');
+  }
+};
+
 export const insertIntoTable = async (table, { auth, values, single }) => {
+  assertDatabaseReady();
   const Model = getModel(table);
   const items = Array.isArray(values) ? values : [values];
   const preparedItems = [];
@@ -650,10 +666,32 @@ export const insertIntoTable = async (table, { auth, values, single }) => {
   return single ? normalized[0] ?? null : normalized;
 };
 
-export const updateTable = async (table, { auth, filters, values, single }) => {
+/**
+ * Trims an update's reply to the columns the client asked for, so saving a
+ * small edit does not send a multi-MB document (photos, video) back down.
+ * "*" or no selection returns the full document as before.
+ */
+export const pickSelectedFields = (doc, select) => {
+  if (!doc || typeof select !== 'string') return doc;
+  const fields = select.split(',').map((field) => field.trim()).filter(Boolean);
+  if (fields.length === 0 || fields.includes('*')) return doc;
+
+  const pick = (item) => Object.fromEntries(fields.filter((field) => field in item).map((field) => [field, item[field]]));
+  return Array.isArray(doc) ? doc.map(pick) : pick(doc);
+};
+
+export const updateTable = async (table, { auth, filters, values, single, select }) => {
+  assertDatabaseReady();
   const Model = getModel(table);
   const scope = await getWriteScope(table, auth, filters);
   const payload = preparePayload(table, 'update', values, auth);
+
+  // Order statuses before the write, so stock is restored only on the update that cancels.
+  const previousOrderStatus = new Map();
+  if (table === 'orders') {
+    const before = await Model.find(scope).select('status').lean();
+    before.forEach((order) => previousOrderStatus.set(String(order._id), order.status));
+  }
 
   let updatedDoc = null;
   if (single) {
@@ -673,7 +711,7 @@ export const updateTable = async (table, { auth, filters, values, single }) => {
         if (table === 'orders') {
           if (doc.status === 'dispatched') triggerEventNotification('order_dispatched', doc);
           else if (doc.status === 'delivered') triggerEventNotification('order_delivered', doc);
-          else if (doc.status === 'cancelled') {
+          else if (shouldRestoreStock(previousOrderStatus.get(String(doc.id)), doc.status)) {
             // Restore inventory stock for cancelled order items
             if (Array.isArray(doc.items)) {
               for (const it of doc.items) {
@@ -694,80 +732,9 @@ export const updateTable = async (table, { auth, filters, values, single }) => {
           }
         } else if (table === 'sell_requests') {
           if (doc.status === 'completed' || doc.status === 'picked_up') triggerEventNotification('sell_request_completed', doc);
-          
-          // Vendor Mobile Buyback & 10% Commission Ledger Logic
-          if ((doc.vendor_quote_status === 'user_accepted' || doc.status === 'completed') && doc.assigned_vendor_id && doc.vendor_quote_price) {
-            const vendor = await User.findById(doc.assigned_vendor_id);
-            if (vendor) {
-              const buybackPrice = Number(doc.vendor_quote_price) || 0;
-              const commissionAmount = Math.round(buybackPrice * 0.10);
-              const totalDebited = buybackPrice;
-
-              const balanceBefore = vendor.outstanding_balance || 0;
-              const balanceAfter = balanceBefore + totalDebited;
-
-              await User.findByIdAndUpdate(vendor._id, { outstanding_balance: balanceAfter });
-
-              // Record Vendor Ledgers (Buyback payout + 10% commission record)
-              await VendorLedger.create({
-                vendor_id: vendor._id.toString(),
-                vendor_name: vendor.business_name || vendor.full_name,
-                type: 'sell_buyback_payout',
-                amount: buybackPrice,
-                balance_before: balanceBefore,
-                balance_after: balanceAfter,
-                reference_order_id: doc.id || doc._id?.toString(),
-                payment_mode: 'Website Limit Credit',
-                notes: `Purchased user phone (${doc.brand} ${doc.model}) via website credit limit.`,
-              });
-
-              await VendorLedger.create({
-                vendor_id: vendor._id.toString(),
-                vendor_name: vendor.business_name || vendor.full_name,
-                type: 'sell_commission_fee',
-                amount: commissionAmount,
-                balance_before: balanceAfter,
-                balance_after: balanceAfter,
-                reference_order_id: doc.id || doc._id?.toString(),
-                payment_mode: '10% Platform Commission',
-                notes: `10% Platform commission fee on mobile buyback ₹${buybackPrice}.`,
-              });
-            }
-          }
+          await postBuybackToLedger(doc);
         } else if (table === 'repair_bookings') {
-          // Vendor Repair Quotation & 10% Commission Ledger Logic
-          if ((doc.quotation_status === 'user_accepted' || doc.quotation_status === 'paid' || doc.status === 'paid') && doc.assigned_vendor_id && doc.vendor_quotation_amount) {
-            const vendor = await User.findById(doc.assigned_vendor_id);
-            if (vendor) {
-              const totalRepairCost = Number(doc.vendor_quotation_amount) || 0;
-              const commissionAmount = Math.round(totalRepairCost * 0.10);
-              const vendorEarning = totalRepairCost - commissionAmount;
-
-              await VendorLedger.create({
-                vendor_id: vendor._id.toString(),
-                vendor_name: vendor.business_name || vendor.full_name,
-                type: 'repair_earning',
-                amount: vendorEarning,
-                balance_before: vendor.outstanding_balance || 0,
-                balance_after: vendor.outstanding_balance || 0,
-                reference_order_id: doc.id || doc._id?.toString(),
-                payment_mode: 'User Website Payment',
-                notes: `Earned 90% (₹${vendorEarning}) for repairing ${doc.brand} ${doc.model} (${doc.problem}).`,
-              });
-
-              await VendorLedger.create({
-                vendor_id: vendor._id.toString(),
-                vendor_name: vendor.business_name || vendor.full_name,
-                type: 'repair_commission_fee',
-                amount: commissionAmount,
-                balance_before: vendor.outstanding_balance || 0,
-                balance_after: vendor.outstanding_balance || 0,
-                reference_order_id: doc.id || doc._id?.toString(),
-                payment_mode: '10% Platform Commission',
-                notes: `10% Platform commission fee on repair job ₹${totalRepairCost}.`,
-              });
-            }
-          }
+          await postRepairToLedger(doc);
         }
       }
     }
@@ -775,10 +742,11 @@ export const updateTable = async (table, { auth, filters, values, single }) => {
     console.warn('Notice on status change notification:', e);
   }
 
-  return updatedDoc;
+  return pickSelectedFields(updatedDoc, select);
 };
 
 export const upsertTable = async (table, { auth, values, single }) => {
+  assertDatabaseReady();
   if (table === 'profiles') {
     requireAuth(auth);
     const payload = preparePayload(table, 'upsert', values, auth);
@@ -877,6 +845,7 @@ export const upsertTable = async (table, { auth, values, single }) => {
 };
 
 export const deleteFromTable = async (table, { auth, filters }) => {
+  assertDatabaseReady();
   const Model = getModel(table);
   const scope = await getWriteScope(table, auth, filters);
   const result = await Model.deleteMany(scope);

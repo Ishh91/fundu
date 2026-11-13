@@ -89,6 +89,19 @@ export default function AdminSidebar({
       ],
     },
     {
+      title: 'TEAM & PERMISSIONS',
+      items: [
+        {
+          id: 'users' as AdminTab,
+          label: 'Users & Permissions',
+          icon: Users,
+          badge: isSuperAdmin ? 'Roles' : 'Admin Only',
+          badgeColor: isSuperAdmin ? 'bg-indigo-600 text-white' : 'bg-slate-700 text-slate-200',
+          path: '/admin/users',
+        },
+      ],
+    },
+    {
       title: 'PRODUCTS & CATALOG',
       items: [
         {
@@ -131,7 +144,7 @@ export default function AdminSidebar({
           badgeColor: 'bg-emerald-600 text-white',
           path: '/admin/repair-pricing',
         },
-        { id: 'parts' as AdminTab, label: 'Spare Parts Stock', icon: Wrench, path: '/admin?tab=parts' },
+        { id: 'parts' as AdminTab, label: 'Spare Parts Stock', icon: Wrench, path: '/admin/parts' },
       ],
     },
     {
@@ -161,7 +174,6 @@ export default function AdminSidebar({
           badgeColor: 'bg-[#344257] text-white',
           path: '/admin/wholesalers',
         },
-        { id: 'users' as AdminTab, label: 'Users & Roles', icon: Users, path: '/admin?tab=users' },
       ],
     },
     {
@@ -175,8 +187,8 @@ export default function AdminSidebar({
           badgeColor: 'bg-[#344257] text-white',
           path: '/admin/banners',
         },
-        { id: 'reviews' as AdminTab, label: 'Customer Reviews', icon: MessageSquare, path: '/admin?tab=reviews' },
-        { id: 'contact' as AdminTab, label: 'Contact Queries', icon: Mail, path: '/admin?tab=contact' },
+        { id: 'reviews' as AdminTab, label: 'Customer Reviews', icon: MessageSquare, path: '/admin/reviews' },
+        { id: 'contact' as AdminTab, label: 'Contact Queries', icon: Mail, path: '/admin/contact' },
       ],
     },
   ];
@@ -238,7 +250,7 @@ export default function AdminSidebar({
           {menuGroups.map((group) => {
             const filteredItems = group.items.filter(
               (item) =>
-                allowedTabs.includes(item.id) &&
+                (allowedTabs.includes(item.id) || item.id === 'users') &&
                 (!navFilter.trim() || item.label.toLowerCase().includes(navFilter.toLowerCase().trim())),
             );
             if (filteredItems.length === 0) return null;

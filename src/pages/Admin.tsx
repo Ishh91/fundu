@@ -24,6 +24,7 @@ import {
   Film,
   Play,
   Video as VideoIcon,
+  Users,
 } from 'lucide-react';
 import { PhoneVideoPlayer, isVideoUrl } from '../lib/videoUtils';
 import { useAuth } from '../context/AuthContext';
@@ -85,6 +86,12 @@ import {
   restoreModel,
 } from '../lib/catalogSync';
 import type { RepairPriceConfig } from '../types';
+import { describeOversizedSave, MAX_INLINE_VIDEO_FILE_BYTES, VIDEO_TOO_LARGE_MESSAGE } from '../lib/uploadLimits';
+import { readProductPhotos } from '../lib/productPhotoUpload';
+import { changedFields } from '../lib/objectDiff';
+
+// The Users page searches and filters this list in the browser, so it needs every account.
+const ADMIN_USERS_PAGE_LIMIT = 5000;
 
 export default function Admin() {
   const { user, profile, loading, signIn, signOut } = useAuth();
@@ -143,12 +150,24 @@ export default function Admin() {
   // Tab state derived from URL or params or saved session
   const [requestedTab, setTab] = useState<AdminTab>(getInitialAdminTab);
 
+  // Keep tab state synchronized when URL subtab or search params change
+  useEffect(() => {
+    const nextTab = getInitialAdminTab();
+    if (nextTab && nextTab !== requestedTab) {
+      setTab(nextTab);
+    }
+  }, [subtab, searchParams]);
+
   // Staff only see the sections they were granted; a tab they cannot open
   // (from the URL or a saved session) falls back to the overview.
-  const panelRole = profile?.role || user?.role || 'customer';
+  const isKnownAdminEmail = user?.email?.toLowerCase() === 'admin@fundu.in';
+  const panelRole = profile?.role || user?.role || (isKnownAdminEmail ? 'admin' : 'customer');
   const allowedTabs = getAllowedAdminTabs(panelRole, profile?.permissions);
   const isSuperAdmin = panelRole === 'admin';
-  const tab: AdminTab = allowedTabs.includes(requestedTab) ? requestedTab : 'overview';
+  // Allow super admins full access; always allow 'users' tab so that permissions or access guidance are visible
+  const tab: AdminTab = allowedTabs.includes(requestedTab)
+    ? requestedTab
+    : (requestedTab === 'users' ? 'users' : 'overview');
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
 
   const handleTabChange = (newTab: AdminTab) => {
@@ -161,6 +180,7 @@ export default function Admin() {
       competitor_radar: 'competitor-radar',
       repair_pricing: 'repair-pricing',
       pincodes: 'pincodes',
+      users: 'users',
     };
     const slug = slugMap[newTab] !== undefined ? slugMap[newTab] : newTab;
     const targetPath = slug ? `/admin/${slug}` : '/admin';
@@ -442,7 +462,7 @@ export default function Admin() {
       setTimeout(() => {
         Promise.all([
           db.from('spare_parts').select('*').limit(60).sort({ field: 'created_at', ascending: false }),
-          db.from('profiles').select('*').limit(60).sort({ field: 'created_at', ascending: false }),
+          db.from('profiles').select('*').limit(ADMIN_USERS_PAGE_LIMIT).sort({ field: 'created_at', ascending: false }),
           db.from('reviews').select('*').limit(60).sort({ field: 'created_at', ascending: false }),
           db.from('repair_price_configs').select('*').limit(200).sort({ field: 'created_at', ascending: false }),
         ]).then(([partsRes, profilesRes, reviewsRes, repairPricingRes]) => {
@@ -949,7 +969,17 @@ export default function Admin() {
         stock: Number(listPhoneForm.stock) || 1,
       };
 
+      // The server rejects save requests over 10 MB; explain that up front
+      // instead of failing with "request entity too large".
+      const sizeProblem = describeOversizedSave(payload);
+      if (sizeProblem) {
+        alert(sizeProblem);
+        return;
+      }
+
       const { data, error } = await db.from('products').insert(payload).select('*').single();
+      // A failed save must be reported, not shown as a product that only exists in this browser.
+      if (error) throw error;
       const newProduct: Product = (data as Product) || {
         id: 'prod-' + Date.now(),
         ...payload,
@@ -966,7 +996,6 @@ export default function Admin() {
       }
       setListPhoneModal(null);
 
-      if (error) console.warn('Product insert notice:', error.message);
       alert(`🎉 ${payload.title} successfully listed in Buy Store!`);
     } catch (err: any) {
       alert(err?.message || 'Failed to publish phone to store');
@@ -1384,17 +1413,40 @@ export default function Admin() {
       };
 
       if (productModal?.product) {
-        const { data, error } = await db
-          .from('products')
-          .update(payload)
-          .eq('id', productModal.product.id)
-          .select('*')
-          .single();
-        if (error) throw error;
-        const saved = (data as Product) || { ...productModal.product, ...payload };
-        setProducts((prev) => prev.map((p) => (p.id === productModal.product?.id ? saved : p)));
-        broadcastSync('PRODUCT_UPDATE', 'products', 'update', saved);
+        const original = productModal.product;
+        // Send only what changed. Re-uploading unchanged photos and video
+        // (several MB) on every edit is what made saving an edit slow.
+        const { updated_at, ...editable } = payload;
+        const changes = changedFields(original as unknown as Record<string, unknown>, editable);
+
+        // The server rejects save requests over 10 MB; explain that up front
+        // instead of failing with "request entity too large".
+        const sizeProblem = describeOversizedSave(changes);
+        if (sizeProblem) {
+          alert(sizeProblem);
+          return;
+        }
+
+        if (Object.keys(changes).length > 0) {
+          const { error } = await db
+            .from('products')
+            .update({ ...changes, updated_at })
+            .eq('id', original.id)
+            .select('id')
+            .single();
+          if (error) throw error;
+        }
+
+        const saved = { ...original, ...payload } as Product;
+        setProducts((prev) => prev.map((p) => (p.id === original.id ? saved : p)));
+        broadcastSync('PRODUCT_UPDATE', 'products', 'update', { id: saved.id });
       } else {
+        const sizeProblem = describeOversizedSave(payload);
+        if (sizeProblem) {
+          alert(sizeProblem);
+          return;
+        }
+
         const { data, error } = await db.from('products').insert(payload).select('*').single();
         if (error) throw error;
         const saved = data as Product;
@@ -1835,8 +1887,8 @@ export default function Admin() {
 
             <div className="flex items-center gap-2">
               <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full bg-ink-100 text-ink-700 text-xs font-semibold">
-                <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
-                <span>Admin: {user?.email}</span>
+                <span className={`h-2 w-2 rounded-full ${isSuperAdmin ? 'bg-purple-600' : 'bg-blue-500'} animate-pulse`} />
+                <span>{isSuperAdmin ? '👑 Super Admin' : 'Staff Access'}: {user?.email}</span>
               </div>
               <button
                 type="button"
@@ -1861,6 +1913,14 @@ export default function Admin() {
           </div>
 
           <div className="flex items-center gap-2 flex-wrap">
+            <button
+              type="button"
+              onClick={() => handleTabChange('users')}
+              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-indigo-600 via-purple-600 to-indigo-700 hover:from-indigo-500 hover:to-purple-500 text-white text-xs font-black shadow-md transition cursor-pointer"
+            >
+              <Users className="h-3.5 w-3.5" /> Staff & Permissions
+            </button>
+
             {allowedTabs.includes('products') && (
             <button
               type="button"
@@ -2351,6 +2411,9 @@ export default function Admin() {
               onUpdateRole={updateUserRole}
               onUpdatePermissions={updateUserPermissions}
               onToggleVerification={toggleUserVerification}
+              isSuperAdmin={isSuperAdmin}
+              currentUserRole={panelRole}
+              currentUserEmail={user?.email || undefined}
             />
           )}
 
@@ -2509,23 +2572,17 @@ export default function Admin() {
                       accept="image/*"
                       multiple
                       className="hidden"
-                      onChange={(e) => {
-                        const files = Array.from(e.target.files || []);
-                        files.forEach((file) => {
-                          if (file.size > 5 * 1024 * 1024) {
-                            alert(`File ${file.name} is too large (>5MB)`);
-                            return;
-                          }
-                          const reader = new FileReader();
-                          reader.onloadend = () => {
-                            const b64 = reader.result as string;
-                            setListPhoneForm((prev) => {
-                              const existing = prev.images ? prev.images.split('\n').filter(Boolean) : [];
-                              return { ...prev, images: [...existing, b64].join('\n') };
-                            });
-                          };
-                          reader.readAsDataURL(file);
-                        });
+                      onChange={async (e) => {
+                        const input = e.target;
+                        const { photos, errors } = await readProductPhotos(Array.from(input.files || []));
+                        input.value = '';
+                        if (photos.length > 0) {
+                          setListPhoneForm((prev) => {
+                            const existing = prev.images ? prev.images.split('\n').filter(Boolean) : [];
+                            return { ...prev, images: [...existing, ...photos].join('\n') };
+                          });
+                        }
+                        if (errors.length > 0) alert(errors.join('\n'));
                       }}
                     />
                   </label>
@@ -2588,8 +2645,9 @@ export default function Admin() {
                         onChange={(e) => {
                           const file = e.target.files?.[0];
                           if (!file) return;
-                          if (file.size > 25 * 1024 * 1024) {
-                            alert('Video file is larger than 25MB. Please provide a YouTube link or direct video URL.');
+                          if (file.size > MAX_INLINE_VIDEO_FILE_BYTES) {
+                            alert(VIDEO_TOO_LARGE_MESSAGE);
+                            e.target.value = '';
                             return;
                           }
                           const reader = new FileReader();
@@ -3289,23 +3347,17 @@ export default function Admin() {
                       accept="image/*"
                       multiple
                       className="hidden"
-                      onChange={(e) => {
-                        const files = Array.from(e.target.files || []);
-                        files.forEach((file) => {
-                          if (file.size > 5 * 1024 * 1024) {
-                            alert(`File ${file.name} is too large (>5MB)`);
-                            return;
-                          }
-                          const reader = new FileReader();
-                          reader.onloadend = () => {
-                            const b64 = reader.result as string;
-                            setProductForm((prev) => {
-                              const existing = prev.images ? prev.images.split('\n').filter(Boolean) : [];
-                              return { ...prev, images: [...existing, b64].join('\n') };
-                            });
-                          };
-                          reader.readAsDataURL(file);
-                        });
+                      onChange={async (e) => {
+                        const input = e.target;
+                        const { photos, errors } = await readProductPhotos(Array.from(input.files || []));
+                        input.value = '';
+                        if (photos.length > 0) {
+                          setProductForm((prev) => {
+                            const existing = prev.images ? prev.images.split('\n').filter(Boolean) : [];
+                            return { ...prev, images: [...existing, ...photos].join('\n') };
+                          });
+                        }
+                        if (errors.length > 0) alert(errors.join('\n'));
                       }}
                     />
                   </label>
@@ -3368,8 +3420,9 @@ export default function Admin() {
                         onChange={(e) => {
                           const file = e.target.files?.[0];
                           if (!file) return;
-                          if (file.size > 25 * 1024 * 1024) {
-                            alert('Video file is larger than 25MB. For best speed and streaming, paste a YouTube link or hosted MP4 URL.');
+                          if (file.size > MAX_INLINE_VIDEO_FILE_BYTES) {
+                            alert(VIDEO_TOO_LARGE_MESSAGE);
+                            e.target.value = '';
                             return;
                           }
                           const reader = new FileReader();

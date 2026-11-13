@@ -47,6 +47,9 @@ type AdminUsersProps = {
   onUpdateRole: (userId: string, role: string) => Promise<boolean>;
   onUpdatePermissions: (userId: string, permissions: string[]) => Promise<boolean>;
   onToggleVerification: (userId: string, current: boolean) => void;
+  isSuperAdmin?: boolean;
+  currentUserRole?: string;
+  currentUserEmail?: string;
 };
 
 export default function AdminUsers({
@@ -59,6 +62,9 @@ export default function AdminUsers({
   onUpdateRole,
   onUpdatePermissions,
   onToggleVerification,
+  isSuperAdmin = true,
+  currentUserRole = 'admin',
+  currentUserEmail,
 }: AdminUsersProps) {
   const [userList, setUserList] = useState<UserProfile[]>(profiles);
   const [search, setSearch] = useState('');
@@ -88,7 +94,12 @@ export default function AdminUsers({
     const matchesSearch = `${u.full_name || ''} ${u.email || ''} ${u.phone || ''} ${u.business_name || ''} ${u.role} ${u.id}`
       .toLowerCase()
       .includes(search.toLowerCase());
-    const matchesRole = roleFilter === 'All' || u.role.toLowerCase() === roleFilter.toLowerCase();
+    const matchesRole =
+      roleFilter === 'All'
+        ? true
+        : roleFilter === 'Staff / Admin'
+          ? u.role === 'staff' || u.role === 'admin'
+          : u.role.toLowerCase() === roleFilter.toLowerCase();
     return matchesSearch && matchesRole;
   });
 
@@ -252,22 +263,47 @@ export default function AdminUsers({
       <div className="card p-6 rounded-[28px] bg-gradient-to-r from-indigo-500/10 via-brand-500/10 to-purple-500/10 border border-indigo-200/60 flex flex-wrap items-center justify-between gap-4">
         <div>
           <div className="inline-flex items-center gap-2 rounded-full bg-indigo-100 px-3 py-1 text-xs font-black text-indigo-800">
-            <Users className="h-3.5 w-3.5" /> User & Vendor Management
+            <Users className="h-3.5 w-3.5" /> Staff Roles & Permissions Control
           </div>
-          <h2 className="mt-2 font-display text-2xl font-black text-ink-900">Manage Accounts & Verification</h2>
-          <p className="mt-1 text-xs text-ink-600">
-            Add new users/vendors with EmailJS verification OTPs, manage roles, resend verification emails, or delete test accounts.
+          <h2 className="mt-2 font-display text-2xl font-black text-ink-900">User Accounts & Admin Permissions</h2>
+          <p className="mt-1 text-xs text-ink-600 max-w-2xl leading-relaxed">
+            Select any user below to assign them <strong>Staff permissions</strong> (choose which admin sections they can access) or make them a <strong>Super Admin</strong>.
           </p>
         </div>
 
-        {/* Add User / Vendor Action Button */}
-        <button
-          onClick={() => setAddUserModal(true)}
-          className="btn-primary py-2.5 px-5 text-sm font-extrabold flex items-center gap-2 shadow-md hover:scale-[1.02] transition-transform"
-        >
-          <Plus className="h-4 w-4" /> Add New User / Vendor
-        </button>
+        {/* Action Buttons */}
+        <div className="flex items-center gap-2 flex-wrap">
+          <button
+            onClick={() => setRoleFilter(roleFilter === 'Staff / Admin' ? 'All' : 'Staff / Admin')}
+            className={`py-2 px-3.5 rounded-xl text-xs font-black border transition ${
+              roleFilter === 'Staff / Admin'
+                ? 'bg-indigo-600 text-white border-indigo-600 shadow-sm'
+                : 'bg-white text-indigo-700 border-indigo-200 hover:bg-indigo-50'
+            }`}
+          >
+            👥 Filter Staff & Admins
+          </button>
+          <button
+            onClick={() => setAddUserModal(true)}
+            className="btn-primary py-2.5 px-5 text-sm font-extrabold flex items-center gap-2 shadow-md hover:scale-[1.02] transition-transform"
+          >
+            <Plus className="h-4 w-4" /> Add New User / Staff
+          </button>
+        </div>
       </div>
+
+      {!isSuperAdmin && (
+        <div className="p-4 rounded-2xl bg-amber-50 border border-amber-300 text-amber-900 text-xs flex items-start gap-3 shadow-xs">
+          <AlertCircle className="h-5 w-5 text-amber-600 shrink-0 mt-0.5" />
+          <div>
+            <p className="font-black text-sm">Super Admin Account Required to Change Permissions</p>
+            <p className="mt-0.5 text-amber-800 leading-relaxed">
+              You are currently viewing this screen with role <strong>{currentUserRole}</strong> ({currentUserEmail || 'staff session'}).
+              To grant or modify permissions for staff accounts, please log in with the primary Super Admin account (<strong>admin@fundu.in</strong>).
+            </p>
+          </div>
+        </div>
+      )}
 
       {addUserNotice && (
         <div className="alert-success flex items-center gap-2 p-3 text-sm rounded-xl">
@@ -291,7 +327,7 @@ export default function AdminUsers({
             </div>
 
             <div className="flex gap-1.5 overflow-x-auto scrollbar-hide py-1 border-t border-ink-100/60">
-              {['All', 'Customer', 'Vendor', 'Wholesaler', 'Staff', 'Admin'].map((r) => (
+              {['All', 'Staff / Admin', 'Customer', 'Vendor', 'Wholesaler'].map((r) => (
                 <button
                   key={r}
                   onClick={() => setRoleFilter(r)}
@@ -321,16 +357,27 @@ export default function AdminUsers({
                   <div
                     key={u.id}
                     onClick={() => onSelectUser(u.id)}
-                    className={`card p-4 rounded-2xl cursor-pointer transition-all ${
-                      isSelected
+                    className={`card p-4 rounded-2xl cursor-pointer transition-all ${isSelected
                         ? 'border-brand-600 bg-brand-50/60 shadow-md ring-2 ring-brand-500/20'
                         : 'bg-white hover:border-brand-300 hover:shadow-xs'
-                    }`}
+                      }`}
                   >
                     <div className="flex items-center justify-between">
                       <p className="font-bold text-sm text-ink-900 truncate">{u.full_name || 'Customer'}</p>
                       <div className="flex items-center gap-1.5">
-                        <span className="badge bg-brand-50 text-brand-700 text-[10px] uppercase font-bold">{u.role}</span>
+                        {u.role === 'admin' ? (
+                          <span className="badge bg-purple-100 text-purple-900 border border-purple-200 text-[10px] font-black uppercase">
+                            Admin
+                          </span>
+                        ) : u.role === 'staff' ? (
+                          <span className="badge bg-blue-100 text-blue-900 border border-blue-200 text-[10px] font-black uppercase">
+                            Staff ({u.permissions?.length || 0})
+                          </span>
+                        ) : (
+                          <span className="badge bg-ink-100 text-ink-700 text-[10px] uppercase font-bold">
+                            {u.role}
+                          </span>
+                        )}
                         {/* Delete Quick Button */}
                         <button
                           onClick={(e) => {
@@ -363,13 +410,12 @@ export default function AdminUsers({
               <div className="flex flex-wrap items-center justify-between gap-4 pb-4 border-b border-ink-100">
                 <div className="flex items-center gap-4">
                   <div
-                    className={`w-14 h-14 rounded-2xl grid place-items-center ${
-                      selectedUser.role === 'admin'
+                    className={`w-14 h-14 rounded-2xl grid place-items-center ${selectedUser.role === 'admin'
                         ? 'bg-brand-100 text-brand-700'
                         : selectedUser.role === 'vendor' || selectedUser.role === 'wholesaler'
-                        ? 'bg-purple-100 text-purple-700'
-                        : 'bg-ink-100 text-ink-600'
-                    }`}
+                          ? 'bg-purple-100 text-purple-700'
+                          : 'bg-ink-100 text-ink-600'
+                      }`}
                   >
                     {selectedUser.role === 'admin' ? (
                       <ShieldCheck className="h-7 w-7" />
@@ -425,25 +471,10 @@ export default function AdminUsers({
                     <MessageSquare className="h-3.5 w-3.5" /> WhatsApp User
                   </a>
 
-                  <select
-                    value={selectedUser.role}
-                    onChange={(e) => handleRoleChange(selectedUser.id, e.target.value)}
-                    disabled={savingAccessForId === selectedUser.id}
-                    aria-label="Account role"
-                    className="input text-xs py-1.5 px-3 bg-white font-bold"
-                  >
-                    <option value="customer">CUSTOMER</option>
-                    <option value="vendor">VENDOR</option>
-                    <option value="wholesaler">WHOLESALER</option>
-                    <option value="staff">STAFF (LIMITED ADMIN)</option>
-                    <option value="admin">ADMIN (FULL ACCESS)</option>
-                  </select>
-
                   <button
                     onClick={() => onToggleVerification(selectedUser.id, selectedUser.is_verified)}
-                    className={`btn text-xs px-3 py-1.5 font-bold rounded-xl ${
-                      selectedUser.is_verified ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-900'
-                    }`}
+                    className={`btn text-xs px-3 py-1.5 font-bold rounded-xl ${selectedUser.is_verified ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-900'
+                      }`}
                   >
                     {selectedUser.is_verified ? '✓ Verified' : 'Manually Verify'}
                   </button>
@@ -458,24 +489,119 @@ export default function AdminUsers({
                 </div>
               </div>
 
-              {/* Staff access: which admin sections this person can manage */}
-              {selectedUser.role === STAFF_ROLE && (
-                <div className="p-4 rounded-2xl border border-[#C0C8D8] bg-[#F8FAFC] space-y-3">
-                  <div>
-                    <p className="text-sm font-black text-ink-900">Staff access</p>
-                    <p className="text-[11px] text-ink-500">
-                      Currently: <strong>{describePermissions(selectedUser.permissions)}</strong>. Changes save
-                      instantly and apply on this person's next click. Only a full Admin can manage users.
-                    </p>
+              {/* Dedicated Admin Role & Permissions Access Control Card */}
+              <div className="p-5 rounded-2xl border-2 border-indigo-200 bg-gradient-to-br from-indigo-50/60 via-white to-blue-50/40 space-y-4 shadow-xs">
+                <div className="flex items-center justify-between flex-wrap gap-2 pb-3 border-b border-indigo-100">
+                  <div className="flex items-center gap-2.5">
+                    <div className="h-9 w-9 rounded-xl bg-indigo-600 text-white grid place-items-center shadow-xs">
+                      <Lock className="h-4 w-4" />
+                    </div>
+                    <div>
+                      <h3 className="font-display font-black text-sm text-ink-900 flex items-center gap-2">
+                        Admin Access & Permissions Control
+                        <span className={`text-[10px] font-black uppercase px-2 py-0.5 rounded-full ${selectedUser.role === 'admin'
+                            ? 'bg-purple-100 text-purple-800 border border-purple-300'
+                            : selectedUser.role === 'staff'
+                              ? 'bg-blue-100 text-blue-800 border border-blue-300'
+                              : 'bg-ink-100 text-ink-700'
+                          }`}>
+                          {selectedUser.role === 'admin' ? 'Super Admin' : selectedUser.role === 'staff' ? 'Staff (Custom Access)' : `${selectedUser.role}`}
+                        </span>
+                      </h3>
+                      <p className="text-[11px] text-ink-500">
+                        Choose whether this account can access the Admin Panel, and assign exact permissions.
+                      </p>
+                    </div>
                   </div>
-                  <StaffPermissionsEditor
-                    idPrefix={`staff-access-${selectedUser.id}`}
-                    value={selectedUser.permissions ?? []}
-                    disabled={savingAccessForId === selectedUser.id}
-                    onChange={(permissions) => handlePermissionsChange(selectedUser.id, permissions)}
-                  />
+
+                  {/* Role Selector Dropdown */}
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs font-bold text-ink-700">Account Role:</span>
+                    <select
+                      value={selectedUser.role}
+                      onChange={(e) => handleRoleChange(selectedUser.id, e.target.value)}
+                      disabled={savingAccessForId === selectedUser.id}
+                      aria-label="Account role"
+                      className="input text-xs py-1.5 px-3 bg-white font-extrabold text-indigo-900 border-indigo-300 shadow-xs focus:ring-indigo-500 rounded-xl"
+                    >
+                      <option value="customer">Customer (No Admin Access)</option>
+                      <option value="staff">Staff (Custom Admin Permissions)</option>
+                      <option value="admin">Admin (Full Access to Everything)</option>
+                      <option value="vendor">Vendor</option>
+                      <option value="wholesaler">Wholesaler</option>
+                    </select>
+                  </div>
                 </div>
-              )}
+
+                {/* Case 1: Role is STAFF - Show granular permission checkboxes */}
+                {selectedUser.role === STAFF_ROLE && (
+                  <div className="space-y-3 pt-1">
+                    <div className="p-3 rounded-xl bg-blue-100/70 border border-blue-200 text-[11px] text-blue-900 font-medium">
+                      <strong>Current Access:</strong>{' '}
+                      <span className="font-bold underline">
+                        {describePermissions(selectedUser.permissions)}
+                      </span>
+                      . Select the sections this staff member can manage. Changes save instantly and apply on their next click.
+                    </div>
+                    <StaffPermissionsEditor
+                      idPrefix={`staff-access-${selectedUser.id}`}
+                      value={selectedUser.permissions ?? []}
+                      disabled={savingAccessForId === selectedUser.id}
+                      onChange={(permissions) => handlePermissionsChange(selectedUser.id, permissions)}
+                    />
+                  </div>
+                )}
+
+                {/* Case 2: Role is FULL ADMIN - Show super admin info banner */}
+                {selectedUser.role === 'admin' && (
+                  <div className="p-4 rounded-xl bg-purple-50 border border-purple-200 flex items-start gap-3">
+                    <ShieldCheck className="h-5 w-5 text-purple-700 shrink-0 mt-0.5" />
+                    <div className="space-y-1">
+                      <p className="text-xs font-black text-purple-950">
+                        👑 Full Administrator Access Active
+                      </p>
+                      <p className="text-[11px] text-purple-800 leading-relaxed">
+                        This user has full access to all 17 admin sections (Orders, Sells, Repairs, Store Products, Pricing, Fleet, Content, and Users & Permissions).
+                      </p>
+                      <p className="text-[11px] text-purple-700 font-bold pt-1">
+                        Want to restrict them to specific sections only? Change their role above to <strong>Staff (Custom Admin Permissions)</strong>.
+                      </p>
+                    </div>
+                  </div>
+                )}
+
+                {/* Case 3: Customer / Vendor / Other - Quick action buttons to grant admin permissions */}
+                {selectedUser.role !== STAFF_ROLE && selectedUser.role !== 'admin' && (
+                  <div className="p-4 rounded-xl bg-gray-50 border border-gray-200 flex flex-wrap items-center justify-between gap-3">
+                    <div className="space-y-0.5">
+                      <p className="text-xs font-bold text-gray-800">
+                        This user currently has no Admin Panel access
+                      </p>
+                      <p className="text-[11px] text-gray-500">
+                        Promote them to Staff to select specific sections, or make them a Full Super Admin.
+                      </p>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <button
+                        type="button"
+                        onClick={() => handleRoleChange(selectedUser.id, STAFF_ROLE)}
+                        disabled={savingAccessForId === selectedUser.id}
+                        className="btn text-xs px-3.5 py-1.5 font-bold rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white shadow-xs flex items-center gap-1.5 cursor-pointer"
+                      >
+                        <Lock className="h-3.5 w-3.5" /> Grant Staff Permissions
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleRoleChange(selectedUser.id, 'admin')}
+                        disabled={savingAccessForId === selectedUser.id}
+                        className="btn text-xs px-3.5 py-1.5 font-bold rounded-xl bg-purple-600 hover:bg-purple-700 text-white shadow-xs flex items-center gap-1.5 cursor-pointer"
+                      >
+                        <ShieldCheck className="h-3.5 w-3.5" /> Make Full Admin
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
 
               {/* User Financial & Request Stats */}
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
@@ -508,9 +634,8 @@ export default function AdminUsers({
                       <button
                         key={tab}
                         onClick={() => setActivityTab(tab)}
-                        className={`text-xs px-3 py-1.5 rounded-lg font-bold uppercase transition-colors ${
-                          activityTab === tab ? 'bg-white text-ink-900 shadow-xs' : 'text-ink-500 hover:text-ink-900'
-                        }`}
+                        className={`text-xs px-3 py-1.5 rounded-lg font-bold uppercase transition-colors ${activityTab === tab ? 'bg-white text-ink-900 shadow-xs' : 'text-ink-500 hover:text-ink-900'
+                          }`}
                       >
                         {tab}
                       </button>
@@ -589,7 +714,17 @@ export default function AdminUsers({
               </div>
             </div>
           ) : (
-            <div className="card p-12 text-center text-ink-400">Select a user from the list to view details.</div>
+            <div className="card p-12 text-center text-ink-500 space-y-3 bg-indigo-50/30 border border-indigo-100 rounded-3xl">
+              <div className="h-12 w-12 rounded-2xl bg-indigo-100 text-indigo-700 grid place-items-center mx-auto">
+                <Users className="h-6 w-6" />
+              </div>
+              <h3 className="font-display font-black text-base text-ink-900">
+                Select a User to Assign Permissions
+              </h3>
+              <p className="text-xs text-ink-500 max-w-sm mx-auto leading-relaxed">
+                Click on any user from the left list. You can change their role to <strong>Staff</strong> and toggle specific permissions for Orders, Sells, Repairs, Store Products, Pricing, and Fleet.
+              </p>
+            </div>
           )}
         </div>
       </div>

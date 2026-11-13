@@ -274,7 +274,7 @@ export function getUnifiedCatalog(brandFilter?: string): UnifiedCatalogModel[] {
       p.model,
       p.storage_options?.[0] || '128 GB',
       p.base_resale_value || p.price || 12500,
-      p.image_url,
+      p.image_url ?? undefined,
       undefined,
       p.release_year
     );
@@ -302,8 +302,8 @@ export function getUnifiedCatalog(brandFilter?: string): UnifiedCatalogModel[] {
             dm.model,
             dm.storage || '128 GB',
             dm.price || 12000,
-            dm.image,
-            s.seriesName
+            dm.image ?? undefined,
+            s.name
           );
         });
       });
@@ -317,7 +317,7 @@ export function getUnifiedCatalog(brandFilter?: string): UnifiedCatalogModel[] {
       p.model,
       p.storage_options?.[0] || '128 GB',
       p.base_resale_value || 11000,
-      p.image_url,
+      p.image_url ?? undefined,
       undefined,
       p.release_year
     );

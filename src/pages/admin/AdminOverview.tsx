@@ -10,6 +10,8 @@ import {
   CheckCircle2,
   Clock,
   ArrowUpRight,
+  Users,
+  ShieldCheck,
 } from 'lucide-react';
 import type { Order, SellRequest, RepairBooking, Product, DeliveryAgent, MasterPhone } from './adminTypes';
 import { formatINR } from '../../lib/db';
@@ -105,6 +107,13 @@ export default function AdminOverview({
           >
             <Wrench className="h-3.5 w-3.5" /> Repair Catalog
           </button>
+          <button
+            type="button"
+            onClick={() => onNavigateTab('users')}
+            className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-indigo-50 hover:bg-indigo-100 text-indigo-900 border border-indigo-200 font-extrabold text-xs transition shadow-2xs"
+          >
+            <Users className="h-3.5 w-3.5 text-indigo-600" /> Users & Permissions
+          </button>
         </div>
       </div>
 
@@ -132,6 +141,31 @@ export default function AdminOverview({
             </div>
           );
         })}
+      </div>
+
+      {/* Team & Staff Permissions Callout */}
+      <div className="card p-5 rounded-2xl bg-gradient-to-r from-indigo-50/70 via-purple-50/40 to-blue-50/60 border border-indigo-200 flex flex-wrap items-center justify-between gap-4 shadow-xs">
+        <div className="flex items-center gap-3">
+          <div className="h-10 w-10 rounded-2xl bg-indigo-600 text-white grid place-items-center shadow-md">
+            <Users className="h-5 w-5" />
+          </div>
+          <div>
+            <h3 className="font-display font-black text-sm text-ink-900 flex items-center gap-2">
+              Admin Access & Staff Permissions
+              <span className="badge bg-indigo-100 text-indigo-800 text-[10px] font-black uppercase">Live Control</span>
+            </h3>
+            <p className="text-xs text-ink-600 mt-0.5">
+              Choose who gets access to what: grant granular section-by-section permissions (Orders, Sells, Repairs, Store Inventory, Pricing, Fleet) to staff accounts.
+            </p>
+          </div>
+        </div>
+        <button
+          type="button"
+          onClick={() => onNavigateTab('users')}
+          className="btn-primary py-2 px-4 text-xs font-black flex items-center gap-1.5 bg-indigo-600 hover:bg-indigo-700 text-white shadow-sm cursor-pointer"
+        >
+          <Users className="h-3.5 w-3.5" /> Manage Users & Permissions →
+        </button>
       </div>
 
       {/* Actionable Split Sections */}
