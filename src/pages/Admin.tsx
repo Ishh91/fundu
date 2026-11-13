@@ -25,6 +25,7 @@ import {
   Play,
   Video as VideoIcon,
   Users,
+  Zap,
 } from 'lucide-react';
 import { PhoneVideoPlayer, isVideoUrl } from '../lib/videoUtils';
 import { useAuth } from '../context/AuthContext';
@@ -977,11 +978,11 @@ export default function Admin() {
         return;
       }
 
-      const { data, error } = await db.from('products').insert(payload).select('*').single();
+      const { data, error } = await db.from('products').insert(payload).select('id').single();
       // A failed save must be reported, not shown as a product that only exists in this browser.
       if (error) throw error;
-      const newProduct: Product = (data as Product) || {
-        id: 'prod-' + Date.now(),
+      const newProduct: Product = {
+        id: (data as any)?.id || 'prod-' + Date.now(),
         ...payload,
         sold_count: 0,
         seller_id: null,
@@ -990,10 +991,12 @@ export default function Admin() {
 
       setProducts((prev) => [newProduct, ...prev]);
       setSelectedProductId(newProduct.id);
-      broadcastSync('PRODUCT_UPDATE', 'products', 'insert', newProduct);
+      broadcastSync('PRODUCT_UPDATE', 'products', 'insert', { id: newProduct.id });
       if (payload.images && payload.images.length > 0 && payload.images[0]) {
         saveCustomModelImage(payload.brand, payload.model, payload.images[0]);
-        saveModelImageToDatabase(payload.brand, payload.model, payload.images[0]).catch(() => {});
+        if (!payload.images[0].startsWith('data:') || payload.images[0].length < 60000) {
+          saveModelImageToDatabase(payload.brand, payload.model, payload.images[0]).catch(() => {});
+        }
       }
       setListPhoneModal(null);
 
@@ -1448,16 +1451,18 @@ export default function Admin() {
           return;
         }
 
-        const { data, error } = await db.from('products').insert(payload).select('*').single();
+        const { data, error } = await db.from('products').insert(payload).select('id').single();
         if (error) throw error;
-        const saved = data as Product;
+        const saved = { ...payload, id: (data as any)?.id || 'prod_' + Date.now() } as Product;
         setProducts((prev) => [saved, ...prev]);
         setSelectedProductId(saved.id);
-        broadcastSync('PRODUCT_UPDATE', 'products', 'insert', saved);
+        broadcastSync('PRODUCT_UPDATE', 'products', 'insert', { id: saved.id });
       }
       if (payload.images && payload.images.length > 0 && payload.images[0]) {
         saveCustomModelImage(payload.brand, payload.model, payload.images[0]);
-        saveModelImageToDatabase(payload.brand, payload.model, payload.images[0]).catch(() => {});
+        if (!payload.images[0].startsWith('data:') || payload.images[0].length < 60000) {
+          saveModelImageToDatabase(payload.brand, payload.model, payload.images[0]).catch(() => {});
+        }
       }
       setProductModal(null);
     } catch (err: any) {
@@ -2668,6 +2673,14 @@ export default function Admin() {
                     placeholder="Paste YouTube link (e.g. https://youtu.be/...) or direct MP4 URL"
                     className="input text-xs font-mono"
                   />
+                  {listPhoneForm.video_url?.startsWith('data:') && (
+                    <div className="mt-2 flex items-center gap-2 p-2 rounded-xl bg-amber-50 border border-amber-200 text-amber-800 text-[11px] font-medium">
+                      <Zap className="h-3.5 w-3.5 text-amber-600 shrink-0" />
+                      <span>
+                        <strong>Tip:</strong> Uploaded video files (~5MB) take 30–60 seconds to upload depending on internet speed. For instant saves under 1 second, paste a YouTube link instead.
+                      </span>
+                    </div>
+                  )}
                   {listPhoneForm.video_url && (
                     <div className="mt-2 rounded-2xl border border-purple-200 bg-purple-50/50 p-2 space-y-1.5">
                       <div className="flex items-center justify-between text-xs font-bold text-purple-900">
@@ -2695,8 +2708,15 @@ export default function Admin() {
               <button onClick={() => setListPhoneModal(null)} className="btn-outline text-xs">
                 Cancel
               </button>
-              <button onClick={publishPhoneToStore} disabled={listPhoneSaving} className="btn-primary text-xs">
-                {listPhoneSaving ? 'Publishing...' : 'Publish to Store'}
+              <button onClick={publishPhoneToStore} disabled={listPhoneSaving} className="btn-primary text-xs flex items-center gap-1.5">
+                {listPhoneSaving ? (
+                  <>
+                    <RefreshCw className="h-3.5 w-3.5 animate-spin" />
+                    {listPhoneForm.video_url?.startsWith('data:') ? 'Uploading Video & Publishing...' : 'Publishing...'}
+                  </>
+                ) : (
+                  'Publish to Store'
+                )}
               </button>
             </div>
           </div>
@@ -3446,6 +3466,14 @@ export default function Admin() {
                   <p className="text-[10px] text-gray-400">
                     Add a YouTube link, video URL, or upload a clip. Customers can watch the video directly on the phone detail page.
                   </p>
+                  {productForm.video_url?.startsWith('data:') && (
+                    <div className="mt-2 flex items-center gap-2 p-2 rounded-xl bg-amber-50 border border-amber-200 text-amber-800 text-[11px] font-medium">
+                      <Zap className="h-3.5 w-3.5 text-amber-600 shrink-0" />
+                      <span>
+                        <strong>Tip:</strong> Uploaded video files (~5MB) take 30–60 seconds to upload depending on internet speed. For instant saves under 1 second, paste a YouTube link instead.
+                      </span>
+                    </div>
+                  )}
                   {productForm.video_url && (
                     <div className="mt-2 rounded-2xl border border-purple-200 bg-purple-50/50 p-2.5 space-y-1.5">
                       <div className="flex items-center justify-between text-xs font-bold text-purple-900">
@@ -3473,8 +3501,15 @@ export default function Admin() {
               <button onClick={() => setProductModal(null)} className="btn-outline text-xs">
                 Cancel
               </button>
-              <button onClick={saveProduct} disabled={productSaving} className="btn-primary text-xs">
-                {productSaving ? 'Saving...' : 'Save Product'}
+              <button onClick={saveProduct} disabled={productSaving} className="btn-primary text-xs flex items-center gap-1.5">
+                {productSaving ? (
+                  <>
+                    <RefreshCw className="h-3.5 w-3.5 animate-spin" />
+                    {productForm.video_url?.startsWith('data:') ? 'Uploading Video & Saving...' : 'Saving Product...'}
+                  </>
+                ) : (
+                  'Save Product'
+                )}
               </button>
             </div>
           </div>
