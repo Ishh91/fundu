@@ -8,7 +8,7 @@
     "dev:server": "node --watch server/index.js",
     "server": "node server/index.js",
     "build": "vite build",
-    "test": "node --test test/quote.test.js test/seo.test.js test/permissions.test.js test/authRefresh.test.js test/performance.test.js test/productSave.test.js test/editSave.test.js",
+    "test": "node --test test/quote.test.js test/seo.test.js test/permissions.test.js test/authRefresh.test.js test/performance.test.js test/productSave.test.js test/editSave.test.js test/rejectedSession.test.js",
     "lint": "eslint .",
     "preview": "vite preview",
     "typecheck": "tsc --noEmit -p tsconfig.app.json",
