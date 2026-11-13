@@ -374,6 +374,24 @@ export const connectDB = async () => {
     await seedDatabase();
   } catch (err) {
     console.warn('MongoDB connection notice:', err.message || err);
-    console.log('Express server starting in standalone mode...');
+    console.log(`Express server starting without a database; retrying the connection every ${DB_RETRY_INTERVAL_MS / 1000}s...`);
+    scheduleReconnect();
   }
 };
+
+const DB_RETRY_INTERVAL_MS = 15 * 1000;
+let reconnectTimer = null;
+
+// A failed first connection is not retried by Mongoose on its own. Without
+// this, one slow database start left the API with no database until the
+// next deploy or restart.
+function scheduleReconnect() {
+  if (reconnectTimer) return;
+  reconnectTimer = setTimeout(async () => {
+    reconnectTimer = null;
+    if (mongoose.connection.readyState === 1) return;
+    await connectDB();
+  }, DB_RETRY_INTERVAL_MS);
+  // Never keep the process alive just for this timer.
+  reconnectTimer.unref?.();
+}

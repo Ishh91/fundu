@@ -85,6 +85,8 @@ import {
   restoreModel,
 } from '../lib/catalogSync';
 import type { RepairPriceConfig } from '../types';
+import { describeOversizedSave, MAX_INLINE_VIDEO_FILE_BYTES, VIDEO_TOO_LARGE_MESSAGE } from '../lib/uploadLimits';
+import { readProductPhotos } from '../lib/productPhotoUpload';
 
 export default function Admin() {
   const { user, profile, loading, signIn, signOut } = useAuth();
@@ -949,7 +951,17 @@ export default function Admin() {
         stock: Number(listPhoneForm.stock) || 1,
       };
 
+      // The server rejects save requests over 10 MB; explain that up front
+      // instead of failing with "request entity too large".
+      const sizeProblem = describeOversizedSave(payload);
+      if (sizeProblem) {
+        alert(sizeProblem);
+        return;
+      }
+
       const { data, error } = await db.from('products').insert(payload).select('*').single();
+      // A failed save must be reported, not shown as a product that only exists in this browser.
+      if (error) throw error;
       const newProduct: Product = (data as Product) || {
         id: 'prod-' + Date.now(),
         ...payload,
@@ -966,7 +978,6 @@ export default function Admin() {
       }
       setListPhoneModal(null);
 
-      if (error) console.warn('Product insert notice:', error.message);
       alert(`🎉 ${payload.title} successfully listed in Buy Store!`);
     } catch (err: any) {
       alert(err?.message || 'Failed to publish phone to store');
@@ -1382,6 +1393,14 @@ export default function Admin() {
         available_colors: productForm.available_colors,
         updated_at: new Date().toISOString(),
       };
+
+      // The server rejects save requests over 10 MB; explain that up front
+      // instead of failing with "request entity too large".
+      const sizeProblem = describeOversizedSave(payload);
+      if (sizeProblem) {
+        alert(sizeProblem);
+        return;
+      }
 
       if (productModal?.product) {
         const { data, error } = await db
@@ -2509,23 +2528,17 @@ export default function Admin() {
                       accept="image/*"
                       multiple
                       className="hidden"
-                      onChange={(e) => {
-                        const files = Array.from(e.target.files || []);
-                        files.forEach((file) => {
-                          if (file.size > 5 * 1024 * 1024) {
-                            alert(`File ${file.name} is too large (>5MB)`);
-                            return;
-                          }
-                          const reader = new FileReader();
-                          reader.onloadend = () => {
-                            const b64 = reader.result as string;
-                            setListPhoneForm((prev) => {
-                              const existing = prev.images ? prev.images.split('\n').filter(Boolean) : [];
-                              return { ...prev, images: [...existing, b64].join('\n') };
-                            });
-                          };
-                          reader.readAsDataURL(file);
-                        });
+                      onChange={async (e) => {
+                        const input = e.target;
+                        const { photos, errors } = await readProductPhotos(Array.from(input.files || []));
+                        input.value = '';
+                        if (photos.length > 0) {
+                          setListPhoneForm((prev) => {
+                            const existing = prev.images ? prev.images.split('\n').filter(Boolean) : [];
+                            return { ...prev, images: [...existing, ...photos].join('\n') };
+                          });
+                        }
+                        if (errors.length > 0) alert(errors.join('\n'));
                       }}
                     />
                   </label>
@@ -2588,8 +2601,9 @@ export default function Admin() {
                         onChange={(e) => {
                           const file = e.target.files?.[0];
                           if (!file) return;
-                          if (file.size > 25 * 1024 * 1024) {
-                            alert('Video file is larger than 25MB. Please provide a YouTube link or direct video URL.');
+                          if (file.size > MAX_INLINE_VIDEO_FILE_BYTES) {
+                            alert(VIDEO_TOO_LARGE_MESSAGE);
+                            e.target.value = '';
                             return;
                           }
                           const reader = new FileReader();
@@ -3289,23 +3303,17 @@ export default function Admin() {
                       accept="image/*"
                       multiple
                       className="hidden"
-                      onChange={(e) => {
-                        const files = Array.from(e.target.files || []);
-                        files.forEach((file) => {
-                          if (file.size > 5 * 1024 * 1024) {
-                            alert(`File ${file.name} is too large (>5MB)`);
-                            return;
-                          }
-                          const reader = new FileReader();
-                          reader.onloadend = () => {
-                            const b64 = reader.result as string;
-                            setProductForm((prev) => {
-                              const existing = prev.images ? prev.images.split('\n').filter(Boolean) : [];
-                              return { ...prev, images: [...existing, b64].join('\n') };
-                            });
-                          };
-                          reader.readAsDataURL(file);
-                        });
+                      onChange={async (e) => {
+                        const input = e.target;
+                        const { photos, errors } = await readProductPhotos(Array.from(input.files || []));
+                        input.value = '';
+                        if (photos.length > 0) {
+                          setProductForm((prev) => {
+                            const existing = prev.images ? prev.images.split('\n').filter(Boolean) : [];
+                            return { ...prev, images: [...existing, ...photos].join('\n') };
+                          });
+                        }
+                        if (errors.length > 0) alert(errors.join('\n'));
                       }}
                     />
                   </label>
@@ -3368,8 +3376,9 @@ export default function Admin() {
                         onChange={(e) => {
                           const file = e.target.files?.[0];
                           if (!file) return;
-                          if (file.size > 25 * 1024 * 1024) {
-                            alert('Video file is larger than 25MB. For best speed and streaming, paste a YouTube link or hosted MP4 URL.');
+                          if (file.size > MAX_INLINE_VIDEO_FILE_BYTES) {
+                            alert(VIDEO_TOO_LARGE_MESSAGE);
+                            e.target.value = '';
                             return;
                           }
                           const reader = new FileReader();

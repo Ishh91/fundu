@@ -1,4 +1,4 @@
-import { Types } from 'mongoose';
+import mongoose, { Types } from 'mongoose';
 import { getModel, Order, User, VendorLedger, WholesaleOrder, WholesaleInventory, Product } from '../models/index.js';
 import { createHttpError } from '../utils/error.js';
 import {
@@ -442,7 +442,22 @@ export const queryTable = async (table, { auth, filters, sort, select, single, l
   return normalized;
 };
 
+const DB_CONNECTED = 1;
+
+/**
+ * Writes must fail cleanly while MongoDB is unreachable. With command
+ * buffering off, Mongoose throws from inside a driver callback when a write
+ * is attempted without a connection, which would crash the whole process
+ * instead of failing the one request.
+ */
+export const assertDatabaseReady = (readyState = mongoose.connection.readyState) => {
+  if (readyState !== DB_CONNECTED) {
+    throw createHttpError(503, 'The database is temporarily unavailable. Nothing was saved - please try again in a minute.');
+  }
+};
+
 export const insertIntoTable = async (table, { auth, values, single }) => {
+  assertDatabaseReady();
   const Model = getModel(table);
   const items = Array.isArray(values) ? values : [values];
   const preparedItems = [];
@@ -651,6 +666,7 @@ export const insertIntoTable = async (table, { auth, values, single }) => {
 };
 
 export const updateTable = async (table, { auth, filters, values, single }) => {
+  assertDatabaseReady();
   const Model = getModel(table);
   const scope = await getWriteScope(table, auth, filters);
   const payload = preparePayload(table, 'update', values, auth);
@@ -779,6 +795,7 @@ export const updateTable = async (table, { auth, filters, values, single }) => {
 };
 
 export const upsertTable = async (table, { auth, values, single }) => {
+  assertDatabaseReady();
   if (table === 'profiles') {
     requireAuth(auth);
     const payload = preparePayload(table, 'upsert', values, auth);
@@ -877,6 +894,7 @@ export const upsertTable = async (table, { auth, values, single }) => {
 };
 
 export const deleteFromTable = async (table, { auth, filters }) => {
+  assertDatabaseReady();
   const Model = getModel(table);
   const scope = await getWriteScope(table, auth, filters);
   const result = await Model.deleteMany(scope);
