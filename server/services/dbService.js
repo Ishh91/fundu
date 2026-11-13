@@ -665,7 +665,21 @@ export const insertIntoTable = async (table, { auth, values, single }) => {
   return single ? normalized[0] ?? null : normalized;
 };
 
-export const updateTable = async (table, { auth, filters, values, single }) => {
+/**
+ * Trims an update's reply to the columns the client asked for, so saving a
+ * small edit does not send a multi-MB document (photos, video) back down.
+ * "*" or no selection returns the full document as before.
+ */
+export const pickSelectedFields = (doc, select) => {
+  if (!doc || typeof select !== 'string') return doc;
+  const fields = select.split(',').map((field) => field.trim()).filter(Boolean);
+  if (fields.length === 0 || fields.includes('*')) return doc;
+
+  const pick = (item) => Object.fromEntries(fields.filter((field) => field in item).map((field) => [field, item[field]]));
+  return Array.isArray(doc) ? doc.map(pick) : pick(doc);
+};
+
+export const updateTable = async (table, { auth, filters, values, single, select }) => {
   assertDatabaseReady();
   const Model = getModel(table);
   const scope = await getWriteScope(table, auth, filters);
@@ -791,7 +805,7 @@ export const updateTable = async (table, { auth, filters, values, single }) => {
     console.warn('Notice on status change notification:', e);
   }
 
-  return updatedDoc;
+  return pickSelectedFields(updatedDoc, select);
 };
 
 export const upsertTable = async (table, { auth, values, single }) => {

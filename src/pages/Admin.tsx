@@ -87,6 +87,7 @@ import {
 import type { RepairPriceConfig } from '../types';
 import { describeOversizedSave, MAX_INLINE_VIDEO_FILE_BYTES, VIDEO_TOO_LARGE_MESSAGE } from '../lib/uploadLimits';
 import { readProductPhotos } from '../lib/productPhotoUpload';
+import { changedFields } from '../lib/objectDiff';
 
 export default function Admin() {
   const { user, profile, loading, signIn, signOut } = useAuth();
@@ -1394,26 +1395,41 @@ export default function Admin() {
         updated_at: new Date().toISOString(),
       };
 
-      // The server rejects save requests over 10 MB; explain that up front
-      // instead of failing with "request entity too large".
-      const sizeProblem = describeOversizedSave(payload);
-      if (sizeProblem) {
-        alert(sizeProblem);
-        return;
-      }
-
       if (productModal?.product) {
-        const { data, error } = await db
-          .from('products')
-          .update(payload)
-          .eq('id', productModal.product.id)
-          .select('*')
-          .single();
-        if (error) throw error;
-        const saved = (data as Product) || { ...productModal.product, ...payload };
-        setProducts((prev) => prev.map((p) => (p.id === productModal.product?.id ? saved : p)));
-        broadcastSync('PRODUCT_UPDATE', 'products', 'update', saved);
+        const original = productModal.product;
+        // Send only what changed. Re-uploading unchanged photos and video
+        // (several MB) on every edit is what made saving an edit slow.
+        const { updated_at, ...editable } = payload;
+        const changes = changedFields(original as unknown as Record<string, unknown>, editable);
+
+        // The server rejects save requests over 10 MB; explain that up front
+        // instead of failing with "request entity too large".
+        const sizeProblem = describeOversizedSave(changes);
+        if (sizeProblem) {
+          alert(sizeProblem);
+          return;
+        }
+
+        if (Object.keys(changes).length > 0) {
+          const { error } = await db
+            .from('products')
+            .update({ ...changes, updated_at })
+            .eq('id', original.id)
+            .select('id')
+            .single();
+          if (error) throw error;
+        }
+
+        const saved = { ...original, ...payload } as Product;
+        setProducts((prev) => prev.map((p) => (p.id === original.id ? saved : p)));
+        broadcastSync('PRODUCT_UPDATE', 'products', 'update', { id: saved.id });
       } else {
+        const sizeProblem = describeOversizedSave(payload);
+        if (sizeProblem) {
+          alert(sizeProblem);
+          return;
+        }
+
         const { data, error } = await db.from('products').insert(payload).select('*').single();
         if (error) throw error;
         const saved = data as Product;

@@ -113,7 +113,7 @@ router.post('/:table', async (req, res, next) => {
 
 router.patch('/:table', async (req, res, next) => {
   try {
-    const { filters = [], values, single = false } = req.body;
+    const { filters = [], values, single = false, select } = req.body;
     if (!values) throw createHttpError(400, 'values is required.');
 
     const data = await updateTable(req.params.table, {
@@ -121,6 +121,7 @@ router.patch('/:table', async (req, res, next) => {
       filters,
       values,
       single,
+      select,
     });
 
     res.json({ data });
