@@ -10,6 +10,7 @@ import {
 } from '../services/dbService.js';
 import { invalidateLiveImages } from '../utils/liveImagesCache.js';
 import { offloadMediaForSave } from '../services/cloudinary.js';
+import { BRAND_TABLES, withCleanBrand } from '../utils/brandText.js';
 
 const router = Router();
 
@@ -44,6 +45,12 @@ const PHOTO_TABLES = new Set([
 
 const withPhotosOnCloudinary = (req, table, values) =>
   req.auth && PHOTO_TABLES.has(table) ? offloadMediaForSave(values, { folder: table }) : values;
+
+// Brand names are typed by hand; stray spaces would later hide a phone from its brand filter.
+const withCleanBrandName = (table, values) => (BRAND_TABLES.has(table) ? withCleanBrand(values) : values);
+
+const prepareValuesForSave = (req, table, rawValues) =>
+  withPhotosOnCloudinary(req, table, withCleanBrandName(table, rawValues));
 
 /**
  * Drops cached reads for a table. Call it after a write has finished: clearing
@@ -128,7 +135,7 @@ router.post('/:table', async (req, res, next) => {
   try {
     const { action = 'insert', values: rawValues, single = false } = req.body;
     if (!rawValues) throw createHttpError(400, 'values is required.');
-    const values = await withPhotosOnCloudinary(req, req.params.table, rawValues);
+    const values = await prepareValuesForSave(req, req.params.table, rawValues);
 
     const data = action === 'upsert'
       ? await upsertTable(req.params.table, { auth: req.auth, values, single })
@@ -146,7 +153,7 @@ router.patch('/:table', async (req, res, next) => {
   try {
     const { filters = [], values: rawValues, single = false, select } = req.body;
     if (!rawValues) throw createHttpError(400, 'values is required.');
-    const values = await withPhotosOnCloudinary(req, req.params.table, rawValues);
+    const values = await prepareValuesForSave(req, req.params.table, rawValues);
 
     const data = await updateTable(req.params.table, {
       auth: req.auth,
