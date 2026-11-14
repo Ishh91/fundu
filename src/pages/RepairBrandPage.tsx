@@ -50,7 +50,7 @@ const BRAND_REPAIR_DETAILS: Record<
   },
   samsung: {
     logo: getCleanBrandLogo('Samsung'),
-    tagline: 'Doorstep Samsung Galaxy Phone Repair & Display Replacement at your doorstep',
+    tagline: 'Doorstep Samsung Galaxy Phone Repair & Display Replacement',
     desc: 'Original Super AMOLED screen replacement, battery health fix & motherboard IC repair for Samsung S, Z Fold, A & M series at your doorstep.',
     count: '45+ Samsung Models Covered',
     series: ['All', 'Galaxy S Series', 'Galaxy Z Series', 'Galaxy A Series', 'Galaxy M Series'],
@@ -64,7 +64,7 @@ const BRAND_REPAIR_DETAILS: Record<
   },
   xiaomi: {
     logo: getCleanBrandLogo('Xiaomi'),
-    tagline: 'Fast Doorstep Xiaomi / Redmi / POCO Phone Doorstep Repair',
+    tagline: 'Fast Doorstep Xiaomi / Redmi / POCO Phone Repair',
     desc: 'Expert display change, battery replacement & liquid damage diagnosis for Xiaomi Mi, Redmi Note & POCO mobiles at home.',
     count: '50+ Xiaomi Models Covered',
     series: ['All', 'Redmi Note Series', 'Mi Series', 'Redmi Series', 'Poco Series'],
@@ -72,7 +72,7 @@ const BRAND_REPAIR_DETAILS: Record<
   vivo: {
     logo: getCleanBrandLogo('Vivo'),
     tagline: 'Doorstep Vivo Mobile Display & Glass Replacement Service',
-    desc: 'Get your Vivo X, V & Y series phone repaired at your doorstep at your doorstep. Original parts & up to 6 months warranty.',
+    desc: 'Get your Vivo X, V & Y series phone repaired at your doorstep. Original parts & up to 6 months warranty.',
     count: '40+ Vivo Models Covered',
     series: ['All', 'X Series', 'V Series', 'Y Series'],
   },
@@ -86,20 +86,20 @@ const BRAND_REPAIR_DETAILS: Record<
   oppo: {
     logo: getCleanBrandLogo('Oppo'),
     tagline: 'Doorstep Oppo Mobile Screen & Charging Port Repair',
-    desc: 'Certified repair for Oppo Reno, Find & A series at your doorstep at your doorstep with zero visiting fees.',
+    desc: 'Certified repair for Oppo Reno, Find & A series at your doorstep with zero visiting fees.',
     count: '30+ Oppo Models Covered',
     series: ['All', 'Reno Series', 'Find Series', 'A Series'],
   },
   google: {
     logo: getCleanBrandLogo('Google'),
-    tagline: 'Doorstep Google Pixel Display & Battery Doorstep Repair',
+    tagline: 'Doorstep Google Pixel Display & Battery Repair',
     desc: 'Specialized doorstep repair for Google Pixel 8, 7 & 6 series with OEM screen panels & original batteries.',
     count: '15+ Pixel Models Covered',
     series: ['All', 'Pixel Series'],
   },
   motorola: {
     logo: getCleanBrandLogo('Motorola'),
-    tagline: 'Doorstep Motorola Phone Display & Battery Doorstep Repair',
+    tagline: 'Doorstep Motorola Phone Display & Battery Repair',
     desc: 'Certified repair for Motorola Edge, Moto G & Razr series at your doorstep with genuine replacement parts.',
     count: '25+ Motorola Models Covered',
     series: ['All', 'Edge Series', 'G Series', 'Razr Series'],
@@ -150,7 +150,7 @@ export default function RepairBrandPage() {
 
   const brandInfo = BRAND_REPAIR_DETAILS[brandCleanKey] || {
     logo: 'https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=150&auto=format&fit=crop&q=80',
-    tagline: `Doorstep ${brandDisplayName} Mobile Repair Service at your doorstep`,
+    tagline: `Doorstep ${brandDisplayName} Mobile Repair Service`,
     desc: `Get certified doorstep ${brandDisplayName} mobile screen, battery, camera & motherboard doorstep repair with up to 6 months warranty.`,
     count: `30+ ${brandDisplayName} Models Covered`,
     series: ['All'],
@@ -494,7 +494,7 @@ export default function RepairBrandPage() {
                   <Wrench className="h-3.5 w-3.5 text-[#47576E]" /> Doorstep Repair Center
                 </div>
                 <h1 className="font-display text-2xl md:text-3xl font-black text-[#344257]">
-                  Doorstep {brandDisplayName} Doorstep Mobile Repair
+                  Doorstep {brandDisplayName} Mobile Repair
                 </h1>
                 <p className="text-xs text-[#47576E] mt-1 max-w-2xl font-medium">
                   {brandInfo.desc}
@@ -890,7 +890,7 @@ export default function RepairBrandPage() {
           <div className="space-y-3 max-w-4xl mx-auto">
             {[
               {
-                q: `How long does it take to repair a ${brandDisplayName} phone at my doorstep at your doorstep?`,
+                q: `How long does it take to repair a ${brandDisplayName} phone at my doorstep?`,
                 a: `Most screen, battery, camera, and charging port replacements are completed within 20 to 30 minutes right in front of you.`,
               },
               {

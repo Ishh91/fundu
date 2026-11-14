@@ -3,6 +3,7 @@
  * Provides official front-facing upright device renders and authentic brand logos.
  */
 
+import { afterPageSettles } from './afterPageSettles';
 import { getErrorMessage } from './errorMessage';
 import { MOBILE_API_THUMBS } from '../data/deviceImageDictionary.ts';
 import { broadcastSync, subscribeToRealtimeSync } from './realtimeSync';
@@ -1091,14 +1092,10 @@ if (typeof window !== 'undefined') {
     }
   });
 
-  // Pull after the first paint, not at the very start: this is a large download and, started
-  // immediately, it competes with the page's own data (a product, a list) on the same slow server.
-  // Pages that need the images straight away (sell pages) still ask for them themselves.
-  if ('requestIdleCallback' in window) {
-    window.requestIdleCallback(() => { void pullLiveModelImagesFromDb(); }, { timeout: 3000 });
-  } else {
-    setTimeout(() => { void pullLiveModelImagesFromDb(); }, 1800);
-  }
+  // Pull once the page has loaded its own data, not at the very start: this is a large download and,
+  // started immediately, it competes with the page's data on the same server. Pages that need the
+  // images straight away (sell pages) still ask for them themselves.
+  afterPageSettles(() => { void pullLiveModelImagesFromDb(); });
 
   // Fast re-check on tab focus / visibilitychange
   window.addEventListener('focus', () => {
