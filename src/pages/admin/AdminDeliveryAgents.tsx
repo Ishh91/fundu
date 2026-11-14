@@ -518,7 +518,7 @@ export default function AdminDeliveryAgents({
                 ⚡ Executive Doorstep Spot Clearance Hub
               </span>
               <p className="text-amber-950 font-bold mt-1 text-sm">
-                Riders have completed 32-point physical check & uploaded live photos. Review and authorize spot bank payout.
+                Riders have completed 42-point physical check & uploaded live photos. Review and authorize spot bank payout.
               </p>
             </div>
             <span className="font-mono font-bold text-amber-900 bg-amber-100 px-3 py-1 rounded-xl">

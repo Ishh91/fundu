@@ -59,7 +59,7 @@ const FLOW_DATA = {
       },
       {
         step: '02',
-        title: '32-Point Quality Inspection',
+        title: '42-Point Quality Inspection',
         desc: 'Every phone passes rigorous hardware, battery, display, and biometric testing.',
         icon: ShieldCheck,
       },

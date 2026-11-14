@@ -377,7 +377,7 @@ export default function SearchActionPage() {
                       </h3>
                       <p className="text-xs text-gray-500 leading-relaxed">
                         {stockInfo.inStock
-                          ? '32-point tested, Grade A condition, 6-month warranty with same-day doorstep delivery.'
+                          ? '42-point tested, Grade A condition, 6-month warranty with same-day doorstep delivery.'
                           : 'Currently out of stock at your doorstep warehouse. Click below to get restock SMS alert.'}
                       </p>
 

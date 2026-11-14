@@ -28,6 +28,7 @@ import {
 } from 'lucide-react';
 import { useSearchParams, useNavigate, Link } from 'react-router-dom';
 import { db, formatINR } from '../lib/db';
+import { BUDGET_SLIDER_MAX, BUDGET_SLIDER_STEP, budgetLabel, isBudgetFilterActive, matchesBudget } from '../lib/budgetFilter';
 import { deduplicateProductsByModel } from '../lib/modelVariants';
 import { getCachedLaptops, setCachedLaptops } from '../lib/productsCache';
 import { useAuth } from '../context/AuthContext';
@@ -135,7 +136,7 @@ export default function BuyLaptops() {
   const [selectedUseCase, setSelectedUseCase] = useState<string>('all');
   const [gradeFilter, setGradeFilter] = useState<string>('All');
   const [pricePreset, setPricePreset] = useState<number>(0);
-  const [maxPrice, setMaxPrice] = useState<number>(150000);
+  const [maxPrice, setMaxPrice] = useState<number>(BUDGET_SLIDER_MAX);
   const [selectedRam, setSelectedRam] = useState<string>('');
   const [selectedStorage, setSelectedStorage] = useState<string>('');
   const [selectedCpu, setSelectedCpu] = useState<string>('All');
@@ -218,7 +219,7 @@ export default function BuyLaptops() {
     setSelectedUseCase('all');
     setGradeFilter('All');
     setPricePreset(0);
-    setMaxPrice(150000);
+    setMaxPrice(BUDGET_SLIDER_MAX);
     setSelectedRam('');
     setSelectedStorage('');
     setSelectedCpu('All');
@@ -226,7 +227,6 @@ export default function BuyLaptops() {
   };
 
   const filteredProducts = useMemo(() => {
-    const preset = PRICE_PRESETS[pricePreset];
     let list = products.filter((p) => {
       // 0. Exclude deleted products
       if (isProductDeleted(p.id, p.title)) return false;
@@ -276,10 +276,7 @@ export default function BuyLaptops() {
         (selectedCpu === 'i3' && /i3|1115g4/i.test(p.processor || ''));
 
       // 8. Price range match
-      const matchPrice =
-        pricePreset === 0
-          ? p.price <= maxPrice
-          : p.price >= preset.min && p.price <= preset.max;
+      const matchPrice = matchesBudget(p.price, PRICE_PRESETS, pricePreset, maxPrice);
 
       return (
         matchSearch &&
@@ -531,7 +528,7 @@ export default function BuyLaptops() {
                   type="button"
                   onClick={() => {
                     setPricePreset(idx);
-                    if (idx !== 0) setMaxPrice(p.max);
+                    setMaxPrice(BUDGET_SLIDER_MAX);
                   }}
                   className={`rounded-full px-3 py-1 text-xs font-bold whitespace-nowrap transition cursor-pointer ${
                     active
@@ -697,13 +694,13 @@ export default function BuyLaptops() {
               <div>
                 <div className="flex justify-between text-xs font-bold text-[#344257] mb-1">
                   <span>Max Budget:</span>
-                  <span className="text-[#344257] font-black">{formatINR(maxPrice)}</span>
+                  <span className="text-[#344257] font-black">{budgetLabel(maxPrice, formatINR)}</span>
                 </div>
                 <input
                   type="range"
                   min="15000"
-                  max="150000"
-                  step="5000"
+                  max={BUDGET_SLIDER_MAX}
+                  step={BUDGET_SLIDER_STEP}
                   value={maxPrice}
                   onChange={(e) => {
                     setMaxPrice(Number(e.target.value));
@@ -713,7 +710,7 @@ export default function BuyLaptops() {
                 />
                 <div className="flex justify-between text-[10px] text-gray-400 mt-1">
                   <span>₹15,000</span>
-                  <span>₹1,50,000</span>
+                  <span>No limit</span>
                 </div>
               </div>
 
@@ -754,7 +751,7 @@ export default function BuyLaptops() {
               <p>
                 Showing <span className="text-[#344257] font-extrabold">{filteredProducts.length}</span> certified refurbished laptops
               </p>
-              {(selectedBrand !== 'All' || selectedUseCase !== 'all') && (
+              {(selectedBrand !== 'All' || selectedUseCase !== 'all' || isBudgetFilterActive(pricePreset, maxPrice)) && (
                 <button
                   type="button"
                   onClick={handleResetFilters}

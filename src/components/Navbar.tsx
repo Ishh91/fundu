@@ -70,7 +70,7 @@ export const DOORSTEP_STORES = [
     locality: 'Hazratganj',
     address: 'Shop 12, Ground Floor, MG Marg, Near Cathedral',
     timing: '10:00 AM – 9:00 PM',
-    phone: '+91 98765 43210',
+    phone: '+91 6390 616 616',
     type: 'Flagship Experience Center',
   },
   {
@@ -196,7 +196,7 @@ const BUY_REFURBISHED_HIGHLIGHTS = [
     title: 'Apple iPhones',
     desc: 'iPhone 11 to 15 Pro Max with 6M warranty',
     to: '/buy?brand=Apple',
-    badge: '32-Point Inspected',
+    badge: '42-Point Inspected',
   },
   {
     title: 'Samsung Galaxy',

@@ -17,7 +17,7 @@ const seedProducts = [
     original_price: 69900,
     discount_percent: 38,
     warranty_months: 6,
-    description: 'Certified refurbished iPhone 13 in excellent condition. 32-point quality check passed, battery health above 88%. Comes with USB-C cable and 6-month Fundu warranty.',
+    description: 'Certified refurbished iPhone 13 in excellent condition. 42-point quality check passed, battery health above 88%. Comes with USB-C cable and 6-month Fundu warranty.',
     is_approved: true,
     is_featured: true,
     stock: 5,

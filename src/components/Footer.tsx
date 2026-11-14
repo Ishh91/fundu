@@ -3,7 +3,6 @@ import {
   ArrowRight,
   Mail,
   Phone,
-  MapPin,
   Truck,
   ShieldCheck,
   Wrench,
@@ -182,14 +181,10 @@ export default function Footer() {
               Helpline
             </h4>
             <ul className="mt-4 space-y-3 text-xs text-[#47576E] font-medium">
-              <li className="flex items-start gap-2.5">
-                <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-[#6A859F]" />
-                <span>Hazratganj, Uttar Pradesh 226001</span>
-              </li>
               <li className="flex items-center gap-2.5">
                 <Phone className="h-4 w-4 shrink-0 text-[#6A859F]" />
-                <a href="tel:+919876543210" className="font-bold text-[#344257] hover:text-[#6A859F] transition">
-                  +91 98765 43210 (9 AM - 9 PM)
+                <a href="tel:+916390616616" className="font-bold text-[#344257] hover:text-[#6A859F] transition">
+                  +91 6390 616 616 (9 AM - 9 PM)
                 </a>
               </li>
               <li className="flex items-center gap-2.5">

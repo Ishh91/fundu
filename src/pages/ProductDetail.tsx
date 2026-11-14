@@ -70,7 +70,7 @@ const CONDITION_GRADES = [
     label: 'Good (Popular)',
     badge: 'Most Popular',
     color: 'bg-brand-600 text-white',
-    desc: 'Minor hairline scratches, screen & body in great shape. Passed 32-point inspection.',
+    desc: 'Minor hairline scratches, screen & body in great shape. Passed 42-point inspection.',
     priceMultiplier: 0.95,
   },
   {
@@ -112,7 +112,7 @@ export default function ProductDetail() {
     product
       ? {
           title: `Buy ${product.title} (Refurbished) | Fundu`,
-          description: `Buy certified refurbished ${product.title} in ${product.condition} condition with 6 months warranty, 32-point quality check and doorstep delivery from Fundu.`,
+          description: `Buy certified refurbished ${product.title} in ${product.condition} condition with 6 months warranty, 42-point quality check and doorstep delivery from Fundu.`,
         }
       : { noindex: !loading },
   );
@@ -535,7 +535,7 @@ return (
             )}
 
             <div className="mt-4 flex items-center gap-2 text-xs font-bold text-ink-500 bg-ink-50 px-3 py-1 rounded-full">
-              <Sparkles className="h-3.5 w-3.5 text-brand-600" /> 32-Point Fundu Quality Certified
+              <Sparkles className="h-3.5 w-3.5 text-brand-600" /> 42-Point Fundu Quality Certified
             </div>
           </div>
 
@@ -586,7 +586,7 @@ return (
           <div className="card p-6 rounded-[28px] bg-gradient-to-br from-white to-[#f0f9f8] border border-emerald-100 shadow-sm space-y-3">
             <div className="flex items-center justify-between">
               <h4 className="text-xs font-extrabold text-ink-900 uppercase tracking-wider flex items-center gap-2">
-                <ShieldCheck className="h-4 w-4 text-[#47576E]" /> 32-Point Quality Inspected
+                <ShieldCheck className="h-4 w-4 text-[#47576E]" /> 42-Point Quality Inspected
               </h4>
               <span className="badge bg-[#E4E7F0] text-[#344257] border border-[#C0C8D8] text-[10px] font-bold">Passed</span>
             </div>
@@ -904,7 +904,7 @@ return (
                 </div>
                 <div className="p-3.5 rounded-2xl border border-ink-100 bg-[#f8fafb]">
                   <Award className="mx-auto h-6 w-6 text-[#47576E]" />
-                  <p className="mt-1 text-xs font-bold text-ink-900">32-Point Verified</p>
+                  <p className="mt-1 text-xs font-bold text-ink-900">42-Point Verified</p>
                   <p className="text-[10px] text-ink-400">Quality Assured</p>
                 </div>
               </div>
@@ -1008,10 +1008,10 @@ return (
               </div>
             </div>
 
-            {/* 32-POINT CHECKLIST FULL GRID */}
+            {/* 42-POINT CHECKLIST FULL GRID */}
             <div className="card p-6 md:p-8 rounded-[32px] bg-white border border-ink-100 space-y-4 shadow-soft">
               <h3 className="font-display text-lg font-black text-ink-900 flex items-center gap-2">
-                <CheckCircle2 className="h-5 w-5 text-[#47576E]" /> Full 32-Point Quality Checklist
+                <CheckCircle2 className="h-5 w-5 text-[#47576E]" /> Full 42-Point Quality Checklist
               </h3>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs font-semibold text-ink-700">

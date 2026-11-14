@@ -1891,7 +1891,7 @@ export default function DeliveryAgentPortal() {
             <div className="p-6 bg-gradient-to-r from-[#1E2734] via-[#2B3646] to-[#344257] text-white flex items-center justify-between shrink-0">
               <div>
                 <span className="badge bg-white/20 text-white text-[10px] font-bold">
-                  Fundu 32-Point Doorstep Evaluation
+                  Fundu 42-Point Doorstep Evaluation
                 </span>
                 <h2 className="font-display font-black text-xl mt-1">
                   Inspect {inspectingSell.brand} {inspectingSell.model}
@@ -2121,7 +2121,7 @@ export default function DeliveryAgentPortal() {
                 </div>
               </div>
 
-              {/* SECTION 3: 32-POINT HARDWARE DIAGNOSTICS */}
+              {/* SECTION 3: 42-POINT HARDWARE DIAGNOSTICS */}
               <div className="space-y-3 p-4 rounded-2xl bg-slate-50 border border-slate-200">
                 <label className="font-bold text-slate-900 flex items-center gap-1.5 text-xs">
                   <Sparkles className="h-4 w-4 text-brand-600" />

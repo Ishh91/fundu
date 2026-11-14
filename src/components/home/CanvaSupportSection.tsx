@@ -46,7 +46,7 @@ export default function CanvaSupportSection() {
                 </p>
                 <p className="flex items-center gap-2 text-slate-600 text-xs pt-1">
                   <Phone className="h-3.5 w-3.5 text-[#47576E] shrink-0" />
-                  <span>+91 98765 43210 &nbsp;|&nbsp; 10:00 AM – 9:00 PM (All Days)</span>
+                  <span>+91 6390 616 616 &nbsp;|&nbsp; 10:00 AM – 9:00 PM (All Days)</span>
                 </p>
               </div>
             </div>

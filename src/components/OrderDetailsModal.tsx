@@ -44,7 +44,7 @@ type OrderDetailsModalProps = {
 const ORDER_LIFECYCLE_STEPS = [
   { id: 'pending', label: 'Order Placed', desc: 'Received at Fundu' },
   { id: 'confirmed', label: 'Confirmed', desc: 'Verified & assigned to hub' },
-  { id: 'packed', label: 'Packed & Inspected', desc: '32-point check passed' },
+  { id: 'packed', label: 'Packed & Inspected', desc: '42-point check passed' },
   { id: 'dispatched', label: 'Out for Delivery', desc: 'Executive on the way' },
   { id: 'delivered', label: 'Delivered', desc: 'Handed over at doorstep' },
 ];

@@ -25,7 +25,7 @@ const FALLBACK_REFURBISHED_PHONES: Product[] = [
     original_price: 59900,
     discount_percent: 35,
     warranty_months: 6,
-    description: 'Refurbished Superb condition. 32-Point inspection passed. Battery health above 88%. Free doorstep doorstep delivery.',
+    description: 'Refurbished Superb condition. 42-Point inspection passed. Battery health above 88%. Free doorstep doorstep delivery.',
     images: ['https://images.unsplash.com/photo-1695048133142-1a20484d2569?w=600&auto=format&fit=crop&q=80'],
     is_approved: true,
     is_featured: true,
@@ -126,7 +126,7 @@ export default function BestDeals({ products, loading }: BestDealsProps) {
             Top Deals on Certified Refurbished Phones
           </h2>
           <p className="mt-1 text-xs sm:text-sm text-gray-500">
-            32-Point Inspected • 6-12 Months Replacement Warranty • Free Doorstep Delivery
+            42-Point Inspected • 6-12 Months Replacement Warranty • Free Doorstep Delivery
           </p>
         </div>
         <Link

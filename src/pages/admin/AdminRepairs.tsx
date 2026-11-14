@@ -222,7 +222,7 @@ export default function AdminRepairs({
             Repair Diagnostics & Service Tracker
           </h2>
           <p className="mt-1 text-xs text-ink-600">
-            Manage doorstep device collection, 32-point technician diagnosis, genuine part replacements, and return delivery at your doorstep.
+            Manage doorstep device collection, 42-point technician diagnosis, genuine part replacements, and return delivery at your doorstep.
           </p>
         </div>
 

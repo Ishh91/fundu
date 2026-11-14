@@ -984,7 +984,7 @@ export default function Admin() {
       offer_tag: phone.popular_tag ? `🔥 ${phone.popular_tag}` : '⚡ Hot Deal',
       warranty_months: '6',
       stock: '2',
-      description: `Certified refurbished ${phone.brand} ${phone.model}. Powered by ${phone.processor || 'high performance processor'}. Camera: ${phone.camera_spec || '50MP camera'}. Battery: ${phone.battery_spec || '5000mAh'}. 32-point inspection passed with 6-month Fundu warranty.`,
+      description: `Certified refurbished ${phone.brand} ${phone.model}. Powered by ${phone.processor || 'high performance processor'}. Camera: ${phone.camera_spec || '50MP camera'}. Battery: ${phone.battery_spec || '5000mAh'}. 42-point inspection passed with 6-month Fundu warranty.`,
       images: phone.image_url || 'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=800&auto=format&fit=crop&q=80',
       video_url: phone.video_url || '',
     });
@@ -3367,7 +3367,7 @@ export default function Admin() {
                   rows={2}
                   value={productForm.description}
                   onChange={(e) => setProductForm({ ...productForm, description: e.target.value })}
-                  placeholder="Battery health (e.g. 98%), cosmetic condition, all accessories included, 32-point tested..."
+                  placeholder="Battery health (e.g. 98%), cosmetic condition, all accessories included, 42-point tested..."
                   className="input text-xs"
                 />
               </div>

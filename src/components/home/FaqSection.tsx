@@ -32,8 +32,8 @@ const DETAILED_FAQS = [
   },
   {
     category: 'buy',
-    q: 'What is the 32-Point Quality Inspection for refurbished phones?',
-    a: 'Every refurbished phone on Fundu undergoes a 32-point technical audit covering display pixels, touch responsiveness, front & rear cameras, speaker, microphone, battery health (minimum 85%+), Wi-Fi, Face ID / fingerprint unlock, and port connectivity.',
+    q: 'What is the 42-Point Quality Inspection for refurbished phones?',
+    a: 'Every refurbished phone on Fundu undergoes a 42-point technical audit covering display pixels, touch responsiveness, front & rear cameras, speaker, microphone, battery health (minimum 85%+), Wi-Fi, Face ID / fingerprint unlock, and port connectivity.',
   },
   {
     category: 'buy',
@@ -119,10 +119,10 @@ export default function FaqSection() {
               </p>
               <div className="mt-3 flex items-center justify-between">
                 <a
-                  href="tel:+919876543210"
+                  href="tel:+916390616616"
                   className="inline-flex items-center gap-1.5 text-xs font-bold text-[#344257] hover:text-[#6A859F] transition"
                 >
-                  <PhoneCall className="h-3.5 w-3.5 text-[#6A859F]" /> Call +91 98765 43210
+                  <PhoneCall className="h-3.5 w-3.5 text-[#6A859F]" /> Call +91 6390 616 616
                 </a>
                 <Link
                   to="/contact"

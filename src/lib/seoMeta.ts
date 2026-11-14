@@ -33,7 +33,7 @@ const STATIC_PAGES: Record<string, StaticPage> = {
   '/buy': {
     title: 'Buy Certified Refurbished Phones with Warranty | Fundu',
     description:
-      'Buy 32-point quality inspected refurbished iPhones, Samsung Galaxy and OnePlus phones with 6 months warranty and doorstep delivery.',
+      'Buy 42-point quality inspected refurbished iPhones, Samsung Galaxy and OnePlus phones with 6 months warranty and doorstep delivery.',
   },
   '/repair': {
     title: 'Doorstep Mobile Repair in 30 Minutes | Fundu',
@@ -292,7 +292,7 @@ export function resolveSeoMeta(pathname: string): SeoMeta {
   if (root === 'product' && rest.length === 1) {
     return {
       title: 'Certified Refurbished Phone with Warranty | Fundu',
-      description: 'Buy this 32-point quality inspected refurbished smartphone with 6 months warranty and doorstep delivery from Fundu.',
+      description: 'Buy this 42-point quality inspected refurbished smartphone with 6 months warranty and doorstep delivery from Fundu.',
       canonicalPath: path,
       noindex: false,
     };

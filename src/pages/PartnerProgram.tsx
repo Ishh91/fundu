@@ -221,7 +221,7 @@ export default function PartnerProgram() {
   const getWhatsAppPartnerUrl = () => {
     const categoryName = PARTNER_CATEGORIES.find((c) => c.id === form.category)?.title || form.category;
     const msg = `Hi Fundu Partner Desk! 🤝\nI have submitted my Partnership Application:\n\n*Reference ID:* ${submittedAppId || 'New Partner'}\n*Name:* ${form.fullName}\n*Business:* ${form.businessName || 'Independent'}\n*Category:* ${categoryName}\n*City:* ${form.city}\n*Phone:* ${form.phone}\n\nPlease help me complete my onboarding.`;
-    return `https://wa.me/919876543210?text=${encodeURIComponent(msg)}`;
+    return `https://wa.me/916390616616?text=${encodeURIComponent(msg)}`;
   };
 
   return (
@@ -427,7 +427,7 @@ export default function PartnerProgram() {
                   <div>
                     <h4 className="text-xs font-bold text-gray-900">100% Genuine Inventory & Spares</h4>
                     <p className="text-[11px] text-gray-500 mt-0.5">
-                      Every phone and spare part undergoes our 32-point inspection check with 6 months warranty support.
+                      Every phone and spare part undergoes our 42-point inspection check with 6 months warranty support.
                     </p>
                   </div>
                 </div>
@@ -894,7 +894,7 @@ export default function PartnerProgram() {
               <p className="text-xs text-slate-200 mt-0.5">Talk to our B2B Partnerships Lead directly on phone or WhatsApp.</p>
             </div>
             <a
-              href="https://wa.me/919876543210?text=Hi%20Fundu%20Partner%20Desk%2C%20I%20have%20a%20partnership%20inquiry."
+              href="https://wa.me/916390616616?text=Hi%20Fundu%20Partner%20Desk%2C%20I%20have%20a%20partnership%20inquiry."
               target="_blank"
               rel="noopener noreferrer"
               className="rounded-full bg-emerald-500 hover:bg-emerald-600 text-white font-bold text-xs px-5 py-2.5 shadow-sm transition inline-flex items-center gap-1.5 shrink-0"

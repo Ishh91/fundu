@@ -34,6 +34,7 @@ import {
 } from 'lucide-react';
 import { useSearchParams, useNavigate, Link } from 'react-router-dom';
 import { db, formatINR } from '../lib/db';
+import { BUDGET_SLIDER_MAX, BUDGET_SLIDER_STEP, budgetLabel, isBudgetFilterActive, matchesBudget } from '../lib/budgetFilter';
 import { deduplicateProductsByModel } from '../lib/modelVariants';
 import { getCachedPhones, setCachedPhones } from '../lib/productsCache';
 import { useAuth } from '../context/AuthContext';
@@ -103,11 +104,11 @@ const QUALITY_CHECK_POINTS = [
 const BUYER_FAQS = [
   {
     q: 'What is a Fundu Certified Refurbished Phone?',
-    a: 'A Fundu Certified Refurbished phone is a gently used or pre-owned smartphone that has undergone rigorous 32-point diagnostic inspection by certified engineers. Every component — including display, battery health, cameras, motherboard, and sensors — is verified 100% functional. Devices are professionally sanitized, graded honestly, and backed by a free 6-month Fundu warranty.',
+    a: 'A Fundu Certified Refurbished phone is a gently used or pre-owned smartphone that has undergone rigorous 42-point diagnostic inspection by certified engineers. Every component — including display, battery health, cameras, motherboard, and sensors — is verified 100% functional. Devices are professionally sanitized, graded honestly, and backed by a free 6-month Fundu warranty.',
   },
   {
     q: 'What are the Refurbished Condition Grades (Superb vs Good vs Fair)?',
-    a: '• Superb (Like New): Flawless screen and body with near-zero signs of usage. 100% original parts and >88% battery health.\n• Good: Light cosmetic scuffs or faint scratches on the frame/back, but 100% pristine original screen and fully functional hardware.\n• Fair (Budget): Visible signs of wear on the body, but screen and internal components are completely functional and pass all 32 quality points.',
+    a: '• Superb (Like New): Flawless screen and body with near-zero signs of usage. 100% original parts and >88% battery health.\n• Good: Light cosmetic scuffs or faint scratches on the frame/back, but 100% pristine original screen and fully functional hardware.\n• Fair (Budget): Visible signs of wear on the body, but screen and internal components are completely functional and pass all 42 quality points.',
   },
   {
     q: 'How does the 6-Month Warranty work?',
@@ -141,7 +142,7 @@ export default function BuyPhones() {
   const [selectedBrand, setSelectedBrand] = useState<string>('All');
   const [gradeFilter, setGradeFilter] = useState<string>('All');
   const [pricePreset, setPricePreset] = useState<number>(0);
-  const [maxPrice, setMaxPrice] = useState<number>(120000);
+  const [maxPrice, setMaxPrice] = useState<number>(BUDGET_SLIDER_MAX);
   const [selectedStorage, setSelectedStorage] = useState<string>('');
   const [sortBy, setSortBy] = useState('featured');
   const [openFaq, setOpenFaq] = useState<number | null>(0);
@@ -226,13 +227,12 @@ export default function BuyPhones() {
     setSelectedBrand('All');
     setGradeFilter('All');
     setPricePreset(0);
-    setMaxPrice(120000);
+    setMaxPrice(BUDGET_SLIDER_MAX);
     setSelectedStorage('');
     setSearch('');
   };
 
   const filteredProducts = useMemo(() => {
-    const preset = PRICE_PRESETS[pricePreset];
     let list = products.filter((p) => {
       // 0. Exclude products marked deleted by admin
       if (isProductDeleted(p.id, p.title)) return false;
@@ -264,10 +264,7 @@ export default function BuyPhones() {
         !selectedStorage || p.storage?.toLowerCase().includes(selectedStorage.toLowerCase());
 
       // 5. Price range match
-      const matchPrice =
-        pricePreset === 0
-          ? p.price <= maxPrice
-          : (p.price >= preset.min && p.price <= preset.max);
+      const matchPrice = matchesBudget(p.price, PRICE_PRESETS, pricePreset, maxPrice);
 
       return matchSearch && matchBrand && matchGrade && matchStorage && matchPrice;
     });
@@ -311,7 +308,7 @@ export default function BuyPhones() {
 
   const activeFilterCount = (selectedBrand !== 'All' ? 1 : 0) +
     (gradeFilter !== 'All' ? 1 : 0) +
-    (pricePreset !== 0 ? 1 : 0) +
+    (isBudgetFilterActive(pricePreset, maxPrice) ? 1 : 0) +
     (selectedStorage ? 1 : 0) +
     (search ? 1 : 0);
 
@@ -341,7 +338,7 @@ export default function BuyPhones() {
               </h1>
 
               <p className="text-xs sm:text-sm text-[#C0C8D8] max-w-xl leading-relaxed">
-                Save up to 50% compared to brand-new prices. Every phone is inspected through our 32-point diagnostic protocol, guaranteed with 6-month warranty and free doorstep delivery.
+                Save up to 50% compared to brand-new prices. Every phone is inspected through our 42-point diagnostic protocol, guaranteed with 6-month warranty and free doorstep delivery.
               </p>
 
               {/* Trust Pillars Bar */}
@@ -524,7 +521,7 @@ export default function BuyPhones() {
                   type="button"
                   onClick={() => {
                     setPricePreset(idx);
-                    if (idx !== 0) setMaxPrice(p.max);
+                    setMaxPrice(BUDGET_SLIDER_MAX);
                   }}
                   className={`rounded-xl px-3 py-1.5 text-xs font-bold whitespace-nowrap transition cursor-pointer ${
                     active
@@ -648,13 +645,13 @@ export default function BuyPhones() {
               <div>
                 <div className="flex justify-between text-xs font-bold text-[#344257] mb-2">
                   <span className="text-slate-500">Max Budget:</span>
-                  <span className="text-[#344257] font-black text-sm">{formatINR(maxPrice)}</span>
+                  <span className="text-[#344257] font-black text-sm">{budgetLabel(maxPrice, formatINR)}</span>
                 </div>
                 <input
                   type="range"
-                  min="8000"
-                  max="150000"
-                  step="5000"
+                  min="5000"
+                  max={BUDGET_SLIDER_MAX}
+                  step={BUDGET_SLIDER_STEP}
                   value={maxPrice}
                   onChange={(e) => {
                     setMaxPrice(Number(e.target.value));
@@ -663,8 +660,8 @@ export default function BuyPhones() {
                   className="w-full accent-[#344257] cursor-pointer"
                 />
                 <div className="flex justify-between text-[11px] text-slate-400 font-semibold mt-1">
-                  <span>₹8,000</span>
-                  <span>₹1,50,000</span>
+                  <span>₹5,000</span>
+                  <span>No limit</span>
                 </div>
               </div>
 
@@ -676,7 +673,7 @@ export default function BuyPhones() {
                 <div className="space-y-2 text-xs text-slate-600 font-medium">
                   <p className="flex items-center gap-2">
                     <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600 shrink-0" />
-                    32-Point diagnostic tested
+                    42-Point diagnostic tested
                   </p>
                   <p className="flex items-center gap-2">
                     <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600 shrink-0" />
@@ -815,10 +812,10 @@ export default function BuyPhones() {
                             />
                           </Link>
 
-                          {/* 32-Point Quality Badge Bottom Overlay */}
+                          {/* 42-Point Quality Badge Bottom Overlay */}
                           <div className="absolute bottom-2.5 left-3.5 right-3.5 flex items-center justify-center gap-1.5 bg-white/95 backdrop-blur-sm py-1 px-2.5 rounded-xl text-[10px] font-black text-[#344257] border border-slate-200/80 shadow-xs">
                             <CheckCircle2 className="h-3 w-3 text-emerald-600 shrink-0" />
-                            <span>32-Point Inspected & Verified</span>
+                            <span>42-Point Inspected & Verified</span>
                           </div>
                         </div>
 
@@ -919,14 +916,14 @@ export default function BuyPhones() {
           </main>
         </div>
 
-        {/* 5. THE 32-POINT QUALITY INSPECTION STANDARDS */}
+        {/* 5. THE 42-POINT QUALITY INSPECTION STANDARDS */}
         <section className="mt-16 bg-white rounded-3xl p-6 sm:p-10 border border-slate-200/90 shadow-sm relative overflow-hidden">
           <div className="text-center max-w-2xl mx-auto space-y-2">
             <div className="inline-flex items-center gap-1.5 rounded-full bg-[#344257]/10 px-3.5 py-1 text-xs font-black text-[#344257]">
               <ShieldCheck className="h-3.5 w-3.5 text-[#344257]" /> Fundu Assured Inspection
             </div>
             <h2 className="font-display text-2xl sm:text-3xl font-black text-[#1E2734]">
-              The 32-Point Quality Inspection
+              The 42-Point Quality Inspection
             </h2>
             <p className="text-xs sm:text-sm text-slate-500">
               Every refurbished phone undergoes strict mechanical, electronic, and software inspection before arriving at your doorstep.
@@ -1007,7 +1004,7 @@ export default function BuyPhones() {
               </div>
               <h4 className="font-bold text-sm text-[#1E2734]">Maximum Savings, 100% Working</h4>
               <p className="text-xs text-slate-600 leading-relaxed">
-                Visible cosmetic scuffs, paint chips, or scratches on body or back panel. Screen has no cracks. All 32 diagnostic tests pass 100%.
+                Visible cosmetic scuffs, paint chips, or scratches on body or back panel. Screen has no cracks. All 42 diagnostic tests pass 100%.
               </p>
               <div className="text-[11px] font-bold text-slate-700 pt-2.5 border-t border-slate-200 flex items-center gap-1">
                 <Check className="h-3.5 w-3.5" /> Ideal for high performance on a strict budget
