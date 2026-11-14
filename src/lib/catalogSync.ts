@@ -357,6 +357,8 @@ export function isProductDeleted(productId?: string, title?: string): boolean {
  * Pulls all disabled/inactive models from MongoDB tables and synchronizes local storage
  */
 const DELETED_MODELS_FRESH_MS = 20 * 1000;
+/** How long after a page mounts its catalog hook waits before the first refresh. */
+const HOOK_FIRST_REFRESH_DELAY_MS = 3000;
 let deletedModelsRefresh: Promise<void> | null = null;
 let deletedModelsRefreshedAt = 0;
 
@@ -470,7 +472,11 @@ export function useCatalogSync() {
     window.addEventListener('fundu_product_deleted', handleSync);
     window.addEventListener('storage', handleSync);
 
-    refreshDeletedModelsFromDb().then(handleSync);
+    // Not at mount: the two large catalog reads would compete with the page's own data.
+    // Deleted models already known from earlier visits are hidden straight away from local storage.
+    const firstRefresh = window.setTimeout(() => {
+      refreshDeletedModelsFromDb().then(handleSync);
+    }, HOOK_FIRST_REFRESH_DELAY_MS);
 
     // Auto-fetch polling every 60 seconds (realtime events handle instant updates)
     const interval = setInterval(() => {
@@ -488,6 +494,7 @@ export function useCatalogSync() {
 
     return () => {
       unsubscribeRealtime();
+      window.clearTimeout(firstRefresh);
       clearInterval(interval);
       window.removeEventListener('fundu_model_deleted', handleSync);
       window.removeEventListener('fundu_model_restored', handleSync);
