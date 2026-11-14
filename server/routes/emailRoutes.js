@@ -1,8 +1,14 @@
 import { Router } from 'express';
 import { Resend } from 'resend';
 import nodemailer from 'nodemailer';
+import { rateLimit } from '../middleware/rateLimit.js';
+import { limitNotification } from '../utils/notificationLimits.js';
 
 const router = Router();
+
+// These endpoints are called by guests (sign-up OTP, booking alerts), so they
+// cannot require a login; limit how fast one address can use them instead.
+const emailRateLimit = rateLimit({ windowMs: 10 * 60 * 1000, max: 20, name: 'email' });
 
 const RESEND_ACCOUNT_OWNER = 'trustiqueassist0003@gmail.com';
 
@@ -46,9 +52,11 @@ export async function sendViaNodemailer({ to, subject, html, from }) {
  * POST /api/email/send
  * General Email Dispatcher
  */
-router.post('/send', async (req, res) => {
+router.post('/send', emailRateLimit, async (req, res) => {
   try {
     const { to, subject, html, from } = req.body;
+    const limitError = limitNotification({ recipients: Array.isArray(to) ? to : [to], body: html });
+    if (limitError) return res.status(400).json({ success: false, error: limitError });
     const recipientEmail = to || RESEND_ACCOUNT_OWNER;
     const apiKey = process.env.RESEND_API_KEY || process.env.VITE_RESEND_API_KEY;
 
@@ -113,7 +121,7 @@ router.post('/send', async (req, res) => {
  * POST /api/email/send-otp
  * Sends 6-digit OTP code directly to email via Resend API or Gmail SMTP
  */
-router.post('/send-otp', async (req, res) => {
+router.post('/send-otp', emailRateLimit, async (req, res) => {
   try {
     const { email, otp, userName } = req.body;
     const recipientEmail = email || RESEND_ACCOUNT_OWNER;

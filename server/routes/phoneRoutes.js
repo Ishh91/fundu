@@ -2,6 +2,7 @@ import { Router } from 'express';
 import mongoose from 'mongoose';
 import { MasterPhone, SellPriceConfig, SellRequest as SellRequestModel } from '../models/index.js';
 import { normalizeDoc } from '../utils/dbHelpers.js';
+import { permissionGuard } from '../middleware/auth.js';
 import { clearTableCache } from './dbRoutes.js';
 import { buildLiveImagesResponse, getLiveImages, invalidateLiveImages } from '../utils/liveImagesCache.js';
 import { INDIAN_MARKET_PHONES_LAST_10_YEARS, ensureMasterPhonesSeeded } from '../config/seedPhones.js';
@@ -16,6 +17,11 @@ import {
 } from '../utils/mobileApi.js';
 
 const router = Router();
+
+// Catalog writes change what every visitor sees, so they need sell-pricing access.
+const requireCatalogAccess = permissionGuard('sell_pricing');
+// Saving a store product also refreshes its model photo, so inventory staff may set media too.
+const requireModelMediaAccess = permissionGuard('sell_pricing', 'inventory');
 
 
 /**
@@ -137,7 +143,7 @@ router.get('/mobileapi/search', async (req, res) => {
  * 1-Click Import a phone from https://mobileapi.dev into Fundu's database
  * POST /api/phones/mobileapi/import
  */
-router.post('/mobileapi/import', async (req, res) => {
+router.post('/mobileapi/import', requireCatalogAccess, async (req, res) => {
   try {
     const body = req.body;
     if (!body.brand || !body.model) {
@@ -290,7 +296,7 @@ router.get('/specs', async (req, res) => {
  * Add a custom / newly launched Indian smartphone model
  * POST /api/phones/custom
  */
-router.post('/custom', async (req, res) => {
+router.post('/custom', requireCatalogAccess, async (req, res) => {
   try {
     const body = req.body;
     if (!body.brand || !body.model) {
@@ -332,7 +338,7 @@ router.post('/custom', async (req, res) => {
  * 1-Click Bulk Seed / Sync all Indian phones into Database
  * POST /api/phones/bulk-sync
  */
-router.post('/bulk-sync', async (_req, res) => {
+router.post('/bulk-sync', requireCatalogAccess, async (_req, res) => {
   try {
     await ensureMasterPhonesSeeded(true);
     const count = await MasterPhone.countDocuments();
@@ -428,7 +434,7 @@ router.post('/quote/accept-revised', async (req, res) => {
  * Update Phone Model Image directly in Database (MasterPhone + SellPriceConfig)
  * POST /api/phones/model-image
  */
-router.post('/model-image', async (req, res) => {
+router.post('/model-image', requireModelMediaAccess, async (req, res) => {
   try {
     const { brand, model, image_url } = req.body;
     if (!brand || !model) {
@@ -541,7 +547,7 @@ router.post('/model-image', async (req, res) => {
  * Update Phone Model Video directly in Database (MasterPhone + SellPriceConfig)
  * POST /api/phones/model-video
  */
-router.post('/model-video', async (req, res) => {
+router.post('/model-video', requireModelMediaAccess, async (req, res) => {
   try {
     const { brand, model, video_url } = req.body;
     if (!brand || !model) {

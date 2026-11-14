@@ -54,6 +54,22 @@ export const requirePermission = (auth, permission) => {
   }
 };
 
+/**
+ * Express middleware form of requirePermission: answers 401/403 itself instead
+ * of throwing. With several permissions, holding any one of them is enough.
+ */
+export const permissionGuard = (...permissions) => (req, res, next) => {
+  try {
+    requireAuth(req.auth);
+    if (!permissions.some((permission) => hasPermission(req.auth, permission))) {
+      throw createHttpError(403, 'You do not have access to this section.');
+    }
+    next();
+  } catch (error) {
+    res.status(error.status || 403).json({ success: false, error: error.message });
+  }
+};
+
 /** Admin-level access to one database table (super admin, or staff with the table's permission). */
 export const canAdminTable = (auth, table) => hasPermission(auth, TABLE_PERMISSION[table]);
 

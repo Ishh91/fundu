@@ -354,7 +354,7 @@ export const withoutInlineProductVideos = (table, auth, docs) => {
   return docs.map((doc) => (hasInlineVideo(doc) && !canEdit(doc) ? { ...doc, video_url: null, has_video: true } : doc));
 };
 
-export const queryTable = async (table, { auth, filters, sort, select, single, limit }) => {
+export const queryTable = async (table, { auth, filters, sort, select, single, limit, offset }) => {
   const Model = getModel(table);
   const scope = await getReadScope(table, auth, filters, select);
   const sortConfig = parseSort(sort);
@@ -363,6 +363,7 @@ export const queryTable = async (table, { auth, filters, sort, select, single, l
   let query = Model.find(scope).lean();
   if (sortConfig) query = query.sort(sortConfig);
   if (selectConfig) query = query.select(selectConfig);
+  if (Number.isInteger(offset) && offset > 0) query = query.skip(offset);
   if (typeof limit === 'number' && limit > 0) query = query.limit(limit);
 
   if (single) {

@@ -1,4 +1,5 @@
 import { API_BASE } from '../config/apiConfig';
+import { authHeaders } from './db';
 import { deviceIncludesStylus, isAmoledDisplay } from './deviceSpecs';
 
 export type PhoneModelOption = {
@@ -361,7 +362,7 @@ export async function searchMobileApiDev(
 export async function importPhoneFromMobileApi(phone: Record<string, any>) {
   const response = await fetch(`${API_BASE}/phones/mobileapi/import`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: { 'Content-Type': 'application/json', ...authHeaders() },
     body: JSON.stringify(phone),
   });
   if (!response.ok) {
@@ -744,7 +745,7 @@ export async function searchIndianPhonesApi(query: string, brand?: string, limit
 
 export async function syncAllIndianPhonesToDbApi() {
   try {
-    const response = await fetch(`${API_BASE}/phones/bulk-sync`, { method: 'POST' });
+    const response = await fetch(`${API_BASE}/phones/bulk-sync`, { method: 'POST', headers: authHeaders() });
     const json = await response.json();
     return json;
   } catch (err: any) {
@@ -755,7 +756,7 @@ export async function syncAllIndianPhonesToDbApi() {
 export async function addCustomIndianPhoneApi(payload: Record<string, any>) {
   const response = await fetch(`${API_BASE}/phones/custom`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: { 'Content-Type': 'application/json', ...authHeaders() },
     body: JSON.stringify(payload),
   });
   if (!response.ok) {

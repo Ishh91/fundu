@@ -1,4 +1,5 @@
 import { API_BASE } from '../config/apiConfig';
+import { authHeaders } from './db';
 
 export interface ServiceablePincodeItem {
   _id?: string;
@@ -134,7 +135,7 @@ export async function addServiceablePincodes(payload: {
 }): Promise<any> {
   const res = await fetch(`${API_BASE}/pincodes`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: { 'Content-Type': 'application/json', ...authHeaders() },
     body: JSON.stringify(payload),
   });
 
@@ -154,7 +155,7 @@ export async function updateServiceablePincode(
 ): Promise<any> {
   const res = await fetch(`${API_BASE}/pincodes/${id}`, {
     method: 'PATCH',
-    headers: { 'Content-Type': 'application/json' },
+    headers: { 'Content-Type': 'application/json', ...authHeaders() },
     body: JSON.stringify(updates),
   });
 
@@ -171,6 +172,7 @@ export async function updateServiceablePincode(
 export async function deleteServiceablePincode(id: string): Promise<any> {
   const res = await fetch(`${API_BASE}/pincodes/${id}`, {
     method: 'DELETE',
+    headers: authHeaders(),
   });
 
   const json = await res.json();
@@ -186,6 +188,7 @@ export async function deleteServiceablePincode(id: string): Promise<any> {
 export async function seedLucknowPincodes(): Promise<any> {
   const res = await fetch(`${API_BASE}/pincodes/seed-lucknow`, {
     method: 'POST',
+    headers: authHeaders(),
   });
 
   const json = await res.json();
