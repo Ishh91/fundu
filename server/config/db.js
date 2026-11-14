@@ -340,6 +340,22 @@ export const seedDatabase = async () => {
   await ensureAgentsSeeded();
   await ensureMasterPhonesSeeded(true);
   startCatalogAutoWatcher();
+
+  // Self-healing migration: update legacy product descriptions from 32-point to 42-point
+  try {
+    const oldProducts = await Product.find({ description: { $regex: /32-point/i } }).select('_id description');
+    if (oldProducts.length > 0) {
+      for (const prod of oldProducts) {
+        if (prod.description) {
+          prod.description = prod.description.replace(/32-point/gi, '42-point').replace(/32 point/gi, '42 point');
+          await prod.save();
+        }
+      }
+      console.log(`[Migration] Updated ${oldProducts.length} legacy products from 32-point to 42-point.`);
+    }
+  } catch (migErr) {
+    console.warn('[Migration] Notice updating legacy 32-point descriptions:', migErr.message);
+  }
 };
 
 export const connectDB = async () => {
