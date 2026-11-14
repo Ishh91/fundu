@@ -1,5 +1,6 @@
 import { Component, ErrorInfo, ReactNode } from 'react';
 import { AlertTriangle, RefreshCw, Home } from 'lucide-react';
+import { reportErrorToTracker } from '../lib/errorTracker';
 
 interface Props {
   children: ReactNode;
@@ -22,6 +23,12 @@ export class ErrorBoundary extends Component<Props, State> {
 
   public componentDidCatch(error: Error, errorInfo: ErrorInfo) {
     console.error('ErrorBoundary caught unhandled error:', error, errorInfo);
+    try {
+      reportErrorToTracker(error, {
+        type: 'react_crash',
+        componentStack: errorInfo?.componentStack || '',
+      });
+    } catch {}
   }
 
   private handleReload = () => {

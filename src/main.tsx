@@ -2,6 +2,10 @@ import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import App from './App.tsx';
 import './index.css';
+import { initErrorTracker } from './lib/errorTracker';
+
+// Initialize global crash & unhandled promise error tracking
+initErrorTracker();
 
 // Handle automatic page reload when an old cached script bundle is updated after a new deployment
 window.addEventListener('vite:preloadError', () => {

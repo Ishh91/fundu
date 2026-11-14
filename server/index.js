@@ -13,6 +13,7 @@ import cors from 'cors';
 import { connectDB } from './config/db.js';
 import { parseAuth } from './middleware/auth.js';
 import apiRoutes from './routes/index.js';
+import { recordServerError } from './routes/errorRoutes.js';
 
 const app = express();
 const PORT = Number(process.env.PORT || 4000);
@@ -73,6 +74,11 @@ app.use((err, req, res, _next) => {
   res.setHeader('Access-Control-Allow-Credentials', 'true');
 
   const status = err.status || err.statusCode || 500;
+  if (status >= 500) {
+    try {
+      recordServerError(err, req);
+    } catch {}
+  }
   // express.json() rejects bodies over its limit before any route runs.
   const message = err.type === 'entity.too.large'
     ? 'This is too large to save (the limit is 10 MB). Use fewer or smaller photos, and a YouTube link instead of an uploaded video.'

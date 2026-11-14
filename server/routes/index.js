@@ -6,9 +6,11 @@ import phoneRoutes from './phoneRoutes.js';
 import emailRoutes from './emailRoutes.js';
 import whatsappRoutes from './whatsappRoutes.js';
 import pincodeRoutes from './pincodeRoutes.js';
+import errorRoutes from './errorRoutes.js';
 
 const router = Router();
 
+router.use('/errors', errorRoutes);
 router.use('/phones', phoneRoutes);
 router.use('/pincodes', pincodeRoutes);
 router.use('/serviceable-pincodes', pincodeRoutes);
