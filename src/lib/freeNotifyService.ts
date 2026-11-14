@@ -1,3 +1,4 @@
+import { getErrorMessage } from './errorMessage';
 import { API_BASE } from '../config/apiConfig';
 
 export interface NotificationPayload {
@@ -231,7 +232,7 @@ export async function sendFreeMetaWhatsApp(
       }),
     });
     return await res.json();
-  } catch (err: any) {
-    return { success: false, error: err?.message || 'Failed to send Meta WhatsApp message' };
+  } catch (err) {
+    return { success: false, error: getErrorMessage(err, 'Failed to send Meta WhatsApp message') };
   }
 }

@@ -36,6 +36,9 @@ export type Product = {
   available_storages?: string[];
   available_rams?: string[];
   available_colors?: string[];
+  /** Older records: the Mongo id and a single image instead of `images`. */
+  _id?: string;
+  image?: string | null;
 };
 
 export type SellRequest = {
@@ -95,6 +98,18 @@ export type SellRequest = {
   delivery_otp_created_at?: string | null;
   delivery_otp_verified_at?: string | null;
   delivery_otp_verified_by?: string | null;
+  /** Whether the assigned rider accepted or declined the pickup, and why. */
+  rider_acceptance_status?: string | null;
+  rider_decline_reason?: string | null;
+  /** Details of the vendor the request was forwarded to. */
+  vendor_business_name?: string | null;
+  vendor_name?: string | null;
+  vendor_phone?: string | null;
+  /** Field names used by older records. */
+  full_name?: string | null;
+  phone?: string | null;
+  contact_phone?: string | null;
+  device_name?: string | null;
   created_at: string;
 };
 
@@ -127,6 +142,8 @@ export type RepairServiceItem = {
   warranty?: string;
   turnaround_time?: string;
   is_available?: boolean;
+  /** Shown under the price, e.g. to explain an inspection-only charge. */
+  note?: string;
 };
 
 export type RepairPriceConfig = {
@@ -203,6 +220,9 @@ export type SparePart = {
   images: string[];
   video_url?: string | null;
   is_approved: boolean;
+  /** Older records: the Mongo id and a single image instead of `images`. */
+  _id?: string;
+  image?: string | null;
   created_at: string;
 };
 
@@ -243,6 +263,11 @@ export type Order = {
   delivery_otp_created_at?: string | null;
   delivery_otp_verified_at?: string | null;
   delivery_otp_verified_by?: string | null;
+  /** Whether the assigned rider accepted or declined the delivery, and why. */
+  rider_acceptance_status?: string | null;
+  rider_decline_reason?: string | null;
+  /** Field name used by older records. */
+  phone?: string | null;
   created_at: string;
 };
 
@@ -310,6 +335,8 @@ export type Review = {
   comment: string;
   reviewer_name: string;
   location: string;
+  /** The phone the review is about, when the customer named one. */
+  phone_model?: string | null;
   is_approved: boolean;
   created_at: string;
 };
@@ -323,6 +350,7 @@ export type Profile = {
   mobile?: string | null;
   email?: string | null;
   address?: string | null;
+  city?: string | null;
   role: 'customer' | 'vendor' | 'wholesaler' | 'admin' | 'staff' | 'delivery' | 'rider';
   /** Admin-panel sections a staff user may manage (empty for every other role). */
   permissions?: string[];

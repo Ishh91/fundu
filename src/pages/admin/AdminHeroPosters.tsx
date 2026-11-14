@@ -18,12 +18,10 @@ import {
   Monitor,
   Smartphone,
   Tablet,
-  Info,
-  Layers,
   HelpCircle,
 } from 'lucide-react';
 import type { HeroPoster } from './adminTypes';
-import { useHeroPosters, DEFAULT_HERO_POSTERS } from '../../lib/heroBanners';
+import { useHeroPosters } from '../../lib/heroBanners';
 import { removeImageBackground, compressImage } from '../../lib/imageUtils';
 
 const QUICK_LINKS = [

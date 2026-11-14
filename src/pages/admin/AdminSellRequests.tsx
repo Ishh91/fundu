@@ -1,3 +1,4 @@
+import { getErrorMessage } from '../../lib/errorMessage';
 import { useState, useEffect } from 'react';
 import {
   BadgeIndianRupee,
@@ -15,15 +16,16 @@ import {
   CheckCircle2,
   XCircle,
   Edit3,
-  AlertTriangle,
   RotateCcw,
   DollarSign,
   X,
 } from 'lucide-react';
 import type { SellRequest, DeliveryAgent, MasterPhone } from './adminTypes';
+import type { Profile } from '../../types';
 import { statusColors } from './adminTypes';
 import { db, formatINR } from '../../lib/db';
 import CustomerDetailsModal from '../../components/CustomerDetailsModal';
+import type { CustomerDetailsModalProps } from '../../components/CustomerDetailsModal';
 
 type AdminSellRequestsProps = {
   sells: SellRequest[];
@@ -50,9 +52,9 @@ export default function AdminSellRequests({
 }: AdminSellRequestsProps) {
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
-  const [customerModalData, setCustomerModalData] = useState<any>(null);
-  const [vendors, setVendors] = useState<any[]>([]);
-  const [overrideModal, setOverrideModal] = useState<{ open: boolean; sell: any; price: string }>({
+  const [customerModalData, setCustomerModalData] = useState<CustomerDetailsModalProps['customer'] | null>(null);
+  const [vendors, setVendors] = useState<Profile[]>([]);
+  const [overrideModal, setOverrideModal] = useState<{ open: boolean; sell: SellRequest | null; price: string }>({
     open: false,
     sell: null,
     price: '',
@@ -64,7 +66,7 @@ export default function AdminSellRequests({
       .in('role', ['vendor', 'wholesaler', 'admin'])
       .order('created_at', { ascending: false })
       .then(({ data }) => {
-        if (data) setVendors(data as any[]);
+        if (data) setVendors(data as Profile[]);
       });
   }, []);
 
@@ -91,7 +93,7 @@ export default function AdminSellRequests({
     return { vendor, name, phone, location, businessName, ownerName };
   };
 
-  const handleApproveVendorQuote = async (sell: any) => {
+  const handleApproveVendorQuote = async (sell: SellRequest) => {
     const price = Number(sell.vendor_quote_price);
     if (!price || price <= 0) {
       alert('⚠️ Invalid quote price from vendor.');
@@ -111,7 +113,7 @@ export default function AdminSellRequests({
     window.location.reload();
   };
 
-  const handleRejectVendorQuote = async (sell: any) => {
+  const handleRejectVendorQuote = async (sell: SellRequest) => {
     if (!window.confirm('Reject this quotation and reset lead status to pending?')) return;
     const { error } = await db.from('sell_requests').update({
       vendor_quote_status: 'admin_rejected',
@@ -126,7 +128,7 @@ export default function AdminSellRequests({
     window.location.reload();
   };
 
-  const handleReassignVendor = async (sell: any, newVendorId: string) => {
+  const handleReassignVendor = async (sell: SellRequest, newVendorId: string) => {
     const isDirect = !newVendorId || newVendorId === 'direct';
     const newVendor = vendors.find(
       (v) => (v.id && String(v.id) === String(newVendorId)) || (v._id && String(v._id) === String(newVendorId))
@@ -196,13 +198,13 @@ export default function AdminSellRequests({
 
       if (error) throw error;
       alert(`🎉 Successfully transferred ${sell.brand} ${sell.model} to B2B Wholesale Inventory at ${formatINR(wholesalePrice)}!`);
-    } catch (err: any) {
-      alert(err?.message || 'Failed to transfer to wholesale inventory');
+    } catch (err) {
+      alert(getErrorMessage(err, 'Failed to transfer to wholesale inventory'));
     }
   };
 
   const getWhatsAppLink = (sell: SellRequest) => {
-    const phone = (sell as any).phone || (sell as any).contact_phone || '9839100000';
+    const phone = sell.phone || sell.contact_phone || '9839100000';
     const text = `Hi, this is Fundu regarding your sell request #${sell.id.slice(0, 8)} for ${sell.brand} ${sell.model}. Your pickup executive ${sell.pickup_person_name || 'is on the way'}. Guaranteed Spot Payout: ${formatINR(sell.estimated_price || 0)}.`;
     const cleanPhone = String(phone).replace(/\D/g, '');
     const fullPhone = cleanPhone.length === 10 ? `91${cleanPhone}` : cleanPhone;
@@ -224,8 +226,8 @@ export default function AdminSellRequests({
     const targetPhone = rawPhone.length === 10 ? `91${rawPhone}` : rawPhone;
     const text = `🚀 *NEW FUNDU PICKUP TASK ASSIGNED*\n\n` +
       `📋 *Request ID:* #${sell.id.slice(0, 8).toUpperCase()}\n` +
-      `👤 *Customer Name:* ${(sell as any).full_name || (sell as any).customer_name || 'Customer'}\n` +
-      `📞 *Customer Phone:* ${(sell as any).phone || (sell as any).customer_phone || (sell.payout_details ?? 'N/A')}\n` +
+      `👤 *Customer Name:* ${sell.full_name || sell.customer_name || 'Customer'}\n` +
+      `📞 *Customer Phone:* ${sell.phone || sell.customer_phone || (sell.payout_details ?? 'N/A')}\n` +
       `📍 *Pickup Address:* ${sell.pickup_address || 'Doorstep Service'}\n` +
       `🏙️ *Locality:* ${sell.pickup_area || 'Doorstep Service'}\n` +
       `⏰ *Pickup Slot:* ${sell.pickup_date || ''} (${sell.pickup_slot || ''})\n\n` +
@@ -367,10 +369,10 @@ export default function AdminSellRequests({
                       </div>
                     )}
 
-                    {Boolean((s as any).assigned_vendor_name || (s as any).vendor_quote_status || (s as any).assigned_vendor_id || (s as any).vendor_business_name) && (() => {
-                      const vInfo = getVendorInfo((s as any).assigned_vendor_id, (s as any).assigned_vendor_name || (s as any).vendor_business_name);
-                      const displayName = (s as any).vendor_business_name || vInfo?.name || (s as any).assigned_vendor_name || (s as any).vendor_name || 'Partner Store';
-                      const displayPhone = (s as any).vendor_phone || vInfo?.phone;
+                    {Boolean(s.assigned_vendor_name || s.vendor_quote_status || s.assigned_vendor_id || s.vendor_business_name) && (() => {
+                      const vInfo = getVendorInfo(s.assigned_vendor_id, s.assigned_vendor_name || s.vendor_business_name);
+                      const displayName = s.vendor_business_name || vInfo?.name || s.assigned_vendor_name || s.vendor_name || 'Partner Store';
+                      const displayPhone = s.vendor_phone || vInfo?.phone;
                       return (
                         <div className="mt-2 pt-2 border-t border-ink-100/60 flex items-center justify-between text-[11px] gap-2">
                           <span className="flex items-center gap-1.5 font-bold text-purple-900 bg-purple-50/80 px-2 py-0.5 rounded-md border border-purple-200/70 truncate max-w-[210px]" title={displayName}>
@@ -378,17 +380,17 @@ export default function AdminSellRequests({
                             <span className="truncate">{displayName}</span>
                             {displayPhone && <span className="text-gray-400 font-normal text-[10px] shrink-0">({displayPhone})</span>}
                           </span>
-                          {(s as any).vendor_quote_status === 'quoted' && (
+                          {s.vendor_quote_status === 'quoted' && (
                             <span className="badge bg-amber-100 text-amber-900 border border-amber-300 font-extrabold text-[9px] shrink-0 animate-pulse">
-                              ⚡ Quoted: {formatINR((s as any).vendor_quote_price || 0)}
+                              ⚡ Quoted: {formatINR(s.vendor_quote_price || 0)}
                             </span>
                           )}
-                          {(s as any).vendor_quote_status === 'admin_approved' && (
+                          {s.vendor_quote_status === 'admin_approved' && (
                             <span className="badge bg-emerald-100 text-emerald-800 font-bold text-[9px] shrink-0">
                               ✓ Approved
                             </span>
                           )}
-                          {(s as any).vendor_quote_status === 'vendor_declined' && (
+                          {s.vendor_quote_status === 'vendor_declined' && (
                             <span className="badge bg-red-100 text-red-800 font-bold text-[9px] shrink-0">
                               ❌ Declined
                             </span>
@@ -471,11 +473,11 @@ export default function AdminSellRequests({
               </div>
 
               {/* Partner Store / Vendor Quotation & Verification Alert */}
-              {Boolean((selectedSell as any).assigned_vendor_id || (selectedSell as any).vendor_quote_status || (selectedSell as any).assigned_vendor_name || (selectedSell as any).vendor_business_name) && (() => {
-                const vInfo = getVendorInfo((selectedSell as any).assigned_vendor_id, (selectedSell as any).assigned_vendor_name || (selectedSell as any).vendor_business_name);
-                const quoteNotes = (selectedSell as any).vendor_notes || (selectedSell as any).vendor_quote_notes;
+              {Boolean(selectedSell.assigned_vendor_id || selectedSell.vendor_quote_status || selectedSell.assigned_vendor_name || selectedSell.vendor_business_name) && (() => {
+                const vInfo = getVendorInfo(selectedSell.assigned_vendor_id, selectedSell.assigned_vendor_name || selectedSell.vendor_business_name);
+                const quoteNotes = selectedSell.vendor_notes || selectedSell.vendor_quote_notes;
                 const currentVendorId = (() => {
-                  const targetId = (selectedSell as any).assigned_vendor_id;
+                  const targetId = selectedSell.assigned_vendor_id;
                   if (!targetId) return '';
                   const match = vendors.find((v) => (v.id && String(v.id) === String(targetId)) || (v._id && String(v._id) === String(targetId)));
                   return match ? (match.id || match._id) : targetId;
@@ -484,14 +486,14 @@ export default function AdminSellRequests({
                   ? (vendors.find((v) => (v.id && String(v.id) === String(currentVendorId)) || (v._id && String(v._id) === String(currentVendorId)))?.business_name ||
                      vendors.find((v) => (v.id && String(v.id) === String(currentVendorId)) || (v._id && String(v._id) === String(currentVendorId)))?.full_name)
                   : null;
-                const displayName = (selectedSell as any).vendor_business_name || vInfo?.name || (selectedSell as any).assigned_vendor_name || fallbackMatchedName || 'Assigned Partner Store';
-                const displayPhone = (selectedSell as any).vendor_phone || vInfo?.phone;
+                const displayName = selectedSell.vendor_business_name || vInfo?.name || selectedSell.assigned_vendor_name || fallbackMatchedName || 'Assigned Partner Store';
+                const displayPhone = selectedSell.vendor_phone || vInfo?.phone;
 
                 return (
                   <div className={`p-4 rounded-2xl border transition-all ${
-                    (selectedSell as any).vendor_quote_status === 'quoted'
+                    selectedSell.vendor_quote_status === 'quoted'
                       ? 'bg-amber-50/90 border-amber-300 ring-2 ring-amber-400/30'
-                      : (selectedSell as any).vendor_quote_status === 'vendor_declined'
+                      : selectedSell.vendor_quote_status === 'vendor_declined'
                       ? 'bg-red-50 border-red-300'
                       : 'bg-indigo-50/60 border-indigo-200'
                   }`}>
@@ -520,29 +522,29 @@ export default function AdminSellRequests({
                             </span>
                           )}
 
-                          {(selectedSell as any).vendor_quote_status === 'quoted' && (
+                          {selectedSell.vendor_quote_status === 'quoted' && (
                             <span className="badge bg-amber-500 text-white font-black text-[10px] animate-pulse">
                               ⚡ Quote Awaiting Verification
                             </span>
                           )}
-                          {(selectedSell as any).vendor_quote_status === 'admin_approved' && (
+                          {selectedSell.vendor_quote_status === 'admin_approved' && (
                             <span className="badge bg-emerald-600 text-white font-bold text-[10px]">
                               ✓ Price Approved
                             </span>
                           )}
-                          {(selectedSell as any).vendor_quote_status === 'vendor_declined' && (
+                          {selectedSell.vendor_quote_status === 'vendor_declined' && (
                             <span className="badge bg-red-600 text-white font-bold text-[10px]">
                               ❌ Vendor Declined Lead
                             </span>
                           )}
                         </div>
 
-                        {(selectedSell as any).vendor_quote_status === 'quoted' && (
+                        {selectedSell.vendor_quote_status === 'quoted' && (
                           <div className="mt-2 bg-white/90 p-3.5 rounded-xl border border-amber-200 shadow-2xs space-y-1.5">
                             <p className="font-extrabold text-gray-900 text-sm flex items-center flex-wrap gap-2">
                               <span>Vendor Quoted Valuation:</span>
                               <span className="font-black text-2xl text-emerald-700">
-                                {formatINR((selectedSell as any).vendor_quote_price || 0)}
+                                {formatINR(selectedSell.vendor_quote_price || 0)}
                               </span>
                               <span className="text-xs text-gray-500 font-medium">
                                 (Customer Portal Est: {formatINR(selectedSell.estimated_price || 0)})
@@ -557,13 +559,13 @@ export default function AdminSellRequests({
                           </div>
                         )}
 
-                        {quoteNotes && (selectedSell as any).vendor_quote_status !== 'quoted' && (
+                        {quoteNotes && selectedSell.vendor_quote_status !== 'quoted' && (
                           <p className="text-xs text-gray-700 italic bg-white/70 px-2.5 py-1 rounded-lg border border-gray-200">
                             Vendor Remarks: "{quoteNotes}"
                           </p>
                         )}
 
-                        {(selectedSell as any).vendor_quote_status === 'vendor_declined' && (
+                        {selectedSell.vendor_quote_status === 'vendor_declined' && (
                           <p className="text-xs font-bold text-red-800">
                             Vendor declined to purchase this device. Please reassign to another vendor below.
                           </p>
@@ -572,20 +574,20 @@ export default function AdminSellRequests({
 
                       {/* Quick Verification Actions */}
                       <div className="flex flex-wrap items-center gap-2">
-                        {(selectedSell as any).vendor_quote_status === 'quoted' && (
+                        {selectedSell.vendor_quote_status === 'quoted' && (
                           <>
                             <button
                               onClick={() => handleApproveVendorQuote(selectedSell)}
                               className="btn bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs px-3.5 py-2 rounded-xl shadow-xs flex items-center gap-1.5"
                             >
-                              <CheckCircle2 className="h-3.5 w-3.5" /> Approve Quote ({formatINR((selectedSell as any).vendor_quote_price || 0)})
+                              <CheckCircle2 className="h-3.5 w-3.5" /> Approve Quote ({formatINR(selectedSell.vendor_quote_price || 0)})
                             </button>
 
                             <button
                               onClick={() => setOverrideModal({
                                 open: true,
                                 sell: selectedSell,
-                                price: String((selectedSell as any).vendor_quote_price || selectedSell.estimated_price || ''),
+                                price: String(selectedSell.vendor_quote_price || selectedSell.estimated_price || ''),
                               })}
                               className="btn-outline bg-white hover:bg-ink-50 text-indigo-700 border-indigo-200 font-bold text-xs px-3 py-2 rounded-xl shadow-xs flex items-center gap-1"
                             >
@@ -627,17 +629,17 @@ export default function AdminSellRequests({
               })()}
 
               {/* Rider Declined Task Alert */}
-              {(selectedSell as any).rider_acceptance_status === 'declined' && (
+              {selectedSell.rider_acceptance_status === 'declined' && (
                 <div className="p-4 rounded-2xl bg-red-50 border border-red-300 flex flex-wrap items-center justify-between gap-3 text-xs">
                   <div className="space-y-1">
                     <span className="badge bg-red-600 text-white font-extrabold text-[10px] uppercase">
                       🚨 Field Executive Declined Task
                     </span>
                     <p className="font-bold text-red-950 text-sm mt-0.5">
-                      Rider {(selectedSell as any).pickup_person_name ? `(${(selectedSell as any).pickup_person_name})` : ''} was unable to complete this pickup.
+                      Rider {selectedSell.pickup_person_name ? `(${selectedSell.pickup_person_name})` : ''} was unable to complete this pickup.
                     </p>
                     <p className="text-red-700 italic">
-                      Decline Reason: "{(selectedSell as any).rider_decline_reason || 'Schedule conflict / area unreachable'}"
+                      Decline Reason: "{selectedSell.rider_decline_reason || 'Schedule conflict / area unreachable'}"
                     </p>
                   </div>
                   <div className="flex items-center gap-2">

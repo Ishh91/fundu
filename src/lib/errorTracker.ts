@@ -52,7 +52,7 @@ export function reportErrorToTracker(
         : typeof error === 'string'
         ? error
         : typeof error === 'object' && error && 'message' in error
-        ? String((error as any).message)
+        ? String(error.message)
         : 'Unknown client error';
 
     if (isIgnoredNoise(message)) return;
@@ -149,3 +149,4 @@ export function initErrorTracker(): void {
     });
   });
 }
+

@@ -172,7 +172,7 @@ export async function compressImage(
 
         if (shouldRevoke) URL.revokeObjectURL(srcUrl);
         resolve(dataUrl);
-      } catch (err) {
+      } catch {
         if (shouldRevoke) URL.revokeObjectURL(srcUrl);
         resolve(typeof source === 'string' ? source : '');
       }

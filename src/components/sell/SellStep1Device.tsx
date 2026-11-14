@@ -1,18 +1,12 @@
 import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import {
   Smartphone,
-  Search,
   Sparkles,
   ArrowRight,
-  RefreshCw,
-  X,
-  AlertCircle,
   Truck,
   ShieldCheck,
   BadgeIndianRupee,
-  Clock,
-  PhoneCall,
   Lock,
   FileText,
   Star,
@@ -22,16 +16,17 @@ import {
   ChevronDown,
 } from 'lucide-react';
 import { getCleanBrandLogo, getCleanPhoneImage, BRAND_FRONT_FALLBACKS, getGenericDevicePlaceholder } from '../../lib/phoneImages';
-import { formatDisplayPrice } from '../../lib/db';
 import { BRAND_TILES, MASTER_MODEL_CATALOG, FAQS_LIST } from '../../data/masterModelCatalog';
 import { isModelDeleted, usePriceSync } from '../../lib/priceSync';
-import { getModelDedupeKey, sortDeviceModelsLatestFirst, inferModelSeries } from '../../data/brandSeriesCatalog';
-import { getModelHardwareSpecs, getRadarHardwareSpecs } from '../../lib/deviceSpecs';
+import { inferModelSeries } from '../../data/brandSeriesCatalog';
+import { getRadarHardwareSpecs } from '../../lib/deviceSpecs';
 import { getUnifiedCatalog } from '../../lib/modelCatalogSync';
+import type { SellFormState } from '../../lib/sellForm';
+import type { User } from '../../lib/db';
 
 interface SellStep1DeviceProps {
-  form: any;
-  setForm: React.Dispatch<React.SetStateAction<any>>;
+  form: SellFormState;
+  setForm: React.Dispatch<React.SetStateAction<SellFormState>>;
   brandSlug?: string;
   modelSlug?: string;
   handleBrandSelect: (brand: string) => void;
@@ -39,21 +34,18 @@ interface SellStep1DeviceProps {
   selectedSeries: string;
   setSelectedSeries: (series: string) => void;
   brandSeriesList: string[];
-  user?: any;
+  user?: User | null;
   dbReviews?: Array<{ id: string; reviewer_name: string; location: string; rating: number; comment: string }>;
 }
 
 export default function SellStep1Device({
   form,
   setForm,
-  brandSlug,
-  modelSlug,
   handleBrandSelect,
   handleQuickModelSelect,
   selectedSeries,
   setSelectedSeries,
   brandSeriesList,
-  user,
   dbReviews = [],
 }: SellStep1DeviceProps) {
   const navigate = useNavigate();
@@ -143,7 +135,7 @@ export default function SellStep1Device({
                   </div>
                   <button
                     type="button"
-                    onClick={() => { setForm((f: any) => ({ ...f, brand: '', model: '' })); navigate('/sell'); }}
+                    onClick={() => { setForm((f) => ({ ...f, brand: '', model: '' })); navigate('/sell'); }}
                     className="text-xs text-[#344257] hover:underline font-bold bg-[#F0F0F5] px-3 py-1.5 rounded-xl border border-[#C0C8D8]"
                   >
                     ← All Brands

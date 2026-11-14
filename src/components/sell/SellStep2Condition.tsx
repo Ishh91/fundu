@@ -1,25 +1,24 @@
 import React from 'react';
 import {
-  Lock,
   ArrowRight,
-  ShieldCheck,
   Check,
   CheckCircle2,
   AlertCircle,
-  Truck,
   Sparkles,
   PenTool,
 } from 'lucide-react';
 import { getCleanPhoneImage, BRAND_FRONT_FALLBACKS, getGenericDevicePlaceholder } from '../../lib/phoneImages';
-import { formatINR, formatMaskedPrice } from '../../lib/db';
+import { formatINR } from '../../lib/db';
 import { HARDWARE_DEFECTS, ACCESSORIES_LIST } from '../../data/masterModelCatalog';
-import { deviceIncludesStylus, getModelReleaseYear, isAmoledDisplay, calculateRamPriceOffset } from '../../lib/deviceSpecs';
+import { deviceIncludesStylus, calculateRamPriceOffset } from '../../lib/deviceSpecs';
 import { getCleanModelName } from '../../lib/modelCatalogSync';
 import type { FunduQuoteResponse } from '../../lib/quoteEngine';
+import type { SellFormState } from '../../lib/sellForm';
+import type { User } from '../../lib/db';
 
 interface SellStep2ConditionProps {
-  form: any;
-  setForm: React.Dispatch<React.SetStateAction<any>>;
+  form: SellFormState;
+  setForm: React.Dispatch<React.SetStateAction<SellFormState>>;
   currentDeviceSpecs: {
     storages: string[];
     rams: string[];
@@ -31,7 +30,7 @@ interface SellStep2ConditionProps {
   baseModelPrice?: number;
   pricingConfig?: any;
   estimate: number;
-  user: any;
+  user: User | null;
   handleGoToLoginForExactPrice: (targetStep?: number) => void;
   toggleDefect: (id: string) => void;
   toggleAccessory: (id: string) => void;
@@ -47,9 +46,6 @@ export default function SellStep2Condition({
   brandSlug,
   baseModelPrice,
   pricingConfig,
-  estimate,
-  user,
-  handleGoToLoginForExactPrice,
   toggleDefect,
   toggleAccessory,
   funduQuote,
@@ -60,8 +56,6 @@ export default function SellStep2Condition({
     (brandSlug?.toLowerCase() === 'apple') ||
     (form.model?.toLowerCase().includes('iphone'));
 
-  const isAmoled = isAmoledDisplay(form.brand, form.model, pricingConfig?.display_spec);
-  const releaseYear = getModelReleaseYear(form.brand, form.model);
   const showsAging = true;
   const hasStylus = deviceIncludesStylus(form.brand, form.model);
 
@@ -73,7 +67,7 @@ export default function SellStep2Condition({
   const stylusSectionNum = hasStylus ? ++nextSection : 0;
 
   const toggleQuestion = (field: string, value: boolean) => {
-    setForm((prev: any) => {
+    setForm((prev) => {
       const next = { ...prev, [field]: value };
 
       const screenCracked = field === 'screenCracked' ? value : !!next.screenCracked;
@@ -82,7 +76,7 @@ export default function SellStep2Condition({
       const displayMajorLines = field === 'displayMajorLines' ? value : !!next.displayMajorLines;
       const displayMajorSpots = field === 'displayMajorSpots' ? value : !!next.displayMajorSpots;
 
-      let sc = 'flawless';
+      let sc: SellFormState['screenCondition'] = 'flawless';
       if (screenCracked) sc = 'cracked';
       else if (displayMajorLines || displayMajorSpots) sc = 'display_lines';
       else if (screenMajor || screenMinor) sc = 'scratched';
@@ -93,8 +87,8 @@ export default function SellStep2Condition({
       const bodyMajorSide = field === 'bodyMajorSideScratches' ? value : !!next.bodyMajorSideScratches;
       const bodyMinorSide = field === 'bodyMinorSideScratches' ? value : !!next.bodyMinorSideScratches;
 
-      let bc = 'flawless';
-      let cc = 'flawless';
+      let bc: SellFormState['bodyCondition'] = 'flawless';
+      let cc: SellFormState['cosmeticCondition'] = 'flawless';
       if (bodyCracked || bodyMajorDents) {
         bc = 'dents_bent';
         cc = 'fair';
@@ -125,14 +119,7 @@ export default function SellStep2Condition({
     ? baseModelPrice
     : ((pricingConfig?.base_price || 0) > 0 ? (pricingConfig?.base_price || 0) + ramOffset : 0);
 
-  const isQuoteMatched = funduQuote?.deviceSummary?.storage
-    ? funduQuote.deviceSummary.storage.replace(/\s+/g, '').toLowerCase() === form.storage.replace(/\s+/g, '').toLowerCase() &&
-      (form.ram ? (funduQuote.deviceSummary.ram || '').toLowerCase() === form.ram.toLowerCase() : true)
-    : true;
 
-  const rawOffer = (isQuoteMatched && funduQuote?.offerAmount) ? funduQuote.offerAmount : estimate;
-  const currentLiveOffer = Math.min(effectiveBasePrice > 0 ? effectiveBasePrice : 180000, Math.max(500, rawOffer));
-  const totalDeductions = effectiveBasePrice > 0 ? Math.max(0, effectiveBasePrice - currentLiveOffer) : 0;
 
   return (
     <div className="max-w-3xl mx-auto space-y-6 animate-fade-in">
@@ -183,7 +170,7 @@ export default function SellStep2Condition({
                     <button
                       key={v.key}
                       type="button"
-                      onClick={() => setForm((f: any) => ({ ...f, storage: v.storage, ram: v.ram }))}
+                      onClick={() => setForm((f) => ({ ...f, storage: v.storage, ram: v.ram }))}
                       className={`flex items-center gap-3.5 px-4 py-3.5 rounded-xl border text-left transition-all cursor-pointer ${
                         isSelected
                           ? 'border-[#344257] bg-white shadow-sm ring-2 ring-[#344257]/20'
@@ -267,7 +254,7 @@ export default function SellStep2Condition({
                 <div className="flex gap-1 shrink-0">
                   <button
                     type="button"
-                    onClick={() => setForm((f: any) => ({ ...f, powersOn: true }))}
+                    onClick={() => setForm((f) => ({ ...f, powersOn: true }))}
                     className={`px-3 py-1.5 rounded-xl text-xs font-bold transition ${form.powersOn ? 'bg-[#344257] text-white shadow-xs' : 'bg-white text-gray-600 border border-gray-200'
                       }`}
                   >
@@ -275,7 +262,7 @@ export default function SellStep2Condition({
                   </button>
                   <button
                     type="button"
-                    onClick={() => setForm((f: any) => ({ ...f, powersOn: false }))}
+                    onClick={() => setForm((f) => ({ ...f, powersOn: false }))}
                     className={`px-3 py-1.5 rounded-xl text-xs font-bold transition ${!form.powersOn ? 'bg-rose-600 text-white shadow-xs' : 'bg-white text-gray-600 border border-gray-200'
                       }`}
                   >
@@ -301,7 +288,7 @@ export default function SellStep2Condition({
                 <div className="flex gap-1 shrink-0">
                   <button
                     type="button"
-                    onClick={() => setForm((f: any) => ({ ...f, activationLockCleared: true }))}
+                    onClick={() => setForm((f) => ({ ...f, activationLockCleared: true }))}
                     className={`px-3 py-1.5 rounded-xl text-xs font-bold transition ${form.activationLockCleared ? 'bg-[#344257] text-white shadow-xs' : 'bg-white text-gray-600 border border-gray-200'
                       }`}
                   >
@@ -309,7 +296,7 @@ export default function SellStep2Condition({
                   </button>
                   <button
                     type="button"
-                    onClick={() => setForm((f: any) => ({ ...f, activationLockCleared: false }))}
+                    onClick={() => setForm((f) => ({ ...f, activationLockCleared: false }))}
                     className={`px-3 py-1.5 rounded-xl text-xs font-bold transition ${!form.activationLockCleared ? 'bg-rose-600 text-white shadow-xs' : 'bg-white text-gray-600 border border-gray-200'
                       }`}
                   >
@@ -333,7 +320,7 @@ export default function SellStep2Condition({
               <div className="flex gap-1 shrink-0">
                 <button
                   type="button"
-                  onClick={() => setForm((f: any) => ({ ...f, ownershipVerified: true }))}
+                  onClick={() => setForm((f) => ({ ...f, ownershipVerified: true }))}
                   className={`px-3 py-1.5 rounded-xl text-xs font-bold transition ${form.ownershipVerified ? 'bg-[#344257] text-white shadow-xs' : 'bg-white text-gray-600 border border-gray-200'
                     }`}
                 >
@@ -341,7 +328,7 @@ export default function SellStep2Condition({
                 </button>
                 <button
                   type="button"
-                  onClick={() => setForm((f: any) => ({ ...f, ownershipVerified: false }))}
+                  onClick={() => setForm((f) => ({ ...f, ownershipVerified: false }))}
                   className={`px-3 py-1.5 rounded-xl text-xs font-bold transition ${!form.ownershipVerified ? 'bg-rose-600 text-white shadow-xs' : 'bg-white text-gray-600 border border-gray-200'
                     }`}
                 >
@@ -361,7 +348,7 @@ export default function SellStep2Condition({
                 <div className="flex gap-1 shrink-0">
                   <button
                     type="button"
-                    onClick={() => setForm((f: any) => ({ ...f, liquidDamage: false }))}
+                    onClick={() => setForm((f) => ({ ...f, liquidDamage: false }))}
                     className={`px-3 py-1.5 rounded-xl text-xs font-bold transition ${!form.liquidDamage ? 'bg-[#344257] text-white shadow-xs' : 'bg-white text-gray-600 border border-gray-200'
                       }`}
                   >
@@ -369,7 +356,7 @@ export default function SellStep2Condition({
                   </button>
                   <button
                     type="button"
-                    onClick={() => setForm((f: any) => ({ ...f, liquidDamage: true }))}
+                    onClick={() => setForm((f) => ({ ...f, liquidDamage: true }))}
                     className={`px-3 py-1.5 rounded-xl text-xs font-bold transition ${form.liquidDamage ? 'bg-rose-600 text-white shadow-xs' : 'bg-white text-gray-600 border border-gray-200'
                       }`}
                   >
@@ -629,7 +616,7 @@ export default function SellStep2Condition({
                   <button
                     key={bat.id}
                     type="button"
-                    onClick={() => setForm((f: any) => ({ ...f, batteryHealth: bat.id as any }))}
+                    onClick={() => setForm((f) => ({ ...f, batteryHealth: bat.id as SellFormState['batteryHealth'] }))}
                     className={`p-4 rounded-2xl border text-left transition-all duration-200 cursor-pointer ${isSelected
                         ? 'border-[#344257] bg-[#F0F0F5] shadow-md ring-2 ring-[#344257]/20 -translate-y-1'
                         : 'border-gray-200 bg-white hover:border-[#6A859F] hover:bg-[#F7F7FA]'
@@ -740,9 +727,9 @@ export default function SellStep2Condition({
                     key={age.id}
                     type="button"
                     onClick={() =>
-                      setForm((f: any) => ({
+                      setForm((f) => ({
                         ...f,
-                        agePeriod: age.id,
+                        agePeriod: age.id as SellFormState['agePeriod'],
                         underWarranty: age.warranty,
                       }))
                     }
@@ -821,7 +808,7 @@ export default function SellStep2Condition({
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
               <button
                 type="button"
-                onClick={() => setForm((f: any) => ({ ...f, stylusAvailable: true }))}
+                onClick={() => setForm((f) => ({ ...f, stylusAvailable: true }))}
                 className={`p-3.5 rounded-xl border text-left transition-all duration-200 cursor-pointer ${form.stylusAvailable !== false
                   ? 'border-emerald-500 bg-emerald-50/80 text-emerald-950 ring-2 ring-emerald-500/30 shadow-xs'
                   : 'border-gray-200 bg-white hover:border-gray-300 text-gray-700'
@@ -838,7 +825,7 @@ export default function SellStep2Condition({
 
               <button
                 type="button"
-                onClick={() => setForm((f: any) => ({ ...f, stylusAvailable: false }))}
+                onClick={() => setForm((f) => ({ ...f, stylusAvailable: false }))}
                 className={`p-3.5 rounded-xl border text-left transition-all duration-200 cursor-pointer ${form.stylusAvailable === false
                   ? 'border-rose-500 bg-rose-50/90 text-rose-950 ring-2 ring-rose-500/30 shadow-xs'
                   : 'border-gray-200 bg-white hover:border-gray-300 text-gray-700'

@@ -22,3 +22,4 @@ const systemErrorSchema = createSchema(
 systemErrorSchema.index({ created_at: 1 }, { expireAfterSeconds: 30 * 24 * 60 * 60 });
 
 export const SystemError = mongoose.models.SystemError || mongoose.model('SystemError', systemErrorSchema);
+

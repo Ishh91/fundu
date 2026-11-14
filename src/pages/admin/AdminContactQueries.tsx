@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Mail, Search, Phone, CheckCircle2, AlertCircle, Clock, Trash2, Send, MessageSquare } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Mail, Search, Phone, Send } from 'lucide-react';
 import { db } from '../../lib/db';
 
 export type ContactQueryItem = {

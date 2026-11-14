@@ -1,4 +1,3 @@
-import React from 'react';
 import { CheckCircle2, ShieldCheck } from 'lucide-react';
 import { formatINR } from '../../lib/db';
 

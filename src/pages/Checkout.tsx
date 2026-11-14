@@ -6,6 +6,7 @@ import { useAuth } from '../context/AuthContext';
 import { formatINR } from '../lib/db';
 import { getCleanPhoneImage } from '../lib/phoneImages';
 import { verifyPanIndiaPincode, type VerifiedLocation } from '../lib/locationService';
+import { describeItemVariant } from '../lib/cartItem';
 
 export default function Checkout() {
   const { cartItems, totalAmount, totalItems, updateQuantity, removeFromCart, setDeliveryDetails } = useCart();
@@ -72,7 +73,7 @@ export default function Checkout() {
         name: prev.name || profile.full_name || '',
         phone: prev.phone || profile.phone || '',
         address: prev.address || profile.address || '',
-        area: prev.area || (profile as any).city || profile.vendor_location || '',
+        area: prev.area || profile.city || profile.vendor_location || '',
       }));
     }
   }, [user, loading, cartItems.length, navigate, profile]);
@@ -205,9 +206,9 @@ export default function Checkout() {
 
             <div className="border-b border-ink-200 pb-4 mb-4 space-y-3 max-h-80 overflow-y-auto pr-1 divide-y divide-gray-100">
               {cartItems.map((ci) => {
-                const itemImg = ci.item.images?.[0] || (ci.item as any).image;
-                const brand = (ci.item as any).brand || '';
-                const variant = [(ci.item as any).storage, (ci.item as any).condition].filter(Boolean).join(' • ');
+                const itemImg = ci.item.images?.[0] || ci.item.image;
+                const brand = ci.item.brand || '';
+                const variant = describeItemVariant(ci.item);
 
                 return (
                   <div key={ci.id} className="pt-3 first:pt-0 flex gap-3 items-center">

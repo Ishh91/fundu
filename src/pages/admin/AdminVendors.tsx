@@ -1,3 +1,4 @@
+import { getErrorMessage } from '../../lib/errorMessage';
 import { useState, useEffect } from 'react';
 import { API_BASE } from '../../config/apiConfig';
 import {
@@ -6,33 +7,20 @@ import {
   Plus,
   Search,
   PhoneCall,
-  MapPin,
   X,
   MessageSquare,
-  Truck,
   CheckCircle2,
   Share2,
   Mail,
-  ExternalLink,
-  Lock,
   Trash2,
-  DollarSign,
   Wrench,
   Smartphone,
-  ShieldCheck,
-  UserCheck,
   Check,
-  AlertTriangle,
-  RotateCcw,
   Edit2,
-  Clock,
   Sparkles,
-  ArrowRight,
-  Filter,
 } from 'lucide-react';
-import type { Profile, WholesaleInventory, WholesaleOrder, SellRequest, RepairBooking, VendorLedger } from '../../types';
+import type { Profile, SellRequest, RepairBooking, VendorLedger } from '../../types';
 import { db, formatINR, authHeaders } from '../../lib/db';
-import { statusColors } from './adminTypes';
 import { sendEmailOtpCode } from '../../lib/freeNotifyService';
 
 export default function AdminVendors() {
@@ -101,28 +89,13 @@ export default function AdminVendors() {
       `Hi *${vendor.full_name || vendor.business_name || 'Vendor'}* (*${vendor.business_name || 'Vendor Partner'}*),\n` +
       `Your Official Vendor Account is created! Please check your email for the EmailJS Verification OTP code to verify your account.\n\n` +
       `🌐 *Login Portal:* ${loginUrl}\n` +
-      `📧 *Login Email:* ${(vendor as any).email || vendor.phone}\n` +
+      `📧 *Login Email:* ${vendor.email || vendor.phone}\n` +
       `🔑 *Passcode:* ${passwordText}\n` +
       `💳 *Approved Credit Limit:* ${formatINR(vendor.credit_limit || 200000)}`;
 
     return `https://wa.me/${targetPhone}?text=${encodeURIComponent(message)}`;
   };
 
-  const getEmailShareLink = (vendor: Partial<Profile>, pass?: string) => {
-    const loginUrl = `${window.location.origin}/vendor-login`;
-    const passwordText = pass || 'Vendor@123456';
-    const emailTo = (vendor as any).email || '';
-    const subject = `Fundu Vendor Account Created — Verification Required`;
-    const body = `Hi ${vendor.full_name || vendor.business_name || 'Vendor Partner'},\n\n` +
-      `Your Fundu Vendor Partner account has been created.\n\n` +
-      `Login Portal: ${loginUrl}\n` +
-      `Email: ${(vendor as any).email || vendor.phone}\n` +
-      `Password: ${passwordText}\n` +
-      `Approved Credit Limit: ${formatINR(vendor.credit_limit || 200000)}\n\n` +
-      `Please enter the Email Verification OTP sent to your email to verify and activate your account.`;
-
-    return `mailto:${emailTo}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-  };
 
   const handleAddVendor = async () => {
     if (!addVendorForm.businessName || !addVendorForm.email || !addVendorForm.phone) {
@@ -189,23 +162,6 @@ export default function AdminVendors() {
     }
   };
 
-  const handleDeleteVendor = async (vendor: Profile) => {
-    const name = vendor.business_name || vendor.full_name || 'this vendor partner';
-    if (!window.confirm(`Are you sure you want to remove Vendor Partner "${name}"?\n\nThis will remove their vendor account and portal access.`)) {
-      return;
-    }
-
-    try {
-      await db.from('profiles').delete().eq('id', vendor.id);
-      await db.from('users').delete().eq('id', vendor.id);
-
-      alert(`🗑️ Vendor Partner "${name}" removed successfully!`);
-      setVendors((prev) => prev.filter((v) => v.id !== vendor.id));
-    } catch (err) {
-      console.error('Failed to delete vendor partner:', err);
-      alert('Failed to remove vendor partner.');
-    }
-  };
 
   const fetchData = async () => {
     setLoading(true);
@@ -234,7 +190,6 @@ export default function AdminVendors() {
 
   // Stats
   const totalCreditLimit = vendors.reduce((sum, v) => sum + (v.credit_limit || 0), 0);
-  const totalOutstandingDue = vendors.reduce((sum, v) => sum + (v.outstanding_balance || 0), 0);
   const totalCommissionsEarned = ledgers
     .filter((l) => l.type === 'sell_commission_fee' || l.type === 'repair_commission_fee')
     .reduce((sum, l) => sum + (l.amount || 0), 0);
@@ -305,8 +260,8 @@ export default function AdminVendors() {
       if (error) throw error;
       alert(`✅ Quoted valuation of ${formatINR(price)} APPROVED by Admin! Customer can now accept on their dashboard.`);
       await fetchData();
-    } catch (err: any) {
-      alert(err?.message || 'Failed to approve sell quotation');
+    } catch (err) {
+      alert(getErrorMessage(err, 'Failed to approve sell quotation'));
     }
   };
 
@@ -326,8 +281,8 @@ export default function AdminVendors() {
       if (error) throw error;
       alert('Quotation rejected. You can now reassign this lead to another vendor.');
       await fetchData();
-    } catch (err: any) {
-      alert(err?.message || 'Failed to reject quotation');
+    } catch (err) {
+      alert(getErrorMessage(err, 'Failed to reject quotation'));
     }
   };
 
@@ -371,8 +326,8 @@ export default function AdminVendors() {
       if (error) throw error;
       alert(`✅ Repair quotation of ${formatINR(amount)} APPROVED by Admin! Customer can now review & pay on their dashboard.`);
       await fetchData();
-    } catch (err: any) {
-      alert(err?.message || 'Failed to approve repair quotation');
+    } catch (err) {
+      alert(getErrorMessage(err, 'Failed to approve repair quotation'));
     }
   };
 
@@ -392,8 +347,8 @@ export default function AdminVendors() {
       if (error) throw error;
       alert('Repair quotation rejected. You can now reassign this repair to another vendor.');
       await fetchData();
-    } catch (err: any) {
-      alert(err?.message || 'Failed to reject quotation');
+    } catch (err) {
+      alert(getErrorMessage(err, 'Failed to reject quotation'));
     }
   };
 
@@ -433,12 +388,16 @@ export default function AdminVendors() {
       setOverrideModal(null);
       setOverridePriceInput('');
       await fetchData();
-    } catch (err: any) {
-      alert(err?.message || 'Failed to override price');
+    } catch (err) {
+      alert(getErrorMessage(err, 'Failed to override price'));
     } finally {
       setOverrideSubmitting(false);
     }
   };
+
+  // Record Cash Repayment from Vendor
+
+  // Update Credit Limit for Vendor
 
   // Record Cash Repayment from Vendor
   const handleRecordRepayment = async () => {
@@ -463,7 +422,7 @@ export default function AdminVendors() {
 
       if (error) throw error;
 
-      alert(`Recorded cash repayment of ${formatINR(amountNum)} for ${paymentModal.vendor.business_name || paymentModal.vendor.full_name}. Limit balance updated!`);
+      alert(`Recorded repayment of ${formatINR(amountNum)} for ${paymentModal.vendor.business_name || paymentModal.vendor.full_name}. Limit balance updated!`);
       setPaymentModal(null);
       setPaymentAmount('');
       setPaymentNotes('');
@@ -560,7 +519,7 @@ export default function AdminVendors() {
           ].map((tab) => (
             <button
               key={tab.id}
-              onClick={() => setActiveSubtab(tab.id as any)}
+              onClick={() => setActiveSubtab(tab.id as 'pending-quotes' | 'assign-sell' | 'assign-repair' | 'vendors' | 'commissions')}
               className={`px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 cursor-pointer ${
                 activeSubtab === tab.id
                   ? 'bg-brand-600 text-white shadow-xs'
@@ -624,7 +583,7 @@ export default function AdminVendors() {
                   <div className="grid grid-cols-1 gap-4">
                     {pendingSellQuotes.map((s) => {
                       const vendor = vendors.find((v) => (v.id && String(v.id) === String(s.assigned_vendor_id)) || (v._id && String(v._id) === String(s.assigned_vendor_id)));
-                      const vendorName = vendor?.business_name || vendor?.full_name || (s as any).assigned_vendor_name || 'Vendor Partner';
+                      const vendorName = vendor?.business_name || vendor?.full_name || s.assigned_vendor_name || 'Vendor Partner';
                       const vendorPhone = vendor?.phone || vendor?.mobile || null;
                       return (
                         <div key={s.id} className="card p-5 rounded-2xl bg-white shadow-xs border-2 border-amber-300 space-y-4">
@@ -735,7 +694,7 @@ export default function AdminVendors() {
                   <div className="grid grid-cols-1 gap-4">
                     {pendingRepairQuotes.map((r) => {
                       const vendor = vendors.find((v) => (v.id && String(v.id) === String(r.assigned_vendor_id)) || (v._id && String(v._id) === String(r.assigned_vendor_id)));
-                      const vendorName = vendor?.business_name || vendor?.full_name || (r as any).assigned_vendor_name || 'Vendor Partner';
+                      const vendorName = vendor?.business_name || vendor?.full_name || r.assigned_vendor_name || 'Vendor Partner';
                       const vendorPhone = vendor?.phone || vendor?.mobile || null;
                       return (
                         <div key={r.id} className="card p-5 rounded-2xl bg-white shadow-xs border-2 border-purple-300 space-y-4">
@@ -929,7 +888,7 @@ export default function AdminVendors() {
 
                     <button
                       onClick={async () => {
-                        const email = (vendor as any).email || `${vendor.phone}@fundu.in`;
+                        const email = vendor.email || `${vendor.phone}@fundu.in`;
                         const otp = Math.floor(100000 + Math.random() * 900000).toString();
                         try {
                           await sendEmailOtpCode(email, otp, vendor.full_name || vendor.business_name || 'Vendor');
@@ -988,7 +947,7 @@ export default function AdminVendors() {
               <button
                 key={f.id}
                 type="button"
-                onClick={() => setSellFilter(f.id as any)}
+                onClick={() => setSellFilter(f.id as 'all' | 'pending_quote' | 'admin_approved' | 'user_accepted' | 'declined')}
                 className={`px-3 py-1.5 rounded-xl text-xs font-bold transition cursor-pointer ${
                   sellFilter === f.id
                     ? 'bg-[#344257] text-white shadow-xs'
@@ -1010,7 +969,7 @@ export default function AdminVendors() {
             })
             .map((s) => {
               const currentVendor = vendors.find((v) => (v.id && String(v.id) === String(s.assigned_vendor_id)) || (v._id && String(v._id) === String(s.assigned_vendor_id)));
-              const vendorName = currentVendor?.business_name || currentVendor?.full_name || (s as any).assigned_vendor_name || 'Vendor Partner';
+              const vendorName = currentVendor?.business_name || currentVendor?.full_name || s.assigned_vendor_name || 'Vendor Partner';
               const isQuoted = s.vendor_quote_status === 'quoted';
               const isAdminApproved = s.vendor_quote_status === 'admin_approved';
               const isUserAccepted = s.vendor_quote_status === 'user_accepted' || s.status === 'completed';
@@ -1164,7 +1123,7 @@ export default function AdminVendors() {
               <button
                 key={f.id}
                 type="button"
-                onClick={() => setRepairFilter(f.id as any)}
+                onClick={() => setRepairFilter(f.id as 'all' | 'pending_quote' | 'admin_approved' | 'paid' | 'declined')}
                 className={`px-3 py-1.5 rounded-xl text-xs font-bold transition cursor-pointer ${
                   repairFilter === f.id
                     ? 'bg-[#344257] text-white shadow-xs'
@@ -1186,7 +1145,7 @@ export default function AdminVendors() {
             })
             .map((r) => {
               const currentVendor = vendors.find((v) => (v.id && String(v.id) === String(r.assigned_vendor_id)) || (v._id && String(v._id) === String(r.assigned_vendor_id)));
-              const vendorName = currentVendor?.business_name || currentVendor?.full_name || (r as any).assigned_vendor_name || 'Vendor Partner';
+              const vendorName = currentVendor?.business_name || currentVendor?.full_name || r.assigned_vendor_name || 'Vendor Partner';
               const isQuoted = r.quotation_status === 'quoted';
               const isAdminApproved = r.quotation_status === 'admin_approved';
               const isPaid = r.quotation_status === 'paid' || r.status === 'paid';
@@ -1444,7 +1403,7 @@ export default function AdminVendors() {
             </div>
 
             <div className="p-3 bg-ink-50 rounded-xl space-y-1 text-xs">
-              <p>Email: <strong>{(shareCredModal.vendor as any).email || shareCredModal.vendor.phone}</strong></p>
+              <p>Email: <strong>{shareCredModal.vendor.email || shareCredModal.vendor.phone}</strong></p>
               <p>Passcode: <strong>{shareCredModal.password || 'Vendor@123456'}</strong></p>
               <p>Limit: <strong>{formatINR(shareCredModal.vendor.credit_limit || 200000)}</strong></p>
             </div>
@@ -1523,6 +1482,142 @@ export default function AdminVendors() {
               >
                 <Check className="h-4 w-4" />
                 {overrideSubmitting ? 'Saving...' : 'Approve Verified Price'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {paymentModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-ink-900/60 backdrop-blur-xs p-4">
+          <div className="card w-full max-w-md p-6 bg-white rounded-2xl shadow-2xl space-y-4">
+            <div className="flex items-center justify-between pb-2 border-b border-ink-100">
+              <h3 className="font-display font-bold text-ink-900 flex items-center gap-2 text-sm">
+                <CreditCard className="h-4 w-4 text-emerald-600" />
+                Record Repayment
+              </h3>
+              <button
+                type="button"
+                onClick={() => setPaymentModal(null)}
+                aria-label="Close"
+                className="text-ink-400 hover:text-ink-700"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+
+            <div className="p-3 bg-emerald-50/60 rounded-xl space-y-1 text-xs border border-emerald-100">
+              <p>Vendor: <strong>{paymentModal.vendor.business_name || paymentModal.vendor.full_name}</strong></p>
+              <p>Outstanding due: <strong>{formatINR(paymentModal.vendor.outstanding_balance || 0)}</strong></p>
+            </div>
+
+            <div>
+              <label htmlFor="vendor-payment-amount" className="text-xs font-bold text-ink-700">Amount received (₹)</label>
+              <input
+                id="vendor-payment-amount"
+                type="number"
+                min="1"
+                value={paymentAmount}
+                onChange={(e) => setPaymentAmount(e.target.value)}
+                placeholder="e.g. 5000"
+                className="input mt-1 text-sm font-black text-ink-900"
+                autoFocus
+              />
+            </div>
+
+            <div>
+              <label htmlFor="vendor-payment-mode" className="text-xs font-bold text-ink-700">Payment mode</label>
+              <select
+                id="vendor-payment-mode"
+                value={paymentMode}
+                onChange={(e) => setPaymentMode(e.target.value)}
+                className="input mt-1 text-sm"
+              >
+                <option value="Cash">Cash</option>
+                <option value="UPI">UPI</option>
+                <option value="Bank Transfer">Bank Transfer</option>
+              </select>
+            </div>
+
+            <div>
+              <label htmlFor="vendor-payment-notes" className="text-xs font-bold text-ink-700">Notes (optional)</label>
+              <input
+                id="vendor-payment-notes"
+                type="text"
+                value={paymentNotes}
+                onChange={(e) => setPaymentNotes(e.target.value)}
+                placeholder="e.g. UPI reference or receipt number"
+                className="input mt-1 text-sm"
+              />
+            </div>
+
+            <div className="flex justify-end gap-2 pt-2 border-t border-ink-100">
+              <button type="button" onClick={() => setPaymentModal(null)} className="btn-outline text-xs px-4 py-2">
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={handleRecordRepayment}
+                disabled={paymentSubmitting || !paymentAmount}
+                className="px-5 py-2 bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 text-white font-black text-xs rounded-xl shadow-xs transition flex items-center gap-1.5 cursor-pointer"
+              >
+                <Check className="h-4 w-4" />
+                {paymentSubmitting ? 'Saving...' : 'Record Repayment'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {limitModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-ink-900/60 backdrop-blur-xs p-4">
+          <div className="card w-full max-w-md p-6 bg-white rounded-2xl shadow-2xl space-y-4">
+            <div className="flex items-center justify-between pb-2 border-b border-ink-100">
+              <h3 className="font-display font-bold text-ink-900 flex items-center gap-2 text-sm">
+                <Edit2 className="h-4 w-4 text-blue-600" />
+                Set Credit Limit
+              </h3>
+              <button
+                type="button"
+                onClick={() => setLimitModal(null)}
+                aria-label="Close"
+                className="text-ink-400 hover:text-ink-700"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+
+            <div className="p-3 bg-blue-50/60 rounded-xl space-y-1 text-xs border border-blue-100">
+              <p>Vendor: <strong>{limitModal.vendor.business_name || limitModal.vendor.full_name}</strong></p>
+              <p>Outstanding due: <strong>{formatINR(limitModal.vendor.outstanding_balance || 0)}</strong></p>
+            </div>
+
+            <div>
+              <label htmlFor="vendor-credit-limit" className="text-xs font-bold text-ink-700">New credit limit (₹)</label>
+              <input
+                id="vendor-credit-limit"
+                type="number"
+                min="0"
+                value={newLimit}
+                onChange={(e) => setNewLimit(e.target.value)}
+                placeholder="e.g. 50000"
+                className="input mt-1 text-sm font-black text-ink-900"
+                autoFocus
+              />
+            </div>
+
+            <div className="flex justify-end gap-2 pt-2 border-t border-ink-100">
+              <button type="button" onClick={() => setLimitModal(null)} className="btn-outline text-xs px-4 py-2">
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={handleUpdateLimit}
+                disabled={limitSubmitting || newLimit === ''}
+                className="px-5 py-2 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white font-black text-xs rounded-xl shadow-xs transition flex items-center gap-1.5 cursor-pointer"
+              >
+                <Check className="h-4 w-4" />
+                {limitSubmitting ? 'Saving...' : 'Save Limit'}
               </button>
             </div>
           </div>

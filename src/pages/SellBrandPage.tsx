@@ -1,10 +1,8 @@
 import { useState, useMemo, useEffect, useRef } from 'react';
 import { useNavigate, useParams, Link } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
 import {
   Search,
   Sparkles,
-  ArrowRight,
   ArrowLeft,
   X,
   BadgeIndianRupee,
@@ -19,132 +17,21 @@ import {
   RefreshCw,
   AlertCircle,
   FileText,
-  Layers,
 } from 'lucide-react';
-import { formatINR } from '../lib/db';
-import { getCleanPhoneImage, getCleanBrandLogo, BRAND_FRONT_FALLBACKS, getGenericDevicePlaceholder, pullLiveModelImagesFromDb, isBrandImageMismatch, clearPhoneImageCache } from '../lib/phoneImages';
-import { usePriceSync, applyPriceOverrides, isModelDeleted, getEffectivePrice } from '../lib/priceSync';
+import { getCleanPhoneImage, BRAND_FRONT_FALLBACKS, getGenericDevicePlaceholder, pullLiveModelImagesFromDb, isBrandImageMismatch, clearPhoneImageCache } from '../lib/phoneImages';
+import { usePriceSync, applyPriceOverrides, isModelDeleted } from '../lib/priceSync';
 import { MASTER_MODEL_CATALOG } from '../data/masterModelCatalog';
 import { getUnifiedCatalog } from '../lib/modelCatalogSync';
-import { fetchBrandCatalogFromApi, getStoredBrandCatalog, getDynamicFallbackConfig, calculateMarketPriceComparison, type CatalogModelItem } from '../lib/mobileApi';
+import { fetchBrandCatalogFromApi, getStoredBrandCatalog, type CatalogModelItem } from '../lib/mobileApi';
 import { ALL_INDIAN_PHONES_CATALOG } from '../data/indianPhonesCatalog';
 import {
   groupModelsBySeries,
-  getSeriesBySlug,
   isSeriesSlug,
   getModelDedupeKey,
   inferModelSeries,
   sortDeviceModelsLatestFirst,
-  type SeriesGroup,
 } from '../data/brandSeriesCatalog';
 
-const BRAND_DETAILS: Record<
-  string,
-  { logo: string; tagline: string; desc: string; count: string }
-> = {
-  apple: {
-    logo: getCleanBrandLogo('apple'),
-    tagline: 'Sell Old Apple iPhone Online for Instant Cash at Doorstep',
-    desc: 'Get highest guaranteed spot cash for your old Apple iPhone at your doorstep. Free doorstep pickup & instant UPI payment across all service localities.',
-    count: '46+ iPhone Models',
-  },
-  samsung: {
-    logo: getCleanBrandLogo('samsung'),
-    tagline: 'Sell Old Samsung Galaxy Mobile Online at Best Resale Valuation',
-    desc: 'Sell used Samsung Galaxy S, Z Fold/Flip, A & M series smartphones online at your doorstep for maximum spot payment.',
-    count: '105+ Galaxy Models',
-  },
-  oneplus: {
-    logo: getCleanBrandLogo('oneplus'),
-    tagline: 'Sell Old OnePlus Smartphone Online at Highest Cash Rates',
-    desc: 'Sell old OnePlus 13, 12, 11, Nord & Open series phones at best doorstep cash rates at your doorstep with instant data wipe.',
-    count: '40+ OnePlus Models',
-  },
-  xiaomi: {
-    logo: getCleanBrandLogo('xiaomi'),
-    tagline: 'Get Maximum Resale Cash Value for Your Old Xiaomi / Redmi Phone at your doorstep',
-    desc: 'Sell used Xiaomi Mi, Redmi Note & POCO smartphones online at your doorstep for instant spot cash & 100% free doorstep pickup across Gomti Nagar, Hazratganj, Indira Nagar & Aliganj.',
-    count: '60+ Xiaomi Models',
-  },
-  redmi: {
-    logo: getCleanBrandLogo('redmi'),
-    tagline: 'Sell Old Redmi Mobile Phone Online for Instant Cash',
-    desc: 'Sell used Redmi Note 13, 12, 11 & C series phones online at your doorstep for instant spot payment.',
-    count: '40+ Redmi Models',
-  },
-  poco: {
-    logo: getCleanBrandLogo('poco'),
-    tagline: 'Sell Old POCO Gaming Phone Online at Best Resale Price',
-    desc: 'Sell used POCO F, X, M & C series performance smartphones with zero hassle and instant cash at doorstep.',
-    count: '25+ POCO Models',
-  },
-  realme: {
-    logo: getCleanBrandLogo('realme'),
-    tagline: 'Sell Old Realme Mobile Phone Online at Best Price',
-    desc: 'Sell used Realme GT, Number Pro, Narzo & C series phones online at your doorstep for instant cash in hand.',
-    count: '40+ Realme Models',
-  },
-  oppo: {
-    logo: getCleanBrandLogo('oppo'),
-    tagline: 'Sell Old Oppo Mobile Phone Online for Instant Cash',
-    desc: 'Sell old Oppo Find, Reno, F & A series mobiles at your doorstep with zero hassle and instant GPay/PhonePe transfer.',
-    count: '35+ Oppo Models',
-  },
-  vivo: {
-    logo: getCleanBrandLogo('vivo'),
-    tagline: 'Sell Old Vivo Mobile Online for Instant Spot Payout',
-    desc: 'Sell used Vivo X, V, T & Y series smartphones at your doorstep with free doorstep pickup & guaranteed valuation.',
-    count: '45+ Vivo Models',
-  },
-  iqoo: {
-    logo: getCleanBrandLogo('iqoo'),
-    tagline: 'Sell Old iQOO Gaming Smartphone Online at Best Value',
-    desc: 'Sell used iQOO 12, 11, Neo & Z series performance phones for instant doorstep payment at your doorstep.',
-    count: '15+ iQOO Models',
-  },
-  google: {
-    logo: getCleanBrandLogo('google'),
-    tagline: 'Sell Old Google Pixel Phone Online at Best Resale Value',
-    desc: 'Sell used Google Pixel 9, 8, 7, 6 & Fold series phones at your doorstep at highest market value.',
-    count: '25+ Pixel Models',
-  },
-  motorola: {
-    logo: getCleanBrandLogo('motorola'),
-    tagline: 'Sell Old Motorola Moto Phone Online for Instant Cash',
-    desc: 'Sell used Motorola Razr, Edge & Moto G series smartphones at your doorstep for maximum spot payment.',
-    count: '30+ Moto Models',
-  },
-  moto: {
-    logo: getCleanBrandLogo('motorola'),
-    tagline: 'Sell Old Moto Smartphone Online for Quick Doorstep Cash',
-    desc: 'Sell used Moto G, Edge & Razr series phones online at your doorstep with free doorstep pickup.',
-    count: '30+ Moto Models',
-  },
-  nothing: {
-    logo: getCleanBrandLogo('nothing'),
-    tagline: 'Sell Old Nothing Phone Online at Top Guaranteed Price',
-    desc: 'Sell used Nothing Phone (2), (1), (2a) & CMF Phone 1 at your doorstep for instant spot cash.',
-    count: '10+ Nothing Models',
-  },
-  tecno: {
-    logo: getCleanBrandLogo('tecno'),
-    tagline: 'Sell Old Tecno Smartphone Online for Instant Cash at Doorstep',
-    desc: 'Sell used Tecno Camon, Pova, Phantom & Spark series smartphones online at your doorstep for maximum spot payment.',
-    count: '25+ Tecno Models',
-  },
-  itel: {
-    logo: getCleanBrandLogo('itel'),
-    tagline: 'Sell Old Itel Mobile Phone Online for Instant Cash',
-    desc: 'Sell used Itel Color Pro, S24, P55, A70 & A60s series smartphones at your doorstep with free doorstep pickup & instant payment.',
-    count: '20+ Itel Models',
-  },
-  infinix: {
-    logo: getCleanBrandLogo('infinix'),
-    tagline: 'Sell Old Infinix Smartphone Online at Best Resale Value',
-    desc: 'Sell used Infinix GT, Zero, Note & Hot series phones online at your doorstep for top guaranteed cash.',
-    count: '30+ Infinix Models',
-  },
-};
 
 export default function SellBrandPage() {
   const { brandSlug, seriesSlug, modelSlug } = useParams<{
@@ -153,7 +40,6 @@ export default function SellBrandPage() {
     modelSlug?: string;
   }>();
   const navigate = useNavigate();
-  const { user } = useAuth();
 
   const brandCleanKey = useMemo(() => {
     if (!brandSlug) return 'apple';
@@ -186,12 +72,6 @@ export default function SellBrandPage() {
     return brandCleanKey.charAt(0).toUpperCase() + brandCleanKey.slice(1);
   }, [brandCleanKey]);
 
-  const brandInfo = BRAND_DETAILS[brandCleanKey] || BRAND_DETAILS[brandCanonicalKey] || {
-    logo: getCleanBrandLogo(brandDisplayName),
-    tagline: `Sell Old ${brandDisplayName} Mobile Phone Online At Best Price`,
-    desc: `Sell used ${brandDisplayName} smartphones online at your doorstep for instant spot cash & free doorstep pickup.`,
-    count: `30+ ${brandDisplayName} Models`,
-  };
 
   // Debounced Search Query State
   const [rawSearchQuery, setRawSearchQuery] = useState('');
@@ -472,44 +352,7 @@ export default function SellBrandPage() {
   }, [allModelsInSeriesOrder, debouncedQuery, selectedSeriesFilter, currentSeriesGroup, brandCanonicalKey]);
 
   // Helper to resolve guaranteed non-zero estimated valuation for any phone model
-  const getModelEstimatedPrice = (m: CatalogModelItem): number => {
-    // 1. Authoritative Admin/Database synced price
-    const liveDbPrice = getEffectivePrice(m.brand || brandDisplayName, m.model, 0, m.storage);
-    if (liveDbPrice > 0) return liveDbPrice;
 
-    if (m.price && m.price > 0) return m.price;
-    if (m.base_resale_value && m.base_resale_value > 0) return m.base_resale_value;
-    const modelNorm = m.model.toLowerCase().trim();
-    const brandNorm = (m.brand || brandDisplayName).toLowerCase().trim();
-
-    const match = MASTER_MODEL_CATALOG.find((x) =>
-      x.model.toLowerCase() === modelNorm ||
-      `${x.brand} ${x.model}`.toLowerCase() === `${brandNorm} ${modelNorm}` ||
-      x.model.toLowerCase().includes(modelNorm)
-    );
-    if (match?.price && match.price > 0) return match.price;
-
-    const indian = Array.isArray(ALL_INDIAN_PHONES_CATALOG)
-      ? ALL_INDIAN_PHONES_CATALOG.find((p) =>
-          p.model.toLowerCase() === modelNorm ||
-          `${p.brand} ${p.model}`.toLowerCase() === `${brandNorm} ${modelNorm}`
-        )
-      : null;
-    if (indian?.base_resale_value) return indian.base_resale_value;
-    if (indian?.default_mrp) return Math.round(indian.default_mrp * 0.55);
-
-    const fallback = getDynamicFallbackConfig(m.brand || brandDisplayName, m.model, m.storage || '128 GB');
-    return fallback.base_price || 12000;
-  };
-
-  const getSeriesEstimatedPrice = (ser: SeriesGroup): number => {
-    if (ser.models && ser.models.length > 0) {
-      const prices = ser.models.map((m) => getModelEstimatedPrice(m)).filter((p) => p > 0);
-      if (prices.length > 0) return Math.max(...prices);
-    }
-    const fallback = getDynamicFallbackConfig(brandDisplayName, ser.name, '128 GB');
-    return fallback.base_price || 20000;
-  };
 
   const handleSelectModel = (modelName: string, storage: string) => {
     const modelSlugClean = modelName
@@ -568,9 +411,6 @@ export default function SellBrandPage() {
     });
   };
 
-  const handleSelectSeries = (series: SeriesGroup) => {
-    setSelectedSeriesFilter(series.slug);
-  };
 
   // Highlight matching search query text
   const highlightMatch = (text: string, query: string) => {
@@ -821,7 +661,6 @@ export default function SellBrandPage() {
                   ? m.model
                   : `${brandDisplayName} ${m.model}`;
 
-                const funduPrice = getModelEstimatedPrice(m);
 
                 return (
                   <div

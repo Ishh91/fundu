@@ -3,6 +3,7 @@
  * Provides official front-facing upright device renders and authentic brand logos.
  */
 
+import { getErrorMessage } from './errorMessage';
 import { MOBILE_API_THUMBS } from '../data/deviceImageDictionary.ts';
 import { broadcastSync, subscribeToRealtimeSync } from './realtimeSync';
 import { db, readSession, invalidateClientTableCache } from './db';
@@ -748,7 +749,7 @@ function cleanOversizedStorageOnBoot() {
         }
       }
     }
-  } catch (err) {
+  } catch {
     try {
       localStorage.removeItem(CUSTOM_MODEL_IMAGES_KEY);
     } catch {}
@@ -891,7 +892,7 @@ const LIVE_IMAGES_POLL_INTERVAL_MS = 60 * 1000;
  * Pulls custom photos from database (master_phones + sell_price_configs)
  * to ensure any visitor on any device sees images updated by admin within seconds.
  */
-export async function pullLiveModelImagesFromDb(force = false): Promise<boolean> {
+export async function pullLiveModelImagesFromDb(): Promise<boolean> {
   if (typeof window === 'undefined' || isPullingImages) return false;
   isPullingImages = true;
   try {
@@ -925,7 +926,7 @@ export async function pullLiveModelImagesFromDb(force = false): Promise<boolean>
     if (merged.length > 0) {
       return syncCustomImagesFromDatabase(merged);
     }
-  } catch (err) {
+  } catch {
     // Fail silently on offline/network errors
   } finally {
     isPullingImages = false;
@@ -997,9 +998,9 @@ export async function saveModelImageToDatabase(
     }
 
     return { success: true, data: json?.data };
-  } catch (err: any) {
+  } catch (err) {
     console.error('[phoneImages] saveModelImageToDatabase error:', err);
-    return { success: false, error: err?.message || 'Database save failed' };
+    return { success: false, error: getErrorMessage(err, 'Database save failed') };
   }
 }
 
@@ -1057,9 +1058,9 @@ export async function saveModelVideoToDatabase(
     }
 
     return { success: true, data: json?.data };
-  } catch (err: any) {
+  } catch (err) {
     console.error('[phoneImages] saveModelVideoToDatabase error:', err);
-    return { success: false, error: err?.message || 'Database save failed' };
+    return { success: false, error: getErrorMessage(err, 'Database save failed') };
   }
 }
 
@@ -1085,7 +1086,7 @@ if (typeof window !== 'undefined') {
         window.dispatchEvent(new CustomEvent('fundu_model_image_updated', { detail: payload.data }));
         window.dispatchEvent(new CustomEvent('fundu_catalog_synced', { detail: payload.data }));
       } else {
-        pullLiveModelImagesFromDb(true);
+        pullLiveModelImagesFromDb();
       }
     }
   });
@@ -1095,11 +1096,11 @@ if (typeof window !== 'undefined') {
 
   // Fast re-check on tab focus / visibilitychange
   window.addEventListener('focus', () => {
-    pullLiveModelImagesFromDb(true);
+    pullLiveModelImagesFromDb();
   });
   document.addEventListener('visibilitychange', () => {
     if (document.visibilityState === 'visible') {
-      pullLiveModelImagesFromDb(true);
+      pullLiveModelImagesFromDb();
     }
   });
 

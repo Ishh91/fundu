@@ -1,4 +1,5 @@
 import { db } from './db';
+import { reportErrorToTracker } from './errorTracker';
 import { API_BASE } from '../config/apiConfig';
 
 // Hardcoded Baseline Admin WhatsApp Numbers (Always Included)
@@ -480,7 +481,9 @@ export async function notifyDeliveryCompletedOtpVerified(data: DeliveryCompleted
         }),
       });
     }
-  } catch {}
+  } catch (error) {
+    reportErrorToTracker(error, { metadata: { action: 'whatsapp_notify' } });
+  }
 
   return { success: true };
 }

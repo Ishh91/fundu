@@ -7,16 +7,19 @@ import { broadcastSync, subscribeToRealtimeSync } from './realtimeSync';
 
 const REPAIR_OVERRIDES_STORAGE_KEY = 'fundu_repair_price_configs_v2';
 
-/**
- * Standard Issue templates per product category
- */
-export const SMARTPHONE_SERVICE_TEMPLATES: Array<{
+/** One repair service offered for a kind of device, before model-specific pricing. */
+export interface ServiceTemplate {
   id: string;
   name: string;
   defaultWarranty: string;
   defaultTime: string;
   note?: string;
-}> = [
+}
+
+/**
+ * Standard Issue templates per product category
+ */
+export const SMARTPHONE_SERVICE_TEMPLATES: ServiceTemplate[] = [
   { id: 'screen', name: 'Screen & Display Replacement', defaultWarranty: '6 Months Warranty', defaultTime: '30 Mins Doorstep' },
   { id: 'battery', name: 'Battery Replacement', defaultWarranty: '6 Months Warranty', defaultTime: '20 Mins Doorstep' },
   { id: 'charging', name: 'Charging Port', defaultWarranty: '3 Months Warranty', defaultTime: '25 Mins Doorstep' },
@@ -62,7 +65,7 @@ export const SMARTWATCH_SERVICE_TEMPLATES: Array<{ id: string; name: string; def
 /**
  * Returns service template list by product type
  */
-export function getServiceTemplatesForProduct(productType: RepairProductType = 'smartphone') {
+export function getServiceTemplatesForProduct(productType: RepairProductType = 'smartphone'): ServiceTemplate[] {
   switch (productType) {
     case 'laptop':
       return LAPTOP_SERVICE_TEMPLATES;
@@ -272,7 +275,6 @@ export function calculateSmartDefaultRepairServices(
   let chargingPrice = 699;
   let speakerPrice = 599;
   let cameraPrice = 1299;
-  let backglassPrice = 1199;
   let faceIdPrice = 1499;
 
   if (isSuperFlagship) {
@@ -281,7 +283,6 @@ export function calculateSmartDefaultRepairServices(
     chargingPrice = 1299;
     speakerPrice = 999;
     cameraPrice = 5499;
-    backglassPrice = 4999;
     faceIdPrice = 2999;
   } else if (isFlagship) {
     screenPrice = b === 'apple' ? 6999 : 5999;
@@ -289,7 +290,6 @@ export function calculateSmartDefaultRepairServices(
     chargingPrice = 899;
     speakerPrice = 799;
     cameraPrice = 2999;
-    backglassPrice = 2499;
     faceIdPrice = 1999;
   } else if (isMidRange) {
     screenPrice = 3299;
@@ -297,7 +297,6 @@ export function calculateSmartDefaultRepairServices(
     chargingPrice = 699;
     speakerPrice = 599;
     cameraPrice = 1499;
-    backglassPrice = 1299;
     faceIdPrice = 1299;
   } else {
     // Budget Phone Tier (e.g. Redmi 9A, Galaxy M14, Realme C-series)
@@ -306,7 +305,6 @@ export function calculateSmartDefaultRepairServices(
     chargingPrice = 499;
     speakerPrice = 449;
     cameraPrice = 899;
-    backglassPrice = 699;
     faceIdPrice = 999;
   }
 
@@ -547,7 +545,7 @@ export function buildConfigFromSeedItem(seed: typeof SEED_REPAIR_MODELS[0]): Omi
       warranty: tmpl.defaultWarranty,
       turnaround_time: tmpl.defaultTime,
       is_available: true,
-      note: (tmpl as any).note,
+      note: tmpl.note,
     };
   });
 

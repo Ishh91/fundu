@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Wrench, Search, Plus, Edit2, Trash2, Tag, CheckCircle2 } from 'lucide-react';
+import { useState } from 'react';
+import { Wrench, Search, Plus, Edit2, Trash2 } from 'lucide-react';
 import type { SparePart } from './adminTypes';
 import { formatINR } from '../../lib/db';
 

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import {
   Bell,
@@ -11,10 +11,8 @@ import {
   X,
   ExternalLink,
   MapPin,
-  Flame,
   Building2,
   Bike,
-  Truck,
   AlertTriangle,
 } from 'lucide-react';
 import { soundNotifier } from '../../lib/soundAlert';

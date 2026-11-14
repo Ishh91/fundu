@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import {
   Truck,
   Search,
@@ -7,10 +7,6 @@ import {
   PhoneCall,
   CheckCircle2,
   Package,
-  Smartphone,
-  Wrench,
-  Navigation,
-  XCircle,
   Edit3,
   AlertTriangle,
   RotateCcw,
@@ -18,7 +14,6 @@ import {
   X,
   Camera,
   Shield,
-  Eye,
 } from 'lucide-react';
 import type { DeliveryAgent, Order, SellRequest, RepairBooking } from './adminTypes';
 import { db, formatINR } from '../../lib/db';
@@ -47,16 +42,16 @@ export default function AdminDeliveryAgents({
   const [subTab, setSubTab] = useState<'fleet' | 'pending-inspections' | 'declined-tasks'>('fleet');
   const [search, setSearch] = useState('');
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
-  const [overrideModal, setOverrideModal] = useState<{ open: boolean; sell: any; price: string }>({
+  const [overrideModal, setOverrideModal] = useState<{ open: boolean; sell: SellRequest | null; price: string }>({
     open: false,
     sell: null,
     price: '',
   });
 
   const pendingInspections = sellRequests.filter((s) => s.status === 'inspection_submitted');
-  const declinedSells = sellRequests.filter((s) => (s as any).rider_acceptance_status === 'declined');
-  const declinedRepairs = repairs.filter((r) => (r as any).rider_acceptance_status === 'declined');
-  const declinedOrders = orders.filter((o) => (o as any).rider_acceptance_status === 'declined');
+  const declinedSells = sellRequests.filter((s) => s.rider_acceptance_status === 'declined');
+  const declinedRepairs = repairs.filter((r) => r.rider_acceptance_status === 'declined');
+  const declinedOrders = orders.filter((o) => o.rider_acceptance_status === 'declined');
   const totalDeclinedCount = declinedSells.length + declinedRepairs.length + declinedOrders.length;
 
   const filteredAgents = agents.filter((ag) =>
@@ -77,7 +72,7 @@ export default function AdminDeliveryAgents({
     ? sellRequests.filter(
         (s) =>
           s.assigned_agent_id === selectedAgent.id ||
-          ((s as any).pickup_person_name && (s as any).pickup_person_name.toLowerCase().includes(selectedAgent.name.toLowerCase()))
+          (s.pickup_person_name && s.pickup_person_name.toLowerCase().includes(selectedAgent.name.toLowerCase()))
       )
     : [];
 
@@ -585,7 +580,7 @@ export default function AdminDeliveryAgents({
                       )}
 
                       <div className="flex items-center justify-between text-[11px] pt-1 text-gray-600">
-                        <span>Executive: <strong>{(sell as any).pickup_person_name || 'Assigned Rider'}</strong></span>
+                        <span>Executive: <strong>{sell.pickup_person_name || 'Assigned Rider'}</strong></span>
                         <span>Mode: <strong>{sell.payout_method || 'UPI'}</strong></span>
                       </div>
                     </div>
@@ -700,7 +695,7 @@ export default function AdminDeliveryAgents({
                       📍 {sell.pickup_address || sell.pickup_area || 'Doorstep Service'} · Customer: {sell.customer_name || 'Customer'} ({sell.customer_phone || ''})
                     </p>
                     <p className="text-red-700 font-semibold italic">
-                      Decline Reason: "{(sell as any).rider_decline_reason || 'Schedule conflict / area unreachable'}"
+                      Decline Reason: "{sell.rider_decline_reason || 'Schedule conflict / area unreachable'}"
                     </p>
                   </div>
 
@@ -737,7 +732,7 @@ export default function AdminDeliveryAgents({
                       📍 {repair.pickup_address || 'Doorstep Service'} · Problem: {repair.problem}
                     </p>
                     <p className="text-red-700 font-semibold italic">
-                      Decline Reason: "{(repair as any).rider_decline_reason || 'Rider unavailable'}"
+                      Decline Reason: "{repair.rider_decline_reason || 'Rider unavailable'}"
                     </p>
                   </div>
 
@@ -773,7 +768,7 @@ export default function AdminDeliveryAgents({
                       📍 {order.delivery_address || 'Doorstep Service'} · Deliver to: {order.delivery_name || 'Customer'}
                     </p>
                     <p className="text-red-700 font-semibold italic">
-                      Decline Reason: "{(order as any).rider_decline_reason || 'Rider unavailable'}"
+                      Decline Reason: "{order.rider_decline_reason || 'Rider unavailable'}"
                     </p>
                   </div>
 
@@ -839,7 +834,7 @@ export default function AdminDeliveryAgents({
                 )}
                 <div className="flex justify-between">
                   <span className="text-gray-500">Assigned Executive:</span>
-                  <span className="font-semibold text-gray-800">{(overrideModal.sell as any).pickup_person_name || 'Rider'}</span>
+                  <span className="font-semibold text-gray-800">{overrideModal.sell.pickup_person_name || 'Rider'}</span>
                 </div>
               </div>
 

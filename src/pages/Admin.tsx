@@ -1,4 +1,6 @@
+import { getErrorMessage } from '../lib/errorMessage';
 import React, { useEffect, useState, useRef } from 'react';
+import { reportErrorToTracker } from '../lib/errorTracker';
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import {
   Menu,
@@ -16,18 +18,15 @@ import {
   LogOut,
   Truck,
   ShieldCheck,
-  Camera,
   Upload,
-  Trash2,
   Sparkles,
   Image as ImageIcon,
   Film,
   Play,
-  Video as VideoIcon,
   Users,
   Zap,
 } from 'lucide-react';
-import { PhoneVideoPlayer, isVideoUrl } from '../lib/videoUtils';
+import { PhoneVideoPlayer } from '../lib/videoUtils';
 import { useAuth } from '../context/AuthContext';
 import type {
   Product,
@@ -43,7 +42,7 @@ import type {
 import type { AdminTab } from './admin/adminTypes';
 import { savePriceOverride } from '../lib/priceSync';
 import { DOORSTEP_AREAS } from '../types';
-import { db, formatINR, authHeaders } from '../lib/db';
+import { db, authHeaders } from '../lib/db';
 import { canAccessAdminPanel, getAllowedAdminTabs } from '../lib/adminPermissions';
 import { API_BASE } from '../config/apiConfig';
 import { broadcastSync, subscribeToRealtimeSync } from '../lib/realtimeSync';
@@ -54,7 +53,7 @@ import {
 } from '../lib/mobileApi';
 import { soundNotifier } from '../lib/soundAlert';
 import AdminLiveNotifier, { LiveNotification } from '../components/admin/AdminLiveNotifier';
-import { saveCustomModelImage, saveModelImageToDatabase, saveModelVideoToDatabase } from '../lib/phoneImages';
+import { saveCustomModelImage, saveModelImageToDatabase } from '../lib/phoneImages';
 import { isStorageAllowedForModel } from '../lib/deviceSpecs';
 
 // Sub-page modular components
@@ -74,6 +73,7 @@ import AdminReviews from './admin/AdminReviews';
 import AdminHeroPosters from './admin/AdminHeroPosters';
 import AdminWholesalers from './admin/AdminWholesalers';
 import AdminContactQueries from './admin/AdminContactQueries';
+import AdminErrors from './admin/AdminErrors';
 import AdminCompetitorRadar from './admin/AdminCompetitorRadar';
 import AdminPincodes from './admin/AdminPincodes';
 import {
@@ -86,7 +86,7 @@ import {
   markProductAsDeleted,
   restoreModel,
 } from '../lib/catalogSync';
-import type { RepairPriceConfig } from '../types';
+import type { Profile, RepairPriceConfig } from '../types';
 import { describeOversizedSave, MAX_INLINE_VIDEO_FILE_BYTES, VIDEO_TOO_LARGE_MESSAGE } from '../lib/uploadLimits';
 import { readProductPhotos } from '../lib/productPhotoUpload';
 import { changedFields } from '../lib/objectDiff';
@@ -118,8 +118,8 @@ export default function Admin() {
     try {
       const res = await signIn(adminEmail, adminPassword);
       if (res.error) throw new Error(res.error);
-    } catch (err: any) {
-      setAdminLoginError(err?.message || 'Invalid admin credentials');
+    } catch (err) {
+      setAdminLoginError(getErrorMessage(err, 'Invalid admin credentials'));
     } finally {
       setAdminLoginLoading(false);
     }
@@ -132,7 +132,7 @@ export default function Admin() {
       const validTabs: AdminTab[] = [
         'overview', 'catalog', 'sells', 'orders', 'repairs', 'repair_pricing',
         'wholesalers', 'agents', 'products', 'pricing', 'competitor_radar',
-        'banners', 'parts', 'users', 'reviews', 'contact', 'pincodes'
+        'banners', 'parts', 'users', 'reviews', 'contact', 'pincodes', 'errors'
       ];
       if (validTabs.includes(subtab as AdminTab)) return subtab as AdminTab;
     }
@@ -258,7 +258,7 @@ export default function Admin() {
         const validTabs: AdminTab[] = [
           'overview', 'catalog', 'sells', 'orders', 'repairs', 'repair_pricing',
           'wholesalers', 'agents', 'products', 'pricing', 'competitor_radar',
-          'banners', 'parts', 'users', 'reviews', 'contact', 'pincodes',
+          'banners', 'parts', 'users', 'reviews', 'contact', 'pincodes', 'errors',
         ];
         if (validTabs.includes(subtab as AdminTab)) t = subtab as AdminTab;
       }
@@ -475,20 +475,20 @@ export default function Admin() {
       if (productsRes.data) setProducts(productsRes.data as Product[]);
       if (sellsRes.data) {
         setSells(sellsRes.data as SellRequest[]);
-        if (!lastKnownSellId.current && (sellsRes.data as any[]).length > 0) {
-          lastKnownSellId.current = (sellsRes.data as any[])[0].id;
+        if (!lastKnownSellId.current && (sellsRes.data as SellRequest[]).length > 0) {
+          lastKnownSellId.current = (sellsRes.data as SellRequest[])[0].id;
         }
       }
       if (repairsRes.data) {
         setRepairs(repairsRes.data as RepairBooking[]);
-        if (!lastKnownRepairId.current && (repairsRes.data as any[]).length > 0) {
-          lastKnownRepairId.current = (repairsRes.data as any[])[0].id;
+        if (!lastKnownRepairId.current && (repairsRes.data as RepairBooking[]).length > 0) {
+          lastKnownRepairId.current = (repairsRes.data as RepairBooking[])[0].id;
         }
       }
       if (ordersRes.data) {
         setOrders(ordersRes.data as Order[]);
-        if (!lastKnownOrderId.current && (ordersRes.data as any[]).length > 0) {
-          lastKnownOrderId.current = (ordersRes.data as any[])[0].id;
+        if (!lastKnownOrderId.current && (ordersRes.data as Order[]).length > 0) {
+          lastKnownOrderId.current = (ordersRes.data as Order[])[0].id;
         }
       }
       if (agentsRes.data) setAgents(agentsRes.data as DeliveryAgent[]);
@@ -513,7 +513,7 @@ export default function Admin() {
           if (partsRes.data) setParts(partsRes.data as SparePart[]);
           loadOlderRows<SparePart>('spare_parts', partsRes.data as SparePart[] | null, setParts, generation);
           loadOlderRows<Review>('reviews', reviewsRes.data as Review[] | null, setReviews, generation);
-          if (profilesRes.data) setProfiles(profilesRes.data as any[]);
+          if (profilesRes.data) setProfiles(profilesRes.data as Profile[]);
           if (reviewsRes.data) setReviews(reviewsRes.data as Review[]);
           if (repairPricingRes?.data) {
             setRepairPriceConfigs(repairPricingRes.data as RepairPriceConfig[]);
@@ -771,7 +771,7 @@ export default function Admin() {
                 id: `rider-dec-${dec.id}`,
                 type: 'rider_declined',
                 title: `Rider Declined: ${dec.brand} ${dec.model}`,
-                subtitle: `Reason: ${(dec as any).rider_decline_reason || 'Area unreachable'}. Reassign now!`,
+                subtitle: `Reason: ${dec.rider_decline_reason || 'Area unreachable'}. Reassign now!`,
                 locality: dec.pickup_area || 'Doorstep Pickup',
                 timestamp: new Date(),
                 tabTarget: 'sells',
@@ -780,7 +780,7 @@ export default function Admin() {
               soundNotifier.notify({
                 type: 'rider_declined',
                 title: `🚨 Executive Declined Task: ${dec.brand} ${dec.model}`,
-                body: `Rider declined this pickup.\nReason: ${(dec as any).rider_decline_reason || 'Schedule conflict'}\nClick to reassign to another rider.`,
+                body: `Rider declined this pickup.\nReason: ${dec.rider_decline_reason || 'Schedule conflict'}\nClick to reassign to another rider.`,
                 onClick: () => {
                   setTab('sells');
                   setSelectedSellId(dec.id);
@@ -793,7 +793,7 @@ export default function Admin() {
         }
 
         isInitialLoad.current = false;
-      } catch (err) {
+      } catch {
         // silent polling catch
       }
     }, 15000);
@@ -1023,11 +1023,11 @@ export default function Admin() {
         return;
       }
 
-      const { data, error } = await db.from('products').insert(payload).select('id').single();
+      const { data, error } = await db.from<{ id: string }>('products').insert(payload).select('id').single();
       // A failed save must be reported, not shown as a product that only exists in this browser.
       if (error) throw error;
       const newProduct: Product = {
-        id: (data as any)?.id || 'prod-' + Date.now(),
+        id: data?.id || 'prod-' + Date.now(),
         ...payload,
         sold_count: 0,
         seller_id: null,
@@ -1046,8 +1046,8 @@ export default function Admin() {
       setListPhoneModal(null);
 
       alert(`🎉 ${payload.title} successfully listed in Buy Store!`);
-    } catch (err: any) {
-      alert(err?.message || 'Failed to publish phone to store');
+    } catch (err) {
+      alert(getErrorMessage(err, 'Failed to publish phone to store'));
     } finally {
       setListPhoneSaving(false);
     }
@@ -1064,8 +1064,8 @@ export default function Admin() {
       if (Array.isArray(data) && data.length > 0) {
         setMasterPhones(data as MasterPhone[]);
       }
-    } catch (err: any) {
-      alert(err?.message || 'Failed to sync phones into database');
+    } catch (err) {
+      alert(getErrorMessage(err, 'Failed to sync phones into database'));
     } finally {
       setSyncingCatalog(false);
     }
@@ -1095,8 +1095,8 @@ export default function Admin() {
       const { data } = await db.from('sell_price_configs').select('*');
       if (data) setSellPriceConfigs(data as SellPriceConfig[]);
       alert(`🎉 Auto-generated ${created} sell pricing rules!`);
-    } catch (err: any) {
-      alert(err?.message || 'Failed to generate rules');
+    } catch (err) {
+      alert(getErrorMessage(err, 'Failed to generate rules'));
     } finally {
       setGeneratingPricingRules(false);
     }
@@ -1159,7 +1159,7 @@ export default function Admin() {
       } catch (_apiErr) {
         // Fallback already saved in DB above
       }
-    } catch (err: any) {
+    } catch (err) {
       console.error('[Admin] Price rule save error:', err);
     } finally {
       setPricingSaving(false);
@@ -1276,8 +1276,8 @@ export default function Admin() {
         saveLocalRepairConfigs(data as RepairPriceConfig[]);
       }
       alert(`🎉 Successfully populated ${insertedCount} bestselling device repair models into the catalog!`);
-    } catch (err: any) {
-      alert(err?.message || 'Failed to auto-generate repair catalog');
+    } catch (err) {
+      alert(getErrorMessage(err, 'Failed to auto-generate repair catalog'));
     } finally {
       setGeneratingRepairSeed(false);
     }
@@ -1331,7 +1331,9 @@ export default function Admin() {
     try {
       await db.from('master_phones').update({ is_active: false }).eq('brand', phone.brand).eq('model', phone.model);
       await db.from('sell_price_configs').upsert({ brand: phone.brand, model: phone.model, is_active: false });
-    } catch {}
+    } catch (error) {
+      reportErrorToTracker(error, { metadata: { action: 'deactivate_model_before_delete' } });
+    }
     await db.from('master_phones').delete().eq('id', phone.id);
     markModelAsDeleted(phone.brand, phone.model);
     setMasterPhones((prev) => prev.filter((p) => p.id !== phone.id));
@@ -1413,7 +1415,7 @@ export default function Admin() {
       warranty_months: dataObj.warranty_months || '6',
       description: dataObj.description || '',
       images: dataObj.images || '',
-      video_url: (dataObj as any).video_url || '',
+      video_url: dataObj.video_url || '',
       is_approved: dataObj.is_approved ?? true,
       is_featured: dataObj.is_featured ?? false,
       show_all_grades: dataObj.show_all_grades ?? true,
@@ -1496,9 +1498,9 @@ export default function Admin() {
           return;
         }
 
-        const { data, error } = await db.from('products').insert(payload).select('id').single();
+        const { data, error } = await db.from<{ id: string }>('products').insert(payload).select('id').single();
         if (error) throw error;
-        const saved = { ...payload, id: (data as any)?.id || 'prod_' + Date.now() } as Product;
+        const saved = { ...payload, id: data?.id || 'prod_' + Date.now() } as Product;
         setProducts((prev) => [saved, ...prev]);
         setSelectedProductId(saved.id);
         broadcastSync('PRODUCT_UPDATE', 'products', 'insert', { id: saved.id });
@@ -1510,7 +1512,7 @@ export default function Admin() {
         }
       }
       setProductModal(null);
-    } catch (err: any) {
+    } catch (err) {
       alert(err instanceof Error ? err.message : 'Failed to save product');
     } finally {
       setProductSaving(false);
@@ -1549,8 +1551,8 @@ export default function Admin() {
         setSelectedPartId((data as SparePart).id);
       }
       setPartModal(null);
-    } catch (err: any) {
-      alert(err?.message || 'Failed to save spare part');
+    } catch (err) {
+      alert(getErrorMessage(err, 'Failed to save spare part'));
     } finally {
       setPartSaving(false);
     }
@@ -1703,8 +1705,8 @@ export default function Admin() {
       );
 
       window.open(waUrl, '_blank');
-    } catch (err: any) {
-      alert(err?.message || 'Failed to register delivery partner');
+    } catch (err) {
+      alert(getErrorMessage(err, 'Failed to register delivery partner'));
     } finally {
       setAgentSaving(false);
     }
@@ -1736,15 +1738,15 @@ export default function Admin() {
       setSelectedPhoneId(newPhone.id);
       setCustomPhoneModalOpen(false);
       alert(`🎉 Added ${newPhone.brand} ${newPhone.model} to Fundu catalog!`);
-    } catch (err: any) {
-      alert(err?.message || 'Failed to add custom phone');
+    } catch (err) {
+      alert(getErrorMessage(err, 'Failed to add custom phone'));
     } finally {
       setCustomPhoneSaving(false);
     }
   };
 
   // 1. DELIVERY PARTNER STRICT BLOCK
-  if (profile?.role === 'delivery' || profile?.role === 'rider' || (user as any)?.role === 'delivery') {
+  if (profile?.role === 'delivery' || profile?.role === 'rider' || user?.role === 'delivery') {
     return (
       <div className="min-h-screen bg-slate-950 text-white flex flex-col items-center justify-center p-4 font-sans">
         <div className="w-full max-w-md bg-slate-900 border border-red-500/40 rounded-3xl p-8 text-center space-y-5 shadow-2xl animate-fade-in">
@@ -1759,7 +1761,7 @@ export default function Admin() {
           </div>
           <div className="p-3.5 rounded-2xl bg-slate-800/80 border border-slate-700 text-left text-xs text-slate-300 space-y-1">
             <p className="font-bold text-slate-200">Current Logged-in Account:</p>
-            <p className="text-slate-400 font-mono">{user?.email || (user as any)?.phone || 'Delivery Agent'}</p>
+            <p className="text-slate-400 font-mono">{user?.email || user?.phone || 'Delivery Agent'}</p>
             <span className="badge bg-amber-500/20 text-amber-300 font-bold text-[10px] uppercase">
               Role: Delivery Partner
             </span>
@@ -1914,6 +1916,7 @@ export default function Admin() {
                 {tab === 'users' && 'User Accounts & Roles'}
                 {tab === 'reviews' && 'Customer Reviews & Moderation'}
                 {tab === 'contact' && 'Customer Help & Contact Queries'}
+                {tab === 'errors' && 'Site Errors & Crashes'}
                 {tab === 'pincodes' && 'Serviceable Pincodes & Hubs'}
                 {tab === 'overview' && 'Admin Control Center'}
               </h1>
@@ -2244,7 +2247,9 @@ export default function Admin() {
                       .update({ is_active: newActive })
                       .eq('brand', targetBrand)
                       .eq('model', targetModel);
-                  } catch {}
+                  } catch (error) {
+                    reportErrorToTracker(error, { metadata: { action: 'toggle_sell_price_config_active' } });
+                  }
                 }
                 if (id && !id.startsWith('master-') && !id.startsWith('mp-') && !id.startsWith('indian-') && !id.startsWith('cat-') && !id.startsWith('ser-')) {
                   await db.from('sell_price_configs').update({ is_active: newActive }).eq('id', id);
@@ -2263,7 +2268,9 @@ export default function Admin() {
                       .update({ is_active: newActive })
                       .eq('brand', targetBrand)
                       .eq('model', targetModel);
-                  } catch {}
+                  } catch (error) {
+                    reportErrorToTracker(error, { metadata: { action: 'toggle_master_phone_active' } });
+                  }
                 }
 
                 // 4. Update local state
@@ -2480,6 +2487,7 @@ export default function Admin() {
           )}
 
           {tab === 'contact' && <AdminContactQueries />}
+          {tab === 'errors' && <AdminErrors />}
           {tab === 'pincodes' && <AdminPincodes />}
         </main>
       </div>

@@ -1,3 +1,4 @@
+import { getErrorMessage } from '../lib/errorMessage';
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import {
@@ -9,11 +10,8 @@ import {
   Mail,
   X,
   CheckCircle2,
-  ShieldCheck,
   RefreshCw,
-  Phone,
   Smartphone,
-  MessageSquare,
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import BrandLogo from '../components/BrandLogo';
@@ -24,7 +22,6 @@ export default function Login() {
   const navigate = useNavigate();
   const [params] = useSearchParams();
   const rawRedirect = params.get('redirect');
-  const redirect = rawRedirect || '/';
   const hasSpecificRedirect = Boolean(rawRedirect && rawRedirect !== '/' && rawRedirect !== '/profile');
 
 
@@ -237,7 +234,7 @@ export default function Login() {
       return;
     }
 
-    const role = ((authRes as any).profile?.role as string) || (profile?.role as string);
+    const role = (authRes.profile?.role as string) || (profile?.role as string);
     if (role === 'admin') {
       navigate('/admin');
     } else if (role === 'vendor' || role === 'wholesaler') {
@@ -296,7 +293,7 @@ export default function Login() {
       // 3. Set UI Success message
       setResetSuccess(`📧 Verification OTP code sent to ${cleanEmail} via Email. Please check your email inbox.`);
       setResetStep(2);
-    } catch (err: any) {
+    } catch (err) {
       console.error('Reset OTP error:', err);
       setResetError('Failed to send reset OTP. Please check your internet connection and try again.');
     } finally {
@@ -344,8 +341,8 @@ export default function Login() {
       setSuccessMsg(`🎉 Password Reset Successfully! Please sign in with your new password.`);
       setIdentifier(resetEmail.trim().toLowerCase());
       setPassword('');
-    } catch (err: any) {
-      setResetError(err?.message || 'Failed to reset password. Please try again.');
+    } catch (err) {
+      setResetError(getErrorMessage(err, 'Failed to reset password. Please try again.'));
     } finally {
       setResetLoading(false);
     }

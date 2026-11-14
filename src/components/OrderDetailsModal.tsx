@@ -1,3 +1,4 @@
+import { getErrorMessage } from '../lib/errorMessage';
 import { useState } from 'react';
 import { getCleanPhoneImage } from '../lib/phoneImages';
 import {
@@ -9,7 +10,6 @@ import {
   Calendar,
   CreditCard,
   CheckCircle2,
-  Clock,
   Navigation,
   ShieldCheck,
   Printer,
@@ -17,9 +17,7 @@ import {
   Send,
   Sparkles,
   ShoppingBag,
-  ExternalLink,
   Star,
-  Building2,
 } from 'lucide-react';
 import type { Order, Dispatch } from '../types';
 import { db, formatINR } from '../lib/db';
@@ -127,8 +125,8 @@ export default function OrderDetailsModal({
       setSupportSentAlert(true);
       setTimeout(() => setSupportSentAlert(false), 5000);
       onOrderUpdated?.();
-    } catch (err: any) {
-      alert(err?.message || 'Failed to send message to admin');
+    } catch (err) {
+      alert(getErrorMessage(err, 'Failed to send message to admin'));
     } finally {
       setSendingMessage(false);
     }
@@ -569,8 +567,8 @@ export default function OrderDetailsModal({
                     alert('✓ Order cancelled successfully. Items have been restored to store inventory.');
                     onOrderUpdated?.();
                     onClose();
-                  } catch (err: any) {
-                    alert(err?.message || 'Failed to cancel order');
+                  } catch (err) {
+                    alert(getErrorMessage(err, 'Failed to cancel order'));
                   }
                 }}
                 className="btn text-xs px-4 py-2 border border-rose-300 text-rose-600 hover:bg-rose-50 font-bold rounded-xl transition cursor-pointer"

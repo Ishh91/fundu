@@ -8,6 +8,7 @@ export type Profile = {
   phone: string | null;
   email?: string | null;
   address?: string | null;
+  city?: string | null;
   role: 'customer' | 'wholesaler' | 'admin' | 'staff' | 'delivery' | 'rider' | 'vendor';
   /** Admin-panel sections a staff user may manage (empty for every other role). */
   permissions?: string[];
@@ -26,7 +27,7 @@ type AuthContextValue = {
   user: User | null;
   profile: Profile | null;
   loading: boolean;
-  signIn: (email: string, password: string) => Promise<{ error: string | null }>;
+  signIn: (email: string, password: string) => Promise<{ error: string | null; profile?: Profile | null }>;
   signUp: (email: string, password: string, fullName: string, phone: string) => Promise<{ error: string | null }>;
   signOut: () => Promise<void>;
   refreshProfile: () => Promise<void>;
@@ -44,9 +45,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
 
-  const fetchProfile = async (uid: string) => {
+  const fetchProfile = async (uid: string): Promise<Profile | null> => {
     const { data } = await db.from('profiles').select('*').eq('id', uid).maybeSingle();
-    setProfile(data as Profile | null);
+    const loaded = (data as Profile | null) ?? null;
+    setProfile(loaded);
+    return loaded;
   };
 
   useEffect(() => {
@@ -110,7 +113,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         return { error: null, message: `OTP dispatched to +91 ${cleanPhone}.` };
       }
       console.warn('Firebase Phone Auth failed, attempting server OTP dispatch:', fbResult.error);
-    } catch (fbErr: any) {
+    } catch (fbErr) {
       console.warn('Firebase Phone Auth exception, attempting server OTP dispatch:', fbErr);
     }
 
@@ -137,7 +140,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           return { error: null, isNewUser: data.isNewUser };
         }
         console.warn('Firebase confirmation failed, trying server OTP verification:', fbVerify.error);
-      } catch (fbErr: any) {
+      } catch (fbErr) {
         console.warn('Firebase confirmation exception, trying server OTP verification:', fbErr);
       }
     }

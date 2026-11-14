@@ -1,12 +1,15 @@
 import { Router } from 'express';
 import { SystemError } from '../models/SystemError.js';
 import { isAdmin } from '../middleware/auth.js';
+import { rateLimit } from '../middleware/rateLimit.js';
+import { buildClientErrorRecord, groupErrors } from '../services/errorReports.js';
 
 const router = Router();
 
 // In-memory rolling buffer of the last 100 errors in case MongoDB is temporarily busy
 const recentMemoryErrors = [];
 const MAX_MEMORY_ERRORS = 100;
+const MAX_ROWS_PER_VIEW = 500;
 
 export function recordServerError(err, req = null) {
   const errEntry = {
@@ -28,49 +31,29 @@ export function recordServerError(err, req = null) {
   SystemError.create(errEntry).catch(() => {});
 }
 
-// POST /api/errors/report - Client reporting endpoint (public so any visitor error is captured)
-router.post('/report', async (req, res) => {
-  try {
-    const {
-      type = 'client_error',
-      message,
-      stack = '',
-      url = '',
-      path = '',
-      component_stack = '',
-      metadata = {},
-      user_id = null,
-      user_email = null,
-    } = req.body || {};
+// One browser stuck in a crash loop (or someone abusing the endpoint) must not fill the database.
+const REPORT_WINDOW_MS = 10 * 60 * 1000;
+const REPORT_MAX_PER_WINDOW = 30;
+const reportLimiter = rateLimit({ windowMs: REPORT_WINDOW_MS, max: REPORT_MAX_PER_WINDOW, name: 'errors/report' });
 
-    if (!message || typeof message !== 'string') {
-      return res.status(400).json({ success: false, error: 'Error message is required.' });
+// POST /api/errors/report - Client reporting endpoint (public so any visitor error is captured)
+router.post('/report', reportLimiter, async (req, res) => {
+  try {
+    const built = buildClientErrorRecord(req.body, {
+      auth: req.auth,
+      ip: req.ip || '',
+      userAgent: req.headers['user-agent'] || '',
+    });
+    if (!built.ok) {
+      return res.status(400).json({ success: false, error: built.error });
     }
 
-    const clientIp = req.headers['x-forwarded-for']?.split(',')[0]?.trim() || req.ip || '';
-    const userAgent = req.headers['user-agent'] || '';
-
-    const errorPayload = {
-      type: String(type).slice(0, 50),
-      message: String(message).slice(0, 1000),
-      stack: String(stack).slice(0, 5000),
-      url: String(url).slice(0, 500),
-      path: String(path).slice(0, 500),
-      component_stack: String(component_stack).slice(0, 5000),
-      user_id: req.auth?.sub || user_id || null,
-      user_email: req.auth?.email || user_email || null,
-      user_agent: userAgent.slice(0, 300),
-      ip: clientIp.slice(0, 50),
-      metadata: typeof metadata === 'object' && metadata !== null ? metadata : {},
-      created_at: new Date().toISOString(),
-    };
-
-    recentMemoryErrors.unshift({ id: 'err_' + Date.now(), ...errorPayload });
+    recentMemoryErrors.unshift({ id: 'err_' + Date.now(), ...built.record });
     if (recentMemoryErrors.length > MAX_MEMORY_ERRORS) {
       recentMemoryErrors.pop();
     }
 
-    await SystemError.create(errorPayload).catch((e) => {
+    await SystemError.create(built.record).catch((e) => {
       console.warn('[ErrorTracker] Failed to persist error to Mongo:', e.message);
     });
 
@@ -87,11 +70,11 @@ router.get('/', async (req, res) => {
       return res.status(403).json({ success: false, error: 'Admin access required.' });
     }
 
-    const limit = Math.min(Number(req.query.limit) || 50, 100);
+    const limit = Math.min(Number(req.query.limit) || 200, MAX_ROWS_PER_VIEW);
     const dbErrors = await SystemError.find().sort({ created_at: -1 }).limit(limit).lean().catch(() => []);
     const errors = dbErrors.length > 0 ? dbErrors : recentMemoryErrors.slice(0, limit);
 
-    res.json({ success: true, count: errors.length, errors });
+    res.json({ success: true, count: errors.length, errors, groups: groupErrors(errors) });
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });
   }
@@ -113,3 +96,4 @@ router.delete('/clear', async (req, res) => {
 });
 
 export default router;
+

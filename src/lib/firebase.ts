@@ -1,3 +1,4 @@
+import { getErrorCode, getErrorMessage } from './errorMessage';
 import { initializeApp, getApps, getApp } from 'firebase/app';
 import { getAnalytics, isSupported } from 'firebase/analytics';
 import {
@@ -120,7 +121,7 @@ export async function sendFirebasePhoneOtp(
     const confirmationResult = await signInWithPhoneNumber(auth, formattedE164, verifier);
     window.confirmationResult = confirmationResult;
     return { success: true };
-  } catch (err: any) {
+  } catch (err) {
     console.error('Firebase sendPhoneOtp error, retrying with fresh reCAPTCHA:', err);
     resetRecaptcha(containerId);
 
@@ -130,18 +131,18 @@ export async function sendFirebasePhoneOtp(
       const retryResult = await signInWithPhoneNumber(auth, formattedE164, freshVerifier);
       window.confirmationResult = retryResult;
       return { success: true };
-    } catch (retryErr: any) {
+    } catch (retryErr) {
       console.error('Firebase sendPhoneOtp retry error:', retryErr);
       resetRecaptcha(containerId);
 
-      let message = retryErr?.message || 'Failed to send OTP via SMS.';
-      if (retryErr?.code === 'auth/invalid-phone-number') {
+      let message = getErrorMessage(retryErr, 'Failed to send OTP via SMS.');
+      if (getErrorCode(retryErr) === 'auth/invalid-phone-number') {
         message = 'Invalid phone number format.';
-      } else if (retryErr?.code === 'auth/too-many-requests') {
+      } else if (getErrorCode(retryErr) === 'auth/too-many-requests') {
         message = 'Too many requests. Please wait a few minutes before requesting another OTP.';
-      } else if (retryErr?.code === 'auth/quota-exceeded') {
+      } else if (getErrorCode(retryErr) === 'auth/quota-exceeded') {
         message = 'SMS quota exceeded for today. Please try again later.';
-      } else if (retryErr?.code === 'auth/captcha-check-failed' || message.includes('reCAPTCHA')) {
+      } else if (getErrorCode(retryErr) === 'auth/captcha-check-failed' || message.includes('reCAPTCHA')) {
         message = 'SMS verification busy. Please wait a moment and click Resend OTP.';
       }
       return { success: false, error: message };
@@ -165,12 +166,12 @@ export async function verifyFirebasePhoneOtp(
     const phone = result.user.phoneNumber || '';
 
     return { success: true, idToken, phone };
-  } catch (err: any) {
+  } catch (err) {
     console.error('Firebase confirm error:', err);
     let message = 'Invalid OTP code. Please check and try again.';
-    if (err?.code === 'auth/invalid-verification-code') {
+    if (getErrorCode(err) === 'auth/invalid-verification-code') {
       message = 'Incorrect 6-digit OTP code entered.';
-    } else if (err?.code === 'auth/code-expired') {
+    } else if (getErrorCode(err) === 'auth/code-expired') {
       message = 'The OTP code has expired. Please click Resend OTP.';
     }
     return { success: false, error: message };

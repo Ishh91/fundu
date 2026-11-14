@@ -1,24 +1,21 @@
 import React, { useState } from 'react';
 import {
   MapPin,
-  Search,
   RefreshCw,
-  X,
   Check,
   CheckCircle2,
   AlertCircle,
   User,
   Phone,
-  Sparkles,
 } from 'lucide-react';
 import { formatINR } from '../../lib/db';
 import {
-  PAN_INDIA_POPULAR_CITIES,
   verifyPanIndiaPincode,
   type PanIndiaLocation,
   type VerifiedLocation,
 } from '../../lib/locationService';
 import { checkPincodeServiceability } from '../../lib/pincodeService';
+import type { SellFormState } from '../../lib/sellForm';
 
 interface SellStep4ScheduleProps {
   form: {
@@ -36,7 +33,7 @@ interface SellStep4ScheduleProps {
     pickupSlot: string;
     notes?: string;
   };
-  setForm: React.Dispatch<React.SetStateAction<any>>;
+  setForm: React.Dispatch<React.SetStateAction<SellFormState>>;
   estimate: number;
   submitting: boolean;
   error: string | null;
@@ -55,10 +52,6 @@ export default function SellStep4Schedule({
   estimate,
   submitting,
   error,
-  pickupSearchQuery,
-  setPickupSearchQuery,
-  pickupSearchResults,
-  isSearchingPickupLoc,
   handleSubmit,
   onBack,
   profile,
@@ -69,7 +62,7 @@ export default function SellStep4Schedule({
 
   const handlePincodeChange = async (val: string) => {
     const clean = val.replace(/\D/g, '').slice(0, 6);
-    setForm((prev: any) => ({ ...prev, pincode: clean }));
+    setForm((prev) => ({ ...prev, pincode: clean }));
 
     if (clean.length === 6) {
       setVerifyingPin(true);
@@ -88,7 +81,7 @@ export default function SellStep4Schedule({
         if (res.valid) {
           setVerifiedLoc(res);
           setPinError(null);
-          setForm((prev: any) => ({
+          setForm((prev) => ({
             ...prev,
             pickupArea: `${res.city}, ${res.state} (${res.pincode})`,
           }));
@@ -104,7 +97,7 @@ export default function SellStep4Schedule({
           };
           setVerifiedLoc(fallbackLoc);
           setPinError(null);
-          setForm((prev: any) => ({
+          setForm((prev) => ({
             ...prev,
             pickupArea: `${fallbackLoc.city}, ${fallbackLoc.state} (${clean})`,
           }));
@@ -151,7 +144,7 @@ export default function SellStep4Schedule({
                 required
                 type="text"
                 value={form.customerName}
-                onChange={(e) => setForm((prev: any) => ({ ...prev, customerName: e.target.value }))}
+                onChange={(e) => setForm((prev) => ({ ...prev, customerName: e.target.value }))}
                 placeholder="Enter your full name"
                 className="input mt-1 text-xs sm:text-sm focus:border-[#6A859F] focus:ring-4 focus:ring-[#6A859F]/15"
               />
@@ -165,7 +158,7 @@ export default function SellStep4Schedule({
                 type="tel"
                 maxLength={10}
                 value={form.customerPhone}
-                onChange={(e) => setForm((prev: any) => ({ ...prev, customerPhone: e.target.value.replace(/\D/g, '').slice(0, 10) }))}
+                onChange={(e) => setForm((prev) => ({ ...prev, customerPhone: e.target.value.replace(/\D/g, '').slice(0, 10) }))}
                 placeholder="10-digit mobile number"
                 className="input mt-1 text-xs sm:text-sm focus:border-[#6A859F] focus:ring-4 focus:ring-[#6A859F]/15"
               />
@@ -232,7 +225,7 @@ export default function SellStep4Schedule({
                 required
                 type="text"
                 value={form.locality}
-                onChange={(e) => setForm((prev: any) => ({ ...prev, locality: e.target.value }))}
+                onChange={(e) => setForm((prev) => ({ ...prev, locality: e.target.value }))}
                 placeholder="e.g. Main Market, Cantt, Sector 4, Near Clock Tower"
                 className="input text-xs sm:text-sm focus:border-[#6A859F] focus:ring-4 focus:ring-[#6A859F]/15"
               />
@@ -245,7 +238,7 @@ export default function SellStep4Schedule({
                     <button
                       key={po}
                       type="button"
-                      onClick={() => setForm((prev: any) => ({ ...prev, locality: po }))}
+                      onClick={() => setForm((prev) => ({ ...prev, locality: po }))}
                       className={`text-[10px] px-1.5 py-0.5 rounded border transition ${form.locality === po
                           ? 'bg-[#344257] text-white border-[#344257]'
                           : 'bg-white hover:bg-gray-100 text-gray-700 border-gray-200'
@@ -278,7 +271,7 @@ export default function SellStep4Schedule({
             <textarea
               rows={3}
               value={form.pickupAddress}
-              onChange={(e) => setForm((prev: any) => ({ ...prev, pickupAddress: e.target.value }))}
+              onChange={(e) => setForm((prev) => ({ ...prev, pickupAddress: e.target.value }))}
               placeholder="House / Flat No., Building Name, Street, Landmark"
               className="input mt-1 focus:border-[#6A859F] focus:ring-4 focus:ring-[#6A859F]/15"
               required
@@ -291,7 +284,7 @@ export default function SellStep4Schedule({
               <input
                 type="date"
                 value={form.pickupDate}
-                onChange={(e) => setForm((prev: any) => ({ ...prev, pickupDate: e.target.value }))}
+                onChange={(e) => setForm((prev) => ({ ...prev, pickupDate: e.target.value }))}
                 className="input mt-1 focus:border-[#6A859F] focus:ring-4 focus:ring-[#6A859F]/15"
               />
             </div>
@@ -300,7 +293,7 @@ export default function SellStep4Schedule({
               <label className="label">Preferred Time Slot</label>
               <select
                 value={form.pickupSlot}
-                onChange={(e) => setForm((prev: any) => ({ ...prev, pickupSlot: e.target.value }))}
+                onChange={(e) => setForm((prev) => ({ ...prev, pickupSlot: e.target.value }))}
                 className="input mt-1 focus:border-[#6A859F] focus:ring-4 focus:ring-[#6A859F]/15"
               >
                 {['10 AM - 12 PM', '12 PM - 2 PM', '2 PM - 4 PM', '4 PM - 6 PM', '6 PM - 8 PM'].map((slot) => (
@@ -317,7 +310,7 @@ export default function SellStep4Schedule({
             <input
               type="text"
               value={form.notes || ''}
-              onChange={(e) => setForm((prev: any) => ({ ...prev, notes: e.target.value }))}
+              onChange={(e) => setForm((prev) => ({ ...prev, notes: e.target.value }))}
               placeholder="e.g. Call 10 mins before arrival, Landmark near Sahara Ganj"
               className="input mt-1 focus:border-[#6A859F] focus:ring-4 focus:ring-[#6A859F]/15"
             />

@@ -1,17 +1,18 @@
+import { getErrorMessage } from '../lib/errorMessage';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
-  Smartphone, Package, Plus, Edit2, Trash2, X, ShoppingCart, CreditCard,
-  Building2, CheckCircle2, FileText, MapPin, ShieldCheck, Check, TrendingUp,
-  Printer, MessageSquare, Truck, Sparkles, Clock, ExternalLink, Wrench, AlertCircle,
-  Eye, IndianRupee, UserCheck, DollarSign
+  Smartphone, Package, Plus, Edit2, X, ShoppingCart, CreditCard,
+  Building2, FileText, MapPin, ShieldCheck, Check, TrendingUp,
+  Wrench, 
+  Eye, UserCheck, DollarSign
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import type { Product, SparePart, WholesaleInventory, WholesaleOrder, VendorLedger, SellRequest, RepairBooking } from '../types';
-import { PHONE_BRANDS } from '../types';
 import { db, formatINR } from '../lib/db';
 import CustomerDetailsModal from '../components/CustomerDetailsModal';
 import { notifyVendorQuoteSubmitted } from '../lib/whatsappNotifyService';
+import type { CustomerDetailsModalProps } from '../components/CustomerDetailsModal';
 
 export default function Vendor() {
   const { user, profile, loading, refreshProfile, signOut } = useAuth();
@@ -34,7 +35,7 @@ export default function Vendor() {
 
   // Khata & Orders State
   const [ledgers, setLedgers] = useState<VendorLedger[]>([]);
-  const [wholesaleOrders, setWholesaleOrders] = useState<WholesaleOrder[]>([]);
+  const [, setWholesaleOrders] = useState<WholesaleOrder[]>([]);
   const [dataLoading, setDataLoading] = useState(true);
 
   // Modal States for Vendor Actions
@@ -51,12 +52,11 @@ export default function Vendor() {
   const [repairQuoteSubmitting, setRepairQuoteSubmitting] = useState(false);
 
   // 3. Customer Profile Inspection Modal
-  const [customerModalData, setCustomerModalData] = useState<any>(null);
+  const [customerModalData, setCustomerModalData] = useState<CustomerDetailsModalProps['customer'] | null>(null);
 
   // Supply Parts & Products State
-  const [supplyTab, setSupplyTab] = useState<'products' | 'spare-parts'>('products');
-  const [products, setProducts] = useState<Product[]>([]);
-  const [spareParts, setSpareParts] = useState<SparePart[]>([]);
+  const [, setProducts] = useState<Product[]>([]);
+  const [, setSpareParts] = useState<SparePart[]>([]);
 
   // Authentication check
   useEffect(() => {
@@ -123,8 +123,8 @@ export default function Vendor() {
         vendor_quote_price: priceNum,
         vendor_notes: notes,
         vendor_quote_notes: notes,
-        assigned_vendor_id: (sellQuoteModal as any).assigned_vendor_id || user?.id,
-        assigned_vendor_name: (sellQuoteModal as any).assigned_vendor_name || vendorName,
+        assigned_vendor_id: sellQuoteModal.assigned_vendor_id || user?.id,
+        assigned_vendor_name: sellQuoteModal.assigned_vendor_name || vendorName,
         vendor_quote_status: 'quoted',
         status: 'quoted_by_vendor',
         updated_at: nowIso,
@@ -168,8 +168,8 @@ export default function Vendor() {
       if (error) throw error;
       alert(`✅ Lead accepted! You can now physically inspect the device and submit your valuation quote.`);
       await fetchData();
-    } catch (err: any) {
-      alert(err?.message || 'Failed to accept lead');
+    } catch (err) {
+      alert(getErrorMessage(err, 'Failed to accept lead'));
     }
   };
 
@@ -190,8 +190,8 @@ export default function Vendor() {
       if (error) throw error;
       alert(`Lead returned to Admin console for reassignment.`);
       await fetchData();
-    } catch (err: any) {
-      alert(err?.message || 'Failed to decline lead');
+    } catch (err) {
+      alert(getErrorMessage(err, 'Failed to decline lead'));
     }
   };
 
@@ -213,8 +213,8 @@ export default function Vendor() {
         vendor_quotation_amount: amountNum,
         vendor_quotation_details: details,
         vendor_quotation_notes: details,
-        assigned_vendor_id: (repairQuoteModal as any).assigned_vendor_id || user?.id,
-        assigned_vendor_name: (repairQuoteModal as any).assigned_vendor_name || vendorName,
+        assigned_vendor_id: repairQuoteModal.assigned_vendor_id || user?.id,
+        assigned_vendor_name: repairQuoteModal.assigned_vendor_name || vendorName,
         quotation_status: 'quoted',
         status: 'quoted_by_vendor',
         updated_at: nowIso,
@@ -258,8 +258,8 @@ export default function Vendor() {
       if (error) throw error;
       alert(`✅ Repair lead accepted! Please upload your diagnostic quotation.`);
       await fetchData();
-    } catch (err: any) {
-      alert(err?.message || 'Failed to accept repair');
+    } catch (err) {
+      alert(getErrorMessage(err, 'Failed to accept repair'));
     }
   };
 
@@ -280,8 +280,8 @@ export default function Vendor() {
       if (error) throw error;
       alert(`Repair lead returned to Admin console for reassignment.`);
       await fetchData();
-    } catch (err: any) {
-      alert(err?.message || 'Failed to decline repair');
+    } catch (err) {
+      alert(getErrorMessage(err, 'Failed to decline repair'));
     }
   };
 
@@ -474,7 +474,7 @@ export default function Vendor() {
               return (
                 <button
                   key={t.id}
-                  onClick={() => setActiveTab(t.id as any)}
+                  onClick={() => setActiveTab(t.id as 'sell-leads' | 'repair-leads' | 'wallet-khata' | 'b2b-procurement' | 'store-supply')}
                   className={`flex items-center justify-between gap-2 p-3 sm:p-3.5 rounded-2xl border text-left transition cursor-pointer ${
                     isActive
                       ? 'bg-slate-900 text-white border-slate-900 shadow-md'

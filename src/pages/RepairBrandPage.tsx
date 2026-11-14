@@ -4,8 +4,6 @@ import { useAuth } from '../context/AuthContext';
 import {
   Search,
   Wrench,
-  Sparkles,
-  ArrowRight,
   ShieldCheck,
   BadgeIndianRupee,
   Truck,
@@ -23,7 +21,6 @@ import {
   Monitor,
   Volume2,
   Cpu,
-  Smartphone,
   CheckCircle2,
   Mic,
   PhoneCall,
@@ -31,12 +28,12 @@ import {
   Droplets,
   ScanFace,
 } from 'lucide-react';
-import { formatINR, formatDisplayPrice } from '../lib/db';
+import { formatDisplayPrice } from '../lib/db';
 import { MASTER_MODEL_CATALOG } from '../data/masterModelCatalog';
 import { getStoredLiveMasterPhones } from '../lib/modelCatalogSync';
 import { getCleanPhoneImage, getCleanBrandLogo, BRAND_FRONT_FALLBACKS, getGenericDevicePlaceholder } from '../lib/phoneImages';
 import { ALL_INDIAN_PHONES_CATALOG } from '../data/indianPhonesCatalog';
-import { useRepairPriceSync, getModelRepairPricing } from '../lib/repairPriceSync';
+import { useRepairPriceSync } from '../lib/repairPriceSync';
 import { isModelDeleted } from '../lib/catalogSync';
 import { getModelDedupeKey, groupModelsBySeries, inferModelSeries, isSeriesSlug, sortDeviceModelsLatestFirst } from '../data/brandSeriesCatalog';
 
@@ -776,7 +773,7 @@ export default function RepairBrandPage() {
                   </div>
                   <p className="font-bold text-xs text-[#344257] line-clamp-1">{srv.label}</p>
                   <p className="text-[11px] font-black text-[#47576E]">From {formatDisplayPrice(srv.cost, !!user)}</p>
-                  {(srv as any).note ? (
+                  {srv.note ? (
                     <span className="inline-block text-[9px] font-bold text-amber-800 bg-amber-50 px-2 py-0.5 rounded-full border border-amber-200">
                       ⚠️ Inspection Only
                     </span>

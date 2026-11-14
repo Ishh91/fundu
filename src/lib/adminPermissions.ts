@@ -60,6 +60,7 @@ const TAB_PERMISSION: Record<AdminTab, AdminPermission | null | 'admin_only'> = 
   reviews: 'content',
   contact: 'content',
   users: 'admin_only',
+  errors: 'admin_only',
 };
 
 const ALL_ADMIN_TABS = Object.keys(TAB_PERMISSION) as AdminTab[];

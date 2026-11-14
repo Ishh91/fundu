@@ -3789,7 +3789,6 @@ export function inferTierHardwareSpecs(
     '128 GB': ['6 GB', '8 GB'],
     '256 GB': ['8 GB', '12 GB'],
   };
-  let allRams = ['6 GB', '8 GB', '12 GB'];
 
   // Strict Model Hardware Overrides
   if (/find\s*x9\s*pro\b/i.test(fullText)) {
@@ -3798,18 +3797,15 @@ export function inferTierHardwareSpecs(
       '512 GB': ['16 GB'],
       '1 TB': ['16 GB'],
     };
-    allRams = ['16 GB'];
   } else if (/f19\s*pro\s*\+/i.test(fullText)) {
     tierStorages = ['128 GB'];
     tierRamMap = { '128 GB': ['8 GB'] };
-    allRams = ['8 GB'];
   } else if (/find\s*x9s/i.test(fullText)) {
     tierStorages = ['256 GB', '512 GB'];
     tierRamMap = {
       '256 GB': ['12 GB'],
       '512 GB': ['12 GB'],
     };
-    allRams = ['12 GB'];
   } else
 
     // 1. Ultra / Fold / Flip / Top Flagships
@@ -3823,7 +3819,6 @@ export function inferTierHardwareSpecs(
           '512 GB': ['12 GB', '16 GB'],
           '1 TB': ['16 GB'],
         };
-        allRams = ['12 GB', '16 GB'];
       } else {
         tierStorages = ['128 GB', '256 GB', '512 GB'];
         tierRamMap = {
@@ -3831,7 +3826,6 @@ export function inferTierHardwareSpecs(
           '256 GB': ['8 GB', '12 GB', '16 GB'],
           '512 GB': ['12 GB', '16 GB'],
         };
-        allRams = ['8 GB', '12 GB', '16 GB'];
       }
     }
     // 2. Upper Mid-Range / Pro / Performance / Neo / GT / Edge / Reno / V series (Indian market caps out at 256 GB)
@@ -3844,7 +3838,6 @@ export function inferTierHardwareSpecs(
         '128 GB': ['6 GB', '8 GB'],
         '256 GB': ['8 GB', '12 GB'],
       };
-      allRams = ['6 GB', '8 GB', '12 GB'];
     }
     // 3. Itel Budget Series (Accurate 4GB-8GB RAM, 64GB-256GB Storage)
     else if (/itel/i.test(fullText)) {
@@ -3854,7 +3847,6 @@ export function inferTierHardwareSpecs(
         '128 GB': ['4 GB', '6 GB', '8 GB'],
         '256 GB': ['8 GB'],
       };
-      allRams = ['4 GB', '6 GB', '8 GB'];
     }
     // 4. Budget / Entry-level (A0x, A1x, Redmi A/C/number A, Realme C, Poco C, Spark, Smart, Narzo 50i, etc.)
     else if (
@@ -3866,7 +3858,6 @@ export function inferTierHardwareSpecs(
         '64 GB': ['4 GB', '6 GB'],
         '128 GB': ['4 GB', '6 GB', '8 GB'],
       };
-      allRams = ['4 GB', '6 GB', '8 GB'];
     }
     // 5. Classic / Vintage J, C, On series
     else if (/galaxy\s*[jcon]\d|\bj\d|\bc\d|\bon\d|galaxy\s*core|galaxy\s*grand/i.test(fullText)) {
@@ -3876,7 +3867,6 @@ export function inferTierHardwareSpecs(
         '32 GB': ['4 GB'],
         '64 GB': ['4 GB'],
       };
-      allRams = ['4 GB'];
     }
     // 6. Standard Mid-range default (A2x, A3x, M3x, Redmi Note base, Realme number, Moto G, etc.)
     else {
@@ -3886,7 +3876,6 @@ export function inferTierHardwareSpecs(
         '128 GB': ['6 GB', '8 GB'],
         '256 GB': ['8 GB'],
       };
-      allRams = ['4 GB', '6 GB', '8 GB'];
     }
 
   const normSeeds = seedStorages
@@ -3897,7 +3886,6 @@ export function inferTierHardwareSpecs(
     return isStorageAllowedForModel(brand, model, stg);
   });
   const normalizedSeedRams = seedRams.map(normalizeRamString).filter((r) => parseInt(r, 10) >= 4);
-  const finalRams = Array.from(new Set([...normalizedSeedRams, ...allRams])).filter((r) => parseInt(r, 10) >= 4);
 
   const getRamsForStorage = (stg: string): string[] => {
     if (isApple) return [];

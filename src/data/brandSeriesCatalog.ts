@@ -1842,9 +1842,10 @@ export function groupModelsBySeries(brand: string, allModels: CatalogModelItem[]
         return false;
       }
 
-      const mSeriesStr = typeof m.series === 'string'
-        ? m.series
-        : (typeof m.series === 'object' && m.series ? (m.series as any).seriesName || '' : '');
+      const rawSeries: unknown = m.series;
+      const mSeriesStr = typeof rawSeries === 'string'
+        ? rawSeries
+        : String((rawSeries as { seriesName?: string } | null)?.seriesName || '');
       const text = `${m.model || ''} ${mSeriesStr}`;
       const inferred = inferModelSeries(brand, m.model, mSeriesStr);
       return (

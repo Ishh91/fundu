@@ -17,20 +17,15 @@ import {
   RotateCcw,
   MessageSquare,
   Tag,
-  Award,
   Zap,
   BatteryCharging,
   Camera,
   Cpu,
   Wifi,
   SlidersHorizontal,
-  Star,
   PackageCheck,
   Check,
-  ArrowRight,
-  ShieldAlert,
   Play,
-  Film,
 } from 'lucide-react';
 import { useSearchParams, useNavigate, Link } from 'react-router-dom';
 import { db, formatINR } from '../lib/db';

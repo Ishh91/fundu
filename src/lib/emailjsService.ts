@@ -1,3 +1,4 @@
+import { getErrorMessage } from './errorMessage';
 import emailjs from '@emailjs/browser';
 
 const getEmailJSConfig = () => ({
@@ -39,8 +40,8 @@ export async function sendEmailJSOTP(email: string, otp: string, userName: strin
     const response = await emailjs.send(serviceId, templateIdOtp, templateParams, publicKey);
     console.log('🎉 [EmailJS OTP Sent Successfully]:', response.status, response.text);
     return { success: true, response };
-  } catch (error: any) {
-    console.error('❌ [EmailJS OTP Error Detail]:', error?.text || error?.message || error);
+  } catch (error) {
+    console.error('❌ [EmailJS OTP Error Detail]:', getErrorMessage(error));
     return { success: true, simulated: true, otp };
   }
 }
@@ -73,8 +74,8 @@ export async function sendEmailJSWelcome(email: string, userName: string = 'User
     const response = await emailjs.send(serviceId, templateIdWelcome, templateParams, publicKey);
     console.log('🎉 [EmailJS Welcome Sent Successfully]:', response.status, response.text);
     return { success: true, response };
-  } catch (error: any) {
-    console.warn('⚠️ [EmailJS Welcome Fallback]:', error?.text || error?.message);
+  } catch (error) {
+    console.warn('⚠️ [EmailJS Welcome Fallback]:', getErrorMessage(error));
     return { success: true, simulated: true };
   }
 }
@@ -113,8 +114,8 @@ export async function sendEmailJSContact(contactData: {
     const response = await emailjs.send(serviceId, templateIdContact, templateParams, publicKey);
     console.log('🎉 [EmailJS Contact Sent Successfully]:', response.status, response.text);
     return { success: true, response };
-  } catch (error: any) {
-    console.warn('⚠️ [EmailJS Contact Fallback]:', error?.text || error?.message);
+  } catch (error) {
+    console.warn('⚠️ [EmailJS Contact Fallback]:', getErrorMessage(error));
     return { success: true, simulated: true };
   }
 }

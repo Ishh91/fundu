@@ -1,0 +1,70 @@
+import { getPanIndiaLocation } from './locationService';
+
+/** A fresh, empty sell-your-phone form. Built on demand because it reads today's date and the saved location. */
+export const createInitialSellForm = () => ({
+  brand: '',
+  model: '',
+  ram: '',
+  storage: '',
+  powersOn: true,
+  activationLockCleared: true,
+  ownershipVerified: true,
+  liquidDamage: false,
+  cosmeticCondition: 'flawless' as 'flawless' | 'good' | 'fair',
+  screenCondition: 'flawless' as 'flawless' | 'scratched' | 'cracked' | 'touch_fault' | 'display_lines',
+  bodyCondition: 'flawless' as 'flawless' | 'minor_scratches' | 'dents_bent',
+
+  // Granular Phone Condition Filter Questions
+  screenMinorScratches: false,
+  screenMajorScratches: false,
+  screenCracked: false,
+  displayMinorSpotsWhite: false,
+  displayMajorSpots: false,
+  displayMinorLines: false,
+  displayMajorLines: false,
+  displayMinorDiscolouration: false,
+  displayMajorDiscolouration: false,
+  bodyMinorSideScratches: false,
+  bodyMajorSideScratches: false,
+  bodyMinorDents: false,
+  bodyMajorDents: false,
+  bodyCrackedOrBroken: false,
+
+  batteryHealth: 'above_85' as 'above_85' | '75_to_85' | 'below_75' | 'healthy' | 'degraded_service' | 'unknown',
+  canMakeCalls: true,
+  agePeriod: 'above_9_months' as '0_to_3_months' | '3_to_6_months' | '6_to_9_months' | 'above_9_months' | 'below_3_months' | '3_to_10_months' | '10_to_12_months' | 'above_11_months',
+  underWarranty: false,
+  stylusAvailable: true,
+  defects: [] as string[],
+  imei: '',
+  imeiPhoto: '',
+  devicePhotos: {
+    front: '',
+    back: '',
+    edges: '',
+    bill_box: '',
+  },
+  diagnostics: {
+    screen_touch: true,
+    cameras: true,
+    battery_health: '85%+',
+    biometrics: true,
+    speaker_mic: true,
+    charging_port: true,
+  },
+  accessories: ['Original Box', 'Original Charger'] as string[],
+  payoutMethod: 'UPI' as 'UPI' | 'Cash' | 'Bank',
+  payoutDetails: '',
+  customerName: '',
+  customerPhone: '',
+  pincode: '',
+  locality: '',
+  pickupAddress: '',
+  pickupArea: getPanIndiaLocation().displayLabel || 'New Delhi (110001)',
+  pickupDate: new Date().toISOString().split('T')[0],
+  pickupSlot: '10 AM - 12 PM',
+  notes: '',
+});
+
+/** Everything the customer fills in across the four sell steps. */
+export type SellFormState = ReturnType<typeof createInitialSellForm>;

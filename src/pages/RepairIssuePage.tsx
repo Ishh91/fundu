@@ -8,35 +8,26 @@ import {
   Zap,
   Volume2,
   Camera,
-  Smartphone,
   Cpu,
-  FileCode,
-  SlidersHorizontal,
   ScanFace,
-  Wifi,
-  Vibrate,
-  ShieldCheck,
   CheckCircle2,
-  Clock,
-  Truck,
   Lock,
-  BadgeIndianRupee,
   HelpCircle,
   ChevronDown,
   ChevronUp,
-  ArrowRight,
   Mic,
   PhoneCall,
   Fingerprint,
   Droplets,
   AlertCircle,
 } from 'lucide-react';
-import { formatINR, formatDisplayPrice } from '../lib/db';
+import { formatDisplayPrice } from '../lib/db';
 import { getCleanPhoneImage } from '../lib/phoneImages';
 import { MASTER_MODEL_CATALOG } from '../data/masterModelCatalog';
 import { ALL_INDIAN_PHONES_CATALOG } from '../data/indianPhonesCatalog';
 import { useRepairPriceSync, getModelRepairPricing } from '../lib/repairPriceSync';
 import { isModelDeleted } from '../lib/catalogSync';
+import type { LucideIcon } from 'lucide-react';
 
 const ISSUE_DETAILS: Record<
   string,
@@ -47,7 +38,7 @@ const ISSUE_DETAILS: Record<
     cost: number;
     time: string;
     warranty: string;
-    icon: any;
+    icon: LucideIcon;
     note?: string;
     features: string[];
     faqs: Array<{ q: string; a: string }>;

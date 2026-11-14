@@ -1,18 +1,13 @@
-import React, { useEffect, useState, useRef } from 'react';
+import { useEffect, useState } from 'react';
 import {
   MapPin,
   Phone,
   Truck,
   ShieldCheck,
   Zap,
-  Clock,
-  CheckCircle2,
   X,
   Navigation,
   Sparkles,
-  Share2,
-  Award,
-  CircleDot,
 } from 'lucide-react';
 
 export type TrackerProps = {
@@ -59,7 +54,7 @@ export default function LiveExecutiveTracker({
   const [distanceKm, setDistanceKm] = useState(2.8); // km
   const [etaMins, setEtaMins] = useState(14);
   const [statusStep, setStatusStep] = useState<'dispatched' | 'on_the_way' | 'nearby' | 'arrived'>('on_the_way');
-  const [userGps, setUserGps] = useState<{ lat: number; lng: number } | null>(null);
+  const [, setUserGps] = useState<{ lat: number; lng: number } | null>(null);
 
   // Match target locality
   const cleanLoc = locality ? locality.toLowerCase().trim() : 'gomti nagar';
