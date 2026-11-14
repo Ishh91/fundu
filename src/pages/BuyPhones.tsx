@@ -34,6 +34,7 @@ import {
 } from 'lucide-react';
 import { useSearchParams, useNavigate, Link } from 'react-router-dom';
 import { db, formatINR } from '../lib/db';
+import { BUDGET_SLIDER_MAX, BUDGET_SLIDER_STEP, budgetLabel, isBudgetFilterActive, matchesBudget } from '../lib/budgetFilter';
 import { deduplicateProductsByModel } from '../lib/modelVariants';
 import { getCachedPhones, setCachedPhones } from '../lib/productsCache';
 import { useAuth } from '../context/AuthContext';
@@ -141,7 +142,7 @@ export default function BuyPhones() {
   const [selectedBrand, setSelectedBrand] = useState<string>('All');
   const [gradeFilter, setGradeFilter] = useState<string>('All');
   const [pricePreset, setPricePreset] = useState<number>(0);
-  const [maxPrice, setMaxPrice] = useState<number>(120000);
+  const [maxPrice, setMaxPrice] = useState<number>(BUDGET_SLIDER_MAX);
   const [selectedStorage, setSelectedStorage] = useState<string>('');
   const [sortBy, setSortBy] = useState('featured');
   const [openFaq, setOpenFaq] = useState<number | null>(0);
@@ -226,13 +227,12 @@ export default function BuyPhones() {
     setSelectedBrand('All');
     setGradeFilter('All');
     setPricePreset(0);
-    setMaxPrice(120000);
+    setMaxPrice(BUDGET_SLIDER_MAX);
     setSelectedStorage('');
     setSearch('');
   };
 
   const filteredProducts = useMemo(() => {
-    const preset = PRICE_PRESETS[pricePreset];
     let list = products.filter((p) => {
       // 0. Exclude products marked deleted by admin
       if (isProductDeleted(p.id, p.title)) return false;
@@ -264,10 +264,7 @@ export default function BuyPhones() {
         !selectedStorage || p.storage?.toLowerCase().includes(selectedStorage.toLowerCase());
 
       // 5. Price range match
-      const matchPrice =
-        pricePreset === 0
-          ? p.price <= maxPrice
-          : (p.price >= preset.min && p.price <= preset.max);
+      const matchPrice = matchesBudget(p.price, PRICE_PRESETS, pricePreset, maxPrice);
 
       return matchSearch && matchBrand && matchGrade && matchStorage && matchPrice;
     });
@@ -311,7 +308,7 @@ export default function BuyPhones() {
 
   const activeFilterCount = (selectedBrand !== 'All' ? 1 : 0) +
     (gradeFilter !== 'All' ? 1 : 0) +
-    (pricePreset !== 0 ? 1 : 0) +
+    (isBudgetFilterActive(pricePreset, maxPrice) ? 1 : 0) +
     (selectedStorage ? 1 : 0) +
     (search ? 1 : 0);
 
@@ -524,7 +521,7 @@ export default function BuyPhones() {
                   type="button"
                   onClick={() => {
                     setPricePreset(idx);
-                    if (idx !== 0) setMaxPrice(p.max);
+                    setMaxPrice(BUDGET_SLIDER_MAX);
                   }}
                   className={`rounded-xl px-3 py-1.5 text-xs font-bold whitespace-nowrap transition cursor-pointer ${
                     active
@@ -648,13 +645,13 @@ export default function BuyPhones() {
               <div>
                 <div className="flex justify-between text-xs font-bold text-[#344257] mb-2">
                   <span className="text-slate-500">Max Budget:</span>
-                  <span className="text-[#344257] font-black text-sm">{formatINR(maxPrice)}</span>
+                  <span className="text-[#344257] font-black text-sm">{budgetLabel(maxPrice, formatINR)}</span>
                 </div>
                 <input
                   type="range"
-                  min="8000"
-                  max="150000"
-                  step="5000"
+                  min="5000"
+                  max={BUDGET_SLIDER_MAX}
+                  step={BUDGET_SLIDER_STEP}
                   value={maxPrice}
                   onChange={(e) => {
                     setMaxPrice(Number(e.target.value));
@@ -663,8 +660,8 @@ export default function BuyPhones() {
                   className="w-full accent-[#344257] cursor-pointer"
                 />
                 <div className="flex justify-between text-[11px] text-slate-400 font-semibold mt-1">
-                  <span>₹8,000</span>
-                  <span>₹1,50,000</span>
+                  <span>₹5,000</span>
+                  <span>No limit</span>
                 </div>
               </div>
 
