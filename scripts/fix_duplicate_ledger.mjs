@@ -17,6 +17,7 @@ import dotenv from 'dotenv';
 import mongoose from 'mongoose';
 import { User, VendorLedger } from '../server/models/index.js';
 import { ONCE_PER_JOB_TYPES, correctedBalance, findDuplicateLedgerEntries } from '../server/services/ledgerCleanup.js';
+import { describeDbTarget, resolveDbName } from '../server/utils/dbTarget.js';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 dotenv.config({ path: path.join(ROOT, '.env') });
@@ -80,7 +81,10 @@ const main = async () => {
   const uri = process.env.MONGODB_URI;
   if (!uri) throw new Error('MONGODB_URI is not set. Put it in .env or the environment.');
 
-  await mongoose.connect(uri);
+  const dbName = resolveDbName();
+  console.log(`Database: ${describeDbTarget(uri, dbName)}
+`);
+  await mongoose.connect(uri, { dbName });
   const rows = await VendorLedger.find({ type: { $in: ONCE_PER_JOB_TYPES } }).lean();
   const { duplicates, overchargeByVendor } = findDuplicateLedgerEntries(rows);
   const balanceChanges = buildBalanceChanges(overchargeByVendor, await loadVendors(Object.keys(overchargeByVendor)));

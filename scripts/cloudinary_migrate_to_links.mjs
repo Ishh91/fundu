@@ -19,6 +19,7 @@ import mongoose from 'mongoose';
 import * as models from '../server/models/index.js';
 import { createMediaUploader, getCloudinaryConfig, listInlineMedia } from '../server/services/cloudinary.js';
 import { createBackupWriter, migrateDocument, restoreFromBackup } from '../server/services/mediaMigration.js';
+import { describeDbTarget, resolveDbName } from '../server/utils/dbTarget.js';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 dotenv.config({ path: path.join(ROOT, '.env'), quiet: true });
@@ -94,7 +95,10 @@ const apply = async (entries, config) => {
 
 const main = async () => {
   if (!process.env.MONGODB_URI) throw new Error('MONGODB_URI is not set. Put it in .env or the environment.');
-  await mongoose.connect(process.env.MONGODB_URI);
+  const dbName = resolveDbName();
+  console.log(`Database: ${describeDbTarget(process.env.MONGODB_URI, dbName)}
+`);
+  await mongoose.connect(process.env.MONGODB_URI, { dbName });
   const entries = listModels();
 
   if (restoreFile) {

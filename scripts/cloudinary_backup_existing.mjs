@@ -18,6 +18,7 @@ import dotenv from 'dotenv';
 import mongoose from 'mongoose';
 import * as models from '../server/models/index.js';
 import { createMediaUploader, getCloudinaryConfig, listInlineMedia } from '../server/services/cloudinary.js';
+import { describeDbTarget, resolveDbName } from '../server/utils/dbTarget.js';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 dotenv.config({ path: path.join(ROOT, '.env'), quiet: true });
@@ -101,7 +102,10 @@ const main = async () => {
   const config = getCloudinaryConfig();
   if (shouldApply && !config) throw new Error('CLOUDINARY_URL is not set. Put it in .env or the environment.');
 
-  await mongoose.connect(uri);
+  const dbName = resolveDbName();
+  console.log(`Database: ${describeDbTarget(uri, dbName)}
+`);
+  await mongoose.connect(uri, { dbName });
   const entries = listModels();
   const rows = await survey(entries);
   printSurvey(rows);
