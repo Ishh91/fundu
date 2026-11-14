@@ -15,8 +15,10 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['Plus Jakarta Sans', 'Inter', 'system-ui', 'sans-serif'],
-        display: ['Sora', 'Plus Jakarta Sans', 'sans-serif'],
+        // 'Noto Sans' is loaded with the rupee sign only (see index.html), so it
+        // supplies ₹ and every other character falls through to the next font.
+        sans: ['Noto Sans', 'Plus Jakarta Sans', 'Inter', 'system-ui', 'sans-serif'],
+        display: ['Noto Sans', 'Sora', 'Plus Jakarta Sans', 'sans-serif'],
       },
       colors: {
         palette: {
