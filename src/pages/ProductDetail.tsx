@@ -38,6 +38,8 @@ import { findSampleLaptopById } from '../data/sampleLaptops';
 import { verifyPanIndiaPincode } from '../lib/locationService';
 import { PhoneVideoPlayer } from '../lib/videoUtils';
 import { usePageSeo } from '../lib/usePageSeo';
+import { storageMultiplier, variantPrice } from '../../shared/variantPricing.js';
+import { missingChoices, stockCap, stockNotice, unitsInCart } from '../lib/cartLimits';
 
 // Doorstep PIN code to Area mapping dictionary
 
@@ -88,7 +90,7 @@ export default function ProductDetail() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { user, profile } = useAuth();
-  const { addToCart } = useCart();
+  const { addToCart, cartItems } = useCart();
 
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
@@ -105,6 +107,7 @@ export default function ProductDetail() {
   );
 
   const [quantity, setQuantity] = useState(1);
+  const [choiceNotice, setChoiceNotice] = useState<string | null>(null);
   const [addedToast, setAddedToast] = useState(false);
 
   // Variant States
@@ -124,6 +127,11 @@ export default function ProductDetail() {
     comment: '',
   });
   const [reviewSubmitting, setReviewSubmitting] = useState(false);
+
+  // A "please choose / only N left" message is about the old choice; drop it when the choice changes.
+  useEffect(() => {
+    setChoiceNotice(null);
+  }, [selectedStorage, selectedColor, selectedGrade]);
 
   // Automatically start playing phone video on user side if available
   useEffect(() => {
@@ -283,23 +291,9 @@ const handleCheckPincode = async (codeToTest?: string) => {
   }
 };
 
-  // Dynamic storage multiplier based on gigabyte ratio
-  const getStorageMultiplier = (targetStorage: string, baseStorage: string = '128 GB') => {
-    const norm = (s: string) => {
-      const num = parseInt(s) || 128;
-      return s.toLowerCase().includes('tb') ? num * 1024 : num;
-    };
-    const targetSize = norm(targetStorage);
-    const baseSize = norm(baseStorage);
-    if (targetSize === baseSize) return 1.0;
-    if (targetSize > baseSize) {
-      const step = Math.log2(targetSize / baseSize);
-      return Math.round((1 + step * 0.15) * 100) / 100;
-    } else {
-      const step = Math.log2(baseSize / targetSize);
-      return Math.round((1 - step * 0.12) * 100) / 100;
-    }
-  };
+  // Dynamic storage multiplier based on gigabyte ratio (same rules the server charges by)
+  const getStorageMultiplier = (targetStorage: string, baseStorage: string = '128 GB') =>
+    storageMultiplier(targetStorage, baseStorage);
 
   const availableStorages = useMemo(() => {
     const isLaptop = product?.category === 'laptop' || !!product?.processor;
@@ -392,13 +386,8 @@ const handleCheckPincode = async (codeToTest?: string) => {
   }
 
     // Proportional Grade Price with percentage savings
-    const getGradePrice = (gradeId: string, storage: string = selectedStorage) => {
-      const grade = CONDITION_GRADES.find((g) => g.id.toLowerCase() === gradeId.toLowerCase()) || CONDITION_GRADES[2];
-      const base = product.price || 20000;
-      const sMult = getStorageMultiplier(storage, product.storage || '128 GB');
-      const gMult = grade.priceMultiplier || 1.0;
-      return Math.round(base * sMult * gMult);
-    };
+    const getGradePrice = (gradeId: string, storage: string = selectedStorage) =>
+      variantPrice(product, { storage, condition: gradeId });
 
     const activeGradeName = (selectedGrade || product.condition || 'Superb').toLowerCase();
     const gradeObj = CONDITION_GRADES.find((g) => g.id.toLowerCase() === activeGradeName || (activeGradeName.includes('excellent') && g.id === 'Superb')) || CONDITION_GRADES[2];
@@ -416,36 +405,57 @@ const images = product.images && product.images.length > 0
   ? product.images
   : [modelFallbackImage || 'https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=800&auto=format&fit=crop&q=80'];
 
-const handleAddToCart = () => {
+// Stock is one count for this listing, shared by every storage/colour line in the cart.
+const stockLimit = stockCap(product);
+const unitsAlreadyInCart = unitsInCart(cartItems, 'product', product);
+const unitsLeft = Math.max(0, stockLimit - unitsAlreadyInCart);
+const isOutOfStock = stockLimit <= 0;
+const canAddMore = unitsLeft > 0;
+const quantityToAdd = Math.min(quantity, Math.max(1, unitsLeft));
+
+/** The cart line for the current choices, or null (with a message shown) when it cannot be added. */
+const prepareCartItem = () => {
   if (profile && profile.role !== 'customer') {
     alert(`Access Restricted: You are logged in as ${profile.role.toUpperCase()}. Vendor, Delivery, and Admin accounts cannot place orders.`);
-    return;
+    return null;
   }
-  const updatedProduct = {
+  const chosen = {
     ...product,
     price: currentPrice,
     storage: selectedStorage,
     color: selectedColor || product.color,
     condition: selectedGrade as any,
+    available_storages: availableStorages,
+    available_colors: availableColors,
   };
-  addToCart(updatedProduct, quantity);
+  const missing = missingChoices(chosen);
+  if (missing.length > 0) {
+    setChoiceNotice(`Please select your ${missing.join(' and ')} before continuing.`);
+    return null;
+  }
+  if (!canAddMore) {
+    setChoiceNotice(
+      isOutOfStock ? stockNotice(0) : `You already have all ${stockLimit} available unit${stockLimit === 1 ? '' : 's'} in your cart.`,
+    );
+    return null;
+  }
+  setChoiceNotice(null);
+  return chosen;
+};
+
+const handleAddToCart = () => {
+  const chosen = prepareCartItem();
+  if (!chosen) return;
+  const { added, limited } = addToCart(chosen, quantityToAdd);
+  if (limited) setChoiceNotice(`${stockNotice(stockLimit)}. Added ${added} to your cart.`);
   setAddedToast(true);
   setTimeout(() => setAddedToast(false), 2500);
 };
 
 const handleBuyNow = () => {
-  if (profile && profile.role !== 'customer') {
-    alert(`Access Restricted: You are logged in as ${profile.role.toUpperCase()}. Vendor, Delivery, and Admin accounts cannot place orders.`);
-    return;
-  }
-  const updatedProduct = {
-    ...product,
-    price: currentPrice,
-    storage: selectedStorage,
-    color: selectedColor || product.color,
-    condition: selectedGrade as any,
-  };
-  addToCart(updatedProduct, quantity);
+  const chosen = prepareCartItem();
+  if (!chosen) return;
+  addToCart(chosen, quantityToAdd);
   if (user) {
     navigate('/checkout');
   } else {
@@ -929,7 +939,8 @@ return (
                   </span>
                   <button
                     type="button"
-                    onClick={() => setQuantity((q) => Math.min(10, q + 1))}
+                    onClick={() => setQuantity((q) => Math.min(Math.max(1, unitsLeft), q + 1))}
+                    disabled={quantity >= Math.max(1, unitsLeft)}
                     className="w-7 h-7 rounded-lg bg-white border border-[#C0C8D8] text-sm font-black text-[#344257] hover:bg-gray-100 grid place-items-center cursor-pointer transition shadow-2xs"
                   >
                     +
@@ -937,10 +948,23 @@ return (
                 </div>
               </div>
 
+              {(isOutOfStock || stockLimit <= 3 || unitsAlreadyInCart > 0) && (
+                <p className={`text-[11px] font-bold ${isOutOfStock ? 'text-rose-600' : 'text-amber-700'}`}>
+                  {isOutOfStock ? stockNotice(0) : stockLimit <= 3 ? stockNotice(stockLimit) : ''}
+                  {unitsAlreadyInCart > 0 && !isOutOfStock ? `${stockLimit <= 3 ? ' · ' : ''}${unitsAlreadyInCart} already in your cart` : ''}
+                </p>
+              )}
+
+              {choiceNotice && (
+                <div role="alert" className="p-2.5 rounded-xl bg-amber-50 border border-amber-200 text-xs font-bold text-amber-900">
+                  {choiceNotice}
+                </div>
+              )}
+
               {addedToast && (
                 <div className="p-2.5 rounded-xl bg-emerald-50 border border-emerald-200 text-center animate-fade-in">
                   <p className="text-xs font-bold text-emerald-800">
-                    ✓ Added {quantity} item(s) to your cart!
+                    ✓ Added {quantityToAdd} item(s) to your cart!
                   </p>
                 </div>
               )}
@@ -950,14 +974,16 @@ return (
                 <button
                   type="button"
                   onClick={handleAddToCart}
-                  className="btn-outline py-3.5 text-sm font-extrabold flex items-center justify-center gap-2 rounded-2xl cursor-pointer"
+                  disabled={isOutOfStock}
+                  className="btn-outline py-3.5 text-sm font-extrabold flex items-center justify-center gap-2 rounded-2xl cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  <ShoppingCart className="h-4 w-4" /> Add to Cart
+                  <ShoppingCart className="h-4 w-4" /> {isOutOfStock ? 'Out of Stock' : 'Add to Cart'}
                 </button>
                 <button
                   type="button"
                   onClick={handleBuyNow}
-                  className="btn-primary py-3.5 text-sm font-extrabold flex items-center justify-center gap-2 rounded-2xl shadow-md cursor-pointer"
+                  disabled={isOutOfStock}
+                  className="btn-primary py-3.5 text-sm font-extrabold flex items-center justify-center gap-2 rounded-2xl shadow-md cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <Zap className="h-4 w-4" /> Buy Now
                 </button>
@@ -1171,14 +1197,16 @@ return (
               <button
                 type="button"
                 onClick={handleAddToCart}
-                className="btn-outline py-2.5 px-4 text-xs font-extrabold rounded-xl cursor-pointer"
+                disabled={isOutOfStock}
+                className="btn-outline py-2.5 px-4 text-xs font-extrabold rounded-xl cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 Add to Cart
               </button>
               <button
                 type="button"
                 onClick={handleBuyNow}
-                className="btn-primary py-2.5 px-5 text-xs font-extrabold rounded-xl shadow-md flex items-center gap-1.5 cursor-pointer"
+                disabled={isOutOfStock}
+                className="btn-primary py-2.5 px-5 text-xs font-extrabold rounded-xl shadow-md flex items-center gap-1.5 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <Zap className="h-3.5 w-3.5" /> Buy Now
               </button>

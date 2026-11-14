@@ -1,6 +1,7 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import type { Product, SparePart } from '../types';
 import { getItemVariant } from '../lib/cartItem';
+import { clampLineQuantity, maxForLine, reconcileLines, type FreshListing } from '../lib/cartLimits';
 
 export type CartItem = {
   id: string; // Unique key: e.g. "sample-apple-15pro_128_gb_excellent"
@@ -23,8 +24,13 @@ type CartContextValue = {
   cartItem: CartItem | null; // Primary/first item for backward compatibility
   totalItems: number;
   totalAmount: number;
-  addToCart: (item: Product | SparePart, quantity?: number) => void;
-  updateQuantity: (id: string, quantity: number) => void;
+  /** Adds up to what is in stock. `added` is how many went in; `limited` is true when it was cut down. */
+  addToCart: (item: Product | SparePart, quantity?: number) => { added: number; limited: boolean };
+  updateQuantity: (id: string, quantity: number) => { quantity: number; limited: boolean };
+  /** How many units this line may hold at most, counting the listing's other lines. */
+  maxQuantityFor: (id: string) => number;
+  /** Applies the shop's current stock (by product id) to the cart; returns a message per change made. */
+  syncStock: (fresh: Record<string, FreshListing>) => string[];
   removeFromCart: (id: string) => void;
   setCartItem: (item: CartItem | null) => void;
   deliveryDetails: DeliveryDetails | null;
@@ -112,49 +118,61 @@ export function CartProvider({ children }: { children: ReactNode }) {
    * Add item to cart. If already present, increments quantity.
    * Supports unlimited items and auto-opens the cart drawer.
    */
-  const addToCart = (item: Product | SparePart, quantity = 1) => {
-    if (!item) return;
+  const addToCart = (item: Product | SparePart, quantity = 1): { added: number; limited: boolean } => {
+    if (!item) return { added: 0, limited: false };
     const key = getItemKey(item);
-    const isProduct = 'storage' in item || 'condition' in item || 'brand' in item;
-    const addQty = Math.max(1, Number(quantity) || 1);
+    const type: CartItem['type'] = 'storage' in item || 'condition' in item || 'brand' in item ? 'product' : 'spare_part';
+    const wanted = Math.max(1, Number(quantity) || 1);
+    const existing = cartItems.find((ci) => ci.id === key);
+    const currentQty = existing ? Math.max(1, Number(existing.quantity) || 1) : 0;
+
+    // The cap is per listing: other lines of the same phone (other storage or colour) use the same stock.
+    const { quantity: finalQty } = clampLineQuantity(cartItems, { id: key, type, item }, currentQty + wanted);
+    const added = Math.max(0, finalQty - currentQty);
+    const limited = added < wanted;
+    if (finalQty <= 0) return { added: 0, limited: true };
 
     setCartItems((prev) => {
-      const existingIdx = prev.findIndex((ci) => ci.id === key);
-      if (existingIdx >= 0) {
+      const idx = prev.findIndex((ci) => ci.id === key);
+      if (idx >= 0) {
         const updated = [...prev];
-        const currentQty = Math.max(1, Number(updated[existingIdx].quantity) || 1);
-        updated[existingIdx] = {
-          ...updated[existingIdx],
-          item, // update with latest item info if changed
-          quantity: currentQty + addQty,
-        };
+        updated[idx] = { ...updated[idx], item, quantity: finalQty }; // keep the latest item info
         return updated;
       }
-      return [
-        ...prev,
-        {
-          id: key,
-          type: isProduct ? 'product' : 'spare_part',
-          item,
-          quantity: addQty,
-        },
-      ];
+      return [...prev, { id: key, type, item, quantity: finalQty }];
     });
 
     setIsCartOpen(true);
+    return { added, limited };
   };
 
   /**
-   * Set or update specific item quantity. Removes if <= 0.
+   * Set or update specific item quantity, never above the stock. Removes if <= 0.
    */
-  const updateQuantity = (id: string, quantity: number) => {
+  const updateQuantity = (id: string, quantity: number): { quantity: number; limited: boolean } => {
     const q = Number(quantity);
-    setCartItems((prev) => {
-      if (q <= 0) {
-        return prev.filter((ci) => ci.id !== id);
-      }
-      return prev.map((ci) => (ci.id === id ? { ...ci, quantity: q } : ci));
-    });
+    const line = cartItems.find((ci) => ci.id === id);
+    if (!line) return { quantity: 0, limited: false };
+    if (q <= 0) {
+      setCartItems((prev) => prev.filter((ci) => ci.id !== id));
+      return { quantity: 0, limited: false };
+    }
+    const result = clampLineQuantity(cartItems, line, q);
+    setCartItems((prev) =>
+      result.quantity <= 0 ? prev.filter((ci) => ci.id !== id) : prev.map((ci) => (ci.id === id ? { ...ci, quantity: result.quantity } : ci)),
+    );
+    return result;
+  };
+
+  const syncStock = (fresh: Record<string, FreshListing>): string[] => {
+    const { lines, messages } = reconcileLines(cartItems, fresh);
+    if (messages.length > 0) setCartItems(lines);
+    return messages;
+  };
+
+  const maxQuantityFor = (id: string): number => {
+    const line = cartItems.find((ci) => ci.id === id);
+    return line ? maxForLine(cartItems, line) : 0;
   };
 
   /**
@@ -198,6 +216,8 @@ export function CartProvider({ children }: { children: ReactNode }) {
   return (
     <CartContext.Provider
       value={{
+        maxQuantityFor,
+        syncStock,
         cartItems,
         cartItem,
         totalItems,

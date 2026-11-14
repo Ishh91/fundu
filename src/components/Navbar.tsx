@@ -264,7 +264,7 @@ const BUY_LAPTOP_HIGHLIGHTS = [
 
 export default function Navbar() {
   const { user, profile, signOut } = useAuth();
-  const { cartItems, totalItems, totalAmount, updateQuantity, removeFromCart, clearCart, isCartOpen: cartOpen, setIsCartOpen: setCartOpen } = useCart();
+  const { cartItems, totalItems, totalAmount, updateQuantity, maxQuantityFor, removeFromCart, clearCart, isCartOpen: cartOpen, setIsCartOpen: setCartOpen } = useCart();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -1033,8 +1033,9 @@ export default function Navbar() {
                                       <button
                                         type="button"
                                         onClick={() => updateQuantity(ci.id, ci.quantity + 1)}
-                                        className="text-xs font-extrabold text-[#344257] hover:text-black w-4 h-4 grid place-items-center cursor-pointer"
-                                        title="Increase quantity"
+                                        disabled={ci.quantity >= maxQuantityFor(ci.id)}
+                                        className="text-xs font-extrabold text-[#344257] hover:text-black w-4 h-4 grid place-items-center cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
+                                        title={ci.quantity >= maxQuantityFor(ci.id) ? 'No more in stock' : 'Increase quantity'}
                                       >
                                         +
                                       </button>

@@ -1,3 +1,4 @@
+import crypto from 'node:crypto';
 import mongoose from 'mongoose';
 import { createSchema } from './baseSchema.js';
 
@@ -16,6 +17,8 @@ const orderSchema = createSchema({
   },
   payment_method: { type: String, default: 'cod' },
   payment_status: { type: String, default: 'pending' },
+  razorpay_order_id: { type: String, default: null },
+  razorpay_payment_id: { type: String, default: null, index: true },
   delivery_address: { type: String, default: null },
   delivery_area: { type: String, default: null },
   delivery_name: { type: String, default: null },
@@ -35,7 +38,7 @@ const orderSchema = createSchema({
   },
   delivery_otp: {
     type: String,
-    default: () => String(Math.floor(1000 + Math.random() * 9000)),
+    default: () => String(crypto.randomInt(1000, 10000)),
   },
   delivery_otp_created_at: {
     type: String,
