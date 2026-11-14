@@ -1091,8 +1091,14 @@ if (typeof window !== 'undefined') {
     }
   });
 
-  // Pull immediately on boot
-  pullLiveModelImagesFromDb();
+  // Pull after the first paint, not at the very start: this is a large download and, started
+  // immediately, it competes with the page's own data (a product, a list) on the same slow server.
+  // Pages that need the images straight away (sell pages) still ask for them themselves.
+  if ('requestIdleCallback' in window) {
+    window.requestIdleCallback(() => { void pullLiveModelImagesFromDb(); }, { timeout: 3000 });
+  } else {
+    setTimeout(() => { void pullLiveModelImagesFromDb(); }, 1800);
+  }
 
   // Fast re-check on tab focus / visibilitychange
   window.addEventListener('focus', () => {
