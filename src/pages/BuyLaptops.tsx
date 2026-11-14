@@ -38,6 +38,8 @@ import { subscribeToRealtimeSync } from '../lib/realtimeSync';
 import type { Product } from '../types';
 import { SAMPLE_LAPTOPS } from '../data/sampleLaptops';
 
+import { matchesBrand } from '../lib/brandFilter';
+
 // Circular brand filters
 const BRAND_PILLS = [
   { name: 'All', label: 'All Brands' },
@@ -239,10 +241,7 @@ export default function BuyLaptops() {
           .includes(search.toLowerCase());
 
       // 2. Brand match
-      const matchBrand =
-        selectedBrand === 'All' ||
-        !selectedBrand ||
-        p.brand.toLowerCase() === selectedBrand.toLowerCase();
+      const matchBrand = matchesBrand(p.brand, selectedBrand);
 
       // 3. Use Case match
       const matchUseCase =

@@ -35,6 +35,7 @@ import { getCachedPhones, setCachedPhones } from '../lib/productsCache';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
 import { getCleanPhoneImage, getCleanBrandLogo } from '../lib/phoneImages';
+import { matchesBrand } from '../lib/brandFilter';
 import { isProductDeleted, useCatalogSync } from '../lib/catalogSync';
 import { subscribeToRealtimeSync } from '../lib/realtimeSync';
 import type { Product } from '../types';
@@ -240,11 +241,7 @@ export default function BuyPhones() {
         p.model.toLowerCase().includes(search.toLowerCase());
 
       // 2. Brand match
-      const matchBrand =
-        selectedBrand === 'All' ||
-        !selectedBrand ||
-        p.brand.toLowerCase() === selectedBrand.toLowerCase() ||
-        (selectedBrand.toLowerCase() === 'xiaomi' && p.brand.toLowerCase() === 'redmi');
+      const matchBrand = matchesBrand(p.brand, selectedBrand);
 
       // 3. Grade condition match
       const pCond = (p.condition || '').toLowerCase();
