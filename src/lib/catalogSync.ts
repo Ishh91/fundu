@@ -1,3 +1,4 @@
+import { afterPageSettles } from './afterPageSettles';
 import { useEffect, useState } from 'react';
 import { db } from './db';
 import { broadcastSync, subscribeToRealtimeSync } from './realtimeSync';
@@ -355,8 +356,27 @@ export function isProductDeleted(productId?: string, title?: string): boolean {
 /**
  * Pulls all disabled/inactive models from MongoDB tables and synchronizes local storage
  */
-export async function refreshDeletedModelsFromDb(): Promise<void> {
-  if (typeof window === 'undefined') return;
+const DELETED_MODELS_FRESH_MS = 20 * 1000;
+let deletedModelsRefresh: Promise<void> | null = null;
+let deletedModelsRefreshedAt = 0;
+
+/**
+ * Callers that start at the same moment (page start-up and a page's own hook) share one request,
+ * and a refresh that finished a moment ago is not repeated.
+ */
+export function refreshDeletedModelsFromDb(): Promise<void> {
+  if (typeof window === 'undefined') return Promise.resolve();
+  if (deletedModelsRefresh) return deletedModelsRefresh;
+  if (Date.now() - deletedModelsRefreshedAt < DELETED_MODELS_FRESH_MS) return Promise.resolve();
+
+  deletedModelsRefresh = loadDeletedModelsFromDb().finally(() => {
+    deletedModelsRefresh = null;
+    deletedModelsRefreshedAt = Date.now();
+  });
+  return deletedModelsRefresh;
+}
+
+async function loadDeletedModelsFromDb(): Promise<void> {
   try {
     const [sellRes, masterRes, disabledRes] = await Promise.all([
       db.from('sell_price_configs').select('brand, model, is_active'),
@@ -418,14 +438,8 @@ export async function refreshDeletedModelsFromDb(): Promise<void> {
   } catch {}
 }
 
-// Background sync on browser load after initial paint
-if (typeof window !== 'undefined') {
-  if ('requestIdleCallback' in window) {
-    window.requestIdleCallback(() => refreshDeletedModelsFromDb(), { timeout: 3000 });
-  } else {
-    setTimeout(() => refreshDeletedModelsFromDb(), 1800);
-  }
-}
+// Background sync once the page has loaded its own data
+afterPageSettles(() => { void refreshDeletedModelsFromDb(); });
 
 /**
  * Custom React hook for real-time live synchronization of deleted models across website components

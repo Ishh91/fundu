@@ -1090,7 +1090,7 @@ export default function Repair() {
                 <Wrench className="h-3.5 w-3.5 text-[#47576E]" /> 30-Minute Doorstep Mobile Repair
               </div>
               <h1 className="mt-2 font-display text-2xl md:text-4xl font-extrabold text-[#344257]">
-                Mobile Repair at Your Doorstep at your doorstep
+                Mobile Repair at Your Doorstep
               </h1>
               <p className="mt-1 text-sm text-ink-500">
                 Screen, battery & hardware fixed at your home in 30 mins · 6 Months Warranty · Pay after testing
@@ -1251,7 +1251,7 @@ export default function Repair() {
                           {form.brand} Repair Models
                         </h2>
                         <p className="text-xs sm:text-sm text-slate-300 mt-1 max-w-xl">
-                          Select your exact model below for instant upfront repair quotes and doorstep technician dispatch at your doorstep.
+                          Select your exact model below for instant upfront repair quotes and doorstep technician dispatch.
                         </p>
                       </div>
                     </div>
@@ -1494,7 +1494,7 @@ export default function Repair() {
                   <div className="flex items-center justify-between border-b border-gray-100 pb-4">
                     <div>
                       <span className="badge bg-amber-50 text-amber-800 font-extrabold text-xs">
-                        Popular Choices at your doorstep
+                        Popular Choices
                       </span>
                       <h3 className="mt-2 font-display text-lg sm:text-xl font-black text-ink-900 flex items-center gap-2">
                         <Sparkles className="h-5 w-5 text-amber-500" /> Frequently Repaired Phones
@@ -1811,7 +1811,7 @@ export default function Repair() {
                     <Clock className="h-3.5 w-3.5" /> 30-Min On-Spot Fix
                   </span>
                   <span className="inline-flex items-center gap-1 rounded-full bg-white/10 px-3 py-1 backdrop-blur-md text-emerald-300">
-                    <Truck className="h-3.5 w-3.5" /> Free Doorstep Visit at your doorstep
+                    <Truck className="h-3.5 w-3.5" /> Free Doorstep Visit
                   </span>
                 </div>
               </div>
@@ -2090,7 +2090,7 @@ export default function Repair() {
           <div className="text-center max-w-xl mx-auto">
             <span className="badge bg-brand-50 text-brand-700">Convenient Doorstep Service</span>
             <h2 className="mt-2 font-display text-2xl font-extrabold text-ink-900">How Doorstep Repair Works</h2>
-            <p className="mt-1 text-xs text-ink-500">Get your phone fixed at home at your doorstep in 3 simple steps</p>
+            <p className="mt-1 text-xs text-ink-500">Get your phone fixed at home in 3 simple steps</p>
           </div>
 
           <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6 text-center">

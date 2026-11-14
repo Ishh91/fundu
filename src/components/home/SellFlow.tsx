@@ -34,7 +34,7 @@ const FLOW_DATA = {
       {
         step: '03',
         title: 'Free Doorstep Pickup',
-        desc: 'Choose your convenient date and time slot for doorstep inspection at your doorstep.',
+        desc: 'Choose your convenient date and time slot for doorstep inspection.',
         icon: Truck,
       },
       {
@@ -72,7 +72,7 @@ const FLOW_DATA = {
       {
         step: '04',
         title: 'Free Same-Day Doorstep Delivery',
-        desc: 'Safe, sealed package delivered directly to your doorstep at your doorstep.',
+        desc: 'Safe, sealed package delivered directly to your doorstep.',
         icon: Truck,
       },
     ],
