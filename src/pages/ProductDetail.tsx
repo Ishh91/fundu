@@ -30,6 +30,7 @@ import { db, formatINR } from '../lib/db';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
 import { getCleanPhoneImage, pullLiveModelImagesFromDb } from '../lib/phoneImages';
+import { getRememberedProduct, rememberProducts } from '../lib/productsCache';
 import type { Product, Review } from '../types';
 import { getModelHardwareSpecs, normalizeStorageString, isStorageAllowedForModel } from '../lib/deviceSpecs';
 import { findSampleProductById } from '../data/sampleProducts';
@@ -219,6 +220,22 @@ export default function ProductDetail() {
       return;
     }
 
+    // A product the visitor already saw in a list (or pointed at) is shown at once; the server copy
+    // then replaces it quietly, without resetting what the visitor has picked in the meantime.
+    const known = getRememberedProduct(id);
+    const showProduct = (p: Product, resetChoices: boolean) => {
+      setProduct(p);
+      if (!resetChoices) return;
+      setSelectedImage(p.images?.[0] || getCleanPhoneImage(p.brand, p.model || p.title));
+      setSelectedStorage(normalizeStorageString(p.storage || '128 GB'));
+      setSelectedColor(p.color || 'Default');
+      setSelectedGrade(p.condition === 'Excellent' ? 'Superb' : p.condition || 'Superb');
+    };
+    if (known) {
+      showProduct(known, true);
+      setLoading(false);
+    }
+
     db.from('products')
       .select('*')
       .eq('id', id)
@@ -226,18 +243,15 @@ export default function ProductDetail() {
       .then(({ data, error }) => {
         if (!error && data) {
           const p = data as Product;
-          setProduct(p);
-          setSelectedImage(p.images?.[0] || getCleanPhoneImage(p.brand, p.model || p.title));
-          setSelectedStorage(normalizeStorageString(p.storage || '128 GB'));
-          setSelectedColor(p.color || 'Default');
-          setSelectedGrade(p.condition === 'Excellent' ? 'Superb' : p.condition || 'Superb');
-        } else {
+          rememberProducts([p]);
+          showProduct(p, !known);
+        } else if (!known) {
           setProduct(null);
         }
         setLoading(false);
       })
       .catch(() => {
-        setProduct(null);
+        if (!known) setProduct(null);
         setLoading(false);
       });
   }, [id]);

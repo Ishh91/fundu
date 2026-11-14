@@ -42,6 +42,7 @@ const WholesalerLogin = lazy(() => import('./pages/WholesalerLogin'));
 const DeliveryLogin = lazy(() => import('./pages/DeliveryLogin'));
 const DemoConditionFilter = lazy(() => import('./pages/DemoConditionFilter'));
 import SEO from './components/SEO';
+import { startRoutePrefetch } from './lib/routePrefetch';
 import ErrorBoundary from './components/ErrorBoundary';
 
 const PageLoaderFallback = () => (
@@ -103,6 +104,8 @@ function ProductDetailRoute() {
 
 function MainLayout() {
   const location = useLocation();
+
+  useEffect(() => startRoutePrefetch(), []);
 
   useEffect(() => {
     if ('scrollRestoration' in window.history) {
