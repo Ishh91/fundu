@@ -5,7 +5,7 @@ import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
 import { db, formatINR } from '../lib/db';
 import { notifyNewBuyOrder, sendCustomerDeliveryOtp } from '../lib/whatsappNotifyService';
-import type { Product } from '../types';
+import { createServerRazorpayOrder, type RazorpayProof } from '../lib/razorpayClient';
 import { getItemVariant } from '../lib/cartItem';
 
 type RazorpayResponse = {
@@ -18,6 +18,7 @@ type RazorpayOptions = {
   key: string;
   amount: number;
   currency: string;
+  order_id: string;
   name: string;
   description: string;
   handler: (response: RazorpayResponse) => void;
@@ -76,7 +77,7 @@ export default function Payment() {
     );
   }
 
-  const createOrder = async (paymentMethod: 'cod' | 'razorpay', paymentStatus: string = 'pending') => {
+  const createOrder = async (paymentMethod: 'cod' | 'razorpay', razorpay?: RazorpayProof) => {
     setLoading(true);
     try {
       const orderItems = cartItems.map((ci) => ({
@@ -90,7 +91,6 @@ export default function Payment() {
         ram: getItemVariant(ci.item).ram,
         color: getItemVariant(ci.item).color,
         condition: getItemVariant(ci.item).condition || 'Grade A (Excellent)',
-        price: ci.item.price,
         quantity: ci.quantity || 1,
         image: ci.item.images?.[0] || ci.item.image || '',
         image_url: ci.item.images?.[0] || ci.item.image || '',
@@ -98,8 +98,6 @@ export default function Payment() {
 
       const primaryProduct = cartItems.find((ci) => ci.type === 'product');
       const primaryPart = cartItems.find((ci) => ci.type === 'spare_part');
-
-      const deliveryOtp = String(Math.floor(1000 + Math.random() * 9000));
 
       const orderData = {
         user_id: user?.id,
@@ -109,10 +107,9 @@ export default function Payment() {
         product_id: primaryProduct ? primaryProduct.item.id : null,
         spare_part_id: primaryPart ? primaryPart.item.id : null,
         quantity: totalItems,
-        total_amount: totalAmount,
         status: 'pending',
         payment_method: paymentMethod,
-        payment_status: paymentStatus,
+        razorpay,
         delivery_address: [
           deliveryDetails.address,
           deliveryDetails.locality,
@@ -123,30 +120,20 @@ export default function Payment() {
         delivery_name: deliveryDetails.name,
         delivery_phone: deliveryDetails.phone,
         items: orderItems,
-        delivery_otp: deliveryOtp,
-        delivery_otp_created_at: new Date().toISOString(),
       };
 
       const { data, error } = await db
-        .from<{ id: string }>('orders')
+        .from<{ id: string; delivery_otp?: string | null; total_amount?: number; payment_status?: string }>('orders')
         .insert(orderData)
         .select()
         .single();
 
       if (error) throw error;
 
-      // Decrement stock for real inventory products in database
-      for (const ci of cartItems) {
-        if (ci.type === 'product' && ci.item?.id && !ci.item.id.startsWith('sample-')) {
-          try {
-            const currentStock = (ci.item as Product).stock ?? 1;
-            const newStock = Math.max(0, currentStock - (ci.quantity || 1));
-            await db.from('products').update({ stock: newStock }).eq('id', ci.item.id);
-          } catch (stockErr) {
-            console.warn('⚠️ [Payment] Stock update error for product:', ci.item.id, stockErr);
-          }
-        }
-      }
+      // Price, payment status and the handover OTP are set by the server; use what it saved.
+      const savedTotal = data?.total_amount ?? totalAmount;
+      const paymentStatus = data?.payment_status ?? 'pending';
+      const deliveryOtp = data?.delivery_otp ?? '';
 
       // Dispatch WhatsApp Notification to Admins (9105783553 & 9839122345)
       try {
@@ -157,7 +144,7 @@ export default function Payment() {
           customerPhone: deliveryDetails.phone || profile?.phone || '',
           customerEmail: user?.email,
           itemsSummary,
-          totalAmount,
+          totalAmount: savedTotal,
           paymentMethod,
           paymentStatus,
           deliveryAddress: orderData.delivery_address,
@@ -165,14 +152,14 @@ export default function Payment() {
 
         // Dispatch Handover OTP to customer WhatsApp immediately
         const custPhone = deliveryDetails.phone || profile?.phone;
-        if (custPhone) {
+        if (custPhone && deliveryOtp) {
           sendCustomerDeliveryOtp({
             phone: custPhone,
             customerName: deliveryDetails.name || profile?.full_name || 'Customer',
             otp: deliveryOtp,
             taskType: 'order',
             itemTitle: itemsSummary,
-            amount: totalAmount,
+            amount: savedTotal,
             riderName: 'Assigned Fundu Delivery Rider',
           });
         }
@@ -192,45 +179,60 @@ export default function Payment() {
 
   const handleCOD = () => {
     setPaymentMethod('cod');
-    createOrder('cod', 'pending');
+    createOrder('cod');
   };
 
   const handleRazorpay = async () => {
     setPaymentMethod('razorpay');
     setLoading(true);
     try {
-      // Load Razorpay script
-      const script = document.createElement('script');
-      script.src = 'https://checkout.razorpay.com/v1/checkout.js';
-      script.async = true;
-      script.onload = () => {
-        const options = {
-          key: import.meta.env.VITE_RAZORPAY_KEY_ID || 'rzp_test_1DP5mmOlF5G5ag', // Replace with your key
-          amount: Math.round(totalAmount * 100), // Amount in paise across all items
-          currency: 'INR',
-          name: 'Fundu',
-          description: `Purchase of ${totalItems} item${totalItems > 1 ? 's' : ''}`,
-          handler: function (response: RazorpayResponse) {
-            console.log('Payment success:', response);
-            createOrder('razorpay', 'paid');
-          },
-          prefill: {
-            name: deliveryDetails.name,
-            email: user?.email || '',
-            contact: deliveryDetails.phone
-          },
-          theme: {
-            color: '#4f46e5'
-          }
-        };
+      const serverOrder = await createServerRazorpayOrder(
+        cartItems.map((ci) => ({
+          product_id: ci.type === 'product' ? ci.item.id : null,
+          spare_part_id: ci.type === 'spare_part' ? ci.item.id : null,
+          quantity: ci.quantity || 1,
+        })),
+      );
 
-        const rzp = new window.Razorpay(options);
-        rzp.open();
-      };
-      document.body.appendChild(script);
+      await new Promise<void>((resolve, reject) => {
+        const script = document.createElement('script');
+        script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+        script.async = true;
+        script.onload = () => resolve();
+        script.onerror = () => reject(new Error('Could not load the payment window.'));
+        document.body.appendChild(script);
+      });
+
+      const rzp = new window.Razorpay({
+        key: serverOrder.key_id,
+        amount: serverOrder.amount,
+        currency: serverOrder.currency,
+        order_id: serverOrder.order_id,
+        name: 'Fundu',
+        description: `Purchase of ${totalItems} item${totalItems > 1 ? 's' : ''}`,
+        handler: (response: RazorpayResponse) => {
+          if (!response.razorpay_order_id || !response.razorpay_signature) {
+            alert('Payment could not be confirmed. If money was deducted, please contact support.');
+            setLoading(false);
+            return;
+          }
+          createOrder('razorpay', {
+            order_id: response.razorpay_order_id,
+            payment_id: response.razorpay_payment_id,
+            signature: response.razorpay_signature,
+          });
+        },
+        prefill: {
+          name: deliveryDetails.name,
+          email: user?.email || '',
+          contact: deliveryDetails.phone,
+        },
+        theme: { color: '#4f46e5' },
+      });
+      rzp.open();
     } catch (err) {
       console.error('Error initializing Razorpay:', err);
-      alert('Failed to initialize payment. Please try again.');
+      alert(err instanceof Error ? err.message : 'Failed to initialize payment. Please try again.');
       setLoading(false);
     }
   };

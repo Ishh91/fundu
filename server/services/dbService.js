@@ -1,5 +1,5 @@
 import mongoose, { Types } from 'mongoose';
-import { getModel, Order, User, VendorLedger, WholesaleOrder, WholesaleInventory, Product } from '../models/index.js';
+import { getModel, Order, User, VendorLedger, WholesaleOrder, WholesaleInventory, Product, SparePart } from '../models/index.js';
 import { createHttpError } from '../utils/error.js';
 import {
   buildMongoFilter,
@@ -14,6 +14,8 @@ import { autoAssignDeliveryAgent } from './dispatchService.js';
 import { triggerEventNotification } from './notificationService.js';
 import { quotePhone } from '../../fundu_phone_quote.mjs';
 import { createPhoneQuote } from './quoteService.js';
+import { isTrustedOrderWriter, secureCustomerOrder } from './orderSecurity.js';
+import { getRazorpayCredentials } from './razorpayService.js';
 import { postBuybackToLedger, postRepairToLedger, shouldRestoreStock } from './vendorLedgerService.js';
 
 export const getReadScope = async (table, auth, filters, select) => {
@@ -180,6 +182,11 @@ const withSanitizedPermissions = (payload) => {
   return { ...payload, permissions: sanitizePermissions(payload.permissions) };
 };
 
+const CUSTOMER_LOCKED_ORDER_FIELDS = [
+  'total_amount', 'items', 'quantity', 'payment_status', 'payment_method', 'delivery_otp',
+  'delivery_otp_created_at', 'razorpay_order_id', 'razorpay_payment_id',
+];
+
 export const preparePayload = (table, action, input, auth) => {
   const payload = { ...input };
   delete payload.id;
@@ -314,6 +321,10 @@ export const preparePayload = (table, action, input, auth) => {
       }
       if (auth?.sub && !canAdminTable(auth, table) && (action === 'insert' || action === 'upsert')) {
         payload.user_id = auth.sub;
+      }
+      if (!canAdminTable(auth, table) && !isTrustedOrderWriter(auth) && action !== 'insert' && action !== 'upsert') {
+        // A customer may change an order's status, never its price, payment or handover code.
+        for (const field of CUSTOMER_LOCKED_ORDER_FIELDS) delete payload[field];
       }
       return payload;
     case 'dispatches':
@@ -458,6 +469,21 @@ export const assertDatabaseReady = (readyState = mongoose.connection.readyState)
   }
 };
 
+const findCatalogItem = async (kind, id) => {
+  const Model = kind === 'spare_parts' ? SparePart : Product;
+  const filter = Types.ObjectId.isValid(id) ? { $or: [{ _id: id }, { id }] } : { id };
+  return Model.findOne(filter).lean();
+};
+
+const orderSecurityDeps = () => ({
+  lookup: async (kind, id) => {
+    const doc = await findCatalogItem(kind, id);
+    return doc ? { ...doc, id: String(doc._id) } : null;
+  },
+  paymentUsed: async (paymentId) => Boolean(await Order.exists({ razorpay_payment_id: paymentId })),
+  creds: getRazorpayCredentials(),
+});
+
 export const insertIntoTable = async (table, { auth, values, single }) => {
   assertDatabaseReady();
   const Model = getModel(table);
@@ -465,7 +491,11 @@ export const insertIntoTable = async (table, { auth, values, single }) => {
   const preparedItems = [];
 
   for (const item of items) {
-    const prepared = preparePayload(table, 'insert', item, auth);
+    let prepared = preparePayload(table, 'insert', item, auth);
+
+    if (table === 'orders' && !canAdminTable(auth, table)) {
+      prepared = await secureCustomerOrder(prepared, auth, orderSecurityDeps());
+    }
 
     // Auto-populate customer contact details from Auth Profile
     if (auth?.sub && (table === 'sell_requests' || table === 'repair_bookings' || table === 'orders')) {

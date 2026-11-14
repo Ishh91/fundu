@@ -1,15 +1,16 @@
-import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState, useEffect, useMemo } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { ArrowLeft, ShoppingCart, MapPin, Phone, User, CheckCircle2, AlertCircle, RefreshCw, Sparkles } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
-import { formatINR } from '../lib/db';
+import { db, formatINR } from '../lib/db';
+import { missingChoices, type FreshListing } from '../lib/cartLimits';
 import { getCleanPhoneImage } from '../lib/phoneImages';
 import { verifyPanIndiaPincode, type VerifiedLocation } from '../lib/locationService';
 import { describeItemVariant } from '../lib/cartItem';
 
 export default function Checkout() {
-  const { cartItems, totalAmount, totalItems, updateQuantity, removeFromCart, setDeliveryDetails } = useCart();
+  const { cartItems, totalAmount, totalItems, updateQuantity, maxQuantityFor, syncStock, removeFromCart, setDeliveryDetails } = useCart();
   const { user, profile, loading } = useAuth();
   const navigate = useNavigate();
   const [form, setForm] = useState({
@@ -23,6 +24,41 @@ export default function Checkout() {
     state: '',
   });
   const [formError, setFormError] = useState<string | null>(null);
+  const [stockMessages, setStockMessages] = useState<string[]>([]);
+  const [checkingCart, setCheckingCart] = useState(false);
+
+  // Lines whose listing offers storage/colour options that have not been chosen yet.
+  const unchosen = useMemo(
+    () =>
+      cartItems
+        .map((ci) => ({ ci, missing: missingChoices(ci.item) }))
+        .filter((entry) => entry.missing.length > 0),
+    [cartItems],
+  );
+
+  /**
+   * Compares the cart with the shop's current stock and fixes it (reduces or removes lines).
+   * Returns true when the cart was already right. If the shop cannot be reached the server
+   * still checks the order, so this does not block.
+   */
+  const verifyCartWithShop = async (): Promise<boolean> => {
+    const ids = Array.from(new Set(cartItems.filter((ci) => ci.type === 'product').map((ci) => String(ci.item.id))));
+    if (ids.length === 0) return true;
+    try {
+      const { data, error } = await db.from<{ id: string; stock: number; is_approved?: boolean }>('products').select('id, stock, is_approved').in('id', ids);
+      if (error || !Array.isArray(data)) return true;
+      const fresh: Record<string, FreshListing> = {};
+      for (const id of ids) {
+        const row = data.find((candidate) => String(candidate.id) === id);
+        fresh[id] = { stock: row && row.is_approved !== false ? Number(row.stock) || 0 : null };
+      }
+      const messages = syncStock(fresh);
+      setStockMessages(messages);
+      return messages.length === 0;
+    } catch {
+      return true;
+    }
+  };
   const [verifyingPin, setVerifyingPin] = useState(false);
   const [verifiedLocation, setVerifiedLocation] = useState<VerifiedLocation | null>(null);
   const [pincodeError, setPincodeError] = useState<string | null>(null);
@@ -78,6 +114,12 @@ export default function Checkout() {
     }
   }, [user, loading, cartItems.length, navigate, profile]);
 
+  useEffect(() => {
+    if (cartItems.length > 0) void verifyCartWithShop();
+    // Once, when the page opens: the cart may be days old.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   if (cartItems.length === 0) return null;
 
   if (profile && profile.role !== 'customer') {
@@ -120,6 +162,18 @@ export default function Checkout() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setFormError(null);
+
+    if (unchosen.length > 0) {
+      setFormError('⚠️ Please choose the storage / colour for every item before continuing.');
+      return;
+    }
+    setCheckingCart(true);
+    const cartIsCurrent = await verifyCartWithShop();
+    setCheckingCart(false);
+    if (!cartIsCurrent) {
+      setFormError('⚠️ Some items in your cart changed. Please review your cart below and continue again.');
+      return;
+    }
 
     const cleanPhone = form.phone.replace(/\D/g, '');
     if (cleanPhone.length !== 10) {
@@ -181,6 +235,20 @@ export default function Checkout() {
       >
         <ArrowLeft className="h-4 w-4" /> Back
       </button>
+
+      {(stockMessages.length > 0 || unchosen.length > 0) && (
+        <div role="alert" className="mb-6 rounded-2xl border border-amber-300 bg-amber-50 p-4 text-sm text-amber-900 space-y-2">
+          {stockMessages.map((message) => (
+            <p key={message} className="font-semibold">⚠️ {message}</p>
+          ))}
+          {unchosen.map(({ ci, missing }) => (
+            <p key={ci.id} className="font-semibold">
+              ⚠️ Please choose the {missing.join(' and ')} for {ci.item.title}.{' '}
+              <Link to={`/product/${ci.item.id}`} className="underline font-bold">Choose options</Link>
+            </p>
+          ))}
+        </div>
+      )}
 
       <div className="grid lg:grid-cols-3 gap-8">
         {/* Order Summary */}
@@ -255,7 +323,9 @@ export default function Checkout() {
                           <button
                             type="button"
                             onClick={() => updateQuantity(ci.id, ci.quantity + 1)}
-                            className="text-xs font-bold text-[#344257] hover:text-black w-3.5 h-3.5 grid place-items-center cursor-pointer"
+                            disabled={ci.quantity >= maxQuantityFor(ci.id)}
+                            title={ci.quantity >= maxQuantityFor(ci.id) ? 'No more in stock' : 'Increase quantity'}
+                            className="text-xs font-bold text-[#344257] hover:text-black w-3.5 h-3.5 grid place-items-center cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
                           >
                             +
                           </button>
@@ -492,10 +562,14 @@ export default function Checkout() {
 
               <button
                 type="submit"
-                disabled={verifyingPin || !verifiedLocation?.valid}
+                disabled={verifyingPin || checkingCart || !verifiedLocation?.valid}
                 className="btn-primary w-full mt-6 py-3 text-sm font-extrabold flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {verifyingPin ? (
+                {checkingCart ? (
+                  <>
+                    <RefreshCw className="h-4 w-4 animate-spin" /> Checking availability...
+                  </>
+                ) : verifyingPin ? (
                   <>
                     <RefreshCw className="h-4 w-4 animate-spin" /> Verifying Delivery Location...
                   </>
