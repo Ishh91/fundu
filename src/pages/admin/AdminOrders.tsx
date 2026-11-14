@@ -95,7 +95,7 @@ function getOrderResolvedItems(order: Order, products: Product[] = [], parts: Sp
     storage: '',
     ram: '',
     color: '',
-    condition: '32-Point Quality Inspected',
+    condition: '42-Point Quality Inspected',
     price: order.total_amount,
     quantity: order.quantity || 1,
     image: '',

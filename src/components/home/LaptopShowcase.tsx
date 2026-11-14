@@ -75,7 +75,7 @@ export default function LaptopShowcase({ customLaptops }: LaptopShowcaseProps) {
               Flagship Laptops. Unbeatable Prices.
             </h2>
             <p className="text-sm font-semibold text-ink-500 max-w-2xl">
-              Save up to 60% on verified MacBooks, Dell Latitudes & Ultrabooks. 32-point inspected, 6-month doorstep warranty & genuine chargers included.
+              Save up to 60% on verified MacBooks, Dell Latitudes & Ultrabooks. 42-point inspected, 6-month doorstep warranty & genuine chargers included.
             </p>
           </div>
 
@@ -254,7 +254,7 @@ export default function LaptopShowcase({ customLaptops }: LaptopShowcaseProps) {
                 <CheckCircle2 className="h-5 w-5 text-amber-300" />
               </div>
               <div>
-                <h4 className="text-xs sm:text-sm font-extrabold text-white">32-Point Quality Check</h4>
+                <h4 className="text-xs sm:text-sm font-extrabold text-white">42-Point Quality Check</h4>
                 <p className="text-[11px] text-white/80 font-medium">Screen, battery & keyboard certified</p>
               </div>
             </div>

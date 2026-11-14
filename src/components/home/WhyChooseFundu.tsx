@@ -31,7 +31,7 @@ const WHY_CHOOSE_PILLARS = [
   },
   {
     icon: ShieldCheck,
-    title: '32-Point Certified Testing',
+    title: '42-Point Certified Testing',
     desc: 'Every phone bought or sold goes through intense multi-point hardware, display, camera and battery audits.',
     color: 'bg-blue-100 text-blue-700',
   },

@@ -780,7 +780,7 @@ export default function AdminSellRequests({
               {selectedSell.device_photos && (
                 <div>
                   <h4 className="text-xs font-bold uppercase tracking-wider text-ink-500 mb-2 flex items-center gap-1.5">
-                    <Camera className="h-3.5 w-3.5 text-brand-600" /> Uploaded Device Photos (32-Point Check)
+                    <Camera className="h-3.5 w-3.5 text-brand-600" /> Uploaded Device Photos (42-Point Check)
                   </h4>
                   <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
                     {[
