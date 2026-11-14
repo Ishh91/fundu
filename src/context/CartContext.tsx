@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import type { Product, SparePart } from '../types';
+import { getItemVariant } from '../lib/cartItem';
 
 export type CartItem = {
   id: string; // Unique key: e.g. "sample-apple-15pro_128_gb_excellent"
@@ -39,16 +40,9 @@ const CartContext = createContext<CartContextValue | undefined>(undefined);
 
 export const getItemKey = (item: Product | SparePart): string => {
   if (!item) return `item_${Date.now()}_${Math.random()}`;
-  const isProduct = 'storage' in item || 'condition' in item || 'brand' in item;
-  if (isProduct) {
-    const p = item as any;
-    const baseId = p.id || `${p.brand || ''}_${p.model || ''}_${p.title || ''}`;
-    const storage = p.storage || '';
-    const condition = p.condition || '';
-    const color = p.color || '';
-    return `${baseId}_${storage}_${condition}_${color}`.replace(/[^a-z0-9_-]/gi, '_').toLowerCase();
-  }
-  return String((item as any).id || (item as any).title || `part_${Date.now()}`);
+  const baseId = item.id || `${item.brand || ''}_${item.model || ''}_${item.title || ''}`;
+  const { storage, condition, color } = getItemVariant(item);
+  return `${baseId}_${storage}_${condition}_${color}`.replace(/[^a-z0-9_-]/gi, '_').toLowerCase();
 };
 
 export function CartProvider({ children }: { children: ReactNode }) {

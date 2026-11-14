@@ -31,6 +31,7 @@ type Filter = {
   value: unknown;
 };
 
+import { getErrorMessage } from './errorMessage';
 import { API_BASE } from '../config/apiConfig';
 import { broadcastSync } from './realtimeSync';
 
@@ -130,7 +131,7 @@ const apiRequest = async <T>(path: string, init: RequestInit = {}, useAuth = tru
       }
 
       return { data: (payload?.data ?? null) as T | null, error: null };
-    } catch (error: any) {
+    } catch (error) {
       if (attempt < retryCount) {
         attempt++;
         await wait(800 * attempt);
@@ -138,7 +139,7 @@ const apiRequest = async <T>(path: string, init: RequestInit = {}, useAuth = tru
       }
       return {
         data: null,
-        error: createError(error?.message || 'Backend server connection failed. Please try again.'),
+        error: createError(getErrorMessage(error, 'Backend server connection failed. Please try again.')),
       };
     }
   }
@@ -151,7 +152,6 @@ const apiRequest = async <T>(path: string, init: RequestInit = {}, useAuth = tru
 
 // Client-Side In-Memory + SessionStorage SWR Cache for Instant 0ms Read Queries
 const clientQueryCache = new Map<string, { data: unknown; timestamp: number }>();
-const CLIENT_CACHE_TTL_MS = 60 * 1000; // 60 seconds fresh in memory
 const CLIENT_CACHEABLE_TABLES = new Set([
   'products',
   'site_content',

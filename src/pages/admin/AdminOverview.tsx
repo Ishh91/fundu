@@ -1,20 +1,14 @@
-import React from 'react';
 import {
   TrendingUp,
   BadgeIndianRupee,
   Wrench,
   Store,
-  Package,
-  Truck,
-  Smartphone,
-  CheckCircle2,
-  Clock,
   ArrowUpRight,
   Users,
-  ShieldCheck,
 } from 'lucide-react';
 import type { Order, SellRequest, RepairBooking, Product, DeliveryAgent, MasterPhone } from './adminTypes';
 import { formatINR } from '../../lib/db';
+import type { AdminTab } from './adminTypes';
 
 type AdminOverviewProps = {
   orders: Order[];
@@ -23,7 +17,7 @@ type AdminOverviewProps = {
   products: Product[];
   agents: DeliveryAgent[];
   masterPhones: MasterPhone[];
-  onNavigateTab: (tab: any) => void;
+  onNavigateTab: (tab: AdminTab) => void;
   onOpenAddProduct?: () => void;
 };
 
@@ -32,8 +26,6 @@ export default function AdminOverview({
   sells,
   repairs,
   products,
-  agents,
-  masterPhones,
   onNavigateTab,
   onOpenAddProduct,
 }: AdminOverviewProps) {
@@ -41,7 +33,7 @@ export default function AdminOverview({
   const pendingSellRequests = sells.filter((s) => s.status === 'pending' || s.status === 'assigned');
   const activeRepairs = repairs.filter((r) => r.status !== 'delivered' && r.status !== 'cancelled');
 
-  const stats = [
+  const stats: Array<{ label: string; value: string; icon: typeof TrendingUp; color: string; tab: AdminTab; [key: string]: unknown }> = [
     {
       label: 'Total Store Revenue (GMV)',
       value: formatINR(totalSalesRevenue),

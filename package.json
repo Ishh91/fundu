@@ -8,13 +8,16 @@
     "dev:server": "node --watch server/index.js",
     "server": "node server/index.js",
     "build": "vite build",
-    "test": "node --test test/quote.test.js test/seo.test.js test/permissions.test.js test/authRefresh.test.js test/performance.test.js test/productSave.test.js test/editSave.test.js test/rejectedSession.test.js test/vendorLedger.test.js test/routeGuards.test.js test/pagedLoad.test.js test/ledgerCleanup.test.js test/budgetFilter.test.js test/errorTracking.test.js",
+    "test": "node --test test/quote.test.js test/seo.test.js test/permissions.test.js test/authRefresh.test.js test/performance.test.js test/productSave.test.js test/editSave.test.js test/rejectedSession.test.js test/vendorLedger.test.js test/routeGuards.test.js test/pagedLoad.test.js test/ledgerCleanup.test.js test/budgetFilter.test.js test/errorTracking.test.js test/errorReports.test.js test/errorMessage.test.js test/cloudinary.test.js test/mediaMigration.test.js",
     "lint": "eslint .",
     "preview": "vite preview",
     "typecheck": "tsc --noEmit -p tsconfig.app.json",
     "sitemap": "node scripts/generate_sitemap.mjs",
     "ledger:check": "node scripts/fix_duplicate_ledger.mjs",
     "ledger:fix": "node scripts/fix_duplicate_ledger.mjs --apply",
+    "cloudinary:check": "node scripts/cloudinary_check.mjs",
+    "cloudinary:backup": "node scripts/cloudinary_backup_existing.mjs",
+    "cloudinary:migrate": "node scripts/cloudinary_migrate_to_links.mjs",
     "prebuild": "node scripts/generate_sitemap.mjs"
   },
   "dependencies": {

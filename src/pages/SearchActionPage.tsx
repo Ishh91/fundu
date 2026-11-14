@@ -6,30 +6,24 @@ import {
   BadgeIndianRupee,
   Wrench,
   ArrowRight,
-  ShieldCheck,
   Truck,
   CheckCircle2,
   Bell,
   X,
-  RefreshCw,
-  Sparkles,
-  AlertCircle,
 } from 'lucide-react';
-import { useAuth } from '../context/AuthContext';
 import { ALL_INDIAN_PHONES_CATALOG } from '../data/indianPhonesCatalog';
 import { getCleanPhoneImage, pullLiveModelImagesFromDb, getGenericDevicePlaceholder } from '../lib/phoneImages';
 import { db, formatINR } from '../lib/db';
 import type { Product } from '../types';
 
 export default function SearchActionPage() {
-  const { user } = useAuth();
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const query = searchParams.get('q') || searchParams.get('search') || searchParams.get('model') || '';
 
   const [searchInput, setSearchInput] = useState(query);
   const [products, setProducts] = useState<Product[]>([]);
-  const [loadingProducts, setLoadingProducts] = useState(true);
+  const [, setLoadingProducts] = useState(true);
 
   // Restock Notification Modal State
   const [notifyModal, setNotifyModal] = useState<{

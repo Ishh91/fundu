@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowRight, ShieldCheck, CheckCircle2, ShoppingCart, Sparkles, Star } from 'lucide-react';
+import { ArrowRight, ShieldCheck, CheckCircle2, ShoppingCart, Sparkles } from 'lucide-react';
 import { formatINR } from '../../lib/db';
 import type { Product } from '../../types';
 import { useCart } from '../../context/CartContext';

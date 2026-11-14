@@ -1,3 +1,4 @@
+import { getErrorMessage } from '../lib/errorMessage';
 import { useEffect, useState, useMemo } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import {
@@ -31,30 +32,13 @@ import { useCart } from '../context/CartContext';
 import { getCleanPhoneImage, pullLiveModelImagesFromDb } from '../lib/phoneImages';
 import type { Product, Review } from '../types';
 import { getModelHardwareSpecs, normalizeStorageString, isStorageAllowedForModel } from '../lib/deviceSpecs';
-import { findSampleProductById, SAMPLE_PRODUCTS_MAP } from '../data/sampleProducts';
+import { findSampleProductById } from '../data/sampleProducts';
 import { findSampleLaptopById } from '../data/sampleLaptops';
 import { verifyPanIndiaPincode } from '../lib/locationService';
 import { PhoneVideoPlayer } from '../lib/videoUtils';
 import { usePageSeo } from '../lib/usePageSeo';
 
 // Doorstep PIN code to Area mapping dictionary
-const DOORSTEP_PINCODE_MAP: Record<string, string> = {
-  '226001': 'Hazratganj',
-  '226002': 'Alambagh',
-  '226003': 'Chowk / Old City',
-  '226004': 'Charbagh Station Area',
-  '226005': 'Rajajipuram',
-  '226006': 'Aashiana / Transport Nagar',
-  '226010': 'Gomti Nagar',
-  '226012': 'Kanpur Road / Amausi',
-  '226016': 'Indira Nagar',
-  '226017': 'Jankipuram',
-  '226020': 'Mahanagar',
-  '226022': 'Nishatganj / IT Crossing',
-  '226024': 'Vikas Nagar',
-  '226028': 'Chinhat / Faizabad Road',
-  '226030': 'Gomti Nagar Extension',
-};
 
 const CONDITION_GRADES = [
   {
@@ -84,7 +68,6 @@ const CONDITION_GRADES = [
 ];
 
 // Universal fallback dictionary mapped from central sample catalog
-const SAMPLE_PRODUCTS: Record<string, Product> = SAMPLE_PRODUCTS_MAP;
 
 const INSPECTION_POINTS = [
   'Display & Touch Response Verified',
@@ -181,8 +164,8 @@ export default function ProductDetail() {
       alert('🎉 Thank you for your review! It has been submitted for verification.');
       setShowReviewModal(false);
       setNewReview({ rating: 5, reviewer_name: '', location: 'Doorstep Service', comment: '' });
-    } catch (err: any) {
-      alert(err?.message || 'Failed to submit review');
+    } catch (err) {
+      alert(getErrorMessage(err, 'Failed to submit review'));
     } finally {
       setReviewSubmitting(false);
     }
@@ -342,12 +325,6 @@ const handleCheckPincode = async (codeToTest?: string) => {
     return colors;
   }, [product]);
 
-  const availableRams = useMemo(() => {
-    if (product?.available_rams && product.available_rams.length > 0) {
-      return product.available_rams;
-    }
-    return product?.ram ? [product.ram] : [];
-  }, [product]);
 
   if (loading) {
     return (

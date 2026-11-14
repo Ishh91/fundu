@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import {
   X,
   User,
@@ -7,17 +7,12 @@ import {
   MapPin,
   CreditCard,
   Smartphone,
-  ShieldCheck,
-  Calendar,
   MessageSquare,
-  CheckCircle2,
-  AlertCircle,
   Copy,
-  ExternalLink,
-  Wrench,
   Package,
 } from 'lucide-react';
 import { db, formatINR } from '../lib/db';
+import type { Profile } from '../types';
 
 export type CustomerDetailsModalProps = {
   isOpen: boolean;
@@ -44,6 +39,10 @@ export type CustomerDetailsModalProps = {
     payment_status?: string | null;
     items?: any[];
     // Item specific
+    screenCondition?: string | null;
+    bodyCondition?: string | null;
+    defects?: string[] | null;
+    accessories?: string[] | null;
     type?: 'sell' | 'repair' | 'order' | 'user';
     brand?: string | null;
     model?: string | null;
@@ -72,16 +71,16 @@ export default function CustomerDetailsModal({ isOpen, onClose, customer }: Cust
 
   useEffect(() => {
     if (isOpen && customer?.user_id && !customer.user_id.startsWith('guest_')) {
-      db.from('profiles')
+      db.from<Profile>('profiles')
         .select('*')
         .eq('id', customer.user_id)
         .single()
         .then(({ data }) => {
           if (data) {
             setFetchedProfile({
-              full_name: (data as any).full_name,
-              phone: (data as any).phone,
-              email: (data as any).email || null,
+              full_name: data.full_name,
+              phone: data.phone,
+              email: data.email || null,
             });
           }
         })
@@ -311,28 +310,28 @@ export default function CustomerDetailsModal({ isOpen, onClose, customer }: Cust
               </div>
 
               {/* Diagnostics & Accessories Summary */}
-              {((customer as any).screenCondition || (customer as any).bodyCondition || (customer as any).defects || (customer as any).accessories) && (
+              {(customer.screenCondition || customer.bodyCondition || customer.defects || customer.accessories) && (
                 <div className="p-3.5 rounded-xl bg-white border border-gray-200 text-xs space-y-2">
                   <span className="font-bold text-gray-900 block text-[11px] uppercase tracking-wider text-[#344257]">
                     🔍 Fundu Diagnostics Evaluation Summary:
                   </span>
                   <div className="flex flex-wrap gap-1.5 text-[11px]">
-                    {(customer as any).screenCondition && (
+                    {customer.screenCondition && (
                       <span className="bg-[#F0F0F5] text-[#344257] border border-[#C0C8D8] px-2 py-0.5 rounded-lg font-semibold">
-                        Screen: {(customer as any).screenCondition}
+                        Screen: {customer.screenCondition}
                       </span>
                     )}
-                    {(customer as any).bodyCondition && (
+                    {customer.bodyCondition && (
                       <span className="bg-[#F0F0F5] text-[#344257] border border-[#C0C8D8] px-2 py-0.5 rounded-lg font-semibold">
-                        Body: {(customer as any).bodyCondition}
+                        Body: {customer.bodyCondition}
                       </span>
                     )}
-                    {Array.isArray((customer as any).accessories) && (customer as any).accessories.map((acc: string, i: number) => (
+                    {Array.isArray(customer.accessories) && customer.accessories.map((acc: string, i: number) => (
                       <span key={i} className="bg-emerald-50 text-emerald-800 border border-emerald-200 px-2 py-0.5 rounded-lg font-semibold">
                         + {acc}
                       </span>
                     ))}
-                    {Array.isArray((customer as any).defects) && (customer as any).defects.map((def: string, i: number) => (
+                    {Array.isArray(customer.defects) && customer.defects.map((def: string, i: number) => (
                       <span key={i} className="bg-rose-50 text-rose-800 border border-rose-200 px-2 py-0.5 rounded-lg font-semibold">
                         ⚠ Defect: {def}
                       </span>

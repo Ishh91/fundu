@@ -9,9 +9,6 @@ import {
   CheckCircle2,
   ArrowRight,
   Phone,
-  Mail,
-  MapPin,
-  Clock,
   Sparkles,
   BadgePercent,
   TrendingUp,
@@ -19,10 +16,7 @@ import {
   Copy,
   Check,
   ChevronDown,
-  HelpCircle,
-  ExternalLink,
-  DollarSign
-} from 'lucide-react';
+  HelpCircle} from 'lucide-react';
 import { db } from '../lib/db';
 
 type PartnershipType = 'retail' | 'repair' | 'wholesale' | 'delivery';

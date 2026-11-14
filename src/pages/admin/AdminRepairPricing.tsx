@@ -1,3 +1,4 @@
+import { getErrorMessage } from '../../lib/errorMessage';
 import React, { useState } from 'react';
 import {
   Wrench,
@@ -6,19 +7,13 @@ import {
   Zap,
   Edit2,
   Trash2,
-  CheckCircle2,
   Smartphone,
   Laptop,
   Tablet,
   Watch,
   Layers,
   Sparkles,
-  ArrowRight,
-  ShieldCheck,
-  Clock,
-  ExternalLink,
   X,
-  AlertCircle,
   Save,
 } from 'lucide-react';
 import type { RepairPriceConfig, RepairProductType, RepairServiceItem } from '../../types';
@@ -188,8 +183,8 @@ export default function AdminRepairPricing({
         is_active: modalForm.is_active,
       });
       setModalOpen(false);
-    } catch (err: any) {
-      alert(err?.message || 'Failed to save repair price config');
+    } catch (err) {
+      alert(getErrorMessage(err, 'Failed to save repair price config'));
     } finally {
       setSaving(false);
     }
@@ -222,8 +217,8 @@ export default function AdminRepairPricing({
       });
       setInlinePriceEdits({});
       alert('✅ Repair service rates saved successfully!');
-    } catch (err: any) {
-      alert(err?.message || 'Failed to update rates');
+    } catch (err) {
+      alert(getErrorMessage(err, 'Failed to update rates'));
     } finally {
       setSavingInline(false);
     }

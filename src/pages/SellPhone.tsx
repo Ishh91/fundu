@@ -2,51 +2,27 @@ import { useState, useMemo, useEffect, useRef } from 'react';
 import { Link, useNavigate, useSearchParams, useParams, useLocation } from 'react-router-dom';
 import {
   BadgeIndianRupee,
-  Truck,
-  CheckCircle2,
-  ArrowRight,
   Check,
-  ShieldCheck,
-  Lock,
   Zap,
   Search,
-  Smartphone,
-  Sparkles,
-  Camera,
-  Upload,
   AlertCircle,
-  HelpCircle,
-  PhoneCall,
-  UserCheck,
-  Clock,
-  MapPin,
-  Battery,
-  ChevronDown,
-  ChevronUp,
-  Star,
   RefreshCw,
-  FileText,
-  Award,
-  User,
-  Phone,
 } from 'lucide-react';
-import { computeDetailedResaleValuation, fetchSellPriceConfig, getStoredPriceConfig, fetchPhoneModels, searchMobileApiDev, calculateMarketPriceComparison, getDynamicFallbackConfig, type SellPriceConfig } from '../lib/mobileApi';
+import { computeDetailedResaleValuation, fetchSellPriceConfig, getStoredPriceConfig, fetchPhoneModels, searchMobileApiDev, getDynamicFallbackConfig, type SellPriceConfig } from '../lib/mobileApi';
 import { getFunduPhoneQuote, getInstantFunduQuote, calculatePhoneAgingFactor, type FunduQuoteResponse } from '../lib/quoteEngine';
-import { db, formatINR, formatMaskedPrice, formatDisplayPrice } from '../lib/db';
+import { db } from '../lib/db';
 import { useAuth } from '../context/AuthContext';
 import { ALL_INDIAN_PHONES_CATALOG } from '../data/indianPhonesCatalog';
-import { getCleanPhoneImage, getCleanBrandLogo, BRAND_FRONT_FALLBACKS, getGenericDevicePlaceholder, pullLiveModelImagesFromDb } from '../lib/phoneImages';
-import { usePriceSync, applyPriceOverrides, isModelDeleted, savePriceOverride, getEffectivePrice } from '../lib/priceSync';
-import { getModelHardwareSpecs, getRadarHardwareSpecs, calculateHardwareVariantMultiplier, calculateRamPriceOffset, deviceIncludesStylus, getModelReleaseYear, isAmoledDisplay, isObsoleteDeviceHardware } from '../lib/deviceSpecs';
+import { getCleanPhoneImage, pullLiveModelImagesFromDb } from '../lib/phoneImages';
+import { usePriceSync, applyPriceOverrides, isModelDeleted, savePriceOverride } from '../lib/priceSync';
+import { getRadarHardwareSpecs, calculateHardwareVariantMultiplier, calculateRamPriceOffset, deviceIncludesStylus, isAmoledDisplay, isObsoleteDeviceHardware } from '../lib/deviceSpecs';
 import {
-  getPanIndiaLocation,
   searchPanIndiaLocations,
   verifyPanIndiaPincode,
-  PAN_INDIA_POPULAR_CITIES,
   type PanIndiaLocation,
 } from '../lib/locationService';
 import { checkPincodeServiceability } from '../lib/pincodeService';
-import { getModelDedupeKey, groupModelsBySeries } from '../data/brandSeriesCatalog';
+import { groupModelsBySeries } from '../data/brandSeriesCatalog';
 import { notifyNewSellRequest, sendCustomerDeliveryOtp } from '../lib/whatsappNotifyService';
 import { getUnifiedCatalog, pullLiveMasterPhonesFromDb } from '../lib/modelCatalogSync';
 import { refreshDeletedModelsFromDb } from '../lib/catalogSync';
@@ -76,6 +52,7 @@ import SellStep1Device from '../components/sell/SellStep1Device';
 import SellStep2Condition from '../components/sell/SellStep2Condition';
 import SellStep3Quote from '../components/sell/SellStep3Quote';
 import SellStep4Schedule from '../components/sell/SellStep4Schedule';
+import { createInitialSellForm } from '../lib/sellForm';
 
 export default function SellPhone() {
   const { user, profile } = useAuth();
@@ -191,7 +168,7 @@ export default function SellPhone() {
       .eq('is_approved', true)
       .then(({ data }) => {
         if (Array.isArray(data)) {
-          setDbReviews(data as any);
+          setDbReviews(data as Array<{ id: string; reviewer_name: string; location: string; rating: number; comment: string }>);
         }
       });
   }, []);
@@ -207,75 +184,11 @@ export default function SellPhone() {
   const searchDropdownRef = useRef<HTMLDivElement>(null);
 
   // Active FAQ Open Accordion State
-  const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(0);
 
   // Active Series Filter for Brand Page
   const [selectedSeries, setSelectedSeries] = useState<string>('All');
 
-  const INITIAL_SELL_FORM = {
-    brand: '',
-    model: '',
-    ram: '',
-    storage: '',
-    powersOn: true,
-    activationLockCleared: true,
-    ownershipVerified: true,
-    liquidDamage: false,
-    cosmeticCondition: 'flawless' as 'flawless' | 'good' | 'fair',
-    screenCondition: 'flawless' as 'flawless' | 'scratched' | 'cracked' | 'touch_fault' | 'display_lines',
-    bodyCondition: 'flawless' as 'flawless' | 'minor_scratches' | 'dents_bent',
-
-    // Granular Phone Condition Filter Questions
-    screenMinorScratches: false,
-    screenMajorScratches: false,
-    screenCracked: false,
-    displayMinorSpotsWhite: false,
-    displayMajorSpots: false,
-    displayMinorLines: false,
-    displayMajorLines: false,
-    displayMinorDiscolouration: false,
-    displayMajorDiscolouration: false,
-    bodyMinorSideScratches: false,
-    bodyMajorSideScratches: false,
-    bodyMinorDents: false,
-    bodyMajorDents: false,
-    bodyCrackedOrBroken: false,
-
-    batteryHealth: 'above_85' as 'above_85' | '75_to_85' | 'below_75' | 'healthy' | 'degraded_service' | 'unknown',
-    canMakeCalls: true,
-    agePeriod: 'above_9_months' as '0_to_3_months' | '3_to_6_months' | '6_to_9_months' | 'above_9_months' | 'below_3_months' | '3_to_10_months' | '10_to_12_months' | 'above_11_months',
-    underWarranty: false,
-    stylusAvailable: true,
-    defects: [] as string[],
-    imei: '',
-    imeiPhoto: '',
-    devicePhotos: {
-      front: '',
-      back: '',
-      edges: '',
-      bill_box: '',
-    },
-    diagnostics: {
-      screen_touch: true,
-      cameras: true,
-      battery_health: '85%+',
-      biometrics: true,
-      speaker_mic: true,
-      charging_port: true,
-    },
-    accessories: ['Original Box', 'Original Charger'] as string[],
-    payoutMethod: 'UPI' as 'UPI' | 'Cash' | 'Bank',
-    payoutDetails: '',
-    customerName: '',
-    customerPhone: '',
-    pincode: '',
-    locality: '',
-    pickupAddress: '',
-    pickupArea: getPanIndiaLocation().displayLabel || 'New Delhi (110001)',
-    pickupDate: new Date().toISOString().split('T')[0],
-    pickupSlot: '10 AM - 12 PM',
-    notes: '',
-  };
+  const INITIAL_SELL_FORM = createInitialSellForm();
 
   const [form, setForm] = useState(INITIAL_SELL_FORM);
 
@@ -294,7 +207,7 @@ export default function SellPhone() {
   // Guard: Redirect back to Step 1 if the selected model was disabled/deleted by admin
   useEffect(() => {
     if (form.model && isModelDeleted(form.brand, form.model)) {
-      setForm((prev: any) => ({ ...prev, model: '', storage: '' }));
+      setForm((prev) => ({ ...prev, model: '', storage: '' }));
       goToStep(1, true);
     }
   }, [form.brand, form.model, version]);
@@ -368,10 +281,10 @@ export default function SellPhone() {
   }, [pickupSearchQuery]);
 
   const [funduQuote, setFunduQuote] = useState<FunduQuoteResponse | null>(null);
-  const [loadingQuote, setLoadingQuote] = useState(false);
+  const [, setLoadingQuote] = useState(false);
 
-  const [modelsList, setModelsList] = useState<Array<{ name: string; storages: string[] }>>([]);
-  const [loadingModels, setLoadingModels] = useState(false);
+  const [, setModelsList] = useState<Array<{ name: string; storages: string[] }>>([]);
+  const [, setLoadingModels] = useState(false);
 
   const [submitting, setSubmitting] = useState(false);
   const [successData, setSuccessData] = useState<{
@@ -918,9 +831,6 @@ export default function SellPhone() {
       val *= aging;
 
       const isApple = (form.brand?.toLowerCase() === 'apple') || (brandSlug?.toLowerCase() === 'apple') || (form.model?.toLowerCase().includes('iphone'));
-      const excMult = 1.00;
-      const goodMult = 0.80;
-      const fairMult = 0.60;
 
       // 1. Screen Deductions
       const isAmoled = isAmoledDisplay(form.brand, form.model);
@@ -1277,11 +1187,11 @@ export default function SellPhone() {
         delivery_otp_created_at: new Date().toISOString(),
       };
 
-      const { data, error: insertErr } = await db.from('sell_requests').insert([payload]).select().single();
+      const { data, error: insertErr } = await db.from<{ id: string }>('sell_requests').insert([payload]).select().single();
 
       if (insertErr) throw insertErr;
 
-      const bookingId = (data as any)?.id || `FND-LKO-${Math.floor(100000 + Math.random() * 900000)}`;
+      const bookingId = data?.id || `FND-LKO-${Math.floor(100000 + Math.random() * 900000)}`;
 
       // Dispatch WhatsApp Notification to Admins (9105783553 & 9839122345)
       try {
@@ -1322,7 +1232,7 @@ export default function SellPhone() {
         estimated_arrival_time: `${form.pickupDate} (${form.pickupSlot})`,
         delivery_otp: deliveryOtp,
       });
-    } catch (err: any) {
+    } catch (err) {
       console.error('Submission error:', err);
       setSuccessData({
         id: `FND-LKO-${Math.floor(100000 + Math.random() * 900000)}`,

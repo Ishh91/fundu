@@ -1,22 +1,18 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import { getErrorMessage } from '../../lib/errorMessage';
+import React, { useState, useEffect } from 'react';
 import {
   MapPin,
   Plus,
   Search,
   CheckCircle2,
-  XCircle,
   Trash2,
   Edit2,
   RefreshCw,
   Layers,
   Wrench,
   Smartphone,
-  ShieldAlert,
   X,
-  Check,
   Sparkles,
-  ArrowRight,
-  Filter,
 } from 'lucide-react';
 import {
   fetchServiceablePincodes,
@@ -58,7 +54,7 @@ export default function AdminPincodes() {
   const [bulkCity, setBulkCity] = useState('Lucknow');
   const [bulkState, setBulkState] = useState('Uttar Pradesh');
   const [bulkLocality, setBulkLocality] = useState('');
-  const [bulkServices, setBulkServices] = useState<string[]>(['sell', 'repair']);
+  const [bulkServices] = useState<string[]>(['sell', 'repair']);
 
   const showToast = (msg: string) => {
     setToastMessage(msg);
@@ -71,7 +67,7 @@ export default function AdminPincodes() {
       const res = await fetchServiceablePincodes(search, serviceFilter, statusFilter);
       setPincodes(res.data || []);
       setStats(res.stats || { total: 0, active: 0, inactive: 0 });
-    } catch (err: any) {
+    } catch (err) {
       console.error('Failed to load pincodes:', err);
     } finally {
       setLoading(false);
@@ -158,8 +154,8 @@ export default function AdminPincodes() {
       }
       setAddModalOpen(false);
       await loadData();
-    } catch (err: any) {
-      alert(err.message || 'Failed to save pincode.');
+    } catch (err) {
+      alert(getErrorMessage(err, 'Failed to save pincode.'));
     } finally {
       setActionLoading(false);
     }
@@ -187,8 +183,8 @@ export default function AdminPincodes() {
       setBulkModalOpen(false);
       setBulkText('');
       await loadData();
-    } catch (err: any) {
-      alert(err.message || 'Failed to bulk-add pincodes.');
+    } catch (err) {
+      alert(getErrorMessage(err, 'Failed to bulk-add pincodes.'));
     } finally {
       setActionLoading(false);
     }
@@ -208,7 +204,7 @@ export default function AdminPincodes() {
         inactive: item.is_active ? prev.inactive + 1 : prev.inactive - 1,
       }));
       showToast(`Pincode ${item.pincode} ${!item.is_active ? 'Activated' : 'Paused'}.`);
-    } catch (err: any) {
+    } catch {
       alert('Failed to update status.');
     }
   };
@@ -227,7 +223,7 @@ export default function AdminPincodes() {
         inactive: !item.is_active ? prev.inactive - 1 : prev.inactive,
       }));
       showToast(`Pincode ${item.pincode} deleted.`);
-    } catch (err: any) {
+    } catch {
       alert('Failed to delete pincode.');
     }
   };
@@ -239,7 +235,7 @@ export default function AdminPincodes() {
       const res = await seedLucknowPincodes();
       showToast(res.message || 'Seeded 30 standard Lucknow pincodes.');
       await loadData();
-    } catch (err: any) {
+    } catch {
       alert('Failed to seed pincodes.');
     } finally {
       setActionLoading(false);
@@ -340,7 +336,7 @@ export default function AdminPincodes() {
           {/* Service Filter */}
           <select
             value={serviceFilter}
-            onChange={(e) => setServiceFilter(e.target.value as any)}
+            onChange={(e) => setServiceFilter(e.target.value as 'all' | 'sell' | 'repair')}
             className="rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-bold text-slate-700 focus:outline-none cursor-pointer"
           >
             <option value="all">All Services (Sell & Repair)</option>
@@ -351,7 +347,7 @@ export default function AdminPincodes() {
           {/* Status Filter */}
           <select
             value={statusFilter}
-            onChange={(e) => setStatusFilter(e.target.value as any)}
+            onChange={(e) => setStatusFilter(e.target.value as 'all' | 'active' | 'inactive')}
             className="rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-bold text-slate-700 focus:outline-none cursor-pointer"
           >
             <option value="all">All Statuses</option>

@@ -1,21 +1,12 @@
-import React, { useState, useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import {
-  Sparkles,
-  ShieldCheck,
   CheckCircle2,
-  AlertCircle,
-  HelpCircle,
   Smartphone,
-  ChevronRight,
   RotateCcw,
-  BadgeIndianRupee,
-  Layers,
-  ArrowRight,
   Eye,
   Tv,
 } from 'lucide-react';
 import { formatINR } from '../lib/db';
-import { isAmoledDisplay, getBrokenScreenDeductionRate } from '../lib/deviceSpecs';
 
 interface QuestionState {
   // 1. Screen

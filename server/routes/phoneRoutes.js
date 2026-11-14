@@ -7,6 +7,7 @@ import { clearTableCache } from './dbRoutes.js';
 import { buildLiveImagesResponse, getLiveImages, invalidateLiveImages } from '../utils/liveImagesCache.js';
 import { INDIAN_MARKET_PHONES_LAST_10_YEARS, ensureMasterPhonesSeeded } from '../config/seedPhones.js';
 import { isBlockedPhone } from '../utils/blockedModels.js';
+import { offloadMediaForSave } from '../services/cloudinary.js';
 import {
   extractStorageOptions,
   extractRamOptions,
@@ -163,7 +164,7 @@ router.post('/mobileapi/import', requireCatalogAccess, async (req, res) => {
       camera_spec: body.camera_spec || '50MP OIS Camera',
       battery_spec: body.battery_spec || '5000 mAh Fast Charging',
       display_spec: body.display_spec || '6.7" AMOLED 120Hz',
-      image_url: body.image_url || 'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=800&auto=format&fit=crop&q=80',
+      image_url: (typeof body.image_url === 'string' && await offloadMediaForSave(body.image_url, { folder: 'model-images' })) || 'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=800&auto=format&fit=crop&q=80',
       is_5g: body.is_5g !== false,
       is_active: true,
     };
@@ -311,8 +312,8 @@ router.post('/custom', requireCatalogAccess, async (req, res) => {
       storage_options: Array.isArray(body.storage_options) ? body.storage_options : ['128GB', '256GB'],
       default_mrp: Number(body.default_mrp) || 29999,
       base_resale_value: Number(body.base_resale_value) || 16000,
-      image_url: body.image_url || 'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=800&auto=format&fit=crop&q=80',
-      video_url: body.video_url ? String(body.video_url).trim() : null,
+      image_url: (typeof body.image_url === 'string' && await offloadMediaForSave(body.image_url, { folder: 'model-images' })) || 'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=800&auto=format&fit=crop&q=80',
+      video_url: body.video_url ? await offloadMediaForSave(String(body.video_url).trim(), { folder: 'model-videos' }) : null,
       popular_tag: body.popular_tag || 'Latest Launch',
       processor: body.processor || 'Octa-core 5G Processor',
       camera_spec: body.camera_spec || '50MP OIS Camera',
@@ -443,7 +444,8 @@ router.post('/model-image', requireModelMediaAccess, async (req, res) => {
 
     const rawBrand = String(brand).trim();
     let rawModel = String(model).trim();
-    const cleanImageUrl = typeof image_url === 'string' ? image_url.trim() : '';
+    const storedImageUrl = typeof image_url === 'string' ? await offloadMediaForSave(image_url.trim(), { folder: 'model-images' }) : '';
+    const cleanImageUrl = typeof storedImageUrl === 'string' ? storedImageUrl : '';
 
     // Strip brand prefix if redundant
     if (rawBrand && rawModel.toLowerCase().startsWith(rawBrand.toLowerCase())) {
@@ -556,7 +558,8 @@ router.post('/model-video', requireModelMediaAccess, async (req, res) => {
 
     const rawBrand = String(brand).trim();
     let rawModel = String(model).trim();
-    const cleanVideoUrl = typeof video_url === 'string' ? video_url.trim() : '';
+    const storedVideoUrl = typeof video_url === 'string' ? await offloadMediaForSave(video_url.trim(), { folder: 'model-videos' }) : '';
+    const cleanVideoUrl = typeof storedVideoUrl === 'string' ? storedVideoUrl : '';
 
     // Strip brand prefix if redundant
     if (rawBrand && rawModel.toLowerCase().startsWith(rawBrand.toLowerCase())) {

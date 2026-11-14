@@ -136,7 +136,7 @@ export default function ReviewModal({
                     <button
                       key={s.id}
                       type="button"
-                      onClick={() => setServiceType(s.id as any)}
+                      onClick={() => setServiceType(s.id as 'buy' | 'sell' | 'repair' | 'spare_parts' | 'general')}
                       className={`py-2 px-2 rounded-xl text-xs font-semibold transition text-center truncate ${
                         serviceType === s.id
                           ? 'bg-brand-600 text-white shadow-sm'

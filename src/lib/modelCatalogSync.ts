@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { db } from './db';
-import { broadcastSync, subscribeToRealtimeSync } from './realtimeSync';
+import { subscribeToRealtimeSync } from './realtimeSync';
 import { MASTER_MODEL_CATALOG } from '../data/masterModelCatalog';
 import { ALL_INDIAN_PHONES_CATALOG } from '../data/indianPhonesCatalog';
 import {
@@ -13,7 +13,7 @@ import {
 import { getCleanPhoneImage, isBrandImageMismatch } from './phoneImages';
 import { getLocalPriceOverrides, getPriceLookupKeys } from './priceSync';
 import { markModelAsDeleted, restoreModel, isModelDeleted } from './catalogSync';
-import { normalizeStorageString, getModelHardwareSpecs, isObsoleteDeviceHardware } from './deviceSpecs';
+import { normalizeStorageString, isObsoleteDeviceHardware } from './deviceSpecs';
 
 const LIVE_MASTER_PHONES_STORAGE_KEY = 'fundu_live_master_phones_v2';
 
@@ -79,7 +79,7 @@ export async function pullLiveMasterPhonesFromDb(): Promise<any[]> {
       window.dispatchEvent(new CustomEvent('fundu_catalog_synced', { detail: { count: data.length } }));
       return data;
     }
-  } catch (err) {
+  } catch {
     // Fail silently on network errors
   } finally {
     isPullingPhones = false;
@@ -90,7 +90,7 @@ export async function pullLiveMasterPhonesFromDb(): Promise<any[]> {
 // Auto-trigger background pull on client boot without blocking initial render
 if (typeof window !== 'undefined') {
   if ('requestIdleCallback' in window) {
-    (window as any).requestIdleCallback(() => pullLiveMasterPhonesFromDb(), { timeout: 2000 });
+    window.requestIdleCallback(() => pullLiveMasterPhonesFromDb(), { timeout: 2000 });
   } else {
     setTimeout(() => pullLiveMasterPhonesFromDb(), 1200);
   }

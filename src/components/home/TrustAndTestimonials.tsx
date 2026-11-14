@@ -4,10 +4,8 @@ import {
   ArrowRight,
   IndianRupee,
   Smartphone,
-  Quote,
   MessageSquarePlus,
   Star,
-  ShieldCheck,
   CheckCircle2,
 } from 'lucide-react';
 import { db } from '../../lib/db';
@@ -144,7 +142,7 @@ export default function TrustAndTestimonials() {
       quote: r.comment,
       name: r.reviewer_name,
       location: r.location || 'Doorstep Service',
-      service: (r as any).phone_model ? `Serviced ${(r as any).phone_model}` : 'Verified Customer',
+      service: r.phone_model ? `Serviced ${r.phone_model}` : 'Verified Customer',
       rating: r.rating || 5,
     })),
     ...DEFAULT_DOORSTEP_TESTIMONIALS,

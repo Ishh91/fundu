@@ -1,3 +1,4 @@
+import { getErrorMessage } from './errorMessage';
 import { API_BASE } from '../config/apiConfig';
 import {
   quotePhone,
@@ -257,8 +258,8 @@ export async function respondToRevisedOffer(
       const json = await res.json();
       return { success: true, message: json.message || 'Decision recorded successfully.' };
     }
-  } catch (err: any) {
-    return { success: false, message: err?.message || 'Network error updating offer.' };
+  } catch (err) {
+    return { success: false, message: getErrorMessage(err, 'Network error updating offer.') };
   }
 
   return { success: false, message: 'Could not communicate with Fundu server.' };

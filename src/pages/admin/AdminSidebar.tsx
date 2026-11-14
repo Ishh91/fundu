@@ -20,6 +20,7 @@ import {
   LogOut,
   Radar,
   Plus,
+  AlertTriangle,
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import type { AdminTab } from './adminTypes';
@@ -55,7 +56,7 @@ export default function AdminSidebar({
 }: AdminSidebarProps) {
   const navigate = useNavigate();
   const { signOut } = useAuth();
-  const [navFilter, setNavFilter] = React.useState('');
+  const [navFilter] = React.useState('');
 
   const menuGroups = [
     {
@@ -189,6 +190,7 @@ export default function AdminSidebar({
         },
         { id: 'reviews' as AdminTab, label: 'Customer Reviews', icon: MessageSquare, path: '/admin/reviews' },
         { id: 'contact' as AdminTab, label: 'Contact Queries', icon: Mail, path: '/admin/contact' },
+        { id: 'errors' as AdminTab, label: 'Site Errors', icon: AlertTriangle, path: '/admin/errors' },
       ],
     },
   ];

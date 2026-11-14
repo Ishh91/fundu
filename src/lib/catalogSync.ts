@@ -421,7 +421,7 @@ export async function refreshDeletedModelsFromDb(): Promise<void> {
 // Background sync on browser load after initial paint
 if (typeof window !== 'undefined') {
   if ('requestIdleCallback' in window) {
-    (window as any).requestIdleCallback(() => refreshDeletedModelsFromDb(), { timeout: 3000 });
+    window.requestIdleCallback(() => refreshDeletedModelsFromDb(), { timeout: 3000 });
   } else {
     setTimeout(() => refreshDeletedModelsFromDb(), 1800);
   }

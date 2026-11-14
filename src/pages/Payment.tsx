@@ -6,6 +6,7 @@ import { useAuth } from '../context/AuthContext';
 import { db, formatINR } from '../lib/db';
 import { notifyNewBuyOrder, sendCustomerDeliveryOtp } from '../lib/whatsappNotifyService';
 import type { Product } from '../types';
+import { getItemVariant } from '../lib/cartItem';
 
 type RazorpayResponse = {
   razorpay_payment_id: string;
@@ -82,17 +83,17 @@ export default function Payment() {
         id: ci.item.id,
         product_id: ci.type === 'product' ? ci.item.id : null,
         spare_part_id: ci.type === 'spare_part' ? ci.item.id : null,
-        title: ci.item.title || `${(ci.item as any).brand || ''} ${(ci.item as any).model || ''}`.trim() || 'Certified Refurbished Device',
-        brand: (ci.item as any).brand || '',
-        model: (ci.item as any).model || '',
-        storage: (ci.item as any).storage || '',
-        ram: (ci.item as any).ram || '',
-        color: (ci.item as any).color || '',
-        condition: (ci.item as any).condition || 'Grade A (Excellent)',
+        title: ci.item.title || `${ci.item.brand || ''} ${ci.item.model || ''}`.trim() || 'Certified Refurbished Device',
+        brand: ci.item.brand || '',
+        model: ci.item.model || '',
+        storage: getItemVariant(ci.item).storage,
+        ram: getItemVariant(ci.item).ram,
+        color: getItemVariant(ci.item).color,
+        condition: getItemVariant(ci.item).condition || 'Grade A (Excellent)',
         price: ci.item.price,
         quantity: ci.quantity || 1,
-        image: ci.item.images?.[0] || (ci.item as any).image || '',
-        image_url: ci.item.images?.[0] || (ci.item as any).image || '',
+        image: ci.item.images?.[0] || ci.item.image || '',
+        image_url: ci.item.images?.[0] || ci.item.image || '',
       }));
 
       const primaryProduct = cartItems.find((ci) => ci.type === 'product');
@@ -127,7 +128,7 @@ export default function Payment() {
       };
 
       const { data, error } = await db
-        .from('orders')
+        .from<{ id: string }>('orders')
         .insert(orderData)
         .select()
         .single();
@@ -149,9 +150,9 @@ export default function Payment() {
 
       // Dispatch WhatsApp Notification to Admins (9105783553 & 9839122345)
       try {
-        const itemsSummary = cartItems.map((c) => `${c.item.title || (c.item as any).model || 'Device'} (x${c.quantity || 1})`).join(', ');
+        const itemsSummary = cartItems.map((c) => `${c.item.title || c.item.model || 'Device'} (x${c.quantity || 1})`).join(', ');
         notifyNewBuyOrder({
-          orderId: (data as any)?.id || `ORD-${Date.now().toString().slice(-6)}`,
+          orderId: data?.id || `ORD-${Date.now().toString().slice(-6)}`,
           customerName: deliveryDetails.name || profile?.full_name || 'Customer',
           customerPhone: deliveryDetails.phone || profile?.phone || '',
           customerEmail: user?.email,

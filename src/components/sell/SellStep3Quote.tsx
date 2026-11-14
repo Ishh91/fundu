@@ -7,15 +7,15 @@ import {
   ArrowRight,
   Lock,
   AlertCircle,
-  Zap,
   Sparkles,
   CheckCircle2,
   PenTool,
 } from 'lucide-react';
 import { formatINR, formatMaskedPrice } from '../../lib/db';
-import { calculateMarketPriceComparison } from '../../lib/mobileApi';
 import { deviceIncludesStylus } from '../../lib/deviceSpecs';
 import type { FunduQuoteResponse } from '../../lib/quoteEngine';
+import type { SellFormState } from '../../lib/sellForm';
+import type { User } from '../../lib/db';
 
 interface SellStep3QuoteProps {
   form: {
@@ -27,11 +27,11 @@ interface SellStep3QuoteProps {
     payoutMethod: 'UPI' | 'Cash' | 'Bank';
     payoutDetails: string;
   };
-  setForm: React.Dispatch<React.SetStateAction<any>>;
+  setForm: React.Dispatch<React.SetStateAction<SellFormState>>;
   estimate: number;
   baseModelPrice?: number;
   funduQuote: FunduQuoteResponse | null;
-  user: any;
+  user: User | null;
   handleGoToLoginForExactPrice: (targetStep?: number) => void;
   goToStep: (step: number) => void;
 }
@@ -235,9 +235,6 @@ export default function SellStep3Quote({
 
           {/* Dedicated Fundu Price Match (+5% Extra Cash Guaranteed) Widget */}
           {(() => {
-            const rawAmt = estimate;
-            const finalAmt = Math.min(maxAllowedCeiling, Math.max(500, rawAmt));
-            const comparison = calculateMarketPriceComparison(finalAmt);
             return (
               <div className="rounded-2xl border-2 border-emerald-500/40 bg-gradient-to-br from-emerald-50/80 via-white to-teal-50/60 p-5 text-left space-y-3.5 shadow-sm">
                 {/* <div className="flex flex-wrap items-center justify-between gap-2">
@@ -339,7 +336,7 @@ export default function SellStep3Quote({
                 <button
                   key={p.id}
                   type="button"
-                  onClick={() => setForm((prev: any) => ({ ...prev, payoutMethod: p.id as any }))}
+                  onClick={() => setForm((prev) => ({ ...prev, payoutMethod: p.id as SellFormState['payoutMethod'] }))}
                   className={`p-3 rounded-xl border text-center transition cursor-pointer ${form.payoutMethod === p.id
                     ? 'border-[#344257] bg-[#F0F0F5] font-extrabold text-[#344257] ring-2 ring-[#344257]/20'
                     : 'border-gray-200 bg-white text-gray-700 hover:border-gray-300'
@@ -356,7 +353,7 @@ export default function SellStep3Quote({
                 <input
                   type="text"
                   value={form.payoutDetails}
-                  onChange={(e) => setForm((prev: any) => ({ ...prev, payoutDetails: e.target.value }))}
+                  onChange={(e) => setForm((prev) => ({ ...prev, payoutDetails: e.target.value }))}
                   placeholder="e.g. yourname@oksbi or 9839122345"
                   className="input mt-1 text-xs focus:border-[#6A859F] focus:ring-4 focus:ring-[#6A859F]/15"
                 />

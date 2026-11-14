@@ -1,14 +1,15 @@
+import { getErrorMessage } from '../../lib/errorMessage';
 import { useState } from 'react';
 import {
   Package, Search, Truck, MapPin, PhoneCall, MessageCircle,
   CreditCard, ShoppingBag, MessageSquare, Send, Smartphone,
-  ExternalLink, ShieldCheck, Tag
-} from 'lucide-react';
+  ExternalLink} from 'lucide-react';
 import type { Order, DeliveryAgent, Product, SparePart } from './adminTypes';
 import { statusColors } from './adminTypes';
 import { db, formatINR } from '../../lib/db';
 import CustomerDetailsModal from '../../components/CustomerDetailsModal';
 import { getCleanPhoneImage } from '../../lib/phoneImages';
+import type { CustomerDetailsModalProps } from '../../components/CustomerDetailsModal';
 
 type AdminOrdersProps = {
   orders: Order[];
@@ -42,7 +43,7 @@ function getOrderResolvedItems(order: Order, products: Product[] = [], parts: Sp
   // If items array is empty, match with order.product_id
   if (order.product_id) {
     const prod = products.find(
-      (p) => String(p.id) === String(order.product_id) || String((p as any)._id) === String(order.product_id)
+      (p) => String(p.id) === String(order.product_id) || String(p._id) === String(order.product_id)
     );
     if (prod) {
       return [{
@@ -57,7 +58,7 @@ function getOrderResolvedItems(order: Order, products: Product[] = [], parts: Sp
         condition: prod.condition || 'Grade A (Excellent)',
         price: prod.price || order.total_amount,
         quantity: order.quantity || 1,
-        image: (prod as any).image || prod.images?.[0] || '',
+        image: prod.image || prod.images?.[0] || '',
       }];
     }
   }
@@ -65,7 +66,7 @@ function getOrderResolvedItems(order: Order, products: Product[] = [], parts: Sp
   // Check order.spare_part_id
   if (order.spare_part_id) {
     const part = parts.find(
-      (p) => String(p.id) === String(order.spare_part_id) || String((p as any)._id) === String(order.spare_part_id)
+      (p) => String(p.id) === String(order.spare_part_id) || String(p._id) === String(order.spare_part_id)
     );
     if (part) {
       return [{
@@ -80,7 +81,7 @@ function getOrderResolvedItems(order: Order, products: Product[] = [], parts: Sp
         condition: 'Brand New Replacement Part',
         price: part.price || order.total_amount,
         quantity: order.quantity || 1,
-        image: (part as any).images?.[0] || '',
+        image: part.images?.[0] || '',
       }];
     }
   }
@@ -115,7 +116,7 @@ export default function AdminOrders({
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [adminReplyText, setAdminReplyText] = useState('');
-  const [customerModalData, setCustomerModalData] = useState<any>(null);
+  const [customerModalData, setCustomerModalData] = useState<CustomerDetailsModalProps['customer'] | null>(null);
   const [agentFilter, setAgentFilter] = useState('all');
   const [reassignModalData, setReassignModalData] = useState<{
     order: Order;
@@ -144,8 +145,8 @@ export default function AdminOrders({
       order.admin_reply = adminReplyText.trim();
       setAdminReplyText('');
       alert('🎉 Reply posted to customer tracking view!');
-    } catch (err: any) {
-      alert(err?.message || 'Failed to send reply');
+    } catch (err) {
+      alert(getErrorMessage(err, 'Failed to send reply'));
     }
   };
 

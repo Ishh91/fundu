@@ -1,3 +1,4 @@
+import { getErrorMessage } from '../../lib/errorMessage';
 import React, { useState, useMemo } from 'react';
 import {
   Smartphone,
@@ -7,9 +8,7 @@ import {
   RefreshCw,
   Tag,
   X,
-  Zap,
   Sparkles,
-  CheckCircle2,
   Trash2,
   Camera,
   Upload,
@@ -18,10 +17,9 @@ import {
   Check,
   Film,
   Play,
-  Video as VideoIcon,
 } from 'lucide-react';
 import type { MasterPhone, Product } from './adminTypes';
-import { db, formatINR } from '../../lib/db';
+import { formatINR } from '../../lib/db';
 import { searchMobileApiDev, importPhoneFromMobileApi } from '../../lib/mobileApi';
 import { ALL_INDIAN_PHONES_CATALOG } from '../../data/indianPhonesCatalog';
 import { MASTER_MODEL_CATALOG } from '../../data/masterModelCatalog';
@@ -31,12 +29,11 @@ import {
   saveModelImageToDatabase,
   saveModelVideoToDatabase,
   resetCustomModelImage,
-  getCustomModelImages,
   hasCustomModelImage,
 } from '../../lib/phoneImages';
 import { compressImage } from '../../lib/imageUtils';
 import { isObsoleteDeviceHardware } from '../../lib/deviceSpecs';
-import { PhoneVideoPlayer, isVideoUrl } from '../../lib/videoUtils';
+import { PhoneVideoPlayer } from '../../lib/videoUtils';
 
 type AdminCatalogProps = {
   masterPhones: MasterPhone[];
@@ -129,8 +126,8 @@ export default function AdminCatalog({
       setCustomImagesVer((v) => v + 1);
       setImageModalOpen(false);
       alert(`🎉 Model image updated for ${editingPhone.brand} ${editingPhone.model}! Live across sell catalog.`);
-    } catch (err: any) {
-      alert(err?.message || 'Failed to update image');
+    } catch (err) {
+      alert(getErrorMessage(err, 'Failed to update image'));
     } finally {
       setImageSaving(false);
     }
@@ -151,8 +148,8 @@ export default function AdminCatalog({
       setCustomImagesVer((v) => v + 1);
       setImageModalOpen(false);
       alert(`✅ Reset to default official render for ${editingPhone.brand} ${editingPhone.model}!`);
-    } catch (err: any) {
-      alert(err?.message || 'Failed to reset image');
+    } catch (err) {
+      alert(getErrorMessage(err, 'Failed to reset image'));
     } finally {
       setImageSaving(false);
     }
@@ -181,8 +178,8 @@ export default function AdminCatalog({
       setCustomImagesVer((v) => v + 1);
       setVideoModalOpen(false);
       alert(`🎉 Model video saved for ${editingPhone.brand} ${editingPhone.model}! Live in database.`);
-    } catch (err: any) {
-      alert(err?.message || 'Failed to save video');
+    } catch (err) {
+      alert(getErrorMessage(err, 'Failed to save video'));
     } finally {
       setVideoSaving(false);
     }
@@ -201,8 +198,8 @@ export default function AdminCatalog({
       setCustomImagesVer((v) => v + 1);
       setVideoModalOpen(false);
       alert(`✅ Video removed for ${editingPhone.brand} ${editingPhone.model}.`);
-    } catch (err: any) {
-      alert(err?.message || 'Failed to remove video');
+    } catch (err) {
+      alert(getErrorMessage(err, 'Failed to remove video'));
     } finally {
       setVideoSaving(false);
     }
@@ -304,8 +301,8 @@ export default function AdminCatalog({
       if (results.length === 0) {
         alert('No devices found for this query.');
       }
-    } catch (err: any) {
-      alert(err?.message || 'Failed to search MobileAPI.dev');
+    } catch (err) {
+      alert(getErrorMessage(err, 'Failed to search MobileAPI.dev'));
     } finally {
       setMobileApiLoading(false);
     }
@@ -320,8 +317,8 @@ export default function AdminCatalog({
         onPhoneImported(imported);
       }
       alert(`🎉 Successfully imported "${imported.brand} ${imported.model}" into Fundu database!`);
-    } catch (err: any) {
-      alert(err?.message || 'Failed to import phone');
+    } catch (err) {
+      alert(getErrorMessage(err, 'Failed to import phone'));
     } finally {
       setImportingPhoneId(null);
     }

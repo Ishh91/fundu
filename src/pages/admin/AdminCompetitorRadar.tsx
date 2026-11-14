@@ -1,25 +1,18 @@
+import { getErrorMessage } from '../../lib/errorMessage';
 import React, { useState, useEffect, useMemo } from 'react';
 import {
   Radar,
   Search,
   ExternalLink,
   TrendingUp,
-  TrendingDown,
-  ShieldCheck,
   CheckCircle2,
   RefreshCw,
   AlertTriangle,
-  ArrowUpRight,
   Zap,
   Save,
   Check,
   Building2,
-  Smartphone,
-  Eye,
-  Info,
-  ChevronDown,
   Download,
-  FileText,
 } from 'lucide-react';
 import { formatINR, authHeaders } from '../../lib/db';
 import { API_BASE } from '../../config/apiConfig';
@@ -32,11 +25,9 @@ import {
   getModelHardwareSpecs,
   getRadarHardwareSpecs,
   calculateRamPriceOffset,
-  isStorageAllowedForModel,
 } from '../../lib/deviceSpecs';
-import { ALL_INDIAN_PHONES_CATALOG } from '../../data/indianPhonesCatalog';
 import { MASTER_MODEL_CATALOG } from '../../data/masterModelCatalog';
-import { BRAND_SERIES_DEFINITIONS, getDeviceRecencyScore } from '../../data/brandSeriesCatalog';
+import { getDeviceRecencyScore } from '../../data/brandSeriesCatalog';
 import { getUnifiedCatalog } from '../../lib/modelCatalogSync';
 
 interface CompetitorData {
@@ -359,8 +350,8 @@ export default function AdminCompetitorRadar() {
           setSearchModel(json.data.device.model);
         }
       }
-    } catch (err: any) {
-      setError(err?.message || 'Error loading live market prices');
+    } catch (err) {
+      setError(getErrorMessage(err, 'Error loading live market prices'));
     } finally {
       setLoading(false);
     }
@@ -550,9 +541,9 @@ export default function AdminCompetitorRadar() {
         broadcastSync('PRICE_UPDATE', 'sell_price_configs', 'upsert', json.data);
       }
       setTimeout(() => setSaveSuccess(false), 2500);
-    } catch (err: any) {
+    } catch (err) {
       console.error('Background price sync failed:', err);
-      alert(err?.message || 'Failed to update database');
+      alert(getErrorMessage(err, 'Failed to update database'));
     } finally {
       setSavingPrice(false);
     }

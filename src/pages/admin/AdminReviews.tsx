@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { MessageSquare, Search, Trash2, CheckCircle2, Star } from 'lucide-react';
+import { useState } from 'react';
+import { MessageSquare, Search, Trash2, Star } from 'lucide-react';
 import type { Review } from './adminTypes';
 
 type AdminReviewsProps = {

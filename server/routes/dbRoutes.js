@@ -9,6 +9,7 @@ import {
   upsertTable,
 } from '../services/dbService.js';
 import { invalidateLiveImages } from '../utils/liveImagesCache.js';
+import { offloadMediaForSave } from '../services/cloudinary.js';
 
 const router = Router();
 
@@ -32,6 +33,17 @@ function getCacheKey(table, query) {
 }
 
 const LIVE_IMAGE_TABLES = new Set(['master_phones', 'phones', 'sell_price_configs']);
+
+// Tables whose rows hold photos. Only a signed-in caller's photos are sent to Cloudinary, so a
+// visitor cannot use a public form to fill the account; the table's own write rules still apply afterwards.
+const PHOTO_TABLES = new Set([
+  'products', 'spare_parts', 'sell_requests', 'repair_bookings', 'master_phones', 'phones',
+  'sell_price_configs', 'repair_price_configs', 'repair_catalogs', 'profiles', 'delivery_agents',
+  'wholesale_inventory', 'wholesale_inventories', 'banners', 'site_content',
+]);
+
+const withPhotosOnCloudinary = (req, table, values) =>
+  req.auth && PHOTO_TABLES.has(table) ? offloadMediaForSave(values, { folder: table }) : values;
 
 /**
  * Drops cached reads for a table. Call it after a write has finished: clearing
@@ -114,8 +126,9 @@ router.get('/:table', async (req, res, next) => {
 
 router.post('/:table', async (req, res, next) => {
   try {
-    const { action = 'insert', values, single = false } = req.body;
-    if (!values) throw createHttpError(400, 'values is required.');
+    const { action = 'insert', values: rawValues, single = false } = req.body;
+    if (!rawValues) throw createHttpError(400, 'values is required.');
+    const values = await withPhotosOnCloudinary(req, req.params.table, rawValues);
 
     const data = action === 'upsert'
       ? await upsertTable(req.params.table, { auth: req.auth, values, single })
@@ -131,8 +144,9 @@ router.post('/:table', async (req, res, next) => {
 
 router.patch('/:table', async (req, res, next) => {
   try {
-    const { filters = [], values, single = false, select } = req.body;
-    if (!values) throw createHttpError(400, 'values is required.');
+    const { filters = [], values: rawValues, single = false, select } = req.body;
+    if (!rawValues) throw createHttpError(400, 'values is required.');
+    const values = await withPhotosOnCloudinary(req, req.params.table, rawValues);
 
     const data = await updateTable(req.params.table, {
       auth: req.auth,

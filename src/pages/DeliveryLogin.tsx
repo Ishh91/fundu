@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { Truck, Lock, Mail, AlertCircle, ArrowRight, ShieldCheck, MapPin } from 'lucide-react';
+import { Lock, Mail, AlertCircle, ArrowRight, ShieldCheck, MapPin } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
 export default function DeliveryLogin() {

@@ -27,30 +27,25 @@ import {
   Camera,
   Volume2,
   Cpu,
-  Wifi,
   ScanFace,
-  Vibrate,
-  SlidersHorizontal,
   X,
   Lock,
-  FileCode,
   Mic,
   PhoneCall,
   Fingerprint,
   Droplets,
   AlertCircle,
-  Info,
   MapPin,
   RefreshCw,
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
-import { DOORSTEP_AREAS } from '../types';
 import { db, formatINR, formatMaskedPrice, formatDisplayPrice } from '../lib/db';
 import { verifyPanIndiaPincode, type VerifiedLocation } from '../lib/locationService';
 import { checkPincodeServiceability } from '../lib/pincodeService';
 import { fetchPhoneModels, searchMobileApiDev } from '../lib/mobileApi';
 import { useRepairPriceSync, getModelRepairPricing } from '../lib/repairPriceSync';
 import { isModelDeleted } from '../lib/catalogSync';
+import type { LucideIcon } from 'lucide-react';
 
 const BRAND_CARDS = [
   { name: 'Apple', logo: getCleanBrandLogo('Apple') },
@@ -68,7 +63,7 @@ const BRAND_CARDS = [
 export interface RepairIssueItem {
   id: string;
   label: string;
-  icon: any;
+  icon: LucideIcon;
   desc: string;
   cost: number;
   warranty: string;
@@ -401,7 +396,7 @@ export default function Repair() {
             cost: Number(s.price) || (s.service_id === 'motherboard' ? 299 : s.service_id === 'water_damage' ? 199 : 499),
             warranty: s.warranty || matchedStatic?.warranty || '6 Months Warranty',
             time: s.turnaround_time || matchedStatic?.time || '30 Mins Doorstep',
-            note: matchedStatic?.note || (s as any).note,
+            note: matchedStatic?.note || s.note,
           };
         });
     }

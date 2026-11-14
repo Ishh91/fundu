@@ -1,3 +1,4 @@
+import { getErrorMessage } from '../../lib/errorMessage';
 import React, { useState, useMemo, useRef } from 'react';
 import {
   TrendingUp,
@@ -6,21 +7,13 @@ import {
   Zap,
   Edit2,
   Trash2,
-  CheckCircle2,
-  ShieldAlert,
   Camera,
   Upload,
-  Link2,
   RotateCcw,
   Check,
   X,
   Smartphone,
   Filter,
-  ArrowUpDown,
-  Sparkles,
-  Tag,
-  Eye,
-  Info,
   DollarSign,
   Layers,
   Download,
@@ -34,7 +27,6 @@ import {
   saveCustomModelImage,
   saveModelImageToDatabase,
   resetCustomModelImage,
-  hasCustomModelImage,
   getCustomModelImages,
   generateModelLookupKeys,
 } from '../../lib/phoneImages';
@@ -43,8 +35,6 @@ import {
   savePriceOverride,
   getLocalPriceOverrides,
   isModelDeleted,
-  markModelAsDeleted,
-  restoreModel,
 } from '../../lib/priceSync';
 import { broadcastSync } from '../../lib/realtimeSync';
 import { exportSellPricesToExcel, parsePricesFromExcelFile, type PriceExcelRow } from '../../lib/priceExcelUtils';
@@ -677,8 +667,8 @@ export default function AdminSellPricing({
       setRefreshVer((v) => v + 1);
       setImageModalOpen(false);
       alert(`🎉 Photo updated for ${activeImageModel.brand} ${activeImageModel.model}! Live across sell catalog.`);
-    } catch (err: any) {
-      alert(err?.message || 'Failed to update model image');
+    } catch (err) {
+      alert(getErrorMessage(err, 'Failed to update model image'));
     } finally {
       setImageSaving(false);
     }
@@ -715,8 +705,8 @@ export default function AdminSellPricing({
       setRefreshVer((v) => v + 1);
       setImageModalOpen(false);
       alert(`🔄 Image reset to official render for ${activeImageModel.brand} ${activeImageModel.model}!`);
-    } catch (err: any) {
-      alert(err?.message || 'Failed to reset model image');
+    } catch (err) {
+      alert(getErrorMessage(err, 'Failed to reset model image'));
     } finally {
       setImageSaving(false);
     }
@@ -776,7 +766,7 @@ export default function AdminSellPricing({
         is_locked: true,
         manual_override: true,
       });
-    } catch (err: any) {
+    } catch (err) {
       console.error('[AdminSellPricing] Background price save error:', err);
     } finally {
       setPriceSaving(false);
@@ -817,7 +807,7 @@ export default function AdminSellPricing({
         is_locked: true,
         manual_override: true,
       });
-    } catch (err: any) {
+    } catch (err) {
       console.error('[AdminSellPricing] Inline background save error:', err);
     } finally {
       setInlineSaving(false);
@@ -883,7 +873,7 @@ export default function AdminSellPricing({
           storage: storageTrim,
         });
       }
-    } catch (err: any) {
+    } catch (err) {
       console.error('[AdminSellPricing] Add model background save error:', err);
     } finally {
       setAddSaving(false);
@@ -922,8 +912,8 @@ export default function AdminSellPricing({
         skippedCount: result.skippedCount,
         errors: result.errors,
       });
-    } catch (err: any) {
-      alert(`Error reading file: ${err.message || err}`);
+    } catch (err) {
+      alert(`Error reading file: ${getErrorMessage(err) || err}`);
     } finally {
       if (fileInputRef.current) fileInputRef.current.value = '';
     }
@@ -977,9 +967,9 @@ export default function AdminSellPricing({
       const fileName = importModal.fileName;
       setImportModal(null);
       alert(`🎉 Successfully imported and updated ${importedCount.toLocaleString()} price rules from "${fileName}"! Changes are live across customer sell pages.`);
-    } catch (err: any) {
+    } catch (err) {
       console.error('[AdminSellPricing] Bulk import error:', err);
-      alert(`Failed to save price rules: ${err.message || 'Database error'}`);
+      alert(`Failed to save price rules: ${getErrorMessage(err, 'Database error')}`);
     } finally {
       setImporting(false);
       setImportProgress(null);
@@ -1111,7 +1101,7 @@ export default function AdminSellPricing({
             {/* Filter by Type */}
             <select
               value={filterType}
-              onChange={(e) => setFilterType(e.target.value as any)}
+              onChange={(e) => setFilterType(e.target.value as 'all' | 'custom_price' | 'custom_image' | 'active' | 'disabled')}
               className="input text-xs py-2 bg-gray-50 border-gray-200 font-semibold rounded-xl"
             >
               <option value="all">All Models ({unifiedModels.length})</option>
@@ -1124,7 +1114,7 @@ export default function AdminSellPricing({
             {/* Sort by */}
             <select
               value={sortBy}
-              onChange={(e) => setSortBy(e.target.value as any)}
+              onChange={(e) => setSortBy(e.target.value as 'default' | 'price_high' | 'price_low' | 'name_asc')}
               className="input text-xs py-2 bg-gray-50 border-gray-200 font-semibold rounded-xl"
             >
               <option value="default">Default Order</option>
@@ -1632,7 +1622,7 @@ export default function AdminSellPricing({
                     alt="Preview"
                     className="max-h-full max-w-full object-contain mix-blend-multiply"
                     onError={(e) => {
-                      (e.currentTarget as any).src = getCleanPhoneImage(activeImageModel.brand, activeImageModel.model);
+                      e.currentTarget.src = getCleanPhoneImage(activeImageModel.brand, activeImageModel.model);
                     }}
                   />
                 ) : (

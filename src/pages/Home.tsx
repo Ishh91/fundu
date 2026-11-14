@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { Sparkles, CheckCircle2, Mail, X } from 'lucide-react';
+import { Sparkles, X } from 'lucide-react';
 import { db } from '../lib/db';
 import { subscribeToRealtimeSync } from '../lib/realtimeSync';
 import { deduplicateProductsByModel } from '../lib/modelVariants';

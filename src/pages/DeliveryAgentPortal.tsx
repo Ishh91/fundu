@@ -1,5 +1,7 @@
+import { getErrorMessage } from '../lib/errorMessage';
 import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { reportErrorToTracker } from '../lib/errorTracker';
+import { Link } from 'react-router-dom';
 import {
   Truck,
   MapPin,
@@ -14,34 +16,24 @@ import {
   Wrench,
   Package,
   Upload,
-  Image as ImageIcon,
-  BadgeIndianRupee,
   RefreshCw,
   ExternalLink,
   Navigation,
   Sparkles,
-  Search,
-  SlidersHorizontal,
-  ChevronRight,
   X,
-  FileText,
-  UserCheck,
   DollarSign,
-  QrCode,
-  ArrowRight,
   LogOut,
   Battery,
   Wifi,
-  Shield,
-  LayoutDashboard,
-  Store,
-  User,
   Radio,
   Send,
 } from 'lucide-react';
-import { useAuth } from '../context/AuthContext';
 import { db, formatINR } from '../lib/db';
 import type { SellRequest, RepairBooking, Order, DeliveryAgent } from '../types';
+
+/** What the rider collects or pays for a job, whichever kind of job it is. */
+const getJobAmount = (job: { final_price?: number | null; total_amount?: number | null; final_cost?: number | null }): number =>
+  job.final_price || job.total_amount || job.final_cost || 0;
 import {
   notifyRiderInspectionSubmitted,
   notifyRiderDeclinedTask,
@@ -52,8 +44,6 @@ import {
 function RiderTaskMapWidget({
   address,
   customerName,
-  phone,
-  title,
   onOpenFullMap,
 }: {
   address: string;
@@ -123,14 +113,11 @@ function RiderTaskMapWidget({
 }
 
 export default function DeliveryAgentPortal() {
-  const { user, profile, signOut } = useAuth();
-  const navigate = useNavigate();
 
   // Rider Login & Fleet Identity State
   const [selectedRiderName, setSelectedRiderName] = useState('Deepak Verma');
   const [selectedRiderPhone, setSelectedRiderPhone] = useState('+91 98391 22345');
   const [selectedVehicle, setSelectedVehicle] = useState('Hero Splendor (UP 32 BK 4421)');
-  const [isRiderApproved, setIsRiderApproved] = useState(true);
   const [isLoggedInAsRider, setIsLoggedInAsRider] = useState(true);
 
   // Tab State
@@ -153,13 +140,13 @@ export default function DeliveryAgentPortal() {
   const [batteryHealth, setBatteryHealth] = useState<string>('88');
   const [biometricsWorking, setBiometricsWorking] = useState<boolean>(true);
   const [chargingPortWorking, setChargingPortWorking] = useState<boolean>(true);
-  const [speakerMicWorking, setSpeakerMicWorking] = useState<boolean>(true);
+  const [speakerMicWorking] = useState<boolean>(true);
   const [hasBox, setHasBox] = useState<boolean>(true);
-  const [hasCharger, setHasCharger] = useState<boolean>(true);
-  const [hasBill, setHasBill] = useState<boolean>(true);
+  const [hasCharger] = useState<boolean>(true);
+  const [hasBill] = useState<boolean>(true);
   const [proposedPayout, setProposedPayout] = useState<string>('');
   const [riderNotes, setRiderNotes] = useState<string>('');
-  const [payoutMethod, setPayoutMethod] = useState<'upi' | 'cash'>('upi');
+  const [payoutMethod] = useState<'upi' | 'cash'>('upi');
   const [customerUpiId, setCustomerUpiId] = useState<string>('');
 
   // Live Photos Uploaded by Delivery Agent
@@ -171,7 +158,7 @@ export default function DeliveryAgentPortal() {
   const [submittingInspection, setSubmittingInspection] = useState(false);
   const [approvalWaiting, setApprovalWaiting] = useState(false);
   const [isApprovedByAdmin, setIsApprovedByAdmin] = useState(false);
-  const [payoutSuccess, setPayoutSuccess] = useState(false);
+  const [, setPayoutSuccess] = useState(false);
 
   // Doorstep Repair Inspection Modal State
   const [inspectingRepair, setInspectingRepair] = useState<RepairBooking | null>(null);
@@ -183,7 +170,6 @@ export default function DeliveryAgentPortal() {
   // Delivery Order Complete Modal State
   const [deliveringOrder, setDeliveringOrder] = useState<Order | null>(null);
   const [deliveryProofPhoto, setDeliveryProofPhoto] = useState<string>('');
-  const [deliveryCashCollected, setDeliveryCashCollected] = useState(true);
   const [deliverySubmitting, setDeliverySubmitting] = useState(false);
 
   // Interactive Live Navigation Map State
@@ -218,13 +204,13 @@ export default function DeliveryAgentPortal() {
     try {
       if (type === 'sell') {
         await db.from('sell_requests').update({ rider_acceptance_status: 'accepted' }).eq('id', id);
-        setSells((prev) => prev.map((s) => (s.id === id ? ({ ...s, rider_acceptance_status: 'accepted' } as any) : s)));
+        setSells((prev) => prev.map((s) => (s.id === id ? { ...s, rider_acceptance_status: 'accepted' } : s)));
       } else if (type === 'repair') {
         await db.from('repair_bookings').update({ rider_acceptance_status: 'accepted' }).eq('id', id);
-        setRepairs((prev) => prev.map((r) => (r.id === id ? ({ ...r, rider_acceptance_status: 'accepted' } as any) : r)));
+        setRepairs((prev) => prev.map((r) => (r.id === id ? { ...r, rider_acceptance_status: 'accepted' } : r)));
       } else {
         await db.from('orders').update({ rider_acceptance_status: 'accepted' }).eq('id', id);
-        setOrders((prev) => prev.map((o) => (o.id === id ? ({ ...o, rider_acceptance_status: 'accepted' } as any) : o)));
+        setOrders((prev) => prev.map((o) => (o.id === id ? { ...o, rider_acceptance_status: 'accepted' } : o)));
       }
       alert('✅ Task Accepted! Proceed with doorstep visit.');
     } catch {
@@ -306,14 +292,16 @@ export default function DeliveryAgentPortal() {
         delivery_otp: freshOtp,
         delivery_otp_created_at: new Date().toISOString(),
       }).eq('id', id);
-    } catch {}
+    } catch (error) {
+      reportErrorToTracker(error, { metadata: { action: 'save_delivery_otp' } });
+    }
 
     if (type === 'sell') {
-      setSells((prev) => prev.map((s) => (s.id === id ? ({ ...s, delivery_otp: freshOtp } as any) : s)));
+      setSells((prev) => prev.map((s) => (s.id === id ? { ...s, delivery_otp: freshOtp } : s)));
     } else if (type === 'repair') {
-      setRepairs((prev) => prev.map((r) => (r.id === id ? ({ ...r, delivery_otp: freshOtp } as any) : r)));
+      setRepairs((prev) => prev.map((r) => (r.id === id ? { ...r, delivery_otp: freshOtp } : r)));
     } else {
-      setOrders((prev) => prev.map((o) => (o.id === id ? ({ ...o, delivery_otp: freshOtp } as any) : o)));
+      setOrders((prev) => prev.map((o) => (o.id === id ? { ...o, delivery_otp: freshOtp } : o)));
     }
     return freshOtp;
   };
@@ -365,7 +353,7 @@ export default function DeliveryAgentPortal() {
       );
       window.open(`https://wa.me/91${cleanPhone}?text=${msg}`, '_blank');
       alert(`🚴 Status: ON THE WAY!\n\nCustomer OTP (*${activeOtp}*) has been generated & dispatched to customer's WhatsApp.`);
-    } catch (err) {
+    } catch {
       alert('Failed to update trip status');
     }
   };
@@ -415,7 +403,7 @@ export default function DeliveryAgentPortal() {
       );
       window.open(`https://wa.me/91${cleanPhone}?text=${msg}`, '_blank');
       alert(`📌 Marked ARRIVED AT DOORSTEP!\nCustomer OTP (*${activeOtp}*) sent to customer via WhatsApp.`);
-    } catch (err) {
+    } catch {
       alert('Failed to update status');
     }
   };
@@ -554,7 +542,7 @@ export default function DeliveryAgentPortal() {
       );
       setOtpModalTask(null);
       setOtpInput('');
-    } catch (err) {
+    } catch {
       alert('Failed to complete verification');
     } finally {
       setOtpSubmitting(false);
@@ -779,7 +767,7 @@ export default function DeliveryAgentPortal() {
       setSells((prev) => prev.map((s) => s.id === inspectingSell.id ? { ...s, status: 'completed', final_price: finalVal } : s));
       alert(`🎉 Spot Payout of ₹${finalVal.toLocaleString('en-IN')} Handover Completed! Phone is now cleared for Hazratganj Hub.`);
       setInspectingSell(null);
-    } catch (err) {
+    } catch {
       alert('Failed to complete pickup');
     }
   };
@@ -818,7 +806,7 @@ export default function DeliveryAgentPortal() {
 
       alert(`🔧 Technician Diagnostic Submitted for ${inspectingRepair.brand} ${inspectingRepair.model}!\nQuotation: ₹${finalNum.toLocaleString('en-IN')}`);
       setInspectingRepair(null);
-    } catch (err) {
+    } catch {
       alert('Failed to update repair');
     } finally {
       setRepairSubmitting(false);
@@ -838,7 +826,7 @@ export default function DeliveryAgentPortal() {
       setOrders((prev) => prev.map((o) => o.id === deliveringOrder.id ? { ...o, status: 'delivered', payment_status: 'paid' } : o));
       alert(`📦 Order #${deliveringOrder.id.slice(0, 8).toUpperCase()} marked as Delivered to ${deliveringOrder.delivery_name || 'Customer'}!`);
       setDeliveringOrder(null);
-    } catch (err) {
+    } catch {
       alert('Failed to complete delivery');
     } finally {
       setDeliverySubmitting(false);
@@ -891,15 +879,15 @@ export default function DeliveryAgentPortal() {
 
       // Check if user has an active agent record in db
       const { data: agentData } = await db
-        .from('delivery_agents')
+        .from<DeliveryAgent>('delivery_agents')
         .select('*')
         .eq('email', cleanEmail)
         .maybeSingle();
 
       if (agentData) {
-        setSelectedRiderName((agentData as any).name);
-        setSelectedRiderPhone((agentData as any).phone);
-        setSelectedVehicle((agentData as any).vehicle_type + ' (' + ((agentData as any).vehicle_number || 'UP 32') + ')');
+        setSelectedRiderName(agentData.name);
+        setSelectedRiderPhone(agentData.phone);
+        setSelectedVehicle(agentData.vehicle_type + ' (' + (agentData.vehicle_number || 'UP 32') + ')');
         setIsLoggedInAsRider(true);
         return;
       }
@@ -917,8 +905,8 @@ export default function DeliveryAgentPortal() {
       }
 
       throw new Error('Invalid Rider ID or secret passcode. Please check credentials issued by Admin.');
-    } catch (err: any) {
-      setRiderLoginError(err?.message || 'Login failed. Please check credentials.');
+    } catch (err) {
+      setRiderLoginError(getErrorMessage(err, 'Login failed. Please check credentials.'));
     } finally {
       setRiderLoginLoading(false);
     }
@@ -1129,7 +1117,7 @@ export default function DeliveryAgentPortal() {
           ].map((t) => (
             <button
               key={t.id}
-              onClick={() => setActiveTab(t.id as any)}
+              onClick={() => setActiveTab(t.id as 'sells' | 'repairs' | 'orders' | 'completed')}
               className={`px-4 py-2 rounded-2xl text-xs font-bold transition shrink-0 ${
                 activeTab === t.id
                   ? 'bg-slate-900 text-white shadow-xs'
@@ -1183,8 +1171,8 @@ export default function DeliveryAgentPortal() {
               activeSellTasks.map((sell) => {
                 const isWaitingAdmin = sell.status === 'inspection_submitted' || sell.status === 'diagnosing';
                 const isApproved = isApprovedStatus(sell.status);
-                const customerName = (sell as any).full_name || (sell as any).customer_name || 'Customer';
-                const customerPhone = (sell as any).phone || (sell as any).customer_phone || '9839122345';
+                const customerName = sell.full_name || sell.customer_name || 'Customer';
+                const customerPhone = sell.phone || sell.customer_phone || '9839122345';
                 const address = sell.pickup_address || sell.pickup_area || 'Gomti Nagar';
                 const payoutAmount = sell.final_price || sell.estimated_price || 0;
 
@@ -1298,7 +1286,7 @@ export default function DeliveryAgentPortal() {
                     {/* Rider Acceptance & Decline Actions Bar */}
                     <div className="flex items-center justify-between gap-2 p-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs">
                       <div className="flex items-center gap-1.5">
-                        {(sell as any).rider_acceptance_status === 'accepted' ? (
+                        {sell.rider_acceptance_status === 'accepted' ? (
                           <span className="badge bg-emerald-100 text-emerald-800 font-bold text-[10px]">
                             ✓ Task Accepted by You
                           </span>
@@ -1315,7 +1303,7 @@ export default function DeliveryAgentPortal() {
                       </div>
 
                       <div className="flex items-center gap-1.5">
-                        {(sell as any).rider_acceptance_status !== 'accepted' && (
+                        {sell.rider_acceptance_status !== 'accepted' && (
                           <button
                             type="button"
                             onClick={() => handleAcceptTask('sell', sell.id)}
@@ -1342,7 +1330,7 @@ export default function DeliveryAgentPortal() {
                       <div className="flex flex-wrap items-center gap-2 text-xs">
                         <button
                           type="button"
-                          onClick={() => handleMarkOnTheWay(sell.id, 'sell', address, customerPhone, customerName, (sell as any).delivery_otp, `${sell.brand} ${sell.model}`, payoutAmount)}
+                          onClick={() => handleMarkOnTheWay(sell.id, 'sell', address, customerPhone, customerName, sell.delivery_otp, `${sell.brand} ${sell.model}`, payoutAmount)}
                           className="btn bg-blue-50 text-blue-700 hover:bg-blue-100 font-bold px-3 py-1.5 rounded-xl flex items-center gap-1"
                         >
                           🚴 Mark On The Way
@@ -1350,7 +1338,7 @@ export default function DeliveryAgentPortal() {
 
                         <button
                           type="button"
-                          onClick={() => handleMarkArrived(sell.id, 'sell', address, customerPhone, customerName, (sell as any).delivery_otp, `${sell.brand} ${sell.model}`, payoutAmount)}
+                          onClick={() => handleMarkArrived(sell.id, 'sell', address, customerPhone, customerName, sell.delivery_otp, `${sell.brand} ${sell.model}`, payoutAmount)}
                           className="btn bg-purple-50 text-purple-700 hover:bg-purple-100 font-bold px-3 py-1.5 rounded-xl flex items-center gap-1"
                         >
                           📌 Mark Arrived
@@ -1431,8 +1419,8 @@ export default function DeliveryAgentPortal() {
               </div>
             ) : (
               activeRepairTasks.map((repair) => {
-                const customerName = (repair as any).customer_name || (repair as any).full_name || 'Customer';
-                const customerPhone = (repair as any).phone || (repair as any).customer_phone || '9839122345';
+                const customerName = repair.customer_name || repair.full_name || 'Customer';
+                const customerPhone = repair.phone || repair.customer_phone || '9839122345';
                 const address = repair.pickup_address || 'Gomti Nagar';
                 const repairCost = repair.final_cost || repair.estimated_cost || 0;
 
@@ -1526,7 +1514,7 @@ export default function DeliveryAgentPortal() {
                     {/* Rider Acceptance & Decline Actions Bar */}
                     <div className="flex items-center justify-between gap-2 p-2.5 rounded-xl bg-purple-50/60 border border-purple-200 text-xs">
                       <div className="flex items-center gap-1.5">
-                        {(repair as any).rider_acceptance_status === 'accepted' ? (
+                        {repair.rider_acceptance_status === 'accepted' ? (
                           <span className="badge bg-emerald-100 text-emerald-800 font-bold text-[10px]">
                             ✓ Task Accepted by You
                           </span>
@@ -1538,7 +1526,7 @@ export default function DeliveryAgentPortal() {
                       </div>
 
                       <div className="flex items-center gap-1.5">
-                        {(repair as any).rider_acceptance_status !== 'accepted' && (
+                        {repair.rider_acceptance_status !== 'accepted' && (
                           <button
                             type="button"
                             onClick={() => handleAcceptTask('repair', repair.id)}
@@ -1562,14 +1550,14 @@ export default function DeliveryAgentPortal() {
                       <div className="flex items-center gap-2">
                         <button
                           type="button"
-                          onClick={() => handleMarkOnTheWay(repair.id, 'repair', address, customerPhone, customerName, (repair as any).delivery_otp, `${repair.brand} ${repair.model} Repair`, repairCost)}
+                          onClick={() => handleMarkOnTheWay(repair.id, 'repair', address, customerPhone, customerName, repair.delivery_otp, `${repair.brand} ${repair.model} Repair`, repairCost)}
                           className="btn bg-blue-50 text-blue-700 hover:bg-blue-100 font-bold px-3 py-1.5 rounded-xl"
                         >
                           🚴 On The Way
                         </button>
                         <button
                           type="button"
-                          onClick={() => handleMarkArrived(repair.id, 'repair', address, customerPhone, customerName, (repair as any).delivery_otp, `${repair.brand} ${repair.model} Repair`, repairCost)}
+                          onClick={() => handleMarkArrived(repair.id, 'repair', address, customerPhone, customerName, repair.delivery_otp, `${repair.brand} ${repair.model} Repair`, repairCost)}
                           className="btn bg-purple-50 text-purple-700 hover:bg-purple-100 font-bold px-3 py-1.5 rounded-xl"
                         >
                           📌 Arrived
@@ -1649,7 +1637,7 @@ export default function DeliveryAgentPortal() {
             ) : (
               activeOrderTasks.map((order) => {
                 const customerName = order.delivery_name || 'Customer';
-                const customerPhone = (order as any).delivery_phone || (order as any).phone || '9839122345';
+                const customerPhone = order.delivery_phone || order.phone || '9839122345';
                 const address = order.delivery_address || 'Doorstep, Uttar Pradesh';
                 const orderAmount = order.total_amount || 0;
 
@@ -1731,7 +1719,7 @@ export default function DeliveryAgentPortal() {
                     {/* Rider Acceptance & Decline Actions Bar */}
                     <div className="flex items-center justify-between gap-2 p-2.5 rounded-xl bg-blue-50/60 border border-blue-200 text-xs">
                       <div className="flex items-center gap-1.5">
-                        {(order as any).rider_acceptance_status === 'accepted' ? (
+                        {order.rider_acceptance_status === 'accepted' ? (
                           <span className="badge bg-emerald-100 text-emerald-800 font-bold text-[10px]">
                             ✓ Task Accepted by You
                           </span>
@@ -1743,7 +1731,7 @@ export default function DeliveryAgentPortal() {
                       </div>
 
                       <div className="flex items-center gap-1.5">
-                        {(order as any).rider_acceptance_status !== 'accepted' && (
+                        {order.rider_acceptance_status !== 'accepted' && (
                           <button
                             type="button"
                             onClick={() => handleAcceptTask('order', order.id)}
@@ -1767,14 +1755,14 @@ export default function DeliveryAgentPortal() {
                       <div className="flex items-center gap-2">
                         <button
                           type="button"
-                          onClick={() => handleMarkOnTheWay(order.id, 'order', address, customerPhone, customerName, (order as any).delivery_otp, `Store Order #${order.id.slice(0, 8)}`, orderAmount)}
+                          onClick={() => handleMarkOnTheWay(order.id, 'order', address, customerPhone, customerName, order.delivery_otp, `Store Order #${order.id.slice(0, 8)}`, orderAmount)}
                           className="btn bg-blue-50 text-blue-700 hover:bg-blue-100 font-bold px-3 py-1.5 rounded-xl"
                         >
                           🚴 On The Way
                         </button>
                         <button
                           type="button"
-                          onClick={() => handleMarkArrived(order.id, 'order', address, customerPhone, customerName, (order as any).delivery_otp, `Store Order #${order.id.slice(0, 8)}`, orderAmount)}
+                          onClick={() => handleMarkArrived(order.id, 'order', address, customerPhone, customerName, order.delivery_otp, `Store Order #${order.id.slice(0, 8)}`, orderAmount)}
                           className="btn bg-purple-50 text-purple-700 hover:bg-purple-100 font-bold px-3 py-1.5 rounded-xl"
                         >
                           📌 Arrived
@@ -1838,7 +1826,7 @@ export default function DeliveryAgentPortal() {
                     </p>
                   </div>
                   <span className="font-extrabold text-emerald-700 text-sm">
-                    {formatINR((t.item as any).final_price || (t.item as any).total_amount || (t.item as any).final_cost || 0)}
+                    {formatINR(getJobAmount(t.item))}
                   </span>
                 </div>
               ))
@@ -1863,7 +1851,7 @@ export default function DeliveryAgentPortal() {
             return (
               <button
                 key={item.id}
-                onClick={() => setActiveTab(item.id as any)}
+                onClick={() => setActiveTab(item.id as 'sells' | 'repairs' | 'orders' | 'completed')}
                 className={`relative flex flex-col items-center justify-center py-1 px-3 rounded-xl transition ${
                   isActive ? 'text-brand-600 font-black' : 'text-slate-500 hover:text-slate-900 font-medium'
                 }`}
@@ -2134,7 +2122,7 @@ export default function DeliveryAgentPortal() {
                     <p className="font-bold text-slate-700 mb-1">Display & Touch Glass</p>
                     <select
                       value={screenCondition}
-                      onChange={(e) => setScreenCondition(e.target.value as any)}
+                      onChange={(e) => setScreenCondition(e.target.value as 'flawless' | 'scratched' | 'cracked')}
                       className="input text-xs py-1.5 bg-white font-medium"
                     >
                       <option value="flawless">Flawless (No scratches)</option>
@@ -2148,7 +2136,7 @@ export default function DeliveryAgentPortal() {
                     <p className="font-bold text-slate-700 mb-1">Body Frame & Corners</p>
                     <select
                       value={bodyCondition}
-                      onChange={(e) => setBodyCondition(e.target.value as any)}
+                      onChange={(e) => setBodyCondition(e.target.value as 'spotless' | 'minor_dents' | 'heavy_scratches')}
                       className="input text-xs py-1.5 bg-white font-medium"
                     >
                       <option value="spotless">Grade A Spotless</option>

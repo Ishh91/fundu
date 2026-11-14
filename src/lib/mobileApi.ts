@@ -1,3 +1,4 @@
+import { getErrorMessage } from './errorMessage';
 import { API_BASE } from '../config/apiConfig';
 import { authHeaders } from './db';
 import { deviceIncludesStylus, isAmoledDisplay } from './deviceSpecs';
@@ -135,16 +136,6 @@ async function fetchWithTimeout<T>(fetchFn: () => Promise<T>, timeoutMs = 15000)
 }
 
 // Smart Evaluator: Compare results from MobileAPI & GSMArena API and return the best list
-function evaluateBestModelList(listA: PhoneModelOption[], listB: PhoneModelOption[]): PhoneModelOption[] {
-  if (!listA || listA.length === 0) return listB;
-  if (!listB || listB.length === 0) return listA;
-
-  // Best list score: count of models + storage options details completeness
-  const scoreA = listA.length * 10 + listA.reduce((acc, m) => acc + (m.storages?.length || 0), 0);
-  const scoreB = listB.length * 10 + listB.reduce((acc, m) => acc + (m.storages?.length || 0), 0);
-
-  return scoreA >= scoreB ? listA : listB;
-}
 
 export async function fetchPhoneModels(
   brand: string,
@@ -748,8 +739,8 @@ export async function syncAllIndianPhonesToDbApi() {
     const response = await fetch(`${API_BASE}/phones/bulk-sync`, { method: 'POST', headers: authHeaders() });
     const json = await response.json();
     return json;
-  } catch (err: any) {
-    return { error: err.message };
+  } catch (err) {
+    return { error: getErrorMessage(err) };
   }
 }
 
@@ -847,7 +838,6 @@ export async function fetchGsmArenaDeviceDetails(slug: string): Promise<GsmArena
 
 export function detectSeries(brand: string, modelName: string): string {
   const b = brand.toLowerCase();
-  const m = modelName.toLowerCase();
 
   if (b === 'apple' || b === 'iphone') {
     if (/ipad/i.test(modelName)) return 'Apple iPad & Tablet Series';
@@ -1019,11 +1009,3 @@ export async function fetchBrandCatalogFromApi(brand: string): Promise<CatalogMo
 
 
 
-async function fetchGsmArenaBrandModels(brand: string): Promise<Array<{ phone_name: string }>> {
-  try {
-    const results = await fetchGsmArenaSearch(brand);
-    return results.map((r) => ({ phone_name: r.phone_name }));
-  } catch {
-    return [];
-  }
-}

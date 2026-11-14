@@ -1,3 +1,4 @@
+import { getErrorMessage } from '../lib/errorMessage';
 import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import {
@@ -210,8 +211,8 @@ export default function Dashboard() {
       if (error) throw error;
       alert('✓ Order cancelled successfully. Items have been restored to store inventory.');
       refreshOrders();
-    } catch (err: any) {
-      alert(err?.message || 'Failed to cancel order');
+    } catch (err) {
+      alert(getErrorMessage(err, 'Failed to cancel order'));
     }
   };
 

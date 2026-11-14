@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Store, Search, Plus, Edit2, Trash2, Smartphone, Laptop, Tag, ExternalLink, ShieldCheck, CheckCircle2, Cpu, Monitor, BatteryCharging, Star, Film, Play } from 'lucide-react';
+import { useState } from 'react';
+import { Store, Search, Plus, Edit2, Trash2, Smartphone, Laptop, ExternalLink, Star, Film } from 'lucide-react';
 import type { Product } from './adminTypes';
 import { formatINR } from '../../lib/db';
 import { getCleanPhoneImage } from '../../lib/phoneImages';
@@ -152,7 +152,7 @@ export default function AdminProducts({
                 <button
                   key={tab.id}
                   type="button"
-                  onClick={() => setStatusFilter(tab.id as any)}
+                  onClick={() => setStatusFilter(tab.id as 'all' | 'featured' | 'live' | 'hidden' | 'out_of_stock')}
                   className={`px-2.5 py-1 rounded-lg transition whitespace-nowrap cursor-pointer ${
                     statusFilter === tab.id
                       ? 'bg-[#344257] text-white shadow-xs'

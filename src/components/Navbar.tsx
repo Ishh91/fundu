@@ -6,7 +6,6 @@ import {
   BadgeIndianRupee,
   Building2,
   ChevronDown,
-  FileText,
   LayoutDashboard,
   LogOut,
   MapPin,
@@ -16,7 +15,6 @@ import {
   ShieldCheck,
   ShoppingBag,
   ShoppingCart,
-  Smartphone,
   Laptop,
   Store,
   Trash2,
@@ -42,6 +40,7 @@ import {
   PAN_INDIA_POPULAR_CITIES,
   type PanIndiaLocation,
 } from '../lib/locationService';
+import { describeItemVariant } from '../lib/cartItem';
 
 
 export const DOORSTEP_LOCALITIES = [
@@ -978,9 +977,9 @@ export default function Navbar() {
                       <div className="space-y-3">
                         <div className="max-h-72 overflow-y-auto space-y-2.5 pr-1 divide-y divide-gray-100">
                           {cartItems.map((ci) => {
-                            const itemImg = ci.item.images?.[0] || (ci.item as any).image;
-                            const brandTitle = (ci.item as any).brand || '';
-                            const variantDesc = [(ci.item as any).storage, (ci.item as any).condition].filter(Boolean).join(' • ');
+                            const itemImg = ci.item.images?.[0] || ci.item.image;
+                            const brandTitle = ci.item.brand || '';
+                            const variantDesc = describeItemVariant(ci.item);
 
                             return (
                               <div key={ci.id} className="pt-2.5 first:pt-0 flex gap-2.5 items-center">

@@ -43,6 +43,7 @@ export type AdminTab =
   | 'users'
   | 'reviews'
   | 'contact'
+  | 'errors'
   | 'pincodes';
 
 export const statusColors: Record<string, string> = {

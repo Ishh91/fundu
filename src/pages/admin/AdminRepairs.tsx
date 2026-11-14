@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Wrench,
   Search,
@@ -7,10 +7,6 @@ import {
   PhoneCall,
   UserCheck,
   CheckCircle2,
-  AlertCircle,
-  FileText,
-  Truck,
-  Sparkles,
   MessageSquare,
   Building2,
   XCircle,
@@ -20,9 +16,11 @@ import {
   X,
 } from 'lucide-react';
 import type { RepairBooking, DeliveryAgent } from './adminTypes';
+import type { Profile } from '../../types';
 import { statusColors } from './adminTypes';
 import { db, formatINR } from '../../lib/db';
 import CustomerDetailsModal from '../../components/CustomerDetailsModal';
+import type { CustomerDetailsModalProps } from '../../components/CustomerDetailsModal';
 
 type AdminRepairsProps = {
   repairs: RepairBooking[];
@@ -47,9 +45,9 @@ export default function AdminRepairs({
   const [statusFilter, setStatusFilter] = useState('all');
   const [editingCost, setEditingCost] = useState(false);
   const [costInput, setCostInput] = useState('');
-  const [customerModalData, setCustomerModalData] = useState<any>(null);
-  const [vendors, setVendors] = useState<any[]>([]);
-  const [overrideModal, setOverrideModal] = useState<{ open: boolean; repair: any; amount: string }>({
+  const [customerModalData, setCustomerModalData] = useState<CustomerDetailsModalProps['customer'] | null>(null);
+  const [vendors, setVendors] = useState<Profile[]>([]);
+  const [overrideModal, setOverrideModal] = useState<{ open: boolean; repair: RepairBooking | null; amount: string }>({
     open: false,
     repair: null,
     amount: '',
@@ -61,7 +59,7 @@ export default function AdminRepairs({
       .in('role', ['vendor', 'wholesaler', 'admin'])
       .order('created_at', { ascending: false })
       .then(({ data }) => {
-        if (data) setVendors(data as any[]);
+        if (data) setVendors(data as Profile[]);
       });
   }, []);
 
@@ -88,7 +86,7 @@ export default function AdminRepairs({
     return { vendor, name, phone, location, businessName, ownerName };
   };
 
-  const handleApproveRepairQuote = async (repair: any) => {
+  const handleApproveRepairQuote = async (repair: RepairBooking) => {
     const amount = Number(repair.vendor_quotation_amount);
     if (!amount || amount <= 0) {
       alert('⚠️ Invalid quotation amount from technician.');
@@ -108,7 +106,7 @@ export default function AdminRepairs({
     window.location.reload();
   };
 
-  const handleRejectRepairQuote = async (repair: any) => {
+  const handleRejectRepairQuote = async (repair: RepairBooking) => {
     if (!window.confirm('Reject this repair quotation and reset status?')) return;
     const { error } = await db.from('repair_bookings').update({
       quotation_status: 'admin_rejected',
@@ -123,7 +121,7 @@ export default function AdminRepairs({
     window.location.reload();
   };
 
-  const handleReassignRepairVendor = async (repair: any, newVendorId: string) => {
+  const handleReassignRepairVendor = async (repair: RepairBooking, newVendorId: string) => {
     const isDirect = !newVendorId || newVendorId === 'direct';
     const newVendor = vendors.find(
       (v) => (v.id && String(v.id) === String(newVendorId)) || (v._id && String(v._id) === String(newVendorId))
@@ -335,9 +333,9 @@ export default function AdminRepairs({
                       </span>
                     </div>
 
-                    {Boolean((r as any).assigned_vendor_name || (r as any).quotation_status || (r as any).assigned_vendor_id) && (() => {
-                      const vInfo = getVendorInfo((r as any).assigned_vendor_id, (r as any).assigned_vendor_name);
-                      const displayName = vInfo?.name || (r as any).assigned_vendor_name || 'Repair Partner';
+                    {Boolean(r.assigned_vendor_name || r.quotation_status || r.assigned_vendor_id) && (() => {
+                      const vInfo = getVendorInfo(r.assigned_vendor_id, r.assigned_vendor_name);
+                      const displayName = vInfo?.name || r.assigned_vendor_name || 'Repair Partner';
                       return (
                         <div className="mt-2 pt-2 border-t border-ink-100/60 flex items-center justify-between text-[11px] gap-2">
                           <span className="flex items-center gap-1 font-bold text-purple-900 truncate max-w-[200px]" title={displayName}>
@@ -345,17 +343,17 @@ export default function AdminRepairs({
                             <span className="truncate">{displayName}</span>
                             {vInfo?.phone && <span className="text-gray-400 font-normal text-[10px] shrink-0">({vInfo.phone})</span>}
                           </span>
-                          {(r as any).quotation_status === 'quoted' && (
+                          {r.quotation_status === 'quoted' && (
                             <span className="badge bg-amber-100 text-amber-900 border border-amber-300 font-extrabold text-[9px] shrink-0 animate-pulse">
-                              ⚡ Quoted: {formatINR((r as any).vendor_quotation_amount || 0)}
+                              ⚡ Quoted: {formatINR(r.vendor_quotation_amount || 0)}
                             </span>
                           )}
-                          {(r as any).quotation_status === 'admin_approved' && (
+                          {r.quotation_status === 'admin_approved' && (
                             <span className="badge bg-emerald-100 text-emerald-800 font-bold text-[9px] shrink-0">
                               ✓ Approved
                             </span>
                           )}
-                          {(r as any).quotation_status === 'vendor_declined' && (
+                          {r.quotation_status === 'vendor_declined' && (
                             <span className="badge bg-red-100 text-red-800 font-bold text-[9px] shrink-0">
                               ❌ Declined
                             </span>
@@ -423,12 +421,12 @@ export default function AdminRepairs({
               </div>
 
               {/* Partner Workshop / Technician Quotation & Verification Card */}
-              {Boolean((selectedRepair as any).assigned_vendor_id || (selectedRepair as any).quotation_status || (selectedRepair as any).assigned_vendor_name) && (() => {
-                const vInfo = getVendorInfo((selectedRepair as any).assigned_vendor_id, (selectedRepair as any).assigned_vendor_name);
-                const quoteNotes = (selectedRepair as any).vendor_quotation_details || (selectedRepair as any).vendor_quotation_notes;
-                const displayName = vInfo?.name || (selectedRepair as any).assigned_vendor_name || 'Assigned Partner Workshop';
+              {Boolean(selectedRepair.assigned_vendor_id || selectedRepair.quotation_status || selectedRepair.assigned_vendor_name) && (() => {
+                const vInfo = getVendorInfo(selectedRepair.assigned_vendor_id, selectedRepair.assigned_vendor_name);
+                const quoteNotes = selectedRepair.vendor_quotation_details || selectedRepair.vendor_quotation_notes;
+                const displayName = vInfo?.name || selectedRepair.assigned_vendor_name || 'Assigned Partner Workshop';
                 const currentVendorId = (() => {
-                  const targetId = (selectedRepair as any).assigned_vendor_id;
+                  const targetId = selectedRepair.assigned_vendor_id;
                   if (!targetId) return '';
                   const match = vendors.find((v) => (v.id && String(v.id) === String(targetId)) || (v._id && String(v._id) === String(targetId)));
                   return match ? (match.id || match._id) : targetId;
@@ -436,9 +434,9 @@ export default function AdminRepairs({
 
                 return (
                   <div className={`p-4 rounded-2xl border transition-all ${
-                    (selectedRepair as any).quotation_status === 'quoted'
+                    selectedRepair.quotation_status === 'quoted'
                       ? 'bg-amber-50/90 border-amber-300 ring-2 ring-amber-400/30'
-                      : (selectedRepair as any).quotation_status === 'vendor_declined'
+                      : selectedRepair.quotation_status === 'vendor_declined'
                       ? 'bg-red-50 border-red-300'
                       : 'bg-purple-50/60 border-purple-200'
                   }`}>
@@ -467,29 +465,29 @@ export default function AdminRepairs({
                             </span>
                           )}
 
-                          {(selectedRepair as any).quotation_status === 'quoted' && (
+                          {selectedRepair.quotation_status === 'quoted' && (
                             <span className="badge bg-amber-500 text-white font-black text-[10px] animate-pulse">
                               ⚡ Quote Awaiting Verification
                             </span>
                           )}
-                          {(selectedRepair as any).quotation_status === 'admin_approved' && (
+                          {selectedRepair.quotation_status === 'admin_approved' && (
                             <span className="badge bg-emerald-600 text-white font-bold text-[10px]">
                               ✓ Cost Approved
                             </span>
                           )}
-                          {(selectedRepair as any).quotation_status === 'vendor_declined' && (
+                          {selectedRepair.quotation_status === 'vendor_declined' && (
                             <span className="badge bg-red-600 text-white font-bold text-[10px]">
                               ❌ Technician Declined Booking
                             </span>
                           )}
                         </div>
 
-                        {(selectedRepair as any).quotation_status === 'quoted' && (
+                        {selectedRepair.quotation_status === 'quoted' && (
                           <div className="mt-2 bg-white/90 p-3.5 rounded-xl border border-amber-200 shadow-2xs space-y-1.5">
                             <p className="font-extrabold text-gray-900 text-sm flex items-center flex-wrap gap-2">
                               <span>Technician Diagnostic Cost:</span>
                               <span className="font-black text-2xl text-emerald-700">
-                                {formatINR((selectedRepair as any).vendor_quotation_amount || 0)}
+                                {formatINR(selectedRepair.vendor_quotation_amount || 0)}
                               </span>
                               <span className="text-xs text-gray-500 font-medium">
                                 (Customer Portal Est: {formatINR(selectedRepair.estimated_cost || 0)})
@@ -504,13 +502,13 @@ export default function AdminRepairs({
                           </div>
                         )}
 
-                        {quoteNotes && (selectedRepair as any).quotation_status !== 'quoted' && (
+                        {quoteNotes && selectedRepair.quotation_status !== 'quoted' && (
                           <p className="text-xs text-gray-700 italic bg-white/70 px-2.5 py-1 rounded-lg border border-gray-200">
                             Parts & Diagnosis: "{quoteNotes}"
                           </p>
                         )}
 
-                        {(selectedRepair as any).quotation_status === 'vendor_declined' && (
+                        {selectedRepair.quotation_status === 'vendor_declined' && (
                           <p className="text-xs font-bold text-red-800">
                             Technician declined this repair. Please reassign to another service partner below.
                           </p>
@@ -519,20 +517,20 @@ export default function AdminRepairs({
 
                       {/* Quick Verification Actions */}
                       <div className="flex flex-wrap items-center gap-2">
-                        {(selectedRepair as any).quotation_status === 'quoted' && (
+                        {selectedRepair.quotation_status === 'quoted' && (
                           <>
                             <button
                               onClick={() => handleApproveRepairQuote(selectedRepair)}
                               className="btn bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs px-3.5 py-2 rounded-xl shadow-xs flex items-center gap-1.5"
                             >
-                              <CheckCircle2 className="h-3.5 w-3.5" /> Approve Quote ({formatINR((selectedRepair as any).vendor_quotation_amount || 0)})
+                              <CheckCircle2 className="h-3.5 w-3.5" /> Approve Quote ({formatINR(selectedRepair.vendor_quotation_amount || 0)})
                             </button>
 
                             <button
                               onClick={() => setOverrideModal({
                                 open: true,
                                 repair: selectedRepair,
-                                amount: String((selectedRepair as any).vendor_quotation_amount || selectedRepair.estimated_cost || ''),
+                                amount: String(selectedRepair.vendor_quotation_amount || selectedRepair.estimated_cost || ''),
                               })}
                               className="btn-outline bg-white hover:bg-ink-50 text-purple-700 border-purple-200 font-bold text-xs px-3 py-2 rounded-xl shadow-xs flex items-center gap-1"
                             >

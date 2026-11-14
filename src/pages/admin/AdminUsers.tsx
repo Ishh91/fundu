@@ -1,3 +1,4 @@
+import { getErrorMessage } from '../../lib/errorMessage';
 import { useState } from 'react';
 import { API_BASE } from '../../config/apiConfig';
 import {
@@ -24,6 +25,7 @@ import CustomerDetailsModal from '../../components/CustomerDetailsModal';
 import { sendEmailOtpCode } from '../../lib/freeNotifyService';
 import { STAFF_ROLE, describePermissions } from '../../lib/adminPermissions';
 import StaffPermissionsEditor from './StaffPermissionsEditor';
+import type { CustomerDetailsModalProps } from '../../components/CustomerDetailsModal';
 
 type UserProfile = {
   id: string;
@@ -70,7 +72,7 @@ export default function AdminUsers({
   const [search, setSearch] = useState('');
   const [roleFilter, setRoleFilter] = useState('All');
   const [activityTab, setActivityTab] = useState<'all' | 'sells' | 'orders' | 'repairs'>('all');
-  const [customerModalData, setCustomerModalData] = useState<any>(null);
+  const [customerModalData, setCustomerModalData] = useState<CustomerDetailsModalProps['customer'] | null>(null);
 
   /* ── Add User Modal State ── */
   const [addUserModal, setAddUserModal] = useState(false);
@@ -221,9 +223,9 @@ export default function AdminUsers({
       onSelectUser(newUser.id);
       setAddUserModal(false);
       alert(`🎉 User/Vendor "${addUserForm.fullName}" added successfully!\n📧 Verification Email OTP code sent to ${cleanEmail} via EmailJS. Please check email inbox.`);
-    } catch (err: any) {
+    } catch (err) {
       console.error('Add user error:', err);
-      alert(`⚠️ ${err?.message || 'Failed to add user.'}`);
+      alert(`⚠️ ${getErrorMessage(err, 'Failed to add user.')}`);
     } finally {
       setAddUserSubmitting(false);
     }
@@ -243,7 +245,7 @@ export default function AdminUsers({
       const generatedOtp = Math.floor(100000 + Math.random() * 900000).toString();
       await sendEmailOtpCode(recipientEmail, generatedOtp, user.full_name || 'User');
       alert(`📧 Verification Email OTP code sent to ${recipientEmail} via EmailJS! Please check inbox.`);
-    } catch (err) {
+    } catch {
       alert('Failed to resend email verification. Please check EmailJS settings.');
     } finally {
       setResendingEmailId(null);
@@ -651,7 +653,7 @@ export default function AdminUsers({
                       {userSells.map((s) => (
                         <div key={s.id} className="p-4 rounded-2xl bg-amber-50/40 border border-amber-200/60 flex flex-wrap items-center justify-between gap-3 text-xs">
                           <div>
-                            <p className="font-bold text-ink-900 text-sm">{(s as any).device_name || `${s.brand} ${s.model}`}</p>
+                            <p className="font-bold text-ink-900 text-sm">{s.device_name || `${s.brand} ${s.model}`}</p>
                             <p className="text-ink-500 mt-0.5">Condition: {s.condition} • Address: {s.pickup_address || 'Doorstep Service'}</p>
                           </div>
                           <div className="text-right">

@@ -31,7 +31,7 @@ export async function fetchDeviceImageOnline(brand: string, model: string): Prom
       saveCustomModelImage(brand, model, data.imageUrl);
       return data.imageUrl;
     }
-  } catch (err) {
+  } catch {
     // Silent failover to static renders
   } finally {
     pendingRequests.delete(key);
