@@ -8,11 +8,13 @@
     "dev:server": "node --watch server/index.js",
     "server": "node server/index.js",
     "build": "vite build",
-    "test": "node --test test/quote.test.js test/seo.test.js test/permissions.test.js test/authRefresh.test.js test/performance.test.js test/productSave.test.js test/editSave.test.js test/rejectedSession.test.js test/vendorLedger.test.js",
+    "test": "node --test test/quote.test.js test/seo.test.js test/permissions.test.js test/authRefresh.test.js test/performance.test.js test/productSave.test.js test/editSave.test.js test/rejectedSession.test.js test/vendorLedger.test.js test/routeGuards.test.js test/pagedLoad.test.js test/ledgerCleanup.test.js",
     "lint": "eslint .",
     "preview": "vite preview",
     "typecheck": "tsc --noEmit -p tsconfig.app.json",
     "sitemap": "node scripts/generate_sitemap.mjs",
+    "ledger:check": "node scripts/fix_duplicate_ledger.mjs",
+    "ledger:fix": "node scripts/fix_duplicate_ledger.mjs --apply",
     "prebuild": "node scripts/generate_sitemap.mjs"
   },
   "dependencies": {

@@ -81,6 +81,7 @@ router.get('/:table', async (req, res, next) => {
     const select = typeof req.query.select === 'string' ? req.query.select : '*';
     const single = req.query.single === 'true' || req.query.maybeSingle === 'true';
     const limit = typeof req.query.limit === 'string' ? Number(req.query.limit) : undefined;
+    const offset = typeof req.query.offset === 'string' ? Number(req.query.offset) : undefined;
 
     const data = await queryTable(table, {
       auth: req.auth,
@@ -89,6 +90,7 @@ router.get('/:table', async (req, res, next) => {
       select,
       single,
       limit,
+      offset,
     });
 
     if (isPublicCacheable && data) {

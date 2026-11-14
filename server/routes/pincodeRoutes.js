@@ -1,5 +1,9 @@
 import { Router } from 'express';
 import { ServiceablePincode } from '../models/ServiceablePincode.js';
+import { permissionGuard } from '../middleware/auth.js';
+
+// Pincodes are public to read; only the super admin or fleet staff may change them.
+const requireFleetAccess = permissionGuard('fleet');
 
 const router = Router();
 
@@ -158,7 +162,7 @@ router.get('/', async (req, res) => {
  * Admin: Add single or bulk pincodes
  * POST /api/pincodes
  */
-router.post('/', async (req, res) => {
+router.post('/', requireFleetAccess, async (req, res) => {
   try {
     const {
       pincode,
@@ -224,7 +228,7 @@ router.post('/', async (req, res) => {
  * Admin: Update a serviceable pincode by ID
  * PATCH /api/pincodes/:id
  */
-router.patch('/:id', async (req, res) => {
+router.patch('/:id', requireFleetAccess, async (req, res) => {
   try {
     const { id } = req.params;
     const updateData = { ...req.body, updated_at: new Date() };
@@ -246,7 +250,7 @@ router.patch('/:id', async (req, res) => {
  * Admin: Delete a serviceable pincode by ID
  * DELETE /api/pincodes/:id
  */
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', requireFleetAccess, async (req, res) => {
   try {
     const { id } = req.params;
     const deleted = await ServiceablePincode.findByIdAndDelete(id);
@@ -265,7 +269,7 @@ router.delete('/:id', async (req, res) => {
  * Admin: Reset / Seed Lucknow Default Pincodes
  * POST /api/pincodes/seed-lucknow
  */
-router.post('/seed-lucknow', async (_req, res) => {
+router.post('/seed-lucknow', requireFleetAccess, async (_req, res) => {
   try {
     const operations = LUCKNOW_DEFAULT_PINCODES.map((item) => ({
       updateOne: {

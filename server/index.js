@@ -17,6 +17,9 @@ import apiRoutes from './routes/index.js';
 const app = express();
 const PORT = Number(process.env.PORT || 4000);
 
+// Render and similar hosts sit behind one proxy; trust it so req.ip is the real client address.
+app.set('trust proxy', 1);
+
 // Bulletproof Universal CORS Middleware (Always set headers first)
 app.use((req, res, next) => {
   const requestOrigin = req.headers.origin;

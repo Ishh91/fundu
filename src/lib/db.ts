@@ -250,6 +250,8 @@ class QueryBuilder<T = unknown> implements PromiseLike<QueryResponse<T>> {
 
   private limitCount: number | null = null;
 
+  private offsetCount: number | null = null;
+
   private payload: unknown = null;
 
   private expectSingle = false;
@@ -286,6 +288,12 @@ class QueryBuilder<T = unknown> implements PromiseLike<QueryResponse<T>> {
 
   limit(count: number) {
     this.limitCount = count;
+    return this;
+  }
+
+  /** Skips this many rows; with sort and limit it pages through a long list. */
+  offset(count: number) {
+    this.offsetCount = count;
     return this;
   }
 
@@ -329,6 +337,7 @@ class QueryBuilder<T = unknown> implements PromiseLike<QueryResponse<T>> {
       if (this.filters.length > 0) params.set('filters', JSON.stringify(this.filters));
       if (this.sortConfig) params.set('sort', JSON.stringify(this.sortConfig));
       if (typeof this.limitCount === 'number') params.set('limit', String(this.limitCount));
+      if (typeof this.offsetCount === 'number' && this.offsetCount > 0) params.set('offset', String(this.offsetCount));
       if (this.expectSingle) params.set('single', 'true');
 
       const cacheKey = `${this.table}:${params.toString()}`;

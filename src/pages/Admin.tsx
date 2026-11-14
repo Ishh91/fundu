@@ -90,9 +90,14 @@ import type { RepairPriceConfig } from '../types';
 import { describeOversizedSave, MAX_INLINE_VIDEO_FILE_BYTES, VIDEO_TOO_LARGE_MESSAGE } from '../lib/uploadLimits';
 import { readProductPhotos } from '../lib/productPhotoUpload';
 import { changedFields } from '../lib/objectDiff';
+import { appendUniqueById, loadRemainingPages, mergeLatestById } from '../lib/pagedLoad';
 
 // The Users page searches and filters this list in the browser, so it needs every account.
 const ADMIN_USERS_PAGE_LIMIT = 5000;
+
+// Lists show their newest page at once; older rows follow in the background, page by page.
+const ADMIN_LIST_PAGE_SIZE = 60;
+const ADMIN_LIST_MAX_ROWS = 5000;
 
 export default function Admin() {
   const { user, profile, loading, signIn, signOut } = useAuth();
@@ -194,6 +199,8 @@ export default function Admin() {
   const [activeNotifications, setActiveNotifications] = useState<LiveNotification[]>([]);
   const isInitialLoad = useRef(true);
   const lastKnownSellId = useRef<string | null>(null);
+  // Bumped on every full reload so background paging from an older reload stops.
+  const loadGeneration = useRef(0);
   const lastKnownRepairId = useRef<string | null>(null);
   const lastKnownOrderId = useRef<string | null>(null);
   const knownQuotedSellIds = useRef<Set<string>>(new Set());
@@ -422,17 +429,47 @@ export default function Admin() {
     }
   }, [user, profile, loading, navigate]);
 
+  /** Keeps loading rows older than the first page, appending them as they arrive. */
+  const loadOlderRows = <T extends { id: string }>(
+    table: string,
+    firstPage: T[] | null,
+    setRows: React.Dispatch<React.SetStateAction<T[]>>,
+    generation: number,
+  ) => {
+    if (!firstPage || firstPage.length < ADMIN_LIST_PAGE_SIZE) return;
+    loadRemainingPages<T>(
+      async (offset, limit) => {
+        const { data } = await db
+          .from(table)
+          .select('*')
+          .sort({ field: 'created_at', ascending: false })
+          .limit(limit)
+          .offset(offset);
+        return (data as T[] | null) ?? null;
+      },
+      {
+        pageSize: ADMIN_LIST_PAGE_SIZE,
+        startOffset: firstPage.length,
+        maxRows: ADMIN_LIST_MAX_ROWS,
+        onPage: (rows) => setRows((prev) => appendUniqueById(prev, rows)),
+        isCancelled: () => loadGeneration.current !== generation,
+      },
+    ).catch((e) => console.warn(`[Admin] Could not load older ${table}:`, e));
+  };
+
   const loadAllData = async () => {
     setDataLoading(true);
     setFetchError(null);
+    loadGeneration.current += 1;
+    const generation = loadGeneration.current;
     try {
       // 1. FAST PRIMARY HYDRATION: Fetch core operational data first (Overview, Leads, Orders, Agents)
       const [productsRes, sellsRes, repairsRes, ordersRes, agentsRes] = await Promise.all([
-        db.from('products').select('*').limit(60).sort({ field: 'created_at', ascending: false }),
-        db.from('sell_requests').select('*').limit(60).sort({ field: 'created_at', ascending: false }),
-        db.from('repair_bookings').select('*').limit(60).sort({ field: 'created_at', ascending: false }),
-        db.from('orders').select('*').limit(60).sort({ field: 'created_at', ascending: false }),
-        db.from('delivery_agents').select('*').limit(30).sort({ field: 'created_at', ascending: false }),
+        db.from('products').select('*').limit(ADMIN_LIST_PAGE_SIZE).sort({ field: 'created_at', ascending: false }),
+        db.from('sell_requests').select('*').limit(ADMIN_LIST_PAGE_SIZE).sort({ field: 'created_at', ascending: false }),
+        db.from('repair_bookings').select('*').limit(ADMIN_LIST_PAGE_SIZE).sort({ field: 'created_at', ascending: false }),
+        db.from('orders').select('*').limit(ADMIN_LIST_PAGE_SIZE).sort({ field: 'created_at', ascending: false }),
+        db.from('delivery_agents').select('*').limit(500).sort({ field: 'created_at', ascending: false }),
       ]);
 
       if (productsRes.data) setProducts(productsRes.data as Product[]);
@@ -459,15 +496,23 @@ export default function Admin() {
       // INSTANTLY UNBLOCK THE ADMIN DASHBOARD! (< 1 second load time)
       setDataLoading(false);
 
+      // Older rows (beyond the first page) keep arriving in the background.
+      loadOlderRows<Product>('products', productsRes.data as Product[] | null, setProducts, generation);
+      loadOlderRows<SellRequest>('sell_requests', sellsRes.data as SellRequest[] | null, setSells, generation);
+      loadOlderRows<RepairBooking>('repair_bookings', repairsRes.data as RepairBooking[] | null, setRepairs, generation);
+      loadOlderRows<Order>('orders', ordersRes.data as Order[] | null, setOrders, generation);
+
       // 2. BACKGROUND HYDRATION: Fetch secondary management tables non-blockingly (after primary render)
       setTimeout(() => {
         Promise.all([
-          db.from('spare_parts').select('*').limit(60).sort({ field: 'created_at', ascending: false }),
+          db.from('spare_parts').select('*').limit(ADMIN_LIST_PAGE_SIZE).sort({ field: 'created_at', ascending: false }),
           db.from('profiles').select('*').limit(ADMIN_USERS_PAGE_LIMIT).sort({ field: 'created_at', ascending: false }),
-          db.from('reviews').select('*').limit(60).sort({ field: 'created_at', ascending: false }),
+          db.from('reviews').select('*').limit(ADMIN_LIST_PAGE_SIZE).sort({ field: 'created_at', ascending: false }),
           db.from('repair_price_configs').select('*').limit(200).sort({ field: 'created_at', ascending: false }),
         ]).then(([partsRes, profilesRes, reviewsRes, repairPricingRes]) => {
           if (partsRes.data) setParts(partsRes.data as SparePart[]);
+          loadOlderRows<SparePart>('spare_parts', partsRes.data as SparePart[] | null, setParts, generation);
+          loadOlderRows<Review>('reviews', reviewsRes.data as Review[] | null, setReviews, generation);
           if (profilesRes.data) setProfiles(profilesRes.data as any[]);
           if (reviewsRes.data) setReviews(reviewsRes.data as Review[]);
           if (repairPricingRes?.data) {
@@ -553,7 +598,7 @@ export default function Admin() {
                 setTab('sells');
               },
             });
-            setSells(freshSells);
+            setSells((prev) => mergeLatestById(prev, freshSells));
           } else if (!lastKnownSellId.current) {
             lastKnownSellId.current = newest.id;
           }
@@ -584,7 +629,7 @@ export default function Admin() {
                 setTab('repairs');
               },
             });
-            setRepairs(freshRepairs);
+            setRepairs((prev) => mergeLatestById(prev, freshRepairs));
           } else if (!lastKnownRepairId.current) {
             lastKnownRepairId.current = newest.id;
           }
@@ -615,7 +660,7 @@ export default function Admin() {
                 setTab('orders');
               },
             });
-            setOrders(freshOrders);
+            setOrders((prev) => mergeLatestById(prev, freshOrders));
           } else if (!lastKnownOrderId.current) {
             lastKnownOrderId.current = newest.id;
           }

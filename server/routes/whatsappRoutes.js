@@ -1,5 +1,10 @@
 import { Router } from 'express';
 import { sendViaNodemailer } from './emailRoutes.js';
+import { rateLimit } from '../middleware/rateLimit.js';
+import { limitNotification } from '../utils/notificationLimits.js';
+
+// Guests trigger booking alerts, so this cannot require a login; rate limit it instead.
+const whatsappRateLimit = rateLimit({ windowMs: 10 * 60 * 1000, max: 30, name: 'whatsapp' });
 
 const router = Router();
 
@@ -133,15 +138,16 @@ async function sendViaUltraMsg(phone, message) {
  * POST /api/whatsapp/send
  * Universal Automated Background WhatsApp Dispatcher
  */
-router.post('/send', async (req, res) => {
+router.post('/send', whatsappRateLimit, async (req, res) => {
   try {
     const { numbers, phone, message } = req.body;
     const recipientNumbers = Array.isArray(numbers)
       ? numbers
       : (phone ? [phone] : ['9105783553', '9839122345']);
 
-    if (!message) {
-      return res.status(400).json({ success: false, error: 'Message body is required' });
+    const limitError = limitNotification({ recipients: recipientNumbers, body: message });
+    if (limitError) {
+      return res.status(400).json({ success: false, error: limitError });
     }
 
     const results = [];
