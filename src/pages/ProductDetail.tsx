@@ -80,6 +80,9 @@ const INSPECTION_POINTS = [
   'Biometric Face ID / Fingerprint Working',
 ];
 
+/** How long after the product appears before the shared model-image list is fetched. */
+const DEFERRED_MODEL_IMAGE_PULL_MS = 1500;
+
 export default function ProductDetail() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
@@ -182,13 +185,22 @@ export default function ProductDetail() {
   const [showExchangeModal, setShowExchangeModal] = useState(false);
 
   useEffect(() => {
-    pullLiveModelImagesFromDb();
     const handleModelImageUpdate = () => {
       setProduct((prev) => (prev ? { ...prev } : null));
     };
     window.addEventListener('fundu_model_image_updated', handleModelImageUpdate);
     return () => window.removeEventListener('fundu_model_image_updated', handleModelImageUpdate);
   }, []);
+
+  // The shared model-image list is large. Fetching it while the product itself is still loading
+  // makes both compete for the same slow server, so it starts only once the product is on screen.
+  useEffect(() => {
+    if (loading) return;
+    const timer = window.setTimeout(() => {
+      void pullLiveModelImagesFromDb();
+    }, DEFERRED_MODEL_IMAGE_PULL_MS);
+    return () => window.clearTimeout(timer);
+  }, [loading]);
 
   useEffect(() => {
     if (!id) return;
