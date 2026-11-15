@@ -36,3 +36,4 @@ Disallow: /order-success
 Disallow: /demo-condition-filter
 
 Sitemap: https://www.thefundu.com/sitemap.xml
+Sitemap: https://www.thefundu.com/sitemap-products.xml

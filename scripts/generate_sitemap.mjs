@@ -39,7 +39,7 @@ const CATALOG_ENTRY = `
 `;
 
 /** Bundles the TypeScript catalog modules so plain Node can import them. */
-async function loadCatalog() {
+export async function loadCatalog() {
   const tempDir = await mkdtemp(path.join(tmpdir(), 'fundu-sitemap-'));
   const bundleFile = path.join(tempDir, 'catalog.mjs');
   try {
@@ -72,7 +72,7 @@ const modelSlugOf = (model) =>
 const escapeXml = (value) =>
   value.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 
-function collectEntries(catalog) {
+export function collectEntries(catalog) {
   const { BRAND_TILES, MASTER_MODEL_CATALOG, BRAND_SERIES_DEFINITIONS, resolveSeoMeta } = catalog;
   const entries = new Map();
 
@@ -126,7 +126,10 @@ async function main() {
   console.log(`Wrote ${entries.size} URLs to ${path.relative(ROOT, OUTPUT_FILE)}`);
 }
 
-main().catch((error) => {
-  console.error('Sitemap generation failed:', error);
-  process.exit(1);
-});
+// Only generate when run directly; the prerender script imports the helpers above.
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
+  main().catch((error) => {
+    console.error('Sitemap generation failed:', error);
+    process.exit(1);
+  });
+}
