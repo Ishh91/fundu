@@ -32,6 +32,7 @@ import { useCart } from '../context/CartContext';
 import { getCleanPhoneImage, pullLiveModelImagesFromDb } from '../lib/phoneImages';
 import { getRememberedProduct, rememberProducts } from '../lib/productsCache';
 import type { Product, Review } from '../types';
+import { showsRam } from '../lib/cardSpecs';
 import { normalizeStorageString, isStorageAllowedForModel } from '../lib/deviceSpecs';
 import { findSampleProductById } from '../data/sampleProducts';
 import { findSampleLaptopById } from '../data/sampleLaptops';
@@ -724,14 +725,16 @@ return (
 
             {/* RAM MEMORY & STORAGE CAPACITY SPECIFICATIONS */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <label className="label text-xs font-bold text-ink-900">RAM (Memory)</label>
-                <div className="flex flex-wrap gap-2">
+              {product.ram && showsRam(product) && (
+                <div className="space-y-2">
+                  <label className="label text-xs font-bold text-ink-900">RAM (Memory)</label>
+                  <div className="flex flex-wrap gap-2">
                     <span className="rounded-2xl px-4 py-2.5 text-xs font-extrabold bg-[#F0F0F5] text-[#344257] border border-[#C0C8D8]">
-                      {product.ram || '8 GB RAM'}
+                      {product.ram}
                     </span>
+                  </div>
                 </div>
-              </div>
+              )}
 
               <div className="space-y-2">
                 <label className="label text-xs font-bold text-ink-900">Storage Capacity</label>
@@ -990,7 +993,7 @@ return (
                         ? 'Apple Silicon Bionic / Neural Engine'
                         : product.category === 'laptop'
                         ? `${product.ram || '16 GB'} RAM · ${product.processor || 'Core Multi-Processor'}`
-                        : `${product.ram || '8 GB'} RAM · High Speed Octa-Core Chipset`}
+                        : `${product.ram ? `${product.ram} RAM · ` : ''}High Speed Octa-Core Chipset`}
                     </p>
                   </div>
                 </div>
