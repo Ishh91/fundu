@@ -23,6 +23,12 @@ const parseQuantity = (raw) => {
 const allowedStorageSizes = (doc) =>
   (Array.isArray(doc.available_storages) ? doc.available_storages : []).map(storageGb).filter(Boolean);
 
+const normalizeColor = (value) => String(value || '').trim().toLowerCase();
+
+/** Colours a listing allows: its own colour plus any it lists; empty when it names none. */
+const allowedColors = (doc) =>
+  [doc.color, ...(Array.isArray(doc.available_colors) ? doc.available_colors : [])].map(normalizeColor).filter(Boolean);
+
 /**
  * One unit's price from the saved listing and the customer's storage/condition choice,
  * by the same rules the product page uses to show it. Spare parts have no variants.
@@ -36,6 +42,10 @@ const unitPrice = (kind, doc, item) => {
   const hasChoice = Boolean(choice.storage);
   const allowed = !hasChoice || (sizes.length > 0 ? sizes.includes(chosenGb) || chosenGb === ownGb : isPlausibleStorage(choice.storage));
   if (!allowed) throw createHttpError(400, `That storage option is not available for ${doc.title || 'this item'}.`);
+  const colors = allowedColors(doc);
+  if (item?.color && colors.length > 0 && !colors.includes(normalizeColor(item.color))) {
+    throw createHttpError(400, `That colour is not available for ${doc.title || 'this item'}.`);
+  }
   return variantPrice(doc, choice);
 };
 

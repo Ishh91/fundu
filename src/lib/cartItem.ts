@@ -23,8 +23,8 @@ export const getItemVariant = (item: Product | SparePart): CartItemVariant =>
       }
     : NO_VARIANT;
 
-/** "128 GB • Superb" style summary for a cart line; empty for spare parts. */
+/** "128 GB • Blue • Superb" style summary for a cart line; empty for spare parts. */
 export const describeItemVariant = (item: Product | SparePart): string => {
-  const { storage, condition } = getItemVariant(item);
-  return [storage, condition].filter(Boolean).join(' • ');
+  const { storage, color, condition } = getItemVariant(item);
+  return [storage, color, condition].filter(Boolean).join(' • ');
 };
