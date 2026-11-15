@@ -1,10 +1,15 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, Navigate, useLocation } from 'react-router-dom';
 import { CheckCircle2, ShoppingBag, Home, Star } from 'lucide-react';
 import ReviewModal from '../components/ReviewModal';
+import { placedOrderIdFrom } from '../lib/orderSuccess';
 
 export default function OrderSuccess() {
+  const location = useLocation();
   const [reviewModalOpen, setReviewModalOpen] = useState(false);
+
+  // Only the payment page, right after an order is saved, sends someone here. A direct visit has no order to confirm.
+  if (!placedOrderIdFrom(location.state)) return <Navigate to="/dashboard" replace />;
 
   return (
     <div className="container-page py-20 text-center">
