@@ -21,7 +21,7 @@ type StaticPage = { title: string; description: string };
 
 const STATIC_PAGES: Record<string, StaticPage> = {
   '/': {
-    title: 'Sell Old Phone, Buy Refurbished & Doorstep Repair | Fundu',
+    title: 'TheFundu: Sell Old Phone, Buy Refurbished & Doorstep Repair | Fundu',
     description:
       'Sell old smartphones for instant UPI/cash at your doorstep, buy certified refurbished iPhones & Galaxy phones with 6-month warranty, and book 30-minute doorstep repair.',
   },
