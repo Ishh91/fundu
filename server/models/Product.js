@@ -20,6 +20,8 @@ const productSchema = createSchema({
   is_approved: { type: Boolean, default: false },
   is_featured: { type: Boolean, default: false },
   stock: { type: Number, default: 1 },
+  // Stock per storage + colour. Empty means the listing counts one `stock` number for everything.
+  variant_stock: { type: [{ storage: String, color: String, stock: Number, _id: false }], default: [] },
   sold_count: { type: Number, default: 0 },
   seller_id: { type: String, default: null },
 }, { timestamps: { createdAt: 'created_at', updatedAt: false } });
