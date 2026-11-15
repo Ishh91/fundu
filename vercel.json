@@ -1,11 +1,24 @@
 {
   "rewrites": [
     {
+      "source": "/sitemap-products.xml",
+      "destination": "https://fundu-1.onrender.com/api/seo/sitemap-products.xml"
+    },
+    {
       "source": "/:route(about|admin|admin-login|articles|brand|buy|buy-laptop|buy-laptops|cart|checkout|contact|dashboard|delivery|delivery-login|demo-condition-filter|doorstep-mobile-repair|festival|fleet-desk|login|mobile-repair|order-success|partner|payment|product|profile|recycle|register|repair|rider|rider-login|search|sell|sell-old-mobile-phone|spare-parts|store|vendor|vendor-login|wholesaler|wholesaler-login)/:path*",
-      "destination": "/index.html"
+      "destination": "/app-shell.html"
     }
   ],
   "headers": [
+    {
+      "source": "/app-shell.html",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-cache, no-store, must-revalidate"
+        }
+      ]
+    },
     {
       "source": "/index.html",
       "headers": [

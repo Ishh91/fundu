@@ -8,9 +8,11 @@ import whatsappRoutes from './whatsappRoutes.js';
 import pincodeRoutes from './pincodeRoutes.js';
 import errorRoutes from './errorRoutes.js';
 import paymentRoutes from './paymentRoutes.js';
+import seoRoutes from './seoRoutes.js';
 
 const router = Router();
 
+router.use('/seo', seoRoutes);
 router.use('/errors', errorRoutes);
 router.use('/phones', phoneRoutes);
 router.use('/pincodes', pincodeRoutes);
