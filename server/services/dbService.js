@@ -15,6 +15,8 @@ import { triggerEventNotification } from './notificationService.js';
 import { quotePhone } from '../../fundu_phone_quote.mjs';
 import { createPhoneQuote } from './quoteService.js';
 import { isTrustedOrderWriter, secureCustomerOrder } from './orderSecurity.js';
+import { adjustProductStock, releaseOrderStock, reserveOrderStock } from './stockService.js';
+import { cleanVariantStock, totalVariantStock } from '../../shared/variantStock.js';
 import { getRazorpayCredentials } from './razorpayService.js';
 import { postBuybackToLedger, postRepairToLedger, shouldRestoreStock } from './vendorLedgerService.js';
 
@@ -219,6 +221,11 @@ export const preparePayload = (table, action, input, auth) => {
       if (!canAdminTable(auth, table)) {
         payload.seller_id = auth.sub;
         if (action === 'insert' || action === 'upsert') payload.is_approved = false;
+      }
+      if (table === 'products' && Array.isArray(payload.variant_stock)) {
+        // The total always follows the per-variant counts so cards and the cart never disagree with them.
+        payload.variant_stock = cleanVariantStock(payload.variant_stock);
+        if (payload.variant_stock.length > 0) payload.stock = totalVariantStock(payload.variant_stock);
       }
       return payload;
     case 'wholesale_inventories':
@@ -623,27 +630,8 @@ export const insertIntoTable = async (table, { auth, values, single }) => {
     }
   }
 
-  // Handle Consumer Order stock reduction
-  if (table === 'orders') {
-    for (const order of preparedItems) {
-      if (Array.isArray(order.items)) {
-        for (const it of order.items) {
-          const pId = it.product_id || it.id || it._id;
-          const qty = Math.max(Number(it.quantity) || 1, 1);
-          if (pId) {
-            try {
-              await Product.findOneAndUpdate(
-                { $or: [{ _id: Types.ObjectId.isValid(pId) ? new Types.ObjectId(pId) : null }, { id: pId }] },
-                { $inc: { stock: -qty } }
-              );
-            } catch (err) {
-              console.warn('Notice updating product stock for order:', err);
-            }
-          }
-        }
-      }
-    }
-  }
+  // Handle Consumer Order stock reduction (taken before the save, given back if the save fails)
+  const reservedStock = table === 'orders' ? await reserveOrderStock(Product, preparedItems) : [];
 
   // Handle Vendor Ledger entries (e.g. Cash repayment from vendor)
   if (table === 'vendor_ledgers' || table === 'vendor_ledger') {
@@ -671,7 +659,13 @@ export const insertIntoTable = async (table, { auth, values, single }) => {
     }
   }
 
-  const docs = await Model.insertMany(preparedItems);
+  let docs;
+  try {
+    docs = await Model.insertMany(preparedItems);
+  } catch (err) {
+    await releaseOrderStock(Product, reservedStock);
+    throw err;
+  }
   const normalized = normalizeDoc(docs);
 
   // Background Automated Notification Triggers
@@ -750,10 +744,7 @@ export const updateTable = async (table, { auth, filters, values, single, select
                 const qty = Math.max(Number(it.quantity) || 1, 1);
                 if (pId) {
                   try {
-                    await Product.findOneAndUpdate(
-                      { $or: [{ _id: Types.ObjectId.isValid(pId) ? new Types.ObjectId(pId) : null }, { id: pId }] },
-                      { $inc: { stock: qty } }
-                    );
+                    await adjustProductStock(Product, pId, it, qty, 'give');
                   } catch (err) {
                     console.warn('Notice restoring stock for cancelled order:', err);
                   }

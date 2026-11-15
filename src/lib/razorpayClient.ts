@@ -14,7 +14,15 @@ export type RazorpayProof = {
   signature: string;
 };
 
-type CartLine = { product_id: string | null; spare_part_id: string | null; quantity: number };
+type CartLine = {
+  product_id: string | null;
+  spare_part_id: string | null;
+  quantity: number;
+  /** The variant the customer chose; the server prices the payment from it. */
+  storage?: string;
+  color?: string;
+  condition?: string;
+};
 
 /** Asks the server to open a Razorpay order; the server works out the amount from its own prices. */
 export async function createServerRazorpayOrder(items: CartLine[]): Promise<RazorpayServerOrder> {

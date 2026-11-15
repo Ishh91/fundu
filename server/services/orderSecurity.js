@@ -2,6 +2,7 @@ import crypto from 'node:crypto';
 import { createHttpError } from '../utils/error.js';
 import { confirmRazorpayPayment } from './razorpayService.js';
 import { isPlausibleStorage, storageGb, variantPrice } from '../../shared/variantPricing.js';
+import { entryStock, findVariantEntry, tracksVariantStock } from '../../shared/variantStock.js';
 
 const MAX_QUANTITY_PER_ITEM = 20;
 const OTP_MIN = 1000;
@@ -23,6 +24,12 @@ const parseQuantity = (raw) => {
 const allowedStorageSizes = (doc) =>
   (Array.isArray(doc.available_storages) ? doc.available_storages : []).map(storageGb).filter(Boolean);
 
+const normalizeColor = (value) => String(value || '').trim().toLowerCase();
+
+/** Colours a listing allows: its own colour plus any it lists; empty when it names none. */
+const allowedColors = (doc) =>
+  [doc.color, ...(Array.isArray(doc.available_colors) ? doc.available_colors : [])].map(normalizeColor).filter(Boolean);
+
 /**
  * One unit's price from the saved listing and the customer's storage/condition choice,
  * by the same rules the product page uses to show it. Spare parts have no variants.
@@ -36,6 +43,10 @@ const unitPrice = (kind, doc, item) => {
   const hasChoice = Boolean(choice.storage);
   const allowed = !hasChoice || (sizes.length > 0 ? sizes.includes(chosenGb) || chosenGb === ownGb : isPlausibleStorage(choice.storage));
   if (!allowed) throw createHttpError(400, `That storage option is not available for ${doc.title || 'this item'}.`);
+  const colors = allowedColors(doc);
+  if (item?.color && colors.length > 0 && !colors.includes(normalizeColor(item.color))) {
+    throw createHttpError(400, `That colour is not available for ${doc.title || 'this item'}.`);
+  }
   return variantPrice(doc, choice);
 };
 
@@ -61,12 +72,19 @@ export const priceOrderItems = async (items, lookup) => {
       throw createHttpError(400, 'An item in your cart is no longer available.');
     }
 
-    // Stock is one count per listing, however many storage/colour lines the cart splits it into.
-    const listingKey = `${kind}:${String(id)}`;
-    const wanted = (unitsByListing.get(listingKey) || 0) + quantity;
-    unitsByListing.set(listingKey, wanted);
-    if ((Number(doc.stock) || 0) < wanted) {
-      throw createHttpError(409, `Not enough stock for ${doc.title || 'an item'}.`);
+    // Stock is one count per listing, or per storage + colour when the listing counts it that way.
+    // Cart lines that share a count share its stock.
+    const counted = kind === 'products' && tracksVariantStock(doc);
+    const entry = counted ? findVariantEntry(doc, { storage: item?.storage, color: item?.color }) : null;
+    if (counted && !entry) {
+      throw createHttpError(409, `That storage and colour combination is not available for ${doc.title || 'this item'}.`);
+    }
+    const stockKey = entry ? `${kind}:${String(id)}:${entry.storage}|${entry.color}` : `${kind}:${String(id)}`;
+    const wanted = (unitsByListing.get(stockKey) || 0) + quantity;
+    unitsByListing.set(stockKey, wanted);
+    if ((entry ? entryStock(entry) : Number(doc.stock) || 0) < wanted) {
+      const label = entry ? ` (${[entry.storage, entry.color].filter(Boolean).join(', ')})` : '';
+      throw createHttpError(409, `Not enough stock for ${doc.title || 'an item'}${label}.`);
     }
 
     const price = unitPrice(kind, doc, item);

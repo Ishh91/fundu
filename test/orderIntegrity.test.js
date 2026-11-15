@@ -233,6 +233,17 @@ describe('priceOrderItems with storage and condition choices', () => {
     );
   });
 
+  it('refuses a colour the listing does not offer', async () => {
+    const coloured = { ...phone, color: 'Blue', available_colors: ['Blue', 'Black'] };
+    const colourLookup = async () => coloured;
+    await assert.rejects(
+      priceOrderItems([{ product_id: 'v1', quantity: 1, color: 'Pink' }], colourLookup),
+      /colour is not available/,
+    );
+    const ok = await priceOrderItems([{ product_id: 'v1', quantity: 1, color: 'black' }], colourLookup);
+    assert.equal(ok.items[0].color, 'black');
+  });
+
   it('counts one listing once even when the cart splits it over several lines', async () => {
     await assert.rejects(
       priceOrderItems(

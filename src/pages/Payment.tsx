@@ -7,6 +7,7 @@ import { db, formatINR } from '../lib/db';
 import { notifyNewBuyOrder, sendCustomerDeliveryOtp } from '../lib/whatsappNotifyService';
 import { createServerRazorpayOrder, type RazorpayProof } from '../lib/razorpayClient';
 import { getItemVariant } from '../lib/cartItem';
+import { showsRam } from '../lib/cardSpecs';
 
 type RazorpayResponse = {
   razorpay_payment_id: string;
@@ -44,6 +45,7 @@ export default function Payment() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState<'cod' | 'razorpay' | null>(null);
+  const [variantConfirmed, setVariantConfirmed] = useState(false);
 
   useEffect(() => {
     if (!user) {
@@ -191,6 +193,9 @@ export default function Payment() {
           product_id: ci.type === 'product' ? ci.item.id : null,
           spare_part_id: ci.type === 'spare_part' ? ci.item.id : null,
           quantity: ci.quantity || 1,
+          storage: getItemVariant(ci.item).storage,
+          color: getItemVariant(ci.item).color,
+          condition: getItemVariant(ci.item).condition,
         })),
       );
 
@@ -250,12 +255,46 @@ export default function Payment() {
         <h1 className="font-display font-bold text-2xl text-ink-900 mb-2">Select Payment Method</h1>
         <p className="text-ink-500 mb-6">Total Amount ({totalItems} item{totalItems > 1 ? 's' : ''}): <span className="font-bold text-brand-600">{formatINR(totalAmount)}</span></p>
 
+        <div className="mb-6 rounded-2xl border border-amber-200 bg-amber-50/60 p-4">
+          <h2 className="font-display text-base font-extrabold text-ink-900">Confirm your device before you pay</h2>
+          <ul className="mt-3 space-y-2">
+            {cartItems.map((ci) => {
+              const variant = getItemVariant(ci.item);
+              const specs = [
+                variant.storage && `Storage: ${variant.storage}`,
+                variant.ram && showsRam(ci.item as { brand?: string; model?: string; title?: string }) && `RAM: ${variant.ram}`,
+                variant.color && `Colour: ${variant.color}`,
+                variant.condition && `Condition: ${variant.condition}`,
+              ].filter(Boolean);
+              return (
+                <li key={ci.id} className="rounded-xl bg-white border border-amber-100 p-3 text-sm">
+                  <p className="font-bold text-ink-900">
+                    {ci.item.title || `${ci.item.brand || ''} ${ci.item.model || ''}`.trim()} <span className="text-ink-500">× {ci.quantity || 1}</span>
+                  </p>
+                  {specs.length > 0 && <p className="mt-0.5 text-xs text-ink-600">{specs.join(' · ')}</p>}
+                </li>
+              );
+            })}
+          </ul>
+          <label className="mt-3 flex items-start gap-2 text-sm font-semibold text-ink-800 cursor-pointer">
+            <input
+              type="checkbox"
+              checked={variantConfirmed}
+              onChange={(e) => setVariantConfirmed(e.target.checked)}
+              className="mt-0.5 h-4 w-4"
+            />
+            <span>Maine storage, colour aur condition check kar li hai, yahi device chahiye.</span>
+          </label>
+        </div>
+
+        {!variantConfirmed && <p className="mb-3 text-xs font-semibold text-amber-700">Payment option chunne se pehle upar device confirm karo.</p>}
+
         <div className="space-y-4">
           {/* COD Option */}
           <button
             onClick={handleCOD}
-            disabled={loading}
-            className={`w-full p-4 border-2 rounded-xl text-left transition-all flex items-center gap-4 ${
+            disabled={loading || !variantConfirmed}
+            className={`w-full p-4 border-2 rounded-xl text-left transition-all flex items-center gap-4 disabled:opacity-50 disabled:cursor-not-allowed ${
               paymentMethod === 'cod' ? 'border-brand-500 bg-brand-50' : 'border-ink-200 bg-ink-100/60 hover:border-ink-300 hover:bg-ink-200/70'
             }`}
           >
@@ -271,8 +310,8 @@ export default function Payment() {
           {/* Razorpay Option */}
           <button
             onClick={handleRazorpay}
-            disabled={loading}
-            className={`w-full p-4 border-2 rounded-xl text-left transition-all flex items-center gap-4 ${
+            disabled={loading || !variantConfirmed}
+            className={`w-full p-4 border-2 rounded-xl text-left transition-all flex items-center gap-4 disabled:opacity-50 disabled:cursor-not-allowed ${
               paymentMethod === 'razorpay' ? 'border-brand-500 bg-brand-50' : 'border-ink-200 bg-ink-100/60 hover:border-ink-300 hover:bg-ink-200/70'
             }`}
           >
