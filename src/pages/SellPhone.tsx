@@ -1,5 +1,6 @@
 import { useState, useMemo, useEffect, useRef } from 'react';
 import { Link, useNavigate, useSearchParams, useParams, useLocation } from 'react-router-dom';
+import { sellModelListPath } from '../lib/sellPaths';
 import {
   BadgeIndianRupee,
   Check,
@@ -138,9 +139,11 @@ export default function SellPhone() {
   };
 
   const handleStep2Back = () => {
+    const modelListPath = sellModelListPath(location.pathname, brandSlug, form.brand);
     setForm((f) => ({ ...f, model: '', storage: '' }));
     setStep(1);
-    navigate('/sell');
+    // Back from a chosen model goes to that brand's model list, not the all-brands page.
+    navigate(modelListPath);
     try {
       window.scrollTo({ top: 0, behavior: 'smooth' });
     } catch { }
