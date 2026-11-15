@@ -32,7 +32,7 @@ import { useCart } from '../context/CartContext';
 import { getCleanPhoneImage, pullLiveModelImagesFromDb } from '../lib/phoneImages';
 import { getRememberedProduct, rememberProducts } from '../lib/productsCache';
 import type { Product, Review } from '../types';
-import { getModelHardwareSpecs, normalizeStorageString, isStorageAllowedForModel } from '../lib/deviceSpecs';
+import { normalizeStorageString, isStorageAllowedForModel } from '../lib/deviceSpecs';
 import { findSampleProductById } from '../data/sampleProducts';
 import { findSampleLaptopById } from '../data/sampleLaptops';
 import { verifyPanIndiaPincode } from '../lib/locationService';
@@ -310,39 +310,15 @@ const handleCheckPincode = async (codeToTest?: string) => {
       if (filtered.length > 0) return filtered;
     }
 
-    if (product) {
-      const specs = getModelHardwareSpecs(product.brand, product.model || product.title);
-      if (specs && specs.storages.length > 0) {
-        const current = product.storage ? normalizeStorageString(product.storage) : '';
-        const baseList = (current && !specs.storages.includes(current))
-          ? Array.from(new Set([current, ...specs.storages]))
-          : specs.storages;
-        const filtered = filterAllowed(baseList);
-        if (filtered.length > 0) return filtered;
-      }
-    }
-    const base = product?.storage ? normalizeStorageString(product.storage) : '128 GB';
-    const fallbackList = filterAllowed([base, '256 GB']);
-    return fallbackList.length > 0 ? fallbackList : [base];
+    // No stored options: offer only the storage this listing really has, never invented ones.
+    return [product?.storage ? normalizeStorageString(product.storage) : '128 GB'];
   }, [product]);
 
   const availableColors = useMemo(() => {
     if (product?.available_colors && product.available_colors.length > 0) {
       return product.available_colors;
     }
-    const baseColor = product?.color || 'Default';
-    const brand = (product?.brand || '').toLowerCase();
-    const pool = brand.includes('apple')
-      ? ['Natural Titanium', 'Midnight Blue', 'Starlight', 'Black Titanium', 'Silver']
-      : ['Phantom Black', 'Cream', 'Titanium Gray', 'Emerald Green', 'Glacier White'];
-    const colors = [baseColor];
-    for (const c of pool) {
-      if (!colors.some((existing) => existing.toLowerCase() === c.toLowerCase())) {
-        colors.push(c);
-      }
-      if (colors.length >= 3) break;
-    }
-    return colors;
+    return [product?.color || 'Default'];
   }, [product]);
 
 
