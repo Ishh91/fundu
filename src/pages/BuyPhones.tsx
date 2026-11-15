@@ -40,6 +40,7 @@ import { isProductDeleted, useCatalogSync } from '../lib/catalogSync';
 import { subscribeToRealtimeSync } from '../lib/realtimeSync';
 import type { Product } from '../types';
 import { SAMPLE_BEST_SELLING_PHONES } from '../data/sampleProducts';
+import { cardStorages, showsRam } from '../lib/cardSpecs';
 
 // Circular brand filters with brand logos
 const BRAND_PILLS = [
@@ -820,16 +821,12 @@ export default function BuyPhones() {
                           </Link>
 
                           <div className="mt-2 flex flex-wrap items-center gap-1.5 text-[11px] font-bold">
-                            {product.available_storages && product.available_storages.length > 0 ? (
+                            {cardStorages(product).length > 0 && (
                               <span className="bg-slate-100 border border-slate-200 text-slate-700 px-2.5 py-0.5 rounded-lg">
-                                {product.available_storages.join(' • ')}
+                                {cardStorages(product).join(' • ')}
                               </span>
-                            ) : product.storage ? (
-                              <span className="bg-slate-100 border border-slate-200 text-slate-700 px-2 py-0.5 rounded-lg">
-                                {product.storage}
-                              </span>
-                            ) : null}
-                            {product.ram && (
+                            )}
+                            {product.ram && showsRam(product) && (
                               <span className="bg-slate-100 border border-slate-200 text-slate-700 px-2 py-0.5 rounded-lg">
                                 {product.ram} RAM
                               </span>
@@ -852,7 +849,7 @@ export default function BuyPhones() {
                         <div className="flex items-baseline justify-between mb-1.5">
                           <div className="flex items-baseline gap-2">
                             <span className="font-display text-lg sm:text-xl font-black text-[#1E2734]">
-                              {product.available_storages && product.available_storages.length > 1 ? `From ${formatINR(product.price)}` : formatINR(product.price)}
+                              {cardStorages(product).length > 1 ? `From ${formatINR(product.price)}` : formatINR(product.price)}
                             </span>
                             {product.original_price && (
                               <span className="text-xs text-slate-400 line-through font-semibold">
