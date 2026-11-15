@@ -5,6 +5,7 @@ import { formatINR } from '../../lib/db';
 import type { Product } from '../../types';
 import { useCart } from '../../context/CartContext';
 import { getCleanPhoneImage } from '../../lib/phoneImages';
+import { cardStorages, showsRam } from '../../lib/cardSpecs';
 
 interface BestDealsProps {
   products: Product[];
@@ -230,16 +231,12 @@ export default function BestDeals({ products, loading }: BestDealsProps) {
 
                     {/* Specs Pills */}
                     <div className="mt-2.5 flex flex-wrap gap-1.5 text-[11px]">
-                      {item.available_storages && item.available_storages.length > 0 ? (
+                      {cardStorages(item).length > 0 && (
                         <span className="rounded-md bg-blue-50 border border-blue-200/60 px-2 py-0.5 font-bold text-blue-800">
-                          {item.available_storages.join(' • ')}
+                          {cardStorages(item).join(' • ')}
                         </span>
-                      ) : item.storage ? (
-                        <span className="rounded-md bg-gray-100 px-2 py-0.5 font-bold text-[#47576E]">
-                          {item.storage}
-                        </span>
-                      ) : null}
-                      {item.ram && (
+                      )}
+                      {item.ram && showsRam(item) && (
                         <span className="rounded-md bg-gray-100 px-2 py-0.5 font-bold text-[#47576E]">
                           {item.ram} RAM
                         </span>
@@ -254,7 +251,7 @@ export default function BestDeals({ products, loading }: BestDealsProps) {
                   <div className="mt-4 pt-3 border-t border-gray-100">
                     <div className="flex items-baseline gap-2">
                       <span className="text-lg font-black text-[#344257]">
-                        {item.available_storages && item.available_storages.length > 1 ? `From ${formatINR(item.price)}` : formatINR(item.price)}
+                        {cardStorages(item).length > 1 ? `From ${formatINR(item.price)}` : formatINR(item.price)}
                       </span>
                       {item.original_price && (
                         <span className="text-xs text-gray-400 line-through">
