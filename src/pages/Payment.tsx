@@ -8,6 +8,7 @@ import { notifyNewBuyOrder, sendCustomerDeliveryOtp } from '../lib/whatsappNotif
 import { createServerRazorpayOrder, type RazorpayProof } from '../lib/razorpayClient';
 import { getItemVariant } from '../lib/cartItem';
 import { showsRam } from '../lib/cardSpecs';
+import type { OrderSuccessState } from '../lib/orderSuccess';
 
 type RazorpayResponse = {
   razorpay_payment_id: string;
@@ -170,7 +171,8 @@ export default function Payment() {
       }
 
       clearCart();
-      navigate('/order-success');
+      const placedOrderId = String(data?.id || `ORD-${Date.now()}`);
+      navigate('/order-success', { state: { placedOrderId } satisfies OrderSuccessState });
     } catch (err) {
       console.error('Error creating order:', err);
       alert('Failed to place order. Please try again.');
