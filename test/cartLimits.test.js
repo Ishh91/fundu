@@ -1,12 +1,16 @@
 import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
-import { transform } from 'esbuild';
-import { readFile } from 'node:fs/promises';
+import { build } from 'esbuild';
 
-const source = await readFile(new URL('../src/lib/cartLimits.ts', import.meta.url), 'utf8');
-const { code } = await transform(source, { loader: 'ts', format: 'esm' });
-const limits = await import(`data:text/javascript;base64,${Buffer.from(code).toString('base64')}`);
-const { stockCap, maxForLine, clampLineQuantity, unitsInCart, stockNotice, missingChoices, MAX_PER_LISTING } = limits;
+// Bundled, because the cart rules import the shared variant-stock helpers.
+const bundle = async (path) => {
+  const { outputFiles } = await build({ entryPoints: [new URL(path, import.meta.url).pathname.replace(/^\/([A-Za-z]:)/, '$1')], bundle: true, format: 'esm', write: false });
+  return import(`data:text/javascript;base64,${Buffer.from(outputFiles[0].text).toString('base64')}`);
+};
+const limits = await bundle('../src/lib/cartLimits.ts');
+const availability = await bundle('../src/lib/variantAvailability.ts');
+const { stockCap, maxForLine, clampLineQuantity, unitsInCart, stockNotice, missingChoices, reconcileLines, MAX_PER_LISTING } = limits;
+const { variantInStock, storageInStock, firstInStockChoice } = availability;
 
 const line = (id, quantity, item, type = 'product') => ({ id, type, quantity, item });
 
@@ -139,5 +143,89 @@ describe('reconcileLines', () => {
     const lines = [line('a', 4, { id: 'x', stock: 9 }), line('b', 2, { id: 'p1', stock: 9 }, 'spare_part')];
     const { lines: next } = reconcileLines(lines, { p1: { stock: 0 } });
     assert.equal(next.length, 2);
+  });
+});
+
+describe('per-variant stock in the cart', () => {
+  const phone = {
+    id: 'p1',
+    title: 'Phone',
+    stock: 3,
+    storage: '128 GB',
+    color: 'Blue',
+    variant_stock: [
+      { storage: '128 GB', color: 'Blue', stock: 2 },
+      { storage: '256 GB', color: 'Black', stock: 1 },
+      { storage: '256 GB', color: 'Blue', stock: 0 },
+    ],
+  };
+  const choose = (storage, color) => ({ ...phone, storage, color });
+
+  it('caps a line by the stock of its own storage and colour', () => {
+    assert.equal(stockCap(choose('128 GB', 'Blue')), 2);
+    assert.equal(stockCap(choose('256 GB', 'Black')), 1);
+    assert.equal(stockCap(choose('256 GB', 'Blue')), 0);
+  });
+
+  it('shares stock only between lines of the same variant', () => {
+    const lines = [line('a', 2, choose('128 GB', 'Blue')), line('b', 1, choose('256 GB', 'Black'))];
+    assert.equal(maxForLine(lines, lines[0]), 2);
+    assert.equal(maxForLine(lines, lines[1]), 1);
+    const twoBlue = [line('a', 1, choose('128 GB', 'Blue')), line('c', 1, choose('128 GB', 'Blue'))];
+    assert.equal(maxForLine(twoBlue, twoBlue[0]), 1);
+  });
+
+  it('a combination the listing does not count cannot be bought', () => {
+    assert.equal(stockCap(choose('512 GB', 'Red')), 0);
+  });
+
+  it('a listing without variant stock still uses its single stock', () => {
+    assert.equal(stockCap({ id: 'p2', stock: 4 }), 4);
+  });
+
+  it('reconcile cuts a line to the fresh variant stock', () => {
+    const lines = [line('a', 2, choose('256 GB', 'Black'))];
+    const fresh = { p1: { stock: 5, variant_stock: [{ storage: '256 GB', color: 'Black', stock: 1 }] } };
+    const result = reconcileLines(lines, fresh);
+    assert.equal(result.lines[0].quantity, 1);
+    assert.equal(result.messages.length, 1);
+  });
+
+  it('reconcile drops a line whose variant sold out', () => {
+    const lines = [line('a', 1, choose('256 GB', 'Black'))];
+    const fresh = { p1: { stock: 2, variant_stock: [{ storage: '256 GB', color: 'Black', stock: 0 }] } };
+    assert.equal(reconcileLines(lines, fresh).lines.length, 0);
+  });
+});
+
+describe('variant availability on the product page', () => {
+  const listing = {
+    storage: '128 GB',
+    color: 'Blue',
+    variant_stock: [
+      { storage: '128 GB', color: 'Blue', stock: 0 },
+      { storage: '128 GB', color: 'Black', stock: 2 },
+      { storage: '256 GB', color: 'Blue', stock: 0 },
+      { storage: '256 GB', color: 'Black', stock: 0 },
+    ],
+  };
+
+  it('flags a sold-out colour for the chosen storage', () => {
+    assert.equal(variantInStock(listing, '128 GB', 'Blue'), false);
+    assert.equal(variantInStock(listing, '128 GB', 'Black'), true);
+  });
+
+  it('flags a storage with no colour left', () => {
+    assert.equal(storageInStock(listing, '256 GB', ['Blue', 'Black']), false);
+    assert.equal(storageInStock(listing, '128 GB', ['Blue', 'Black']), true);
+  });
+
+  it('picks the first choice still in stock, preferring the given storage', () => {
+    assert.deepEqual(firstInStockChoice(listing, ['256 GB', '128 GB'], ['Blue', 'Black'], '128 GB'), { storage: '128 GB', color: 'Black' });
+    assert.equal(firstInStockChoice({ ...listing, variant_stock: [{ storage: '128 GB', color: 'Blue', stock: 0 }] }, ['128 GB'], ['Blue']), null);
+  });
+
+  it('never blocks a listing that does not count stock per variant', () => {
+    assert.equal(variantInStock({ storage: '128 GB' }, '256 GB', 'Red'), true);
   });
 });
