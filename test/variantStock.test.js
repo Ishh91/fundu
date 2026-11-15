@@ -1,8 +1,12 @@
 import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
+import { transform } from 'esbuild';
+import { readFile } from 'node:fs/promises';
+import { changesOwnAccess } from '../server/services/roleGuard.js';
 import {
   cleanVariantStock,
   findVariantEntry,
+  pruneVariantStock,
   totalVariantStock,
   tracksVariantStock,
 } from '../shared/variantStock.js';
@@ -172,5 +176,49 @@ describe('adjustProductStock and reserveOrderStock', () => {
     assert.equal(Product.docs[0].variant_stock[0].stock, 2);
     assert.equal(Product.docs[0].variant_stock[1].stock, 1);
     assert.equal(Product.docs[0].stock, 3);
+  });
+});
+
+describe('pruneVariantStock', () => {
+  it('drops stock for a storage or colour the listing no longer offers', () => {
+    const entries = [
+      { storage: '128 GB', color: 'Blue', stock: 2 },
+      { storage: '256 GB', color: 'Black', stock: 1 },
+    ];
+    assert.deepEqual(pruneVariantStock(entries, ['128gb'], ['blue', 'Teal']), [{ storage: '128 GB', color: 'Blue', stock: 2 }]);
+    assert.deepEqual(pruneVariantStock(entries, ['128 GB', '256 GB'], ['Teal']), []);
+  });
+});
+
+describe('colour options', async () => {
+  const source = await readFile(new URL('../src/lib/colorOptions.ts', import.meta.url), 'utf8');
+  const { code } = await transform(source, { loader: 'ts', format: 'esm' });
+  const { colorOptionsFor, withColor } = await import(`data:text/javascript;base64,${Buffer.from(code).toString('base64')}`);
+
+  it('offers Teal for an iPhone', () => {
+    assert.ok(colorOptionsFor('Apple', 'iPhone 16').includes('Teal'));
+    assert.ok(colorOptionsFor('Apple', 'iPhone 15 Pro').includes('Natural Titanium'));
+  });
+
+  it('keeps a colour already on the listing even when the palette lacks it', () => {
+    assert.ok(colorOptionsFor('Samsung', 'Galaxy S24', ['Cobalt Violet']).includes('Cobalt Violet'));
+  });
+
+  it('adds a typed colour once, ignoring case and spacing', () => {
+    assert.deepEqual(withColor(['Teal'], ' teal '), ['Teal']);
+    assert.deepEqual(withColor(['Teal'], '  Sea   Green '), ['Teal', 'Sea Green']);
+    assert.deepEqual(withColor(['Teal'], '   '), ['Teal']);
+  });
+});
+
+describe('changesOwnAccess', () => {
+  it('flags a role or permission change on the caller own account', () => {
+    assert.equal(changesOwnAccess({ role: 'customer' }, ['u1'], 'u1'), true);
+    assert.equal(changesOwnAccess({ permissions: [] }, ['u1', 'u2'], 'u1'), true);
+  });
+
+  it('lets other accounts and unrelated fields through', () => {
+    assert.equal(changesOwnAccess({ role: 'staff' }, ['u2'], 'u1'), false);
+    assert.equal(changesOwnAccess({ full_name: 'A' }, ['u1'], 'u1'), false);
   });
 });

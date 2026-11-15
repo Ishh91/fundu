@@ -15,6 +15,7 @@ import { triggerEventNotification } from './notificationService.js';
 import { quotePhone } from '../../fundu_phone_quote.mjs';
 import { createPhoneQuote } from './quoteService.js';
 import { isTrustedOrderWriter, secureCustomerOrder } from './orderSecurity.js';
+import { changesOwnAccess } from './roleGuard.js';
 import { adjustProductStock, releaseOrderStock, reserveOrderStock } from './stockService.js';
 import { cleanVariantStock, totalVariantStock } from '../../shared/variantStock.js';
 import { getRazorpayCredentials } from './razorpayService.js';
@@ -710,6 +711,14 @@ export const updateTable = async (table, { auth, filters, values, single, select
   const Model = getModel(table);
   const scope = await getWriteScope(table, auth, filters);
   const payload = preparePayload(table, 'update', values, auth);
+
+  // Nobody may change their own role or staff access; another admin has to do it.
+  if (table === 'profiles' && (payload.role !== undefined || payload.permissions !== undefined)) {
+    const targets = await Model.find(scope).select('_id').lean();
+    if (changesOwnAccess(payload, targets.map((target) => target._id), auth?.sub)) {
+      throw createHttpError(403, 'You cannot change your own role or access.');
+    }
+  }
 
   // Order statuses before the write, so stock is restored only on the update that cancels.
   const previousOrderStatus = new Map();
