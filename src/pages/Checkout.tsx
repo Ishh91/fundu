@@ -45,12 +45,15 @@ export default function Checkout() {
     const ids = Array.from(new Set(cartItems.filter((ci) => ci.type === 'product').map((ci) => String(ci.item.id))));
     if (ids.length === 0) return true;
     try {
-      const { data, error } = await db.from<{ id: string; stock: number; is_approved?: boolean }>('products').select('id, stock, is_approved').in('id', ids);
+      const { data, error } = await db
+        .from<{ id: string; stock: number; is_approved?: boolean; variant_stock?: FreshListing['variant_stock'] }>('products')
+        .select('id, stock, is_approved, variant_stock')
+        .in('id', ids);
       if (error || !Array.isArray(data)) return true;
       const fresh: Record<string, FreshListing> = {};
       for (const id of ids) {
         const row = data.find((candidate) => String(candidate.id) === id);
-        fresh[id] = { stock: row && row.is_approved !== false ? Number(row.stock) || 0 : null };
+        fresh[id] = { stock: row && row.is_approved !== false ? Number(row.stock) || 0 : null, variant_stock: row?.variant_stock ?? [] };
       }
       const messages = syncStock(fresh);
       setStockMessages(messages);

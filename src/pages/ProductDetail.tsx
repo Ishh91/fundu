@@ -41,6 +41,7 @@ import { PhoneVideoPlayer } from '../lib/videoUtils';
 import { usePageSeo } from '../lib/usePageSeo';
 import { storageMultiplier, variantPrice } from '../../shared/variantPricing.js';
 import { missingChoices, stockCap, stockNotice, unitsInCart } from '../lib/cartLimits';
+import { firstInStockChoice, storageInStock, variantInStock } from '../lib/variantAvailability';
 
 // Doorstep PIN code to Area mapping dictionary
 
@@ -322,6 +323,16 @@ const handleCheckPincode = async (codeToTest?: string) => {
     return [product?.color || 'Default'];
   }, [product]);
 
+  // Land on a combination that is in stock, not on a sold-out one.
+  useEffect(() => {
+    if (!product || variantInStock(product, selectedStorage, selectedColor || product.color || '')) return;
+    const pick = firstInStockChoice(product, availableStorages, availableColors, selectedStorage);
+    if (pick) {
+      setSelectedStorage(pick.storage);
+      setSelectedColor(pick.color);
+    }
+  }, [product, selectedStorage, selectedColor, availableStorages, availableColors]);
+
 
   if (loading) {
     return (
@@ -382,9 +393,10 @@ const images = product.images && product.images.length > 0
   ? product.images
   : [modelFallbackImage || 'https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=800&auto=format&fit=crop&q=80'];
 
-// Stock is one count for this listing, shared by every storage/colour line in the cart.
-const stockLimit = stockCap(product);
-const unitsAlreadyInCart = unitsInCart(cartItems, 'product', product);
+// Stock is one count for this listing, or one per storage + colour when the shop counts it that way.
+const stockChoice = { ...product, storage: selectedStorage, color: selectedColor || product.color };
+const stockLimit = stockCap(stockChoice);
+const unitsAlreadyInCart = unitsInCart(cartItems, 'product', stockChoice);
 const unitsLeft = Math.max(0, stockLimit - unitsAlreadyInCart);
 const isOutOfStock = stockLimit <= 0;
 const canAddMore = unitsLeft > 0;
@@ -743,8 +755,18 @@ return (
                     <button
                       key={stg}
                       type="button"
-                      onClick={() => setSelectedStorage(stg)}
-                      className={`rounded-2xl px-4 py-2 text-xs font-extrabold transition cursor-pointer ${selectedStorage === stg
+                      onClick={() => {
+                        setSelectedStorage(stg);
+                        // Keep the colour only if this storage still has it in stock.
+                        const colour = selectedColor || product.color || '';
+                        if (!variantInStock(product, stg, colour)) {
+                          const next = availableColors.find((c) => variantInStock(product, stg, c));
+                          if (next) setSelectedColor(next);
+                        }
+                      }}
+                      disabled={!storageInStock(product, stg, availableColors)}
+                      title={storageInStock(product, stg, availableColors) ? undefined : 'Out of stock'}
+                      className={`rounded-2xl px-4 py-2 text-xs font-extrabold transition cursor-pointer disabled:opacity-40 disabled:line-through disabled:cursor-not-allowed ${selectedStorage === stg
                           ? 'bg-[#344257] text-white shadow-md ring-2 ring-[#344257]/20'
                           : 'bg-gray-100 text-[#344257] hover:bg-gray-200 border border-gray-200'
                         }`}
@@ -765,7 +787,9 @@ return (
                       key={col}
                       type="button"
                       onClick={() => setSelectedColor(col)}
-                      className={`rounded-2xl px-3.5 py-1.5 text-xs font-bold transition flex items-center gap-2 cursor-pointer ${(selectedColor || product.color) === col
+                      disabled={!variantInStock(product, selectedStorage, col)}
+                      title={variantInStock(product, selectedStorage, col) ? undefined : `Out of stock in ${selectedStorage}`}
+                      className={`rounded-2xl px-3.5 py-1.5 text-xs font-bold transition flex items-center gap-2 cursor-pointer disabled:opacity-40 disabled:line-through disabled:cursor-not-allowed ${(selectedColor || product.color) === col
                           ? 'bg-[#344257] text-white shadow-sm ring-2 ring-[#344257]/20'
                           : 'bg-gray-100 text-[#344257] hover:bg-gray-200 border border-gray-200'
                         }`}

@@ -2,11 +2,15 @@
  * What a customer may put in the cart.
  *
  * - One listing is one stock count. The same phone in two storage/colour lines still shares
- *   that count, so the cap is applied across all lines of the same listing.
+ *   that count, so the cap is applied across all lines of the same listing. A listing that counts
+ *   stock per storage + colour (`variant_stock`) is capped per combination instead.
  * - A listing that offers storage or colour options needs a choice before checkout.
  *
  * Pure functions only, so the rules are easy to test and the cart and checkout agree.
  */
+
+import { entryStock, findVariantEntry, tracksVariantStock } from '../../shared/variantStock.js';
+import type { VariantStockEntry } from '../../shared/variantStock.js';
 
 /** Most units of one listing in a cart, even when the stock is larger. */
 export const MAX_PER_LISTING = 10;
@@ -18,6 +22,7 @@ export interface CartLimitItem {
   color?: string | null;
   available_storages?: string[] | null;
   available_colors?: string[] | null;
+  variant_stock?: VariantStockEntry[] | null;
 }
 
 export interface CartLimitLine {
@@ -27,10 +32,20 @@ export interface CartLimitLine {
   item: CartLimitItem;
 }
 
-const listingKey = (line: Pick<CartLimitLine, 'type' | 'item'>): string => `${line.type}:${line.item?.id ?? ''}`;
+/** The stock count a line draws from: the listing, or its storage + colour when stock is counted that way. */
+const listingKey = (line: Pick<CartLimitLine, 'type' | 'item'>): string => {
+  const base = `${line.type}:${line.item?.id ?? ''}`;
+  if (line.type !== 'product' || !tracksVariantStock(line.item)) return base;
+  const entry = findVariantEntry(line.item);
+  return entry ? `${base}:${entry.storage}|${entry.color}` : `${base}:none`;
+};
 
 /** How many units of this listing can be bought at most (stock, but never above MAX_PER_LISTING). */
 export const stockCap = (item: CartLimitItem): number => {
+  if (tracksVariantStock(item)) {
+    const entry = findVariantEntry(item);
+    return entry ? Math.min(MAX_PER_LISTING, entryStock(entry)) : 0;
+  }
   const stock = Number(item?.stock);
   if (item?.stock === undefined || item?.stock === null || !Number.isFinite(stock)) return MAX_PER_LISTING;
   return Math.max(0, Math.min(MAX_PER_LISTING, Math.floor(stock)));
@@ -79,6 +94,8 @@ export const missingChoices = (item: CartLimitItem): Array<'storage' | 'colour'>
 export interface FreshListing {
   /** The listing's current stock; null when it can no longer be bought. */
   stock: number | null;
+  /** The listing's current per-variant stock, when it counts that way. */
+  variant_stock?: VariantStockEntry[] | null;
 }
 
 /**
@@ -106,7 +123,7 @@ export const reconcileLines = <L extends CartLimitLine & { item: CartLimitItem &
       continue;
     }
 
-    const item = { ...line.item, stock: news.stock };
+    const item = { ...line.item, stock: news.stock, variant_stock: news.variant_stock ?? [] };
     const key = listingKey({ type: line.type, item });
     const left = Math.max(0, stockCap(item) - (used.get(key) ?? 0));
     const quantity = Math.min(Math.max(0, Number(line.quantity) || 0), left);
