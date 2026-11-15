@@ -53,7 +53,7 @@ import {
 } from '../lib/mobileApi';
 import { soundNotifier } from '../lib/soundAlert';
 import AdminLiveNotifier, { LiveNotification } from '../components/admin/AdminLiveNotifier';
-import { saveCustomModelImage, saveModelImageToDatabase } from '../lib/phoneImages';
+import { saveModelImageToDatabase } from '../lib/phoneImages';
 import { isStorageAllowedForModel } from '../lib/deviceSpecs';
 
 // Sub-page modular components
@@ -1037,12 +1037,7 @@ export default function Admin() {
       setProducts((prev) => [newProduct, ...prev]);
       setSelectedProductId(newProduct.id);
       broadcastSync('PRODUCT_UPDATE', 'products', 'insert', { id: newProduct.id });
-      if (payload.images && payload.images.length > 0 && payload.images[0]) {
-        saveCustomModelImage(payload.brand, payload.model, payload.images[0]);
-        if (!payload.images[0].startsWith('data:') || payload.images[0].length < 60000) {
-          saveModelImageToDatabase(payload.brand, payload.model, payload.images[0]).catch(() => {});
-        }
-      }
+      // A listing's own photos stay on the listing. They must not replace the model's catalog image used by Sell.
       setListPhoneModal(null);
 
       alert(`🎉 ${payload.title} successfully listed in Buy Store!`);
@@ -1420,9 +1415,10 @@ export default function Admin() {
       is_featured: dataObj.is_featured ?? false,
       show_all_grades: dataObj.show_all_grades ?? true,
       stock: dataObj.stock || '1',
-      available_storages: dataObj.available_storages || (cat === 'laptop' ? ['256 GB SSD', '512 GB SSD'] : ['128 GB', '256 GB']),
-      available_rams: dataObj.available_rams || (cat === 'laptop' ? ['8 GB', '16 GB'] : ['6 GB', '8 GB']),
-      available_colors: dataObj.available_colors || (cat === 'laptop' ? ['Space Grey', 'Silver'] : ['Midnight', 'Starlight']),
+      // Never invent options the admin did not pick: a made-up 256 GB shows up on the Buy page as real stock.
+      available_storages: dataObj.available_storages || (dataObj.storage ? [dataObj.storage] : []),
+      available_rams: dataObj.available_rams || (dataObj.ram ? [dataObj.ram] : []),
+      available_colors: dataObj.available_colors || (dataObj.color ? [dataObj.color] : []),
     });
     setProductModal({ product: null });
   };
@@ -1505,12 +1501,7 @@ export default function Admin() {
         setSelectedProductId(saved.id);
         broadcastSync('PRODUCT_UPDATE', 'products', 'insert', { id: saved.id });
       }
-      if (payload.images && payload.images.length > 0 && payload.images[0]) {
-        saveCustomModelImage(payload.brand, payload.model, payload.images[0]);
-        if (!payload.images[0].startsWith('data:') || payload.images[0].length < 60000) {
-          saveModelImageToDatabase(payload.brand, payload.model, payload.images[0]).catch(() => {});
-        }
-      }
+      // A listing's own photos stay on the listing. They must not replace the model's catalog image used by Sell.
       setProductModal(null);
     } catch (err) {
       alert(err instanceof Error ? err.message : 'Failed to save product');
@@ -2381,7 +2372,7 @@ export default function Admin() {
                     stock: String(product.stock),
                     available_storages: product.available_storages && product.available_storages.length > 0
                       ? product.available_storages
-                      : (product.storage ? [product.storage] : ['128 GB', '256 GB']),
+                      : (product.storage ? [product.storage] : []),
                     available_rams: product.available_rams && product.available_rams.length > 0
                       ? product.available_rams
                       : (product.ram ? [product.ram] : []),
