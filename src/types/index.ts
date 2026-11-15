@@ -36,6 +36,8 @@ export type Product = {
   available_storages?: string[];
   available_rams?: string[];
   available_colors?: string[];
+  /** Stock per storage + colour; empty or missing means `stock` is one number for the whole listing. */
+  variant_stock?: Array<{ storage: string; color: string; stock: number }>;
   /** Older records: the Mongo id and a single image instead of `images`. */
   _id?: string;
   image?: string | null;

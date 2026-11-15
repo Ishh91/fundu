@@ -31,6 +31,16 @@ export const entryStock = (entry) => Math.max(0, Math.floor(Number(entry?.stock)
 export const totalVariantStock = (entries) =>
   (Array.isArray(entries) ? entries : []).reduce((sum, entry) => sum + entryStock(entry), 0);
 
+/** Keeps only the entries whose storage and colour the listing still offers (a deselected option drops out). */
+export const pruneVariantStock = (entries, storages, colors) => {
+  const sizes = (Array.isArray(storages) ? storages : []).map((storage) => storageGb(storage) || normalizeText(storage));
+  const shades = (Array.isArray(colors) ? colors : []).map(normalizeText);
+  return cleanVariantStock(entries).filter(
+    (entry) =>
+      sizes.includes(storageGb(entry.storage) || normalizeText(entry.storage)) && shades.includes(normalizeText(entry.color)),
+  );
+};
+
 /** Tidies a list from a form: trimmed text, whole non-negative stock, one entry per storage + colour. */
 export const cleanVariantStock = (entries) => {
   const merged = new Map();

@@ -90,6 +90,10 @@ import type { Profile, RepairPriceConfig } from '../types';
 import { describeOversizedSave, MAX_INLINE_VIDEO_FILE_BYTES, VIDEO_TOO_LARGE_MESSAGE } from '../lib/uploadLimits';
 import { readProductPhotos } from '../lib/productPhotoUpload';
 import { changedFields } from '../lib/objectDiff';
+import { colorOptionsFor, withColor } from '../lib/colorOptions';
+import VariantStockEditor from '../components/admin/VariantStockEditor';
+import { pruneVariantStock, totalVariantStock } from '../../shared/variantStock.js';
+import type { VariantStockEntry } from '../../shared/variantStock.js';
 import { appendUniqueById, loadRemainingPages, mergeLatestById } from '../lib/pagedLoad';
 
 // The Users page searches and filters this list in the browser, so it needs every account.
@@ -360,8 +364,10 @@ export default function Admin() {
     available_storages: [] as string[],
     available_rams: [] as string[],
     available_colors: [] as string[],
+    variant_stock: [] as VariantStockEntry[],
   });
   const [productSaving, setProductSaving] = useState(false);
+  const [customColor, setCustomColor] = useState('');
 
   // 4. Custom Phone Model Modal
   const [customPhoneModalOpen, setCustomPhoneModalOpen] = useState(false);
@@ -1419,6 +1425,7 @@ export default function Admin() {
       available_storages: dataObj.available_storages || (dataObj.storage ? [dataObj.storage] : []),
       available_rams: dataObj.available_rams || (dataObj.ram ? [dataObj.ram] : []),
       available_colors: dataObj.available_colors || (dataObj.color ? [dataObj.color] : []),
+      variant_stock: dataObj.variant_stock || [],
     });
     setProductModal({ product: null });
   };
@@ -1426,6 +1433,12 @@ export default function Admin() {
   const saveProduct = async () => {
     setProductSaving(true);
     try {
+      // Only the storage + colour combinations the listing still offers keep a stock count.
+      const variantStock = pruneVariantStock(
+        productForm.variant_stock,
+        productForm.available_storages.length > 0 ? productForm.available_storages : [productForm.storage],
+        productForm.available_colors.length > 0 ? productForm.available_colors : [productForm.color],
+      );
       const payload = {
         title: productForm.title,
         category: productForm.category || 'smartphone',
@@ -1452,7 +1465,8 @@ export default function Admin() {
         is_approved: productForm.is_approved,
         is_featured: productForm.is_featured,
         show_all_grades: productForm.show_all_grades,
-        stock: Number(productForm.stock) || 0,
+        stock: variantStock.length > 0 ? totalVariantStock(variantStock) : Number(productForm.stock) || 0,
+        variant_stock: variantStock,
         available_storages: productForm.available_storages,
         available_rams: productForm.available_rams,
         available_colors: productForm.available_colors,
@@ -2379,6 +2393,7 @@ export default function Admin() {
                     available_colors: product.available_colors && product.available_colors.length > 0
                       ? product.available_colors
                       : (product.color ? [product.color] : []),
+                    variant_stock: product.variant_stock ?? [],
                   });
                   setProductModal({ product });
                 } else {
@@ -2464,6 +2479,7 @@ export default function Admin() {
               isSuperAdmin={isSuperAdmin}
               currentUserRole={panelRole}
               currentUserEmail={user?.email || undefined}
+              currentUserId={user?.id}
             />
           )}
 
@@ -3199,20 +3215,7 @@ export default function Admin() {
                     <span className="text-[10px] text-blue-600 font-bold">Click to toggle on/off</span>
                   </div>
                   <div className="flex flex-wrap gap-1.5">
-                    {[
-                      'Midnight',
-                      'Starlight',
-                      'Space Grey',
-                      'Silver',
-                      'Deep Purple',
-                      'Natural Titanium',
-                      'Blue',
-                      'Gold',
-                      'Phantom Black',
-                      'Titanium Gray',
-                      'Emerald Green',
-                      'White',
-                    ].map((col) => {
+                    {colorOptionsFor(productForm.brand, productForm.model, productForm.available_colors || []).map((col) => {
                       const isSelected = (productForm.available_colors || []).includes(col);
                       return (
                         <button
@@ -3239,7 +3242,43 @@ export default function Admin() {
                       );
                     })}
                   </div>
+                  <div className="mt-2 flex items-center gap-2">
+                    <input
+                      type="text"
+                      value={customColor}
+                      onChange={(e) => setCustomColor(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key !== 'Enter') return;
+                        e.preventDefault();
+                        setProductForm((prev) => ({ ...prev, available_colors: withColor(prev.available_colors || [], customColor), color: prev.color || customColor.trim() }));
+                        setCustomColor('');
+                      }}
+                      placeholder="Colour not listed? Type it, e.g. Teal"
+                      aria-label="Add another colour"
+                      className="input text-xs py-1.5 flex-1"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setProductForm((prev) => ({ ...prev, available_colors: withColor(prev.available_colors || [], customColor), color: prev.color || customColor.trim() }));
+                        setCustomColor('');
+                      }}
+                      className="rounded-xl bg-purple-600 px-3 py-1.5 text-xs font-bold text-white hover:bg-purple-700"
+                    >
+                      Add colour
+                    </button>
+                  </div>
                 </div>
+
+                <VariantStockEditor
+                  storages={productForm.available_storages.length > 0 ? productForm.available_storages : (productForm.storage ? [productForm.storage] : [])}
+                  colors={productForm.available_colors.length > 0 ? productForm.available_colors : (productForm.color ? [productForm.color] : [])}
+                  value={productForm.variant_stock}
+                  onChange={(next) => setProductForm((prev) => ({ ...prev, variant_stock: next }))}
+                  ownStorage={productForm.storage}
+                  ownColor={productForm.color}
+                  singleStock={Number(productForm.stock) || 0}
+                />
 
                 {/* Live Customer Preview Pill */}
                 <div className="p-2.5 rounded-xl bg-blue-100/70 border border-blue-200 text-[11px] text-blue-900 font-medium">
@@ -3327,9 +3366,11 @@ export default function Admin() {
                   <label className="label text-xs font-bold">Stock Units</label>
                   <input
                     type="number"
-                    value={productForm.stock}
+                    value={productForm.variant_stock.length > 0 ? totalVariantStock(productForm.variant_stock) : productForm.stock}
                     onChange={(e) => setProductForm({ ...productForm, stock: e.target.value })}
-                    className="input text-xs font-bold"
+                    disabled={productForm.variant_stock.length > 0}
+                    title={productForm.variant_stock.length > 0 ? 'Total of the per-variant stock above' : undefined}
+                    className="input text-xs font-bold disabled:opacity-60"
                   />
                 </div>
               </div>

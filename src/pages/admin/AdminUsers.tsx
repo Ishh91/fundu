@@ -52,6 +52,8 @@ type AdminUsersProps = {
   isSuperAdmin?: boolean;
   currentUserRole?: string;
   currentUserEmail?: string;
+  /** The signed-in account: its own role and access are read-only. */
+  currentUserId?: string;
 };
 
 export default function AdminUsers({
@@ -67,6 +69,7 @@ export default function AdminUsers({
   isSuperAdmin = true,
   currentUserRole = 'admin',
   currentUserEmail,
+  currentUserId,
 }: AdminUsersProps) {
   const [userList, setUserList] = useState<UserProfile[]>(profiles);
   const [search, setSearch] = useState('');
@@ -106,6 +109,7 @@ export default function AdminUsers({
   });
 
   const selectedUser = activeProfiles.find((u) => u.id === selectedUserId) || filteredUsers[0] || null;
+  const isOwnAccount = Boolean(currentUserId && selectedUser && selectedUser.id === currentUserId);
 
   // This component keeps its own copy of the list, so mirror saved access changes into it.
   const patchLocalUser = (userId: string, patch: Partial<UserProfile>) => {
@@ -517,12 +521,18 @@ export default function AdminUsers({
                   </div>
 
                   {/* Role Selector Dropdown */}
+                  {isOwnAccount && (
+                    <p className="w-full text-[11px] font-bold text-amber-700">
+                      This is your own account. Your role and access can only be changed by another admin.
+                    </p>
+                  )}
                   <div className="flex items-center gap-2">
                     <span className="text-xs font-bold text-ink-700">Account Role:</span>
                     <select
                       value={selectedUser.role}
                       onChange={(e) => handleRoleChange(selectedUser.id, e.target.value)}
-                      disabled={savingAccessForId === selectedUser.id}
+                      disabled={savingAccessForId === selectedUser.id || isOwnAccount}
+                      title={isOwnAccount ? 'You cannot change your own role' : undefined}
                       aria-label="Account role"
                       className="input text-xs py-1.5 px-3 bg-white font-extrabold text-indigo-900 border-indigo-300 shadow-xs focus:ring-indigo-500 rounded-xl"
                     >
@@ -548,7 +558,7 @@ export default function AdminUsers({
                     <StaffPermissionsEditor
                       idPrefix={`staff-access-${selectedUser.id}`}
                       value={selectedUser.permissions ?? []}
-                      disabled={savingAccessForId === selectedUser.id}
+                      disabled={savingAccessForId === selectedUser.id || isOwnAccount}
                       onChange={(permissions) => handlePermissionsChange(selectedUser.id, permissions)}
                     />
                   </div>
@@ -587,7 +597,7 @@ export default function AdminUsers({
                       <button
                         type="button"
                         onClick={() => handleRoleChange(selectedUser.id, STAFF_ROLE)}
-                        disabled={savingAccessForId === selectedUser.id}
+                        disabled={savingAccessForId === selectedUser.id || isOwnAccount}
                         className="btn text-xs px-3.5 py-1.5 font-bold rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white shadow-xs flex items-center gap-1.5 cursor-pointer"
                       >
                         <Lock className="h-3.5 w-3.5" /> Grant Staff Permissions
@@ -595,7 +605,7 @@ export default function AdminUsers({
                       <button
                         type="button"
                         onClick={() => handleRoleChange(selectedUser.id, 'admin')}
-                        disabled={savingAccessForId === selectedUser.id}
+                        disabled={savingAccessForId === selectedUser.id || isOwnAccount}
                         className="btn text-xs px-3.5 py-1.5 font-bold rounded-xl bg-purple-600 hover:bg-purple-700 text-white shadow-xs flex items-center gap-1.5 cursor-pointer"
                       >
                         <ShieldCheck className="h-3.5 w-3.5" /> Make Full Admin
