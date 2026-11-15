@@ -816,7 +816,8 @@ export function getCustomModelImages(): Record<string, string> {
  * Ingests live master_phones from the database into client cache & memory
  */
 export function syncCustomImagesFromDatabase(
-  phones: Array<{ brand: string; model: string; image_url?: string; custom_image?: boolean }>
+  phones: Array<{ brand: string; model: string; image_url?: string; custom_image?: boolean }>,
+  options: { authoritative?: boolean } = {}
 ): boolean {
   if (!Array.isArray(phones) || phones.length === 0) return false;
   let changed = false;
@@ -838,6 +839,20 @@ export function syncCustomImagesFromDatabase(
 
   // 2. Process true custom entries: they take absolute priority in memory and get persisted
   const customToPersist: Record<string, string> = {};
+  // When the payload is the complete server list, anything this browser still holds that the server no
+  // longer reports as custom was reset by an admin and must go, or visitors keep seeing the old photo.
+  const serverKeys = new Set<string>();
+  if (options.authoritative) {
+    trueCustomEntries.forEach((entry) => {
+      generateModelLookupKeys(entry.brand, entry.model).forEach((k) => serverKeys.add(k));
+    });
+    Object.keys(memoryCustomCache).forEach((k) => {
+      if (!serverKeys.has(k)) {
+        delete memoryCustomCache[k];
+        changed = true;
+      }
+    });
+  }
   trueCustomEntries.forEach((entry) => {
     const brand = entry.brand;
     const model = entry.model;
@@ -871,6 +886,11 @@ export function syncCustomImagesFromDatabase(
         if (raw) current = JSON.parse(raw);
       } catch {
         current = {};
+      }
+      if (options.authoritative) {
+        Object.keys(current).forEach((k) => {
+          if (!serverKeys.has(k)) delete current[k];
+        });
       }
       Object.assign(current, customToPersist);
       safeSetLocalStorage(CUSTOM_MODEL_IMAGES_KEY, current);
@@ -909,7 +929,7 @@ export async function pullLiveModelImagesFromDb(): Promise<boolean> {
         if (json?.unchanged) return false;
         if (Array.isArray(json?.data) && json.data.length > 0) {
           if (typeof json.version === 'string') liveImagesVersion = json.version;
-          return syncCustomImagesFromDatabase(json.data);
+          return syncCustomImagesFromDatabase(json.data, { authoritative: true });
         }
       }
     } catch (_liveErr) {
