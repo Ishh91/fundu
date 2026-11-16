@@ -7856,6 +7856,10 @@ export const HARDWARE_DEFECTS = [
   { id: 'charging_port', label: 'Charging Port / Connection Fault' },
   { id: 'speaker_mic', label: 'Speaker / Earpiece / Microphone Fault' },
   { id: 'biometrics', label: 'Biometrics Fault (Face ID or Fingerprint)' },
+  { id: 'wifi_bluetooth', label: 'Wi-Fi / Bluetooth / Mobile Network Fault' },
+  { id: 'buttons', label: 'Power / Volume / Silent Button Not Working' },
+  { id: 'sensors', label: 'Sensor Fault (Proximity, Auto-rotate, Vibration)' },
+  { id: 'battery_fault', label: 'Battery Fault (Swollen, Drains Fast, Will Not Charge)' },
 ];
 
 export const FAQS_LIST = [

@@ -14,6 +14,7 @@ import { deviceIncludesStylus, calculateRamPriceOffset } from '../../lib/deviceS
 import { getCleanModelName } from '../../lib/modelCatalogSync';
 import type { FunduQuoteResponse } from '../../lib/quoteEngine';
 import type { SellFormState } from '../../lib/sellForm';
+import { deriveCondition } from '../../lib/sellCondition';
 import type { User } from '../../lib/db';
 
 interface SellStep2ConditionProps {
@@ -69,43 +70,8 @@ export default function SellStep2Condition({
   const toggleQuestion = (field: string, value: boolean) => {
     setForm((prev) => {
       const next = { ...prev, [field]: value };
-
-      const screenCracked = field === 'screenCracked' ? value : !!next.screenCracked;
-      const screenMajor = field === 'screenMajorScratches' ? value : !!next.screenMajorScratches;
-      const screenMinor = field === 'screenMinorScratches' ? value : !!next.screenMinorScratches;
-      const displayMajorLines = field === 'displayMajorLines' ? value : !!next.displayMajorLines;
-      const displayMajorSpots = field === 'displayMajorSpots' ? value : !!next.displayMajorSpots;
-
-      let sc: SellFormState['screenCondition'] = 'flawless';
-      if (screenCracked) sc = 'cracked';
-      else if (displayMajorLines || displayMajorSpots) sc = 'display_lines';
-      else if (screenMajor || screenMinor) sc = 'scratched';
-
-      const bodyCracked = field === 'bodyCrackedOrBroken' ? value : !!next.bodyCrackedOrBroken;
-      const bodyMajorDents = field === 'bodyMajorDents' ? value : !!next.bodyMajorDents;
-      const bodyMinorDents = field === 'bodyMinorDents' ? value : !!next.bodyMinorDents;
-      const bodyMajorSide = field === 'bodyMajorSideScratches' ? value : !!next.bodyMajorSideScratches;
-      const bodyMinorSide = field === 'bodyMinorSideScratches' ? value : !!next.bodyMinorSideScratches;
-
-      let bc: SellFormState['bodyCondition'] = 'flawless';
-      let cc: SellFormState['cosmeticCondition'] = 'flawless';
-      if (bodyCracked || bodyMajorDents) {
-        bc = 'dents_bent';
-        cc = 'fair';
-      } else if (bodyMinorDents || bodyMajorSide || bodyMinorSide) {
-        bc = 'minor_scratches';
-        cc = 'good';
-      }
-
-      if (screenCracked) cc = 'fair';
-      else if (screenMajor || screenMinor) cc = 'good';
-
-      return {
-        ...next,
-        screenCondition: sc,
-        bodyCondition: bc,
-        cosmeticCondition: cc,
-      };
+      // Every screen, display, touch and body answer feeds the quote through one shared rule.
+      return { ...next, ...deriveCondition(next) };
     });
   };
 
@@ -387,10 +353,19 @@ export default function SellStep2Condition({
                 <span className="text-[11px] text-gray-500 block">Outer front glass surface physical assessment</span>
               </div>
             </div>
-            <span className="text-[11px] font-bold text-gray-400 uppercase tracking-wider">3 Questions</span>
+            <span className="text-[11px] font-bold text-gray-400 uppercase tracking-wider">4 Questions</span>
           </div>
 
           <div className="space-y-2.5">
+            {/* Touch */}
+            <QuestionToggleRow
+              title="Touch Not Working"
+              question="Does the touch screen have dead areas, ghost touches, or not respond properly?"
+              value={!!form.touchFault}
+              onChange={(val) => toggleQuestion('touchFault', val)}
+              highlightDanger
+            />
+
             {/* Minor Scratches */}
             <QuestionToggleRow
               title="Minor Scratches"
@@ -645,7 +620,7 @@ export default function SellStep2Condition({
             <span className="text-[11px] text-gray-500">Leave unchecked if working</span>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-            {HARDWARE_DEFECTS.map((def) => {
+            {HARDWARE_DEFECTS.filter((def) => !(isApple && def.id === 'battery_fault')).map((def) => {
               const hasDefect = form.defects.includes(def.id);
               return (
                 <button
