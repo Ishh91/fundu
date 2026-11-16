@@ -113,3 +113,40 @@ describe('vercel.json rewrites', () => {
     assert.deepEqual(missing, [], `Add these routes to the rewrite in vercel.json: ${missing.join(', ')}`);
   });
 });
+
+describe('local search keywords', () => {
+  let resolveSeoMeta;
+  let indexHtml;
+
+  before(async () => {
+    ({ resolveSeoMeta } = await loadSeoMeta());
+    indexHtml = await readFile(path.join(ROOT, 'index.html'), 'utf8');
+  });
+
+  it('names Lucknow in the titles of the pages people search for', () => {
+    for (const path of ['/', '/sell', '/buy', '/repair']) {
+      assert.match(resolveSeoMeta(path).title, /Lucknow/, path);
+      assert.match(resolveSeoMeta(path).description, /Lucknow/, path);
+    }
+  });
+
+  it('keeps the brand name in the home title so "thefundu" searches match', () => {
+    assert.match(resolveSeoMeta('/').title, /TheFundu/);
+    assert.match(resolveSeoMeta('/').title, /Fundu/);
+  });
+
+  it('uses the same home title in index.html as the page meta does', () => {
+    const title = indexHtml.match(/<title>([^<]*)<\/title>/)[1].replace(/&amp;/g, '&');
+    assert.equal(title, resolveSeoMeta('/').title);
+  });
+
+  it('has valid structured data that places the business in Lucknow', () => {
+    const blocks = [...indexHtml.matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/g)].map((m) => JSON.parse(m[1]));
+    assert.ok(blocks.length >= 2);
+    const store = blocks.find((b) => b['@type'] === 'MobilePhoneStore');
+    assert.equal(store.address.addressLocality, 'Lucknow');
+    assert.equal(store.address.addressRegion, 'Uttar Pradesh');
+    assert.equal(store.areaServed.name, 'Lucknow');
+    assert.ok(blocks.some((b) => b['@type'] === 'WebSite' && b.alternateName.includes('TheFundu')));
+  });
+});

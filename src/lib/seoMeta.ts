@@ -21,24 +21,24 @@ type StaticPage = { title: string; description: string };
 
 const STATIC_PAGES: Record<string, StaticPage> = {
   '/': {
-    title: 'TheFundu: Sell Old Phone, Buy Refurbished & Doorstep Repair | Fundu',
+    title: 'TheFundu | Sell Old Phone, Buy Refurbished Phone & Repair in Lucknow',
     description:
-      'Sell old smartphones for instant UPI/cash at your doorstep, buy certified refurbished iPhones & Galaxy phones with 6-month warranty, and book 30-minute doorstep repair.',
+      'Fundu (TheFundu) in Lucknow: sell old smartphones for instant UPI/cash at your doorstep, buy certified refurbished iPhones & Galaxy phones with 6-month warranty, and book 30-minute doorstep repair.',
   },
   '/sell': {
-    title: 'Sell Old Phone Online for Instant Cash | Fundu',
+    title: 'Sell Old Phone in Lucknow for Instant Cash | Fundu',
     description:
-      'Get the best instant valuation for your old smartphone. Free doorstep pickup and on-the-spot cash or UPI payment from Fundu.',
+      'Sell your old smartphone in Lucknow. Get an instant valuation, free doorstep pickup and on-the-spot cash or UPI payment from Fundu (TheFundu).',
   },
   '/buy': {
-    title: 'Buy Certified Refurbished Phones with Warranty | Fundu',
+    title: 'Buy Refurbished Phones in Lucknow with Warranty | Fundu',
     description:
-      'Buy 42-point quality inspected refurbished iPhones, Samsung Galaxy and OnePlus phones with 6 months warranty and doorstep delivery.',
+      'Buy 42-point quality inspected refurbished iPhones, Samsung Galaxy and OnePlus phones in Lucknow with 6 months warranty and doorstep delivery from Fundu.',
   },
   '/repair': {
-    title: 'Doorstep Mobile Repair in 30 Minutes | Fundu',
+    title: 'Mobile Repair at Home in Lucknow, 30 Minutes | Fundu',
     description:
-      'Book certified mobile repair at your home or office. 30-minute screen and battery replacement with genuine parts and a 6-month repair warranty.',
+      'Book certified mobile repair at your home or office in Lucknow. 30-minute screen and battery replacement with genuine parts and a 6-month repair warranty from Fundu.',
   },
   '/spare-parts': {
     title: 'Genuine Mobile Spare Parts Online | Fundu',
