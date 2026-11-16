@@ -178,7 +178,7 @@ export default function SellStep1Device({
                         <div className="flex items-center gap-3">
                           <div className="h-16 w-16 shrink-0 overflow-hidden rounded-xl bg-white p-1 border border-gray-100 flex items-center justify-center">
                             <img
-                              src={getCleanPhoneImage(m.brand, m.model, m.image)}
+                              src={getCleanPhoneImage(m.brand || form.brand, m.model, m.image)}
                               alt={m.model}
                               loading="lazy"
                               decoding="async"
@@ -186,16 +186,25 @@ export default function SellStep1Device({
                               referrerPolicy="no-referrer"
                               onError={(e) => {
                                 const target = e.currentTarget;
-                                const bSlug = (m.brand || form.brand || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+                                const brandName = m.brand || form.brand || '';
+                                if (!target.dataset.triedClean) {
+                                  target.dataset.triedClean = 'true';
+                                  const clean = getCleanPhoneImage(brandName, m.model);
+                                  if (clean && target.src !== clean) {
+                                    target.src = clean;
+                                    return;
+                                  }
+                                }
+                                const bSlug = brandName.toLowerCase().replace(/[^a-z0-9]/g, '');
                                 if (!target.dataset.triedBrandFallback) {
                                   target.dataset.triedBrandFallback = 'true';
                                   const fallback = BRAND_FRONT_FALLBACKS[bSlug] || BRAND_FRONT_FALLBACKS.apple;
-                                  if (target.src !== fallback) {
+                                  if (fallback && target.src !== fallback) {
                                     target.src = fallback;
                                     return;
                                   }
                                 }
-                                target.src = getGenericDevicePlaceholder(m.brand || form.brand, m.model);
+                                target.src = getGenericDevicePlaceholder(brandName, m.model);
                               }}
                             />
                           </div>

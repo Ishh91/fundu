@@ -601,9 +601,13 @@ export function isBrandImageMismatch(brand = '', model = '', url = ''): boolean 
     }
   }
 
-  // 6. Hard rejection: Vivo receiving other brands
+  // 6. Hard rejection: Vivo receiving other brands (allows iQOO models under Vivo parent company)
   if (isVivo) {
-    if (hasToken(['apple-iphone', 'apple-', 'samsung', 'galaxy', 'oneplus', 'xiaomi', 'redmi', 'poco', 'realme', 'oppo', 'motorola', 'moto', 'pixel', 'vivo-iqoo', 'iqoo-'])) {
+    if (hasToken(['apple-iphone', 'apple-', 'samsung', 'galaxy', 'oneplus', 'xiaomi', 'redmi', 'poco', 'realme', 'oppo', 'motorola', 'moto', 'pixel'])) {
+      return true;
+    }
+    // Only reject iQOO renders if the model being looked up is definitely NOT an iQOO model
+    if (!m.includes('iqoo') && !b.includes('iqoo') && hasToken(['vivo-iqoo', 'iqoo-'])) {
       return true;
     }
   }
@@ -1250,7 +1254,7 @@ export function hasCustomModelImage(brand?: string, model?: string): boolean {
  * Resolves the EXACT model image rather than generic brand fallbacks.
  * Explicitly rejects fake repetitive URLs (e.g. apple-apple, samsung-samsung) and unsplash placeholders.
  */
-function cleanUrl(url: string, brandHint?: string): string {
+function cleanUrl(url: string, brandHint?: string, modelHint?: string): string {
   if (!url) return '';
   let cleaned = url.trim();
 
@@ -1265,7 +1269,7 @@ function cleanUrl(url: string, brandHint?: string): string {
   }
 
   // Reject cross-brand contaminated URLs
-  if (brandHint && isBrandImageMismatch(brandHint, '', cleaned)) {
+  if (brandHint && isBrandImageMismatch(brandHint, modelHint || '', cleaned)) {
     return '';
   }
 
@@ -1377,23 +1381,10 @@ function computeCleanPhoneImage(brand?: string, model?: string, fallbackUrl?: st
   const m = (model || '').toLowerCase().trim();
   const fullText = `${b} ${m}`.toLowerCase().replace(/[^a-z0-9]/g, ' ').replace(/\s+/g, ' ').trim();
   const modelNorm = m.toLowerCase().replace(/[^a-z0-9]/g, ' ').replace(/\s+/g, ' ').trim();
-  const rawUrl = cleanUrl((fallbackUrl || '').trim(), b);
+  const rawUrl = cleanUrl((fallbackUrl || '').trim(), b, m);
 
-  // 1. If explicit product image was provided and valid, USE IT IMMEDIATELY!
-  // A specific product's photo must NEVER be overwritten by a generic catalog render.
-  const isInvalidUrl =
-    !rawUrl ||
-    rawUrl.includes('unsplash.com') ||
-    rawUrl.includes('pexels.com') ||
-    rawUrl.includes('pixabay.com') ||
-    rawUrl.includes('777/thumb') ||
-    isBrandImageMismatch(brand, model, rawUrl);
-
-  if (!isInvalidUrl) {
-    return rawUrl;
-  }
-
-  // 2. Admin custom image override for this specific brand & model (from database/admin panel)
+  // 1. Admin custom image override for this specific brand & model (from database/admin panel)
+  // Non-negotiable: When admin sets or fixes an image, it persists across entire site!
   const customImages = getCustomModelImages();
   const lookupKeys = generateModelLookupKeys(brand, model);
   for (const k of lookupKeys) {
@@ -1404,9 +1395,30 @@ function computeCleanPhoneImage(brand?: string, model?: string, fallbackUrl?: st
       !customImages[k].includes('777/thumb') &&
       !isBrandImageMismatch(brand, model, customImages[k])
     ) {
-      return cleanUrl(customImages[k], b);
+      return cleanUrl(customImages[k], b, m);
     }
   }
+
+  // 2. Explicit custom uploaded inventory product photo (e.g. Cloudinary, local uploads)
+  const isCustomUploadedPhoto =
+    Boolean(rawUrl) &&
+    (rawUrl.includes('cloudinary.com') ||
+      rawUrl.includes('res.cloudinary.com') ||
+      rawUrl.includes('/uploads/') ||
+      rawUrl.startsWith('blob:')) &&
+    !isBrandImageMismatch(brand, model, rawUrl);
+
+  if (isCustomUploadedPhoto) {
+    return rawUrl;
+  }
+
+  const isInvalidUrl =
+    !rawUrl ||
+    rawUrl.includes('unsplash.com') ||
+    rawUrl.includes('pexels.com') ||
+    rawUrl.includes('pixabay.com') ||
+    rawUrl.includes('777/thumb') ||
+    isBrandImageMismatch(brand, model, rawUrl);
 
   const isApple = b.includes('apple') || b.includes('iphone') || fullText.includes('iphone');
   // Default authentic studio renders for iPhone 17 (when no custom admin photo exists)
@@ -1436,24 +1448,24 @@ function computeCleanPhoneImage(brand?: string, model?: string, fallbackUrl?: st
     const escaped = item.keyword.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     const wordReg = new RegExp(`(^|\\s)${escaped}(\\s|$)`, 'i');
     if (wordReg.test(fullText) || wordReg.test(modelNorm)) {
-      return cleanUrl(item.url, b);
+      return cleanUrl(item.url, b, m);
     }
   }
 
-  // 3. Exact dictionary lookup from verified 4,000+ device catalog
+  // 4. Exact dictionary lookup from verified 4,000+ device catalog
   if (MOBILE_API_THUMBS[fullText] && !isBrandImageMismatch(brand, model, MOBILE_API_THUMBS[fullText])) {
-    return cleanUrl(MOBILE_API_THUMBS[fullText], b);
+    return cleanUrl(MOBILE_API_THUMBS[fullText], b, m);
   }
   if (MOBILE_API_THUMBS[modelNorm] && !isBrandImageMismatch(brand, model, MOBILE_API_THUMBS[modelNorm])) {
-    return cleanUrl(MOBILE_API_THUMBS[modelNorm], b);
+    return cleanUrl(MOBILE_API_THUMBS[modelNorm], b, m);
   }
 
-  // 4. If a valid verified catalog/database image URL was passed, use it before fuzzy substring matching!
+  // 5. If a valid verified catalog/database image URL was passed, use it before fuzzy substring matching!
   if (!isInvalidUrl && (rawUrl.includes('gsmarena.com') || rawUrl.includes('api.mobileapi.dev')) && !isBrandImageMismatch(brand, model, rawUrl)) {
     return rawUrl;
   }
 
-  // 5. Intelligent word-boundary match in deviceImageDictionary (strictly word boundaries to prevent single-digit hijacking!)
+  // 6. Intelligent word-boundary match in deviceImageDictionary (strictly word boundaries to prevent single-digit hijacking!)
   for (const k of SORTED_THUMB_KEYS) {
     if (k.length >= 4) {
       if (isBrandImageMismatch(brand, model, MOBILE_API_THUMBS[k])) {
@@ -1462,7 +1474,7 @@ function computeCleanPhoneImage(brand?: string, model?: string, fallbackUrl?: st
       const escaped = k.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
       const wordReg = new RegExp(`(^|\\s)${escaped}(\\s|$)`, 'i');
       if (wordReg.test(fullText) || wordReg.test(modelNorm)) {
-        return cleanUrl(MOBILE_API_THUMBS[k], b);
+        return cleanUrl(MOBILE_API_THUMBS[k], b, m);
       }
     }
   }
@@ -1536,14 +1548,14 @@ function computeCleanPhoneImage(brand?: string, model?: string, fallbackUrl?: st
   // 8. Brand-Specific Clean Render Fallback
   for (const [key, url] of Object.entries(BRAND_FRONT_FALLBACKS)) {
     if (b.includes(key) || m.includes(key)) {
-      return cleanUrl(url, b);
+      return cleanUrl(url, b, m);
     }
   }
 
   if (BRAND_FRONT_FALLBACKS[b]) {
-    return cleanUrl(BRAND_FRONT_FALLBACKS[b], b);
+    return cleanUrl(BRAND_FRONT_FALLBACKS[b], b, m);
   }
 
   // 9. Ultimate Fallback: Default to Apple Clean Render
-  return cleanUrl(BRAND_FRONT_FALLBACKS.apple, b);
+  return cleanUrl(BRAND_FRONT_FALLBACKS.apple, b, m);
 }

@@ -672,21 +672,31 @@ export default function SellBrandPage() {
                       <img
                         src={getCleanPhoneImage(m.brand || brandDisplayName, m.model, m.image || undefined)}
                         alt={displayName}
-                        className="h-full max-h-28 sm:max-h-36 w-auto object-contain group-hover:scale-105 transition-transform duration-300 drop-shadow-xs"
+                        className="h-full w-full max-h-28 sm:max-h-36 object-contain group-hover:scale-105 transition-transform duration-300 drop-shadow-xs"
                         loading="lazy"
+                        decoding="async"
                         referrerPolicy="no-referrer"
                         onError={(e) => {
                           const target = e.currentTarget;
-                          const bSlug = (m.brand || brandDisplayName).toLowerCase().replace(/[^a-z0-9]/g, '');
+                          const brandName = m.brand || brandDisplayName;
+                          if (!target.dataset.triedClean) {
+                            target.dataset.triedClean = 'true';
+                            const clean = getCleanPhoneImage(brandName, m.model);
+                            if (clean && target.src !== clean) {
+                              target.src = clean;
+                              return;
+                            }
+                          }
+                          const bSlug = brandName.toLowerCase().replace(/[^a-z0-9]/g, '');
                           if (!target.dataset.triedBrandFallback) {
                             target.dataset.triedBrandFallback = 'true';
                             const fallback = BRAND_FRONT_FALLBACKS[bSlug] || BRAND_FRONT_FALLBACKS.apple;
-                            if (target.src !== fallback) {
+                            if (fallback && target.src !== fallback) {
                               target.src = fallback;
                               return;
                             }
                           }
-                          target.src = getGenericDevicePlaceholder(m.brand || brandDisplayName, m.model);
+                          target.src = getGenericDevicePlaceholder(brandName, m.model);
                         }}
                       />
                     </div>

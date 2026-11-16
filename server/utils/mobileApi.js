@@ -198,10 +198,10 @@ export const formatMobileApiDevice = (d, brandFallback = '') => {
   }
 
   let imageUrl = '';
-  if (d.image_b64) {
-    imageUrl = `data:image/jpeg;base64,${d.image_b64}`;
-  } else if (d.image_url && !d.image_url.includes('unsplash.com')) {
+  if (d.image_url && !d.image_url.includes('unsplash.com')) {
     imageUrl = d.image_url;
+  } else if (d.image_b64) {
+    imageUrl = `data:image/jpeg;base64,${d.image_b64}`;
   }
 
   return {
