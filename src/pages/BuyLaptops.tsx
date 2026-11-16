@@ -36,7 +36,6 @@ import { useCart } from '../context/CartContext';
 import { isProductDeleted, useCatalogSync } from '../lib/catalogSync';
 import { subscribeToRealtimeSync } from '../lib/realtimeSync';
 import type { Product } from '../types';
-import { SAMPLE_LAPTOPS } from '../data/sampleLaptops';
 
 import { matchesBrand } from '../lib/brandFilter';
 
@@ -127,10 +126,7 @@ export default function BuyLaptops() {
   const [searchParams] = useSearchParams();
   const { syncVersion } = useCatalogSync();
 
-  const [products, setProducts] = useState<Product[]>(() => {
-    const cached = getCachedLaptops();
-    return cached.length > 0 ? cached : SAMPLE_LAPTOPS;
-  });
+  const [products, setProducts] = useState<Product[]>(() => getCachedLaptops());
   const [loading, setLoading] = useState(false);
 
   const [search, setSearch] = useState('');
@@ -172,12 +168,11 @@ export default function BuyLaptops() {
             setProducts(fetched);
             setCachedLaptops(fetched);
           } else {
-            setProducts(SAMPLE_LAPTOPS);
+            setProducts([]);
           }
           setLoading(false);
         })
         .catch(() => {
-          setProducts(SAMPLE_LAPTOPS);
           setLoading(false);
         });
     };

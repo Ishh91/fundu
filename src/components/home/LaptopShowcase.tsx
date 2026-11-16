@@ -15,7 +15,6 @@ import {
 } from 'lucide-react';
 import { formatINR } from '../../lib/db';
 import { useCart } from '../../context/CartContext';
-import { SAMPLE_LAPTOPS } from '../../data/sampleLaptops';
 import { deduplicateProductsByModel } from '../../lib/modelVariants';
 import type { Product } from '../../types';
 
@@ -29,15 +28,9 @@ export default function LaptopShowcase({ customLaptops }: LaptopShowcaseProps) {
   const [addedId, setAddedId] = useState<string | null>(null);
 
   const allLaptops = useMemo(() => {
-    // Only featured laptops as decided by Admin
-    const sampleFeatured = SAMPLE_LAPTOPS.filter((l) => l.is_featured);
-    if (customLaptops && customLaptops.length > 0) {
-      const customFeatured = customLaptops.filter((l) => l.is_featured && l.is_approved !== false);
-      if (customFeatured.length > 0) {
-        return deduplicateProductsByModel(customFeatured);
-      }
-    }
-    return deduplicateProductsByModel(sampleFeatured);
+    // Only the laptops Admin has marked as featured
+    const featured = (customLaptops ?? []).filter((l) => l.is_featured && l.is_approved !== false);
+    return deduplicateProductsByModel(featured);
   }, [customLaptops]);
 
   const filteredLaptops = useMemo(() => {
@@ -61,6 +54,9 @@ export default function LaptopShowcase({ customLaptops }: LaptopShowcaseProps) {
     setAddedId(laptop.id);
     setTimeout(() => setAddedId(null), 2000);
   };
+
+  // No featured laptops in the store yet: show nothing rather than a made-up list.
+  if (allLaptops.length === 0) return null;
 
   return (
     <section className="py-12 bg-gradient-to-b from-white via-[#f7f9fa] to-white border-y border-[#e5ecef]">

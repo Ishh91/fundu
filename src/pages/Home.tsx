@@ -5,7 +5,6 @@ import { db } from '../lib/db';
 import { subscribeToRealtimeSync } from '../lib/realtimeSync';
 import { deduplicateProductsByModel } from '../lib/modelVariants';
 import { getCachedFeaturedPhones, setCachedFeaturedPhones } from '../lib/productsCache';
-import { SAMPLE_BEST_SELLING_PHONES } from '../data/sampleProducts';
 import type { Product } from '../types';
 import {
   HeroSection,
@@ -61,8 +60,7 @@ export default function Home() {
             setProducts(uniqueModels);
             setCachedFeaturedPhones(uniqueModels);
           } else {
-            const fallback = deduplicateProductsByModel(SAMPLE_BEST_SELLING_PHONES.filter((p) => p.is_featured));
-            setProducts(fallback);
+            setProducts([]);
           }
           setLoading(false);
         })
