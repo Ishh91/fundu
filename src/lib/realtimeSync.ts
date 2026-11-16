@@ -14,6 +14,7 @@ export type RealtimeSyncAction =
   | 'REPAIR_UPDATE'
   | 'HERO_UPDATE'
   | 'REVIEW_UPDATE'
+  | 'STORES_UPDATE'
   | 'DB_MUTATION';
 
 export interface RealtimeSyncPayload {

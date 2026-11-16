@@ -262,9 +262,21 @@ export default function BuyPhones() {
       return matchSearch && matchBrand && matchGrade && matchStorage && matchPrice;
     });
 
-    if (sortBy === 'low') list = [...list].sort((a, b) => a.price - b.price);
-    if (sortBy === 'high') list = [...list].sort((a, b) => b.price - a.price);
-    if (sortBy === 'discount') list = [...list].sort((a, b) => (b.discount_percent || 0) - (a.discount_percent || 0));
+    if (sortBy === 'featured') {
+      list = [...list].sort((a, b) => {
+        if (a.is_featured && !b.is_featured) return -1;
+        if (!a.is_featured && b.is_featured) return 1;
+        const timeA = new Date(a.updated_at || a.created_at || 0).getTime();
+        const timeB = new Date(b.updated_at || b.created_at || 0).getTime();
+        return timeB - timeA;
+      });
+    } else if (sortBy === 'low') {
+      list = [...list].sort((a, b) => a.price - b.price);
+    } else if (sortBy === 'high') {
+      list = [...list].sort((a, b) => b.price - a.price);
+    } else if (sortBy === 'discount') {
+      list = [...list].sort((a, b) => (b.discount_percent || 0) - (a.discount_percent || 0));
+    }
 
     // Deduplicate by model so identical models do not repeat on the Buy storefront
     return deduplicateProductsByModel(list);
@@ -774,6 +786,13 @@ export default function BuyPhones() {
                             <Sparkles className="h-2.5 w-2.5 text-amber-300" />
                             {isSuperb ? 'Superb (Like New)' : 'Good Value'}
                           </span>
+
+                          {/* Featured Badge Pill (Home & Buy Sync) */}
+                          {product.is_featured && (
+                            <span className="absolute top-10 left-3.5 z-10 text-[9px] font-black px-2 py-0.5 rounded-full bg-amber-400 text-amber-950 shadow-xs flex items-center gap-1 uppercase tracking-wider">
+                              <Sparkles className="h-2.5 w-2.5 fill-amber-950" /> Featured
+                            </span>
+                          )}
 
                           {/* Discount / Offer Tag */}
                           <div className="absolute top-3.5 right-3.5 z-10 flex flex-col items-end gap-1">

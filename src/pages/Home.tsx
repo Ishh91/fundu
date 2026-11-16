@@ -5,6 +5,7 @@ import { db } from '../lib/db';
 import { subscribeToRealtimeSync } from '../lib/realtimeSync';
 import { deduplicateProductsByModel } from '../lib/modelVariants';
 import { getCachedFeaturedPhones, setCachedFeaturedPhones } from '../lib/productsCache';
+import { SAMPLE_BEST_SELLING_PHONES } from '../data/sampleProducts';
 import type { Product } from '../types';
 import {
   HeroSection,
@@ -39,26 +40,30 @@ export default function Home() {
 
   useEffect(() => {
     const loadHomeProducts = () => {
-      // ONLY load products that are approved AND explicitly marked as featured by Admin
+      // Load approved products, prioritizing featured items to sync with the Buy store
       db.from<Product[]>('products')
         .select('*')
         .eq('is_approved', true)
-        .eq('is_featured', true)
         .limit(60)
         .then(({ data }) => {
           const list = (data ?? []) as Product[];
-          // Strictly keep only approved AND featured items decided by Admin
-          const featuredOnly = list.filter((p) => p.is_approved && p.is_featured);
-          // Sort by newest update/creation
-          const sorted = [...featuredOnly].sort((a, b) => {
-            const timeA = new Date(a.updated_at || a.created_at || 0).getTime();
-            const timeB = new Date(b.updated_at || b.created_at || 0).getTime();
-            return timeB - timeA;
-          });
-          // Deduplicate by model so identical models do not repeat on the storefront
-          const uniqueModels = deduplicateProductsByModel(sorted);
-          setProducts(uniqueModels);
-          setCachedFeaturedPhones(uniqueModels);
+          if (list.length > 0) {
+            // Sort: is_featured items first, followed by newest updated/created
+            const sorted = [...list].sort((a, b) => {
+              if (a.is_featured && !b.is_featured) return -1;
+              if (!a.is_featured && b.is_featured) return 1;
+              const timeA = new Date(a.updated_at || a.created_at || 0).getTime();
+              const timeB = new Date(b.updated_at || b.created_at || 0).getTime();
+              return timeB - timeA;
+            });
+            // Deduplicate by model so identical models do not repeat on the storefront
+            const uniqueModels = deduplicateProductsByModel(sorted);
+            setProducts(uniqueModels);
+            setCachedFeaturedPhones(uniqueModels);
+          } else {
+            const fallback = deduplicateProductsByModel(SAMPLE_BEST_SELLING_PHONES.filter((p) => p.is_featured));
+            setProducts(fallback);
+          }
           setLoading(false);
         })
         .catch(() => setLoading(false));

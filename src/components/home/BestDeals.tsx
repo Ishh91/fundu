@@ -6,111 +6,24 @@ import type { Product } from '../../types';
 import { useCart } from '../../context/CartContext';
 import { getCleanPhoneImage } from '../../lib/phoneImages';
 import { cardStorages, showsRam } from '../../lib/cardSpecs';
+import { SAMPLE_BEST_SELLING_PHONES } from '../../data/sampleProducts';
 
 interface BestDealsProps {
   products: Product[];
   loading: boolean;
 }
 
-const FALLBACK_REFURBISHED_PHONES: Product[] = [
-  {
-    id: 'sample-1',
-    title: 'Apple iPhone 13 (128 GB) - Starlight',
-    brand: 'Apple',
-    model: 'iPhone 13',
-    ram: '4 GB',
-    storage: '128 GB',
-    color: 'Starlight',
-    condition: 'Excellent',
-    price: 38999,
-    original_price: 59900,
-    discount_percent: 35,
-    warranty_months: 6,
-    description: 'Refurbished Superb condition. 42-Point inspection passed. Battery health above 88%. Free doorstep doorstep delivery.',
-    images: ['https://images.unsplash.com/photo-1695048133142-1a20484d2569?w=600&auto=format&fit=crop&q=80'],
-    is_approved: true,
-    is_featured: true,
-    stock: 5,
-    sold_count: 42,
-    seller_id: null,
-    created_at: new Date().toISOString(),
-  },
-  {
-    id: 'sample-2',
-    title: 'Apple iPhone 14 (128 GB) - Midnight',
-    brand: 'Apple',
-    model: 'iPhone 14',
-    ram: '6 GB',
-    storage: '128 GB',
-    color: 'Midnight',
-    condition: 'Excellent',
-    price: 47499,
-    original_price: 69900,
-    discount_percent: 32,
-    warranty_months: 6,
-    description: 'Flawless condition, verified screen & camera. Includes charging cable and Fundu 6-month warranty card.',
-    images: ['https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=600&auto=format&fit=crop&q=80'],
-    is_approved: true,
-    is_featured: true,
-    stock: 4,
-    sold_count: 29,
-    seller_id: null,
-    created_at: new Date().toISOString(),
-  },
-  {
-    id: 'sample-3',
-    title: 'Samsung Galaxy S23 5G (256 GB) - Phantom Black',
-    brand: 'Samsung',
-    model: 'Galaxy S23',
-    ram: '8 GB',
-    storage: '256 GB',
-    color: 'Phantom Black',
-    condition: 'Good',
-    price: 42999,
-    original_price: 74999,
-    discount_percent: 42,
-    warranty_months: 6,
-    description: 'Snapdragon 8 Gen 2, Super AMOLED display, pristine condition with 6-month warranty.',
-    images: ['https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?w=600&auto=format&fit=crop&q=80'],
-    is_approved: true,
-    is_featured: true,
-    stock: 3,
-    sold_count: 19,
-    seller_id: null,
-    created_at: new Date().toISOString(),
-  },
-  {
-    id: 'sample-4',
-    title: 'OnePlus 11 5G (256 GB) - Titan Black',
-    brand: 'OnePlus',
-    model: 'OnePlus 11',
-    ram: '16 GB',
-    storage: '256 GB',
-    color: 'Titan Black',
-    condition: 'Excellent',
-    price: 34999,
-    original_price: 61999,
-    discount_percent: 43,
-    warranty_months: 6,
-    description: 'Hasselblad camera, 100W fast charging supported, battery health 92%.',
-    images: ['https://images.unsplash.com/photo-1580910051074-3eb694886505?w=600&auto=format&fit=crop&q=80'],
-    is_approved: true,
-    is_featured: true,
-    stock: 6,
-    sold_count: 31,
-    seller_id: null,
-    created_at: new Date().toISOString(),
-  },
-];
-
 export default function BestDeals({ products, loading }: BestDealsProps) {
   const { addToCart } = useCart();
-  // Strictly display ONLY products where is_featured is true as decided by Admin
+  // Display products: prioritize featured, but always ensure top store phones show
   const displayProducts = useMemo(() => {
-    const featured = (products || []).filter((p) => p.is_featured && p.is_approved !== false);
+    if (!products || products.length === 0) {
+      return SAMPLE_BEST_SELLING_PHONES.filter((p) => p.is_featured);
+    }
+    const featured = products.filter((p) => p.is_featured && p.is_approved !== false);
     if (featured.length > 0) return featured;
-    if (products && products.length > 0) return [];
-    return FALLBACK_REFURBISHED_PHONES.filter((p) => p.is_featured);
+    // If no products are explicitly tagged is_featured, display the top approved products from store
+    return products.filter((p) => p.is_approved !== false).slice(0, 8);
   }, [products]);
 
   return (
@@ -219,7 +132,7 @@ export default function BestDeals({ products, loading }: BestDealsProps) {
                     <div className="flex items-center justify-between text-xs text-gray-400 font-semibold uppercase tracking-wider">
                       <span>{item.brand}</span>
                       <span className="flex items-center gap-1 text-[#344257] font-bold">
-                        <CheckCircle2 className="h-3 w-3 text-[#6A859F]" /> 32-Pt Check Passed
+                        <CheckCircle2 className="h-3 w-3 text-[#6A859F]" /> 42-Pt Check Passed
                       </span>
                     </div>
 
