@@ -71,7 +71,8 @@ export function deriveCondition(a: ConditionAnswers): DerivedCondition {
     bodyLook = 'good';
   }
 
-  const screenLook: CosmeticCondition = screenCondition === 'cracked' ? 'fair' : screenCondition === 'scratched' ? 'good' : 'flawless';
+  // A screen that needs repair is paid for by its repair cost, so it does not also lower the look.
+  const screenLook: CosmeticCondition = screenCondition === 'scratched' ? 'good' : 'flawless';
 
   const cosmeticCondition = needsScreenRepair(a) ? screenLook : worseOf(bodyLook, screenLook);
   return { screenCondition, bodyCondition, cosmeticCondition };

@@ -166,7 +166,8 @@ describe('Fundu Phone Buyback Quote Engine', () => {
       const fresh = quotePhone({ ...bestCase, screen_condition: 'cracked', age_period: '0_to_3_months' }).offerAmount;
       const old = quotePhone({ ...bestCase, screen_condition: 'cracked', age_period: 'above_11_months' }).offerAmount;
       assert.ok(old < fresh, `${old} should be below ${fresh}`);
-      assertWithinRounding(fresh - old, benchmarkPrice * 0.2, 'ageing on a cracked screen');
+      // Ageing takes 20% off the whole aged value, the screen share included.
+      assertWithinRounding(old, fresh * 0.8, 'ageing on a cracked screen');
     });
 
     test('still takes off other hardware faults and missing accessories', () => {
@@ -235,6 +236,46 @@ describe('Fundu Phone Buyback Quote Engine', () => {
         lookupModelRepairs('Apple', 'iPhone 13', benchmarkPrice).screen,
         'cracked screen with a flawless look',
       );
+    });
+  });
+
+  describe('cracked screen deduction', () => {
+    const flawlessOffer = (model, storage, extra = {}) => quotePhone({ ...bestCase, model, storage, ...extra }).offerAmount;
+    const shareLost = (model, storage, extra = {}) => {
+      const flawless = flawlessOffer(model, storage, extra);
+      const cracked = flawlessOffer(model, storage, { ...extra, screen_condition: 'cracked' });
+      return (flawless - cracked) / flawless;
+    };
+
+    test('takes about a quarter off a premium phone, not three quarters', () => {
+      const share = shareLost('iPhone 15 Pro Max', '256 GB');
+      assert.ok(share > 0.24 && share < 0.30, `took ${(share * 100).toFixed(1)}%`);
+    });
+
+    test('takes about a third off a mid-priced phone', () => {
+      const share = shareLost('iPhone 16', '128 GB');
+      assert.ok(share > 0.32 && share < 0.38, `took ${(share * 100).toFixed(1)}%`);
+    });
+
+    test('scales with the phone age, so an old phone does not lose a larger share', () => {
+      const fresh = shareLost('iPhone 15 Pro Max', '256 GB');
+      const old = shareLost('iPhone 15 Pro Max', '256 GB', { age_period: 'above_11_months' });
+      assert.ok(Math.abs(fresh - old) < 0.02, `${(fresh * 100).toFixed(1)}% fresh vs ${(old * 100).toFixed(1)}% old`);
+    });
+
+    test('does not also lower the look: a cracked screen costs the same whatever look is sent with it', () => {
+      for (const cosmetic_condition of ['flawless', 'good', 'fair']) {
+        assert.equal(
+          quotePhone({ ...bestCase, screen_condition: 'cracked', cosmetic_condition }).offerAmount,
+          quotePhone({ ...bestCase, screen_condition: 'cracked', cosmetic_condition: 'flawless' }).offerAmount,
+          cosmetic_condition,
+        );
+      }
+    });
+
+    test('keeps an old premium phone with a cracked screen above 55% of its flawless price (it was 14%)', () => {
+      const share = shareLost('iPhone 15 Pro Max', '256 GB', { age_period: 'above_11_months' });
+      assert.ok(1 - share > 0.55, `kept ${((1 - share) * 100).toFixed(1)}%`);
     });
   });
 

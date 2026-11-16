@@ -17,7 +17,8 @@ describe('deriveCondition: screen', () => {
   it('treats a cracked screen as cracked, above everything else', () => {
     const out = deriveCondition({ screenCracked: true, touchFault: true, displayMajorLines: true, screenMinorScratches: true });
     assert.equal(out.screenCondition, 'cracked');
-    assert.equal(out.cosmeticCondition, 'fair');
+    // The repair cost already covers the cracked screen, so it does not also lower the overall look.
+    assert.equal(out.cosmeticCondition, 'flawless');
   });
 
   it('treats a touch that does not work as a touch fault', () => {
@@ -76,8 +77,9 @@ describe('deriveCondition: body and overall look', () => {
     assert.equal(deriveCondition({ bodyMinorDents: true }).cosmeticCondition, 'good');
   });
 
-  it('keeps a fair look when a cracked screen meets light body wear', () => {
-    assert.equal(deriveCondition({ screenCracked: true, bodyMinorDents: true }).cosmeticCondition, 'fair');
+  it('does not lower the look for a cracked screen, even with body wear', () => {
+    assert.equal(deriveCondition({ screenCracked: true }).cosmeticCondition, 'flawless');
+    assert.equal(deriveCondition({ screenCracked: true, bodyMinorDents: true }).cosmeticCondition, 'flawless');
   });
 
   it('does not change its input', () => {

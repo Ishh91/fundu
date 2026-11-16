@@ -10,7 +10,7 @@ import {
   RefreshCw,
 } from 'lucide-react';
 import { computeDetailedResaleValuation, fetchSellPriceConfig, getStoredPriceConfig, fetchPhoneModels, searchMobileApiDev, getDynamicFallbackConfig, type SellPriceConfig } from '../lib/mobileApi';
-import { getFunduPhoneQuote, getInstantFunduQuote, calculatePhoneAgingFactor, type FunduQuoteResponse } from '../lib/quoteEngine';
+import { getFunduPhoneQuote, getInstantFunduQuote, calculatePhoneAgingFactor, screenRepairRate, type FunduQuoteResponse } from '../lib/quoteEngine';
 import { needsScreenRepair } from '../lib/sellCondition';
 import { db } from '../lib/db';
 import { useAuth } from '../context/AuthContext';
@@ -841,7 +841,8 @@ export default function SellPhone() {
 
       // 1. Screen Deductions
       const isAmoled = isAmoledDisplay(form.brand, form.model);
-      const brokenScreenRate = isAmoled ? 0.45 : 0.40;
+      // Same share as the quote engine, taken off the aged value so an older phone does not lose more.
+      const brokenScreenRate = screenRepairRate(form.brand, form.model, baseModelPrice) * aging;
 
       if (form.screenCracked) {
         val -= baseModelPrice * brokenScreenRate;

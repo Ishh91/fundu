@@ -2396,10 +2396,21 @@ export function isAmoledModel(brand, model) {
   return false;
 }
 
+/** From this catalog price up, a cracked screen costs a smaller share of the phone's value (Cashify takes about a quarter there). */
+export const HIGH_PRICE_SCREEN_FROM = 60000;
+
+/**
+ * Share of the catalog price taken off for a screen that needs repair (cracked, touch fault, display lines).
+ * Measured against Cashify's quotes: about a quarter on premium phones, about a third on the rest.
+ */
+export function screenRepairRate(brand, model, benchmarkProceeds = 20000) {
+  if (benchmarkProceeds >= HIGH_PRICE_SCREEN_FROM) return 0.27;
+  return isAmoledModel(brand, model) ? 0.35 : 0.32;
+}
+
 export function lookupModelRepairs(brand, model, benchmarkProceeds = 20000) {
-  const isAmoled = isAmoledModel(brand, model);
-  const screenDeductionRate = isAmoled ? 0.45 : 0.40;
   const p = benchmarkProceeds > 0 ? benchmarkProceeds : 20000;
+  const screenDeductionRate = screenRepairRate(brand, model, p);
 
   const key = `${String(brand).trim().toLowerCase()}:${normalizeKey(model)}`;
   if (CONFIGURED_REPAIRS[key]) {
@@ -2776,17 +2787,14 @@ export function quotePhone(input = {}, options = {}) {
 
   // 5. Compute Deductions & Adjustments according to Business Formula
   const agePeriod = input.age_period || input.agePeriod || '';
+  const agingFactor = calculatePhoneAgingFactor(brand, model, under_warranty, agePeriod);
   const normAge = String(agePeriod || '').toLowerCase().trim();
   const is0to3Months = isApple && (normAge === '0_to_3_months' || normAge === 'below_3_months');
 
   let cosmeticKey = String(cosmetic_condition).toLowerCase();
-  // With the screen needing a repair, the overall look comes from the screen alone: a worse look that a dent put
-  // there (for instance by another client) is not deducted on top. A better look is left as given.
-  if (screenIsDeducted) {
-    const COSMETIC_SEVERITY = { flawless: 0, good: 1, fair: 2 };
-    const screenLook = screen_condition === 'cracked' ? 'fair' : 'flawless';
-    if ((COSMETIC_SEVERITY[cosmeticKey] ?? 0) > COSMETIC_SEVERITY[screenLook]) cosmeticKey = screenLook;
-  }
+  // With the screen needing a repair, the overall look is not lowered at all: the screen repair cost already
+  // covers the damage, and a worse look that a dent put there (for instance by another client) is not deducted on top.
+  if (screenIsDeducted) cosmeticKey = 'flawless';
   const activeCosmeticMultipliers = options.cosmeticMultipliers || {
     flawless: 1.00,
     good: 0.85,
@@ -2826,8 +2834,10 @@ export function quotePhone(input = {}, options = {}) {
   const internalRepairBreakdown = [];
 
   if (requiresScreenRepair && repairCosts?.screen) {
-    configuredRepairsTotal += repairCosts.screen;
-    internalRepairBreakdown.push({ item: 'screen', cost: repairCosts.screen });
+    // The screen share is taken off the phone's aged value, so an older phone loses the same share, not more.
+    const screenCost = Math.round(repairCosts.screen * agingFactor);
+    configuredRepairsTotal += screenCost;
+    internalRepairBreakdown.push({ item: 'screen', cost: screenCost });
     conditionReasons.push(`Screen/display replacement required (${screen_condition.replace('_', ' ')})`);
   }
 
@@ -2937,7 +2947,6 @@ export function quotePhone(input = {}, options = {}) {
   // - 3 to 6 months: 93.45% (0.9345)
   // - 6 to 11 months: 90.78% (0.9078)
   // - > 11 months (out of warranty): 80% (0.80)
-  const agingFactor = calculatePhoneAgingFactor(brand, model, under_warranty, agePeriod);
   const baseP = Math.round(expectedResaleProceeds * agingFactor);
   const condP = Math.round(baseP * cosmeticMultiplier);
 
