@@ -18,6 +18,7 @@ export const createInitialSellForm = () => ({
   screenMinorScratches: false,
   screenMajorScratches: false,
   screenCracked: false,
+  touchFault: false,
   displayMinorSpotsWhite: false,
   displayMajorSpots: false,
   displayMinorLines: false,
