@@ -6,9 +6,11 @@ import {
   recalculateInspectedQuote,
   FUNDU_POLICY,
   FUNDU_SERVICE_LOCALITIES,
+  screenRepairRate,
 } from '../../fundu_phone_quote.mjs';
 
 export {
+  screenRepairRate,
   calculatePhoneAgingFactor,
   quotePhone,
   recalculateInspectedQuote,
