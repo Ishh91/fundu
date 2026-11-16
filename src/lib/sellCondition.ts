@@ -16,6 +16,22 @@ export interface ConditionAnswers {
   bodyMinorDents?: boolean;
   bodyMajorDents?: boolean;
   bodyCrackedOrBroken?: boolean;
+  // Extra detail the Cashify-style questions ask for. Each always goes with one of the answers above, which is
+  // what the quote is priced on; these only remember which description the customer picked.
+  /** The glass is chipped or cracked outside the display area (priced as a cracked screen). */
+  screenChipped?: boolean;
+  /** Three or more minor spots (priced as minor spots). */
+  displayManyMinorSpots?: boolean;
+  /** The display is faded along the edges (priced as minor lines). */
+  displayFadedEdges?: boolean;
+  /** A side or back panel is missing (priced as a broken body). */
+  bodyMissingPanel?: boolean;
+  /** The phone is bent (priced as a major dent). */
+  bodyBent?: boolean;
+  /** The screen is loose, with a gap between screen and body (priced as a major dent). */
+  bodyLooseScreen?: boolean;
+  // bodyBent and bodyLooseScreen are priced like bodyMajorDents, but are kept apart so that picking one of them
+  // does not also show the "major dents" description as picked.
 }
 
 export type ScreenCondition = 'flawless' | 'scratched' | 'cracked' | 'touch_fault' | 'display_lines';
@@ -63,7 +79,7 @@ export function deriveCondition(a: ConditionAnswers): DerivedCondition {
 
   let bodyCondition: BodyCondition = 'flawless';
   let bodyLook: CosmeticCondition = 'flawless';
-  if (a.bodyCrackedOrBroken || a.bodyMajorDents) {
+  if (a.bodyCrackedOrBroken || a.bodyMajorDents || a.bodyBent || a.bodyLooseScreen) {
     bodyCondition = 'dents_bent';
     bodyLook = 'fair';
   } else if (a.bodyMinorDents || a.bodyMajorSideScratches || a.bodyMinorSideScratches) {

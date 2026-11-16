@@ -15,7 +15,27 @@ import { getCleanModelName } from '../../lib/modelCatalogSync';
 import type { FunduQuoteResponse } from '../../lib/quoteEngine';
 import type { SellFormState } from '../../lib/sellForm';
 import { deriveCondition } from '../../lib/sellCondition';
+import {
+  QUESTION_SECTIONS,
+  applyChoice,
+  clearSection,
+  sectionHasAnswers,
+  selectedOptionId,
+  type QuestionGroup,
+  type QuestionSection,
+} from '../../lib/sellQuestions';
 import type { User } from '../../lib/db';
+
+/** Cashify's eSIM question. It is asked and saved with the request; it does not change the price. */
+const ESIM_GROUP: QuestionGroup = {
+  id: 'esim',
+  title: 'How many eSIMs does your device support?',
+  help: 'Choose "Dual eSIM" if your device supports two eSIMs. Otherwise choose "Single eSIM".',
+  options: [
+    { id: 'single', label: 'Single eSIM', sets: {} },
+    { id: 'dual', label: 'Dual eSIM', sets: {} },
+  ],
+};
 
 interface SellStep2ConditionProps {
   form: SellFormState;
@@ -60,10 +80,16 @@ export default function SellStep2Condition({
   const showsAging = true;
   const hasStylus = deviceIncludesStylus(form.brand, form.model);
 
-  let nextSection = 4; // 1: Power/Ownership, 2: Screen, 3: Display Spots & Issues, 4: Body
+  // A kind of damage is open when the customer ticked it, or when an answer in it already says something is wrong.
+  const isAreaOn = (section: QuestionSection) => form.defectAreas.includes(section.id) || sectionHasAnswers(section, form);
+  const visibleSections = QUESTION_SECTIONS.filter(isAreaOn);
+
+  // 1: Power, Ownership & calls, 2: which damage applies, then one section for each kind of damage ticked.
+  let nextSection = 2 + visibleSections.length;
   const batterySectionNum = isApple ? ++nextSection : 0;
   const faultsSectionNum = ++nextSection;
   const agingSectionNum = showsAging ? ++nextSection : 0;
+  const warrantySectionNum = ++nextSection;
   const accessoriesSectionNum = ++nextSection;
   const stylusSectionNum = hasStylus ? ++nextSection : 0;
 
@@ -72,6 +98,32 @@ export default function SellStep2Condition({
       const next = { ...prev, [field]: value };
       // Every screen, display, touch and body answer feeds the quote through one shared rule.
       return { ...next, ...deriveCondition(next) };
+    });
+  };
+
+  /** Picks one description for a part of the phone (for example the screen) and re-derives how the phone is priced. */
+  const chooseOption = (group: QuestionGroup, optionId: string) => {
+    setForm((prev) => {
+      const next = { ...prev, ...applyChoice(group, optionId, prev) };
+      return { ...next, ...deriveCondition(next) };
+    });
+  };
+
+  /** Ticks or unticks a kind of damage. Unticking it clears its answers, so a phone is never priced on damage the customer said does not apply. */
+  const toggleArea = (section: QuestionSection) => {
+    setForm((prev) => {
+      const isOn = prev.defectAreas.includes(section.id) || sectionHasAnswers(section, prev);
+      if (!isOn) return { ...prev, defectAreas: [...prev.defectAreas, section.id] };
+      const next = { ...prev, ...clearSection(section, prev), defectAreas: prev.defectAreas.filter((id) => id !== section.id) };
+      return { ...next, ...deriveCondition(next) };
+    });
+  };
+
+  /** A fault that the quote prices like any other declared fault, kept in the same list as the faults below. */
+  const setFault = (faultId: string, present: boolean) => {
+    setForm((prev) => {
+      const others = prev.defects.filter((d) => d !== faultId);
+      return { ...prev, defects: present ? [...others, faultId] : others };
     });
   };
 
@@ -336,10 +388,37 @@ export default function SellStep2Condition({
                 </p>
               )}
             </div>
+
+            {/* Calls (Cashify asks this on its first page) */}
+            <YesNoQuestion
+              title="Are you able to make and receive calls?"
+              help="Check your phone for network or calling problems."
+              value={form.canMakeCalls !== false}
+              onChange={(works) => {
+                setForm((f) => ({ ...f, canMakeCalls: works }));
+                setFault('calls_not_working', !works);
+              }}
+            />
+
+            {/* Original screen (Cashify asks this on its first page) */}
+            <YesNoQuestion
+              title="Is your phone's screen original?"
+              help="Choose Yes if the screen was never changed, or was changed by an authorised service centre. Choose No if it was changed at a local shop."
+              value={!form.defects.includes('screen_not_original')}
+              onChange={(original) => setFault('screen_not_original', !original)}
+            />
+
+            {/* Touch (Cashify asks this on its first page) */}
+            <YesNoQuestion
+              title="Is your device's touch screen working properly?"
+              help="Check the touch screen of your phone: no dead areas, no ghost touches."
+              value={!form.touchFault}
+              onChange={(working) => toggleQuestion('touchFault', !working)}
+            />
           </div>
         </div>
 
-        {/* 2. Screen Condition (PDF Questions 1-3) */}
+        {/* 2. Which kinds of damage apply (Cashify asks this before the detailed questions) */}
         <div className="space-y-3">
           <div className="flex items-center justify-between pb-1 border-b border-gray-200">
             <div className="flex items-center gap-2">
@@ -348,208 +427,74 @@ export default function SellStep2Condition({
               </div>
               <div>
                 <label className="label text-sm font-extrabold text-gray-900">
-                  Screen Condition
+                  Select screen / body defects that are applicable
                 </label>
-                <span className="text-[11px] text-gray-500 block">Outer front glass surface physical assessment</span>
+                <span className="text-[11px] text-gray-500 block">
+                  Tick what is wrong with your phone. We only ask about what you tick. Leave all unticked if there is no damage.
+                </span>
               </div>
             </div>
-            <span className="text-[11px] font-bold text-gray-400 uppercase tracking-wider">4 Questions</span>
           </div>
-
-          <div className="space-y-2.5">
-            {/* Touch */}
-            <QuestionToggleRow
-              title="Touch Not Working"
-              question="Does the touch screen have dead areas, ghost touches, or not respond properly?"
-              value={!!form.touchFault}
-              onChange={(val) => toggleQuestion('touchFault', val)}
-              highlightDanger
-            />
-
-            {/* Minor Scratches */}
-            <QuestionToggleRow
-              title="Minor Scratches"
-              question="Does the screen have light scratches that are hard to see?"
-              value={!!form.screenMinorScratches}
-              onChange={(val) => toggleQuestion('screenMinorScratches', val)}
-            />
-
-            {/* Major Scratches */}
-            <QuestionToggleRow
-              title="Major Scratches"
-              question="Does the screen have deep scratches that are easy to see or feel?"
-              value={!!form.screenMajorScratches}
-              onChange={(val) => toggleQuestion('screenMajorScratches', val)}
-            />
-
-            {/* Cracked or Broken */}
-            <QuestionToggleRow
-              title="Cracked or Broken"
-              question="Is the screen cracked or broken?"
-              value={!!form.screenCracked}
-              onChange={(val) => toggleQuestion('screenCracked', val)}
-              highlightDanger
-            // customBadge={
-            //   isAmoled
-            //     ? 'AMOLED Screen (45% Direct Deduction)'
-            //     : 'Normal LCD Screen (40% Direct Deduction)'
-            // }
-            // customBadgeColor={
-            //   isAmoled
-            //     ? 'bg-purple-100 text-purple-800 border-purple-300'
-            //     : 'bg-teal-100 text-teal-800 border-teal-300'
-            // }
-            />
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            {QUESTION_SECTIONS.map((section) => {
+              const isOn = isAreaOn(section);
+              return (
+                <button
+                  key={section.id}
+                  type="button"
+                  role="checkbox"
+                  aria-checked={isOn}
+                  onClick={() => toggleArea(section)}
+                  className={`flex items-center gap-3 p-3.5 rounded-xl border text-left text-xs font-bold transition-all cursor-pointer ${
+                    isOn
+                      ? 'border-rose-400 bg-rose-50 text-rose-900 shadow-xs'
+                      : 'border-gray-200 bg-white text-gray-700 hover:border-gray-300'
+                  }`}
+                >
+                  <span
+                    className={`grid h-5 w-5 shrink-0 place-items-center rounded-md transition-colors ${
+                      isOn ? 'bg-rose-600 text-white' : 'border border-gray-300'
+                    }`}
+                  >
+                    {isOn && <Check className="h-3.5 w-3.5" />}
+                  </span>
+                  {section.applies}
+                </button>
+              );
+            })}
           </div>
         </div>
 
-        {/* 3. Display Spots & Issues (PDF Questions 4-9) */}
-        <div className="space-y-3.5">
-          <div className="flex items-center justify-between pb-1 border-b border-gray-200">
-            <div className="flex items-center gap-2">
-              <div className="h-6 w-6 rounded-lg bg-[#344257] text-white flex items-center justify-center font-black text-xs">
-                3
+        {/* The detailed questions for each kind of damage the customer ticked */}
+        {visibleSections.map((section, sectionIndex) => (
+          <div key={section.id} className="space-y-3.5">
+            <div className="flex items-center justify-between pb-1 border-b border-gray-200">
+              <div className="flex items-center gap-2">
+                <div className="h-6 w-6 rounded-lg bg-[#344257] text-white flex items-center justify-center font-black text-xs">
+                  {sectionIndex + 3}
+                </div>
+                <div>
+                  <label className="label text-sm font-extrabold text-gray-900">
+                    {section.title}
+                  </label>
+                  <span className="text-[11px] text-gray-500 block">{section.subtitle}</span>
+                </div>
               </div>
-              <div>
-                <label className="label text-sm font-extrabold text-gray-900">
-                  Display Spots &amp; Issues
-                </label>
-                <span className="text-[11px] text-gray-500 block">Internal panel health, spots, lines &amp; color accuracy</span>
-              </div>
+              <span className="text-[11px] font-bold text-gray-400 uppercase tracking-wider">
+                {section.groups.length} {section.groups.length === 1 ? 'Question' : 'Questions'}
+              </span>
             </div>
-            <span className="text-[11px] font-bold text-gray-400 uppercase tracking-wider">6 Questions</span>
-          </div>
 
-          {/* Subcategory: Spots */}
-          <div className="space-y-2">
-            <p className="text-[11px] font-black uppercase tracking-wider text-gray-500 flex items-center gap-1.5">
-              <span className="h-1.5 w-1.5 rounded-full bg-[#344257]"></span> Spots
-            </p>
-            <QuestionToggleRow
-              title="Minor Spots (White)"
-              question="Are there any small white spots on the display?"
-              value={!!form.displayMinorSpotsWhite}
-              onChange={(val) => toggleQuestion('displayMinorSpotsWhite', val)}
-            />
-            <QuestionToggleRow
-              title="Major Spots (Black / Green / Other)"
-              question="Are there any black, green, or other coloured spots on the display?"
-              value={!!form.displayMajorSpots}
-              onChange={(val) => toggleQuestion('displayMajorSpots', val)}
-              highlightDanger
-            />
+            {section.groups.map((group) => (
+              <ChoiceGroupCard
+                key={group.id}
+                group={group}
+                selectedId={selectedOptionId(group, form)}
+                onSelect={(optionId) => chooseOption(group, optionId)}
+              />
+            ))}
           </div>
-
-          {/* Subcategory: Lines */}
-          <div className="space-y-2 pt-1">
-            <p className="text-[11px] font-black uppercase tracking-wider text-gray-500 flex items-center gap-1.5">
-              <span className="h-1.5 w-1.5 rounded-full bg-[#344257]"></span> Lines
-            </p>
-            <QuestionToggleRow
-              title="Minor Lines"
-              question="Are there any thin or faint lines that show up only sometimes?"
-              value={!!form.displayMinorLines}
-              onChange={(val) => toggleQuestion('displayMinorLines', val)}
-            />
-            <QuestionToggleRow
-              title="Major Lines"
-              question="Are there any bold lines that are always visible on the display?"
-              value={!!form.displayMajorLines}
-              onChange={(val) => toggleQuestion('displayMajorLines', val)}
-              highlightDanger
-            />
-          </div>
-
-          {/* Subcategory: Discolouration */}
-          <div className="space-y-2 pt-1">
-            <p className="text-[11px] font-black uppercase tracking-wider text-gray-500 flex items-center gap-1.5">
-              <span className="h-1.5 w-1.5 rounded-full bg-[#344257]"></span> Discolouration
-            </p>
-            <QuestionToggleRow
-              title="Minor Discolouration"
-              question="Does the display have a slight colour tint that you can notice only when you look closely?"
-              value={!!form.displayMinorDiscolouration}
-              onChange={(val) => toggleQuestion('displayMinorDiscolouration', val)}
-            />
-            <QuestionToggleRow
-              title="Major Discolouration"
-              question="Does the display have a strong colour patch or tint that is easy to see?"
-              value={!!form.displayMajorDiscolouration}
-              onChange={(val) => toggleQuestion('displayMajorDiscolouration', val)}
-            />
-          </div>
-        </div>
-
-        {/* 4. Body & Frame Condition (PDF Questions 10-14) */}
-        <div className="space-y-3.5">
-          <div className="flex items-center justify-between pb-1 border-b border-gray-200">
-            <div className="flex items-center gap-2">
-              <div className="h-6 w-6 rounded-lg bg-[#344257] text-white flex items-center justify-center font-black text-xs">
-                4
-              </div>
-              <div>
-                <label className="label text-sm font-extrabold text-gray-900">
-                  Body &amp; Frame Condition
-                </label>
-                <span className="text-[11px] text-gray-500 block">Side panels, metal frame, corners &amp; back integrity</span>
-              </div>
-            </div>
-            <span className="text-[11px] font-bold text-gray-400 uppercase tracking-wider">5 Questions</span>
-          </div>
-
-          {/* Subcategory: Side Panel Scratches */}
-          <div className="space-y-2">
-            <p className="text-[11px] font-black uppercase tracking-wider text-gray-500 flex items-center gap-1.5">
-              <span className="h-1.5 w-1.5 rounded-full bg-[#344257]"></span> Side Panel Scratches
-            </p>
-            <QuestionToggleRow
-              title="Minor Side Panel Scratches"
-              question="Are there any light scratches on the side panels of the phone?"
-              value={!!form.bodyMinorSideScratches}
-              onChange={(val) => toggleQuestion('bodyMinorSideScratches', val)}
-            />
-            <QuestionToggleRow
-              title="Major Side Panel Scratches"
-              question="Are there any deep scratches on the side panels that are easy to see or feel?"
-              value={!!form.bodyMajorSideScratches}
-              onChange={(val) => toggleQuestion('bodyMajorSideScratches', val)}
-            />
-          </div>
-
-          {/* Subcategory: Dents */}
-          <div className="space-y-2 pt-1">
-            <p className="text-[11px] font-black uppercase tracking-wider text-gray-500 flex items-center gap-1.5">
-              <span className="h-1.5 w-1.5 rounded-full bg-[#344257]"></span> Dents
-            </p>
-            <QuestionToggleRow
-              title="Minor Dents"
-              question="Are there any small dents on the phone, such as on the corners or edges?"
-              value={!!form.bodyMinorDents}
-              onChange={(val) => toggleQuestion('bodyMinorDents', val)}
-            />
-            <QuestionToggleRow
-              title="Major Dents"
-              question="Are there any large or deep dents that change the shape of the phone?"
-              value={!!form.bodyMajorDents}
-              onChange={(val) => toggleQuestion('bodyMajorDents', val)}
-              highlightDanger
-            />
-          </div>
-
-          {/* Subcategory: Back & Frame Integrity */}
-          <div className="space-y-2 pt-1">
-            <p className="text-[11px] font-black uppercase tracking-wider text-gray-500 flex items-center gap-1.5">
-              <span className="h-1.5 w-1.5 rounded-full bg-[#344257]"></span> Back &amp; Frame Integrity
-            </p>
-            <QuestionToggleRow
-              title="Cracked or Broken Body"
-              question="Is the back panel or frame of the phone cracked or broken?"
-              value={!!form.bodyCrackedOrBroken}
-              onChange={(val) => toggleQuestion('bodyCrackedOrBroken', val)}
-              highlightDanger
-            />
-          </div>
-        </div>
+        ))}
 
         {/* Battery Health (Apple iOS Only - Android does not have battery health percentage) */}
         {isApple && (
@@ -729,6 +674,38 @@ export default function SellStep2Condition({
           </div>
         )}
 
+        {/* Warranty, purchase bill and eSIM (asked on Cashify's first page) */}
+        <div className="space-y-3">
+          <div className="flex items-center justify-between">
+            <label className="label text-sm font-extrabold text-gray-900">
+              {warrantySectionNum}. {isApple ? 'Warranty, Bill & eSIM' : 'Warranty & Bill'}
+            </label>
+            <span className="text-[11px] text-[#6A859F] font-bold">Better price with a valid bill</span>
+          </div>
+          <YesNoQuestion
+            title="Is your device under manufacturer warranty?"
+            help="You get a better price if it is under manufacturer warranty with a GST valid bill. This follows the age you picked above; change it if it is wrong."
+            value={!!form.underWarranty}
+            onChange={(inWarranty) => setForm((f) => ({ ...f, underWarranty: inWarranty }))}
+          />
+          <YesNoQuestion
+            title="Do you have a GST valid bill with the same IMEI?"
+            help="Make sure the bill has the device IMEI written on it."
+            value={form.accessories.includes('Valid Bill')}
+            onChange={(hasBill) => {
+              if (hasBill !== form.accessories.includes('Valid Bill')) toggleAccessory('Valid Bill');
+            }}
+          />
+          {isApple && (
+            <ChoiceGroupCard
+              neutral
+              group={ESIM_GROUP}
+              selectedId={form.esimCount}
+              onSelect={(optionId) => setForm((f) => ({ ...f, esimCount: optionId === 'dual' ? 'dual' : 'single' }))}
+            />
+          )}
+        </div>
+
         {/* Included Original Accessories */}
         <div className="space-y-3">
           <div className="flex items-center justify-between">
@@ -739,7 +716,7 @@ export default function SellStep2Condition({
           </div>
 
           <div className="flex flex-wrap gap-2">
-            {ACCESSORIES_LIST.map((acc) => {
+            {ACCESSORIES_LIST.filter((acc) => acc.id !== 'Valid Bill').map((acc) => {
               const isSel = form.accessories.includes(acc.id);
               return (
                 <button
@@ -842,84 +819,103 @@ export default function SellStep2Condition({
   );
 }
 
-function QuestionToggleRow({
-  title,
-  question,
-  value,
-  onChange,
-  highlightDanger = false,
-  customBadge,
-  customBadgeColor,
+function ChoiceGroupCard({
+  group,
+  selectedId,
+  onSelect,
+  neutral = false,
 }: {
-  title: string;
-  question: string;
-  value: boolean;
-  onChange: (val: boolean) => void;
-  highlightDanger?: boolean;
-  customBadge?: string;
-  customBadgeColor?: string;
+  group: QuestionGroup;
+  selectedId: string;
+  onSelect: (optionId: string) => void;
+  /** True for choices that are not a problem with the phone, so no choice is shown as an issue. */
+  neutral?: boolean;
 }) {
   return (
-    <div
-      className={`p-3.5 sm:p-4 rounded-2xl border transition-all ${value
-          ? highlightDanger
-            ? 'bg-rose-50/70 border-rose-300 ring-1 ring-rose-300/40'
-            : 'bg-amber-50/60 border-amber-300 ring-1 ring-amber-300/40'
-          : 'bg-white border-gray-200 hover:border-gray-300'
-        }`}
-    >
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-        <div className="space-y-1">
-          <div className="flex items-center gap-2 flex-wrap">
-            <span className="text-xs font-bold text-gray-900">{title}</span>
-            {customBadge && (
-              <span
-                className={`text-[10px] font-extrabold px-2 py-0.5 rounded-full border ${customBadgeColor || 'bg-purple-100 text-purple-800 border-purple-300'
-                  }`}
-              >
-                {customBadge}
-              </span>
-            )}
-            {value && (
-              <span
-                className={`text-[10px] font-extrabold px-2 py-0.5 rounded-full ${highlightDanger
-                    ? 'bg-rose-100 text-rose-800 border border-rose-300'
-                    : 'bg-amber-100 text-amber-800 border border-amber-300'
-                  }`}
-              >
-                Issue Declared
-              </span>
-            )}
-          </div>
-          <p className="text-[12px] text-gray-600 leading-snug">{question}</p>
-        </div>
-
-        <div className="flex items-center gap-1.5 shrink-0 self-end sm:self-center">
-          <button
-            type="button"
-            onClick={() => onChange(true)}
-            className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition cursor-pointer ${value
-                ? highlightDanger
-                  ? 'bg-rose-600 text-white shadow-xs'
-                  : 'bg-amber-600 text-white shadow-xs'
-                : 'bg-gray-100 hover:bg-gray-200 text-gray-700 border border-gray-200'
+    <div className="p-3.5 sm:p-4 rounded-2xl border border-gray-200 bg-white space-y-2.5">
+      <div>
+        <p className="text-xs font-extrabold text-gray-900">{group.title}</p>
+        <p className="text-[11px] text-gray-500 mt-0.5">{group.help}</p>
+      </div>
+      <div role="radiogroup" aria-label={group.title} className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+        {group.options.map((option) => {
+          const isSelected = option.id === selectedId;
+          const hasIssue = !neutral && isSelected && option.id !== 'none';
+          return (
+            <button
+              key={option.id}
+              type="button"
+              role="radio"
+              aria-checked={isSelected}
+              onClick={() => onSelect(option.id)}
+              className={`flex items-center gap-3 px-3.5 py-3 rounded-xl border text-left text-xs font-bold transition-all cursor-pointer ${
+                isSelected
+                  ? hasIssue && option.severe
+                    ? 'border-rose-400 bg-rose-50 text-rose-900 ring-1 ring-rose-300/40'
+                    : hasIssue
+                      ? 'border-amber-400 bg-amber-50 text-amber-900 ring-1 ring-amber-300/40'
+                      : 'border-[#344257] bg-[#F0F0F5] text-gray-900 ring-1 ring-[#344257]/20'
+                  : 'border-gray-200 bg-white text-gray-700 hover:border-gray-300'
               }`}
-          >
-            Yes
-          </button>
-          <button
-            type="button"
-            onClick={() => onChange(false)}
-            className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition cursor-pointer ${!value
-                ? 'bg-[#344257] text-white shadow-xs'
-                : 'bg-gray-100 hover:bg-gray-200 text-gray-700 border border-gray-200'
-              }`}
-          >
-            No
-          </button>
-        </div>
+            >
+              <span
+                className={`h-4 w-4 rounded-full border-2 flex items-center justify-center shrink-0 ${
+                  isSelected ? 'border-[#344257]' : 'border-gray-300'
+                }`}
+              >
+                {isSelected && <span className="h-2 w-2 rounded-full bg-[#344257]" />}
+              </span>
+              {option.label}
+            </button>
+          );
+        })}
       </div>
     </div>
   );
 }
 
+function YesNoQuestion({
+  title,
+  help,
+  value,
+  onChange,
+}: {
+  title: string;
+  help: string;
+  /** True when the answer is "Yes". */
+  value: boolean;
+  onChange: (value: boolean) => void;
+}) {
+  return (
+    <div className="p-3.5 sm:p-4 rounded-2xl border border-gray-200 bg-white flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+      <div className="space-y-1">
+        <p className="text-xs font-bold text-gray-900">{title}</p>
+        <p className="text-[11px] text-gray-500 leading-snug">{help}</p>
+      </div>
+      <div role="radiogroup" aria-label={title} className="flex items-center gap-1.5 shrink-0 self-end sm:self-center">
+        <button
+          type="button"
+          role="radio"
+          aria-checked={value}
+          onClick={() => onChange(true)}
+          className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition cursor-pointer ${
+            value ? 'bg-[#344257] text-white shadow-xs' : 'bg-gray-100 hover:bg-gray-200 text-gray-700 border border-gray-200'
+          }`}
+        >
+          Yes
+        </button>
+        <button
+          type="button"
+          role="radio"
+          aria-checked={!value}
+          onClick={() => onChange(false)}
+          className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition cursor-pointer ${
+            !value ? 'bg-rose-600 text-white shadow-xs' : 'bg-gray-100 hover:bg-gray-200 text-gray-700 border border-gray-200'
+          }`}
+        >
+          No
+        </button>
+      </div>
+    </div>
+  );
+}

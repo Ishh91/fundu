@@ -2625,6 +2625,31 @@ export function calculatePhoneAgingFactor(brand = '', model = '', underWarranty 
  * @returns {Object} Quote result
  */
 const PRICED_DEFECT_KEYS = new Set(['camera', 'charging_port', 'speaker_mic']);
+
+// The sell form lists faults one by one (front camera, back camera, speaker, microphone...). Faults the quote
+// prices as one repair are folded into that repair, so two cameras are one camera repair and not two.
+const DEFECT_ALIASES = {
+  camera_front: 'camera',
+  camera_back: 'camera',
+  speaker: 'speaker_mic',
+  microphone: 'speaker_mic',
+  audio_receiver: 'speaker_mic',
+};
+
+/** The declared faults with each alias replaced by the fault it is priced as, and no repeats. */
+export function normalizeDefects(declared) {
+  if (!Array.isArray(declared)) return [];
+  return [...new Set(declared.map((d) => DEFECT_ALIASES[String(d || '').trim()] || String(d || '').trim()).filter(Boolean))];
+}
+
+// What the customer is told for a declared fault that has no itemised repair price. calls_not_working and
+// screen_not_original come from the "make and receive calls?" and "is the screen original?" questions.
+const UNPRICED_DEFECT_REASONS = {
+  biometrics: 'Face ID / fingerprint sensor repair required',
+  calls_not_working: 'Calling / network fault to be verified at inspection',
+  screen_not_original: 'Replaced (non-original) screen to be verified at inspection',
+  camera_glass: 'Camera glass replacement to be verified at inspection',
+};
 /** A battery problem reported as a fault; like battery health, it is not deducted next to a screen that needs repair. */
 const BATTERY_FAULT_KEY = 'battery_fault';
 const UNPRICED_DEFECT_DEDUCTION_RATE = 0.08; // same per-fault rate the sell page uses
@@ -2643,11 +2668,12 @@ export function quotePhone(input = {}, options = {}) {
     screen_condition = 'flawless',
     body_condition = 'flawless',
     battery_health = 'healthy',
-    defects = [],
+    defects: declaredDefects = [],
     accessories,
     under_warranty = false,
     stylus_available = true,
   } = input;
+  const defects = normalizeDefects(declaredDefects);
 
   // 1. Validate mandatory basic input structure
   if (!brand || !String(brand).trim()) {
@@ -2912,9 +2938,7 @@ export function quotePhone(input = {}, options = {}) {
     configuredRepairsTotal += cost;
     internalRepairBreakdown.push({ item: defectKey, cost });
     conditionReasons.push(
-      defectKey === 'biometrics'
-        ? 'Face ID / fingerprint sensor repair required'
-        : 'Additional reported hardware fault to be verified at inspection',
+      UNPRICED_DEFECT_REASONS[defectKey] || 'Additional reported hardware fault to be verified at inspection',
     );
   });
 

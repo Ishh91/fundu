@@ -907,7 +907,7 @@ export default function SellPhone() {
       }
       if (form.powersOn === false) val *= 0.35;
       if (form.liquidDamage) val *= 0.50;
-      if (form.canMakeCalls === false) val *= 0.85;
+      // "Cannot make calls" is one of form.defects (calls_not_working), so it is deducted with the other faults below.
       if (Array.isArray(form.defects)) {
         val -= form.defects.length * (baseModelPrice * 0.08);
       }
@@ -1166,6 +1166,7 @@ export default function SellPhone() {
         screen_condition: form.screenCondition,
         body_condition: form.bodyCondition,
         can_make_calls: form.canMakeCalls,
+        esim_count: /iphone/i.test(form.model) || /apple/i.test(form.brand) ? form.esimCount : null,
         under_warranty: form.underWarranty,
         defects: form.defects,
         imei: form.imei || null,
