@@ -18,6 +18,7 @@ const STATIC_PAGES = [
   { path: '/', changefreq: 'daily', priority: '1.0' },
   { path: '/sell', changefreq: 'daily', priority: '0.9' },
   { path: '/buy', changefreq: 'daily', priority: '0.9' },
+  { path: '/buy-laptops', changefreq: 'daily', priority: '0.8' },
   { path: '/repair', changefreq: 'daily', priority: '0.9' },
   { path: '/spare-parts', changefreq: 'weekly', priority: '0.7' },
   { path: '/store', changefreq: 'weekly', priority: '0.6' },

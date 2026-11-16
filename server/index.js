@@ -32,6 +32,9 @@ app.use((req, res, next) => {
   } else {
     res.setHeader('Access-Control-Allow-Origin', '*');
   }
+  // The allowed origin changes per request, so caches must keep one copy per origin
+  // (otherwise www.thefundu.com can be served a copy meant for another origin).
+  res.vary('Origin');
 
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE, OPTIONS');
   const requestedHeaders = req.headers['access-control-request-headers'];
