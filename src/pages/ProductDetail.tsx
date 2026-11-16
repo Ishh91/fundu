@@ -222,11 +222,22 @@ export default function ProductDetail() {
     const known = getRememberedProduct(id);
     const showProduct = (p: Product, resetChoices: boolean) => {
       setProduct(p);
-      if (!resetChoices) return;
-      setSelectedImage(p.images?.[0] || getCleanPhoneImage(p.brand, p.model || p.title));
-      setSelectedStorage(normalizeStorageString(p.storage || '128 GB'));
-      setSelectedColor(p.color || 'Default');
-      setSelectedGrade(p.condition === 'Excellent' ? 'Superb' : p.condition || 'Superb');
+      const serverPrimaryImage = p.images?.[0] || getCleanPhoneImage(p.brand, p.model || p.title);
+      if (resetChoices) {
+        setSelectedImage(serverPrimaryImage);
+        setSelectedStorage(normalizeStorageString(p.storage || '128 GB'));
+        setSelectedColor(p.color || 'Default');
+        setSelectedGrade(p.condition === 'Excellent' ? 'Superb' : p.condition || 'Superb');
+      } else {
+        setSelectedImage((current) => {
+          const knownFallback = known ? getCleanPhoneImage(known.brand, known.model || known.title) : '';
+          const knownFirst = known?.images?.[0] || '';
+          if (!current || current === knownFallback || current === knownFirst) {
+            return serverPrimaryImage;
+          }
+          return current;
+        });
+      }
     };
     if (known) {
       showProduct(known, true);
@@ -379,6 +390,9 @@ const modelFallbackImage = getCleanPhoneImage(product.brand, product.model || pr
 const images = product.images && product.images.length > 0
   ? product.images
   : [modelFallbackImage || 'https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=800&auto=format&fit=crop&q=80'];
+const mainDisplayImage = (selectedImage && selectedImage !== modelFallbackImage)
+  ? selectedImage
+  : (images[0] || modelFallbackImage || '');
 
 // Stock is one count for this listing, or one per storage + colour when the shop counts it that way.
 const stockChoice = { ...product, storage: selectedStorage, color: selectedColor || product.color };
@@ -510,7 +524,7 @@ return (
               </div>
             ) : (
               <img
-                src={selectedImage || images[0] || getCleanPhoneImage(product.brand, product.model || product.title, '')}
+                src={mainDisplayImage}
                 alt={product.title}
                 className="h-80 w-auto object-contain transition-transform duration-300 group-hover:scale-105 drop-shadow-md"
                 onError={(e) => {

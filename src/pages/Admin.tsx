@@ -96,6 +96,7 @@ import VariantStockEditor from '../components/admin/VariantStockEditor';
 import { pruneVariantStock, totalVariantStock } from '../../shared/variantStock.js';
 import type { VariantStockEntry } from '../../shared/variantStock.js';
 import { appendUniqueById, loadRemainingPages, mergeLatestById } from '../lib/pagedLoad';
+import { rememberProducts } from '../lib/productsCache';
 
 // The Users page searches and filters this list in the browser, so it needs every account.
 const ADMIN_USERS_PAGE_LIMIT = 5000;
@@ -1325,6 +1326,11 @@ export default function Admin() {
     }
     setProducts((prev) => prev.filter((p) => p.id !== id));
     if (selectedProductId === id) setSelectedProductId(null);
+    try {
+      localStorage.removeItem('fundu_cached_phones_v3');
+      localStorage.removeItem('fundu_cached_featured_phones_v1');
+    } catch {}
+    window.dispatchEvent(new CustomEvent('fundu_product_deleted', { detail: { id } }));
     broadcastSync('PRODUCT_UPDATE', 'products', 'delete', { id });
   };
 
@@ -1501,6 +1507,12 @@ export default function Admin() {
 
         const saved = { ...original, ...payload } as Product;
         setProducts((prev) => prev.map((p) => (p.id === original.id ? saved : p)));
+        rememberProducts([saved]);
+        try {
+          localStorage.removeItem('fundu_cached_phones_v3');
+          localStorage.removeItem('fundu_cached_featured_phones_v1');
+        } catch {}
+        window.dispatchEvent(new CustomEvent('fundu_product_updated', { detail: { id: saved.id } }));
         broadcastSync('PRODUCT_UPDATE', 'products', 'update', { id: saved.id });
       } else {
         const sizeProblem = describeOversizedSave(payload);
@@ -1514,6 +1526,12 @@ export default function Admin() {
         const saved = { ...payload, id: data?.id || 'prod_' + Date.now() } as Product;
         setProducts((prev) => [saved, ...prev]);
         setSelectedProductId(saved.id);
+        rememberProducts([saved]);
+        try {
+          localStorage.removeItem('fundu_cached_phones_v3');
+          localStorage.removeItem('fundu_cached_featured_phones_v1');
+        } catch {}
+        window.dispatchEvent(new CustomEvent('fundu_product_updated', { detail: { id: saved.id } }));
         broadcastSync('PRODUCT_UPDATE', 'products', 'insert', { id: saved.id });
       }
       // A listing's own photos stay on the listing. They must not replace the model's catalog image used by Sell.
