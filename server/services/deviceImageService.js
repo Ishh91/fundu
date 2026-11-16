@@ -83,27 +83,20 @@ export async function resolveDeviceImage(brand, model) {
       const candidateList = brandMatchedResults.length > 0 ? brandMatchedResults : [];
       if (candidateList.length > 0) {
         const modelLower = cleanModel.toLowerCase();
-        let best = candidateList.find(r => 
+        const best = candidateList.find(r => 
           (r.name && r.name.toLowerCase() === modelLower) || 
           (r.full_name && r.full_name.toLowerCase().includes(modelLower))
         );
-        if (!best) best = candidateList[0];
+        // No loose "first result" fallback: a near-miss is a different phone,
+        // and showing its picture is worse than showing none.
 
         if (best && best.id) {
           const thumbUrl = `https://api.mobileapi.dev/devices/${best.id}/thumb.png`;
+          // Kept in memory only. This endpoint is public, so it must never write
+          // to the catalog; images are changed from Admin only.
           setCachedValue(cacheKey, thumbUrl);
 
-          // Update database in background for permanent persistence (only if admin hasn't set a custom image)
-          MasterPhone.updateOne(
-            { 
-              brand: new RegExp(`^${cleanBrand}$`, 'i'), 
-              model: new RegExp(`^${cleanModel}$`, 'i'),
-              custom_image: { $ne: true }
-            },
-            { $set: { image_url: thumbUrl } }
-          ).catch(() => {});
-
-          return { 
+          return {
             imageUrl: thumbUrl, 
             source: 'option_a_mobileapi', 
             deviceId: best.id, 
@@ -132,15 +125,7 @@ export async function resolveDeviceImage(brand, model) {
         if (firstMatch && firstMatch.image) {
           const gsmImg = firstMatch.image;
           setCachedValue(cacheKey, gsmImg);
-          MasterPhone.updateOne(
-            { 
-              brand: new RegExp(`^${cleanBrand}$`, 'i'), 
-              model: new RegExp(`^${cleanModel}$`, 'i'),
-              custom_image: { $ne: true }
-            },
-            { $set: { image_url: gsmImg } }
-          ).catch(() => {});
-          return { 
+          return {
             imageUrl: gsmImg, 
             source: 'option_b_rapidapi_gsmarena', 
             title: firstMatch.name 
