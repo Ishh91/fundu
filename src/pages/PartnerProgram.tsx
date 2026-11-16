@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
 import {
   Building2,
   Store,
@@ -261,21 +260,6 @@ export default function PartnerProgram() {
                 <ArrowRight className="h-4 w-4" />
               </a>
 
-              <Link
-                to="/vendor-login"
-                className="inline-flex items-center gap-2 rounded-full bg-white/15 hover:bg-white/25 border border-white/25 px-6 py-3 text-sm font-bold text-white shadow-md active:scale-95 transition-all duration-200"
-              >
-                <Building2 className="h-4 w-4 text-amber-300" />
-                <span>Existing Vendor Login</span>
-              </Link>
-
-              <Link
-                to="/delivery-login"
-                className="inline-flex items-center gap-2 rounded-full bg-white/10 hover:bg-white/20 border border-white/20 px-5 py-3 text-xs sm:text-sm font-bold text-slate-200 transition"
-              >
-                <Truck className="h-4 w-4 text-emerald-300" />
-                <span>Rider Partner Login</span>
-              </Link>
             </div>
           </div>
 
@@ -451,25 +435,6 @@ export default function PartnerProgram() {
                 </div>
               </div>
 
-              {/* Existing Partner Quick Links */}
-              <div className="mt-8 rounded-2xl bg-gray-50 border border-gray-200 p-4">
-                <p className="text-xs font-bold text-gray-800">Already Registered?</p>
-                <p className="text-[11px] text-gray-500 mt-0.5">Login directly to access your partner dashboard & leads.</p>
-                <div className="mt-3 flex flex-wrap gap-2">
-                  <Link
-                    to="/vendor-login"
-                    className="text-xs font-bold text-[#344257] bg-white border border-gray-300 rounded-lg px-3 py-1.5 hover:bg-gray-100 transition inline-flex items-center gap-1"
-                  >
-                    <Building2 className="h-3.5 w-3.5" /> Vendor Portal
-                  </Link>
-                  <Link
-                    to="/delivery-login"
-                    className="text-xs font-bold text-emerald-800 bg-white border border-gray-300 rounded-lg px-3 py-1.5 hover:bg-gray-100 transition inline-flex items-center gap-1"
-                  >
-                    <Truck className="h-3.5 w-3.5" /> Rider Portal
-                  </Link>
-                </div>
-              </div>
             </div>
           </div>
 
