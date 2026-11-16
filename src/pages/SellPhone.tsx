@@ -882,7 +882,7 @@ export default function SellPhone() {
           val -= baseModelPrice * 0.12;
         } else if (form.bodyMinorDents) {
           val -= baseModelPrice * 0.05;
-        } else if (form.bodyCondition === 'dents_bent') {
+        } else if (form.bodyCondition === 'dents_bent' || form.bodyCondition === 'panel_broken') {
           val *= 0.85;
         }
 
@@ -973,7 +973,7 @@ export default function SellPhone() {
       pricingConfig,
       {
         screenCondition: form.screenCondition === 'cracked' ? 'cracked' : form.screenCondition === 'scratched' ? 'scratches' : 'flawless',
-        bodyCondition: form.bodyCondition === 'dents_bent' ? 'dents_bent' : form.bodyCondition === 'minor_scratches' ? 'scratches' : 'flawless',
+        bodyCondition: form.bodyCondition === 'dents_bent' || form.bodyCondition === 'panel_broken' ? 'dents_bent' : form.bodyCondition === 'minor_scratches' ? 'scratches' : 'flawless',
         canMakeCalls: form.canMakeCalls,
         underWarranty: form.underWarranty,
         defects: form.defects,

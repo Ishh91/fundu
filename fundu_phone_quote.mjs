@@ -2624,6 +2624,21 @@ export function calculatePhoneAgingFactor(brand = '', model = '', underWarranty 
  * @param {Object} [options]
  * @returns {Object} Quote result
  */
+// What body damage takes off the aged value. Measured against Cashify on an iPhone 17 Pro Max: 1-2 minor dents or more
+// than 2 scratches 6%, a major dent 10%, a cracked, missing or bent panel or a loose screen 18%. This replaces the
+// old "worn look plus back glass repair", which took 38% for a major dent. The screen is priced the same way.
+const BODY_DAMAGE_SHARE = {
+  minor_scratches: 0.06,
+  dents_bent: 0.10,
+  panel_broken: 0.18,
+};
+
+const BODY_DAMAGE_REASONS = {
+  minor_scratches: 'Minor body scratches or dents',
+  dents_bent: 'Major dents on the body',
+  panel_broken: 'Cracked, missing or bent panel, or a loose screen',
+};
+
 const PRICED_DEFECT_KEYS = new Set(['camera', 'charging_port', 'speaker_mic']);
 
 // The sell form lists faults one by one (front camera, back camera, speaker, microphone...). Faults the quote
@@ -2807,7 +2822,8 @@ export function quotePhone(input = {}, options = {}) {
   // back panel and the iPhone battery health are not deducted on top of it. Ageing still applies.
   // A scratched screen does not trigger this: dents and battery wear still count there.
   const screenIsDeducted = requiresScreenRepair;
-  const requiresBackglassRepair = body_condition === 'dents_bent' && !screenIsDeducted;
+  // Body damage is a share of the aged value, like the screen. A screen that is already deducted covers it (see above).
+  const bodyDamageShare = screenIsDeducted ? 0 : (BODY_DAMAGE_SHARE[body_condition] || 0);
   const isApple = String(brand).toLowerCase() === 'apple' || String(model).toLowerCase().includes('iphone');
   const hasCameraDefect = Array.isArray(defects) && defects.includes('camera');
   const hasChargingDefect = Array.isArray(defects) && defects.includes('charging_port');
@@ -2869,10 +2885,11 @@ export function quotePhone(input = {}, options = {}) {
     conditionReasons.push(`Screen/display replacement required (${screen_condition.replace('_', ' ')})`);
   }
 
-  if (requiresBackglassRepair && repairCosts?.backglass) {
-    configuredRepairsTotal += repairCosts.backglass;
-    internalRepairBreakdown.push({ item: 'backglass', cost: repairCosts.backglass });
-    conditionReasons.push('Chassis / back housing panel replacement required');
+  if (bodyDamageShare > 0) {
+    const bodyCost = Math.round(expectedResaleProceeds * agingFactor * bodyDamageShare);
+    configuredRepairsTotal += bodyCost;
+    internalRepairBreakdown.push({ item: 'body', cost: bodyCost });
+    conditionReasons.push(BODY_DAMAGE_REASONS[body_condition]);
   }
 
   // Apple Battery Health Percentage Deduction:
@@ -2906,7 +2923,7 @@ export function quotePhone(input = {}, options = {}) {
   }
 
   const reportsBatteryFault = Array.isArray(defects) && defects.includes(BATTERY_FAULT_KEY);
-  if (screenIsDeducted && (body_condition === 'dents_bent' || wornBatteryRate > 0 || reportsBatteryFault)) {
+  if (screenIsDeducted && (BODY_DAMAGE_SHARE[body_condition] || wornBatteryRate > 0 || reportsBatteryFault)) {
     conditionReasons.push('Screen condition is priced; dents and battery health are not deducted separately');
   }
 

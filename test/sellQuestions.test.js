@@ -120,7 +120,7 @@ describe('choosing which kinds of damage apply', () => {
 
   it('prices a phone as flawless again once its damage is cleared', () => {
     const damaged = pick(pick({}, 'bodyBent', 'loose'), 'bodyPanel', 'panel_cracked');
-    assert.equal(derived(damaged).bodyCondition, 'dents_bent');
+    assert.equal(derived(damaged).bodyCondition, 'panel_broken');
     assert.equal(derived(clearSection(section('panel'), damaged)).bodyCondition, 'flawless');
   });
 });
@@ -148,10 +148,11 @@ describe('what each description is priced as', () => {
     assert.equal(derived(pick({}, 'displayColour', 'colour_major')).screenCondition, 'display_lines');
   });
 
-  it('prices a missing panel as a broken body, and a bent phone or loose screen as a major dent', () => {
-    assert.equal(derived(pick({}, 'bodyPanel', 'panel_missing')).bodyCondition, 'dents_bent');
-    assert.equal(derived(pick({}, 'bodyBent', 'bent')).bodyCondition, 'dents_bent');
-    assert.equal(derived(pick({}, 'bodyBent', 'loose')).bodyCondition, 'dents_bent');
+  it('prices a missing, cracked, bent or loose panel as a broken panel, and a major dent as a dent', () => {
+    assert.equal(derived(pick({}, 'bodyPanel', 'panel_missing')).bodyCondition, 'panel_broken');
+    assert.equal(derived(pick({}, 'bodyBent', 'bent')).bodyCondition, 'panel_broken');
+    assert.equal(derived(pick({}, 'bodyBent', 'loose')).bodyCondition, 'panel_broken');
+    assert.equal(derived(pick({}, 'bodyDents', 'dents_major')).bodyCondition, 'dents_bent');
   });
 
   it('prices body scratches and minor dents as a lightly worn body', () => {

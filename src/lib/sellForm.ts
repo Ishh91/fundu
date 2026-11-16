@@ -12,7 +12,7 @@ export const createInitialSellForm = () => ({
   liquidDamage: false,
   cosmeticCondition: 'flawless' as 'flawless' | 'good' | 'fair',
   screenCondition: 'flawless' as 'flawless' | 'scratched' | 'cracked' | 'touch_fault' | 'display_lines',
-  bodyCondition: 'flawless' as 'flawless' | 'minor_scratches' | 'dents_bent',
+  bodyCondition: 'flawless' as 'flawless' | 'minor_scratches' | 'dents_bent' | 'panel_broken',
 
   // Granular Phone Condition Filter Questions
   screenMinorScratches: false,
