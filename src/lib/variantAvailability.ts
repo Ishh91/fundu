@@ -4,8 +4,16 @@ import type { VariantStockEntry } from '../../shared/variantStock.js';
 interface StockedListing {
   storage?: string | null;
   color?: string | null;
+  stock?: number | null;
   variant_stock?: VariantStockEntry[] | null;
 }
+
+/** Whether a listing has at least one unit left, counting variants when stock is kept per variant. */
+export const hasStock = (listing: StockedListing | null | undefined): boolean => {
+  if (!listing) return false;
+  if (tracksVariantStock(listing)) return (listing.variant_stock ?? []).some((entry) => entryStock(entry) > 0);
+  return Number(listing.stock ?? 0) > 0;
+};
 
 /**
  * Whether a storage + colour can still be ordered. A listing that does not count stock per variant
