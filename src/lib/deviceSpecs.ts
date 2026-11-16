@@ -3548,7 +3548,12 @@ export function isStorageAllowedForModel(brand = '', model = '', storageStr = ''
   if (gb >= 512) {
     if (gb === 2048) {
       if (b.includes('apple') || m.includes('iphone') || m.includes('ipad')) {
-        return /ipad/i.test(m) || /iphone\s*(?:1[7-9]|[2-9]\d)\s*pro/i.test(m);
+        // 2 TB iPhones: the 17 Pro Max, and the 18 Pro and Pro Max (Cashify lists them; the 17 Pro tops out at 1 TB).
+        return (
+          /ipad/i.test(m) ||
+          /iphone\s*(?:1[7-9]|[2-9]\d)\s*pro\s*max/i.test(m) ||
+          /iphone\s*(?:1[89]|[2-9]\d)\s*pro\b/i.test(m)
+        );
       }
     }
     return is512GBValidForModel(brand, model);
@@ -4190,8 +4195,9 @@ export function getRadarHardwareSpecs(
       .map((m) => m.storage)
     : [];
 
+  // 2 TB is listed for Apple too; isStorageAllowedForModel below keeps it to the iPhones that are sold with it.
   const baseList = isApple
-    ? ['128 GB', '256 GB', '512 GB', '1 TB']
+    ? ['128 GB', '256 GB', '512 GB', '1 TB', '2 TB']
     : (currentDeviceSpecs.storages.length > 0 ? currentDeviceSpecs.storages : ['128 GB', '256 GB']);
 
   // If the model has authoritative hardware specs, use them directly without polluting from loose catalog items
