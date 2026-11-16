@@ -2343,16 +2343,10 @@ export function lookupResaleBenchmark(brand, model, storage, options = {}) {
     }
   }
 
-  // 3. Guaranteed comprehensive catalog valuation fallback
+  // 3. No price for this model anywhere (no admin or catalog price, no benchmark, no sibling storage variant).
+  // Never make one up: the caller sends the phone to inspection instead of quoting a flat guess.
   if (!benchmark) {
-    const fallbackProceeds = computeDynamicBenchmarkProceeds(brand, model, storage, '');
-    benchmark = {
-      brand: brand || 'Smartphone',
-      model: model || 'Smartphone',
-      storage: normStorage,
-      proceeds: fallbackProceeds,
-      lastUpdated: '2025-02-01',
-    };
+    return { found: false, benchmark: null };
   }
 
   // 4. Variant adjustments for RAM on Android devices
@@ -2667,6 +2661,26 @@ export function quotePhone(input = {}, options = {}) {
     };
   }
 
+  // A model with no price at all is never quoted from a guess, whatever else is reported about it.
+  const benchmarkResult = lookupResaleBenchmark(brand, model, storage, { ...options, ram });
+  if (!benchmarkResult.found) {
+    return {
+      status: 'requires_manual_review',
+      quoteId: `FND-Q-${Date.now().toString(36).toUpperCase()}-${Math.floor(1000 + Math.random() * 9000)}`,
+      isConditionalEstimate: true,
+      reason: 'MISSING_PRICING_BENCHMARK',
+      reviewReason: 'No online price for this model yet',
+      reviewMessage: 'We do not have an online price for this model yet. A Fundu technician will inspect the phone at your doorstep and confirm a spot cash price before anything is final.',
+      missingConfig: [`${String(brand).trim()} ${String(model).trim()} ${normalizeStorage(storage)}`],
+      reviewAction: 'book_inspection',
+      contactPath: {
+        phone: '+91-9839122345',
+        email: 'support@fundu.in',
+        doorstepHub: 'Lucknow Central Diagnostics',
+      },
+    };
+  }
+
   // 2. Mandatory Manual-Review Routing Triggers (Still compute estimated recovery/salvage value so valuation is never zero)
   const estBaseProceeds = computeDynamicBenchmarkProceeds(brand, model, storage, ram);
 
@@ -2743,9 +2757,7 @@ export function quotePhone(input = {}, options = {}) {
     };
   }
 
-  // 3. Exact Variant Benchmark Lookup from Real Catalog
-  const benchmarkResult = lookupResaleBenchmark(brand, model, storage, { ...options, ram });
-
+  // 3. Exact Variant Benchmark (looked up above)
   const { proceeds: expectedResaleProceeds } = benchmarkResult.benchmark;
 
   // 4. Retrieve Configured Repairs for this exact phone (with proportional fallback)

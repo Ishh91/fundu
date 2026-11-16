@@ -71,7 +71,17 @@ export default function SellStep3Quote({
             </p>
           </div>
 
-          {/* Prominently show Estimated Phone Valuation */}
+          {funduQuote.reason === 'MISSING_PRICING_BENCHMARK' ? (
+            /* No online price exists for this model: show no number at all. */
+            <div className="rounded-3xl bg-gradient-to-r from-[#1E2734] via-[#344257] to-[#47576E] p-6 text-white shadow-xl space-y-2 text-center">
+              <p className="text-xs font-bold uppercase tracking-widest text-[#9ac0dd]">Buyback Price</p>
+              <div className="font-display text-2xl sm:text-3xl font-black text-white">Confirmed at inspection</div>
+              <p className="text-xs text-amber-200 font-semibold">
+                We have no online price for this model yet. Our technician quotes you at your doorstep.
+              </p>
+            </div>
+          ) : (
+          /* Prominently show Estimated Phone Valuation */
           <div className="rounded-3xl bg-gradient-to-r from-[#1E2734] via-[#344257] to-[#47576E] p-6 text-white shadow-xl space-y-2 text-center">
             <p className="text-xs font-bold uppercase tracking-widest text-[#9ac0dd]">
               Estimated Buyback Value
@@ -98,6 +108,7 @@ export default function SellStep3Quote({
               </div>
             )}
           </div>
+          )}
 
           {/* Clear explanation banner */}
           <div className="rounded-3xl bg-gradient-to-r from-[#2A3442] via-[#344257] to-[#40536C] p-6 text-white text-left space-y-3 shadow-lg">
