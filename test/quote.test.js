@@ -5,6 +5,7 @@ import {
   recalculateInspectedQuote,
   lookupResaleBenchmark,
   lookupModelRepairs,
+  calculateHardwareVariantMultiplier,
   FUNDU_POLICY,
   RESALE_BENCHMARKS,
 } from '../fundu_phone_quote.mjs';
@@ -355,6 +356,43 @@ describe('Fundu Phone Buyback Quote Engine', () => {
         const quote = quotePhone({ ...bestCase, brand: row.brand, model: row.model, storage: row.storage });
         assert.equal(quote.status, 'quoted', key);
       }
+    });
+  });
+
+  describe('storage price multiplier', () => {
+    test('rises with every storage size, 2 TB included (it used to fall back to the 128 GB price)', () => {
+      const sizes = ['64 GB', '128 GB', '256 GB', '512 GB', '1 TB', '2 TB'];
+      for (const brand of ['Apple', 'Samsung']) {
+        const multipliers = sizes.map((size) => calculateHardwareVariantMultiplier(size, '', brand));
+        for (let i = 1; i < multipliers.length; i += 1) {
+          assert.ok(multipliers[i] > multipliers[i - 1], `${brand}: ${sizes[i]} (${multipliers[i]}) should cost more than ${sizes[i - 1]} (${multipliers[i - 1]})`);
+        }
+      }
+    });
+
+    test('prices 2 TB about 10% above 1 TB, as Cashify does', () => {
+      const ratio = calculateHardwareVariantMultiplier('2 TB', '', 'Apple') / calculateHardwareVariantMultiplier('1 TB', '', 'Apple');
+      assert.ok(ratio > 1.07 && ratio < 1.14, `ratio ${ratio}`);
+    });
+
+    test('reads 2 TB written as 2048 GB or 2TB the same way', () => {
+      const two = calculateHardwareVariantMultiplier('2 TB', '', 'Apple');
+      assert.equal(calculateHardwareVariantMultiplier('2048 GB', '', 'Apple'), two);
+      assert.equal(calculateHardwareVariantMultiplier('2TB', '', 'Apple'), two);
+    });
+
+    test('scales a price given for another size up to 2 TB', () => {
+      const quote = (storage) => quotePhone(
+        { ...bestCase, brand: 'Apple', model: 'iPhone 17 Pro Max', storage },
+        { catalogPrice: 100000, catalogStorage: '256 GB' },
+      ).offerAmount;
+      assert.ok(quote('2 TB') > quote('1 TB'), `${quote('2 TB')} vs ${quote('1 TB')}`);
+    });
+
+    test('keeps the sizes below 2 TB as they were', () => {
+      assert.equal(calculateHardwareVariantMultiplier('1 TB', '', 'Apple'), 1.42);
+      assert.equal(calculateHardwareVariantMultiplier('512 GB', '', 'Apple'), 1.26);
+      assert.equal(calculateHardwareVariantMultiplier('128 GB', '', 'Apple'), 1);
     });
   });
 
