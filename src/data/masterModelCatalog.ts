@@ -7851,14 +7851,26 @@ export const ACCESSORIES_LIST = [
   { id: 'Valid Bill', label: 'Valid Purchase Bill / Invoice', bonus: '+ ₹200' },
 ];
 
+/**
+ * The faults a customer can report, worded like Cashify's list. The quote prices a front and a back camera as one
+ * camera repair, and a speaker, microphone or receiver as one audio repair (see DEFECT_ALIASES in fundu_phone_quote.mjs).
+ */
 export const HARDWARE_DEFECTS = [
-  { id: 'camera', label: 'Camera Fault (Front/Back Lens or Autofocus Issue)' },
-  { id: 'charging_port', label: 'Charging Port / Connection Fault' },
-  { id: 'speaker_mic', label: 'Speaker / Earpiece / Microphone Fault' },
-  { id: 'biometrics', label: 'Biometrics Fault (Face ID or Fingerprint)' },
-  { id: 'wifi_bluetooth', label: 'Wi-Fi / Bluetooth / Mobile Network Fault' },
-  { id: 'buttons', label: 'Power / Volume / Silent Button Not Working' },
-  { id: 'sensors', label: 'Sensor Fault (Proximity, Auto-rotate, Vibration)' },
+  { id: 'camera_front', label: 'Front Camera not working' },
+  { id: 'camera_back', label: 'Back Camera not working' },
+  { id: 'camera_glass', label: 'Camera Glass Broken' },
+  { id: 'volume_button', label: 'Volume Button not working' },
+  { id: 'power_button', label: 'Power Button not working' },
+  { id: 'silent_button', label: 'Silent Button not working' },
+  { id: 'wifi', label: 'WiFi not working' },
+  { id: 'bluetooth', label: 'Bluetooth not working' },
+  { id: 'speaker', label: 'Speaker Faulty' },
+  { id: 'microphone', label: 'Microphone not working' },
+  { id: 'audio_receiver', label: 'Audio Receiver not working' },
+  { id: 'biometrics', label: 'Face ID / Fingerprint Sensor not working' },
+  { id: 'charging_port', label: 'Charging Port not working' },
+  { id: 'vibrator', label: 'Vibrator is not working' },
+  { id: 'proximity_sensor', label: 'Proximity Sensor not working' },
   { id: 'battery_fault', label: 'Battery Fault (Swollen, Drains Fast, Will Not Charge)' },
 ];
 

@@ -30,6 +30,16 @@ export const createInitialSellForm = () => ({
   bodyMinorDents: false,
   bodyMajorDents: false,
   bodyCrackedOrBroken: false,
+  screenChipped: false,
+  displayManyMinorSpots: false,
+  displayFadedEdges: false,
+  bodyMissingPanel: false,
+  bodyBent: false,
+  bodyLooseScreen: false,
+  /** Which kinds of damage the customer ticked as applying: 'screen', 'display', 'body' or 'panel'. */
+  defectAreas: [] as string[],
+  /** How many eSIMs an iPhone supports. Asked and saved with the request; it does not change the price. */
+  esimCount: 'single' as 'single' | 'dual',
 
   batteryHealth: 'above_85' as 'above_85' | '75_to_85' | 'below_75' | 'healthy' | 'degraded_service' | 'unknown',
   canMakeCalls: true,

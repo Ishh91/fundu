@@ -16,6 +16,7 @@ const sellRequestSchema = createSchema({
   screen_condition: { type: String, default: null },
   body_condition: { type: String, default: null },
   can_make_calls: { type: Boolean, default: true },
+  esim_count: { type: String, default: null },
   under_warranty: { type: Boolean, default: false },
   defects: { type: [String], default: [] },
   imei: { type: String, default: null },
