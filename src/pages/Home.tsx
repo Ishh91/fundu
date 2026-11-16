@@ -3,6 +3,7 @@ import { useSearchParams } from 'react-router-dom';
 import { Sparkles, X } from 'lucide-react';
 import { db } from '../lib/db';
 import { subscribeToRealtimeSync } from '../lib/realtimeSync';
+import { hasStock } from '../lib/variantAvailability';
 import { deduplicateProductsByModel } from '../lib/modelVariants';
 import { getCachedFeaturedPhones, setCachedFeaturedPhones } from '../lib/productsCache';
 import type { Product } from '../types';
@@ -45,7 +46,8 @@ export default function Home() {
         .eq('is_approved', true)
         .limit(60)
         .then(({ data }) => {
-          const list = (data ?? []) as Product[];
+          // Sold-out phones stay on the Buy page; the home page only promotes what can be bought.
+          const list = ((data ?? []) as Product[]).filter(hasStock);
           if (list.length > 0) {
             // Sort: is_featured items first, followed by newest updated/created
             const sorted = [...list].sort((a, b) => {

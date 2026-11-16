@@ -10,7 +10,7 @@ const bundle = async (path) => {
 const limits = await bundle('../src/lib/cartLimits.ts');
 const availability = await bundle('../src/lib/variantAvailability.ts');
 const { stockCap, maxForLine, clampLineQuantity, unitsInCart, stockNotice, missingChoices, reconcileLines, MAX_PER_LISTING } = limits;
-const { variantInStock, storageInStock, firstInStockChoice } = availability;
+const { variantInStock, storageInStock, firstInStockChoice, hasStock } = availability;
 
 const line = (id, quantity, item, type = 'product') => ({ id, type, quantity, item });
 
@@ -227,5 +227,18 @@ describe('variant availability on the product page', () => {
 
   it('never blocks a listing that does not count stock per variant', () => {
     assert.equal(variantInStock({ storage: '128 GB' }, '256 GB', 'Red'), true);
+  });
+});
+
+describe('hasStock', () => {
+  it('is true only when the listing has something left to sell', () => {
+    assert.equal(hasStock({ stock: 3 }), true);
+    assert.equal(hasStock({ stock: 0 }), false);
+    assert.equal(hasStock({}), false);
+  });
+
+  it('counts variants when stock is tracked per storage and colour', () => {
+    assert.equal(hasStock({ stock: 0, variant_stock: [{ storage: '128 GB', color: 'Blue', stock: 2 }] }), true);
+    assert.equal(hasStock({ stock: 5, variant_stock: [{ storage: '128 GB', color: 'Blue', stock: 0 }] }), false);
   });
 });
