@@ -465,7 +465,9 @@ export function calculateHardwareVariantMultiplier(storage = '128 GB', ram = '',
 
   // 1. Storage Multiplier (against 128GB standard)
   let storageMult = 1.0;
-  if (normStorage.includes('1 tb') || normStorage.includes('1024')) storageMult = 1.42;
+  // 2 TB is about 10% above 1 TB (Cashify's 2 TB iPhones are 4-14% above their 1 TB). It used to match no branch and be priced as 128 GB.
+  if (normStorage.includes('2 tb') || normStorage.includes('2048')) storageMult = 1.56;
+  else if (normStorage.includes('1 tb') || normStorage.includes('1024')) storageMult = 1.42;
   else if (normStorage.includes('512')) storageMult = 1.26;
   else if (normStorage.includes('256')) storageMult = 1.12;
   else if (normStorage.includes('128')) storageMult = 1.00;
