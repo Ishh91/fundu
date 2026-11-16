@@ -2618,6 +2618,8 @@ export function calculatePhoneAgingFactor(brand = '', model = '', underWarranty 
  * @returns {Object} Quote result
  */
 const PRICED_DEFECT_KEYS = new Set(['camera', 'charging_port', 'speaker_mic']);
+/** A battery problem reported as a fault; like battery health, it is not deducted next to a screen that needs repair. */
+const BATTERY_FAULT_KEY = 'battery_fault';
 const UNPRICED_DEFECT_DEDUCTION_RATE = 0.08; // same per-fault rate the sell page uses
 
 export function quotePhone(input = {}, options = {}) {
@@ -2853,7 +2855,8 @@ export function quotePhone(input = {}, options = {}) {
     conditionReasons.push('iPhone Battery Health wear verified');
   }
 
-  if (screenIsDeducted && (body_condition === 'dents_bent' || wornBatteryRate > 0)) {
+  const reportsBatteryFault = Array.isArray(defects) && defects.includes(BATTERY_FAULT_KEY);
+  if (screenIsDeducted && (body_condition === 'dents_bent' || wornBatteryRate > 0 || reportsBatteryFault)) {
     conditionReasons.push('Screen condition is priced; dents and battery health are not deducted separately');
   }
 
@@ -2878,7 +2881,7 @@ export function quotePhone(input = {}, options = {}) {
   // Any other declared fault (e.g. biometrics) has no itemised repair price, so
   // it takes the standard per-fault deduction instead of being ignored.
   const unpricedDefects = Array.isArray(defects)
-    ? [...new Set(defects.map((d) => String(d || '').trim()).filter((d) => d && !PRICED_DEFECT_KEYS.has(d)))]
+    ? [...new Set(defects.map((d) => String(d || '').trim()).filter((d) => d && !PRICED_DEFECT_KEYS.has(d) && !(screenIsDeducted && d === BATTERY_FAULT_KEY)))]
     : [];
   unpricedDefects.forEach((defectKey) => {
     const cost = Math.round(expectedResaleProceeds * UNPRICED_DEFECT_DEDUCTION_RATE);

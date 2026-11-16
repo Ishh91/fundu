@@ -169,6 +169,24 @@ describe('Fundu Phone Buyback Quote Engine', () => {
       );
     });
 
+    test('does not deduct a reported battery fault either', () => {
+      for (const screen_condition of screenStates) {
+        assert.equal(
+          deductionFor({ screen_condition, defects: ['battery_fault'] }),
+          deductionFor({ screen_condition }),
+          screen_condition,
+        );
+      }
+    });
+
+    test('still deducts the other faults next to a battery fault', () => {
+      assertWithinRounding(
+        deductionFor({ screen_condition: 'cracked', defects: ['battery_fault', 'biometrics'] }) - deductionFor({ screen_condition: 'cracked' }),
+        benchmarkPrice * 0.08,
+        'biometrics next to a battery fault',
+      );
+    });
+
     test('says why the dent and battery are not deducted separately', () => {
       const quote = quotePhone({ ...bestCase, screen_condition: 'cracked', body_condition: 'dents_bent', battery_health: 'below_75' });
       assert.ok(quote.conditionSummary.some((line) => /not deducted separately/i.test(line)));
@@ -209,6 +227,16 @@ describe('Fundu Phone Buyback Quote Engine', () => {
   });
 
   describe('when the screen is fine or only scratched', () => {
+    test('still deducts a reported battery fault', () => {
+      for (const screen_condition of ['flawless', 'scratched']) {
+        assertWithinRounding(
+          deductionFor({ screen_condition, defects: ['battery_fault'] }) - deductionFor({ screen_condition }),
+          benchmarkPrice * 0.08,
+          `battery fault, ${screen_condition} screen`,
+        );
+      }
+    });
+
     test('still deducts a dent / back panel repair and battery wear', () => {
       for (const screen_condition of ['flawless', 'scratched']) {
         assert.ok(deductionFor({ screen_condition, body_condition: 'dents_bent' }) > deductionFor({ screen_condition }), screen_condition);
