@@ -257,3 +257,38 @@ describe('priceOrderItems with storage and condition choices', () => {
     );
   });
 });
+
+describe('preparePayload for new repair bookings', () => {
+  const customer = { sub: 'cust-1', role: 'customer' };
+  const tampered = {
+    brand: 'Apple',
+    model: 'iPhone 13',
+    problem: 'Screen',
+    estimated_cost: 4999,
+    status: 'completed',
+    final_cost: 1,
+    quotation_status: 'paid',
+    assigned_agent_id: 'someone',
+    assigned_vendor_id: 'v1',
+    commission_amount: 0,
+    delivery_otp_verified_at: '2026-01-01T00:00:00.000Z',
+    user_id: 'someone-else',
+  };
+
+  it('ignores what a customer sends about progress, price, staff and payout', () => {
+    const out = preparePayload('repair_bookings', 'insert', tampered, customer);
+    for (const field of ['final_cost', 'quotation_status', 'assigned_agent_id', 'assigned_vendor_id', 'commission_amount', 'delivery_otp_verified_at']) {
+      assert.equal(out[field], undefined, field);
+    }
+    assert.equal(out.status, 'pending');
+    assert.equal(out.user_id, 'cust-1');
+    assert.equal(out.estimated_cost, 4999);
+    assert.equal(out.model, 'iPhone 13');
+  });
+
+  it('lets an admin create a booking with any state', () => {
+    const out = preparePayload('repair_bookings', 'insert', tampered, { sub: 'a', role: 'admin' });
+    assert.equal(out.status, 'completed');
+    assert.equal(out.final_cost, 1);
+  });
+});

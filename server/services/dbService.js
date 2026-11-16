@@ -190,6 +190,15 @@ const CUSTOMER_LOCKED_ORDER_FIELDS = [
   'delivery_otp_created_at', 'razorpay_order_id', 'razorpay_payment_id',
 ];
 
+const REPAIR_STAFF_FIELDS = [
+  'final_cost', 'quotation_status', 'assigned_agent_id', 'technician_name', 'technician_phone',
+  'pickup_person_name', 'pickup_person_phone', 'estimated_arrival_time',
+  'assigned_vendor_id', 'assigned_vendor_name', 'forwarded_to_vendor',
+  'vendor_quotation_amount', 'vendor_quotation_details', 'vendor_quotation_notes',
+  'commission_percent', 'commission_amount', 'vendor_payout_amount',
+  'delivery_otp_verified_at', 'delivery_otp_verified_by',
+];
+
 export const preparePayload = (table, action, input, auth) => {
   const payload = { ...input };
   delete payload.id;
@@ -300,6 +309,11 @@ export const preparePayload = (table, action, input, auth) => {
         payload.user_id = auth.sub;
       } else if (!payload.user_id) {
         payload.user_id = `guest_${Date.now()}`;
+      }
+      if (action === 'insert' && !canAdminTable(auth, table)) {
+        // A new booking starts as pending; progress, final price, technician and payout are set by Fundu.
+        for (const field of REPAIR_STAFF_FIELDS) delete payload[field];
+        payload.status = 'pending';
       }
       return payload;
     case 'sell_price_configs':
