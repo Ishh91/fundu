@@ -118,8 +118,8 @@ describe('Fundu Phone Buyback Quote Engine', () => {
       assertWithinRounding(deductionFor({ defects: ['speaker_mic'] }), repairCosts.speaker, 'speaker fault');
     });
 
-    test('deducts for a biometrics fault, which has no itemised repair price', () => {
-      assertWithinRounding(deductionFor({ defects: ['biometrics'] }), benchmarkPrice * 0.08, 'biometrics fault');
+    test('deducts 27% for a biometrics fault, as Cashify does', () => {
+      assertWithinRounding(deductionFor({ defects: ['biometrics'] }), benchmarkPrice * 0.27, 'biometrics fault');
     });
 
     test('deducts for any other reported fault instead of ignoring it', () => {
@@ -196,7 +196,7 @@ describe('Fundu Phone Buyback Quote Engine', () => {
     test('still deducts the other faults next to a battery fault', () => {
       assertWithinRounding(
         deductionFor({ screen_condition: 'cracked', defects: ['battery_fault', 'biometrics'] }) - deductionFor({ screen_condition: 'cracked' }),
-        benchmarkPrice * 0.08,
+        benchmarkPrice * 0.27,
         'biometrics next to a battery fault',
       );
     });
@@ -333,7 +333,7 @@ describe('Fundu Phone Buyback Quote Engine', () => {
       for (const screen_condition of ['flawless', 'scratched']) {
         assertWithinRounding(
           deductionFor({ screen_condition, defects: ['battery_fault'] }) - deductionFor({ screen_condition }),
-          benchmarkPrice * 0.08,
+          lookupModelRepairs('Apple', 'iPhone 13', benchmarkPrice).battery,
           `battery fault, ${screen_condition} screen`,
         );
       }
