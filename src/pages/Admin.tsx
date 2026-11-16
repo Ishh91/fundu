@@ -71,6 +71,7 @@ import AdminSpareParts from './admin/AdminSpareParts';
 import AdminUsers from './admin/AdminUsers';
 import AdminReviews from './admin/AdminReviews';
 import AdminHeroPosters from './admin/AdminHeroPosters';
+import AdminStores from './admin/AdminStores';
 import AdminWholesalers from './admin/AdminWholesalers';
 import AdminContactQueries from './admin/AdminContactQueries';
 import AdminErrors from './admin/AdminErrors';
@@ -136,7 +137,7 @@ export default function Admin() {
       const validTabs: AdminTab[] = [
         'overview', 'catalog', 'sells', 'orders', 'repairs', 'repair_pricing',
         'wholesalers', 'agents', 'products', 'pricing', 'competitor_radar',
-        'banners', 'parts', 'users', 'reviews', 'contact', 'pincodes', 'errors'
+        'banners', 'stores', 'parts', 'users', 'reviews', 'contact', 'pincodes', 'errors'
       ];
       if (validTabs.includes(subtab as AdminTab)) return subtab as AdminTab;
     }
@@ -262,7 +263,7 @@ export default function Admin() {
         const validTabs: AdminTab[] = [
           'overview', 'catalog', 'sells', 'orders', 'repairs', 'repair_pricing',
           'wholesalers', 'agents', 'products', 'pricing', 'competitor_radar',
-          'banners', 'parts', 'users', 'reviews', 'contact', 'pincodes', 'errors',
+          'banners', 'stores', 'parts', 'users', 'reviews', 'contact', 'pincodes', 'errors',
         ];
         if (validTabs.includes(subtab as AdminTab)) t = subtab as AdminTab;
       }
@@ -1917,6 +1918,7 @@ export default function Admin() {
                 {tab === 'wholesalers' && 'B2B Wholesalers & Vendor Khata'}
                 {tab === 'agents' && 'Delivery Fleet'}
                 {tab === 'banners' && 'Hero Section Posters & Banners'}
+                {tab === 'stores' && 'Our Stores & Pickup Hubs'}
                 {tab === 'parts' && 'Spare Parts & OEM Components'}
                 {tab === 'users' && 'User Accounts & Roles'}
                 {tab === 'reviews' && 'Customer Reviews & Moderation'}
@@ -2426,6 +2428,8 @@ export default function Admin() {
           {tab === 'banners' && (
             <AdminHeroPosters />
           )}
+
+          {tab === 'stores' && <AdminStores />}
 
           {tab === 'parts' && (
             <AdminSpareParts
