@@ -799,6 +799,9 @@ export default function SellPhone() {
     return Math.max(1000, scaled + ramOffset);
   }, [form.brand, form.model, form.storage, form.ram, availableRams, version, pricingConfig]);
 
+  // A model with no price is never recorded or announced with a made-up number: its price is set at inspection.
+  const isUnpricedModel = funduQuote?.reason === 'MISSING_PRICING_BENCHMARK';
+
   // Guaranteed non-zero smartphone valuation estimate
   const estimate = useMemo(() => {
     const quoteStorage = funduQuote?.deviceSummary?.storage;
@@ -959,6 +962,9 @@ export default function SellPhone() {
     form.ram,
     funduQuote,
   ]);
+
+  // The price saved with the request and sent in alerts (0 when the price is set at inspection).
+  const recordedPrice = isUnpricedModel ? 0 : estimate;
 
   // Complete diagnostic valuation breakdown
   const valuationBreakdown = useMemo(() => {
@@ -1173,8 +1179,8 @@ export default function SellPhone() {
           battery_health: form.batteryHealth,
         },
         accessories: form.accessories,
-        estimated_price: estimate,
-        valuation_price: estimate,
+        estimated_price: recordedPrice,
+        valuation_price: recordedPrice,
         quote_id: funduQuote?.quoteId || null,
         policy_version: funduQuote?.policyVersion || null,
         condition_summary: funduQuote?.conditionSummary || [],
@@ -1212,7 +1218,7 @@ export default function SellPhone() {
           model: form.model,
           storage: form.storage,
           condition: form.cosmeticCondition,
-          offeredPrice: estimate,
+          offeredPrice: recordedPrice,
           pickupAddress: [form.pickupAddress, resolvedPickupArea].filter(Boolean).join(', '),
           pickupDate: form.pickupDate,
           pickupSlot: form.pickupSlot,
@@ -1226,7 +1232,7 @@ export default function SellPhone() {
             otp: deliveryOtp,
             taskType: 'sell',
             itemTitle: `${form.brand} ${form.model} (${form.storage})`,
-            amount: estimate,
+            amount: recordedPrice,
             riderName: 'Assigned Fundu Rider',
           });
         }

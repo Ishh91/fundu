@@ -6,6 +6,7 @@ import {
   lookupResaleBenchmark,
   lookupModelRepairs,
   FUNDU_POLICY,
+  RESALE_BENCHMARKS,
 } from '../fundu_phone_quote.mjs';
 import { createPhoneQuote, getQuoteAudit } from '../server/services/quoteService.js';
 
@@ -70,7 +71,7 @@ describe('Fundu Phone Buyback Quote Engine', () => {
       assert.ok(olderPhone.offerAmount < benchmarkPrice);
     });
 
-    test('gives a model outside the catalog a positive conditional estimate', () => {
+    test('sends a model outside the catalog to inspection instead of guessing a price', () => {
       const quote = quotePhone({
         brand: 'ObscureBrand',
         model: 'SuperPhone 9000 Pro',
@@ -78,9 +79,20 @@ describe('Fundu Phone Buyback Quote Engine', () => {
         powers_on: true,
       });
 
-      assert.equal(quote.status, 'quoted');
+      assert.equal(quote.status, 'requires_manual_review');
+      assert.equal(quote.reason, 'MISSING_PRICING_BENCHMARK');
       assert.equal(quote.isConditionalEstimate, true);
-      assert.ok(quote.offerAmount >= FUNDU_POLICY.minOfferFloor);
+      assert.equal(quote.offerAmount, undefined);
+    });
+
+    test('still quotes a model outside the benchmark list when a catalog price is supplied', () => {
+      const quote = quotePhone(
+        { brand: 'ObscureBrand', model: 'SuperPhone 9000 Pro', storage: '128 GB', powers_on: true },
+        { catalogPrice: 9000, catalogStorage: '128 GB' },
+      );
+
+      assert.equal(quote.status, 'quoted');
+      assert.ok(quote.offerAmount >= FUNDU_POLICY.minOfferFloor && quote.offerAmount <= 9000);
     });
 
     test('returns invalid_input when required parameters are missing', () => {
@@ -251,6 +263,57 @@ describe('Fundu Phone Buyback Quote Engine', () => {
     test('keeps the look the seller gave on a scratched screen', () => {
       const offer = (changes) => quotePhone({ ...bestCase, ...changes }).offerAmount;
       assert.ok(offer({ screen_condition: 'scratched', cosmetic_condition: 'fair' }) < offer({ screen_condition: 'scratched', cosmetic_condition: 'good' }));
+    });
+  });
+
+  describe('a model with no price in the catalog', () => {
+    const unpriced = { ...bestCase, brand: 'Samsung', model: 'Galaxy A10', storage: '32 GB', ram: '3 GB' };
+
+    test('is sent to inspection instead of getting a made-up flat price', () => {
+      const quote = quotePhone(unpriced);
+
+      assert.equal(quote.status, 'requires_manual_review');
+      assert.equal(quote.reason, 'MISSING_PRICING_BENCHMARK');
+      assert.equal(quote.offerAmount, undefined);
+      assert.ok(quote.missingConfig.some((item) => /Galaxy A10/.test(item)));
+      assert.ok(quote.reviewMessage.length > 0);
+    });
+
+    test('does the same for a model that does not exist', () => {
+      for (const [brand, model] of [['Samsung', 'Galaxy Zzz 99'], ['Apple', 'iPhone 99'], ['Vivo', 'NoSuchPhone 5']]) {
+        const quote = quotePhone({ ...bestCase, brand, model, storage: '128 GB' });
+        assert.equal(quote.status, 'requires_manual_review', `${brand} ${model}`);
+        assert.equal(quote.offerAmount, undefined, `${brand} ${model}`);
+      }
+    });
+
+    test('also refuses a non-powering unpriced phone instead of guessing a salvage value', () => {
+      const quote = quotePhone({ ...unpriced, powers_on: false });
+      assert.equal(quote.reason, 'MISSING_PRICING_BENCHMARK');
+      assert.equal(quote.offerAmount, undefined);
+    });
+
+    test('is priced when the admin or the catalog supplies a price', () => {
+      const quote = quotePhone(unpriced, { catalogPrice: 2400, catalogStorage: '32 GB' });
+      assert.equal(quote.status, 'quoted');
+      assert.ok(quote.offerAmount > 0 && quote.offerAmount <= 2400, `got ${quote.offerAmount}`);
+    });
+
+    test('keeps quoting models that have a benchmark, and storage variants of them', () => {
+      assert.equal(quotePhone(bestCase).status, 'quoted');
+      assert.equal(quotePhone({ ...bestCase, storage: '256 GB' }).status, 'quoted');
+      assert.equal(quotePhone({ ...bestCase, brand: 'Samsung', model: 'Galaxy A23', storage: '128 GB', ram: '6 GB' }).status, 'quoted');
+    });
+
+    test('quotes every model in the price catalog', () => {
+      const seen = new Set();
+      for (const row of RESALE_BENCHMARKS) {
+        const key = `${row.brand}|${row.model}|${row.storage}`;
+        if (seen.has(key)) continue;
+        seen.add(key);
+        const quote = quotePhone({ ...bestCase, brand: row.brand, model: row.model, storage: row.storage });
+        assert.equal(quote.status, 'quoted', key);
+      }
     });
   });
 

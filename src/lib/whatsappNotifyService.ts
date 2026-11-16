@@ -187,7 +187,7 @@ export async function notifyNewSellRequest(data: SellRequestNotificationData, au
     `📞 *Phone:* ${data.customerPhone}\n` +
     `📱 *Device:* ${data.brand} ${data.model} (${data.storage || 'Standard'})\n` +
     (data.condition ? `⚙️ *Condition:* ${data.condition}\n` : '') +
-    `💵 *Quoted Value:* ₹${data.offeredPrice.toLocaleString('en-IN')}\n` +
+    `💵 *Quoted Value:* ${data.offeredPrice > 0 ? `₹${data.offeredPrice.toLocaleString('en-IN')}` : 'To be confirmed at inspection'}\n` +
     `📅 *Pickup Schedule:* ${data.pickupDate} (${data.pickupSlot})\n` +
     `📍 *Pickup Address:* ${data.pickupAddress}\n` +
     `━━━━━━━━━━━━━━━━━━━━━\n` +
