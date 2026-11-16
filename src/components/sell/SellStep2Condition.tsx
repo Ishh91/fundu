@@ -393,6 +393,7 @@ export default function SellStep2Condition({
             <YesNoQuestion
               title="Are you able to make and receive calls?"
               help="Check your phone for network or calling problems."
+              noNote="A phone that cannot make or receive calls is priced after a physical check. The amount shown is only a rough estimate."
               value={form.canMakeCalls !== false}
               onChange={(works) => {
                 setForm((f) => ({ ...f, canMakeCalls: works }));
@@ -879,15 +880,19 @@ function YesNoQuestion({
   help,
   value,
   onChange,
+  noNote,
 }: {
   title: string;
   help: string;
   /** True when the answer is "Yes". */
   value: boolean;
   onChange: (value: boolean) => void;
+  /** A warning shown under the question while the answer is "No". */
+  noNote?: string;
 }) {
   return (
-    <div className="p-3.5 sm:p-4 rounded-2xl border border-gray-200 bg-white flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+    <div className="p-3.5 sm:p-4 rounded-2xl border border-gray-200 bg-white space-y-2.5">
+    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
       <div className="space-y-1">
         <p className="text-xs font-bold text-gray-900">{title}</p>
         <p className="text-[11px] text-gray-500 leading-snug">{help}</p>
@@ -916,6 +921,10 @@ function YesNoQuestion({
           No
         </button>
       </div>
+    </div>
+      {!value && noNote && (
+        <p className="text-[11px] font-bold text-amber-800 bg-amber-100/70 px-2.5 py-1.5 rounded-lg">⚠️ {noNote}</p>
+      )}
     </div>
   );
 }

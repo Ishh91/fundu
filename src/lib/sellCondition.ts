@@ -35,7 +35,7 @@ export interface ConditionAnswers {
 }
 
 export type ScreenCondition = 'flawless' | 'scratched' | 'cracked' | 'touch_fault' | 'display_lines';
-export type BodyCondition = 'flawless' | 'minor_scratches' | 'dents_bent';
+export type BodyCondition = 'flawless' | 'minor_scratches' | 'dents_bent' | 'panel_broken';
 export type CosmeticCondition = 'flawless' | 'good' | 'fair';
 
 export interface DerivedCondition {
@@ -56,17 +56,13 @@ export const hasDisplayOrTouchIssue = (a: ConditionAnswers): boolean =>
       a.displayMinorDiscolouration || a.displayMajorDiscolouration,
   );
 
-const COSMETIC_RANK: Record<CosmeticCondition, number> = { flawless: 0, good: 1, fair: 2 };
-
-/** The worse of two overall looks. */
-const worseOf = (a: CosmeticCondition, b: CosmeticCondition): CosmeticCondition =>
-  COSMETIC_RANK[a] >= COSMETIC_RANK[b] ? a : b;
-
 /**
  * Turns the individual answers into the three conditions the quote engine prices.
- * Every screen, display and body question counts. Business rule: once the screen needs a repair (cracked,
- * touch fault, major display problems), the overall look comes from the screen alone and dents are not
- * deducted on top; the body is still recorded as answered. With only scratches, the body still counts.
+ * Every screen, display and body question counts. The overall look comes from the screen alone; the body is
+ * priced on its own as a share of the value (minor wear 6%, a major dent 10%, a broken or bent panel 18%, as
+ * measured against Cashify), so body damage is not also counted as a worn look. Business rule: once the screen
+ * needs a repair (cracked, touch fault, major display problems) the body is not deducted on top; it is still
+ * recorded as answered. With only scratches on the screen, the body still counts.
  */
 export function deriveCondition(a: ConditionAnswers): DerivedCondition {
   let screenCondition: ScreenCondition = 'flawless';
@@ -78,18 +74,12 @@ export function deriveCondition(a: ConditionAnswers): DerivedCondition {
   ) screenCondition = 'scratched';
 
   let bodyCondition: BodyCondition = 'flawless';
-  let bodyLook: CosmeticCondition = 'flawless';
-  if (a.bodyCrackedOrBroken || a.bodyMajorDents || a.bodyBent || a.bodyLooseScreen) {
-    bodyCondition = 'dents_bent';
-    bodyLook = 'fair';
-  } else if (a.bodyMinorDents || a.bodyMajorSideScratches || a.bodyMinorSideScratches) {
-    bodyCondition = 'minor_scratches';
-    bodyLook = 'good';
-  }
+  if (a.bodyCrackedOrBroken || a.bodyBent || a.bodyLooseScreen) bodyCondition = 'panel_broken';
+  else if (a.bodyMajorDents) bodyCondition = 'dents_bent';
+  else if (a.bodyMinorDents || a.bodyMajorSideScratches || a.bodyMinorSideScratches) bodyCondition = 'minor_scratches';
 
   // A screen that needs repair is paid for by its repair cost, so it does not also lower the look.
   const screenLook: CosmeticCondition = screenCondition === 'scratched' ? 'good' : 'flawless';
 
-  const cosmeticCondition = needsScreenRepair(a) ? screenLook : worseOf(bodyLook, screenLook);
-  return { screenCondition, bodyCondition, cosmeticCondition };
+  return { screenCondition, bodyCondition, cosmeticCondition: screenLook };
 }

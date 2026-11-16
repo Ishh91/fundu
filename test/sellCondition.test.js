@@ -43,27 +43,38 @@ describe('deriveCondition: screen', () => {
 });
 
 describe('deriveCondition: body and overall look', () => {
-  it('reads light body wear as minor scratches', () => {
+  it('reads light body wear as minor scratches, without also lowering the overall look', () => {
     for (const field of ['bodyMinorSideScratches', 'bodyMajorSideScratches', 'bodyMinorDents']) {
       const out = deriveCondition({ [field]: true });
       assert.equal(out.bodyCondition, 'minor_scratches', field);
-      assert.equal(out.cosmeticCondition, 'good', field);
+      assert.equal(out.cosmeticCondition, 'flawless', field);
     }
   });
 
-  it('reads a broken body or big dents as bent', () => {
-    for (const field of ['bodyCrackedOrBroken', 'bodyMajorDents']) {
+  it('reads big dents as bent, without also lowering the overall look', () => {
+    const out = deriveCondition({ bodyMajorDents: true });
+    assert.equal(out.bodyCondition, 'dents_bent');
+    assert.equal(out.cosmeticCondition, 'flawless');
+  });
+
+  it('reads a broken, bent or loose panel as a broken panel', () => {
+    for (const field of ['bodyCrackedOrBroken', 'bodyBent', 'bodyLooseScreen']) {
       const out = deriveCondition({ [field]: true });
-      assert.equal(out.bodyCondition, 'dents_bent', field);
-      assert.equal(out.cosmeticCondition, 'fair', field);
+      assert.equal(out.bodyCondition, 'panel_broken', field);
+      assert.equal(out.cosmeticCondition, 'flawless', field);
     }
   });
 
-  it('never makes the overall look better because of a minor screen issue', () => {
+  it('prices the worse of a dent and a broken panel', () => {
+    assert.equal(deriveCondition({ bodyMajorDents: true, bodyCrackedOrBroken: true }).bodyCondition, 'panel_broken');
+    assert.equal(deriveCondition({ bodyMinorDents: true, bodyMajorDents: true }).bodyCondition, 'dents_bent');
+  });
+
+  it('keeps a scratched screen and a dent as two separate things', () => {
     const scratched = deriveCondition({ bodyMajorDents: true, screenMinorScratches: true });
     assert.equal(scratched.screenCondition, 'scratched');
     assert.equal(scratched.bodyCondition, 'dents_bent');
-    assert.equal(scratched.cosmeticCondition, 'fair');
+    assert.equal(scratched.cosmeticCondition, 'good');
   });
 
   it('judges the overall look by the screen alone once the screen needs a repair', () => {
@@ -72,9 +83,10 @@ describe('deriveCondition: body and overall look', () => {
     assert.equal(touch.cosmeticCondition, 'flawless');
   });
 
-  it('still judges the overall look by the body when the screen is fine', () => {
-    assert.equal(deriveCondition({ bodyMajorDents: true }).cosmeticCondition, 'fair');
-    assert.equal(deriveCondition({ bodyMinorDents: true }).cosmeticCondition, 'good');
+  it('judges the overall look by the screen alone, whatever the body is like', () => {
+    assert.equal(deriveCondition({ bodyMajorDents: true }).cosmeticCondition, 'flawless');
+    assert.equal(deriveCondition({ bodyMinorDents: true }).cosmeticCondition, 'flawless');
+    assert.equal(deriveCondition({ screenMinorScratches: true }).cosmeticCondition, 'good');
   });
 
   it('does not lower the look for a cracked screen, even with body wear', () => {

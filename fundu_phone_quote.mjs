@@ -2624,35 +2624,130 @@ export function calculatePhoneAgingFactor(brand = '', model = '', underWarranty 
  * @param {Object} [options]
  * @returns {Object} Quote result
  */
-const PRICED_DEFECT_KEYS = new Set(['camera', 'charging_port', 'speaker_mic']);
-
-// The sell form lists faults one by one (front camera, back camera, speaker, microphone...). Faults the quote
-// prices as one repair are folded into that repair, so two cameras are one camera repair and not two.
-const DEFECT_ALIASES = {
-  camera_front: 'camera',
-  camera_back: 'camera',
-  speaker: 'speaker_mic',
-  microphone: 'speaker_mic',
-  audio_receiver: 'speaker_mic',
+// What body damage takes off the aged value, measured against Cashify on three phones. On an iPhone 17 Pro Max (about
+// ₹80,000): 1-2 minor dents or more than 2 scratches 6%, a major dent 10%, a cracked, missing or bent panel or a loose
+// screen 18%. On an iPhone 13 (₹23,500) and a Galaxy A14 5G (₹6,240) the same damage took about 3.5%, 4.5% and 11%,
+// so a cheaper phone loses a smaller share. This replaces the old "worn look plus back glass repair", which took 38%
+// for a major dent. The screen is priced the same way (see HIGH_PRICE_SCREEN_FROM).
+const BODY_DAMAGE_SHARE_PREMIUM = {
+  minor_scratches: 0.06,
+  dents_bent: 0.10,
+  panel_broken: 0.18,
+};
+const BODY_DAMAGE_SHARE_STANDARD = {
+  minor_scratches: 0.035,
+  dents_bent: 0.045,
+  panel_broken: 0.11,
 };
 
-/** The declared faults with each alias replaced by the fault it is priced as, and no repeats. */
+/** The share a kind of body damage takes off a phone worth `benchmarkProceeds`. */
+function bodyDamageShareFor(bodyCondition, benchmarkProceeds) {
+  const table = benchmarkProceeds >= HIGH_PRICE_SCREEN_FROM ? BODY_DAMAGE_SHARE_PREMIUM : BODY_DAMAGE_SHARE_STANDARD;
+  return table[bodyCondition] || 0;
+}
+
+const BODY_DAMAGE_REASONS = {
+  minor_scratches: 'Minor body scratches or dents',
+  dents_bent: 'Major dents on the body',
+  panel_broken: 'Cracked, missing or bent panel, or a loose screen',
+};
+
+const PRICED_DEFECT_KEYS = new Set(['camera', 'charging_port', 'speaker_mic']);
+
+// Faults the sell page saved with its old list, folded into the fault they are priced as.
+const DEFECT_ALIASES = {
+  wifi_bluetooth: 'wifi',
+};
+
+/** The declared faults with old names replaced by the fault they are priced as, and no repeats. */
 export function normalizeDefects(declared) {
   if (!Array.isArray(declared)) return [];
   return [...new Set(declared.map((d) => DEFECT_ALIASES[String(d || '').trim()] || String(d || '').trim()).filter(Boolean))];
 }
 
-// What the customer is told for a declared fault that has no itemised repair price. calls_not_working and
-// screen_not_original come from the "make and receive calls?" and "is the screen original?" questions.
-const UNPRICED_DEFECT_REASONS = {
-  biometrics: 'Face ID / fingerprint sensor repair required',
-  calls_not_working: 'Calling / network fault to be verified at inspection',
-  screen_not_original: 'Replaced (non-original) screen to be verified at inspection',
-  camera_glass: 'Camera glass replacement to be verified at inspection',
+// What each fault takes off, measured against Cashify on an iPhone 17 Pro Max (about ₹80,000), an iPhone 13 (₹23,500)
+// and a Galaxy A14 5G (₹6,240). It works in three ways, whichever matches how Cashify's amounts behave:
+//  - a share of the phone's aged value (so an older phone does not lose a bigger share) when the amount grows with the
+//    price: WiFi or Bluetooth 40% on all three phones, Face ID 27% (iPhone 17 Pro Max), proximity sensor 3%;
+//  - the itemised repair cost of the model when the amount is a parts cost (FAULT_REPAIR_PART): cameras, the battery;
+//  - a share with a minimum, for the small faults whose amount barely moves with the price (FAULT_MIN).
+// Camera, charging port and speaker/mic reported with the old list keep their itemised repair cost (PRICED_DEFECT_KEYS).
+const FAULT_SHARE = {
+  wifi: 0.40,
+  bluetooth: 0.40,
+  biometrics: 0.27, // Apple only: see faultCost
+  speaker: 0.03,
+  audio_receiver: 0.03,
+  proximity_sensor: 0.03,
+  silent_button: 0.02,
+  microphone: 0.01,
+  volume_button: 0.01,
+  power_button: 0.01,
+  vibrator: 0.01,
+  // Saved by the old list.
+  buttons: 0.01,
+  sensors: 0.03,
 };
+
+// Faults that cost the model's repair of one part, times a factor: the back camera is the camera repair, the front
+// camera and the camera glass are a part of it, and a battery fault is a battery replacement.
+const FAULT_REPAIR_PART = {
+  camera_back: { part: 'camera', factor: 1 },
+  camera_front: { part: 'camera', factor: 0.55 },
+  camera_glass: { part: 'camera', factor: 0.45 },
+  battery_fault: { part: 'battery', factor: 1 },
+};
+
+// A replaced screen costs about what a screen repair does (Cashify: 84%, 109% and 76% of its cracked-screen amount).
+const SCREEN_NOT_ORIGINAL_SCREEN_SHARE = 0.85;
+
+// The least a small fault takes off, in rupees, whatever the price of the phone.
+const FAULT_MIN = {
+  speaker: 600,
+  audio_receiver: 600,
+  silent_button: 300,
+  microphone: 300,
+  volume_button: 300,
+  power_button: 300,
+  vibrator: 300,
+};
+
+// Cashify takes WiFi and Bluetooth off once, not twice, so only the worst fault of a group counts.
+const FAULT_GROUPS = {
+  wifi: 'wireless',
+  bluetooth: 'wireless',
+};
+
+// What the customer is told for each declared fault.
+const FAULT_REASONS = {
+  wifi: 'WiFi / wireless repair required',
+  bluetooth: 'WiFi / wireless repair required',
+  biometrics: 'Face ID / fingerprint sensor repair required',
+  screen_not_original: 'Replaced (non-original) screen to be verified at inspection',
+  camera_back: 'Back camera repair required',
+  camera_front: 'Front camera repair required',
+  camera_glass: 'Camera glass replacement to be verified at inspection',
+  battery_fault: 'Battery replacement required',
+  speaker: 'Speaker repair required',
+  audio_receiver: 'Audio receiver repair required',
+  microphone: 'Microphone repair required',
+  proximity_sensor: 'Proximity sensor repair required',
+  volume_button: 'Volume button repair required',
+  power_button: 'Power button repair required',
+  silent_button: 'Silent button repair required',
+  vibrator: 'Vibrator repair required',
+};
+
 /** A battery problem reported as a fault; like battery health, it is not deducted next to a screen that needs repair. */
 const BATTERY_FAULT_KEY = 'battery_fault';
-const UNPRICED_DEFECT_DEDUCTION_RATE = 0.08; // same per-fault rate the sell page uses
+// A fault with no measured share (an unknown one) takes this share of the benchmark, so it is never ignored.
+const UNPRICED_DEFECT_DEDUCTION_RATE = 0.08;
+
+// A phone that cannot make or receive calls is treated like a dead one. Cashify pays a small fixed amount whatever the
+// price: ₹1,180 for an iPhone 17 Pro Max and an iPhone 13, ₹780 for a Galaxy A14 5G.
+const CALLS_NOT_WORKING_KEY = 'calls_not_working';
+const CALLS_NOT_WORKING_SALVAGE_APPLE = 1200;
+const CALLS_NOT_WORKING_SALVAGE_OTHER = 800;
 
 export function quotePhone(input = {}, options = {}) {
   const {
@@ -2796,6 +2891,26 @@ export function quotePhone(input = {}, options = {}) {
     };
   }
 
+  // Trigger E: Cannot make or receive calls. Valued like a dead phone until a technician looks at it.
+  if (Array.isArray(defects) && defects.includes(CALLS_NOT_WORKING_KEY)) {
+    const isAppleBrand = String(brand).toLowerCase() === 'apple' || String(model).toLowerCase().includes('iphone');
+    const salvageAmount = isAppleBrand ? CALLS_NOT_WORKING_SALVAGE_APPLE : CALLS_NOT_WORKING_SALVAGE_OTHER;
+    return {
+      status: 'requires_manual_review',
+      quoteId: `FND-Q-${Date.now().toString(36).toUpperCase()}-${Math.floor(1000 + Math.random() * 9000)}`,
+      offerAmount: salvageAmount,
+      isConditionalEstimate: true,
+      reason: 'CALLS_NOT_WORKING',
+      message: 'A phone that cannot make or receive calls needs a physical diagnostic. Our technician will check the network hardware at our inspection hub before a final price is given.',
+      reviewAction: 'book_inspection',
+      contactPath: {
+        phone: '+91-9839122345',
+        email: 'support@fundu.in',
+        doorstepHub: 'Lucknow Central Diagnostics',
+      },
+    };
+  }
+
   // 3. Exact Variant Benchmark (looked up above)
   const { proceeds: expectedResaleProceeds } = benchmarkResult.benchmark;
 
@@ -2807,7 +2922,8 @@ export function quotePhone(input = {}, options = {}) {
   // back panel and the iPhone battery health are not deducted on top of it. Ageing still applies.
   // A scratched screen does not trigger this: dents and battery wear still count there.
   const screenIsDeducted = requiresScreenRepair;
-  const requiresBackglassRepair = body_condition === 'dents_bent' && !screenIsDeducted;
+  // Body damage is a share of the aged value, like the screen. A screen that is already deducted covers it (see above).
+  const bodyDamageShare = screenIsDeducted ? 0 : bodyDamageShareFor(body_condition, expectedResaleProceeds);
   const isApple = String(brand).toLowerCase() === 'apple' || String(model).toLowerCase().includes('iphone');
   const hasCameraDefect = Array.isArray(defects) && defects.includes('camera');
   const hasChargingDefect = Array.isArray(defects) && defects.includes('charging_port');
@@ -2869,10 +2985,11 @@ export function quotePhone(input = {}, options = {}) {
     conditionReasons.push(`Screen/display replacement required (${screen_condition.replace('_', ' ')})`);
   }
 
-  if (requiresBackglassRepair && repairCosts?.backglass) {
-    configuredRepairsTotal += repairCosts.backglass;
-    internalRepairBreakdown.push({ item: 'backglass', cost: repairCosts.backglass });
-    conditionReasons.push('Chassis / back housing panel replacement required');
+  if (bodyDamageShare > 0) {
+    const bodyCost = Math.round(expectedResaleProceeds * agingFactor * bodyDamageShare);
+    configuredRepairsTotal += bodyCost;
+    internalRepairBreakdown.push({ item: 'body', cost: bodyCost });
+    conditionReasons.push(BODY_DAMAGE_REASONS[body_condition]);
   }
 
   // Apple Battery Health Percentage Deduction:
@@ -2906,7 +3023,7 @@ export function quotePhone(input = {}, options = {}) {
   }
 
   const reportsBatteryFault = Array.isArray(defects) && defects.includes(BATTERY_FAULT_KEY);
-  if (screenIsDeducted && (body_condition === 'dents_bent' || wornBatteryRate > 0 || reportsBatteryFault)) {
+  if (screenIsDeducted && (bodyDamageShareFor(body_condition, expectedResaleProceeds) > 0 || wornBatteryRate > 0 || reportsBatteryFault)) {
     conditionReasons.push('Screen condition is priced; dents and battery health are not deducted separately');
   }
 
@@ -2928,19 +3045,38 @@ export function quotePhone(input = {}, options = {}) {
     conditionReasons.push('Speaker / audio microphone repair required');
   }
 
-  // Any other declared fault (e.g. biometrics) has no itemised repair price, so
-  // it takes the standard per-fault deduction instead of being ignored.
-  const unpricedDefects = Array.isArray(defects)
+  // Every other declared fault takes its measured share of the aged value (FAULT_SHARE); a fault with no measured
+  // share takes the standard per-fault deduction instead of being ignored. WiFi and Bluetooth count once.
+  const agedValue = expectedResaleProceeds * agingFactor;
+  const faultCost = (defectKey) => {
+    const repairPart = FAULT_REPAIR_PART[defectKey];
+    if (repairPart) return Math.round((repairCosts?.[repairPart.part] || 0) * repairPart.factor);
+    if (defectKey === 'screen_not_original') {
+      return Math.round(agedValue * screenRepairRate(brand, model, expectedResaleProceeds) * SCREEN_NOT_ORIGINAL_SCREEN_SHARE);
+    }
+    // A fingerprint sensor is a far smaller repair than Face ID, so only an iPhone takes the Face ID share.
+    const share = defectKey === 'biometrics' && !isApple ? undefined : FAULT_SHARE[defectKey];
+    if (share === undefined) return Math.round(expectedResaleProceeds * UNPRICED_DEFECT_DEDUCTION_RATE);
+    return Math.max(FAULT_MIN[defectKey] || 0, Math.round(agedValue * share));
+  };
+  const chargedGroups = new Set();
+  const otherDefects = Array.isArray(defects)
     ? [...new Set(defects.map((d) => String(d || '').trim()).filter((d) => d && !PRICED_DEFECT_KEYS.has(d) && !(screenIsDeducted && d === BATTERY_FAULT_KEY)))]
     : [];
-  unpricedDefects.forEach((defectKey) => {
-    const cost = Math.round(expectedResaleProceeds * UNPRICED_DEFECT_DEDUCTION_RATE);
-    configuredRepairsTotal += cost;
-    internalRepairBreakdown.push({ item: defectKey, cost });
-    conditionReasons.push(
-      UNPRICED_DEFECT_REASONS[defectKey] || 'Additional reported hardware fault to be verified at inspection',
-    );
-  });
+  // Charge the costliest fault of a group first so the group is charged for that one.
+  otherDefects
+    .sort((x, y) => faultCost(y) - faultCost(x))
+    .forEach((defectKey) => {
+      const group = FAULT_GROUPS[defectKey];
+      if (group) {
+        if (chargedGroups.has(group)) return;
+        chargedGroups.add(group);
+      }
+      const cost = faultCost(defectKey);
+      configuredRepairsTotal += cost;
+      internalRepairBreakdown.push({ item: defectKey, cost });
+      conditionReasons.push(FAULT_REASONS[defectKey] || 'Additional reported hardware fault to be verified at inspection');
+    });
 
   // Logistics, Refurbishment, and Inspection Costs (Internal)
   const pickupInspectionCost = FUNDU_POLICY.pickupInspectionRefurbCost;

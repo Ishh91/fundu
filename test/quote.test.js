@@ -118,8 +118,8 @@ describe('Fundu Phone Buyback Quote Engine', () => {
       assertWithinRounding(deductionFor({ defects: ['speaker_mic'] }), repairCosts.speaker, 'speaker fault');
     });
 
-    test('deducts for a biometrics fault, which has no itemised repair price', () => {
-      assertWithinRounding(deductionFor({ defects: ['biometrics'] }), benchmarkPrice * 0.08, 'biometrics fault');
+    test('deducts 27% for a biometrics fault, as Cashify does', () => {
+      assertWithinRounding(deductionFor({ defects: ['biometrics'] }), benchmarkPrice * 0.27, 'biometrics fault');
     });
 
     test('deducts for any other reported fault instead of ignoring it', () => {
@@ -196,7 +196,7 @@ describe('Fundu Phone Buyback Quote Engine', () => {
     test('still deducts the other faults next to a battery fault', () => {
       assertWithinRounding(
         deductionFor({ screen_condition: 'cracked', defects: ['battery_fault', 'biometrics'] }) - deductionFor({ screen_condition: 'cracked' }),
-        benchmarkPrice * 0.08,
+        benchmarkPrice * 0.27,
         'biometrics next to a battery fault',
       );
     });
@@ -237,6 +237,54 @@ describe('Fundu Phone Buyback Quote Engine', () => {
         lookupModelRepairs('Apple', 'iPhone 13', benchmarkPrice).screen,
         'cracked screen with a flawless look',
       );
+    });
+  });
+
+  describe('body damage deduction', () => {
+    // The share of the aged value taken off, measured against Cashify on an iPhone 17 Pro Max.
+    const bodyShare = (model, storage, body_condition, extra = {}) => {
+      const flawless = quotePhone({ ...bestCase, model, storage, ...extra }).offerAmount;
+      const damaged = quotePhone({ ...bestCase, model, storage, body_condition, ...extra }).offerAmount;
+      return (flawless - damaged) / flawless;
+    };
+
+    test('takes about 6% off for minor body wear', () => {
+      const share = bodyShare('iPhone 17 Pro Max', '256 GB', 'minor_scratches');
+      assert.ok(share > 0.05 && share < 0.075, `took ${(share * 100).toFixed(1)}%`);
+    });
+
+    test('takes about 10% off for a major dent, not the 38% it used to', () => {
+      const share = bodyShare('iPhone 17 Pro Max', '256 GB', 'dents_bent');
+      assert.ok(share > 0.09 && share < 0.12, `took ${(share * 100).toFixed(1)}%`);
+    });
+
+    test('takes about 18% off for a cracked, missing or bent panel', () => {
+      const share = bodyShare('iPhone 17 Pro Max', '256 GB', 'panel_broken');
+      assert.ok(share > 0.16 && share < 0.20, `took ${(share * 100).toFixed(1)}%`);
+    });
+
+    test('takes more off the worse the damage is', () => {
+      assert.ok(deductionFor({ body_condition: 'minor_scratches' }) < deductionFor({ body_condition: 'dents_bent' }));
+      assert.ok(deductionFor({ body_condition: 'dents_bent' }) < deductionFor({ body_condition: 'panel_broken' }));
+    });
+
+    test('scales with the phone age, so an old phone does not lose a larger share', () => {
+      const fresh = bodyShare('iPhone 17 Pro Max', '256 GB', 'dents_bent');
+      const old = bodyShare('iPhone 17 Pro Max', '256 GB', 'dents_bent', { age_period: 'above_11_months' });
+      assert.ok(Math.abs(fresh - old) < 0.02, `${(fresh * 100).toFixed(1)}% fresh vs ${(old * 100).toFixed(1)}% old`);
+    });
+
+    test('is not deducted on top of a screen that needs a repair', () => {
+      for (const body_condition of ['minor_scratches', 'dents_bent', 'panel_broken']) {
+        assert.equal(deductionFor({ screen_condition: 'cracked', body_condition }), deductionFor({ screen_condition: 'cracked' }), body_condition);
+      }
+    });
+
+    test('says what the body deduction is for', () => {
+      const text = (body_condition) => quotePhone({ ...bestCase, body_condition }).conditionSummary.join(' | ');
+      assert.match(text('minor_scratches'), /Minor body scratches or dents/);
+      assert.match(text('dents_bent'), /Major dents on the body/);
+      assert.match(text('panel_broken'), /Cracked, missing or bent panel/);
     });
   });
 
@@ -285,7 +333,7 @@ describe('Fundu Phone Buyback Quote Engine', () => {
       for (const screen_condition of ['flawless', 'scratched']) {
         assertWithinRounding(
           deductionFor({ screen_condition, defects: ['battery_fault'] }) - deductionFor({ screen_condition }),
-          benchmarkPrice * 0.08,
+          lookupModelRepairs('Apple', 'iPhone 13', benchmarkPrice).battery,
           `battery fault, ${screen_condition} screen`,
         );
       }
