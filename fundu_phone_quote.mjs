@@ -2750,7 +2750,11 @@ export function quotePhone(input = {}, options = {}) {
   const repairCosts = lookupModelRepairs(brand, model, expectedResaleProceeds);
 
   const requiresScreenRepair = screen_condition === 'cracked' || screen_condition === 'touch_fault' || screen_condition === 'display_lines';
-  const requiresBackglassRepair = body_condition === 'dents_bent';
+  // Business rule: once the screen needs a repair (cracked, touch fault or display lines), the dent /
+  // back panel and the iPhone battery health are not deducted on top of it. Ageing still applies.
+  // A scratched screen does not trigger this: dents and battery wear still count there.
+  const screenIsDeducted = requiresScreenRepair;
+  const requiresBackglassRepair = body_condition === 'dents_bent' && !screenIsDeducted;
   const isApple = String(brand).toLowerCase() === 'apple' || String(model).toLowerCase().includes('iphone');
   const hasCameraDefect = Array.isArray(defects) && defects.includes('camera');
   const hasChargingDefect = Array.isArray(defects) && defects.includes('charging_port');
@@ -2761,7 +2765,14 @@ export function quotePhone(input = {}, options = {}) {
   const normAge = String(agePeriod || '').toLowerCase().trim();
   const is0to3Months = isApple && (normAge === '0_to_3_months' || normAge === 'below_3_months');
 
-  const cosmeticKey = String(cosmetic_condition).toLowerCase();
+  let cosmeticKey = String(cosmetic_condition).toLowerCase();
+  // With the screen needing a repair, the overall look comes from the screen alone: a worse look that a dent put
+  // there (for instance by another client) is not deducted on top. A better look is left as given.
+  if (screenIsDeducted) {
+    const COSMETIC_SEVERITY = { flawless: 0, good: 1, fair: 2 };
+    const screenLook = screen_condition === 'cracked' ? 'fair' : 'flawless';
+    if ((COSMETIC_SEVERITY[cosmeticKey] ?? 0) > COSMETIC_SEVERITY[screenLook]) cosmeticKey = screenLook;
+  }
   const activeCosmeticMultipliers = options.cosmeticMultipliers || {
     flawless: 1.00,
     good: 0.85,
@@ -2816,28 +2827,34 @@ export function quotePhone(input = {}, options = {}) {
   // > 85%: 0% deduction
   // 75% to 85%: 1% reduction
   // < 75%: 2% deduction
-  let batteryDeductionRate = 0;
+  let wornBatteryRate = 0;
   if (isApple) {
     const bHealth = String(battery_health || '').toLowerCase().trim();
     const num = parseFloat(bHealth);
     if (!isNaN(num) && num > 0) {
-      if (num > 85) batteryDeductionRate = 0;
-      else if (num >= 75) batteryDeductionRate = 0.01;
-      else batteryDeductionRate = 0.02;
+      if (num > 85) wornBatteryRate = 0;
+      else if (num >= 75) wornBatteryRate = 0.01;
+      else wornBatteryRate = 0.02;
     } else if (bHealth === 'above_85' || bHealth === 'healthy') {
-      batteryDeductionRate = 0;
+      wornBatteryRate = 0;
     } else if (bHealth === '75_to_85') {
-      batteryDeductionRate = 0.01;
+      wornBatteryRate = 0.01;
     } else if (bHealth === 'below_75' || bHealth === 'degraded_service') {
-      batteryDeductionRate = 0.02;
+      wornBatteryRate = 0.02;
     }
   }
+
+  const batteryDeductionRate = screenIsDeducted ? 0 : wornBatteryRate;
 
   if (batteryDeductionRate > 0) {
     const batteryDeductionAmount = Math.round(expectedResaleProceeds * batteryDeductionRate);
     configuredRepairsTotal += batteryDeductionAmount;
     internalRepairBreakdown.push({ item: 'battery_health', cost: batteryDeductionAmount });
     conditionReasons.push('iPhone Battery Health wear verified');
+  }
+
+  if (screenIsDeducted && (body_condition === 'dents_bent' || wornBatteryRate > 0)) {
+    conditionReasons.push('Screen condition is priced; dents and battery health are not deducted separately');
   }
 
   if (hasCameraDefect && repairCosts?.camera) {

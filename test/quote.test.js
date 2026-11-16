@@ -121,6 +121,111 @@ describe('Fundu Phone Buyback Quote Engine', () => {
     });
   });
 
+  describe('when the screen is deducted', () => {
+    const repairCosts = lookupModelRepairs('Apple', 'iPhone 13', benchmarkPrice);
+    const screenStates = ['cracked', 'touch_fault', 'display_lines'];
+
+    test('does not also deduct a dent / back panel repair', () => {
+      for (const screen_condition of screenStates) {
+        assert.equal(
+          deductionFor({ screen_condition, body_condition: 'dents_bent' }),
+          deductionFor({ screen_condition }),
+          screen_condition,
+        );
+      }
+    });
+
+    test('does not also deduct iPhone battery health wear', () => {
+      for (const screen_condition of screenStates) {
+        assert.equal(
+          deductionFor({ screen_condition, battery_health: 'below_75' }),
+          deductionFor({ screen_condition }),
+          screen_condition,
+        );
+        assert.equal(
+          deductionFor({ screen_condition, battery_health: '75_to_85' }),
+          deductionFor({ screen_condition }),
+          screen_condition,
+        );
+      }
+    });
+
+    test('still takes off ageing', () => {
+      const fresh = quotePhone({ ...bestCase, screen_condition: 'cracked', age_period: '0_to_3_months' }).offerAmount;
+      const old = quotePhone({ ...bestCase, screen_condition: 'cracked', age_period: 'above_11_months' }).offerAmount;
+      assert.ok(old < fresh, `${old} should be below ${fresh}`);
+      assertWithinRounding(fresh - old, benchmarkPrice * 0.2, 'ageing on a cracked screen');
+    });
+
+    test('still takes off other hardware faults and missing accessories', () => {
+      assertWithinRounding(
+        deductionFor({ screen_condition: 'cracked', defects: ['speaker_mic'] }) - deductionFor({ screen_condition: 'cracked' }),
+        repairCosts.speaker,
+        'speaker fault with a cracked screen',
+      );
+      assert.equal(
+        deductionFor({ screen_condition: 'cracked', accessories: ['Original Box'] }) - deductionFor({ screen_condition: 'cracked' }),
+        500,
+      );
+    });
+
+    test('says why the dent and battery are not deducted separately', () => {
+      const quote = quotePhone({ ...bestCase, screen_condition: 'cracked', body_condition: 'dents_bent', battery_health: 'below_75' });
+      assert.ok(quote.conditionSummary.some((line) => /not deducted separately/i.test(line)));
+      const plain = quotePhone({ ...bestCase, screen_condition: 'cracked' });
+      assert.ok(!plain.conditionSummary.some((line) => /not deducted separately/i.test(line)));
+    });
+  });
+
+  describe('a body-driven look sent by another client', () => {
+    const offer = (changes) => quotePhone({ ...bestCase, ...changes }).offerAmount;
+
+    test('does not stack a worn look on a cracked screen, touch fault or display lines', () => {
+      for (const screen_condition of ['touch_fault', 'display_lines']) {
+        assert.equal(
+          offer({ screen_condition, cosmetic_condition: 'fair' }),
+          offer({ screen_condition, cosmetic_condition: 'flawless' }),
+          screen_condition,
+        );
+      }
+      assert.equal(
+        offer({ screen_condition: 'cracked', cosmetic_condition: 'fair' }),
+        offer({ screen_condition: 'cracked', cosmetic_condition: 'fair', body_condition: 'dents_bent' }),
+      );
+    });
+
+    test('keeps the look the seller gave when the screen is fine', () => {
+      assert.ok(offer({ cosmetic_condition: 'fair' }) < offer({ cosmetic_condition: 'good' }));
+      assert.ok(offer({ cosmetic_condition: 'good' }) < offer({ cosmetic_condition: 'flawless' }));
+    });
+
+    test('never makes a better look worse because of the screen', () => {
+      assertWithinRounding(
+        bestOffer - offer({ screen_condition: 'cracked', cosmetic_condition: 'flawless' }),
+        lookupModelRepairs('Apple', 'iPhone 13', benchmarkPrice).screen,
+        'cracked screen with a flawless look',
+      );
+    });
+  });
+
+  describe('when the screen is fine or only scratched', () => {
+    test('still deducts a dent / back panel repair and battery wear', () => {
+      for (const screen_condition of ['flawless', 'scratched']) {
+        assert.ok(deductionFor({ screen_condition, body_condition: 'dents_bent' }) > deductionFor({ screen_condition }), screen_condition);
+        assertWithinRounding(
+          deductionFor({ screen_condition, battery_health: 'below_75' }) - deductionFor({ screen_condition }),
+          benchmarkPrice * 0.02,
+          `worn battery, ${screen_condition} screen`,
+        );
+      }
+    });
+
+    test('keeps the look the seller gave on a scratched screen', () => {
+      const offer = (changes) => quotePhone({ ...bestCase, ...changes }).offerAmount;
+      assert.ok(offer({ screen_condition: 'scratched', cosmetic_condition: 'fair' }) < offer({ screen_condition: 'scratched', cosmetic_condition: 'good' }));
+    });
+  });
+
   describe('accessories', () => {
     test('offers less for each missing accessory', () => {
       assert.equal(deductionFor({ accessories: ['Original Box', 'Original Charger'] }), 200);

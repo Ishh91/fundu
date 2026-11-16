@@ -5,7 +5,7 @@ import { readFile } from 'node:fs/promises';
 
 const source = await readFile(new URL('../src/lib/sellCondition.ts', import.meta.url), 'utf8');
 const { code } = await transform(source, { loader: 'ts', format: 'esm' });
-const { deriveCondition, hasDisplayOrTouchIssue } = await import(`data:text/javascript;base64,${Buffer.from(code).toString('base64')}`);
+const { deriveCondition, hasDisplayOrTouchIssue, needsScreenRepair } = await import(`data:text/javascript;base64,${Buffer.from(code).toString('base64')}`);
 
 const flawless = { screenCondition: 'flawless', bodyCondition: 'flawless', cosmeticCondition: 'flawless' };
 
@@ -58,11 +58,22 @@ describe('deriveCondition: body and overall look', () => {
     }
   });
 
-  it('never makes the overall look better because of a minor screen issue (it used to)', () => {
-    const out = deriveCondition({ bodyMajorDents: true, screenMinorScratches: true });
-    assert.equal(out.cosmeticCondition, 'fair');
-    assert.equal(out.bodyCondition, 'dents_bent');
-    assert.equal(out.screenCondition, 'scratched');
+  it('never makes the overall look better because of a minor screen issue', () => {
+    const scratched = deriveCondition({ bodyMajorDents: true, screenMinorScratches: true });
+    assert.equal(scratched.screenCondition, 'scratched');
+    assert.equal(scratched.bodyCondition, 'dents_bent');
+    assert.equal(scratched.cosmeticCondition, 'fair');
+  });
+
+  it('judges the overall look by the screen alone once the screen needs a repair', () => {
+    const touch = deriveCondition({ bodyMajorDents: true, touchFault: true });
+    assert.equal(touch.screenCondition, 'touch_fault');
+    assert.equal(touch.cosmeticCondition, 'flawless');
+  });
+
+  it('still judges the overall look by the body when the screen is fine', () => {
+    assert.equal(deriveCondition({ bodyMajorDents: true }).cosmeticCondition, 'fair');
+    assert.equal(deriveCondition({ bodyMinorDents: true }).cosmeticCondition, 'good');
   });
 
   it('keeps a fair look when a cracked screen meets light body wear', () => {
@@ -72,6 +83,16 @@ describe('deriveCondition: body and overall look', () => {
   it('does not change its input', () => {
     const answers = Object.freeze({ screenCracked: true });
     assert.equal(deriveCondition(answers).screenCondition, 'cracked');
+  });
+});
+
+describe('needsScreenRepair', () => {
+  it('is true only for a cracked screen, a touch fault or major display problems', () => {
+    assert.equal(needsScreenRepair({}), false);
+    assert.equal(needsScreenRepair({ screenMinorScratches: true, displayMinorLines: true, displayMinorSpotsWhite: true }), false);
+    for (const field of ['screenCracked', 'touchFault', 'displayMajorLines', 'displayMajorSpots', 'displayMajorDiscolouration']) {
+      assert.equal(needsScreenRepair({ [field]: true }), true, field);
+    }
   });
 });
 

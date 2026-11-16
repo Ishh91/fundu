@@ -11,6 +11,7 @@ import {
 } from 'lucide-react';
 import { computeDetailedResaleValuation, fetchSellPriceConfig, getStoredPriceConfig, fetchPhoneModels, searchMobileApiDev, getDynamicFallbackConfig, type SellPriceConfig } from '../lib/mobileApi';
 import { getFunduPhoneQuote, getInstantFunduQuote, calculatePhoneAgingFactor, type FunduQuoteResponse } from '../lib/quoteEngine';
+import { needsScreenRepair } from '../lib/sellCondition';
 import { db } from '../lib/db';
 import { useAuth } from '../context/AuthContext';
 import { ALL_INDIAN_PHONES_CATALOG } from '../data/indianPhonesCatalog';
@@ -866,24 +867,29 @@ export default function SellPhone() {
         val -= baseModelPrice * 0.06;
       }
 
+      // Business rule: once the screen needs a repair, dents and battery health are not deducted on top (ageing still is).
+      const screenDeducted = needsScreenRepair(form) || ['cracked', 'touch_fault', 'display_lines'].includes(form.screenCondition);
+
       // 3. Body / Frame Deductions
-      if (form.bodyCrackedOrBroken) {
-        val -= baseModelPrice * 0.20;
-      } else if (form.bodyMajorDents) {
-        val -= baseModelPrice * 0.12;
-      } else if (form.bodyMinorDents) {
-        val -= baseModelPrice * 0.05;
-      } else if (form.bodyCondition === 'dents_bent') {
-        val *= 0.85;
+      if (!screenDeducted) {
+        if (form.bodyCrackedOrBroken) {
+          val -= baseModelPrice * 0.20;
+        } else if (form.bodyMajorDents) {
+          val -= baseModelPrice * 0.12;
+        } else if (form.bodyMinorDents) {
+          val -= baseModelPrice * 0.05;
+        } else if (form.bodyCondition === 'dents_bent') {
+          val *= 0.85;
+        }
+
+        if (form.bodyMajorSideScratches) {
+          val -= baseModelPrice * 0.08;
+        } else if (form.bodyMinorSideScratches) {
+          val -= baseModelPrice * 0.03;
+        }
       }
 
-      if (form.bodyMajorSideScratches) {
-        val -= baseModelPrice * 0.08;
-      } else if (form.bodyMinorSideScratches) {
-        val -= baseModelPrice * 0.03;
-      }
-
-      if (isApple) {
+      if (isApple && !screenDeducted) {
         const bHealth = String(form.batteryHealth || '').toLowerCase().trim();
         const num = parseFloat(bHealth);
         if (!isNaN(num) && num > 0) {
