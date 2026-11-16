@@ -1,5 +1,4 @@
 import type { Product } from '../types';
-import { SAMPLE_BEST_SELLING_PHONES } from '../data/sampleProducts';
 import { deduplicateProductsByModel } from './modelVariants';
 import { db } from './db';
 
@@ -66,7 +65,7 @@ export function getCachedFeaturedPhones(): Product[] {
   } catch (_e) {
     // fallback
   }
-  return deduplicateProductsByModel(SAMPLE_BEST_SELLING_PHONES.filter((p) => p.is_featured));
+  return [];
 }
 
 export function setCachedFeaturedPhones(products: Product[]): void {
@@ -82,8 +81,8 @@ export function setCachedFeaturedPhones(products: Product[]): void {
 }
 
 /**
- * Returns immediately with cached products or default instant sample products.
- * Guarantees 0ms initial load time on the storefront with zero blank screen delay.
+ * Returns the products this browser saved last time, or nothing.
+ * Never invents products: only real listings from the store may be shown.
  */
 export function getCachedPhones(): Product[] {
   try {
@@ -97,7 +96,7 @@ export function getCachedPhones(): Product[] {
   } catch (_e) {
     // fallback
   }
-  return deduplicateProductsByModel(SAMPLE_BEST_SELLING_PHONES);
+  return [];
 }
 
 export function setCachedPhones(products: Product[]): void {

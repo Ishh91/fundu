@@ -4,7 +4,7 @@ import { getItemVariant } from '../lib/cartItem';
 import { clampLineQuantity, maxForLine, reconcileLines, type FreshListing } from '../lib/cartLimits';
 
 export type CartItem = {
-  id: string; // Unique key: e.g. "sample-apple-15pro_128_gb_excellent"
+  id: string; // Unique key: e.g. "<productId>_128_gb_excellent"
   type: 'product' | 'spare_part';
   item: Product | SparePart;
   quantity: number;

@@ -6,7 +6,6 @@ import type { Product } from '../../types';
 import { useCart } from '../../context/CartContext';
 import { getCleanPhoneImage } from '../../lib/phoneImages';
 import { cardStorages, showsRam } from '../../lib/cardSpecs';
-import { SAMPLE_BEST_SELLING_PHONES } from '../../data/sampleProducts';
 
 interface BestDealsProps {
   products: Product[];
@@ -17,9 +16,7 @@ export default function BestDeals({ products, loading }: BestDealsProps) {
   const { addToCart } = useCart();
   // Display products: prioritize featured, but always ensure top store phones show
   const displayProducts = useMemo(() => {
-    if (!products || products.length === 0) {
-      return SAMPLE_BEST_SELLING_PHONES.filter((p) => p.is_featured);
-    }
+    if (!products || products.length === 0) return [];
     const featured = products.filter((p) => p.is_featured && p.is_approved !== false);
     if (featured.length > 0) return featured;
     // If no products are explicitly tagged is_featured, display the top approved products from store

@@ -34,8 +34,6 @@ import { getRememberedProduct, rememberProducts } from '../lib/productsCache';
 import type { Product, Review } from '../types';
 import { showsRam } from '../lib/cardSpecs';
 import { normalizeStorageString, isStorageAllowedForModel } from '../lib/deviceSpecs';
-import { findSampleProductById } from '../data/sampleProducts';
-import { findSampleLaptopById } from '../data/sampleLaptops';
 import { verifyPanIndiaPincode } from '../lib/locationService';
 import { PhoneVideoPlayer } from '../lib/videoUtils';
 import { usePageSeo } from '../lib/usePageSeo';
@@ -218,17 +216,6 @@ export default function ProductDetail() {
     setProduct(null);
     setSelectedImage('');
     setLoading(true);
-
-    const sample = findSampleProductById(id) || findSampleLaptopById(id);
-    if (sample) {
-      setProduct(sample);
-      setSelectedImage(sample.images[0] || '');
-      setSelectedStorage(sample.storage || '128 GB');
-      setSelectedColor(sample.color || 'Default');
-      setSelectedGrade(sample.condition || 'Superb');
-      setLoading(false);
-      return;
-    }
 
     // A product the visitor already saw in a list (or pointed at) is shown at once; the server copy
     // then replaces it quietly, without resetting what the visitor has picked in the meantime.

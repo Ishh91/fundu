@@ -39,7 +39,6 @@ import { matchesBrand } from '../lib/brandFilter';
 import { isProductDeleted, useCatalogSync } from '../lib/catalogSync';
 import { subscribeToRealtimeSync } from '../lib/realtimeSync';
 import type { Product } from '../types';
-import { SAMPLE_BEST_SELLING_PHONES } from '../data/sampleProducts';
 import { cardStorages, showsRam } from '../lib/cardSpecs';
 
 // Circular brand filters with brand logos
@@ -179,7 +178,7 @@ export default function BuyPhones() {
             setProducts(deduplicated);
             setCachedPhones(deduplicated);
           } else {
-            setProducts(SAMPLE_BEST_SELLING_PHONES);
+            setProducts([]);
           }
           setLoading(false);
         })
