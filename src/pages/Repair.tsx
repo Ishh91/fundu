@@ -39,7 +39,9 @@ import {
   RefreshCw,
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
-import { db, formatINR, formatMaskedPrice, formatDisplayPrice } from '../lib/db';
+import { db, formatINR } from '../lib/db';
+import RepairModeChooser from '../components/repair/RepairModeChooser';
+import { summarizeIssues } from '../lib/repairIssueInfo';
 import { verifyPanIndiaPincode, type VerifiedLocation } from '../lib/locationService';
 import { checkPincodeServiceability } from '../lib/pincodeService';
 import { fetchPhoneModels, searchMobileApiDev } from '../lib/mobileApi';
@@ -424,6 +426,8 @@ export default function Repair() {
   const combinedProblemLabel = useMemo(() => {
     return selectedIssues.map((i) => i.label).join(' + ');
   }, [selectedIssues]);
+
+  const issueSummary = useMemo(() => summarizeIssues(selectedIssues), [selectedIssues]);
 
   const toggleIssueSelection = (issueId: string) => {
     setSelectedIssueIds((prev) => {
@@ -1456,7 +1460,8 @@ export default function Repair() {
             ) : (
               /* BRAND SELECTION GRID (Shown when no brand is selected) */
               <>
-                <div className="card p-6 md:p-8 rounded-[28px] border border-gray-200/80 bg-white shadow-sm">
+                <RepairModeChooser doorstepTargetId="repair-brand-grid" />
+                <div id="repair-brand-grid" className="card p-6 md:p-8 rounded-[28px] border border-gray-200/80 bg-white shadow-sm scroll-mt-24">
                   <div className="flex items-center justify-between border-b border-gray-100 pb-4">
                     <div>
                       <span className="badge bg-[#F0F0F5] text-[#344257] border border-[#C0C8D8] font-extrabold text-xs">
@@ -1587,17 +1592,8 @@ export default function Repair() {
                   <div className="text-left sm:text-right">
                     <p className="text-[10px] uppercase font-bold text-[#C0C8D8] tracking-wider">Estimated Repair Cost</p>
                     <p className="text-2xl font-black text-white">
-                      {formatDisplayPrice(totalRepairCost, !!user)}
+                      {formatINR(totalRepairCost)}
                     </p>
-                    {!user && (
-                      <button
-                        type="button"
-                        onClick={handleGoToLoginForRepairExactPrice}
-                        className="text-[10px] font-bold text-emerald-300 hover:text-white underline flex items-center gap-1 cursor-pointer transition"
-                      >
-                        <Lock className="h-3 w-3" /> Know exact price? Login to view
-                      </button>
-                    )}
                   </div>
                   <Link
                     to={brandSlug ? `/repair/${brandSlug}` : form.brand ? `/repair/${form.brand.toLowerCase()}` : '/repair'}
@@ -1651,7 +1647,7 @@ export default function Repair() {
                       <div className="flex-1">
                         <div className="flex items-center justify-between gap-2">
                           <p className="font-bold text-sm text-ink-900">{issue.label}</p>
-                          <span className="font-display font-black text-[#344257] text-base">{formatDisplayPrice(issue.cost, !!user)}</span>
+                          <span className="font-display font-black text-[#344257] text-base">{formatINR(issue.cost)}</span>
                         </div>
                         <p className="mt-1 text-xs text-ink-500 leading-relaxed">{issue.desc}</p>
                         {issue.note && (
@@ -1661,9 +1657,13 @@ export default function Repair() {
                           </div>
                         )}
                         <div className="mt-3 flex items-center justify-between text-[10px] font-bold">
-                          <div className="flex items-center gap-2">
-                            <span className="badge bg-emerald-50 text-[#344257]">{issue.warranty}</span>
-                            <span className="badge bg-purple-50 text-purple-700">{issue.time}</span>
+                          <div className="flex flex-wrap items-center gap-2 text-[11px]">
+                            <span className="badge inline-flex items-center gap-1 bg-emerald-50 text-[#344257]">
+                              <ShieldCheck className="h-3 w-3" /> {issue.warranty}
+                            </span>
+                            <span className="badge inline-flex items-center gap-1 bg-purple-50 text-purple-700">
+                              <Clock className="h-3 w-3" /> {issue.time}
+                            </span>
                           </div>
                           <span className={`px-2.5 py-1 rounded-full text-[10px] font-black transition ${isSelected ? 'bg-[#344257] text-white' : 'bg-gray-100 text-gray-600 hover:bg-[#F0F0F5] hover:text-[#344257]'}`}>
                             {isSelected ? '✓ Selected' : '+ Add Issue'}
@@ -1695,7 +1695,7 @@ export default function Repair() {
 
                 <div className="text-right shrink-0">
                   <p className="text-[10px] uppercase font-bold text-slate-400 tracking-wider">Total Combined Quote</p>
-                  <p className="font-display font-black text-2xl text-emerald-400">{formatDisplayPrice(totalRepairCost, !!user)}</p>
+                  <p className="font-display font-black text-2xl text-emerald-400">{formatINR(totalRepairCost)}</p>
                 </div>
               </div>
 
@@ -1716,18 +1716,10 @@ export default function Repair() {
                 </button>
                 <button
                   type="button"
-                  onClick={() => {
-                    if (!user) {
-                      handleGoToLoginForRepairExactPrice();
-                    } else {
-                      goToStep(3);
-                    }
-                  }}
+                  onClick={() => goToStep(3)}
                   className="btn-primary flex items-center gap-2"
                 >
-                  {!user
-                    ? 'Want to Know Exact Price? Login to View'
-                    : `View Total Upfront Quote (${formatINR(totalRepairCost)})`}{' '}
+                  {`View Total Upfront Quote (${formatINR(totalRepairCost)})`}{' '}
                   <ArrowRight className="h-4 w-4" />
                 </button>
               </div>
@@ -1766,21 +1758,9 @@ export default function Repair() {
                 <div>
                   <p className="text-xs font-bold uppercase tracking-widest text-emerald-400">Total Upfront Repair Price (Incl. Parts & Labor)</p>
                   <div className="mt-2 font-display text-4xl sm:text-5xl font-black text-white">
-                    {user ? formatINR(totalRepairCost) : formatMaskedPrice(totalRepairCost)}
+                    {formatINR(totalRepairCost)}
                   </div>
-                  {!user ? (
-                    <div className="mt-3">
-                      <button
-                        type="button"
-                        onClick={handleGoToLoginForRepairExactPrice}
-                        className="btn bg-white text-[#344257] hover:bg-gray-100 font-black text-xs px-4 py-2 rounded-xl inline-flex items-center gap-1.5 shadow-md cursor-pointer transition"
-                      >
-                        <Lock className="h-3.5 w-3.5 text-[#344257]" /> Want exact price? Login to view
-                      </button>
-                    </div>
-                  ) : (
-                    <p className="mt-2 text-xs text-white/70">No hidden fees · Pay only after testing your phone</p>
-                  )}
+                  <p className="mt-2 text-xs text-white/70">No hidden fees · Pay only after testing your phone</p>
                 </div>
 
                 {/* Selected Issues List */}
@@ -1790,8 +1770,11 @@ export default function Repair() {
                     <div key={item.id} className="border-b border-white/10 pb-2 pt-1 space-y-1">
                       <div className="flex items-center justify-between text-slate-200 font-semibold">
                         <span>• {item.label}</span>
-                        <span className="font-bold text-white">{formatDisplayPrice(item.cost, !!user)}</span>
+                        <span className="font-bold text-white">{formatINR(item.cost)}</span>
                       </div>
+                      <p className="pl-3 text-[10px] font-semibold text-emerald-300/90">
+                        {[item.warranty, item.time].filter(Boolean).join(' · ')}
+                      </p>
                       {item.note && (
                         <p className="text-[10px] text-amber-300 font-medium pl-3 flex items-start gap-1 leading-snug">
                           <span>⚠️</span>
@@ -1804,12 +1787,16 @@ export default function Repair() {
 
                 {/* Repair Guarantees Pills */}
                 <div className="flex flex-wrap justify-center gap-2 text-xs font-semibold pt-1">
-                  <span className="inline-flex items-center gap-1 rounded-full bg-white/10 px-3 py-1 backdrop-blur-md text-emerald-300">
-                    <ShieldCheck className="h-3.5 w-3.5" /> 6 Months Parts Warranty
-                  </span>
-                  <span className="inline-flex items-center gap-1 rounded-full bg-white/10 px-3 py-1 backdrop-blur-md text-emerald-300">
-                    <Clock className="h-3.5 w-3.5" /> 30-Min On-Spot Fix
-                  </span>
+                  {issueSummary.warranty && (
+                    <span className="inline-flex items-center gap-1 rounded-full bg-white/10 px-3 py-1 backdrop-blur-md text-emerald-300">
+                      <ShieldCheck className="h-3.5 w-3.5" /> {issueSummary.warranty}
+                    </span>
+                  )}
+                  {issueSummary.time && (
+                    <span className="inline-flex items-center gap-1 rounded-full bg-white/10 px-3 py-1 backdrop-blur-md text-emerald-300">
+                      <Clock className="h-3.5 w-3.5" /> {issueSummary.time}
+                    </span>
+                  )}
                   <span className="inline-flex items-center gap-1 rounded-full bg-white/10 px-3 py-1 backdrop-blur-md text-emerald-300">
                     <Truck className="h-3.5 w-3.5" /> Free Doorstep Visit
                   </span>
@@ -1831,7 +1818,7 @@ export default function Repair() {
                   }}
                   className="btn-primary flex items-center gap-2"
                 >
-                  {!user ? 'Login to View Final Price & Schedule' : 'Schedule Doorstep Booking'}{' '}
+                  {!user ? 'Login to Book Doorstep Repair' : 'Schedule Doorstep Booking'}{' '}
                   <ArrowRight className="h-4 w-4" />
                 </button>
               </div>
