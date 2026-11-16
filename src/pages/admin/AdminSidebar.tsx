@@ -188,6 +188,7 @@ export default function AdminSidebar({
           badgeColor: 'bg-[#344257] text-white',
           path: '/admin/banners',
         },
+        { id: 'stores' as AdminTab, label: 'Our Stores', icon: Store, path: '/admin/stores' },
         { id: 'reviews' as AdminTab, label: 'Customer Reviews', icon: MessageSquare, path: '/admin/reviews' },
         { id: 'contact' as AdminTab, label: 'Contact Queries', icon: Mail, path: '/admin/contact' },
         { id: 'errors' as AdminTab, label: 'Site Errors', icon: AlertTriangle, path: '/admin/errors' },

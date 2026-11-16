@@ -57,6 +57,7 @@ const TAB_PERMISSION: Record<AdminTab, AdminPermission | null | 'admin_only'> = 
   pincodes: 'fleet',
   wholesalers: 'vendors',
   banners: 'content',
+  stores: 'content',
   reviews: 'content',
   contact: 'content',
   users: 'admin_only',

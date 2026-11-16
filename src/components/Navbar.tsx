@@ -41,6 +41,7 @@ import {
   type PanIndiaLocation,
 } from '../lib/locationService';
 import { describeItemVariant } from '../lib/cartItem';
+import { useStoreLocations } from '../lib/useStoreLocations';
 
 
 export const DOORSTEP_LOCALITIES = [
@@ -60,72 +61,6 @@ export const DOORSTEP_LOCALITIES = [
   'Faizabad Road',
   'Telibagh',
   'Aminabad',
-];
-
-export const DOORSTEP_STORES = [
-  {
-    id: 1,
-    name: 'Hazratganj Flagship Store',
-    locality: 'Hazratganj',
-    address: 'Shop 12, Ground Floor, MG Marg, Near Cathedral',
-    timing: '10:00 AM – 9:00 PM',
-    phone: '+91 6390 616 616',
-    type: 'Flagship Experience Center',
-  },
-  {
-    id: 2,
-    name: 'Gomti Nagar Super Hub',
-    locality: 'Gomti Nagar',
-    address: 'Plot 4, Viram Khand 1, Near Patrakarpuram Crossing',
-    timing: '10:00 AM – 9:00 PM',
-    phone: '+91 98765 43211',
-    type: 'Sales & Express Repair Hub',
-  },
-  {
-    id: 3,
-    name: 'Aliganj Tech Center',
-    locality: 'Aliganj',
-    address: 'B-14, Kapoorthala Shopping Complex',
-    timing: '10:30 AM – 8:30 PM',
-    phone: '+91 98765 43212',
-    type: 'Diagnostic & Trade-In Store',
-  },
-  {
-    id: 4,
-    name: 'Indira Nagar Store',
-    locality: 'Indira Nagar',
-    address: 'Sector 14, Near Munshipulia Metro Station',
-    timing: '10:00 AM – 9:00 PM',
-    phone: '+91 98765 43213',
-    type: 'Retail & Refurbished Hub',
-  },
-  {
-    id: 5,
-    name: 'Mahanagar Store',
-    locality: 'Mahanagar',
-    address: 'Shop 8, Gole Market Commercial Centre',
-    timing: '10:30 AM – 8:30 PM',
-    phone: '+91 98765 43214',
-    type: 'Experience & Pickup Point',
-  },
-  {
-    id: 6,
-    name: 'Ashiyana Pickup Hub',
-    locality: 'Ashiyana',
-    address: 'Sector H, Power House Chauraha, LDA Colony',
-    timing: '10:00 AM – 8:30 PM',
-    phone: '+91 98765 43215',
-    type: 'Express Drop & Instant Cash',
-  },
-  {
-    id: 7,
-    name: 'Chowk Heritage Center',
-    locality: 'Chowk',
-    address: 'Shop 22, Phool Mandi Road, Opp. Clock Tower',
-    timing: '11:00 AM – 9:00 PM',
-    phone: '+91 98765 43216',
-    type: 'Old City Trade & Service Hub',
-  },
 ];
 
 const PHONE_BRANDS = [
@@ -263,6 +198,7 @@ const BUY_LAPTOP_HIGHLIGHTS = [
 ];
 
 export default function Navbar() {
+  const { stores: storeList } = useStoreLocations();
   const { user, profile, signOut } = useAuth();
   const { cartItems, totalItems, totalAmount, updateQuantity, maxQuantityFor, removeFromCart, clearCart, isCartOpen: cartOpen, setIsCartOpen: setCartOpen } = useCart();
   const navigate = useNavigate();
@@ -1534,7 +1470,7 @@ export default function Navbar() {
                   <MapPin className="h-3.5 w-3.5 text-[#6A859F]" />
                   <span>Our Stores</span>
                   <span className="grid h-4.5 min-w-4.5 px-1 place-items-center rounded-full bg-[#344257] text-[10px] font-extrabold text-white shadow-xs">
-                    7
+                    {storeList.length}
                   </span>
                   <ChevronDown className={`h-3 w-3 transition-transform duration-200 ${activeDropdown === 'our-stores' ? 'rotate-180 text-[#344257]' : 'text-[#6A859F]'}`} />
                 </button>
@@ -1543,7 +1479,7 @@ export default function Navbar() {
                   <div className="absolute right-0 top-full mt-1 w-[460px] rounded-2xl border border-gray-200 bg-white p-4 shadow-2xl z-50 animate-fade-in">
                     <div className="flex items-center justify-between pb-2 border-b border-gray-100 mb-3">
                       <div>
-                        <span className="text-xs font-bold text-gray-900">7 Store & Pickup Hubs</span>
+                        <span className="text-xs font-bold text-gray-900">{storeList.length} Store & Pickup Hubs</span>
                         <p className="text-[11px] text-[#47576E] font-medium">Walk-in for instant cash or phone pickup</p>
                       </div>
                       <Link to="/store" className="text-xs font-bold text-[#344257] hover:underline">
@@ -1552,7 +1488,7 @@ export default function Navbar() {
                     </div>
 
                     <div className="max-h-72 overflow-y-auto space-y-2 pr-1">
-                      {DOORSTEP_STORES.map((s) => (
+                      {storeList.map((s) => (
                         <div
                           key={s.id}
                           className="p-2.5 rounded-xl border border-gray-100 hover:border-[#C0C8D8] hover:bg-[#F0F0F5]/50 transition"
@@ -1572,9 +1508,11 @@ export default function Navbar() {
                                 </span>
                               </div>
                             </div>
-                            <span className="text-[9px] font-bold uppercase bg-[#F0F0F5] text-[#344257] border border-[#C0C8D8] px-1.5 py-0.5 rounded">
-                              {s.locality}
-                            </span>
+                            {s.locality && (
+                              <span className="text-[9px] font-bold uppercase bg-[#F0F0F5] text-[#344257] border border-[#C0C8D8] px-1.5 py-0.5 rounded">
+                                {s.locality}
+                              </span>
+                            )}
                           </div>
                         </div>
                       ))}
@@ -1735,7 +1673,7 @@ export default function Navbar() {
                   className="flex items-center justify-between rounded-xl px-3 py-2.5 text-sm font-bold text-gray-800 hover:bg-gray-50"
                 >
                   <span className="flex items-center gap-2.5">
-                    <MapPin className="h-4 w-4 text-[#47576E]" /> Our Stores (7 Hubs)
+                    <MapPin className="h-4 w-4 text-[#47576E]" /> Our Stores ({storeList.length} Hubs)
                   </span>
                   <span className="text-[10px] font-bold bg-[#344257] text-white px-2 py-0.5 rounded-full">
                     Doorstep
