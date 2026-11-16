@@ -28,11 +28,9 @@ export interface DerivedCondition {
   cosmeticCondition: CosmeticCondition;
 }
 
-const COSMETIC_RANK: Record<CosmeticCondition, number> = { flawless: 0, good: 1, fair: 2 };
-
-/** The worse of two overall looks. */
-const worseOf = (a: CosmeticCondition, b: CosmeticCondition): CosmeticCondition =>
-  COSMETIC_RANK[a] >= COSMETIC_RANK[b] ? a : b;
+/** True when the answers say the screen needs a repair: cracked, touch not working, or major spots, lines or discolouration. */
+export const needsScreenRepair = (a: ConditionAnswers): boolean =>
+  Boolean(a.screenCracked || a.touchFault || a.displayMajorLines || a.displayMajorSpots || a.displayMajorDiscolouration);
 
 /** True when the answers report anything wrong with the screen, display or touch. */
 export const hasDisplayOrTouchIssue = (a: ConditionAnswers): boolean =>
@@ -42,9 +40,17 @@ export const hasDisplayOrTouchIssue = (a: ConditionAnswers): boolean =>
       a.displayMinorDiscolouration || a.displayMajorDiscolouration,
   );
 
+const COSMETIC_RANK: Record<CosmeticCondition, number> = { flawless: 0, good: 1, fair: 2 };
+
+/** The worse of two overall looks. */
+const worseOf = (a: CosmeticCondition, b: CosmeticCondition): CosmeticCondition =>
+  COSMETIC_RANK[a] >= COSMETIC_RANK[b] ? a : b;
+
 /**
  * Turns the individual answers into the three conditions the quote engine prices.
- * Every screen, display and body question counts: a worse answer never gets a better look back.
+ * Every screen, display and body question counts. Business rule: once the screen needs a repair (cracked,
+ * touch fault, major display problems), the overall look comes from the screen alone and dents are not
+ * deducted on top; the body is still recorded as answered. With only scratches, the body still counts.
  */
 export function deriveCondition(a: ConditionAnswers): DerivedCondition {
   let screenCondition: ScreenCondition = 'flawless';
@@ -67,5 +73,6 @@ export function deriveCondition(a: ConditionAnswers): DerivedCondition {
 
   const screenLook: CosmeticCondition = screenCondition === 'cracked' ? 'fair' : screenCondition === 'scratched' ? 'good' : 'flawless';
 
-  return { screenCondition, bodyCondition, cosmeticCondition: worseOf(bodyLook, screenLook) };
+  const cosmeticCondition = needsScreenRepair(a) ? screenLook : worseOf(bodyLook, screenLook);
+  return { screenCondition, bodyCondition, cosmeticCondition };
 }
