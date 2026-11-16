@@ -92,3 +92,14 @@ describe('renderProductSitemap', () => {
     assert.match(xml, /product\/x&amp;y/);
   });
 });
+
+describe('prerendered text', () => {
+  it('is clipped out of sight so it never flashes before the app loads', () => {
+    const html = renderRoutePage(SHELL, { meta: META, canonicalUrl: 'https://www.thefundu.com/sell/apple/iphone-13' });
+    const main = html.match(/<main style="([^"]*)">/);
+    assert.ok(main, 'main has an inline style');
+    assert.match(main[1], /position:absolute/);
+    assert.match(main[1], /clip:rect\(0,0,0,0\)/);
+    assert.doesNotMatch(main[1], /max-width|padding:24px/);
+  });
+});

@@ -7,6 +7,11 @@
 const escapeHtml = (value) =>
   String(value).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 
+// The text is for crawlers and screen readers. It stays in the page but is clipped out of
+// sight, so visitors never see it flash before the app replaces it.
+const HIDDEN_UNTIL_APP_LOADS =
+  'position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0';
+
 const BRAND_SUFFIX = ' | Fundu';
 const MAIN_LINKS = [
   ['/sell', 'Sell old phone'],
@@ -41,7 +46,7 @@ export const renderRoutePage = (shellHtml, { meta, canonicalUrl }) => {
 
   const links = MAIN_LINKS.map(([href, label]) => `<a href="${href}">${escapeHtml(label)}</a>`).join(' · ');
   const body =
-    `<main style="max-width:960px;margin:0 auto;padding:24px;font-family:system-ui,sans-serif">` +
+    `<main style="${HIDDEN_UNTIL_APP_LOADS}">` +
     `<h1>${escapeHtml(headingFromTitle(meta.title))}</h1><p>${description}</p><nav aria-label="Main">${links}</nav></main>`;
   return html.replace('<div id="root"></div>', `<div id="root">${body}</div>`);
 };
