@@ -46,4 +46,11 @@ describe('Sell Brand Page Image Resolution', () => {
     assert.equal(isBrandImageMismatch('Apple', 'iPhone 15', 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s24.jpg'), true);
     assert.equal(isBrandImageMismatch('Samsung', 'Galaxy S24', 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-15.jpg'), true);
   });
+
+  it('preserves custom uploaded inventory photo (data:image or cloudinary)', () => {
+    const customB64 = 'data:image/webp;base64,UklGRkrBAABXRUJQVlA4WAoAAAAgAAAAzgQA/AQASUNDUMgBAAAAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQ...';
+    assert.equal(getCleanPhoneImage('Apple', 'iPhone 15 Pro Max', customB64), customB64);
+    const customCloudinary = 'https://res.cloudinary.com/wvjhfc16/image/upload/v1234/fundu/my-phone.jpg';
+    assert.equal(getCleanPhoneImage('Apple', 'iPhone 15 Pro Max', customCloudinary), customCloudinary);
+  });
 });

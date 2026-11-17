@@ -1399,12 +1399,13 @@ function computeCleanPhoneImage(brand?: string, model?: string, fallbackUrl?: st
     }
   }
 
-  // 2. Explicit custom uploaded inventory product photo (e.g. Cloudinary, local uploads)
+  // 2. Explicit custom uploaded inventory product photo (e.g. Cloudinary, local uploads, base64)
   const isCustomUploadedPhoto =
     Boolean(rawUrl) &&
     (rawUrl.includes('cloudinary.com') ||
       rawUrl.includes('res.cloudinary.com') ||
       rawUrl.includes('/uploads/') ||
+      rawUrl.startsWith('data:image/') ||
       rawUrl.startsWith('blob:')) &&
     !isBrandImageMismatch(brand, model, rawUrl);
 

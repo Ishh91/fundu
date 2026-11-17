@@ -194,7 +194,7 @@ export default function AdminProducts({
                   >
                     <div className="h-12 w-12 rounded-xl bg-ink-100 overflow-hidden shrink-0 flex items-center justify-center p-1 bg-white border border-gray-100">
                       <img
-                        src={getCleanPhoneImage(p.brand, p.model || p.title, p.images?.[0])}
+                        src={p.images?.[0] || getCleanPhoneImage(p.brand, p.model || p.title, '')}
                         alt=""
                         className="h-full w-full object-contain"
                       />
@@ -444,7 +444,7 @@ export default function AdminProducts({
 
               <div className="rounded-2xl overflow-hidden border border-ink-200 bg-white p-4 flex items-center justify-center">
                 <img
-                  src={getCleanPhoneImage(selectedProduct.brand, selectedProduct.model || selectedProduct.title, selectedProduct.images?.[0])}
+                  src={selectedProduct.images?.[0] || getCleanPhoneImage(selectedProduct.brand, selectedProduct.model || selectedProduct.title, '')}
                   alt=""
                   className="h-52 w-auto object-contain"
                 />
