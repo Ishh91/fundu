@@ -3479,8 +3479,8 @@ export function isStorageAllowedForModel(brand = '', model = '', storageStr = ''
     return gb === 64;
   }
 
-  // iPhone 18 Pro/Pro Max, 17 Pro/Pro Max, 17 Air: 128 GB is completely disallowed (Starts at 256 GB)
-  if (/iphone\s*(?:18\s*pro(?:\s*max)?|17\s*pro(?:\s*max)?|17\s*air)\b/i.test(m)) {
+  // iPhone 18 Pro/Pro Max, 17, 17 Pro/Pro Max, 17 Air and 16 Pro Max: 128 GB is completely disallowed (they start at 256 GB)
+  if (/iphone\s*(?:18\s*pro(?:\s*max)?|17\s*pro(?:\s*max)?|17\s*air|17|16\s*pro\s*max)\b/i.test(m)) {
     if (gb === 128) return false;
   }
 
