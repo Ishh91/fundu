@@ -1,4 +1,5 @@
 import { getErrorMessage } from './errorMessage';
+import type { ScreenCondition } from './sellCondition';
 import { API_BASE } from '../config/apiConfig';
 import {
   quotePhone,
@@ -31,7 +32,7 @@ export interface FunduQuoteRequest {
   ownership_verified?: boolean;
   liquid_damage?: boolean;
   cosmetic_condition?: 'flawless' | 'good' | 'fair';
-  screen_condition?: 'flawless' | 'scratched' | 'cracked' | 'touch_fault' | 'display_lines';
+  screen_condition?: ScreenCondition;
   body_condition?: 'flawless' | 'minor_scratches' | 'dents_bent' | 'panel_broken';
   battery_health?: 'above_85' | '75_to_85' | 'below_75' | 'healthy' | 'degraded_service' | 'unknown' | string;
   defects?: string[];

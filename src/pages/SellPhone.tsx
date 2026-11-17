@@ -11,7 +11,7 @@ import {
 } from 'lucide-react';
 import { computeDetailedResaleValuation, fetchSellPriceConfig, getStoredPriceConfig, fetchPhoneModels, searchMobileApiDev, getDynamicFallbackConfig, type SellPriceConfig } from '../lib/mobileApi';
 import { getFunduPhoneQuote, getInstantFunduQuote, calculatePhoneAgingFactor, screenRepairRate, type FunduQuoteResponse } from '../lib/quoteEngine';
-import { needsScreenRepair } from '../lib/sellCondition';
+import { needsScreenRepair, isScreenRepairState } from '../lib/sellCondition';
 import { db } from '../lib/db';
 import { useAuth } from '../context/AuthContext';
 import { ALL_INDIAN_PHONES_CATALOG } from '../data/indianPhonesCatalog';
@@ -716,7 +716,7 @@ export default function SellPhone() {
       if (isBrandEq) {
         const normConfigStorage = (pricingConfig.storage || '').replace(/\s+/g, '').toUpperCase();
         const normFormStorage = (form.storage || '').replace(/\s+/g, '').toUpperCase();
-        const ramOffset = calculateRamPriceOffset(form.ram, availableRams, form.brand);
+        const ramOffset = calculateRamPriceOffset(form.ram, availableRams, form.brand, pricingConfig.base_price);
 
         // If exact storage matches, preserve exact price + authentic RAM offset!
         if (!normConfigStorage || normConfigStorage === normFormStorage) {
@@ -735,7 +735,7 @@ export default function SellPhone() {
     // 2. Check dynamic database synced price from priceSync
     const directEffective = getEffectivePrice(form.brand, form.model, 0, form.storage);
     if (directEffective > 0) {
-      const ramOffset = calculateRamPriceOffset(form.ram, availableRams, form.brand);
+      const ramOffset = calculateRamPriceOffset(form.ram, availableRams, form.brand, directEffective);
       return directEffective + ramOffset;
     }
 
@@ -794,7 +794,7 @@ export default function SellPhone() {
     const storageMult = calculateHardwareVariantMultiplier(form.storage, '', form.brand);
     const ratio = catalogMult > 0 ? storageMult / catalogMult : 1.0;
     const scaled = Math.round((rawBase * ratio) / 50) * 50;
-    const ramOffset = calculateRamPriceOffset(form.ram, availableRams, form.brand);
+    const ramOffset = calculateRamPriceOffset(form.ram, availableRams, form.brand, scaled);
 
     return Math.max(1000, scaled + ramOffset);
   }, [form.brand, form.model, form.storage, form.ram, availableRams, version, pricingConfig]);
@@ -861,7 +861,7 @@ export default function SellPhone() {
         val -= baseModelPrice * 0.28;
       } else if (form.displayMinorLines || form.displayMinorSpotsWhite) {
         val -= baseModelPrice * 0.10;
-      } else if (form.screenCondition === 'touch_fault' || form.screenCondition === 'display_lines') {
+      } else if (isScreenRepairState(form.screenCondition) && form.screenCondition !== 'cracked' && form.screenCondition !== 'chipped') {
         val *= 0.60;
       }
 
@@ -872,7 +872,7 @@ export default function SellPhone() {
       }
 
       // Business rule: once the screen needs a repair, dents and battery health are not deducted on top (ageing still is).
-      const screenDeducted = needsScreenRepair(form) || ['cracked', 'touch_fault', 'display_lines'].includes(form.screenCondition);
+      const screenDeducted = needsScreenRepair(form) || isScreenRepairState(form.screenCondition);
 
       // 3. Body / Frame Deductions
       if (!screenDeducted) {

@@ -499,8 +499,26 @@ export function calculateHardwareVariantMultiplier(storage = '128 GB', ram = '',
  * Calculates authentic RAM tier price offset for devices with multiple RAM options on the same storage.
  * e.g. 6GB RAM -> +0 (baseline), 8GB RAM -> +1,000, 12GB RAM -> +2,000
  * Guaranteed minimum +₹1,000 difference for 8GB over 6GB on Android devices.
+ *
+ * On a phone priced under LOW_PRICE_BELOW the offset never passes RAM_OFFSET_MAX_SHARE_LOW of the price, because a flat step
+ * is a big share of a cheap phone (the quote engine in fundu_phone_quote.mjs applies the same cap).
  */
-export function calculateRamPriceOffset(selectedRam = '', availableRams: string[] = [], brand = ''): number {
+export function calculateRamPriceOffset(selectedRam = '', availableRams: string[] = [], brand = '', price = 0): number {
+  const offset = ramPriceOffsetBeforeCap(selectedRam, availableRams, brand);
+  if (price > 0 && price < LOW_PRICE_BELOW) {
+    const cap = Math.round(price * RAM_OFFSET_MAX_SHARE_LOW);
+    return Math.max(-cap, Math.min(cap, offset));
+  }
+  return offset;
+}
+
+/** A phone priced under this is a low-end phone. Same value as LOW_PRICE_BELOW in fundu_phone_quote.mjs. */
+export const LOW_PRICE_BELOW = 20000;
+
+/** The most a RAM offset can move the price of a low-end phone, as a share of that price. Same as in fundu_phone_quote.mjs. */
+export const RAM_OFFSET_MAX_SHARE_LOW = 0.14;
+
+function ramPriceOffsetBeforeCap(selectedRam = '', availableRams: string[] = [], brand = ''): number {
   const isApple = String(brand || '').toLowerCase().includes('apple');
   if (isApple || !selectedRam) {
     return 0;

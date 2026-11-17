@@ -111,18 +111,28 @@ export default function BestDeals({ products, loading }: BestDealsProps) {
                     </span>
                   )}
 
-                  <Link to={`/product/${item.id}`} className="h-full w-full flex items-center justify-center">
-                    <img
-                      src={getCleanPhoneImage(item.brand, item.title || item.model, item.images?.[0])}
-                      alt={item.title}
-                      className="h-full w-auto object-contain transition group-hover:scale-105"
-                      loading="lazy"
-                      decoding="async"
-                      onError={(e) => {
-                        (e.target as HTMLImageElement).src = getCleanPhoneImage(item.brand, item.title || item.model, '');
-                      }}
-                    />
-                  </Link>
+                  {(() => {
+                    const explicitImage = item.images && item.images.length > 0 && item.images[0] ? item.images[0] : '';
+                    const displayImage = explicitImage || getCleanPhoneImage(item.brand, item.title || item.model, '');
+                    return (
+                      <Link to={`/product/${item.id}`} className="h-full w-full flex items-center justify-center">
+                        <img
+                          src={displayImage}
+                          alt={item.title}
+                          className="h-full w-auto object-contain transition group-hover:scale-105"
+                          loading="lazy"
+                          decoding="async"
+                          onError={(e) => {
+                            const target = e.target as HTMLImageElement;
+                            if (!target.dataset.triedFallback) {
+                              target.dataset.triedFallback = '1';
+                              target.src = getCleanPhoneImage(item.brand, item.title || item.model, '');
+                            }
+                          }}
+                        />
+                      </Link>
+                    );
+                  })()}
                 </div>
 
                 {/* Body Content */}
