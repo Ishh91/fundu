@@ -2608,13 +2608,21 @@ export const APPLE_SCREEN_CRACK_RUPEES = {
   iphone17promax: 17850,
 };
 
+// Touch not working is 1.68 times the crack on every iPhone but three, where Cashify takes a little less.
+export const APPLE_TOUCH_RUPEES = {
+  iphone14: 16920,
+  iphone14plus: 17980,
+  iphone15: 19350,
+};
+
+const appleModelKey = (model) => String(model ?? '').toLowerCase().replace(/^apple\s+/, '').replace(/[^a-z0-9]/g, '');
+
 /** The most that a screen state can take off, as a share of the aged value, whatever the table says. */
 const SCREEN_CUT_MAX_SHARE = 0.75;
 
 /** What Cashify takes off a cracked screen on this iPhone, or undefined for a model that was not measured. */
 export function appleCrackRupees(model) {
-  const key = String(model ?? '').toLowerCase().replace(/^apple\s+/, '').replace(/[^a-z0-9]/g, '');
-  return APPLE_SCREEN_CRACK_RUPEES[key];
+  return APPLE_SCREEN_CRACK_RUPEES[appleModelKey(model)];
 }
 
 // What the customer is told for each screen state.
@@ -2796,7 +2804,26 @@ export function getModelReleaseYear(brand = '', model = '') {
  *     6 to 11 months: 9.22% deduction (factor = 0.9078)
  *     Out of warranty (>11 months): 20% deduction (factor = 0.80)
  */
+/**
+ * What a phone older than 11 months is offered, as a share of its admin price, when it is an old iPhone. Cashify offers 0.96 of
+ * its market price for an iPhone 14 or older, which has no warranty or bill question (iPhone 14 Plus 28,910, 14 Pro Max 41,990,
+ * 13 27,290 and 20 more); a newer phone gets 0.73-0.79 there, because the bill and warranty answers are "no". The admin price is
+ * about 2.5% above that market price, so 0.955 of it lands where Cashify does (within 6% on 20 models, 2% on average).
+ */
+export const OLD_PHONE_AGE_FACTOR = 0.955;
+
+const OLD_IPHONE_KEY = /^iphone(?:[678](?:s|plus|splus)?|x(?:r|s|smax)?|se(?:2020|2022|3rdgen2022)?|1[1-4](?:mini|plus|pro|promax)?)$/;
+
+/** An iPhone launched in 2022 or before: the iPhone 14 family, the SE and everything older. */
+export function isIphoneLaunchedBefore2023(brand, model) {
+  const key = String(model ?? '').toLowerCase().replace(/^apple\s+/, '').replace(/[^a-z0-9]/g, '');
+  if (!key.startsWith('iphone')) return false;
+  if (!/apple/i.test(String(brand ?? '')) && !/iphone/i.test(String(model ?? ''))) return false;
+  return OLD_IPHONE_KEY.test(key);
+}
+
 export function calculatePhoneAgingFactor(brand = '', model = '', underWarranty = false, agePeriod = '') {
+  const outOfWarranty = isIphoneLaunchedBefore2023(brand, model) ? OLD_PHONE_AGE_FACTOR : 0.80;
   const normAge = String(agePeriod || '').toLowerCase().trim();
 
   // Universal Aging brackets for ALL brands & models (Apple & Android):
@@ -2824,14 +2851,14 @@ export function calculatePhoneAgingFactor(brand = '', model = '', underWarranty 
     normAge === 'above_11_months' ||
     normAge === 'out_of_warranty'
   ) {
-    return 0.80;
+    return outOfWarranty;
   }
 
   // If no explicit agePeriod was passed, fall back to warranty status:
   if (underWarranty) {
     return 1.00;
   }
-  return 0.80;
+  return outOfWarranty;
 }
 
 /**
@@ -3184,7 +3211,10 @@ export function quotePhone(input = {}, options = {}) {
   const appleCrack = isAppleDevice ? appleCrackRupees(model) : undefined;
   const screenCutFor = (state, agedForShare) => {
     const multiple = SCREEN_STATE_MULTIPLE[state];
-    if (appleCrack !== undefined && multiple !== undefined) return Math.min(Math.round(appleCrack * multiple), Math.round(agedForShare * SCREEN_CUT_MAX_SHARE));
+    if (appleCrack !== undefined && multiple !== undefined) {
+      const rupees = state === 'touch_fault' && APPLE_TOUCH_RUPEES[appleModelKey(model)] !== undefined ? APPLE_TOUCH_RUPEES[appleModelKey(model)] : Math.round(appleCrack * multiple);
+      return Math.min(rupees, Math.round(agedForShare * SCREEN_CUT_MAX_SHARE));
+    }
     return tierScreenShare === undefined ? undefined : Math.round(agedForShare * tierScreenShare);
   };
   const bodyDamageShare = screenIsDeducted ? 0 : bodyDamageShareFor(body_condition, expectedResaleProceeds, isAppleDevice);
