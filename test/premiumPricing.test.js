@@ -8,6 +8,7 @@ import {
   HIGH_PRICE_SCREEN_FROM,
   SCREEN_STATE_SHARE_HIGH,
   SCREEN_STATE_SHARE_LOW,
+  SCREEN_STATE_SHARE_MID,
 } from '../fundu_phone_quote.mjs';
 
 const FULL = ['Original Box', 'Original Charger', 'Valid Bill'];
@@ -39,8 +40,8 @@ describe('the three price tiers', () => {
     assert.equal(LOW_PRICE_BELOW, 20000);
     assert.equal(HIGH_PRICE_SCREEN_FROM, 60000);
     assert.ok(screenStateShare('cracked', 19999) === SCREEN_STATE_SHARE_LOW.cracked);
-    assert.equal(screenStateShare('cracked', 20000), undefined);
-    assert.equal(screenStateShare('cracked', 59999), undefined);
+    assert.ok(screenStateShare('cracked', 20000) === SCREEN_STATE_SHARE_MID.cracked);
+    assert.ok(screenStateShare('cracked', 59999) < SCREEN_STATE_SHARE_MID.cracked);
     assert.ok(screenStateShare('cracked', 60000) === SCREEN_STATE_SHARE_HIGH.cracked);
   });
 });
@@ -111,25 +112,22 @@ describe('screen states on a premium phone (measured against Cashify on S26 Ultr
   });
 });
 
-describe('a phone between the tiers keeps its old pricing', () => {
-  it('prices a crack as the old 32-35% and a scratched screen as the 15% look', () => {
-    assert.ok(within(share(S26_ULTRA, MID, { screen_condition: 'cracked' }), 0.30, 0.37));
+describe('a phone just under the premium line', () => {
+  it('is priced almost exactly like one just over it, with no jump at 60,000', () => {
+    const justUnder = share(S26_ULTRA, 59999, { screen_condition: 'cracked' });
+    const atLine = share(S26_ULTRA, 60000, { screen_condition: 'cracked' });
+    assert.ok(Math.abs(justUnder - atLine) < 0.005, `${(justUnder * 100).toFixed(1)}% vs ${(atLine * 100).toFixed(1)}%`);
+    assert.ok(within(atLine, 0.21, 0.25));
+  });
+
+  it('is priced on the middle table well under it', () => {
+    assert.ok(within(share(S26_ULTRA, MID, { screen_condition: 'cracked' }), 0.34, 0.38));
     assert.ok(within(share(S26_ULTRA, MID, { screen_condition: 'scratched', cosmetic_condition: 'good' }), 0.13, 0.17));
   });
 
-  it('prices every graded wear as the old "scratched" look and chipped glass as a crack', () => {
-    for (const state of ['scratches_minor', 'spots_many', 'faded_edges']) {
-      assert.ok(within(share(S26_ULTRA, MID, { screen_condition: state, cosmetic_condition: 'good' }), 0.13, 0.17), state);
-    }
+  it('prices chipped glass as a smaller problem than a crack, as Cashify does', () => {
+    assert.ok(offerAt(S26_ULTRA, MID, { screen_condition: 'chipped' }).offerAmount > offerAt(S26_ULTRA, MID, { screen_condition: 'cracked' }).offerAmount);
     assert.equal(legacyScreenCondition('chipped'), 'cracked');
-    assert.equal(offerAt(S26_ULTRA, MID, { screen_condition: 'chipped' }).offerAmount, offerAt(S26_ULTRA, MID, { screen_condition: 'cracked' }).offerAmount);
-  });
-
-  it('jumps to the premium share exactly at 60,000', () => {
-    const justUnder = share(S26_ULTRA, 59999, { screen_condition: 'cracked' });
-    const atLine = share(S26_ULTRA, 60000, { screen_condition: 'cracked' });
-    assert.ok(justUnder > 0.30);
-    assert.ok(within(atLine, 0.21, 0.25));
   });
 });
 

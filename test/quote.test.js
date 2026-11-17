@@ -8,6 +8,7 @@ import {
   calculateHardwareVariantMultiplier,
   FUNDU_POLICY,
   RESALE_BENCHMARKS,
+  SCREEN_STATE_SHARE_MID,
 } from '../fundu_phone_quote.mjs';
 import { createPhoneQuote, getQuoteAudit } from '../server/services/quoteService.js';
 
@@ -106,8 +107,9 @@ describe('Fundu Phone Buyback Quote Engine', () => {
   describe('condition deductions', () => {
     const repairCosts = lookupModelRepairs('Apple', 'iPhone 13', benchmarkPrice);
 
-    test('deducts the screen replacement cost for a cracked screen', () => {
-      assertWithinRounding(deductionFor({ screen_condition: 'cracked' }), repairCosts.screen, 'cracked screen');
+    test('deducts the middle-tier share of the catalog price for a cracked screen', () => {
+      assert.ok(repairCosts.screen > 0);
+      assertWithinRounding(deductionFor({ screen_condition: 'cracked' }), benchmarkPrice * SCREEN_STATE_SHARE_MID.cracked, 'cracked screen');
     });
 
     test('deducts 2% of the catalog price for a worn iPhone battery', () => {
@@ -234,7 +236,7 @@ describe('Fundu Phone Buyback Quote Engine', () => {
     test('never makes a better look worse because of the screen', () => {
       assertWithinRounding(
         bestOffer - offer({ screen_condition: 'cracked', cosmetic_condition: 'flawless' }),
-        lookupModelRepairs('Apple', 'iPhone 13', benchmarkPrice).screen,
+        benchmarkPrice * SCREEN_STATE_SHARE_MID.cracked,
         'cracked screen with a flawless look',
       );
     });
@@ -302,8 +304,14 @@ describe('Fundu Phone Buyback Quote Engine', () => {
     });
 
     test('takes about a third off a mid-priced phone', () => {
+      const share = shareLost('iPhone 13', '128 GB');
+      assert.ok(share > 0.34 && share < 0.38, `took ${(share * 100).toFixed(1)}%`);
+    });
+
+    test('takes less as a phone nears the premium line, as Cashify does', () => {
       const share = shareLost('iPhone 16', '128 GB');
-      assert.ok(share > 0.32 && share < 0.38, `took ${(share * 100).toFixed(1)}%`);
+      assert.ok(share > 0.24 && share < 0.31, `took ${(share * 100).toFixed(1)}%`);
+      assert.ok(share < shareLost('iPhone 13', '128 GB'));
     });
 
     test('scales with the phone age, so an old phone does not lose a larger share', () => {

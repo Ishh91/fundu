@@ -108,28 +108,13 @@ describe('screen states on a low-end phone (measured against Cashify on a Galaxy
 const within = (v, lo, hi) => v >= lo && v <= hi;
 
 describe('screen states on a phone that is not low-end', () => {
-  it('prices every graded wear as the old "scratched" look, 15%', () => {
-    for (const state of ['scratches_minor', 'scratches_major', 'spots_few', 'spots_many', 'tint_minor', 'faded_edges']) {
-      const lost = share(MID, { screen_condition: state, cosmetic_condition: 'good' });
-      assert.ok(within(lost, 0.13, 0.17), `${state} took ${(lost * 100).toFixed(1)}%`);
+  it('are priced on the middle table, not the cheap one (see middlePricing.test.js)', () => {
+    for (const state of ['cracked', 'touch_fault', 'spots_many']) {
+      assert.ok(share(MID, { screen_condition: state }) > share(CHEAP, { screen_condition: state }), state);
     }
   });
 
-  it('prices chipped glass as a cracked screen', () => {
-    assert.equal(offerAt(MID, { screen_condition: 'chipped' }), offerAt(MID, { screen_condition: 'cracked' }));
-  });
-
-  it('prices heavy spots, lines and a strong tint as the old display problem', () => {
-    for (const state of ['spots_heavy', 'lines_visible', 'tint_major']) {
-      assert.equal(offerAt(MID, { screen_condition: state }), offerAt(MID, { screen_condition: 'display_lines' }), state);
-    }
-  });
-
-  it('takes the same share off for touch not working as for a crack', () => {
-    assert.equal(offerAt(MID, { screen_condition: 'touch_fault' }), offerAt(MID, { screen_condition: 'cracked' }));
-  });
-
-  it('maps each state to the old two-level value', () => {
+  it('maps each state to the old two-level value, which decides whether the screen needs a repair', () => {
     assert.equal(legacyScreenCondition('chipped'), 'cracked');
     assert.equal(legacyScreenCondition('spots_many'), 'scratched');
     assert.equal(legacyScreenCondition('lines_visible'), 'display_lines');
