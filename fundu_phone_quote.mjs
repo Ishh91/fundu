@@ -2549,6 +2549,74 @@ export function legacyScreenCondition(screenCondition) {
   return SCREEN_STATE_LEGACY[screenCondition] || screenCondition;
 }
 
+// Cashify takes a flat amount off an iPhone for a cracked screen, the same on every storage, and every other screen state is a fixed
+// multiple of it. The multiples are identical on an iPhone 14, an iPhone 17 Pro Max, a Galaxy S26 Ultra and a Galaxy S25 Ultra:
+// 1-2 scratches 0.212, 2+ scratches 0.494, chipped 0.706, a few spots or a slight tint 0.336, faded edges 0.84, several spots 1.008,
+// a strong tint 0.924, heavy spots or visible lines 1.4286, and touch not working 1.68 (the iPhone 14 and 15 are a little under that).
+export const SCREEN_STATE_MULTIPLE = {
+  scratches_minor: 0.212,
+  scratches_major: 0.494,
+  spots_few: 0.336,
+  tint_minor: 0.336,
+  faded_edges: 0.84,
+  spots_many: 1.008,
+  chipped: 0.706,
+  cracked: 1,
+  tint_major: 0.924,
+  spots_heavy: 1.4286,
+  lines_visible: 1.4286,
+  touch_fault: 1.68,
+  display_lines: 1.4286,
+};
+
+// What Cashify took off a cracked screen, in rupees, on each iPhone it buys (phone older than 11 months). It is the model's own
+// amount and not a share of the price: the iPhone 14 Plus, 14 Pro and 13 Pro Max are all 11,900 on very different prices, and a
+// Galaxy S25 Ultra and an iPhone 15 are both 12,500. Measured on Cashify in November 2026.
+export const APPLE_SCREEN_CRACK_RUPEES = {
+  iphone8plus: 2140,
+  iphonex: 3810,
+  iphonexr: 3570,
+  iphonexsmax: 4880,
+  iphonese2022: 5000,
+  iphonese3rdgen2022: 5000,
+  iphone11: 3220,
+  iphone11pro: 5950,
+  iphone11promax: 7140,
+  iphone12: 4880,
+  iphone12mini: 4290,
+  iphone12pro: 8030,
+  iphone12promax: 8630,
+  iphone13: 7440,
+  iphone13mini: 6780,
+  iphone13pro: 9820,
+  iphone13promax: 11900,
+  iphone14: 10710,
+  iphone14plus: 11900,
+  iphone14pro: 11900,
+  iphone14promax: 12790,
+  iphone15: 12500,
+  iphone15plus: 13090,
+  iphone15pro: 13680,
+  iphone15promax: 13680,
+  iphone16: 15470,
+  iphone16e: 13680,
+  iphone16plus: 16060,
+  iphone16pro: 16660,
+  iphone16promax: 16660,
+  iphone17: 17850,
+  iphone17pro: 17850,
+  iphone17promax: 17850,
+};
+
+/** The most that a screen state can take off, as a share of the aged value, whatever the table says. */
+const SCREEN_CUT_MAX_SHARE = 0.75;
+
+/** What Cashify takes off a cracked screen on this iPhone, or undefined for a model that was not measured. */
+export function appleCrackRupees(model) {
+  const key = String(model ?? '').toLowerCase().replace(/^apple\s+/, '').replace(/[^a-z0-9]/g, '');
+  return APPLE_SCREEN_CRACK_RUPEES[key];
+}
+
 // What the customer is told for each screen state.
 const SCREEN_STATE_LABEL = {
   scratches_minor: 'a few light scratches',
@@ -3112,6 +3180,13 @@ export function quotePhone(input = {}, options = {}) {
   const screenIsDeducted = requiresScreenRepair;
   // Body damage is a share of the aged value, like the screen. A screen that is already deducted covers it (see above).
   const isAppleDevice = String(brand).toLowerCase() === 'apple' || String(model).toLowerCase().includes('iphone');
+  // An iPhone that was measured takes Cashify's own amount for its model; every other phone takes its tier's share of the aged value.
+  const appleCrack = isAppleDevice ? appleCrackRupees(model) : undefined;
+  const screenCutFor = (state, agedForShare) => {
+    const multiple = SCREEN_STATE_MULTIPLE[state];
+    if (appleCrack !== undefined && multiple !== undefined) return Math.min(Math.round(appleCrack * multiple), Math.round(agedForShare * SCREEN_CUT_MAX_SHARE));
+    return tierScreenShare === undefined ? undefined : Math.round(agedForShare * tierScreenShare);
+  };
   const bodyDamageShare = screenIsDeducted ? 0 : bodyDamageShareFor(body_condition, expectedResaleProceeds, isAppleDevice);
   const isApple = String(brand).toLowerCase() === 'apple' || String(model).toLowerCase().includes('iphone');
   const hasCameraDefect = Array.isArray(defects) && defects.includes('camera');
@@ -3170,14 +3245,12 @@ export function quotePhone(input = {}, options = {}) {
     // The screen share is taken off the phone's aged value, so an older phone loses the same share, not more.
     // A low-end phone is priced on its graded share with no rupee floor: Cashify takes 1,850 off a 6,240 phone for a cracked
     // screen, which is under the 1,999 floor that the other phones keep.
-    const screenCost = tierScreenShare !== undefined
-      ? Math.round(expectedResaleProceeds * agingFactor * tierScreenShare)
-      : Math.round(repairCosts.screen * agingFactor);
+    const screenCost = screenCutFor(screen_condition, expectedResaleProceeds * agingFactor) ?? Math.round(repairCosts.screen * agingFactor);
     configuredRepairsTotal += screenCost;
     internalRepairBreakdown.push({ item: 'screen', cost: screenCost });
     conditionReasons.push(`Screen/display replacement required (${SCREEN_STATE_LABEL[screen_condition] || screen_condition.replace('_', ' ')})`);
   } else if (gradedMinorScreen) {
-    const screenCost = Math.round(expectedResaleProceeds * agingFactor * tierScreenShare);
+    const screenCost = screenCutFor(screen_condition, expectedResaleProceeds * agingFactor);
     configuredRepairsTotal += screenCost;
     internalRepairBreakdown.push({ item: 'screen', cost: screenCost });
     conditionReasons.push(`Screen wear deducted (${SCREEN_STATE_LABEL[screen_condition]})`);
@@ -3250,6 +3323,7 @@ export function quotePhone(input = {}, options = {}) {
     const repairPart = FAULT_REPAIR_PART[defectKey];
     if (repairPart) return Math.round((repairCosts?.[repairPart.part] || 0) * repairPart.factor);
     if (defectKey === 'screen_not_original') {
+      if (appleCrack !== undefined) return Math.round(appleCrack * SCREEN_NOT_ORIGINAL_SCREEN_SHARE);
       const crackedShare = screenStateShare('cracked', expectedResaleProceeds, brand) ?? screenRepairRate(brand, model, expectedResaleProceeds);
       return Math.round(agedValue * crackedShare * SCREEN_NOT_ORIGINAL_SCREEN_SHARE);
     }

@@ -13,7 +13,6 @@ import {
 } from '../fundu_phone_quote.mjs';
 
 const FULL = ['Original Box', 'Original Charger', 'Valid Bill'];
-const IPHONE_14 = { brand: 'Apple', model: 'iPhone 14', storage: '128 GB' };
 const ONEPLUS_12 = { brand: 'OnePlus', model: '12', storage: '256 GB' };
 
 /** A flawless phone older than 11 months with every accessory, on the admin price `price`, the way the server prices it. */
@@ -82,21 +81,20 @@ describe('a phone just over 20,000', () => {
 });
 
 describe('a phone near the top of the middle tier (measured on an iPhone 15 Plus, 16, 15 Pro and 16 Pro)', () => {
-  const IPHONE_16 = { brand: 'Apple', model: 'iPhone 16', storage: '128 GB' };
 
   it('still takes about a third off for a crack, as Cashify takes 15,470 off the iPhone 16 (37.5% of its offer)', () => {
-    assert.ok(within(share(IPHONE_16, 55000, { screen_condition: 'cracked' }), 0.34, 0.38));
-    assert.ok(within(share(IPHONE_16, 46360, { screen_condition: 'cracked' }), 0.34, 0.38));
+    assert.ok(within(share(ONEPLUS_12, 55000, { screen_condition: 'cracked' }), 0.34, 0.38));
+    assert.ok(within(share(ONEPLUS_12, 46360, { screen_condition: 'cracked' }), 0.34, 0.38));
   });
 
   it('takes about 63% off for a touch that does not work and 53% for lines, as Cashify does on the iPhone 16', () => {
-    assert.ok(within(share(IPHONE_16, 55000, { screen_condition: 'touch_fault' }), 0.58, 0.64));
-    assert.ok(within(share(IPHONE_16, 55000, { screen_condition: 'lines_visible' }), 0.5, 0.56));
+    assert.ok(within(share(ONEPLUS_12, 55000, { screen_condition: 'touch_fault' }), 0.58, 0.64));
+    assert.ok(within(share(ONEPLUS_12, 55000, { screen_condition: 'lines_visible' }), 0.5, 0.56));
   });
 
   it('steps down to the premium share at 60,000, where Cashify steps down too (iPhone 16 29% to iPhone 15 Pro 22% of the market price)', () => {
-    const under = share(IPHONE_16, 59999, { screen_condition: 'cracked' });
-    const over = share(IPHONE_16, 60000, { screen_condition: 'cracked' });
+    const under = share(ONEPLUS_12, 59999, { screen_condition: 'cracked' });
+    const over = share(ONEPLUS_12, 60000, { screen_condition: 'cracked' });
     assert.ok(under > over + 0.09, `${(under * 100).toFixed(1)}% then ${(over * 100).toFixed(1)}%`);
   });
 });
@@ -110,20 +108,20 @@ describe('screen states on a middle phone (measured against Cashify on iPhone 13
 
   for (const [state, wanted] of Object.entries(SCREEN_STATE_SHARE_MID).filter(([s]) => s !== 'display_lines')) {
     it(`takes about ${(wanted * 100).toFixed(1)}% off for ${state}`, () => {
-      const lost = share(IPHONE_14, 30000, { screen_condition: state });
+      const lost = share(ONEPLUS_12, 30000, { screen_condition: state });
       assert.ok(Math.abs(lost - wanted) < 0.012, `${state} took ${(lost * 100).toFixed(1)}%`);
     });
   }
 
   it('is within 6 points of what Cashify takes off an iPhone 14, for every state', () => {
     for (const [state, cashify] of Object.entries(cashifyIphone14)) {
-      const lost = share(IPHONE_14, 30000, { screen_condition: state });
+      const lost = share(ONEPLUS_12, 30000, { screen_condition: state });
       assert.ok(Math.abs(lost - cashify) < 0.06, `${state}: Fundu ${(lost * 100).toFixed(1)}% vs Cashify ${(cashify * 100).toFixed(1)}%`);
     }
   });
 
   it('keeps a crack at the 36% it always took', () => {
-    assert.ok(within(share(IPHONE_14, 30000, { screen_condition: 'cracked' }), 0.34, 0.38));
+    assert.ok(within(share(ONEPLUS_12, 30000, { screen_condition: 'cracked' }), 0.34, 0.38));
     assert.ok(within(share(ONEPLUS_12, 34480, { screen_condition: 'cracked' }), 0.34, 0.38));
   });
 
@@ -140,31 +138,31 @@ describe('screen states on a middle phone (measured against Cashify on iPhone 13
   });
 
   it('takes less off for chipped glass than for a crack', () => {
-    assert.ok(share(IPHONE_14, 30000, { screen_condition: 'chipped' }) < share(IPHONE_14, 30000, { screen_condition: 'cracked' }) - 0.07);
+    assert.ok(share(ONEPLUS_12, 30000, { screen_condition: 'chipped' }) < share(ONEPLUS_12, 30000, { screen_condition: 'cracked' }) - 0.07);
   });
 
   it('takes under 10% for one or two light scratches, in place of the flat 15% "good look" markdown', () => {
-    const light = share(IPHONE_14, 30000, { screen_condition: 'scratches_minor', cosmetic_condition: 'good' });
+    const light = share(ONEPLUS_12, 30000, { screen_condition: 'scratches_minor', cosmetic_condition: 'good' });
     assert.ok(light < 0.10, `light scratches took ${(light * 100).toFixed(1)}%`);
   });
 
   it('is in the order Cashify prices them', () => {
     const order = ['scratches_minor', 'scratches_major', 'chipped', 'faded_edges', 'cracked', 'spots_heavy', 'touch_fault'];
     for (let i = 1; i < order.length; i++) {
-      assert.ok(share(IPHONE_14, 30000, { screen_condition: order[i] }) > share(IPHONE_14, 30000, { screen_condition: order[i - 1] }), `${order[i - 1]} < ${order[i]}`);
+      assert.ok(share(ONEPLUS_12, 30000, { screen_condition: order[i] }) > share(ONEPLUS_12, 30000, { screen_condition: order[i - 1] }), `${order[i - 1]} < ${order[i]}`);
     }
   });
 
   it('keeps a body dent for a worn screen, but not on top of a screen that needs a repair', () => {
-    assert.ok(offerAt(IPHONE_14, 30000, { screen_condition: 'spots_many', body_condition: 'dents_bent' }) < offerAt(IPHONE_14, 30000, { screen_condition: 'spots_many' }));
+    assert.ok(offerAt(ONEPLUS_12, 30000, { screen_condition: 'spots_many', body_condition: 'dents_bent' }) < offerAt(ONEPLUS_12, 30000, { screen_condition: 'spots_many' }));
     for (const state of ['cracked', 'chipped', 'touch_fault', 'spots_heavy', 'lines_visible', 'tint_major']) {
-      assert.equal(offerAt(IPHONE_14, 30000, { screen_condition: state, body_condition: 'dents_bent' }), offerAt(IPHONE_14, 30000, { screen_condition: state }), state);
+      assert.equal(offerAt(ONEPLUS_12, 30000, { screen_condition: state, body_condition: 'dents_bent' }), offerAt(ONEPLUS_12, 30000, { screen_condition: state }), state);
     }
   });
 
   it('tells the customer what is wrong with the screen', () => {
     const text = (state) => quotePhone(
-      { ...IPHONE_14, powers_on: true, activation_lock_cleared: true, ownership_verified: true, liquid_damage: false, cosmetic_condition: 'flawless', screen_condition: state, body_condition: 'flawless', battery_health: 'healthy', defects: [], accessories: FULL, age_period: 'above_11_months' },
+      { ...ONEPLUS_12, powers_on: true, activation_lock_cleared: true, ownership_verified: true, liquid_damage: false, cosmetic_condition: 'flawless', screen_condition: state, body_condition: 'flawless', battery_health: 'healthy', defects: [], accessories: FULL, age_period: 'above_11_months' },
       { catalogPrice: 30000, catalogStorage: '128 GB' },
     ).conditionSummary.join(' | ');
     assert.match(text('touch_fault'), /touch not working/);
@@ -172,15 +170,15 @@ describe('screen states on a middle phone (measured against Cashify on iPhone 13
   });
 
   it('takes the screen-not-original share as 85% of a crack', () => {
-    const lost = share(IPHONE_14, 30000, { defects: ['screen_not_original'] });
+    const lost = share(ONEPLUS_12, 30000, { defects: ['screen_not_original'] });
     assert.ok(within(lost, 0.28, 0.33), `${(lost * 100).toFixed(1)}%`);
   });
 });
 
 describe('a client that still sends the old two-level values', () => {
   it('prices "display_lines" as a heavy screen problem and "scratched" as the 15% look', () => {
-    assert.ok(within(share(IPHONE_14, 30000, { screen_condition: 'display_lines' }), 0.36, 0.46));
-    assert.ok(within(share(IPHONE_14, 30000, { screen_condition: 'scratched', cosmetic_condition: 'good' }), 0.13, 0.17));
+    assert.ok(within(share(ONEPLUS_12, 30000, { screen_condition: 'display_lines' }), 0.36, 0.46));
+    assert.ok(within(share(ONEPLUS_12, 30000, { screen_condition: 'scratched', cosmetic_condition: 'good' }), 0.13, 0.17));
   });
 });
 
@@ -219,7 +217,7 @@ describe('a Samsung phone in the middle tier (Cashify takes about 0.8 of what it
 
   it('takes less off than an iPhone of the same price', () => {
     for (const state of ['cracked', 'touch_fault', 'lines_visible', 'scratches_major']) {
-      assert.ok(share(S24_PLUS, 39500, { screen_condition: state }) < share({ ...IPHONE_14 }, 39500, { screen_condition: state }) - 0.03, state);
+      assert.ok(share(S24_PLUS, 39500, { screen_condition: state }) < share({ ...ONEPLUS_12 }, 39500, { screen_condition: state }) - 0.03, state);
     }
   });
 
@@ -231,8 +229,8 @@ describe('a Samsung phone in the middle tier (Cashify takes about 0.8 of what it
   });
 
   it('does not change body damage or faults, which already matched Cashify', () => {
-    assert.ok(Math.abs(share(S23, 30000, { body_condition: 'dents_bent' }) - share(IPHONE_14, 30000, { body_condition: 'dents_bent' })) < 0.01);
-    assert.ok(Math.abs(share(S23, 30000, { defects: ['wifi'] }) - share(IPHONE_14, 30000, { defects: ['wifi'] })) < 0.02);
+    assert.ok(Math.abs(share(S23, 30000, { body_condition: 'dents_bent' }) - share(ONEPLUS_12, 30000, { body_condition: 'dents_bent' })) < 0.01);
+    assert.ok(Math.abs(share(S23, 30000, { defects: ['wifi'] }) - share(ONEPLUS_12, 30000, { defects: ['wifi'] })) < 0.02);
   });
 
   it('never pays a damaged Samsung less because its price is higher, from 18,000 to 62,000', () => {

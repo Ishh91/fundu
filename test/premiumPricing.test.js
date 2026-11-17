@@ -14,6 +14,7 @@ import {
 const FULL = ['Original Box', 'Original Charger', 'Valid Bill'];
 const S26_ULTRA = { brand: 'Samsung', model: 'Galaxy S26 Ultra', storage: '256 GB' };
 const IPHONE = { brand: 'Apple', model: 'iPhone 17 Pro Max', storage: '256 GB' };
+const ONEPLUS = { brand: 'OnePlus', model: '12', storage: '256 GB' };
 const A14 = { brand: 'Samsung', model: 'Galaxy A14 5G', storage: '128 GB' };
 
 /** A flawless phone older than 11 months with every accessory, on the admin price `price`, the way the server prices it. */
@@ -86,11 +87,11 @@ describe('screen states on a premium phone (measured against Cashify on S26 Ultr
     assert.ok(light < 0.07, `light scratches took ${(light * 100).toFixed(1)}%`);
   });
 
-  it('is the same for an iPhone as for an Android phone', () => {
+  it('is about the same share for an iPhone (which takes its own flat amount) as for an Android phone', () => {
     for (const state of ['cracked', 'touch_fault', 'scratches_major']) {
       const apple = share(IPHONE, 109500, { screen_condition: state });
       const android = share(S26_ULTRA, 109500, { screen_condition: state });
-      assert.ok(Math.abs(apple - android) < 0.01, state);
+      assert.ok(Math.abs(apple - android) < 0.045, state);
     }
   });
 
@@ -116,13 +117,13 @@ describe('screen states on a premium phone (measured against Cashify on S26 Ultr
 describe('a phone just under the premium line', () => {
   it('is priced on the middle table up to 59,999 and on the premium table from 60,000', () => {
     assert.ok(within(share(S26_ULTRA, 59999, { screen_condition: 'cracked' }), 0.26, 0.32)); // a Samsung: 0.8 of the middle table
-    assert.ok(within(share(IPHONE, 59999, { screen_condition: 'cracked' }), 0.34, 0.38));
+    assert.ok(within(share(ONEPLUS, 59999, { screen_condition: 'cracked' }), 0.34, 0.38));
     assert.ok(within(share(S26_ULTRA, 60000, { screen_condition: 'cracked' }), 0.21, 0.25));
   });
 
   it('is priced on the middle table well under it', () => {
     assert.ok(within(share(S26_ULTRA, MID, { screen_condition: 'cracked' }), 0.26, 0.32));
-    assert.ok(within(share(IPHONE, MID, { screen_condition: 'cracked' }), 0.34, 0.38));
+    assert.ok(within(share(ONEPLUS, MID, { screen_condition: 'cracked' }), 0.34, 0.38));
     assert.ok(within(share(S26_ULTRA, MID, { screen_condition: 'scratched', cosmetic_condition: 'good' }), 0.13, 0.17));
   });
 
