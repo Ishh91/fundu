@@ -198,8 +198,8 @@ describe('the model list for the preview dropdowns', () => {
     assert.equal(status, 200);
     assert.deepEqual(json.data.brands.map((b) => b.brand), ['Apple', 'OnePlus', 'Samsung']);
     assert.deepEqual(json.data.brands[0].models, [
-      { model: 'iPhone 14', storages: ['128 GB', '256 GB'] },
-      { model: 'iPhone 14 Plus', storages: ['128 GB'] },
+      { model: 'iPhone 14', storages: ['128 GB', '256 GB'], price: 0 },
+      { model: 'iPhone 14 Plus', storages: ['128 GB'], price: 0 },
     ]);
   });
 

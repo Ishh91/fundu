@@ -10,10 +10,10 @@ import { createPhoneQuote } from '../services/quoteService.js';
 
 const MODEL_LIST_CACHE_MS = 60_000;
 
-/** The active sell price rows, as { brand, model, storage }. Nothing without a database connection, rather than waiting for one. */
+/** The active sell price rows, as { brand, model, storage, base_price }. Nothing without a database connection, rather than waiting for one. */
 async function loadActiveSellRows() {
   if (mongoose.connection.readyState !== 1) return [];
-  return SellPriceConfig.find({ is_active: { $ne: false }, base_price: { $gt: 0 } }).select('brand model storage').lean();
+  return SellPriceConfig.find({ is_active: { $ne: false }, base_price: { $gt: 0 } }).select('brand model storage base_price').lean();
 }
 
 /** The answers a preview may send; nothing else reaches the quote engine. */

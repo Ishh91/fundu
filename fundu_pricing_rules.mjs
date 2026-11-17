@@ -247,6 +247,8 @@ export const DEFAULT_PRICING_RULES = deepFreeze({
       nothingphone1: 3570, // Nothing Phone (1)
       nothingphone2: 4410, // Nothing Phone (2)
     },
+    // Touch not working, only for an Android phone where Cashify takes a different amount from 1.68 times its crack. Empty: every phone is 1.68 times.
+    touchRupees: {},
   },
   // A Samsung phone from 20,000 up to 60,000 takes this much of the middle screen table.
   samsungMidFactor: 0.8,
@@ -478,6 +480,7 @@ export function validatePricingRules(rules) {
     errors.push('The Android screen amounts are missing.');
   } else {
     checkMap(rules.androidScreen.crackRupees, 'Android crack amounts', RULE_LIMITS.crackRupees, errors);
+    checkMap(rules.androidScreen.touchRupees, 'Android touch amounts', RULE_LIMITS.touchRupees, errors);
   }
 
   if (!inRange(rules.samsungMidFactor, RULE_LIMITS.samsungMidFactor)) {
@@ -558,6 +561,7 @@ export function resolvePricingRules(saved) {
     },
     androidScreen: {
       crackRupees: cleanMap(s.androidScreen?.crackRupees, RULE_LIMITS.crackRupees) ?? { ...d.androidScreen.crackRupees },
+      touchRupees: cleanMap(s.androidScreen?.touchRupees, RULE_LIMITS.touchRupees) ?? {},
     },
     samsungMidFactor: pickNumber(s.samsungMidFactor, RULE_LIMITS.samsungMidFactor, d.samsungMidFactor),
     screenTables: {
@@ -624,6 +628,8 @@ export function fillMissingGroups(rules) {
   for (const group of TOP_LEVEL_GROUPS) {
     if (filled[group] === undefined) filled[group] = cloneRules(DEFAULT_PRICING_RULES[group]);
   }
+  // The Android screen group grew a touch list after it was first saved: a set without one gets an empty one.
+  if (isPlainObject(filled.androidScreen) && filled.androidScreen.touchRupees === undefined) filled.androidScreen = { ...filled.androidScreen, touchRupees: {} };
   // The age group grew after it was first saved: a set without the Android factors gets them from the defaults.
   if (isPlainObject(filled.age)) {
     filled.age = { ...filled.age };

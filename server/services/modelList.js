@@ -37,9 +37,15 @@ function isMisfiled(brandKey, model) {
   return /redmi/i.test(model) && !MAKES_REDMI.has(brandKey);
 }
 
+/** The admin price of the storage a model starts on (128 GB when it has it, else the smallest); the dearest row if none has a price. 0 if no row has one. */
+function priceOf(phone, storages) {
+  const start = storages.includes('128 GB') ? '128 GB' : storages[0];
+  return phone.prices.get(start) ?? phone.anyPrice;
+}
+
 /**
- * @param {unknown} rows the active sell price rows ({ brand, model, storage })
- * @returns {{ brand: string, models: { model: string, storages: string[] }[] }[]} brands A to Z, each with its models in reading order
+ * @param {unknown} rows the active sell price rows ({ brand, model, storage, base_price })
+ * @returns {{ brand: string, models: { model: string, storages: string[], price: number }[] }[]} brands A to Z, each with its models in reading order
  */
 export function buildModelList(rows) {
   if (!Array.isArray(rows)) return [];
@@ -56,11 +62,16 @@ export function buildModelList(rows) {
     if (!brands.has(brandKey)) brands.set(brandKey, { spellings: new Map(), models: new Map() });
     const entry = brands.get(brandKey);
     bump(entry.spellings, brand);
-    if (!entry.models.has(modelKey)) entry.models.set(modelKey, { spellings: new Map(), storages: new Set() });
+    if (!entry.models.has(modelKey)) entry.models.set(modelKey, { spellings: new Map(), storages: new Set(), prices: new Map(), anyPrice: 0 });
     const phone = entry.models.get(modelKey);
     bump(phone.spellings, model);
     const storage = normalizeStorageLabel(row.storage);
     if (storage) phone.storages.add(storage);
+    const price = Number(row.base_price);
+    if (Number.isFinite(price) && price > 0) {
+      phone.anyPrice = Math.max(phone.anyPrice, price);
+      if (storage) phone.prices.set(storage, Math.max(phone.prices.get(storage) ?? 0, price));
+    }
   }
 
   const byName = (a, b) => a.localeCompare(b, undefined, { numeric: true, sensitivity: 'base' });
@@ -68,7 +79,10 @@ export function buildModelList(rows) {
     .map((entry) => ({
       brand: bestSpelling(entry.spellings),
       models: [...entry.models.values()]
-        .map((phone) => ({ model: bestSpelling(phone.spellings), storages: [...phone.storages].sort((a, b) => storageSize(a) - storageSize(b)) }))
+        .map((phone) => {
+          const storages = [...phone.storages].sort((a, b) => storageSize(a) - storageSize(b));
+          return { model: bestSpelling(phone.spellings), storages, price: priceOf(phone, storages) };
+        })
         .sort((a, b) => byName(a.model, b.model)),
     }))
     .sort((a, b) => byName(a.brand, b.brand));

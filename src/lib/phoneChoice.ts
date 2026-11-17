@@ -4,6 +4,8 @@
 export interface ModelStorages {
   model: string;
   storages: string[];
+  /** The admin price of the storage the model starts on; 0 when no row has one. */
+  price?: number;
 }
 
 export interface BrandModels {
