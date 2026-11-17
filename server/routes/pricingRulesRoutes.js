@@ -1,9 +1,20 @@
 import { Router } from 'express';
+import mongoose from 'mongoose';
 import { permissionGuard } from '../middleware/auth.js';
+import { SellPriceConfig } from '../models/SellPriceConfig.js';
+import { buildModelList } from '../services/modelList.js';
 import { createHttpError } from '../utils/error.js';
 import { DEFAULT_PRICING_RULES, RULE_LIMITS, validatePricingRules, resolvePricingRules } from '../../fundu_pricing_rules.mjs';
 import { pricingRules as realService } from '../services/pricingRules.js';
 import { createPhoneQuote } from '../services/quoteService.js';
+
+const MODEL_LIST_CACHE_MS = 60_000;
+
+/** The active sell price rows, as { brand, model, storage }. Nothing without a database connection, rather than waiting for one. */
+async function loadActiveSellRows() {
+  if (mongoose.connection.readyState !== 1) return [];
+  return SellPriceConfig.find({ is_active: { $ne: false }, base_price: { $gt: 0 } }).select('brand model storage').lean();
+}
 
 /** The answers a preview may send; nothing else reaches the quote engine. */
 const PREVIEW_FIELDS = [
@@ -55,9 +66,17 @@ const handle = (fn) => async (req, res) => {
  * POST /api/pricing-rules/admin/publish    make the draft live as the next version
  * POST /api/pricing-rules/admin/rollback   make an earlier version live again
  * POST /api/pricing-rules/admin/preview    one quote under the live rules and under the given rules, side by side
+ * GET  /api/pricing-rules/admin/models     every brand and its models and storages, for the preview's dropdowns
  */
-export function createPricingRulesRouter({ service = realService, quote = createPhoneQuote, guard = permissionGuard('sell_pricing') } = {}) {
+export function createPricingRulesRouter({
+  service = realService,
+  quote = createPhoneQuote,
+  guard = permissionGuard('sell_pricing'),
+  loadRows = loadActiveSellRows,
+  now = () => Date.now(),
+} = {}) {
   const router = Router();
+  let modelListCache = null; // { at, list }
 
   router.get('/', handle(async (_req, res) => {
     const published = await service.getPublished();
@@ -68,6 +87,13 @@ export function createPricingRulesRouter({ service = realService, quote = create
   router.get('/admin', guard, handle(async (_req, res) => {
     const state = await service.getState();
     res.json({ success: true, data: { ...state, defaults: DEFAULT_PRICING_RULES, limits: RULE_LIMITS } });
+  }));
+
+  router.get('/admin/models', guard, handle(async (_req, res) => {
+    if (!modelListCache || now() - modelListCache.at > MODEL_LIST_CACHE_MS) {
+      modelListCache = { at: now(), list: buildModelList(await loadRows()) };
+    }
+    res.json({ success: true, data: { brands: modelListCache.list } });
   }));
 
   router.put('/admin/draft', guard, handle(async (req, res) => {

@@ -1,5 +1,6 @@
 import { API_BASE } from '../config/apiConfig';
 import { authHeaders } from './db';
+import type { BrandModels } from './phoneChoice';
 import {
   DEFAULT_PRICING_RULES,
   RULE_LIMITS,
@@ -257,3 +258,6 @@ export function describeRuleChange(path: string): string {
   if (path === 'samsungMidFactor') return 'Samsung screen factor';
   return path;
 }
+
+/** Every brand with its models and storages, from the active sell price rows, for the preview's dropdowns. */
+export const fetchPreviewModels = async (): Promise<BrandModels[]> => (await request<{ brands: BrandModels[] }>('/admin/models', 'GET')).brands;
