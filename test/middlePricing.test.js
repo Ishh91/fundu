@@ -5,6 +5,7 @@ import {
   screenStateShare,
   LOW_PRICE_BELOW,
   HIGH_PRICE_SCREEN_FROM,
+  MID_PRICE_SCREEN_FULL_FROM,
   SCREEN_STATE_SHARE_LOW,
   SCREEN_STATE_SHARE_MID,
   SCREEN_STATE_SHARE_HIGH,
@@ -28,9 +29,10 @@ const share = (phone, price, extra) => (offerAt(phone, price) - offerAt(phone, p
 const within = (v, lo, hi) => v >= lo && v <= hi;
 
 describe('where the middle tier sits', () => {
-  it('runs from 20,000 up to 60,000', () => {
+  it('runs from 20,000 up to 60,000, and is reached in full at 25,000', () => {
     assert.equal(LOW_PRICE_BELOW, 20000);
     assert.equal(HIGH_PRICE_SCREEN_FROM, 60000);
+    assert.equal(MID_PRICE_SCREEN_FULL_FROM, 25000);
   });
 
   it('has a graded share for every state, as the cheap and the premium tiers do', () => {
@@ -38,9 +40,9 @@ describe('where the middle tier sits', () => {
     assert.deepEqual(Object.keys(SCREEN_STATE_SHARE_MID).sort(), Object.keys(SCREEN_STATE_SHARE_HIGH).sort());
   });
 
-  it('prices every known state from the middle table at 20,000 and right up to 59,999', () => {
+  it('prices every known state from the middle table from 25,000 and right up to 59,999', () => {
     for (const state of Object.keys(SCREEN_STATE_SHARE_MID)) {
-      assert.equal(screenStateShare(state, 20000), SCREEN_STATE_SHARE_MID[state], state);
+      assert.equal(screenStateShare(state, 25000), SCREEN_STATE_SHARE_MID[state], state);
       assert.equal(screenStateShare(state, 45000), SCREEN_STATE_SHARE_MID[state], state);
       assert.equal(screenStateShare(state, 59999), SCREEN_STATE_SHARE_MID[state], state);
       assert.equal(screenStateShare(state, 60000), SCREEN_STATE_SHARE_HIGH[state], state);
@@ -49,6 +51,32 @@ describe('where the middle tier sits', () => {
 
   it('is still undefined for the old two-level values a client may send, like "scratched"', () => {
     assert.equal(screenStateShare('scratched', 30000), undefined);
+  });
+});
+
+describe('a phone just over 20,000', () => {
+  it('starts on the cheap table at exactly 20,000, with no jump from 19,999', () => {
+    for (const state of Object.keys(SCREEN_STATE_SHARE_LOW)) {
+      assert.equal(screenStateShare(state, 20000), SCREEN_STATE_SHARE_LOW[state], state);
+      assert.ok(Math.abs(screenStateShare(state, 19999) - screenStateShare(state, 20000.5)) < 0.001, state);
+    }
+  });
+
+  it('is halfway to the middle table at 22,500', () => {
+    const half = (SCREEN_STATE_SHARE_LOW.touch_fault + SCREEN_STATE_SHARE_MID.touch_fault) / 2;
+    assert.ok(Math.abs(screenStateShare('touch_fault', 22500) - half) < 0.0001);
+  });
+
+  it('never pays a damaged phone less because its price is higher, across the 20,000 line', () => {
+    const phone = { brand: 'Samsung', model: 'Galaxy S23', storage: '128 GB' };
+    for (const state of Object.keys(SCREEN_STATE_SHARE_MID).filter((s) => s !== 'display_lines')) {
+      let last = 0;
+      for (let price = 18000; price <= 27000; price += 250) {
+        const offer = offerAt(phone, price, { screen_condition: state });
+        assert.ok(offer >= last - 50, `${state}: ${offer} at ${price} after ${last}`);
+        last = offer;
+      }
+    }
   });
 });
 

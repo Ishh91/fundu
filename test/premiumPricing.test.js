@@ -40,7 +40,8 @@ describe('the three price tiers', () => {
     assert.equal(LOW_PRICE_BELOW, 20000);
     assert.equal(HIGH_PRICE_SCREEN_FROM, 60000);
     assert.ok(screenStateShare('cracked', 19999) === SCREEN_STATE_SHARE_LOW.cracked);
-    assert.ok(screenStateShare('cracked', 20000) === SCREEN_STATE_SHARE_MID.cracked);
+    assert.ok(screenStateShare('cracked', 20000) === SCREEN_STATE_SHARE_LOW.cracked);
+    assert.ok(screenStateShare('cracked', 25000) === SCREEN_STATE_SHARE_MID.cracked);
     assert.ok(screenStateShare('cracked', 59999) === SCREEN_STATE_SHARE_MID.cracked);
     assert.ok(screenStateShare('cracked', 60000) === SCREEN_STATE_SHARE_HIGH.cracked);
   });

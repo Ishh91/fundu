@@ -2497,14 +2497,25 @@ export const SCREEN_STATE_SHARE_MID = {
 };
 
 /**
+ * The middle table is reached over this price range, starting at LOW_PRICE_BELOW: a crack takes 31% of a 19,999 phone and 36%
+ * of a 25,000 one, with no jump at 20,000. A jump would pay a damaged 19,750 phone more than a damaged 20,000 one.
+ */
+export const MID_PRICE_SCREEN_FULL_FROM = 25000;
+
+/**
  * The graded share of the aged value that a screen state takes off a phone priced `price`: its own table under 20,000, the
- * middle table from there up to 60,000, and the premium table from 60,000. Undefined for a value that is not a graded state
- * ("scratched" and the like from an older client), which is priced on the old look markdown.
+ * middle table from 25,000 (rising to it from the cheap one between 20,000 and 25,000) up to 60,000, and the premium table from
+ * 60,000. Undefined for a value that is not a graded state ("scratched" and the like from an older client), which is priced on
+ * the old look markdown.
  */
 export function screenStateShare(screenCondition, price) {
   if (price < LOW_PRICE_BELOW) return SCREEN_STATE_SHARE_LOW[screenCondition];
   if (price >= HIGH_PRICE_SCREEN_FROM) return SCREEN_STATE_SHARE_HIGH[screenCondition];
-  return SCREEN_STATE_SHARE_MID[screenCondition];
+  const mid = SCREEN_STATE_SHARE_MID[screenCondition];
+  if (mid === undefined || price >= MID_PRICE_SCREEN_FULL_FROM) return mid;
+  const low = SCREEN_STATE_SHARE_LOW[screenCondition];
+  const t = (price - LOW_PRICE_BELOW) / (MID_PRICE_SCREEN_FULL_FROM - LOW_PRICE_BELOW);
+  return low + (mid - low) * t;
 }
 
 // The two-level values every other part of the quote understands: they decide whether the screen needs a repair, and they
