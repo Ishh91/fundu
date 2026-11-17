@@ -2187,7 +2187,21 @@ export function computeDynamicBenchmarkProceeds(brand = '', model = '', storage 
  * Calculates authentic RAM tier price offset for devices with multiple RAM options on the same storage.
  * e.g. 6GB RAM -> +0 (baseline), 8GB RAM -> +1,000, 12GB RAM -> +2,000, 16GB RAM -> +2,500
  */
-export function calculateRamPriceOffset(selectedRam = '', availableRams = [], brand = '') {
+export function calculateRamPriceOffset(selectedRam = '', availableRams = [], brand = '', price = 0) {
+  const offset = ramPriceOffsetBeforeCap(selectedRam, availableRams, brand);
+  // On a cheap phone a flat RAM step is a big share of the price: Cashify's Galaxy A14 5G goes up 14% from 4 to 6 GB and
+  // only 2% more to 8 GB, where a flat step would add 27% in all. So the offset never passes this share of the price.
+  if (price > 0 && price < LOW_PRICE_BELOW) {
+    const cap = Math.round(price * RAM_OFFSET_MAX_SHARE_LOW);
+    return Math.max(-cap, Math.min(cap, offset));
+  }
+  return offset;
+}
+
+/** The most the RAM offset can move the price of a low-end phone, as a share of that price. */
+export const RAM_OFFSET_MAX_SHARE_LOW = 0.14;
+
+function ramPriceOffsetBeforeCap(selectedRam = '', availableRams = [], brand = '') {
   const isApple = String(brand || '').toLowerCase().includes('apple');
   if (isApple || !selectedRam) return 0;
   const isBudgetBrand = /tecno|techno|itel|infinix|lava/i.test(brand);
@@ -2291,7 +2305,7 @@ export function lookupResaleBenchmark(brand, model, storage, options = {}) {
 
     // Apply RAM tier offset for Android / non-Apple devices
     if (ram && !normBrand.includes('apple')) {
-      const ramOffset = calculateRamPriceOffset(ram, options.availableRams || [], brand);
+      const ramOffset = calculateRamPriceOffset(ram, options.availableRams || [], brand, adjustedProceeds);
       adjustedProceeds = Math.max(500, adjustedProceeds + ramOffset);
     }
 
@@ -2353,7 +2367,7 @@ export function lookupResaleBenchmark(brand, model, storage, options = {}) {
 
   // 4. Variant adjustments for RAM on Android devices
   if (ram && !normBrand.includes('apple') && benchmark && benchmark.proceeds) {
-    const ramOffset = calculateRamPriceOffset(ram, options.availableRams || [], brand);
+    const ramOffset = calculateRamPriceOffset(ram, options.availableRams || [], brand, benchmark.proceeds);
     benchmark.proceeds = Math.max(500, benchmark.proceeds + ramOffset);
   }
 
@@ -2409,6 +2423,73 @@ export function screenRepairRate(brand, model, benchmarkProceeds = 20000) {
   if (benchmarkProceeds >= HIGH_PRICE_SCREEN_FROM) return 0.27;
   return isAmoledModel(brand, model) ? 0.35 : 0.32;
 }
+
+/**
+ * A "low-end" phone: its catalog price is under this. Cheap phones get their own screen levels, a cap on the flat
+ * rupee deductions and a cap on the RAM offset, because a flat amount that is small on a premium phone is a big part of a
+ * cheap one.
+ */
+export const LOW_PRICE_BELOW = 20000;
+
+// How much each screen state takes off a low-end phone, as a share of its aged value. Measured against Cashify on a
+// Galaxy A14 5G (Cashify base 6,240), a Redmi Note 10 (4,670) and a Galaxy A53 5G (7,760); where a state was measured on more
+// than one of them this is the average. Cashify grades the screen in many steps, so the sell form sends the one worst state
+// and not just "cracked" or "scratched".
+export const SCREEN_STATE_SHARE_LOW = {
+  scratches_minor: 0.065, // 1-2 scratches (A14 6.3%, Redmi 6.6%)
+  scratches_major: 0.155, // more than 2 scratches (14.6%, 15.6%, 16.0%)
+  spots_few: 0.10, // 1-2 minor spots (A14 only)
+  tint_minor: 0.10, // minor discoloration (A14 only)
+  faded_edges: 0.26, // display faded along the edges (24.8%, 26.8%)
+  spots_many: 0.31, // 3 or more minor spots (29.8%, 32.1%)
+  chipped: 0.22, // chipped or cracked outside the display area (21.0%, 22.5%)
+  cracked: 0.31, // screen cracked / glass broken (29.6%, 31.9%, 32.2%)
+  tint_major: 0.27, // major discoloration (A14 only)
+  spots_heavy: 0.44, // large or heavy spots (A14 42.3%; taken with the lines)
+  lines_visible: 0.445, // visible lines on the display (42.3%, 45.4%, 46.0%)
+  touch_fault: 0.51, // touch screen not working: Cashify's worst screen problem (49.7%, 49.7%, 54.1%)
+  display_lines: 0.36, // the old single value for heavy spots, lines or a big tint, from clients that do not send the graded ones
+};
+
+// The two-level values every other part of the quote understands. A phone that is not low-end, or a client that sends no
+// graded state, is priced on these.
+const SCREEN_STATE_LEGACY = {
+  scratches_minor: 'scratched',
+  scratches_major: 'scratched',
+  spots_few: 'scratched',
+  spots_many: 'scratched',
+  tint_minor: 'scratched',
+  faded_edges: 'scratched',
+  chipped: 'cracked',
+  tint_major: 'display_lines',
+  spots_heavy: 'display_lines',
+  lines_visible: 'display_lines',
+};
+
+/** The old two-level screen condition for any screen state: flawless, scratched, cracked, touch_fault or display_lines. */
+export function legacyScreenCondition(screenCondition) {
+  return SCREEN_STATE_LEGACY[screenCondition] || screenCondition;
+}
+
+// What the customer is told for each screen state.
+const SCREEN_STATE_LABEL = {
+  scratches_minor: 'a few light scratches',
+  scratches_major: 'many scratches',
+  spots_few: 'a few spots',
+  spots_many: 'several spots',
+  tint_minor: 'a slight tint',
+  faded_edges: 'display faded along the edges',
+  chipped: 'chipped glass',
+  cracked: 'cracked',
+  tint_major: 'a strong tint',
+  spots_heavy: 'heavy spots',
+  lines_visible: 'visible lines',
+  touch_fault: 'touch not working',
+  display_lines: 'display problem',
+};
+
+/** The most that missing accessories can take off a low-end phone, as a share of its aged value. */
+export const ACCESSORIES_MAX_SHARE_LOW = 0.06;
 
 export function lookupModelRepairs(brand, model, benchmarkProceeds = 20000) {
   const p = benchmarkProceeds > 0 ? benchmarkProceeds : 20000;
@@ -2917,7 +2998,15 @@ export function quotePhone(input = {}, options = {}) {
   // 4. Retrieve Configured Repairs for this exact phone (with proportional fallback)
   const repairCosts = lookupModelRepairs(brand, model, expectedResaleProceeds);
 
-  const requiresScreenRepair = screen_condition === 'cracked' || screen_condition === 'touch_fault' || screen_condition === 'display_lines';
+  // Every screen state is read both ways: as the old two-level value (which decides whether the screen needs a repair) and,
+  // on a low-end phone, as its own graded share.
+  const legacyScreen = legacyScreenCondition(screen_condition);
+  const requiresScreenRepair = legacyScreen === 'cracked' || legacyScreen === 'touch_fault' || legacyScreen === 'display_lines';
+  const isLowEnd = expectedResaleProceeds < LOW_PRICE_BELOW;
+  const lowScreenShare = isLowEnd ? SCREEN_STATE_SHARE_LOW[screen_condition] : undefined;
+  // A graded state that is not a repair (scratches, a few spots, a tint, faded edges) is deducted as its share, in place of the
+  // flat "good look" markdown, and the body and battery still count.
+  const gradedMinorScreen = lowScreenShare !== undefined && !requiresScreenRepair;
   // Business rule: once the screen needs a repair (cracked, touch fault or display lines), the dent /
   // back panel and the iPhone battery health are not deducted on top of it. Ageing still applies.
   // A scratched screen does not trigger this: dents and battery wear still count there.
@@ -2938,7 +3027,7 @@ export function quotePhone(input = {}, options = {}) {
   let cosmeticKey = String(cosmetic_condition).toLowerCase();
   // With the screen needing a repair, the overall look is not lowered at all: the screen repair cost already
   // covers the damage, and a worse look that a dent put there (for instance by another client) is not deducted on top.
-  if (screenIsDeducted) cosmeticKey = 'flawless';
+  if (screenIsDeducted || gradedMinorScreen) cosmeticKey = 'flawless';
   const activeCosmeticMultipliers = options.cosmeticMultipliers || {
     flawless: 1.00,
     good: 0.85,
@@ -2979,10 +3068,19 @@ export function quotePhone(input = {}, options = {}) {
 
   if (requiresScreenRepair && repairCosts?.screen) {
     // The screen share is taken off the phone's aged value, so an older phone loses the same share, not more.
-    const screenCost = Math.round(repairCosts.screen * agingFactor);
+    // A low-end phone is priced on its graded share with no rupee floor: Cashify takes 1,850 off a 6,240 phone for a cracked
+    // screen, which is under the 1,999 floor that the other phones keep.
+    const screenCost = lowScreenShare !== undefined
+      ? Math.round(expectedResaleProceeds * agingFactor * lowScreenShare)
+      : Math.round(repairCosts.screen * agingFactor);
     configuredRepairsTotal += screenCost;
     internalRepairBreakdown.push({ item: 'screen', cost: screenCost });
-    conditionReasons.push(`Screen/display replacement required (${screen_condition.replace('_', ' ')})`);
+    conditionReasons.push(`Screen/display replacement required (${SCREEN_STATE_LABEL[screen_condition] || screen_condition.replace('_', ' ')})`);
+  } else if (gradedMinorScreen) {
+    const screenCost = Math.round(expectedResaleProceeds * agingFactor * lowScreenShare);
+    configuredRepairsTotal += screenCost;
+    internalRepairBreakdown.push({ item: 'screen', cost: screenCost });
+    conditionReasons.push(`Screen wear deducted (${SCREEN_STATE_LABEL[screen_condition]})`);
   }
 
   if (bodyDamageShare > 0) {
@@ -3144,6 +3242,10 @@ export function quotePhone(input = {}, options = {}) {
     if (!hasBox) accessoriesAdjustment -= (FUNDU_POLICY.accessoriesBonus['Original Box'] || 300);
     if (!hasCharger) accessoriesAdjustment -= (FUNDU_POLICY.accessoriesBonus['Original Charger'] || 300);
     if (!hasBill) accessoriesAdjustment -= (FUNDU_POLICY.accessoriesBonus['Valid Bill'] || 200);
+    // The flat rupee amounts are a big share of a cheap phone (800 of 4,800 is 17%), so there they never pass a share of its value.
+    if (isLowEnd) {
+      accessoriesAdjustment = Math.max(accessoriesAdjustment, -Math.round(expectedResaleProceeds * agingFactor * ACCESSORIES_MAX_SHARE_LOW));
+    }
   }
 
   const proceedsAdjustedForCondition = condP + accessoriesAdjustment;

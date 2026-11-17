@@ -34,7 +34,15 @@ export interface ConditionAnswers {
   // does not also show the "major dents" description as picked.
 }
 
-export type ScreenCondition = 'flawless' | 'scratched' | 'cracked' | 'touch_fault' | 'display_lines';
+/**
+ * How the screen is. 'flawless', 'scratched', 'cracked', 'touch_fault' and 'display_lines' are the old two-level values; the rest
+ * are the graded states Cashify prices separately. The quote engine prices a cheap phone on the graded state and any other
+ * phone on the old two-level value it maps to (legacyScreenCondition in fundu_phone_quote.mjs).
+ */
+export type ScreenCondition =
+  | 'flawless' | 'scratched' | 'cracked' | 'touch_fault' | 'display_lines'
+  | 'scratches_minor' | 'scratches_major' | 'spots_few' | 'spots_many' | 'tint_minor' | 'faded_edges'
+  | 'chipped' | 'tint_major' | 'spots_heavy' | 'lines_visible';
 export type BodyCondition = 'flawless' | 'minor_scratches' | 'dents_bent' | 'panel_broken';
 export type CosmeticCondition = 'flawless' | 'good' | 'fair';
 
@@ -47,6 +55,35 @@ export interface DerivedCondition {
 /** True when the answers say the screen needs a repair: cracked, touch not working, or major spots, lines or discolouration. */
 export const needsScreenRepair = (a: ConditionAnswers): boolean =>
   Boolean(a.screenCracked || a.touchFault || a.displayMajorLines || a.displayMajorSpots || a.displayMajorDiscolouration);
+
+/** The screen states that need a repair, worst first (by what Cashify takes off a cheap phone). */
+const REPAIR_SCREEN_STATES: ScreenCondition[] = ['touch_fault', 'lines_visible', 'spots_heavy', 'cracked', 'tint_major', 'chipped'];
+/** The screen states that only wear the screen, worst first. A body dent still counts next to these. */
+const WEAR_SCREEN_STATES: ScreenCondition[] = ['spots_many', 'faded_edges', 'scratches_major', 'spots_few', 'tint_minor', 'scratches_minor'];
+
+/** True for a screen state that needs a repair, so the body and the battery are not deducted on top of it. */
+export const isScreenRepairState = (state: string): boolean =>
+  (REPAIR_SCREEN_STATES as string[]).includes(state) || state === 'display_lines';
+
+/** The one worst screen state the answers describe: any repair beats any wear, and the worse of two wears wins. */
+export function worstScreenState(a: ConditionAnswers): ScreenCondition {
+  const present: Record<string, boolean> = {
+    touch_fault: Boolean(a.touchFault),
+    lines_visible: Boolean(a.displayMajorLines),
+    spots_heavy: Boolean(a.displayMajorSpots),
+    cracked: Boolean(a.screenCracked && !a.screenChipped),
+    tint_major: Boolean(a.displayMajorDiscolouration),
+    chipped: Boolean(a.screenChipped),
+    spots_many: Boolean(a.displayManyMinorSpots),
+    faded_edges: Boolean(a.displayFadedEdges || a.displayMinorLines),
+    scratches_major: Boolean(a.screenMajorScratches),
+    spots_few: Boolean(a.displayMinorSpotsWhite && !a.displayManyMinorSpots),
+    tint_minor: Boolean(a.displayMinorDiscolouration),
+    scratches_minor: Boolean(a.screenMinorScratches),
+  };
+  const worst = [...REPAIR_SCREEN_STATES, ...WEAR_SCREEN_STATES].find((state) => present[state]);
+  return worst ?? 'flawless';
+}
 
 /** True when the answers report anything wrong with the screen, display or touch. */
 export const hasDisplayOrTouchIssue = (a: ConditionAnswers): boolean =>
@@ -65,21 +102,16 @@ export const hasDisplayOrTouchIssue = (a: ConditionAnswers): boolean =>
  * recorded as answered. With only scratches on the screen, the body still counts.
  */
 export function deriveCondition(a: ConditionAnswers): DerivedCondition {
-  let screenCondition: ScreenCondition = 'flawless';
-  if (a.screenCracked) screenCondition = 'cracked';
-  else if (a.touchFault) screenCondition = 'touch_fault';
-  else if (a.displayMajorLines || a.displayMajorSpots || a.displayMajorDiscolouration) screenCondition = 'display_lines';
-  else if (
-    a.screenMajorScratches || a.screenMinorScratches || a.displayMinorSpotsWhite || a.displayMinorLines || a.displayMinorDiscolouration
-  ) screenCondition = 'scratched';
+  const screenCondition = worstScreenState(a);
 
   let bodyCondition: BodyCondition = 'flawless';
   if (a.bodyCrackedOrBroken || a.bodyBent || a.bodyLooseScreen) bodyCondition = 'panel_broken';
   else if (a.bodyMajorDents) bodyCondition = 'dents_bent';
   else if (a.bodyMinorDents || a.bodyMajorSideScratches || a.bodyMinorSideScratches) bodyCondition = 'minor_scratches';
 
-  // A screen that needs repair is paid for by its repair cost, so it does not also lower the look.
-  const screenLook: CosmeticCondition = screenCondition === 'scratched' ? 'good' : 'flawless';
+  // A screen that needs repair is paid for by its repair cost, so it does not also lower the look. A screen that is only worn
+  // gets the "good" look, which is what a phone that is not cheap is priced on; a cheap phone is priced on the graded state.
+  const screenLook: CosmeticCondition = screenCondition === 'flawless' || isScreenRepairState(screenCondition) ? 'flawless' : 'good';
 
   return { screenCondition, bodyCondition, cosmeticCondition: screenLook };
 }

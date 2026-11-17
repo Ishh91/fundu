@@ -131,7 +131,7 @@ export default function SellStep2Condition({
     ? currentDeviceSpecs.getRamsForStorage(form.storage)
     : (currentDeviceSpecs?.rams || []);
 
-  const ramOffset = calculateRamPriceOffset(form.ram, availableRams, form.brand);
+  const ramOffset = calculateRamPriceOffset(form.ram, availableRams, form.brand, pricingConfig?.base_price || 0);
 
   const effectiveBasePrice = (baseModelPrice && baseModelPrice > 0)
     ? baseModelPrice

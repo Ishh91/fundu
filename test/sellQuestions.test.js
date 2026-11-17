@@ -127,25 +127,27 @@ describe('choosing which kinds of damage apply', () => {
 
 describe('what each description is priced as', () => {
   it('prices a chipped screen the same as a cracked one', () => {
-    assert.deepEqual(derived(pick({}, 'screenPhysical', 'chipped')), derived(pick({}, 'screenPhysical', 'cracked')));
-    assert.equal(derived(pick({}, 'screenPhysical', 'chipped')).screenCondition, 'cracked');
+    // Both need the glass replaced, so a phone that is not cheap is priced the same for them (see legacyScreenCondition).
+    assert.equal(derived(pick({}, 'screenPhysical', 'chipped')).screenCondition, 'chipped');
+    assert.equal(derived(pick({}, 'screenPhysical', 'cracked')).screenCondition, 'cracked');
+    assert.equal(derived(pick({}, 'screenPhysical', 'chipped')).cosmeticCondition, derived(pick({}, 'screenPhysical', 'cracked')).cosmeticCondition);
   });
 
   it('prices scratches as a scratched screen', () => {
-    assert.equal(derived(pick({}, 'screenPhysical', 'scratches_1_2')).screenCondition, 'scratched');
-    assert.equal(derived(pick({}, 'screenPhysical', 'scratches_3_plus')).screenCondition, 'scratched');
+    assert.equal(derived(pick({}, 'screenPhysical', 'scratches_1_2')).screenCondition, 'scratches_minor');
+    assert.equal(derived(pick({}, 'screenPhysical', 'scratches_3_plus')).screenCondition, 'scratches_major');
   });
 
   it('prices minor spots, faded edges and minor discoloration as a scratched screen', () => {
-    assert.equal(derived(pick({}, 'displaySpots', 'spots_3_plus')).screenCondition, 'scratched');
-    assert.equal(derived(pick({}, 'displayLines', 'lines_faded')).screenCondition, 'scratched');
-    assert.equal(derived(pick({}, 'displayColour', 'colour_minor')).screenCondition, 'scratched');
+    assert.equal(derived(pick({}, 'displaySpots', 'spots_3_plus')).screenCondition, 'spots_many');
+    assert.equal(derived(pick({}, 'displayLines', 'lines_faded')).screenCondition, 'faded_edges');
+    assert.equal(derived(pick({}, 'displayColour', 'colour_minor')).screenCondition, 'tint_minor');
   });
 
   it('prices heavy spots, visible lines and major discoloration as a screen that needs a repair', () => {
-    assert.equal(derived(pick({}, 'displaySpots', 'spots_heavy')).screenCondition, 'display_lines');
-    assert.equal(derived(pick({}, 'displayLines', 'lines_visible')).screenCondition, 'display_lines');
-    assert.equal(derived(pick({}, 'displayColour', 'colour_major')).screenCondition, 'display_lines');
+    assert.equal(derived(pick({}, 'displaySpots', 'spots_heavy')).screenCondition, 'spots_heavy');
+    assert.equal(derived(pick({}, 'displayLines', 'lines_visible')).screenCondition, 'lines_visible');
+    assert.equal(derived(pick({}, 'displayColour', 'colour_major')).screenCondition, 'tint_major');
   });
 
   it('prices a missing, cracked, bent or loose panel as a broken panel, and a major dent as a dent', () => {
