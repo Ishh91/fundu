@@ -43,6 +43,14 @@ const stubQuote = async (input, options) => {
   return { status: 'quoted', offerAmount: Math.round(10000 * options.pricingRules.age.over11), conditionSummary: ['stub'] };
 };
 
+const MODEL_ROWS = [
+  { brand: 'Apple', model: 'iPhone 14', storage: '128 GB' }, { brand: 'Apple', model: 'iPhone 14', storage: '256GB' },
+  { brand: 'Apple', model: 'iPhone 14 Plus', storage: '128 GB' }, { brand: 'Apple', model: 'Redmi Note 11 Pro+ 5g', storage: '128 GB' },
+  { brand: 'Samsung', model: 'Galaxy S23', storage: '256 GB' }, { brand: 'OnePlus', model: '12', storage: '256 GB' },
+];
+let rowLoads = 0;
+const clock = { t: 1_000_000 };
+
 let server;
 let base;
 let currentAuth = null;
@@ -52,7 +60,7 @@ before(async () => {
   const app = express();
   app.use(express.json());
   app.use((req, _res, next) => { req.auth = currentAuth; next(); });
-  app.use('/api/pricing-rules', createPricingRulesRouter({ service, quote: stubQuote }));
+  app.use('/api/pricing-rules', createPricingRulesRouter({ service, quote: stubQuote, loadRows: async () => { rowLoads += 1; return MODEL_ROWS; }, now: () => clock.t }));
   await new Promise((resolve) => { server = app.listen(0, resolve); });
   base = `http://127.0.0.1:${server.address().port}/api/pricing-rules`;
 });
@@ -171,6 +179,40 @@ describe('saving, publishing and rolling back', () => {
     currentAuth = admin;
     const { json } = await call('GET', '/admin');
     assert.deepEqual(json.data.versions.map((v) => v.version), [3, 2, 1]);
+  });
+});
+
+describe('the model list for the preview dropdowns', () => {
+  it('is for admins only', async () => {
+    currentAuth = null;
+    assert.equal((await call('GET', '/admin/models')).status, 401);
+    currentAuth = { sub: 'c1', role: 'customer' };
+    assert.equal((await call('GET', '/admin/models')).status, 403);
+    currentAuth = { sub: 's1', role: 'staff', permissions: ['orders'] };
+    assert.equal((await call('GET', '/admin/models')).status, 403);
+  });
+
+  it('lists each brand with its models and storages, tidied', async () => {
+    currentAuth = admin;
+    const { status, json } = await call('GET', '/admin/models');
+    assert.equal(status, 200);
+    assert.deepEqual(json.data.brands.map((b) => b.brand), ['Apple', 'OnePlus', 'Samsung']);
+    assert.deepEqual(json.data.brands[0].models, [
+      { model: 'iPhone 14', storages: ['128 GB', '256 GB'] },
+      { model: 'iPhone 14 Plus', storages: ['128 GB'] },
+    ]);
+  });
+
+  it('reads the rows once a minute, not on every visit', async () => {
+    currentAuth = admin;
+    await call('GET', '/admin/models');
+    const loads = rowLoads;
+    await call('GET', '/admin/models');
+    await call('GET', '/admin/models');
+    assert.equal(rowLoads, loads);
+    clock.t += 61_000;
+    await call('GET', '/admin/models');
+    assert.equal(rowLoads, loads + 1);
   });
 });
 

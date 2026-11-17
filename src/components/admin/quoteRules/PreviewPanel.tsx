@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Loader2, Scale } from 'lucide-react';
+import PhonePicker from './PhonePicker';
 import { previewRulesQuote, FAULT_LABELS, SCREEN_STATE_LABELS, screenStateKeys, QuoteRulesError, type PreviewQuote, type PricingRules } from '../../../lib/quoteRules';
 
 interface PreviewPanelProps {
@@ -79,15 +80,7 @@ export default function PreviewPanel({ rules, rulesValid }: PreviewPanelProps) {
         <p className="text-sm text-ink-600">Prices one phone under the rules that are live and under the rules on this page, side by side. Nothing is recorded.</p>
       </div>
       <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
-        <label className="text-xs font-semibold text-ink-600">Brand
-          <input className="input mt-1 py-2 text-sm" value={form.brand} onChange={(e) => set({ brand: e.target.value })} />
-        </label>
-        <label className="text-xs font-semibold text-ink-600">Model
-          <input className="input mt-1 py-2 text-sm" value={form.model} onChange={(e) => set({ model: e.target.value })} />
-        </label>
-        <label className="text-xs font-semibold text-ink-600">Storage
-          <input className="input mt-1 py-2 text-sm" value={form.storage} onChange={(e) => set({ storage: e.target.value })} />
-        </label>
+        <PhonePicker value={{ brand: form.brand, model: form.model, storage: form.storage }} onChange={(choice) => set(choice)} />
         <label className="text-xs font-semibold text-ink-600">Age
           <select className="input mt-1 py-2 text-sm" value={form.age_period} onChange={(e) => set({ age_period: e.target.value })}>
             {AGE_OPTIONS.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
