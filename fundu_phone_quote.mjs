@@ -2451,6 +2451,37 @@ export const SCREEN_STATE_SHARE_LOW = {
   display_lines: 0.36, // the old single value for heavy spots, lines or a big tint, from clients that do not send the graded ones
 };
 
+// The same states on a premium phone (catalog price from HIGH_PRICE_SCREEN_FROM). Measured against Cashify on a Galaxy S26 Ultra
+// (Cashify base 60,340), a Galaxy S25 Ultra (49,030) and an iPhone 17 Pro Max (79,520). Cashify's amounts there are about
+// two thirds of what they are on a cheap phone: 1-2 scratches 4.4% / 4.8%, 2+ scratches 10.2% / 12.6% / 11.1%, cracked
+// 20.7% / 25.5% / 22.4%, touch not working 34.8% / 42.8% / 37.7%, visible lines 29.6% / 32.1%. A state measured on one phone only
+// is that phone's value times 1.10, the average gap between those phones.
+export const SCREEN_STATE_SHARE_HIGH = {
+  scratches_minor: 0.046,
+  scratches_major: 0.113,
+  spots_few: 0.077,
+  tint_minor: 0.077,
+  faded_edges: 0.19,
+  spots_many: 0.22,
+  chipped: 0.155,
+  cracked: 0.229,
+  tint_major: 0.21,
+  spots_heavy: 0.31,
+  lines_visible: 0.31,
+  touch_fault: 0.384,
+  display_lines: 0.31,
+};
+
+/**
+ * The graded share of the aged value that a screen state takes off a phone priced `price`, or undefined for a phone between
+ * the two tiers, which is priced on the old two-level values (legacyScreenCondition).
+ */
+export function screenStateShare(screenCondition, price) {
+  if (price < LOW_PRICE_BELOW) return SCREEN_STATE_SHARE_LOW[screenCondition];
+  if (price >= HIGH_PRICE_SCREEN_FROM) return SCREEN_STATE_SHARE_HIGH[screenCondition];
+  return undefined;
+}
+
 // The two-level values every other part of the quote understands. A phone that is not low-end, or a client that sends no
 // graded state, is priced on these.
 const SCREEN_STATE_LEGACY = {
@@ -2715,6 +2746,13 @@ const BODY_DAMAGE_SHARE_PREMIUM = {
   dents_bent: 0.10,
   panel_broken: 0.18,
 };
+// A premium Android phone: Galaxy S26 Ultra 2.65% / 3.6% / 8.6%, Galaxy S25 Ultra 3.9% / 9.3% for a major dent and a broken
+// panel (minor wear on the S26 Ultra only).
+const BODY_DAMAGE_SHARE_PREMIUM_ANDROID = {
+  minor_scratches: 0.03,
+  dents_bent: 0.0375,
+  panel_broken: 0.09,
+};
 const BODY_DAMAGE_SHARE_STANDARD = {
   minor_scratches: 0.035,
   dents_bent: 0.045,
@@ -2722,8 +2760,9 @@ const BODY_DAMAGE_SHARE_STANDARD = {
 };
 
 /** The share a kind of body damage takes off a phone worth `benchmarkProceeds`. */
-function bodyDamageShareFor(bodyCondition, benchmarkProceeds) {
-  const table = benchmarkProceeds >= HIGH_PRICE_SCREEN_FROM ? BODY_DAMAGE_SHARE_PREMIUM : BODY_DAMAGE_SHARE_STANDARD;
+function bodyDamageShareFor(bodyCondition, benchmarkProceeds, isApple = true) {
+  let table = BODY_DAMAGE_SHARE_STANDARD;
+  if (benchmarkProceeds >= HIGH_PRICE_SCREEN_FROM) table = isApple ? BODY_DAMAGE_SHARE_PREMIUM : BODY_DAMAGE_SHARE_PREMIUM_ANDROID;
   return table[bodyCondition] || 0;
 }
 
@@ -2782,6 +2821,14 @@ const FAULT_REPAIR_PART = {
 // A replaced screen costs about what a screen repair does (Cashify: 84%, 109% and 76% of its cracked-screen amount).
 const SCREEN_NOT_ORIGINAL_SCREEN_SHARE = 0.85;
 
+// What a small fault takes off an Android phone, in rupees, whatever its price: Cashify takes 400 / 500 off a Galaxy A14 5G / S26
+// Ultra for a speaker, and 300 / 500 for the vibrator. An iPhone's parts cost more (speaker 2,000-2,500), so it keeps its share.
+const FAULT_FLAT_ANDROID = {
+  speaker: 450,
+  audio_receiver: 450,
+  vibrator: 300,
+};
+
 // The least a small fault takes off, in rupees, whatever the price of the phone.
 const FAULT_MIN = {
   speaker: 600,
@@ -2827,6 +2874,8 @@ const UNPRICED_DEFECT_DEDUCTION_RATE = 0.08;
 // A phone that cannot make or receive calls is treated like a dead one. Cashify pays a small fixed amount whatever the
 // price: ₹1,180 for an iPhone 17 Pro Max and an iPhone 13, ₹780 for a Galaxy A14 5G.
 const CALLS_NOT_WORKING_KEY = 'calls_not_working';
+// An iPhone, and any phone from LOW_PRICE_BELOW up (a Galaxy S26 Ultra and an iPhone 13 both get 1,180), is bought for about 1,200;
+// a cheaper Android phone (Galaxy A14 5G and A53 5G both 780) for about 800.
 const CALLS_NOT_WORKING_SALVAGE_APPLE = 1200;
 const CALLS_NOT_WORKING_SALVAGE_OTHER = 800;
 
@@ -2975,7 +3024,9 @@ export function quotePhone(input = {}, options = {}) {
   // Trigger E: Cannot make or receive calls. Valued like a dead phone until a technician looks at it.
   if (Array.isArray(defects) && defects.includes(CALLS_NOT_WORKING_KEY)) {
     const isAppleBrand = String(brand).toLowerCase() === 'apple' || String(model).toLowerCase().includes('iphone');
-    const salvageAmount = isAppleBrand ? CALLS_NOT_WORKING_SALVAGE_APPLE : CALLS_NOT_WORKING_SALVAGE_OTHER;
+    // The admin price when the server sends one (options.catalogPrice), else the built-in estimate.
+    const priceForSalvage = options.catalogPrice > 0 ? options.catalogPrice : estBaseProceeds;
+    const salvageAmount = isAppleBrand || priceForSalvage >= LOW_PRICE_BELOW ? CALLS_NOT_WORKING_SALVAGE_APPLE : CALLS_NOT_WORKING_SALVAGE_OTHER;
     return {
       status: 'requires_manual_review',
       quoteId: `FND-Q-${Date.now().toString(36).toUpperCase()}-${Math.floor(1000 + Math.random() * 9000)}`,
@@ -3003,16 +3054,18 @@ export function quotePhone(input = {}, options = {}) {
   const legacyScreen = legacyScreenCondition(screen_condition);
   const requiresScreenRepair = legacyScreen === 'cracked' || legacyScreen === 'touch_fault' || legacyScreen === 'display_lines';
   const isLowEnd = expectedResaleProceeds < LOW_PRICE_BELOW;
-  const lowScreenShare = isLowEnd ? SCREEN_STATE_SHARE_LOW[screen_condition] : undefined;
+  // A cheap phone and a premium phone are priced on their own graded share; a phone in between on the old two-level value.
+  const tierScreenShare = screenStateShare(screen_condition, expectedResaleProceeds);
   // A graded state that is not a repair (scratches, a few spots, a tint, faded edges) is deducted as its share, in place of the
   // flat "good look" markdown, and the body and battery still count.
-  const gradedMinorScreen = lowScreenShare !== undefined && !requiresScreenRepair;
+  const gradedMinorScreen = tierScreenShare !== undefined && !requiresScreenRepair;
   // Business rule: once the screen needs a repair (cracked, touch fault or display lines), the dent /
   // back panel and the iPhone battery health are not deducted on top of it. Ageing still applies.
   // A scratched screen does not trigger this: dents and battery wear still count there.
   const screenIsDeducted = requiresScreenRepair;
   // Body damage is a share of the aged value, like the screen. A screen that is already deducted covers it (see above).
-  const bodyDamageShare = screenIsDeducted ? 0 : bodyDamageShareFor(body_condition, expectedResaleProceeds);
+  const isAppleDevice = String(brand).toLowerCase() === 'apple' || String(model).toLowerCase().includes('iphone');
+  const bodyDamageShare = screenIsDeducted ? 0 : bodyDamageShareFor(body_condition, expectedResaleProceeds, isAppleDevice);
   const isApple = String(brand).toLowerCase() === 'apple' || String(model).toLowerCase().includes('iphone');
   const hasCameraDefect = Array.isArray(defects) && defects.includes('camera');
   const hasChargingDefect = Array.isArray(defects) && defects.includes('charging_port');
@@ -3070,14 +3123,14 @@ export function quotePhone(input = {}, options = {}) {
     // The screen share is taken off the phone's aged value, so an older phone loses the same share, not more.
     // A low-end phone is priced on its graded share with no rupee floor: Cashify takes 1,850 off a 6,240 phone for a cracked
     // screen, which is under the 1,999 floor that the other phones keep.
-    const screenCost = lowScreenShare !== undefined
-      ? Math.round(expectedResaleProceeds * agingFactor * lowScreenShare)
+    const screenCost = tierScreenShare !== undefined
+      ? Math.round(expectedResaleProceeds * agingFactor * tierScreenShare)
       : Math.round(repairCosts.screen * agingFactor);
     configuredRepairsTotal += screenCost;
     internalRepairBreakdown.push({ item: 'screen', cost: screenCost });
     conditionReasons.push(`Screen/display replacement required (${SCREEN_STATE_LABEL[screen_condition] || screen_condition.replace('_', ' ')})`);
   } else if (gradedMinorScreen) {
-    const screenCost = Math.round(expectedResaleProceeds * agingFactor * lowScreenShare);
+    const screenCost = Math.round(expectedResaleProceeds * agingFactor * tierScreenShare);
     configuredRepairsTotal += screenCost;
     internalRepairBreakdown.push({ item: 'screen', cost: screenCost });
     conditionReasons.push(`Screen wear deducted (${SCREEN_STATE_LABEL[screen_condition]})`);
@@ -3121,7 +3174,7 @@ export function quotePhone(input = {}, options = {}) {
   }
 
   const reportsBatteryFault = Array.isArray(defects) && defects.includes(BATTERY_FAULT_KEY);
-  if (screenIsDeducted && (bodyDamageShareFor(body_condition, expectedResaleProceeds) > 0 || wornBatteryRate > 0 || reportsBatteryFault)) {
+  if (screenIsDeducted && (bodyDamageShareFor(body_condition, expectedResaleProceeds, isAppleDevice) > 0 || wornBatteryRate > 0 || reportsBatteryFault)) {
     conditionReasons.push('Screen condition is priced; dents and battery health are not deducted separately');
   }
 
@@ -3150,10 +3203,14 @@ export function quotePhone(input = {}, options = {}) {
     const repairPart = FAULT_REPAIR_PART[defectKey];
     if (repairPart) return Math.round((repairCosts?.[repairPart.part] || 0) * repairPart.factor);
     if (defectKey === 'screen_not_original') {
-      return Math.round(agedValue * screenRepairRate(brand, model, expectedResaleProceeds) * SCREEN_NOT_ORIGINAL_SCREEN_SHARE);
+      const crackedShare = screenStateShare('cracked', expectedResaleProceeds) ?? screenRepairRate(brand, model, expectedResaleProceeds);
+      return Math.round(agedValue * crackedShare * SCREEN_NOT_ORIGINAL_SCREEN_SHARE);
     }
-    // A fingerprint sensor is a far smaller repair than Face ID, so only an iPhone takes the Face ID share.
-    const share = defectKey === 'biometrics' && !isApple ? undefined : FAULT_SHARE[defectKey];
+    if (!isApple && FAULT_FLAT_ANDROID[defectKey] !== undefined) return FAULT_FLAT_ANDROID[defectKey];
+    // Face ID and a premium Android phone's sensor are both 27% on Cashify (Galaxy S25 Ultra and S26 Ultra 27.2%), but a cheaper
+    // Android phone has no such sensor to repair (a Galaxy A14 5G and A53 5G lose nothing), so only those two take the share.
+    const hasBigSensor = isApple || expectedResaleProceeds >= HIGH_PRICE_SCREEN_FROM;
+    const share = defectKey === 'biometrics' && !hasBigSensor ? undefined : FAULT_SHARE[defectKey];
     if (share === undefined) return Math.round(expectedResaleProceeds * UNPRICED_DEFECT_DEDUCTION_RATE);
     return Math.max(FAULT_MIN[defectKey] || 0, Math.round(agedValue * share));
   };
