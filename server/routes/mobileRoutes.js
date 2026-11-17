@@ -27,6 +27,7 @@ import { resolveDeviceImage } from '../services/deviceImageService.js';
 import { INDIAN_MARKET_PHONES_LAST_10_YEARS } from '../config/seedPhones.js';
 import { calculateHardwareVariantMultiplier } from '../../fundu_phone_quote.mjs';
 import { isBlockedPhone } from '../utils/blockedModels.js';
+import { buildSiblingVariantUpsert } from '../services/sellPriceVariants.js';
 
 const router = Router();
 
@@ -968,24 +969,7 @@ router.post('/sell-pricing/config', async (req, res, next) => {
 
           const varDoc = await SellPriceConfig.findOneAndUpdate(
             varMatch,
-            {
-              $setOnInsert: {
-                brand: rawBrand,
-                model: rawModel,
-                storage: varStorage,
-                base_price: proportionalPrice,
-                excellent_multiplier: 1.0,
-                good_multiplier: 0.70,
-                fair_multiplier: 0.55,
-                box_bonus: 400,
-                charger_bonus: 400,
-                is_active: true,
-                is_locked: false,
-                manual_override: false,
-                created_at: new Date(),
-                updated_at: new Date(),
-              },
-            },
+            buildSiblingVariantUpsert({ brand: rawBrand, model: rawModel, storage: varStorage, basePrice: proportionalPrice }),
             { upsert: true, new: true, setDefaultsOnInsert: true }
           );
 
