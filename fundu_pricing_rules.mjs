@@ -100,6 +100,55 @@ export const DEFAULT_PRICING_RULES = deepFreeze({
   },
   // A Samsung phone from 20,000 up to 60,000 takes this much of the middle screen table.
   samsungMidFactor: 0.8,
+
+  // What each screen state takes off a phone that is not an iPhone with its own amount, as a share of the aged value, by price
+  // range: under 20,000 (low), 20,000 up to 60,000 (mid, reached over 20,000-25,000) and 60,000 and up (high).
+  screenTables: {
+    low: {
+      scratches_minor: 0.065, scratches_major: 0.155, spots_few: 0.10, tint_minor: 0.10, faded_edges: 0.26, spots_many: 0.31, chipped: 0.22,
+      cracked: 0.31, tint_major: 0.27, spots_heavy: 0.44, lines_visible: 0.445, touch_fault: 0.51, display_lines: 0.36,
+    },
+    mid: {
+      scratches_minor: 0.076, scratches_major: 0.178, spots_few: 0.121, tint_minor: 0.121, faded_edges: 0.303, spots_many: 0.364, chipped: 0.255,
+      cracked: 0.36, tint_major: 0.333, spots_heavy: 0.515, lines_visible: 0.515, touch_fault: 0.594, display_lines: 0.42,
+    },
+    high: {
+      scratches_minor: 0.046, scratches_major: 0.113, spots_few: 0.077, tint_minor: 0.077, faded_edges: 0.19, spots_many: 0.22, chipped: 0.155,
+      cracked: 0.229, tint_major: 0.21, spots_heavy: 0.31, lines_visible: 0.31, touch_fault: 0.384, display_lines: 0.31,
+    },
+  },
+
+  // What body damage takes off, as a share of the aged value: a phone under 60,000, an iPhone from 60,000 and an Android phone from 60,000.
+  bodyDamage: {
+    standard: { minor_scratches: 0.035, dents_bent: 0.045, panel_broken: 0.11 },
+    premiumApple: { minor_scratches: 0.06, dents_bent: 0.10, panel_broken: 0.18 },
+    premiumAndroid: { minor_scratches: 0.03, dents_bent: 0.0375, panel_broken: 0.09 },
+  },
+
+  // What each declared fault takes off.
+  faults: {
+    // A share of the aged value. Face ID / fingerprint (biometrics) counts on an iPhone and on an Android phone from 60,000 only.
+    share: {
+      wifi: 0.40, bluetooth: 0.40, biometrics: 0.27, speaker: 0.03, audio_receiver: 0.03, proximity_sensor: 0.03, silent_button: 0.02,
+      microphone: 0.01, volume_button: 0.01, power_button: 0.01, vibrator: 0.01, buttons: 0.01, sensors: 0.03,
+    },
+    // The least a small fault takes off, in rupees, whatever the price.
+    min: { speaker: 600, audio_receiver: 600, silent_button: 300, microphone: 300, volume_button: 300, power_button: 300, vibrator: 300 },
+    // What a small fault takes off an Android phone, in rupees, whatever its price (an iPhone keeps its share).
+    flatAndroid: { speaker: 450, audio_receiver: 450, vibrator: 300 },
+    // A fault that costs a part of the model's repair of one part: the back camera is all of the camera repair, a battery fault a battery.
+    repairFactor: { camera_back: 1, camera_front: 0.55, camera_glass: 0.45, battery_fault: 1 },
+    // A replaced (non-original) screen, as a share of a cracked screen.
+    screenNotOriginalShare: 0.85,
+    // A fault with no share of its own takes this share of the price, so it is never ignored.
+    unknownShare: 0.08,
+    // A phone that cannot make or receive calls is bought for this much: an iPhone or any phone from 20,000 up, and a cheaper Android.
+    callsSalvageApple: 1200,
+    callsSalvageOther: 800,
+  },
+
+  // What a missing accessory takes off, in rupees, and the most that all of them take off a phone under 20,000.
+  accessories: { box: 300, charger: 300, bill: 200, lowEndMaxShare: 0.06 },
 });
 
 /** The bounds each value must stay within. The admin editor and the server both enforce them. */
@@ -117,6 +166,16 @@ export const RULE_LIMITS = deepFreeze({
   multiple: [0, 3],
   maxShare: [0.3, 0.9],
   samsungMidFactor: [0.4, 1.2],
+  screenShare: [0, 0.9],
+  bodyShare: [0, 0.4],
+  faultShare: [0, 0.6],
+  faultRupees: [0, 5000],
+  repairFactor: [0, 2],
+  screenNotOriginalShare: [0.3, 1.5],
+  unknownShare: [0, 0.3],
+  salvage: [0, 5000],
+  accessoryRupees: [0, 3000],
+  accessoryMaxShare: [0, 0.3],
   maxEntries: 300,
 });
 
@@ -137,6 +196,85 @@ function checkMap(map, label, range, errors) {
   for (const key of keys) {
     if (!MODEL_KEY.test(key)) errors.push(`${label}: "${key}" is not a valid model key (letters and digits, 2 to 40).`);
     else if (!inRange(map[key], range)) errors.push(`${label}: ${key} must be between ${range[0]} and ${range[1]}.`);
+  }
+}
+
+// A map whose keys are fixed (screen states, body kinds, faults): every key must be there, none may be added.
+function checkFixedMap(map, defaults, label, range, errors) {
+  if (!isPlainObject(map)) {
+    errors.push(`${label} is missing.`);
+    return false;
+  }
+  for (const key of Object.keys(defaults)) {
+    if (!inRange(map[key], range)) errors.push(`${label}: ${key} must be between ${range[0]} and ${range[1]}.`);
+  }
+  for (const key of Object.keys(map)) {
+    if (!(key in defaults)) errors.push(`${label}: "${key}" is not something the quote engine prices.`);
+  }
+  return true;
+}
+
+// Worse damage must not take less off than lighter damage: minor wear <= more scratches <= a crack <= touch not working.
+function checkStateOrder(table, label, errors) {
+  const order = ['scratches_minor', 'scratches_major', 'cracked', 'touch_fault'];
+  for (let i = 1; i < order.length; i++) {
+    if (isNumber(table[order[i]]) && isNumber(table[order[i - 1]]) && table[order[i]] < table[order[i - 1]]) {
+      errors.push(`${label}: ${order[i]} must not take less off than ${order[i - 1]}.`);
+    }
+  }
+}
+
+function validateExtraRules(rules, errors) {
+  const screenTables = rules.screenTables;
+  if (!isPlainObject(screenTables)) {
+    errors.push('The screen tables by price range are missing.');
+  } else {
+    for (const tier of ['low', 'mid', 'high']) {
+      if (checkFixedMap(screenTables[tier], DEFAULT_PRICING_RULES.screenTables[tier], `Screen table (${tier})`, RULE_LIMITS.screenShare, errors)) {
+        checkStateOrder(screenTables[tier], `Screen table (${tier})`, errors);
+      }
+    }
+    for (const key of Object.keys(screenTables)) if (!['low', 'mid', 'high'].includes(key)) errors.push(`Screen table "${key}" is not a price range.`);
+  }
+
+  const body = rules.bodyDamage;
+  if (!isPlainObject(body)) {
+    errors.push('The body damage shares are missing.');
+  } else {
+    for (const kind of Object.keys(DEFAULT_PRICING_RULES.bodyDamage)) {
+      if (checkFixedMap(body[kind], DEFAULT_PRICING_RULES.bodyDamage[kind], `Body damage (${kind})`, RULE_LIMITS.bodyShare, errors)) {
+        const t = body[kind];
+        if (isNumber(t.minor_scratches) && isNumber(t.dents_bent) && isNumber(t.panel_broken) && !(t.minor_scratches <= t.dents_bent && t.dents_bent <= t.panel_broken)) {
+          errors.push(`Body damage (${kind}): a dent must not take less than minor wear, and a broken panel not less than a dent.`);
+        }
+      }
+    }
+  }
+
+  const faults = rules.faults;
+  if (!isPlainObject(faults)) {
+    errors.push('The fault amounts are missing.');
+  } else {
+    const d = DEFAULT_PRICING_RULES.faults;
+    checkFixedMap(faults.share, d.share, 'Fault shares', RULE_LIMITS.faultShare, errors);
+    checkFixedMap(faults.min, d.min, 'Fault minimums', RULE_LIMITS.faultRupees, errors);
+    checkFixedMap(faults.flatAndroid, d.flatAndroid, 'Android flat fault amounts', RULE_LIMITS.faultRupees, errors);
+    checkFixedMap(faults.repairFactor, d.repairFactor, 'Repair part factors', RULE_LIMITS.repairFactor, errors);
+    if (!inRange(faults.screenNotOriginalShare, RULE_LIMITS.screenNotOriginalShare)) errors.push(`The replaced-screen share must be between ${RULE_LIMITS.screenNotOriginalShare[0]} and ${RULE_LIMITS.screenNotOriginalShare[1]}.`);
+    if (!inRange(faults.unknownShare, RULE_LIMITS.unknownShare)) errors.push(`The share for an unknown fault must be between ${RULE_LIMITS.unknownShare[0]} and ${RULE_LIMITS.unknownShare[1]}.`);
+    for (const field of ['callsSalvageApple', 'callsSalvageOther']) {
+      if (!inRange(faults[field], RULE_LIMITS.salvage)) errors.push(`${field} must be between ${RULE_LIMITS.salvage[0]} and ${RULE_LIMITS.salvage[1]}.`);
+    }
+  }
+
+  const accessories = rules.accessories;
+  if (!isPlainObject(accessories)) {
+    errors.push('The accessory amounts are missing.');
+  } else {
+    for (const field of ['box', 'charger', 'bill']) {
+      if (!inRange(accessories[field], RULE_LIMITS.accessoryRupees)) errors.push(`Accessory ${field} must be between ${RULE_LIMITS.accessoryRupees[0]} and ${RULE_LIMITS.accessoryRupees[1]}.`);
+    }
+    if (!inRange(accessories.lowEndMaxShare, RULE_LIMITS.accessoryMaxShare)) errors.push(`The most accessories can take off a cheap phone must be between ${RULE_LIMITS.accessoryMaxShare[0]} and ${RULE_LIMITS.accessoryMaxShare[1]}.`);
   }
 }
 
@@ -185,6 +323,7 @@ export function validatePricingRules(rules) {
   if (!inRange(rules.samsungMidFactor, RULE_LIMITS.samsungMidFactor)) {
     errors.push(`The Samsung factor must be between ${RULE_LIMITS.samsungMidFactor[0]} and ${RULE_LIMITS.samsungMidFactor[1]}.`);
   }
+  validateExtraRules(rules, errors);
   return { valid: errors.length === 0, errors };
 }
 
@@ -198,6 +337,24 @@ const cleanMap = (map, range) => {
 };
 
 const pickNumber = (value, range, fallback) => (inRange(value, range) ? value : fallback);
+
+// A fixed-key map: each value that is missing or out of bounds is its default.
+function resolveFixedMap(saved, defaults, range) {
+  const src = isPlainObject(saved) ? saved : {};
+  const out = {};
+  for (const key of Object.keys(defaults)) out[key] = pickNumber(src[key], range, defaults[key]);
+  return out;
+}
+
+// A table that was damaged (a crack that takes less than light scratches) is replaced whole, so it cannot price a quote oddly.
+function resolveStateTable(saved, defaults, range, order) {
+  const table = resolveFixedMap(saved, defaults, range);
+  for (let i = 1; i < order.length; i++) if (table[order[i]] < table[order[i - 1]]) return { ...defaults };
+  return table;
+}
+
+const STATE_ORDER = ['scratches_minor', 'scratches_major', 'cracked', 'touch_fault'];
+const BODY_ORDER = ['minor_scratches', 'dents_bent', 'panel_broken'];
 
 /**
  * Turns saved rules (anything, including nothing) into a complete, safe rules object. A value that is missing or out of bounds is
@@ -236,6 +393,32 @@ export function resolvePricingRules(saved) {
       maxShare: pickNumber(screen.maxShare, RULE_LIMITS.maxShare, d.appleScreen.maxShare),
     },
     samsungMidFactor: pickNumber(s.samsungMidFactor, RULE_LIMITS.samsungMidFactor, d.samsungMidFactor),
+    screenTables: {
+      low: resolveStateTable(s.screenTables?.low, d.screenTables.low, RULE_LIMITS.screenShare, STATE_ORDER),
+      mid: resolveStateTable(s.screenTables?.mid, d.screenTables.mid, RULE_LIMITS.screenShare, STATE_ORDER),
+      high: resolveStateTable(s.screenTables?.high, d.screenTables.high, RULE_LIMITS.screenShare, STATE_ORDER),
+    },
+    bodyDamage: {
+      standard: resolveStateTable(s.bodyDamage?.standard, d.bodyDamage.standard, RULE_LIMITS.bodyShare, BODY_ORDER),
+      premiumApple: resolveStateTable(s.bodyDamage?.premiumApple, d.bodyDamage.premiumApple, RULE_LIMITS.bodyShare, BODY_ORDER),
+      premiumAndroid: resolveStateTable(s.bodyDamage?.premiumAndroid, d.bodyDamage.premiumAndroid, RULE_LIMITS.bodyShare, BODY_ORDER),
+    },
+    faults: {
+      share: resolveFixedMap(s.faults?.share, d.faults.share, RULE_LIMITS.faultShare),
+      min: resolveFixedMap(s.faults?.min, d.faults.min, RULE_LIMITS.faultRupees),
+      flatAndroid: resolveFixedMap(s.faults?.flatAndroid, d.faults.flatAndroid, RULE_LIMITS.faultRupees),
+      repairFactor: resolveFixedMap(s.faults?.repairFactor, d.faults.repairFactor, RULE_LIMITS.repairFactor),
+      screenNotOriginalShare: pickNumber(s.faults?.screenNotOriginalShare, RULE_LIMITS.screenNotOriginalShare, d.faults.screenNotOriginalShare),
+      unknownShare: pickNumber(s.faults?.unknownShare, RULE_LIMITS.unknownShare, d.faults.unknownShare),
+      callsSalvageApple: pickNumber(s.faults?.callsSalvageApple, RULE_LIMITS.salvage, d.faults.callsSalvageApple),
+      callsSalvageOther: pickNumber(s.faults?.callsSalvageOther, RULE_LIMITS.salvage, d.faults.callsSalvageOther),
+    },
+    accessories: {
+      box: pickNumber(s.accessories?.box, RULE_LIMITS.accessoryRupees, d.accessories.box),
+      charger: pickNumber(s.accessories?.charger, RULE_LIMITS.accessoryRupees, d.accessories.charger),
+      bill: pickNumber(s.accessories?.bill, RULE_LIMITS.accessoryRupees, d.accessories.bill),
+      lowEndMaxShare: pickNumber(s.accessories?.lowEndMaxShare, RULE_LIMITS.accessoryMaxShare, d.accessories.lowEndMaxShare),
+    },
   };
 }
 
@@ -259,4 +442,19 @@ export function diffPricingRules(before, after) {
   };
   walk(before, after, '');
   return out;
+}
+
+const TOP_LEVEL_GROUPS = ['age', 'appleScreen', 'samsungMidFactor', 'screenTables', 'bodyDamage', 'faults', 'accessories'];
+
+/**
+ * Rules saved before a group existed (a Phase 1 set has no screen tables, body damage, faults or accessories) get that group from the
+ * defaults. Only a group that is missing altogether is filled; a value that is there and wrong is left wrong, so validation still sees it.
+ */
+export function fillMissingGroups(rules) {
+  if (!isPlainObject(rules)) return rules;
+  const filled = { ...rules };
+  for (const group of TOP_LEVEL_GROUPS) {
+    if (filled[group] === undefined) filled[group] = cloneRules(DEFAULT_PRICING_RULES[group]);
+  }
+  return filled;
 }
