@@ -2812,6 +2812,21 @@ export function getModelReleaseYear(brand = '', model = '') {
  */
 export const OLD_PHONE_AGE_FACTOR = 0.955;
 
+/**
+ * The newest iPhones are offered less than 0.80 once they are older than 11 months: Cashify offers the iPhone 17, 17 Pro and 17 Pro
+ * Max 0.732-0.744 of the admin price (48,840 for an iPhone 17 256 GB, 74,220 for a 17 Pro, 79,520 for a 17 Pro Max) and the 16e
+ * 0.751, where the 15 and 16 families are 0.765-0.794 and stay on 0.80. Measured on Cashify in November 2026; a model that was not
+ * measured (17e, Air, 18) stays on 0.80.
+ */
+export const RECENT_IPHONE_AGE_FACTOR = {
+  iphone17: 0.735,
+  iphone17pro: 0.735,
+  iphone17promax: 0.735,
+  iphone16e: 0.75,
+};
+
+const iphoneKey = (model) => String(model ?? '').toLowerCase().replace(/^apple\s+/, '').replace(/[^a-z0-9]/g, '');
+
 const OLD_IPHONE_KEY = /^iphone(?:[678](?:s|plus|splus)?|x(?:r|s|smax)?|se(?:2020|2022|3rdgen2022)?|1[1-4](?:mini|plus|pro|promax)?)$/;
 
 /** An iPhone launched in 2022 or before: the iPhone 14 family, the SE and everything older. */
@@ -2823,7 +2838,8 @@ export function isIphoneLaunchedBefore2023(brand, model) {
 }
 
 export function calculatePhoneAgingFactor(brand = '', model = '', underWarranty = false, agePeriod = '') {
-  const outOfWarranty = isIphoneLaunchedBefore2023(brand, model) ? OLD_PHONE_AGE_FACTOR : 0.80;
+  const recentFactor = /apple/i.test(String(brand ?? '')) || /iphone/i.test(String(model ?? '')) ? RECENT_IPHONE_AGE_FACTOR[iphoneKey(model)] : undefined;
+  const outOfWarranty = isIphoneLaunchedBefore2023(brand, model) ? OLD_PHONE_AGE_FACTOR : (recentFactor ?? 0.80);
   const normAge = String(agePeriod || '').toLowerCase().trim();
 
   // Universal Aging brackets for ALL brands & models (Apple & Android):

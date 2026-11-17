@@ -44,7 +44,8 @@ describe('the age factor of an old iPhone', () => {
     assert.equal(calculatePhoneAgingFactor('Apple', 'iPhone 11', false, 'out_of_warranty'), 0.955);
     assert.equal(calculatePhoneAgingFactor('Apple', 'iPhone 13', false, ''), 0.955);
     assert.equal(calculatePhoneAgingFactor('Apple', 'iPhone 15', false, OLD), 0.80);
-    assert.equal(calculatePhoneAgingFactor('Apple', 'iPhone 17 Pro Max', false, OLD), 0.80);
+    assert.equal(calculatePhoneAgingFactor('Apple', 'iPhone 17 Pro Max', false, OLD), 0.735);
+    assert.equal(calculatePhoneAgingFactor('Apple', 'iPhone 16 Pro Max', false, OLD), 0.80);
     assert.equal(calculatePhoneAgingFactor('Samsung', 'Galaxy S23', false, OLD), 0.80);
     assert.equal(calculatePhoneAgingFactor('OnePlus', '11', false, OLD), 0.80);
   });
