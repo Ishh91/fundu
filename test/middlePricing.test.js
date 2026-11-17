@@ -5,6 +5,8 @@ import {
   screenStateShare,
   LOW_PRICE_BELOW,
   HIGH_PRICE_SCREEN_FROM,
+  MID_PRICE_SCREEN_FULL_FROM,
+  MID_SAMSUNG_FACTOR,
   SCREEN_STATE_SHARE_LOW,
   SCREEN_STATE_SHARE_MID,
   SCREEN_STATE_SHARE_HIGH,
@@ -28,9 +30,10 @@ const share = (phone, price, extra) => (offerAt(phone, price) - offerAt(phone, p
 const within = (v, lo, hi) => v >= lo && v <= hi;
 
 describe('where the middle tier sits', () => {
-  it('runs from 20,000 up to 60,000', () => {
+  it('runs from 20,000 up to 60,000, and is reached in full at 25,000', () => {
     assert.equal(LOW_PRICE_BELOW, 20000);
     assert.equal(HIGH_PRICE_SCREEN_FROM, 60000);
+    assert.equal(MID_PRICE_SCREEN_FULL_FROM, 25000);
   });
 
   it('has a graded share for every state, as the cheap and the premium tiers do', () => {
@@ -38,9 +41,9 @@ describe('where the middle tier sits', () => {
     assert.deepEqual(Object.keys(SCREEN_STATE_SHARE_MID).sort(), Object.keys(SCREEN_STATE_SHARE_HIGH).sort());
   });
 
-  it('prices every known state from the middle table at 20,000 and right up to 59,999', () => {
+  it('prices every known state from the middle table from 25,000 and right up to 59,999', () => {
     for (const state of Object.keys(SCREEN_STATE_SHARE_MID)) {
-      assert.equal(screenStateShare(state, 20000), SCREEN_STATE_SHARE_MID[state], state);
+      assert.equal(screenStateShare(state, 25000), SCREEN_STATE_SHARE_MID[state], state);
       assert.equal(screenStateShare(state, 45000), SCREEN_STATE_SHARE_MID[state], state);
       assert.equal(screenStateShare(state, 59999), SCREEN_STATE_SHARE_MID[state], state);
       assert.equal(screenStateShare(state, 60000), SCREEN_STATE_SHARE_HIGH[state], state);
@@ -49,6 +52,32 @@ describe('where the middle tier sits', () => {
 
   it('is still undefined for the old two-level values a client may send, like "scratched"', () => {
     assert.equal(screenStateShare('scratched', 30000), undefined);
+  });
+});
+
+describe('a phone just over 20,000', () => {
+  it('starts on the cheap table at exactly 20,000, with no jump from 19,999', () => {
+    for (const state of Object.keys(SCREEN_STATE_SHARE_LOW)) {
+      assert.equal(screenStateShare(state, 20000), SCREEN_STATE_SHARE_LOW[state], state);
+      assert.ok(Math.abs(screenStateShare(state, 19999) - screenStateShare(state, 20000.5)) < 0.001, state);
+    }
+  });
+
+  it('is halfway to the middle table at 22,500', () => {
+    const half = (SCREEN_STATE_SHARE_LOW.touch_fault + SCREEN_STATE_SHARE_MID.touch_fault) / 2;
+    assert.ok(Math.abs(screenStateShare('touch_fault', 22500) - half) < 0.0001);
+  });
+
+  it('never pays a damaged phone less because its price is higher, across the 20,000 line', () => {
+    const phone = { brand: 'Samsung', model: 'Galaxy S23', storage: '128 GB' };
+    for (const state of Object.keys(SCREEN_STATE_SHARE_MID).filter((s) => s !== 'display_lines')) {
+      let last = 0;
+      for (let price = 18000; price <= 27000; price += 250) {
+        const offer = offerAt(phone, price, { screen_condition: state });
+        assert.ok(offer >= last - 50, `${state}: ${offer} at ${price} after ${last}`);
+        last = offer;
+      }
+    }
   });
 });
 
@@ -152,6 +181,69 @@ describe('a client that still sends the old two-level values', () => {
   it('prices "display_lines" as a heavy screen problem and "scratched" as the 15% look', () => {
     assert.ok(within(share(IPHONE_14, 30000, { screen_condition: 'display_lines' }), 0.36, 0.46));
     assert.ok(within(share(IPHONE_14, 30000, { screen_condition: 'scratched', cosmetic_condition: 'good' }), 0.13, 0.17));
+  });
+});
+
+describe('a Samsung phone in the middle tier (Cashify takes about 0.8 of what it takes off an iPhone or a OnePlus)', () => {
+  const S23 = { brand: 'Samsung', model: 'Galaxy S23', storage: '128 GB' };
+  const S24_PLUS = { brand: 'Samsung', model: 'Galaxy S24+', storage: '256 GB' };
+  // The share Cashify takes off each phone (S23 29.5% / 49.7%, S23 Ultra 29.5% / 49.6%, S24 30.2%, S24+ 26.4% / 44.3%).
+
+  it('takes 0.8 of the middle table for every state, from 25,000 up', () => {
+    assert.equal(MID_SAMSUNG_FACTOR, 0.8);
+    for (const state of Object.keys(SCREEN_STATE_SHARE_MID)) {
+      assert.ok(Math.abs(screenStateShare(state, 30000, 'Samsung') - SCREEN_STATE_SHARE_MID[state] * 0.8) < 1e-9, state);
+      assert.ok(Math.abs(screenStateShare(state, 59999, 'samsung') - SCREEN_STATE_SHARE_MID[state] * 0.8) < 1e-9, state);
+    }
+  });
+
+  it('is not applied to other brands, whatever the case', () => {
+    for (const brand of ['Apple', 'OnePlus', 'Google', undefined, '']) {
+      assert.equal(screenStateShare('cracked', 30000, brand), SCREEN_STATE_SHARE_MID.cracked, String(brand));
+    }
+  });
+
+  it('is not applied to a cheap phone or a premium phone', () => {
+    assert.equal(screenStateShare('cracked', 6240, 'Samsung'), SCREEN_STATE_SHARE_LOW.cracked);
+    assert.equal(screenStateShare('cracked', 19999, 'Samsung'), SCREEN_STATE_SHARE_LOW.cracked);
+    assert.equal(screenStateShare('cracked', 60000, 'Samsung'), SCREEN_STATE_SHARE_HIGH.cracked);
+    assert.equal(screenStateShare('cracked', 82920, 'Samsung'), SCREEN_STATE_SHARE_HIGH.cracked);
+  });
+
+  it('takes about 29% off for a crack and 47% for touch not working, as Cashify does on the Galaxy S23 and S24+', () => {
+    for (const [phone, price] of [[S23, 23970], [S24_PLUS, 39500]]) {
+      assert.ok(within(share(phone, price, { screen_condition: 'cracked' }), 0.265, 0.315), phone.model);
+      assert.ok(within(share(phone, price, { screen_condition: 'touch_fault' }), 0.44, 0.51), phone.model);
+    }
+  });
+
+  it('takes less off than an iPhone of the same price', () => {
+    for (const state of ['cracked', 'touch_fault', 'lines_visible', 'scratches_major']) {
+      assert.ok(share(S24_PLUS, 39500, { screen_condition: state }) < share({ ...IPHONE_14 }, 39500, { screen_condition: state }) - 0.03, state);
+    }
+  });
+
+  it('keeps the states in the order Cashify prices them', () => {
+    const order = ['scratches_minor', 'scratches_major', 'chipped', 'faded_edges', 'cracked', 'spots_heavy', 'touch_fault'];
+    for (let i = 1; i < order.length; i++) {
+      assert.ok(share(S23, 30000, { screen_condition: order[i] }) > share(S23, 30000, { screen_condition: order[i - 1] }), `${order[i - 1]} < ${order[i]}`);
+    }
+  });
+
+  it('does not change body damage or faults, which already matched Cashify', () => {
+    assert.ok(Math.abs(share(S23, 30000, { body_condition: 'dents_bent' }) - share(IPHONE_14, 30000, { body_condition: 'dents_bent' })) < 0.01);
+    assert.ok(Math.abs(share(S23, 30000, { defects: ['wifi'] }) - share(IPHONE_14, 30000, { defects: ['wifi'] })) < 0.02);
+  });
+
+  it('never pays a damaged Samsung less because its price is higher, from 18,000 to 62,000', () => {
+    for (const state of ['cracked', 'touch_fault', 'lines_visible', 'scratches_major', 'spots_many']) {
+      let last = 0;
+      for (let price = 18000; price <= 62000; price += 250) {
+        const offer = offerAt(S23, price, { screen_condition: state });
+        assert.ok(offer >= last - 50, `${state}: ${offer} at ${price} after ${last}`);
+        last = offer;
+      }
+    }
   });
 });
 

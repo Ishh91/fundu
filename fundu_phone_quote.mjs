@@ -2497,14 +2497,36 @@ export const SCREEN_STATE_SHARE_MID = {
 };
 
 /**
- * The graded share of the aged value that a screen state takes off a phone priced `price`: its own table under 20,000, the
- * middle table from there up to 60,000, and the premium table from 60,000. Undefined for a value that is not a graded state
- * ("scratched" and the like from an older client), which is priced on the old look markdown.
+ * A Samsung phone in the middle tier takes 0.8 of the middle table for every state. Cashify takes a crack of 26-30% of the offer
+ * on a Galaxy S23, S23 Ultra, S24 and S24+ (touch not working 44-50%), where it takes 36-38% (touch 58-62%) on an iPhone or a
+ * OnePlus; the shape of the table is the same on both. The cheap and the premium tables were measured on Samsung phones already.
  */
-export function screenStateShare(screenCondition, price) {
+export const MID_SAMSUNG_FACTOR = 0.8;
+
+const isSamsungBrand = (brand) => String(brand ?? '').toLowerCase().includes('samsung');
+
+/**
+ * The middle table is reached over this price range, starting at LOW_PRICE_BELOW: a crack takes 31% of a 19,999 phone and 36%
+ * of a 25,000 one, with no jump at 20,000. A jump would pay a damaged 19,750 phone more than a damaged 20,000 one.
+ */
+export const MID_PRICE_SCREEN_FULL_FROM = 25000;
+
+/**
+ * The graded share of the aged value that a screen state takes off a phone priced `price`: its own table under 20,000, the
+ * middle table from 25,000 (rising to it from the cheap one between 20,000 and 25,000) up to 60,000, and the premium table from
+ * 60,000. Undefined for a value that is not a graded state ("scratched" and the like from an older client), which is priced on
+ * the old look markdown.
+ */
+export function screenStateShare(screenCondition, price, brand) {
   if (price < LOW_PRICE_BELOW) return SCREEN_STATE_SHARE_LOW[screenCondition];
   if (price >= HIGH_PRICE_SCREEN_FROM) return SCREEN_STATE_SHARE_HIGH[screenCondition];
-  return SCREEN_STATE_SHARE_MID[screenCondition];
+  const table = SCREEN_STATE_SHARE_MID[screenCondition];
+  if (table === undefined) return undefined;
+  const mid = isSamsungBrand(brand) ? table * MID_SAMSUNG_FACTOR : table;
+  if (price >= MID_PRICE_SCREEN_FULL_FROM) return mid;
+  const low = SCREEN_STATE_SHARE_LOW[screenCondition];
+  const t = (price - LOW_PRICE_BELOW) / (MID_PRICE_SCREEN_FULL_FROM - LOW_PRICE_BELOW);
+  return low + (mid - low) * t;
 }
 
 // The two-level values every other part of the quote understands: they decide whether the screen needs a repair, and they
@@ -3080,7 +3102,7 @@ export function quotePhone(input = {}, options = {}) {
   const requiresScreenRepair = legacyScreen === 'cracked' || legacyScreen === 'touch_fault' || legacyScreen === 'display_lines';
   const isLowEnd = expectedResaleProceeds < LOW_PRICE_BELOW;
   // Every price tier is priced on its own graded share; only an old two-level value ("scratched") has none.
-  const tierScreenShare = screenStateShare(screen_condition, expectedResaleProceeds);
+  const tierScreenShare = screenStateShare(screen_condition, expectedResaleProceeds, brand);
   // A graded state that is not a repair (scratches, a few spots, a tint, faded edges) is deducted as its share, in place of the
   // flat "good look" markdown, and the body and battery still count.
   const gradedMinorScreen = tierScreenShare !== undefined && !requiresScreenRepair;
@@ -3228,7 +3250,7 @@ export function quotePhone(input = {}, options = {}) {
     const repairPart = FAULT_REPAIR_PART[defectKey];
     if (repairPart) return Math.round((repairCosts?.[repairPart.part] || 0) * repairPart.factor);
     if (defectKey === 'screen_not_original') {
-      const crackedShare = screenStateShare('cracked', expectedResaleProceeds) ?? screenRepairRate(brand, model, expectedResaleProceeds);
+      const crackedShare = screenStateShare('cracked', expectedResaleProceeds, brand) ?? screenRepairRate(brand, model, expectedResaleProceeds);
       return Math.round(agedValue * crackedShare * SCREEN_NOT_ORIGINAL_SCREEN_SHARE);
     }
     if (!isApple && FAULT_FLAT_ANDROID[defectKey] !== undefined) return FAULT_FLAT_ANDROID[defectKey];
