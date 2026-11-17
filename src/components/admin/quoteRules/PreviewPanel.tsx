@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Loader2, Scale } from 'lucide-react';
-import { previewRulesQuote, SCREEN_STATE_LABELS, screenStateKeys, QuoteRulesError, type PreviewQuote, type PricingRules } from '../../../lib/quoteRules';
+import { previewRulesQuote, FAULT_LABELS, SCREEN_STATE_LABELS, screenStateKeys, QuoteRulesError, type PreviewQuote, type PricingRules } from '../../../lib/quoteRules';
 
 interface PreviewPanelProps {
   /** The rules being edited, saved or not. */
@@ -21,6 +21,12 @@ const BODY_OPTIONS = [
   { value: 'dents_bent', label: 'Dents' },
   { value: 'panel_broken', label: 'Panel broken' },
 ];
+const FAULT_OPTIONS = [
+  { value: '', label: 'No fault' },
+  ...Object.entries(FAULT_LABELS).filter(([key]) => key !== 'buttons' && key !== 'sensors').map(([value, label]) => ({ value, label })),
+  { value: 'screen_not_original', label: 'Replaced (non-original) screen' },
+  { value: 'calls_not_working', label: 'Cannot make or receive calls' },
+];
 const money = (n: number | null) => (n === null ? '—' : `₹${n.toLocaleString('en-IN')}`);
 
 function Result({ title, quote, tone }: { title: string; quote: PreviewQuote; tone: string }) {
@@ -38,7 +44,7 @@ function Result({ title, quote, tone }: { title: string; quote: PreviewQuote; to
 export default function PreviewPanel({ rules, rulesValid }: PreviewPanelProps) {
   const [form, setForm] = useState({
     brand: 'Apple', model: 'iPhone 14 Plus', storage: '128 GB', age_period: 'above_11_months',
-    screen_condition: 'cracked', body_condition: 'flawless', box: false,
+    screen_condition: 'cracked', body_condition: 'flawless', fault: '', box: false,
   });
   const [result, setResult] = useState<{ live: PreviewQuote; draft: PreviewQuote } | null>(null);
   const [error, setError] = useState('');
@@ -53,7 +59,7 @@ export default function PreviewPanel({ rules, rulesValid }: PreviewPanelProps) {
         brand: form.brand, model: form.model, storage: form.storage, age_period: form.age_period,
         powers_on: true, activation_lock_cleared: true, ownership_verified: true, liquid_damage: false,
         cosmetic_condition: 'flawless', screen_condition: form.screen_condition, body_condition: form.body_condition,
-        battery_health: 'healthy', defects: [], accessories: form.box ? ['Original Box', 'Original Charger', 'Valid Bill'] : [],
+        battery_health: 'healthy', defects: form.fault ? [form.fault] : [], accessories: form.box ? ['Original Box', 'Original Charger', 'Valid Bill'] : [],
       }, rules));
     } catch (err) {
       setResult(null);
@@ -96,6 +102,11 @@ export default function PreviewPanel({ rules, rulesValid }: PreviewPanelProps) {
         <label className="text-xs font-semibold text-ink-600">Body
           <select className="input mt-1 py-2 text-sm" value={form.body_condition} onChange={(e) => set({ body_condition: e.target.value })}>
             {BODY_OPTIONS.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
+          </select>
+        </label>
+        <label className="text-xs font-semibold text-ink-600">Fault
+          <select className="input mt-1 py-2 text-sm" value={form.fault} onChange={(e) => set({ fault: e.target.value })}>
+            {FAULT_OPTIONS.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
           </select>
         </label>
         <label className="flex items-end gap-2 pb-2 text-sm text-ink-700">

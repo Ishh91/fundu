@@ -1,4 +1,4 @@
-import { resolvePricingRules, validatePricingRules, cloneRules } from '../../fundu_pricing_rules.mjs';
+import { resolvePricingRules, validatePricingRules, cloneRules, fillMissingGroups } from '../../fundu_pricing_rules.mjs';
 import { createHttpError } from '../utils/error.js';
 
 /** How long a quote may use rules it already read before it looks again. A publish clears it at once on this server. */
@@ -82,11 +82,13 @@ export function createPricingRulesService({ model, cacheMs = DEFAULT_CACHE_MS, n
 
   /** Saves the rules being edited. Nothing about quotes changes until publish. */
   async function saveDraft(rules, { user = '', note = '' } = {}) {
-    const checked = validatePricingRules(rules);
+    // A set from before a group existed gets that group from the defaults, so an older draft can still be saved and published.
+    const complete = fillMissingGroups(rules);
+    const checked = validatePricingRules(complete);
     if (!checked.valid) throw validationError(checked.errors);
     const published = await getPublished();
     const body = {
-      rules: cloneRules(rules),
+      rules: cloneRules(complete),
       note: String(note || '').slice(0, 300),
       based_on_version: published.version || null,
       updated_by: user,
@@ -131,10 +133,11 @@ export function createPricingRulesService({ model, cacheMs = DEFAULT_CACHE_MS, n
   async function publish({ user = '', note = '' } = {}) {
     const draft = plain(await model.findOne({ status: 'draft' }).lean());
     if (!draft) throw createHttpError(409, 'There is no draft to publish. Change a rule and save it first.');
-    const checked = validatePricingRules(draft.rules);
+    const complete = fillMissingGroups(draft.rules);
+    const checked = validatePricingRules(complete);
     if (!checked.valid) throw validationError(checked.errors);
     const current = await getPublished();
-    const version = await publishRules(draft.rules, { user, note: note || draft.note, basedOn: current.version || null });
+    const version = await publishRules(complete, { user, note: note || draft.note, basedOn: current.version || null });
     await model.deleteMany({ status: 'draft' });
     return version;
   }
@@ -145,11 +148,12 @@ export function createPricingRulesService({ model, cacheMs = DEFAULT_CACHE_MS, n
     if (!Number.isInteger(version) || version < 1) throw createHttpError(400, 'Choose a version to roll back to.');
     const target = plain(await model.findOne({ status: { $in: ['published', 'archived'] }, version }).lean());
     if (!target) throw createHttpError(404, `Version ${version} was not found.`);
-    const checked = validatePricingRules(target.rules);
+    const complete = fillMissingGroups(target.rules);
+    const checked = validatePricingRules(complete);
     if (!checked.valid) throw validationError(checked.errors);
     const current = await getPublished();
     if (current.version === version) throw createHttpError(409, `Version ${version} is already the live one.`);
-    return publishRules(target.rules, { user, note: `Rolled back to version ${version}`, basedOn: version });
+    return publishRules(complete, { user, note: `Rolled back to version ${version}`, basedOn: version });
   }
 
   return { getPublished, peek, getDraft, listVersions, getState, saveDraft, discardDraft, publish, rollback, invalidate };

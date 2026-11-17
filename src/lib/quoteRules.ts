@@ -28,6 +28,19 @@ export interface PricingRules {
     maxShare: number;
   };
   samsungMidFactor: number;
+  screenTables: Record<'low' | 'mid' | 'high', Record<string, number>>;
+  bodyDamage: Record<'standard' | 'premiumApple' | 'premiumAndroid', Record<string, number>>;
+  faults: {
+    share: Record<string, number>;
+    min: Record<string, number>;
+    flatAndroid: Record<string, number>;
+    repairFactor: Record<string, number>;
+    screenNotOriginalShare: number;
+    unknownShare: number;
+    callsSalvageApple: number;
+    callsSalvageOther: number;
+  };
+  accessories: { box: number; charger: number; bill: number; lowEndMaxShare: number };
 }
 
 export interface RulesVersion {
@@ -82,6 +95,16 @@ export const ruleLimits = RULE_LIMITS as {
   multiple: [number, number];
   maxShare: [number, number];
   samsungMidFactor: [number, number];
+  screenShare: [number, number];
+  bodyShare: [number, number];
+  faultShare: [number, number];
+  faultRupees: [number, number];
+  repairFactor: [number, number];
+  screenNotOriginalShare: [number, number];
+  unknownShare: [number, number];
+  salvage: [number, number];
+  accessoryRupees: [number, number];
+  accessoryMaxShare: [number, number];
   maxEntries: number;
 };
 export const screenStateKeys = SCREEN_STATE_KEYS as readonly string[];
@@ -107,6 +130,44 @@ export const SCREEN_STATE_LABELS: Record<string, string> = {
   lines_visible: 'Visible lines on the display',
   touch_fault: 'Touch not working',
   display_lines: 'Display problem (older sell forms)',
+};
+
+export const FAULT_LABELS: Record<string, string> = {
+  wifi: 'WiFi not working',
+  bluetooth: 'Bluetooth not working',
+  biometrics: 'Face ID / fingerprint sensor',
+  speaker: 'Speaker faulty',
+  audio_receiver: 'Audio receiver (earpiece)',
+  proximity_sensor: 'Proximity sensor',
+  silent_button: 'Silent button',
+  microphone: 'Microphone',
+  volume_button: 'Volume button',
+  power_button: 'Power button',
+  vibrator: 'Vibrator',
+  buttons: 'Buttons (older sell forms)',
+  sensors: 'Sensors (older sell forms)',
+  camera_back: 'Back camera',
+  camera_front: 'Front camera',
+  camera_glass: 'Camera glass',
+  battery_fault: 'Battery fault',
+};
+
+export const BODY_KIND_LABELS: Record<string, string> = {
+  standard: 'Phones under ₹60,000',
+  premiumApple: 'iPhones from ₹60,000',
+  premiumAndroid: 'Android phones from ₹60,000',
+};
+
+export const BODY_CONDITION_LABELS: Record<string, string> = {
+  minor_scratches: '1-2 minor dents, or more than 2 scratches',
+  dents_bent: 'Major dent(s)',
+  panel_broken: 'Cracked, missing or bent panel, or a loose screen',
+};
+
+export const TIER_LABELS: Record<string, string> = {
+  low: 'Under ₹20,000',
+  mid: '₹20,000 to ₹60,000',
+  high: '₹60,000 and up',
 };
 
 /** "iphone14plus" -> "iPhone 14 Plus", "iphone16e" -> "iPhone 16e", "iphonese2022" -> "iPhone SE 2022". */
@@ -173,6 +234,20 @@ const AGE_LABELS: Record<string, string> = {
 /** A change in plain words for the "what did I change" list, e.g. "iPhone crack amount: iPhone 14". */
 export function describeRuleChange(path: string): string {
   const parts = path.split('.');
+  if (parts[0] === 'screenTables' && parts[1] && parts[2]) return `Screen share (${TIER_LABELS[parts[1]] ?? parts[1]}): ${SCREEN_STATE_LABELS[parts[2]] ?? parts[2]}`;
+  if (parts[0] === 'bodyDamage' && parts[1] && parts[2]) return `Body damage (${BODY_KIND_LABELS[parts[1]] ?? parts[1]}): ${BODY_CONDITION_LABELS[parts[2]] ?? parts[2]}`;
+  if (parts[0] === 'faults' && parts[1] === 'share' && parts[2]) return `Fault share: ${FAULT_LABELS[parts[2]] ?? parts[2]}`;
+  if (parts[0] === 'faults' && parts[1] === 'min' && parts[2]) return `Fault minimum ₹: ${FAULT_LABELS[parts[2]] ?? parts[2]}`;
+  if (parts[0] === 'faults' && parts[1] === 'flatAndroid' && parts[2]) return `Android flat fault ₹: ${FAULT_LABELS[parts[2]] ?? parts[2]}`;
+  if (parts[0] === 'faults' && parts[1] === 'repairFactor' && parts[2]) return `Repair part factor: ${FAULT_LABELS[parts[2]] ?? parts[2]}`;
+  if (path === 'faults.screenNotOriginalShare') return 'Replaced (non-original) screen, share of a crack';
+  if (path === 'faults.unknownShare') return 'Fault the engine does not know, share of the price';
+  if (path === 'faults.callsSalvageApple') return 'Calls not working: iPhone or phone from ₹20,000 (₹)';
+  if (path === 'faults.callsSalvageOther') return 'Calls not working: cheaper Android (₹)';
+  if (path === 'accessories.box') return 'Missing original box (₹)';
+  if (path === 'accessories.charger') return 'Missing original charger (₹)';
+  if (path === 'accessories.bill') return 'Missing valid bill (₹)';
+  if (path === 'accessories.lowEndMaxShare') return 'Most missing accessories take off a phone under ₹20,000';
   if (parts[0] === 'age' && parts[1] === 'recentIphone' && parts[2]) return `Newest iPhone age factor: ${modelLabelFromKey(parts[2])}`;
   if (parts[0] === 'age') return AGE_LABELS[parts[1]] ?? path;
   if (parts[0] === 'appleScreen' && parts[1] === 'crackRupees' && parts[2]) return `iPhone crack amount: ${modelLabelFromKey(parts[2])}`;

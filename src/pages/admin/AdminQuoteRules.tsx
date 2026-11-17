@@ -17,6 +17,8 @@ import {
 import AgeSection from '../../components/admin/quoteRules/AgeSection';
 import ScreenSection from '../../components/admin/quoteRules/ScreenSection';
 import OtherSection from '../../components/admin/quoteRules/OtherSection';
+import ScreenTablesSection from '../../components/admin/quoteRules/ScreenTablesSection';
+import { AccessoriesSection, BodyDamageSection, FaultsSection } from '../../components/admin/quoteRules/BodyFaultSections';
 import PreviewPanel from '../../components/admin/quoteRules/PreviewPanel';
 
 const formatWhen = (iso: string | null) => (iso ? new Date(iso).toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' }) : '');
@@ -158,7 +160,11 @@ export default function AdminQuoteRules() {
 
       <AgeSection rules={edited} live={live} onChange={setEdited} />
       <ScreenSection rules={edited} live={live} onChange={setEdited} />
+      <ScreenTablesSection rules={edited} live={live} onChange={setEdited} />
       <OtherSection rules={edited} live={live} onChange={setEdited} />
+      <BodyDamageSection rules={edited} live={live} onChange={setEdited} />
+      <FaultsSection rules={edited} live={live} onChange={setEdited} />
+      <AccessoriesSection rules={edited} live={live} onChange={setEdited} />
 
       <section className="card p-5 space-y-3" aria-labelledby="changes-vs-live">
         <h3 id="changes-vs-live" className="font-display text-base font-black text-ink-900">What differs from the live rules ({changesVsLive.length})</h3>
