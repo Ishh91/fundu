@@ -189,15 +189,13 @@ export default function SellStep2Condition({
                       key={v.key}
                       type="button"
                       onClick={() => setForm((f) => ({ ...f, storage: v.storage, ram: v.ram }))}
-                      className={`flex items-center gap-3.5 px-4 py-3.5 rounded-xl border text-left transition-all cursor-pointer ${
-                        isSelected
+                      className={`flex items-center gap-3.5 px-4 py-3.5 rounded-xl border text-left transition-all cursor-pointer ${isSelected
                           ? 'border-[#344257] bg-white shadow-sm ring-2 ring-[#344257]/20'
                           : 'border-gray-200 bg-white hover:border-gray-300 hover:bg-gray-50/50'
-                      }`}
+                        }`}
                     >
-                      <span className={`h-5 w-5 rounded-full border-2 flex items-center justify-center shrink-0 transition-colors ${
-                        isSelected ? 'border-[#344257] bg-white' : 'border-gray-300 bg-white'
-                      }`}>
+                      <span className={`h-5 w-5 rounded-full border-2 flex items-center justify-center shrink-0 transition-colors ${isSelected ? 'border-[#344257] bg-white' : 'border-gray-300 bg-white'
+                        }`}>
                         {isSelected && <span className="h-2.5 w-2.5 rounded-full bg-[#344257]" />}
                       </span>
                       <span className="text-xs sm:text-sm font-bold text-gray-900">{v.label}</span>
@@ -446,16 +444,14 @@ export default function SellStep2Condition({
                   role="checkbox"
                   aria-checked={isOn}
                   onClick={() => toggleArea(section)}
-                  className={`flex items-center gap-3 p-3.5 rounded-xl border text-left text-xs font-bold transition-all cursor-pointer ${
-                    isOn
+                  className={`flex items-center gap-3 p-3.5 rounded-xl border text-left text-xs font-bold transition-all cursor-pointer ${isOn
                       ? 'border-rose-400 bg-rose-50 text-rose-900 shadow-xs'
                       : 'border-gray-200 bg-white text-gray-700 hover:border-gray-300'
-                  }`}
+                    }`}
                 >
                   <span
-                    className={`grid h-5 w-5 shrink-0 place-items-center rounded-md transition-colors ${
-                      isOn ? 'bg-rose-600 text-white' : 'border border-gray-300'
-                    }`}
+                    className={`grid h-5 w-5 shrink-0 place-items-center rounded-md transition-colors ${isOn ? 'bg-rose-600 text-white' : 'border border-gray-300'
+                      }`}
                   >
                     {isOn && <Check className="h-3.5 w-3.5" />}
                   </span>
@@ -516,18 +512,18 @@ export default function SellStep2Condition({
                   desc: 'Maximum capacity 85% or above, normal backup',
                 },
                 {
-                  id: '75_to_85',
-                  label: '⚡ 75% to 85% (Normal)',
+                  id: '80_to_85',
+                  label: '⚡ 80% to 85% (Normal)',
                   badge: 'Normal',
                   badgeColor: 'bg-amber-100 text-amber-800 border-amber-300',
-                  desc: 'Maximum capacity between 75% and 85%',
+                  desc: 'Maximum capacity between 80% and 85%',
                 },
                 {
-                  id: 'below_75',
-                  label: '⚠️ Below 75% (Service Alert)',
+                  id: 'below_80%',
+                  label: '⚠️ Below 80% (Service Alert)',
                   badge: 'Service Alert',
                   badgeColor: 'bg-rose-100 text-rose-800 border-rose-300',
-                  desc: 'Maximum capacity below 75% or service recommendation',
+                  desc: 'Maximum capacity below 80% or service recommendation',
                 },
               ].map((bat) => {
                 const isSelected = form.batteryHealth === bat.id ||
@@ -539,8 +535,8 @@ export default function SellStep2Condition({
                     type="button"
                     onClick={() => setForm((f) => ({ ...f, batteryHealth: bat.id as SellFormState['batteryHealth'] }))}
                     className={`p-4 rounded-2xl border text-left transition-all duration-200 cursor-pointer ${isSelected
-                        ? 'border-[#344257] bg-[#F0F0F5] shadow-md ring-2 ring-[#344257]/20 -translate-y-1'
-                        : 'border-gray-200 bg-white hover:border-[#6A859F] hover:bg-[#F7F7FA]'
+                      ? 'border-[#344257] bg-[#F0F0F5] shadow-md ring-2 ring-[#344257]/20 -translate-y-1'
+                      : 'border-gray-200 bg-white hover:border-[#6A859F] hover:bg-[#F7F7FA]'
                       }`}
                   >
                     <div className="flex items-center justify-between gap-2 mb-1">
@@ -655,8 +651,8 @@ export default function SellStep2Condition({
                       }))
                     }
                     className={`p-4 rounded-2xl border text-left transition-all duration-200 cursor-pointer ${isSelected
-                        ? 'border-[#344257] bg-[#F0F0F5] shadow-md ring-2 ring-[#344257]/20 -translate-y-0.5'
-                        : 'border-gray-200 bg-white hover:border-[#6A859F] hover:bg-[#F7F7FA]'
+                      ? 'border-[#344257] bg-[#F0F0F5] shadow-md ring-2 ring-[#344257]/20 -translate-y-0.5'
+                      : 'border-gray-200 bg-white hover:border-[#6A859F] hover:bg-[#F7F7FA]'
                       }`}
                   >
                     <div className="flex items-center justify-between gap-2 mb-1">
@@ -849,20 +845,18 @@ function ChoiceGroupCard({
               role="radio"
               aria-checked={isSelected}
               onClick={() => onSelect(option.id)}
-              className={`flex items-center gap-3 px-3.5 py-3 rounded-xl border text-left text-xs font-bold transition-all cursor-pointer ${
-                isSelected
+              className={`flex items-center gap-3 px-3.5 py-3 rounded-xl border text-left text-xs font-bold transition-all cursor-pointer ${isSelected
                   ? hasIssue && option.severe
                     ? 'border-rose-400 bg-rose-50 text-rose-900 ring-1 ring-rose-300/40'
                     : hasIssue
                       ? 'border-amber-400 bg-amber-50 text-amber-900 ring-1 ring-amber-300/40'
                       : 'border-[#344257] bg-[#F0F0F5] text-gray-900 ring-1 ring-[#344257]/20'
                   : 'border-gray-200 bg-white text-gray-700 hover:border-gray-300'
-              }`}
+                }`}
             >
               <span
-                className={`h-4 w-4 rounded-full border-2 flex items-center justify-center shrink-0 ${
-                  isSelected ? 'border-[#344257]' : 'border-gray-300'
-                }`}
+                className={`h-4 w-4 rounded-full border-2 flex items-center justify-center shrink-0 ${isSelected ? 'border-[#344257]' : 'border-gray-300'
+                  }`}
               >
                 {isSelected && <span className="h-2 w-2 rounded-full bg-[#344257]" />}
               </span>
@@ -892,36 +886,34 @@ function YesNoQuestion({
 }) {
   return (
     <div className="p-3.5 sm:p-4 rounded-2xl border border-gray-200 bg-white space-y-2.5">
-    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-      <div className="space-y-1">
-        <p className="text-xs font-bold text-gray-900">{title}</p>
-        <p className="text-[11px] text-gray-500 leading-snug">{help}</p>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div className="space-y-1">
+          <p className="text-xs font-bold text-gray-900">{title}</p>
+          <p className="text-[11px] text-gray-500 leading-snug">{help}</p>
+        </div>
+        <div role="radiogroup" aria-label={title} className="flex items-center gap-1.5 shrink-0 self-end sm:self-center">
+          <button
+            type="button"
+            role="radio"
+            aria-checked={value}
+            onClick={() => onChange(true)}
+            className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition cursor-pointer ${value ? 'bg-[#344257] text-white shadow-xs' : 'bg-gray-100 hover:bg-gray-200 text-gray-700 border border-gray-200'
+              }`}
+          >
+            Yes
+          </button>
+          <button
+            type="button"
+            role="radio"
+            aria-checked={!value}
+            onClick={() => onChange(false)}
+            className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition cursor-pointer ${!value ? 'bg-rose-600 text-white shadow-xs' : 'bg-gray-100 hover:bg-gray-200 text-gray-700 border border-gray-200'
+              }`}
+          >
+            No
+          </button>
+        </div>
       </div>
-      <div role="radiogroup" aria-label={title} className="flex items-center gap-1.5 shrink-0 self-end sm:self-center">
-        <button
-          type="button"
-          role="radio"
-          aria-checked={value}
-          onClick={() => onChange(true)}
-          className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition cursor-pointer ${
-            value ? 'bg-[#344257] text-white shadow-xs' : 'bg-gray-100 hover:bg-gray-200 text-gray-700 border border-gray-200'
-          }`}
-        >
-          Yes
-        </button>
-        <button
-          type="button"
-          role="radio"
-          aria-checked={!value}
-          onClick={() => onChange(false)}
-          className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition cursor-pointer ${
-            !value ? 'bg-rose-600 text-white shadow-xs' : 'bg-gray-100 hover:bg-gray-200 text-gray-700 border border-gray-200'
-          }`}
-        >
-          No
-        </button>
-      </div>
-    </div>
       {!value && noNote && (
         <p className="text-[11px] font-bold text-amber-800 bg-amber-100/70 px-2.5 py-1.5 rounded-lg">⚠️ {noNote}</p>
       )}
