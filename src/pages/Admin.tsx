@@ -76,6 +76,7 @@ import AdminWholesalers from './admin/AdminWholesalers';
 import AdminContactQueries from './admin/AdminContactQueries';
 import AdminErrors from './admin/AdminErrors';
 import AdminCompetitorRadar from './admin/AdminCompetitorRadar';
+import AdminQuoteRules from './admin/AdminQuoteRules';
 import AdminPincodes from './admin/AdminPincodes';
 import {
   buildConfigFromSeedItem,
@@ -137,7 +138,7 @@ export default function Admin() {
       if (subtab === 'competitor-radar' || subtab === 'competitor_radar') return 'competitor_radar';
       const validTabs: AdminTab[] = [
         'overview', 'catalog', 'sells', 'orders', 'repairs', 'repair_pricing',
-        'wholesalers', 'agents', 'products', 'pricing', 'competitor_radar',
+        'wholesalers', 'agents', 'products', 'pricing', 'competitor_radar', 'rules',
         'banners', 'stores', 'parts', 'users', 'reviews', 'contact', 'pincodes', 'errors'
       ];
       if (validTabs.includes(subtab as AdminTab)) return subtab as AdminTab;
@@ -263,7 +264,7 @@ export default function Admin() {
       else {
         const validTabs: AdminTab[] = [
           'overview', 'catalog', 'sells', 'orders', 'repairs', 'repair_pricing',
-          'wholesalers', 'agents', 'products', 'pricing', 'competitor_radar',
+          'wholesalers', 'agents', 'products', 'pricing', 'competitor_radar', 'rules',
           'banners', 'stores', 'parts', 'users', 'reviews', 'contact', 'pincodes', 'errors',
         ];
         if (validTabs.includes(subtab as AdminTab)) t = subtab as AdminTab;
@@ -1931,6 +1932,7 @@ export default function Admin() {
                 {tab === 'catalog' && 'Master Smartphone Catalog'}
                 {tab === 'pricing' && 'Sell Mobile — Price & Image Manager'}
                 {tab === 'competitor_radar' && 'Competitor Price Radar — Live Market Intelligence'}
+                {tab === 'rules' && 'Quote Rules — Age Factor & Screen Amounts'}
                 {tab === 'orders' && 'Store Customer Orders'}
                 {tab === 'products' && 'Refurbished Store Inventory'}
                 {tab === 'wholesalers' && 'B2B Wholesalers & Vendor Khata'}
@@ -2342,6 +2344,10 @@ export default function Admin() {
 
           {tab === 'competitor_radar' && (
             <AdminCompetitorRadar />
+          )}
+
+          {tab === 'rules' && (
+            <AdminQuoteRules />
           )}
 
           {tab === 'repair_pricing' && (

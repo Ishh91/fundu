@@ -16,6 +16,7 @@ import { WholesaleOrder } from './WholesaleOrder.js';
 import { VendorLedger } from './VendorLedger.js';
 import { RepairPriceCatalog } from './RepairPriceCatalog.js';
 import { ServiceablePincode } from './ServiceablePincode.js';
+import { PricingRules } from './PricingRules.js';
 
 export {
   User,
@@ -36,6 +37,7 @@ export {
   WholesaleOrder,
   VendorLedger,
   ServiceablePincode,
+  PricingRules,
 };
 
 export const TABLE_MODELS = {

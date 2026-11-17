@@ -52,6 +52,7 @@ const TAB_PERMISSION: Record<AdminTab, AdminPermission | null | 'admin_only'> = 
   catalog: 'sell_pricing',
   pricing: 'sell_pricing',
   competitor_radar: 'sell_pricing',
+  rules: 'sell_pricing',
   repair_pricing: 'repair_pricing',
   agents: 'fleet',
   pincodes: 'fleet',

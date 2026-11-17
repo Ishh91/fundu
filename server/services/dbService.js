@@ -14,6 +14,7 @@ import { autoAssignDeliveryAgent } from './dispatchService.js';
 import { triggerEventNotification } from './notificationService.js';
 import { quotePhone } from '../../fundu_phone_quote.mjs';
 import { createPhoneQuote } from './quoteService.js';
+import { pricingRules } from './pricingRules.js';
 import { isTrustedOrderWriter, secureCustomerOrder } from './orderSecurity.js';
 import { changesOwnAccess } from './roleGuard.js';
 import { adjustProductStock, releaseOrderStock, reserveOrderStock } from './stockService.js';
@@ -287,7 +288,7 @@ export const preparePayload = (table, action, input, auth) => {
           under_warranty: payload.under_warranty === true,
         };
 
-        const serverQuote = quotePhone(quoteInputs);
+        const serverQuote = quotePhone(quoteInputs, { pricingRules: pricingRules.peek().rules });
         if (serverQuote.status === 'quoted') {
           payload.estimated_price = serverQuote.offerAmount;
           payload.valuation_price = serverQuote.offerAmount;

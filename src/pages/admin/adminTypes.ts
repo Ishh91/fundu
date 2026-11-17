@@ -38,6 +38,7 @@ export type AdminTab =
   | 'products'
   | 'pricing'
   | 'competitor_radar'
+  | 'rules'
   | 'banners'
   | 'parts'
   | 'users'

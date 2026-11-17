@@ -13,6 +13,8 @@
  * Sellers are shown the resulting conditional estimate and understandable condition-related reasons.
  */
 
+import { DEFAULT_PRICING_RULES, resolvePricingRules, normalizeModelKey } from './fundu_pricing_rules.mjs';
+
 // Fundu-controlled Policy Configuration
 export const FUNDU_POLICY = {
   version: 'fundu-policy-2025.1',
@@ -2501,7 +2503,7 @@ export const SCREEN_STATE_SHARE_MID = {
  * on a Galaxy S23, S23 Ultra, S24 and S24+ (touch not working 44-50%), where it takes 36-38% (touch 58-62%) on an iPhone or a
  * OnePlus; the shape of the table is the same on both. The cheap and the premium tables were measured on Samsung phones already.
  */
-export const MID_SAMSUNG_FACTOR = 0.8;
+export const MID_SAMSUNG_FACTOR = DEFAULT_PRICING_RULES.samsungMidFactor;
 
 const isSamsungBrand = (brand) => String(brand ?? '').toLowerCase().includes('samsung');
 
@@ -2517,12 +2519,12 @@ export const MID_PRICE_SCREEN_FULL_FROM = 25000;
  * 60,000. Undefined for a value that is not a graded state ("scratched" and the like from an older client), which is priced on
  * the old look markdown.
  */
-export function screenStateShare(screenCondition, price, brand) {
+export function screenStateShare(screenCondition, price, brand, rules) {
   if (price < LOW_PRICE_BELOW) return SCREEN_STATE_SHARE_LOW[screenCondition];
   if (price >= HIGH_PRICE_SCREEN_FROM) return SCREEN_STATE_SHARE_HIGH[screenCondition];
   const table = SCREEN_STATE_SHARE_MID[screenCondition];
   if (table === undefined) return undefined;
-  const mid = isSamsungBrand(brand) ? table * MID_SAMSUNG_FACTOR : table;
+  const mid = isSamsungBrand(brand) ? table * (rules?.samsungMidFactor ?? MID_SAMSUNG_FACTOR) : table;
   if (price >= MID_PRICE_SCREEN_FULL_FROM) return mid;
   const low = SCREEN_STATE_SHARE_LOW[screenCondition];
   const t = (price - LOW_PRICE_BELOW) / (MID_PRICE_SCREEN_FULL_FROM - LOW_PRICE_BELOW);
@@ -2553,76 +2555,20 @@ export function legacyScreenCondition(screenCondition) {
 // multiple of it. The multiples are identical on an iPhone 14, an iPhone 17 Pro Max, a Galaxy S26 Ultra and a Galaxy S25 Ultra:
 // 1-2 scratches 0.212, 2+ scratches 0.494, chipped 0.706, a few spots or a slight tint 0.336, faded edges 0.84, several spots 1.008,
 // a strong tint 0.924, heavy spots or visible lines 1.4286, and touch not working 1.68 (the iPhone 14 and 15 are a little under that).
-export const SCREEN_STATE_MULTIPLE = {
-  scratches_minor: 0.212,
-  scratches_major: 0.494,
-  spots_few: 0.336,
-  tint_minor: 0.336,
-  faded_edges: 0.84,
-  spots_many: 1.008,
-  chipped: 0.706,
-  cracked: 1,
-  tint_major: 0.924,
-  spots_heavy: 1.4286,
-  lines_visible: 1.4286,
-  touch_fault: 1.68,
-  display_lines: 1.4286,
-};
+// The amounts are the defaults of the editable rules (fundu_pricing_rules.mjs); a quote uses the rules it is given.
+export const SCREEN_STATE_MULTIPLE = DEFAULT_PRICING_RULES.appleScreen.multiples;
 
 // What Cashify took off a cracked screen, in rupees, on each iPhone it buys (phone older than 11 months). It is the model's own
 // amount and not a share of the price: the iPhone 14 Plus, 14 Pro and 13 Pro Max are all 11,900 on very different prices, and a
 // Galaxy S25 Ultra and an iPhone 15 are both 12,500. Measured on Cashify in November 2026.
-export const APPLE_SCREEN_CRACK_RUPEES = {
-  iphone8plus: 2140,
-  iphonex: 3810,
-  iphonexr: 3570,
-  iphonexsmax: 4880,
-  iphonese2022: 5000,
-  iphonese3rdgen2022: 5000,
-  iphone11: 3220,
-  iphone11pro: 5950,
-  iphone11promax: 7140,
-  iphone12: 4880,
-  iphone12mini: 4290,
-  iphone12pro: 8030,
-  iphone12promax: 8630,
-  iphone13: 7440,
-  iphone13mini: 6780,
-  iphone13pro: 9820,
-  iphone13promax: 11900,
-  iphone14: 10710,
-  iphone14plus: 11900,
-  iphone14pro: 11900,
-  iphone14promax: 12790,
-  iphone15: 12500,
-  iphone15plus: 13090,
-  iphone15pro: 13680,
-  iphone15promax: 13680,
-  iphone16: 15470,
-  iphone16e: 13680,
-  iphone16plus: 16060,
-  iphone16pro: 16660,
-  iphone16promax: 16660,
-  iphone17: 17850,
-  iphone17pro: 17850,
-  iphone17promax: 17850,
-};
+export const APPLE_SCREEN_CRACK_RUPEES = DEFAULT_PRICING_RULES.appleScreen.crackRupees;
 
 // Touch not working is 1.68 times the crack on every iPhone but three, where Cashify takes a little less.
-export const APPLE_TOUCH_RUPEES = {
-  iphone14: 16920,
-  iphone14plus: 17980,
-  iphone15: 19350,
-};
-
-const appleModelKey = (model) => String(model ?? '').toLowerCase().replace(/^apple\s+/, '').replace(/[^a-z0-9]/g, '');
-
-/** The most that a screen state can take off, as a share of the aged value, whatever the table says. */
-const SCREEN_CUT_MAX_SHARE = 0.75;
+export const APPLE_TOUCH_RUPEES = DEFAULT_PRICING_RULES.appleScreen.touchRupees;
 
 /** What Cashify takes off a cracked screen on this iPhone, or undefined for a model that was not measured. */
-export function appleCrackRupees(model) {
-  return APPLE_SCREEN_CRACK_RUPEES[appleModelKey(model)];
+export function appleCrackRupees(model, rules) {
+  return (rules?.appleScreen?.crackRupees ?? APPLE_SCREEN_CRACK_RUPEES)[normalizeModelKey(model)];
 }
 
 // What the customer is told for each screen state.
@@ -2810,7 +2756,7 @@ export function getModelReleaseYear(brand = '', model = '') {
  * 13 27,290 and 20 more); a newer phone gets 0.73-0.79 there, because the bill and warranty answers are "no". The admin price is
  * about 2.5% above that market price, so 0.955 of it lands where Cashify does (within 6% on 20 models, 2% on average).
  */
-export const OLD_PHONE_AGE_FACTOR = 0.955;
+export const OLD_PHONE_AGE_FACTOR = DEFAULT_PRICING_RULES.age.oldIphone;
 
 /**
  * The newest iPhones are offered less than 0.80 once they are older than 11 months: Cashify offers the iPhone 17, 17 Pro and 17 Pro
@@ -2818,38 +2764,32 @@ export const OLD_PHONE_AGE_FACTOR = 0.955;
  * 0.751, where the 15 and 16 families are 0.765-0.794 and stay on 0.80. Measured on Cashify in November 2026; a model that was not
  * measured (17e, Air, 18) stays on 0.80.
  */
-export const RECENT_IPHONE_AGE_FACTOR = {
-  iphone17: 0.735,
-  iphone17pro: 0.735,
-  iphone17promax: 0.735,
-  iphone16e: 0.75,
-};
-
-const iphoneKey = (model) => String(model ?? '').toLowerCase().replace(/^apple\s+/, '').replace(/[^a-z0-9]/g, '');
+export const RECENT_IPHONE_AGE_FACTOR = DEFAULT_PRICING_RULES.age.recentIphone;
 
 const OLD_IPHONE_KEY = /^iphone(?:[678](?:s|plus|splus)?|x(?:r|s|smax)?|se(?:2020|2022|3rdgen2022)?|1[1-4](?:mini|plus|pro|promax)?)$/;
 
 /** An iPhone launched in 2022 or before: the iPhone 14 family, the SE and everything older. */
 export function isIphoneLaunchedBefore2023(brand, model) {
-  const key = String(model ?? '').toLowerCase().replace(/^apple\s+/, '').replace(/[^a-z0-9]/g, '');
+  const key = normalizeModelKey(model);
   if (!key.startsWith('iphone')) return false;
   if (!/apple/i.test(String(brand ?? '')) && !/iphone/i.test(String(model ?? ''))) return false;
   return OLD_IPHONE_KEY.test(key);
 }
 
-export function calculatePhoneAgingFactor(brand = '', model = '', underWarranty = false, agePeriod = '') {
-  const recentFactor = /apple/i.test(String(brand ?? '')) || /iphone/i.test(String(model ?? '')) ? RECENT_IPHONE_AGE_FACTOR[iphoneKey(model)] : undefined;
-  const outOfWarranty = isIphoneLaunchedBefore2023(brand, model) ? OLD_PHONE_AGE_FACTOR : (recentFactor ?? 0.80);
+export function calculatePhoneAgingFactor(brand = '', model = '', underWarranty = false, agePeriod = '', rules) {
+  const age = rules?.age ?? DEFAULT_PRICING_RULES.age;
+  const recentFactor = /apple/i.test(String(brand ?? '')) || /iphone/i.test(String(model ?? '')) ? age.recentIphone[normalizeModelKey(model)] : undefined;
+  const outOfWarranty = isIphoneLaunchedBefore2023(brand, model) ? age.oldIphone : (recentFactor ?? age.over11);
   const normAge = String(agePeriod || '').toLowerCase().trim();
 
   // Universal Aging brackets for ALL brands & models (Apple & Android):
   // 1. 0 to 3 months: 0% deduction (100% full base price)
   if (normAge === '0_to_3_months' || normAge === 'below_3_months') {
-    return 1.00;
+    return age.under3;
   }
   // 2. 3 to 6 months: 6.55% deduction (0.9345 multiplier)
   if (normAge === '3_to_6_months') {
-    return 0.9345;
+    return age.m3to6;
   }
   // 3. 6 to 11 months: 9.22% deduction (0.9078 multiplier)
   if (
@@ -2858,7 +2798,7 @@ export function calculatePhoneAgingFactor(brand = '', model = '', underWarranty 
     normAge === '3_to_10_months' ||
     normAge === '10_to_12_months'
   ) {
-    return 0.9078;
+    return age.m6to11;
   }
   // 4. Out of warranty (>11 months): 20% deduction (0.80 multiplier)
   if (
@@ -2872,7 +2812,7 @@ export function calculatePhoneAgingFactor(brand = '', model = '', underWarranty 
 
   // If no explicit agePeriod was passed, fall back to warranty status:
   if (underWarranty) {
-    return 1.00;
+    return age.under3;
   }
   return outOfWarranty;
 }
@@ -3038,6 +2978,8 @@ const CALLS_NOT_WORKING_SALVAGE_APPLE = 1200;
 const CALLS_NOT_WORKING_SALVAGE_OTHER = 800;
 
 export function quotePhone(input = {}, options = {}) {
+  // The editable quote rules (age factors, iPhone screen amounts, Samsung factor). Anything missing or out of bounds is the default.
+  const rules = resolvePricingRules(options.pricingRules);
   const {
     brand,
     model,
@@ -3213,7 +3155,7 @@ export function quotePhone(input = {}, options = {}) {
   const requiresScreenRepair = legacyScreen === 'cracked' || legacyScreen === 'touch_fault' || legacyScreen === 'display_lines';
   const isLowEnd = expectedResaleProceeds < LOW_PRICE_BELOW;
   // Every price tier is priced on its own graded share; only an old two-level value ("scratched") has none.
-  const tierScreenShare = screenStateShare(screen_condition, expectedResaleProceeds, brand);
+  const tierScreenShare = screenStateShare(screen_condition, expectedResaleProceeds, brand, rules);
   // A graded state that is not a repair (scratches, a few spots, a tint, faded edges) is deducted as its share, in place of the
   // flat "good look" markdown, and the body and battery still count.
   const gradedMinorScreen = tierScreenShare !== undefined && !requiresScreenRepair;
@@ -3224,12 +3166,13 @@ export function quotePhone(input = {}, options = {}) {
   // Body damage is a share of the aged value, like the screen. A screen that is already deducted covers it (see above).
   const isAppleDevice = String(brand).toLowerCase() === 'apple' || String(model).toLowerCase().includes('iphone');
   // An iPhone that was measured takes Cashify's own amount for its model; every other phone takes its tier's share of the aged value.
-  const appleCrack = isAppleDevice ? appleCrackRupees(model) : undefined;
+  const appleCrack = isAppleDevice ? appleCrackRupees(model, rules) : undefined;
   const screenCutFor = (state, agedForShare) => {
-    const multiple = SCREEN_STATE_MULTIPLE[state];
+    const multiple = rules.appleScreen.multiples[state];
     if (appleCrack !== undefined && multiple !== undefined) {
-      const rupees = state === 'touch_fault' && APPLE_TOUCH_RUPEES[appleModelKey(model)] !== undefined ? APPLE_TOUCH_RUPEES[appleModelKey(model)] : Math.round(appleCrack * multiple);
-      return Math.min(rupees, Math.round(agedForShare * SCREEN_CUT_MAX_SHARE));
+      const touchRupees = rules.appleScreen.touchRupees[normalizeModelKey(model)];
+      const rupees = state === 'touch_fault' && touchRupees !== undefined ? touchRupees : Math.round(appleCrack * multiple);
+      return Math.min(rupees, Math.round(agedForShare * rules.appleScreen.maxShare));
     }
     return tierScreenShare === undefined ? undefined : Math.round(agedForShare * tierScreenShare);
   };
@@ -3241,7 +3184,7 @@ export function quotePhone(input = {}, options = {}) {
 
   // 5. Compute Deductions & Adjustments according to Business Formula
   const agePeriod = input.age_period || input.agePeriod || '';
-  const agingFactor = calculatePhoneAgingFactor(brand, model, under_warranty, agePeriod);
+  const agingFactor = calculatePhoneAgingFactor(brand, model, under_warranty, agePeriod, rules);
   const normAge = String(agePeriod || '').toLowerCase().trim();
   const is0to3Months = isApple && (normAge === '0_to_3_months' || normAge === 'below_3_months');
 
@@ -3370,7 +3313,7 @@ export function quotePhone(input = {}, options = {}) {
     if (repairPart) return Math.round((repairCosts?.[repairPart.part] || 0) * repairPart.factor);
     if (defectKey === 'screen_not_original') {
       if (appleCrack !== undefined) return Math.round(appleCrack * SCREEN_NOT_ORIGINAL_SCREEN_SHARE);
-      const crackedShare = screenStateShare('cracked', expectedResaleProceeds, brand) ?? screenRepairRate(brand, model, expectedResaleProceeds);
+      const crackedShare = screenStateShare('cracked', expectedResaleProceeds, brand, rules) ?? screenRepairRate(brand, model, expectedResaleProceeds);
       return Math.round(agedValue * crackedShare * SCREEN_NOT_ORIGINAL_SCREEN_SHARE);
     }
     if (!isApple && FAULT_FLAT_ANDROID[defectKey] !== undefined) return FAULT_FLAT_ANDROID[defectKey];
@@ -3567,6 +3510,9 @@ export function quotePhone(input = {}, options = {}) {
       targetMarginPercent: `${(FUNDU_POLICY.targetContributionMarginRate * 100).toFixed(1)}%`,
     },
     policyVersion: FUNDU_POLICY.version,
+    pricingRulesVersion: options.pricingRulesVersion ?? null,
+    // The rules this quote was priced with, so an inspection later is priced on the same ones even if they have been changed since.
+    pricingRules: rules,
     createdAt: sellerFacingQuote.createdAt,
   };
 
@@ -3587,7 +3533,7 @@ export function quotePhone(input = {}, options = {}) {
  * @param {Object} inspectedAnswers
  * @returns {Object} Mismatch analysis & revised offer
  */
-export function recalculateInspectedQuote(initialAudit, inspectedAnswers = {}) {
+export function recalculateInspectedQuote(initialAudit, inspectedAnswers = {}, options = {}) {
   if (!initialAudit || !initialAudit.variant) {
     throw new Error('Initial quote audit record is required for inspection recalculation.');
   }
@@ -3614,7 +3560,11 @@ export function recalculateInspectedQuote(initialAudit, inspectedAnswers = {}) {
   };
 
   // Run official quote engine on inspected condition
-  const revisedResult = quotePhone(evaluatedInputs);
+  const revisedResult = quotePhone(evaluatedInputs, {
+    pricingRules: initialAudit.pricingRules,
+    pricingRulesVersion: initialAudit.pricingRulesVersion,
+    ...options,
+  });
 
   // Detect material mismatches
   const mismatches = [];
