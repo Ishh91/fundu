@@ -41,7 +41,7 @@ describe('the three price tiers', () => {
     assert.equal(HIGH_PRICE_SCREEN_FROM, 60000);
     assert.ok(screenStateShare('cracked', 19999) === SCREEN_STATE_SHARE_LOW.cracked);
     assert.ok(screenStateShare('cracked', 20000) === SCREEN_STATE_SHARE_MID.cracked);
-    assert.ok(screenStateShare('cracked', 59999) < SCREEN_STATE_SHARE_MID.cracked);
+    assert.ok(screenStateShare('cracked', 59999) === SCREEN_STATE_SHARE_MID.cracked);
     assert.ok(screenStateShare('cracked', 60000) === SCREEN_STATE_SHARE_HIGH.cracked);
   });
 });
@@ -113,11 +113,9 @@ describe('screen states on a premium phone (measured against Cashify on S26 Ultr
 });
 
 describe('a phone just under the premium line', () => {
-  it('is priced almost exactly like one just over it, with no jump at 60,000', () => {
-    const justUnder = share(S26_ULTRA, 59999, { screen_condition: 'cracked' });
-    const atLine = share(S26_ULTRA, 60000, { screen_condition: 'cracked' });
-    assert.ok(Math.abs(justUnder - atLine) < 0.005, `${(justUnder * 100).toFixed(1)}% vs ${(atLine * 100).toFixed(1)}%`);
-    assert.ok(within(atLine, 0.21, 0.25));
+  it('is priced on the middle table up to 59,999 and on the premium table from 60,000', () => {
+    assert.ok(within(share(S26_ULTRA, 59999, { screen_condition: 'cracked' }), 0.34, 0.38));
+    assert.ok(within(share(S26_ULTRA, 60000, { screen_condition: 'cracked' }), 0.21, 0.25));
   });
 
   it('is priced on the middle table well under it', () => {

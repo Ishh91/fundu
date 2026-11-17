@@ -308,10 +308,9 @@ describe('Fundu Phone Buyback Quote Engine', () => {
       assert.ok(share > 0.34 && share < 0.38, `took ${(share * 100).toFixed(1)}%`);
     });
 
-    test('takes less as a phone nears the premium line, as Cashify does', () => {
+    test('takes the same third off up to the top of the middle tier: an iPhone 16 (Cashify 37.5%)', () => {
       const share = shareLost('iPhone 16', '128 GB');
-      assert.ok(share > 0.24 && share < 0.31, `took ${(share * 100).toFixed(1)}%`);
-      assert.ok(share < shareLost('iPhone 13', '128 GB'));
+      assert.ok(share > 0.34 && share < 0.38, `took ${(share * 100).toFixed(1)}%`);
     });
 
     test('scales with the phone age, so an old phone does not lose a larger share', () => {

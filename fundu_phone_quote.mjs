@@ -2472,10 +2472,12 @@ export const SCREEN_STATE_SHARE_HIGH = {
   display_lines: 0.31,
 };
 
-// The same states on a phone from LOW_PRICE_BELOW up to MID_PRICE_SCREEN_DECLINE_FROM. Measured against Cashify on an iPhone 13
-// (Cashify 23,500), an iPhone 14 (27,290), an iPhone 14 Pro (41,230), an iPhone 15 (33,220), a OnePlus 12 (25,880) and a Galaxy
-// S23 (22,150). Cashify takes a crack of 7,440 to 12,500 rupees there, which is about 36% of the aged value, the share a crack
-// always took here. Every other state is a fixed multiple of a crack on Cashify, the same on all four phones it was measured on:
+// The same states on a phone from LOW_PRICE_BELOW up to HIGH_PRICE_SCREEN_FROM. Measured against Cashify on an iPhone 13
+// (Cashify 23,500), an iPhone 14 (27,290), an iPhone 14 Pro (41,230), an iPhone 15 (33,220), an iPhone 15 Plus (36,020), an
+// iPhone 16 (41,280), a OnePlus 12 (25,880), a OnePlus 13 (30,420) and a Galaxy S23 (22,150). Cashify takes a crack of 7,440 to
+// 15,470 rupees there, which is about 36% of the aged value, the share a crack always took here. It holds up to the iPhone 16
+// (market price 52,800: a crack is 29% of it); the iPhone 15 Pro (61,440) and 16 Pro (73,240) are at about 22%, so Cashify steps
+// down at about the same price as the premium table here, and the two tables meet with a step, not a slope. Every other state is a fixed multiple of a crack on Cashify, the same on all four phones it was measured on:
 // 1-2 scratches 0.21, 2+ scratches 0.495, chipped 0.71, a few spots or a slight tint 0.34, faded edges 0.84, several spots 1.0,
 // a strong tint 0.93, heavy spots or visible lines 1.43, touch not working 1.65. So the table is those multiples of 0.36.
 export const SCREEN_STATE_SHARE_MID = {
@@ -2495,24 +2497,14 @@ export const SCREEN_STATE_SHARE_MID = {
 };
 
 /**
- * From this catalog price up Cashify's flat amount (about 12,500 for a crack) is a smaller share of the phone, so the middle
- * table eases down to the premium table, reaching it at HIGH_PRICE_SCREEN_FROM.
- */
-export const MID_PRICE_SCREEN_DECLINE_FROM = 45000;
-
-/**
  * The graded share of the aged value that a screen state takes off a phone priced `price`: its own table under 20,000, the
- * middle table from there (easing down to the premium one from 45,000), and the premium table from 60,000. Undefined for a
- * value that is not a graded state ("scratched" and the like from an older client), which is priced on the old look markdown.
+ * middle table from there up to 60,000, and the premium table from 60,000. Undefined for a value that is not a graded state
+ * ("scratched" and the like from an older client), which is priced on the old look markdown.
  */
 export function screenStateShare(screenCondition, price) {
   if (price < LOW_PRICE_BELOW) return SCREEN_STATE_SHARE_LOW[screenCondition];
   if (price >= HIGH_PRICE_SCREEN_FROM) return SCREEN_STATE_SHARE_HIGH[screenCondition];
-  const mid = SCREEN_STATE_SHARE_MID[screenCondition];
-  if (mid === undefined || price <= MID_PRICE_SCREEN_DECLINE_FROM) return mid;
-  const high = SCREEN_STATE_SHARE_HIGH[screenCondition];
-  const t = (price - MID_PRICE_SCREEN_DECLINE_FROM) / (HIGH_PRICE_SCREEN_FROM - MID_PRICE_SCREEN_DECLINE_FROM);
-  return mid + (high - mid) * t;
+  return SCREEN_STATE_SHARE_MID[screenCondition];
 }
 
 // The two-level values every other part of the quote understands: they decide whether the screen needs a repair, and they
