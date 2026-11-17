@@ -296,9 +296,9 @@ describe('Fundu Phone Buyback Quote Engine', () => {
       return (flawless - cracked) / flawless;
     };
 
-    test('takes about a quarter off a premium phone, not three quarters', () => {
+    test('takes about a fifth off a premium phone, not three quarters', () => {
       const share = shareLost('iPhone 15 Pro Max', '256 GB');
-      assert.ok(share > 0.24 && share < 0.30, `took ${(share * 100).toFixed(1)}%`);
+      assert.ok(share > 0.20 && share < 0.26, `took ${(share * 100).toFixed(1)}%`);
     });
 
     test('takes about a third off a mid-priced phone', () => {

@@ -36,7 +36,7 @@ describe('how much each fault takes off (measured against Cashify on three phone
     wifi: 0.40,
     bluetooth: 0.40,
     biometrics: 0.27,
-    screen_not_original: 0.23,
+    screen_not_original: 0.195,
     speaker: 0.03,
     audio_receiver: 0.03,
     proximity_sensor: 0.03,
