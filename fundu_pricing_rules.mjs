@@ -11,6 +11,17 @@ export function normalizeModelKey(model) {
   return String(model ?? '').toLowerCase().replace(/^apple\s+/, '').replace(/[^a-z0-9]/g, '');
 }
 
+/**
+ * The key of an Android phone: its brand and model, so a OnePlus "9" and an iQOO "9" are two keys, without a trailing "5G" (the
+ * admin lists some models both ways) and without repeating the brand when the model already starts with it:
+ * ("Samsung", "Galaxy S23 FE 5G") -> "samsunggalaxys23fe", ("OnePlus", "10T") -> "oneplus10t".
+ */
+export function androidModelKey(brand, model) {
+  const brandKey = String(brand ?? '').toLowerCase().replace(/[^a-z0-9]/g, '');
+  const modelKey = String(model ?? '').toLowerCase().replace(/[^a-z0-9]/g, '').replace(/5g$/, '');
+  return modelKey.startsWith(brandKey) ? modelKey : `${brandKey}${modelKey}`;
+}
+
 const deepFreeze = (value) => {
   if (value && typeof value === 'object' && !Object.isFrozen(value)) {
     Object.freeze(value);
@@ -28,6 +39,60 @@ export const DEFAULT_PRICING_RULES = deepFreeze({
     over11: 0.80,
     // An iPhone launched in 2022 or before, once older than 11 months (Cashify 0.96 of its market price).
     oldIphone: 0.955,
+    // An Android phone older than 11 months, as a share of its admin price. Cashify offers a recent Android 0.69-0.79 of its market
+    // price (Samsung 0.77, the rest about 0.72); the admin price is close to that market price for Samsung and 0-20% above it for
+    // the rest, so after the Rs 800 off for no box, charger or bill, 0.77 and 0.73 land within a few percent of Cashify.
+    samsungOver11: 0.77,
+    androidOver11: 0.73,
+    // An Android phone Cashify treats as old (it pays about 0.95 of the market price, the way it does for an iPhone 14), by brand
+    // and model key (androidModelKey). Only phones measured on Cashify, and their older siblings, are here.
+    oldAndroid: {
+      samsunggalaxys23fe: 0.975,
+      samsunggalaxys21: 0.955,
+      samsunggalaxya52: 0.925,
+      oneplus10t: 0.955,
+      oneplusnord2: 0.94,
+      realmegtneo2: 0.84,
+      samsunggalaxys20: 0.95,
+      samsunggalaxys20fe: 0.95,
+      samsunggalaxys20ultra: 0.95,
+      samsunggalaxys21fe: 0.95,
+      samsunggalaxys21ultra: 0.95,
+      samsunggalaxys22: 0.95,
+      samsunggalaxys22ultra: 0.95,
+      samsunggalaxys23: 0.95,
+      samsunggalaxys23ultra: 0.95,
+      samsunggalaxynote20: 0.95,
+      samsunggalaxynote20ultra: 0.95,
+      samsunggalaxya52s: 0.95,
+      samsunggalaxya53: 0.95,
+      samsunggalaxya72: 0.95,
+      samsunggalaxyzflip3: 0.95,
+      samsunggalaxyzflip4: 0.95,
+      samsunggalaxyzfold3: 0.95,
+      samsunggalaxyzfold4: 0.95,
+      oneplus8: 0.95,
+      oneplus8t: 0.95,
+      oneplus8pro: 0.95,
+      oneplus9: 0.95,
+      oneplus9r: 0.95,
+      oneplus9rt: 0.95,
+      oneplus9pro: 0.95,
+      oneplus10pro: 0.95,
+      oneplus10r: 0.95,
+      oneplusnord2t: 0.95,
+      oneplusnordce: 0.95,
+      oneplusnordce2: 0.95,
+      iqoo7: 0.95,
+      iqoo7legend: 0.95,
+      iqoo9: 0.95,
+      iqoo9se: 0.95,
+      iqoo9t: 0.95,
+      iqoo9pro: 0.95,
+      iqoo11: 0.95,
+      realmegt2: 0.95,
+      realmegt2pro: 0.95,
+    },
     // The newest iPhones, once older than 11 months, each by model key.
     recentIphone: {
       iphone17: 0.735,
@@ -159,6 +224,9 @@ export const RULE_LIMITS = deepFreeze({
     m6to11: [0.5, 1.0],
     over11: [0.5, 1.0],
     oldIphone: [0.5, 1.0],
+    samsungOver11: [0.5, 1.0],
+    androidOver11: [0.5, 1.0],
+    oldAndroid: [0.5, 1.0],
     recentIphone: [0.5, 1.0],
   },
   crackRupees: [500, 50000],
@@ -290,7 +358,7 @@ export function validatePricingRules(rules) {
   if (!isPlainObject(age)) {
     errors.push('The age factors are missing.');
   } else {
-    for (const field of ['under3', 'm3to6', 'm6to11', 'over11', 'oldIphone']) {
+    for (const field of ['under3', 'm3to6', 'm6to11', 'over11', 'oldIphone', 'samsungOver11', 'androidOver11']) {
       if (!inRange(age[field], RULE_LIMITS.age[field])) errors.push(`Age factor ${field} must be between ${RULE_LIMITS.age[field][0]} and ${RULE_LIMITS.age[field][1]}.`);
     }
     if (isNumber(age.under3) && isNumber(age.m3to6) && isNumber(age.m6to11) && isNumber(age.over11)
@@ -298,6 +366,7 @@ export function validatePricingRules(rules) {
       errors.push('A phone must not be offered more as it gets older: the age factors must fall from under 3 months to over 11 months.');
     }
     checkMap(age.recentIphone, 'Newest iPhones', RULE_LIMITS.age.recentIphone, errors);
+    checkMap(age.oldAndroid, 'Old Android phones', RULE_LIMITS.age.oldAndroid, errors);
   }
 
   const screen = rules.appleScreen;
@@ -384,6 +453,10 @@ export function resolvePricingRules(saved) {
     age: {
       ...(ordered ? brackets : { under3: d.age.under3, m3to6: d.age.m3to6, m6to11: d.age.m6to11, over11: d.age.over11 }),
       oldIphone: pickNumber(age.oldIphone, RULE_LIMITS.age.oldIphone, d.age.oldIphone),
+      samsungOver11: pickNumber(age.samsungOver11, RULE_LIMITS.age.samsungOver11, d.age.samsungOver11),
+      androidOver11: pickNumber(age.androidOver11, RULE_LIMITS.age.androidOver11, d.age.androidOver11),
+      // Rules saved before this list existed have none, so they get the built-in one; a saved list (even an emptied one) is kept.
+      oldAndroid: cleanMap(age.oldAndroid, RULE_LIMITS.age.oldAndroid) ?? { ...d.age.oldAndroid },
       recentIphone: cleanMap(age.recentIphone, RULE_LIMITS.age.recentIphone) ?? { ...d.age.recentIphone },
     },
     appleScreen: {
@@ -444,6 +517,7 @@ export function diffPricingRules(before, after) {
   return out;
 }
 
+const ANDROID_AGE_FIELDS = ['samsungOver11', 'androidOver11', 'oldAndroid'];
 const TOP_LEVEL_GROUPS = ['age', 'appleScreen', 'samsungMidFactor', 'screenTables', 'bodyDamage', 'faults', 'accessories'];
 
 /**
@@ -455,6 +529,13 @@ export function fillMissingGroups(rules) {
   const filled = { ...rules };
   for (const group of TOP_LEVEL_GROUPS) {
     if (filled[group] === undefined) filled[group] = cloneRules(DEFAULT_PRICING_RULES[group]);
+  }
+  // The age group grew after it was first saved: a set without the Android factors gets them from the defaults.
+  if (isPlainObject(filled.age)) {
+    filled.age = { ...filled.age };
+    for (const field of ANDROID_AGE_FIELDS) {
+      if (filled.age[field] === undefined) filled.age[field] = cloneRules(DEFAULT_PRICING_RULES.age[field]);
+    }
   }
   return filled;
 }

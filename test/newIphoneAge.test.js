@@ -49,8 +49,8 @@ describe('the age factor of the newest iPhones, measured against Cashify (phone 
     for (const model of ['iPhone 17e', 'iPhone Air', 'iPhone 17 Air', 'iPhone 18 Pro', 'iPhone 18 Pro Max']) {
       assert.equal(calculatePhoneAgingFactor('Apple', model, false, OLD), 0.80, model);
     }
-    assert.equal(calculatePhoneAgingFactor('Samsung', 'Galaxy S26 Ultra', false, OLD), 0.80);
-    assert.equal(calculatePhoneAgingFactor('OnePlus', '17', false, OLD), 0.80);
+    assert.equal(calculatePhoneAgingFactor('Samsung', 'Galaxy S26 Ultra', false, OLD), 0.77, 'a Samsung has its own factor');
+    assert.equal(calculatePhoneAgingFactor('OnePlus', '17', false, OLD), 0.73, 'any other Android has the Android factor');
   });
 });
 

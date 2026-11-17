@@ -13,7 +13,7 @@
  * Sellers are shown the resulting conditional estimate and understandable condition-related reasons.
  */
 
-import { DEFAULT_PRICING_RULES, resolvePricingRules, normalizeModelKey } from './fundu_pricing_rules.mjs';
+import { DEFAULT_PRICING_RULES, resolvePricingRules, normalizeModelKey, androidModelKey } from './fundu_pricing_rules.mjs';
 
 // Fundu-controlled Policy Configuration
 export const FUNDU_POLICY = {
@@ -2739,10 +2739,24 @@ export function isIphoneLaunchedBefore2023(brand, model) {
   return OLD_IPHONE_KEY.test(key);
 }
 
+/**
+ * What an Android phone older than 11 months is offered, as a share of its admin price. Measured on Cashify in November 2026 on 26
+ * phones: a recent Android gets 0.69-0.79 of Cashify's market price (Samsung 0.77, the rest about 0.72), against the 0.80 every
+ * Android had, so Fundu paid 4-33% more than Cashify on all 20 recent phones. A phone Cashify treats as old (Galaxy S21, S23 FE, A52,
+ * OnePlus 10T, Nord 2) gets about 0.95 of its market price, so those are listed one by one in `oldAndroid` and keep a higher factor.
+ * Any other phone that is not an iPhone is taken as recent.
+ */
+function androidOutOfWarrantyFactor(brand, model, age) {
+  if (/apple/i.test(String(brand ?? '')) || /iphone/i.test(String(model ?? ''))) return age.over11;
+  const own = age.oldAndroid?.[androidModelKey(brand, model)];
+  if (own !== undefined) return own;
+  return /samsung/i.test(String(brand ?? '')) || /galaxy/i.test(String(model ?? '')) ? age.samsungOver11 : age.androidOver11;
+}
+
 export function calculatePhoneAgingFactor(brand = '', model = '', underWarranty = false, agePeriod = '', rules) {
   const age = rules?.age ?? DEFAULT_PRICING_RULES.age;
   const recentFactor = /apple/i.test(String(brand ?? '')) || /iphone/i.test(String(model ?? '')) ? age.recentIphone[normalizeModelKey(model)] : undefined;
-  const outOfWarranty = isIphoneLaunchedBefore2023(brand, model) ? age.oldIphone : (recentFactor ?? age.over11);
+  const outOfWarranty = isIphoneLaunchedBefore2023(brand, model) ? age.oldIphone : (recentFactor ?? androidOutOfWarrantyFactor(brand, model, age));
   const normAge = String(agePeriod || '').toLowerCase().trim();
 
   // Universal Aging brackets for ALL brands & models (Apple & Android):

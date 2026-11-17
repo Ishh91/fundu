@@ -225,7 +225,7 @@ describe('the engine with no rules, and with the default rules', () => {
 
 describe('the engine with edited rules', () => {
   it('uses the age factors: a lower over-11-months factor lowers every phone older than 11 months, and nothing younger', () => {
-    const rules = withRules((r) => { r.age.over11 = 0.7; });
+    const rules = withRules((r) => { r.age.androidOver11 = 0.7; });
     assert.ok(offer('OnePlus', '12', 34480, '256 GB', rules) < offer('OnePlus', '12', 34480, '256 GB', undefined));
     near(offer('OnePlus', '12', 34480, '256 GB', rules), 34480 * 0.7 - NO_ACCESSORIES, 60, 'OnePlus 12 at 0.70');
     assert.equal(offer('OnePlus', '12', 34480, '256 GB', rules, { age_period: '0_to_3_months' }), offer('OnePlus', '12', 34480, '256 GB', undefined, { age_period: '0_to_3_months' }));
@@ -245,10 +245,10 @@ describe('the engine with edited rules', () => {
   });
 
   it('reads the age factor through calculatePhoneAgingFactor too', () => {
-    const rules = resolvePricingRules(withRules((r) => { r.age.over11 = 0.7; r.age.oldIphone = 0.9; }));
+    const rules = resolvePricingRules(withRules((r) => { r.age.samsungOver11 = 0.7; r.age.oldIphone = 0.9; }));
     assert.equal(calculatePhoneAgingFactor('Samsung', 'Galaxy S24', false, 'above_11_months', rules), 0.7);
     assert.equal(calculatePhoneAgingFactor('Apple', 'iPhone 13', false, 'above_11_months', rules), 0.9);
-    assert.equal(calculatePhoneAgingFactor('Samsung', 'Galaxy S24', false, 'above_11_months'), 0.8);
+    assert.equal(calculatePhoneAgingFactor('Samsung', 'Galaxy S24', false, 'above_11_months'), 0.77);
   });
 
   it('uses the crack amount of a model, and a new model that was not measured', () => {
