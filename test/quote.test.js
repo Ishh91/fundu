@@ -9,6 +9,7 @@ import {
   FUNDU_POLICY,
   RESALE_BENCHMARKS,
   appleCrackRupees,
+  OLD_PHONE_AGE_FACTOR,
 } from '../fundu_phone_quote.mjs';
 import { createPhoneQuote, getQuoteAudit } from '../server/services/quoteService.js';
 
@@ -169,8 +170,8 @@ describe('Fundu Phone Buyback Quote Engine', () => {
       const fresh = quotePhone({ ...bestCase, screen_condition: 'cracked', age_period: '0_to_3_months' }).offerAmount;
       const old = quotePhone({ ...bestCase, screen_condition: 'cracked', age_period: 'above_11_months' }).offerAmount;
       assert.ok(old < fresh, `${old} should be below ${fresh}`);
-      // Ageing takes 20% off the price; Cashify's amount for the screen is flat, so it stays the same on an old phone.
-      assertWithinRounding(fresh - old, bestOffer * 0.2, 'ageing on a cracked screen');
+      // Ageing takes 4.5% off an old iPhone (20% off any other phone); Cashify's amount for the screen is flat, so it stays the same.
+      assertWithinRounding(fresh - old, bestOffer * (1 - OLD_PHONE_AGE_FACTOR), 'ageing on a cracked screen');
     });
 
     test('still takes off other hardware faults and missing accessories', () => {

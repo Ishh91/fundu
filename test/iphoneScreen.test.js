@@ -87,6 +87,12 @@ describe('the other screen states are a fixed multiple of the crack, as on Cashi
     }
   });
 
+  it('takes what Cashify takes off touch not working on the three iPhones where it is under 1.68 times the crack', () => {
+    near(cut('iPhone 14', 29270, { screen_condition: 'touch_fault' }, '128 GB'), 16920, 150, 'iPhone 14');
+    near(cut('iPhone 14 Plus', 30890, { screen_condition: 'touch_fault' }, '128 GB'), 17980, 150, 'iPhone 14 Plus');
+    near(cut('iPhone 15', 43600, { screen_condition: 'touch_fault' }, '128 GB'), 19350, 150, 'iPhone 15');
+  });
+
   it('takes what Cashify takes off an iPhone 14 for every state', () => {
     const cashify = {
       scratches_minor: 2270, scratches_major: 5290, chipped: 7560, spots_few: 3600, spots_many: 10800, faded_edges: 9000,
