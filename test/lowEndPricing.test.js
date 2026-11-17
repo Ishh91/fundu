@@ -108,10 +108,10 @@ describe('screen states on a low-end phone (measured against Cashify on a Galaxy
 const within = (v, lo, hi) => v >= lo && v <= hi;
 
 describe('screen states on a phone that is not low-end', () => {
-  it('are priced on the middle table, not the cheap one (see middlePricing.test.js)', () => {
-    for (const state of ['cracked', 'touch_fault', 'spots_many']) {
-      assert.ok(share(MID, { screen_condition: state }) > share(CHEAP, { screen_condition: state }), state);
-    }
+  it('are priced on the middle table, not the cheap one (see middlePricing.test.js): a Samsung crack takes 0.8 of 36%', () => {
+    assert.ok(within(share(MID, { screen_condition: 'cracked' }), 0.26, 0.32));
+    assert.ok(within(share(MID, { screen_condition: 'touch_fault' }), 0.44, 0.51));
+    assert.ok(share(MID, { screen_condition: 'touch_fault' }) > share(MID, { screen_condition: 'cracked' }) + 0.15);
   });
 
   it('maps each state to the old two-level value, which decides whether the screen needs a repair', () => {
