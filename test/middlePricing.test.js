@@ -5,7 +5,6 @@ import {
   screenStateShare,
   LOW_PRICE_BELOW,
   HIGH_PRICE_SCREEN_FROM,
-  MID_PRICE_SCREEN_DECLINE_FROM,
   SCREEN_STATE_SHARE_LOW,
   SCREEN_STATE_SHARE_MID,
   SCREEN_STATE_SHARE_HIGH,
@@ -29,10 +28,9 @@ const share = (phone, price, extra) => (offerAt(phone, price) - offerAt(phone, p
 const within = (v, lo, hi) => v >= lo && v <= hi;
 
 describe('where the middle tier sits', () => {
-  it('runs from 20,000 up to 60,000 and starts to ease off at 45,000', () => {
+  it('runs from 20,000 up to 60,000', () => {
     assert.equal(LOW_PRICE_BELOW, 20000);
     assert.equal(HIGH_PRICE_SCREEN_FROM, 60000);
-    assert.equal(MID_PRICE_SCREEN_DECLINE_FROM, 45000);
   });
 
   it('has a graded share for every state, as the cheap and the premium tiers do', () => {
@@ -40,10 +38,12 @@ describe('where the middle tier sits', () => {
     assert.deepEqual(Object.keys(SCREEN_STATE_SHARE_MID).sort(), Object.keys(SCREEN_STATE_SHARE_HIGH).sort());
   });
 
-  it('prices every known state from the middle table at 20,000 and up to 45,000', () => {
+  it('prices every known state from the middle table at 20,000 and right up to 59,999', () => {
     for (const state of Object.keys(SCREEN_STATE_SHARE_MID)) {
       assert.equal(screenStateShare(state, 20000), SCREEN_STATE_SHARE_MID[state], state);
       assert.equal(screenStateShare(state, 45000), SCREEN_STATE_SHARE_MID[state], state);
+      assert.equal(screenStateShare(state, 59999), SCREEN_STATE_SHARE_MID[state], state);
+      assert.equal(screenStateShare(state, 60000), SCREEN_STATE_SHARE_HIGH[state], state);
     }
   });
 
@@ -52,26 +52,23 @@ describe('where the middle tier sits', () => {
   });
 });
 
-describe('between 45,000 and 60,000 the share eases down to the premium share', () => {
-  it('lands exactly on the premium share at 60,000, with no jump', () => {
-    for (const state of Object.keys(SCREEN_STATE_SHARE_HIGH)) {
-      assert.ok(Math.abs(screenStateShare(state, 59999.99) - SCREEN_STATE_SHARE_HIGH[state]) < 0.0001, state);
-      assert.equal(screenStateShare(state, 60000), SCREEN_STATE_SHARE_HIGH[state]);
-    }
+describe('a phone near the top of the middle tier (measured on an iPhone 15 Plus, 16, 15 Pro and 16 Pro)', () => {
+  const IPHONE_16 = { brand: 'Apple', model: 'iPhone 16', storage: '128 GB' };
+
+  it('still takes about a third off for a crack, as Cashify takes 15,470 off the iPhone 16 (37.5% of its offer)', () => {
+    assert.ok(within(share(IPHONE_16, 55000, { screen_condition: 'cracked' }), 0.34, 0.38));
+    assert.ok(within(share(IPHONE_16, 46360, { screen_condition: 'cracked' }), 0.34, 0.38));
   });
 
-  it('falls steadily as the price goes up, never rising', () => {
-    let last = Infinity;
-    for (let price = 40000; price <= 60000; price += 1000) {
-      const s = screenStateShare('cracked', price);
-      assert.ok(s <= last + 1e-9, `cracked at ${price} is ${s}`);
-      last = s;
-    }
+  it('takes about 63% off for a touch that does not work and 53% for lines, as Cashify does on the iPhone 16', () => {
+    assert.ok(within(share(IPHONE_16, 55000, { screen_condition: 'touch_fault' }), 0.58, 0.64));
+    assert.ok(within(share(IPHONE_16, 55000, { screen_condition: 'lines_visible' }), 0.5, 0.56));
   });
 
-  it('is halfway between the two tables at 52,500', () => {
-    const mid = (SCREEN_STATE_SHARE_MID.touch_fault + SCREEN_STATE_SHARE_HIGH.touch_fault) / 2;
-    assert.ok(Math.abs(screenStateShare('touch_fault', 52500) - mid) < 0.0001);
+  it('steps down to the premium share at 60,000, where Cashify steps down too (iPhone 16 29% to iPhone 15 Pro 22% of the market price)', () => {
+    const under = share(IPHONE_16, 59999, { screen_condition: 'cracked' });
+    const over = share(IPHONE_16, 60000, { screen_condition: 'cracked' });
+    assert.ok(under > over + 0.09, `${(under * 100).toFixed(1)}% then ${(over * 100).toFixed(1)}%`);
   });
 });
 
