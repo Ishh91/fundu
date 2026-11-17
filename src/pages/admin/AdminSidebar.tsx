@@ -19,6 +19,7 @@ import {
   Building2,
   LogOut,
   Radar,
+  SlidersHorizontal,
   Plus,
   AlertTriangle,
 } from 'lucide-react';
@@ -136,6 +137,14 @@ export default function AdminSidebar({
           badge: 'Live Market',
           badgeColor: 'bg-indigo-600 text-white animate-pulse',
           path: '/admin/competitor-radar',
+        },
+        {
+          id: 'rules' as AdminTab,
+          label: 'Quote Rules',
+          icon: SlidersHorizontal,
+          badge: 'Age & Screen',
+          badgeColor: 'bg-emerald-600 text-white',
+          path: '/admin/rules',
         },
         {
           id: 'repair_pricing' as AdminTab,

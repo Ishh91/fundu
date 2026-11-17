@@ -19,6 +19,7 @@ export {
   FUNDU_SERVICE_LOCALITIES,
 };
 import { getEffectivePrice } from './priceSync';
+import { getPricingRulesForQuote } from './pricingRulesClient';
 import { MASTER_MODEL_CATALOG } from '../data/masterModelCatalog';
 import { ALL_INDIAN_PHONES_CATALOG } from '../data/indianPhonesCatalog';
 
@@ -148,13 +149,17 @@ export function getInstantFunduQuote(params: FunduQuoteRequest): FunduQuoteRespo
     }
   }
 
+  // The same published rules the server prices with (the defaults until they load).
+  const pricingRules = getPricingRulesForQuote();
   const quoteOptions = dbPrice > 0 ? {
     catalogPrice: dbPrice,
     catalogStorage,
     isDirectBuybackPrice: true,
     ram: params.ram || '',
+    pricingRules,
   } : {
     ram: params.ram || '',
+    pricingRules,
   };
   const localResult = quotePhone(params, quoteOptions);
   const { _internalAudit, ...publicQuote } = localResult as any;

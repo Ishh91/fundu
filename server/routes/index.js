@@ -9,11 +9,13 @@ import pincodeRoutes from './pincodeRoutes.js';
 import errorRoutes from './errorRoutes.js';
 import paymentRoutes from './paymentRoutes.js';
 import seoRoutes from './seoRoutes.js';
+import pricingRulesRoutes from './pricingRulesRoutes.js';
 
 const router = Router();
 
 router.use('/seo', seoRoutes);
 router.use('/errors', errorRoutes);
+router.use('/pricing-rules', pricingRulesRoutes);
 router.use('/phones', phoneRoutes);
 router.use('/pincodes', pincodeRoutes);
 router.use('/serviceable-pincodes', pincodeRoutes);

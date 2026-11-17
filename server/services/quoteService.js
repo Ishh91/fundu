@@ -15,6 +15,7 @@ import {
 import { SellRequest } from '../models/SellRequest.js';
 import { SellPriceConfig } from '../models/SellPriceConfig.js';
 import { MasterPhone } from '../models/MasterPhone.js';
+import { pricingRules } from './pricingRules.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -100,7 +101,11 @@ export async function createPhoneQuote(input, options = {}) {
     cleanModel = cleanModel.slice(bNorm.length).trim();
   }
 
-  const enrichedOptions = { ...options, ram: input.ram || options.ram || '' };
+  // The saved quote rules (age factors, iPhone screen amounts, ...). A caller may hand its own, which is how the admin previews a draft.
+  const rulesInUse = options.pricingRules
+    ? { rules: options.pricingRules, version: options.pricingRulesVersion ?? null }
+    : await pricingRules.getPublished();
+  const enrichedOptions = { ...options, ram: input.ram || options.ram || '', pricingRules: rulesInUse.rules, pricingRulesVersion: rulesInUse.version };
   const enrichedInput = { ...input, model: cleanModel, ram: input.ram || options.ram || '' };
 
   // 1. Authoritative Admin Pricing: Check MongoDB SellPriceConfig first (if connected)
@@ -188,7 +193,8 @@ export async function createPhoneQuote(input, options = {}) {
 
   const result = quotePhone(enrichedInput, enrichedOptions);
 
-  if (result.status === 'quoted' && result._internalAudit) {
+  // A preview from the admin prices a quote without leaving a record of it.
+  if (!options.preview && result.status === 'quoted' && result._internalAudit) {
     quoteAuditRegistry.set(result.quoteId, result._internalAudit);
   }
 
@@ -257,7 +263,9 @@ export async function processInspectionMismatch(quoteIdOrAudit, inspectedAnswers
     throw new Error('Initial quote audit record could not be located.');
   }
 
-  const mismatchResult = recalculateInspectedQuote(audit, inspectedAnswers);
+  // Priced on the rules the quote was made with; a quote rebuilt from the database has none stored, so it uses the live ones.
+  const rulesForInspection = audit.pricingRules || (await pricingRules.getPublished()).rules;
+  const mismatchResult = recalculateInspectedQuote(audit, inspectedAnswers, { pricingRules: rulesForInspection });
 
   // If linked to a SellRequest and mismatch exists, update the database record
   if (sellRequestId && mismatchResult.hasMismatch) {

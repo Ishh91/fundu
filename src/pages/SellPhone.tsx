@@ -11,6 +11,7 @@ import {
 } from 'lucide-react';
 import { computeDetailedResaleValuation, fetchSellPriceConfig, getStoredPriceConfig, fetchPhoneModels, searchMobileApiDev, getDynamicFallbackConfig, type SellPriceConfig } from '../lib/mobileApi';
 import { getFunduPhoneQuote, getInstantFunduQuote, calculatePhoneAgingFactor, screenRepairRate, type FunduQuoteResponse } from '../lib/quoteEngine';
+import { getPricingRulesForQuote } from '../lib/pricingRulesClient';
 import { needsScreenRepair, isScreenRepairState } from '../lib/sellCondition';
 import { db } from '../lib/db';
 import { useAuth } from '../context/AuthContext';
@@ -834,7 +835,7 @@ export default function SellPhone() {
       let val = baseModelPrice;
 
       // 1. Natural Aging & Generation factor (waived if under active warranty or new purchase)
-      const aging = calculatePhoneAgingFactor(form.brand, form.model, !!form.underWarranty, form.agePeriod);
+      const aging = calculatePhoneAgingFactor(form.brand, form.model, !!form.underWarranty, form.agePeriod, getPricingRulesForQuote());
       val *= aging;
 
       const isApple = (form.brand?.toLowerCase() === 'apple') || (brandSlug?.toLowerCase() === 'apple') || (form.model?.toLowerCase().includes('iphone'));
