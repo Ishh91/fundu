@@ -5,6 +5,7 @@ import {
   DEFAULT_PRICING_RULES,
   RULE_LIMITS,
   SCREEN_STATE_KEYS,
+  androidModelKey,
   diffPricingRules,
   normalizeModelKey,
   resolvePricingRules,
@@ -20,6 +21,9 @@ export interface PricingRules {
     m6to11: number;
     over11: number;
     oldIphone: number;
+    samsungOver11: number;
+    androidOver11: number;
+    oldAndroid: Record<string, number>;
     recentIphone: Record<string, number>;
   };
   appleScreen: {
@@ -28,6 +32,7 @@ export interface PricingRules {
     multiples: Record<string, number>;
     maxShare: number;
   };
+  androidScreen: { crackRupees: Record<string, number> };
   samsungMidFactor: number;
   screenTables: Record<'low' | 'mid' | 'high', Record<string, number>>;
   bodyDamage: Record<'standard' | 'premiumApple' | 'premiumAndroid', Record<string, number>>;
@@ -89,6 +94,7 @@ export const validateRules = (rules: unknown) => validatePricingRules(rules) as 
 export const diffRules = (before: unknown, after: unknown): RuleChange[] => diffPricingRules(before, after);
 export const copyRules = (rules: PricingRules): PricingRules => cloneRules(rules);
 export const modelKey = (model: string): string => normalizeModelKey(model);
+export const phoneKey = (brand: string, model: string): string => androidModelKey(brand, model);
 export const ruleLimits = RULE_LIMITS as {
   age: Record<string, [number, number]>;
   crackRupees: [number, number];
@@ -114,7 +120,7 @@ export const AGE_FIELDS: { key: 'under3' | 'm3to6' | 'm6to11' | 'over11'; label:
   { key: 'under3', label: 'Below 3 months', hint: 'Almost new: usually 1.00, the full admin price.' },
   { key: 'm3to6', label: '3 to 6 months', hint: 'Cashify takes about 0.85 of the market price here.' },
   { key: 'm6to11', label: '6 to 11 months', hint: 'Cashify takes about 0.84 of the market price here.' },
-  { key: 'over11', label: 'Older than 11 months', hint: 'Every phone that has no rule of its own below.' },
+  { key: 'over11', label: 'Older than 11 months', hint: 'An iPhone 15 or 16 or newer that has no rule of its own below. Android phones have their own factors.' },
 ];
 
 export const SCREEN_STATE_LABELS: Record<string, string> = {
@@ -230,6 +236,8 @@ const AGE_LABELS: Record<string, string> = {
   m6to11: 'Age factor: 6 to 11 months',
   over11: 'Age factor: older than 11 months',
   oldIphone: 'Age factor: old iPhone (older than 11 months)',
+  samsungOver11: 'Age factor: Samsung older than 11 months',
+  androidOver11: 'Age factor: other Android older than 11 months',
 };
 
 /** A change in plain words for the "what did I change" list, e.g. "iPhone crack amount: iPhone 14". */
@@ -249,6 +257,8 @@ export function describeRuleChange(path: string): string {
   if (path === 'accessories.charger') return 'Missing original charger (₹)';
   if (path === 'accessories.bill') return 'Missing valid bill (₹)';
   if (path === 'accessories.lowEndMaxShare') return 'Most missing accessories take off a phone under ₹20,000';
+  if (parts[0] === 'androidScreen' && parts[1] === 'crackRupees' && parts[2]) return `Android crack amount: ${parts[2]}`;
+  if (parts[0] === 'age' && parts[1] === 'oldAndroid' && parts[2]) return `Old Android age factor: ${parts[2]}`;
   if (parts[0] === 'age' && parts[1] === 'recentIphone' && parts[2]) return `Newest iPhone age factor: ${modelLabelFromKey(parts[2])}`;
   if (parts[0] === 'age') return AGE_LABELS[parts[1]] ?? path;
   if (parts[0] === 'appleScreen' && parts[1] === 'crackRupees' && parts[2]) return `iPhone crack amount: ${modelLabelFromKey(parts[2])}`;

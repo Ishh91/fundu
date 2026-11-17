@@ -43,7 +43,8 @@ const withRules = (change) => {
 // Phones in each price range, none of them an iPhone with its own screen amount.
 const CHEAP = ['Samsung', 'Galaxy A14 5G', 6240, '128 GB'];
 const MID = ['OnePlus', '12', 34480, '256 GB'];
-const PREMIUM_ANDROID = ['Samsung', 'Galaxy S26 Ultra', 82920, '256 GB'];
+const ANDROID_AGE = 0.73; // what a recent Android older than 11 months is offered, as a share of its admin price
+const PREMIUM_ANDROID = ['Samsung', 'Galaxy S26 Plus', 82920, '256 GB']; // no crack amount saved: priced on the premium tier
 const PREMIUM_APPLE = ['Apple', 'iPhone 18 Pro', 123000, '256 GB']; // no crack amount saved: priced by its range
 
 describe('the Phase 2 defaults', () => {
@@ -180,7 +181,7 @@ describe('the engine with edited screen tables', () => {
     const base = cut(...MID, undefined, { screen_condition: 'cracked' });
     const edited = cut(...MID, rules, { screen_condition: 'cracked' });
     assert.ok(edited > base * 1.3, `${edited} against ${base}`);
-    near(edited / (offer(...MID, rules) - 800 * 0), 0.5 * 0.8 * 34480 / offer(...MID, rules) * 1, 0.02, 'about half of the aged value');
+    near(edited / (offer(...MID, rules) - 800 * 0), 0.5 * ANDROID_AGE * 34480 / offer(...MID, rules) * 1, 0.02, 'about half of the aged value');
     assert.ok(cut(...MID, rules, { screen_condition: 'touch_fault' }) > edited);
   });
 
@@ -227,7 +228,7 @@ describe('the engine with edited body damage', () => {
 
   it('takes the edited share of the aged value', () => {
     const rules = withRules((r) => { r.bodyDamage.standard.minor_scratches = 0.1; r.bodyDamage.standard.dents_bent = 0.1; r.bodyDamage.standard.panel_broken = 0.1; });
-    near(cut(...MID, rules, { body_condition: 'minor_scratches' }), 34480 * 0.8 * 0.1, 80, 'ten percent');
+    near(cut(...MID, rules, { body_condition: 'minor_scratches' }), 34480 * ANDROID_AGE * 0.1, 80, 'ten percent');
   });
 
   it('ignores an unknown body condition', () => {
@@ -238,7 +239,7 @@ describe('the engine with edited body damage', () => {
 describe('the engine with edited faults', () => {
   it('uses the share for WiFi, and the share of Face ID on an iPhone', () => {
     const rules = withRules((r) => { r.faults.share.wifi = 0.2; r.faults.share.biometrics = 0.1; });
-    near(cut(...MID, rules, { defects: ['wifi'] }), 34480 * 0.8 * 0.2, 80, 'wifi');
+    near(cut(...MID, rules, { defects: ['wifi'] }), 34480 * ANDROID_AGE * 0.2, 80, 'wifi');
     near(cut('Apple', 'iPhone 14', 29270, '128 GB', rules, { defects: ['biometrics'] }), 29270 * 0.955 * 0.1, 80, 'face id');
     assert.ok(cut(...MID, rules, { defects: ['wifi'] }) < cut(...MID, undefined, { defects: ['wifi'] }));
   });

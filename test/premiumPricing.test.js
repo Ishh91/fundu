@@ -12,7 +12,8 @@ import {
 } from '../fundu_phone_quote.mjs';
 
 const FULL = ['Original Box', 'Original Charger', 'Valid Bill'];
-const S26_ULTRA = { brand: 'Samsung', model: 'Galaxy S26 Ultra', storage: '256 GB' };
+// A premium Samsung with no crack amount of its own, so it is priced on the premium tier (the Galaxy S26 Ultra itself has one: newAndroidScreen.test.js).
+const S26_ULTRA = { brand: 'Samsung', model: 'Galaxy S26 Plus', storage: '256 GB' };
 const IPHONE = { brand: 'Apple', model: 'iPhone 17 Pro Max', storage: '256 GB' };
 const ONEPLUS = { brand: 'OnePlus', model: '12', storage: '256 GB' };
 const A14 = { brand: 'Samsung', model: 'Galaxy A14 5G', storage: '128 GB' };

@@ -16,6 +16,7 @@ declare module '*/fundu_pricing_rules.mjs' {
   export const RULE_LIMITS: any;
   export const SCREEN_STATE_KEYS: readonly string[];
   export const normalizeModelKey: (model: unknown) => string;
+  export const androidModelKey: (brand: unknown, model: unknown) => string;
   export const resolvePricingRules: (saved: unknown) => any;
   export const validatePricingRules: (rules: unknown) => { valid: boolean; errors: string[] };
   export const diffPricingRules: (before: unknown, after: unknown) => { path: string; from: number | undefined; to: number | undefined }[];

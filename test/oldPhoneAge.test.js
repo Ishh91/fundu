@@ -38,7 +38,7 @@ describe('which iPhones are old enough that Cashify has no bill or warranty cut 
 });
 
 describe('the age factor of an old iPhone', () => {
-  it('is 0.955 for a phone older than 11 months, where every other phone is 0.80', () => {
+  it('is 0.955 for a phone older than 11 months, where an iPhone 15 or 16 is 0.80', () => {
     assert.equal(OLD_PHONE_AGE_FACTOR, 0.955);
     assert.equal(calculatePhoneAgingFactor('Apple', 'iPhone 14 Plus', false, OLD), 0.955);
     assert.equal(calculatePhoneAgingFactor('Apple', 'iPhone 11', false, 'out_of_warranty'), 0.955);
@@ -46,8 +46,8 @@ describe('the age factor of an old iPhone', () => {
     assert.equal(calculatePhoneAgingFactor('Apple', 'iPhone 15', false, OLD), 0.80);
     assert.equal(calculatePhoneAgingFactor('Apple', 'iPhone 17 Pro Max', false, OLD), 0.735);
     assert.equal(calculatePhoneAgingFactor('Apple', 'iPhone 16 Pro Max', false, OLD), 0.80);
-    assert.equal(calculatePhoneAgingFactor('Samsung', 'Galaxy S23', false, OLD), 0.80);
-    assert.equal(calculatePhoneAgingFactor('OnePlus', '11', false, OLD), 0.80);
+    assert.equal(calculatePhoneAgingFactor('Samsung', 'Galaxy S23', false, OLD), 0.95, 'an old Android Cashify treats as old (see newAndroidAge.test.js)');
+    assert.equal(calculatePhoneAgingFactor('OnePlus', '11', false, OLD), 0.73, 'a recent Android');
   });
 
   it('does not change a younger phone: 0-3 months is 1.00, 3-6 months 0.9345, 6-11 months 0.9078', () => {
@@ -99,12 +99,12 @@ describe('what does not move', () => {
     near(offerAt('iPhone 16 Pro Max', 88300, '512 GB').offerAmount, 69850, 100, 'iPhone 16 Pro Max');
   });
 
-  it('prices an old Android phone as before: a Galaxy S23 on 23,970 is 18,400 without accessories', () => {
+  it('prices an old Android phone at 0.95: a Galaxy S23 on 23,970 is 21,970 without accessories', () => {
     const offer = quotePhone(
       { brand: 'Samsung', model: 'Galaxy S23', storage: '128 GB', powers_on: true, activation_lock_cleared: true, ownership_verified: true, liquid_damage: false, cosmetic_condition: 'flawless', screen_condition: 'flawless', body_condition: 'flawless', battery_health: 'healthy', defects: [], accessories: [], age_period: OLD },
       { catalogPrice: 23970, catalogStorage: '128 GB' },
     ).offerAmount;
-    near(offer, 18400, 100, 'Galaxy S23');
+    near(offer, 21970, 100, 'Galaxy S23');
   });
 
   it('never offers an old iPhone more than the admin price', () => {

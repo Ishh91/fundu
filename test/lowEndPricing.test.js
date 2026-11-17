@@ -208,8 +208,8 @@ describe('from the sell form answers to the quote, on a low-end phone', () => {
 });
 
 describe('a low-end quote end to end (Galaxy A14 5G, Cashify base 6,240)', () => {
-  it('quotes a flawless old phone at about the aged price', () => {
-    assert.ok(within(offerAt(CHEAP), 4900, 5100), String(offerAt(CHEAP)));
+  it('quotes a flawless old phone at about the aged price (a Samsung older than 11 months is offered 0.77 of it)', () => {
+    assert.ok(within(offerAt(CHEAP), 4750, 4850), String(offerAt(CHEAP)));
   });
 
   it('still sends a phone that cannot make calls to inspection', () => {
