@@ -2534,6 +2534,17 @@ export function appleCrackRupees(model, rules) {
   return (rules?.appleScreen?.crackRupees ?? APPLE_SCREEN_CRACK_RUPEES)[normalizeModelKey(model)];
 }
 
+// What Cashify took off a cracked screen on each Android phone it was measured on. Like an iPhone's it is the model's own amount, so
+// a measured Android is priced the way a measured iPhone is, and any other Android is priced on its tier's share of the price.
+export const ANDROID_SCREEN_CRACK_RUPEES = DEFAULT_PRICING_RULES.androidScreen.crackRupees;
+
+/** What Cashify takes off a cracked screen on this Android phone, or undefined for a model that was not measured. */
+export function androidCrackRupees(brand, model, rules) {
+  const map = rules?.androidScreen?.crackRupees ?? ANDROID_SCREEN_CRACK_RUPEES;
+  const key = androidModelKey(brand, model);
+  return Object.hasOwn(map, key) ? map[key] : undefined;
+}
+
 // What the customer is told for each screen state.
 const SCREEN_STATE_LABEL = {
   scratches_minor: 'a few light scratches',
@@ -3106,12 +3117,13 @@ export function quotePhone(input = {}, options = {}) {
   const screenIsDeducted = requiresScreenRepair;
   // Body damage is a share of the aged value, like the screen. A screen that is already deducted covers it (see above).
   const isAppleDevice = String(brand).toLowerCase() === 'apple' || String(model).toLowerCase().includes('iphone');
-  // An iPhone that was measured takes Cashify's own amount for its model; every other phone takes its tier's share of the aged value.
-  const appleCrack = isAppleDevice ? appleCrackRupees(model, rules) : undefined;
+  // A phone that was measured (an iPhone, or an Android in androidScreen) takes Cashify's own amount for its model; every other phone
+  // takes its tier's share of the aged value.
+  const appleCrack = isAppleDevice ? appleCrackRupees(model, rules) : androidCrackRupees(brand, model, rules);
   const screenCutFor = (state, agedForShare) => {
     const multiple = rules.appleScreen.multiples[state];
     if (appleCrack !== undefined && multiple !== undefined) {
-      const touchRupees = rules.appleScreen.touchRupees[normalizeModelKey(model)];
+      const touchRupees = isAppleDevice ? rules.appleScreen.touchRupees[normalizeModelKey(model)] : undefined;
       const rupees = state === 'touch_fault' && touchRupees !== undefined ? touchRupees : Math.round(appleCrack * multiple);
       return Math.min(rupees, Math.round(agedForShare * rules.appleScreen.maxShare));
     }

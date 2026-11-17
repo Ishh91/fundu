@@ -1,9 +1,10 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useState } from 'react';
 import { Plus, Trash2 } from 'lucide-react';
 import NumberField from './NumberField';
 import PhonePicker from './PhonePicker';
-import { AGE_FIELDS, fetchPreviewModels, modelKey, modelLabelFromKey, phoneKey, ruleLimits, type PricingRules } from '../../../lib/quoteRules';
-import type { BrandModels, PhoneChoice } from '../../../lib/phoneChoice';
+import { useModelNames } from './useModelNames';
+import { AGE_FIELDS, modelKey, modelLabelFromKey, phoneKey, ruleLimits, type PricingRules } from '../../../lib/quoteRules';
+import type { PhoneChoice } from '../../../lib/phoneChoice';
 
 interface AgeSectionProps {
   rules: PricingRules;
@@ -16,22 +17,9 @@ const changedClass = (changed: boolean) => (changed ? 'ring-2 ring-amber-300 bg-
 export default function AgeSection({ rules, live, onChange }: AgeSectionProps) {
   const [newModel, setNewModel] = useState('');
   const [newFactor, setNewFactor] = useState<number | undefined>(0.75);
-  const [oldChoice, setOldChoice] = useState<PhoneChoice>({ brand: '', model: '', storage: '' });
+  const [oldChoice, setOldChoice] = useState<PhoneChoice>({ brand: 'Samsung', model: '', storage: '' });
   const [oldFactor, setOldFactor] = useState<number | undefined>(0.95);
-  const [brands, setBrands] = useState<BrandModels[]>([]);
-
-  // The names of the models on the old Android list come from the sell price rows; without them the key is shown.
-  useEffect(() => {
-    let alive = true;
-    fetchPreviewModels().then((list) => { if (alive) setBrands(list); }).catch(() => undefined);
-    return () => { alive = false; };
-  }, []);
-  const androidNames = useMemo(() => {
-    const names = new Map<string, string>();
-    for (const brand of brands) for (const model of brand.models) names.set(phoneKey(brand.brand, model.model), `${brand.brand} ${model.model}`);
-    return names;
-  }, [brands]);
-  const androidLabel = (key: string) => androidNames.get(key) ?? key;
+  const androidLabel = useModelNames();
 
   const setAge = (patch: Partial<PricingRules['age']>) => onChange({ ...rules, age: { ...rules.age, ...patch } });
   const setRecent = (key: string, factor: number | undefined) => {

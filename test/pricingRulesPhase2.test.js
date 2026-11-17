@@ -44,7 +44,7 @@ const withRules = (change) => {
 const CHEAP = ['Samsung', 'Galaxy A14 5G', 6240, '128 GB'];
 const MID = ['OnePlus', '12', 34480, '256 GB'];
 const ANDROID_AGE = 0.73; // what a recent Android older than 11 months is offered, as a share of its admin price
-const PREMIUM_ANDROID = ['Samsung', 'Galaxy S26 Ultra', 82920, '256 GB'];
+const PREMIUM_ANDROID = ['Samsung', 'Galaxy S26 Plus', 82920, '256 GB']; // no crack amount saved: priced on the premium tier
 const PREMIUM_APPLE = ['Apple', 'iPhone 18 Pro', 123000, '256 GB']; // no crack amount saved: priced by its range
 
 describe('the Phase 2 defaults', () => {

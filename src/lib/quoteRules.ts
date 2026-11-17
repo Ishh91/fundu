@@ -32,6 +32,7 @@ export interface PricingRules {
     multiples: Record<string, number>;
     maxShare: number;
   };
+  androidScreen: { crackRupees: Record<string, number> };
   samsungMidFactor: number;
   screenTables: Record<'low' | 'mid' | 'high', Record<string, number>>;
   bodyDamage: Record<'standard' | 'premiumApple' | 'premiumAndroid', Record<string, number>>;
@@ -256,6 +257,7 @@ export function describeRuleChange(path: string): string {
   if (path === 'accessories.charger') return 'Missing original charger (₹)';
   if (path === 'accessories.bill') return 'Missing valid bill (₹)';
   if (path === 'accessories.lowEndMaxShare') return 'Most missing accessories take off a phone under ₹20,000';
+  if (parts[0] === 'androidScreen' && parts[1] === 'crackRupees' && parts[2]) return `Android crack amount: ${parts[2]}`;
   if (parts[0] === 'age' && parts[1] === 'oldAndroid' && parts[2]) return `Old Android age factor: ${parts[2]}`;
   if (parts[0] === 'age' && parts[1] === 'recentIphone' && parts[2]) return `Newest iPhone age factor: ${modelLabelFromKey(parts[2])}`;
   if (parts[0] === 'age') return AGE_LABELS[parts[1]] ?? path;

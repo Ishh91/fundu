@@ -150,7 +150,7 @@ describe('validating rules', () => {
     assert.match(errorsFor((r) => { r.appleScreen.crackRupees.iphone14 = 100; }).join(' '), /iphone14 must be between 500/);
     assert.match(errorsFor((r) => { r.appleScreen.crackRupees.iphone14 = 90000; }).join(' '), /iphone14/);
     assert.match(errorsFor((r) => { r.appleScreen.crackRupees['bad key'] = 5000; }).join(' '), /not a valid model key/);
-    assert.match(errorsFor((r) => { for (let i = 0; i < 300; i++) r.appleScreen.touchRupees[`model${i}x`] = 5000; }).join(' '), /at most 300/);
+    assert.match(errorsFor((r) => { for (let i = 0; i < 1500; i++) r.appleScreen.touchRupees[`model${i}x`] = 5000; }).join(' '), /at most 1500/);
   });
 
   it('rejects a screen multiple outside 0 to 3, a changed crack multiple and an unknown state', () => {
