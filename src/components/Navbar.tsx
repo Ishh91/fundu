@@ -802,8 +802,8 @@ export default function Navbar() {
         {/* Gradient: #42546C -> #B6AEBB */}
         {/* ========================================================================= */}
         <div className="fundu-top-nav-gradient border-b border-white/10 text-white">
-          <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex h-16 sm:h-18 md:h-20 items-center justify-between gap-3 md:gap-6">
+          <div className="max-w-[1400px] mx-auto px-3 min-[360px]:px-4 sm:px-6 lg:px-8">
+            <div className="flex h-16 sm:h-18 md:h-20 items-center justify-between gap-2 sm:gap-3 md:gap-6">
 
               {/* 1. Left: Brand Logo & Location Selector */}
               <div className="flex items-center gap-3 sm:gap-6 shrink-0">
@@ -863,16 +863,19 @@ export default function Navbar() {
             </div>
 
             {/* 3. Right: Shopping Cart Icon & Solid Fundu Slate Pill Login Button */}
-            <div className="flex items-center gap-3 sm:gap-4 shrink-0">
+            {/* On phones narrower than 440 px the four buttons plus the logo are wider than the screen, so they
+                shrink: the location badge shows only its pin, the gaps and the round buttons get smaller. */}
+            <div className="flex items-center gap-1.5 min-[440px]:gap-3 sm:gap-4 shrink-0">
 
               {/* Mobile Location Badge */}
               <button
                 type="button"
                 onClick={() => setLocationModalOpen(true)}
-                className="flex sm:hidden items-center gap-1 rounded-full bg-white/15 border border-white/25 px-2.5 py-1 text-xs font-bold text-white"
+                aria-label={`Location: ${selectedLocation.city}`}
+                className="flex sm:hidden h-9 w-9 min-[440px]:h-auto min-[440px]:w-auto items-center justify-center gap-1 rounded-full bg-white/15 border border-white/25 min-[440px]:px-2.5 min-[440px]:py-1 text-xs font-bold text-white"
               >
-                <MapPin className="h-3 w-3 text-[#C0C8D8]" />
-                <span className="max-w-[75px] truncate">{selectedLocation.city}</span>
+                <MapPin className="h-4 w-4 min-[440px]:h-3 min-[440px]:w-3 text-[#C0C8D8]" />
+                <span className="hidden min-[440px]:inline max-w-[75px] truncate">{selectedLocation.city}</span>
               </button>
 
               {/* Cart Button */}
@@ -880,7 +883,7 @@ export default function Navbar() {
                 <button
                   type="button"
                   onClick={() => setCartOpen(!cartOpen)}
-                  className="relative flex h-10 w-10 items-center justify-center rounded-full text-white/90 hover:text-white hover:bg-white/15 transition-colors cursor-pointer"
+                  className="relative flex h-9 w-9 min-[440px]:h-10 min-[440px]:w-10 items-center justify-center rounded-full text-white/90 hover:text-white hover:bg-white/15 transition-colors cursor-pointer"
                   aria-label="Shopping Cart"
                 >
                   <ShoppingCart className="h-5 w-5 text-white" />
@@ -1067,7 +1070,7 @@ export default function Navbar() {
               ) : (
                 <Link
                   to="/login"
-                  className="inline-flex items-center justify-center rounded-full bg-gradient-to-r from-[#344257] to-[#5D6A82] hover:brightness-110 active:scale-95 text-white font-bold text-xs sm:text-sm px-5 sm:px-6 py-2 sm:py-2.5 shadow-md border border-white/20 transition-all duration-150 cursor-pointer"
+                  className="inline-flex items-center justify-center rounded-full bg-gradient-to-r from-[#344257] to-[#5D6A82] hover:brightness-110 active:scale-95 text-white font-bold text-xs sm:text-sm px-4 min-[440px]:px-5 sm:px-6 py-2 sm:py-2.5 shadow-md border border-white/20 transition-all duration-150 cursor-pointer"
                 >
                   Login
                 </Link>
@@ -1077,7 +1080,7 @@ export default function Navbar() {
               <button
                 type="button"
                 onClick={() => setMobileOpen((prev) => !prev)}
-                className="grid h-10 w-10 place-items-center rounded-full border border-white/25 bg-white/15 text-white lg:hidden shadow-sm hover:bg-white/25 cursor-pointer"
+                className="grid h-9 w-9 min-[440px]:h-10 min-[440px]:w-10 place-items-center rounded-full border border-white/25 bg-white/15 text-white lg:hidden shadow-sm hover:bg-white/25 cursor-pointer"
                 aria-label="Toggle Navigation Menu"
               >
                 {mobileOpen ? <X className="h-5 w-5 text-white" /> : <Menu className="h-5 w-5 text-white" />}

@@ -133,11 +133,11 @@ export default function SellFlow() {
             </p>
           </div>
 
-          <div className="flex items-center gap-1.5 rounded-2xl bg-gray-100 p-1.5 self-start lg:self-auto border border-[#C0C8D8]/60">
+          <div className="flex max-w-full items-center gap-1.5 overflow-x-auto rounded-2xl bg-gray-100 p-1.5 self-start lg:self-auto border border-[#C0C8D8]/60">
             <button
               type="button"
               onClick={() => setActiveTab('sell')}
-              className={`flex items-center gap-2 rounded-xl px-4 py-2 text-xs font-bold transition ${
+              className={`flex shrink-0 items-center gap-2 rounded-xl px-3 min-[360px]:px-4 py-2 text-xs font-bold transition ${
                 activeTab === 'sell'
                   ? 'bg-gradient-to-r from-[#344257] to-[#5D6A82] text-white shadow-sm'
                   : 'text-[#47576E] hover:text-[#344257]'
@@ -149,7 +149,7 @@ export default function SellFlow() {
             <button
               type="button"
               onClick={() => setActiveTab('buy')}
-              className={`flex items-center gap-2 rounded-xl px-4 py-2 text-xs font-bold transition ${
+              className={`flex shrink-0 items-center gap-2 rounded-xl px-3 min-[360px]:px-4 py-2 text-xs font-bold transition ${
                 activeTab === 'buy'
                   ? 'bg-gradient-to-r from-[#344257] to-[#5D6A82] text-white shadow-sm'
                   : 'text-[#47576E] hover:text-[#344257]'
@@ -161,7 +161,7 @@ export default function SellFlow() {
             <button
               type="button"
               onClick={() => setActiveTab('repair')}
-              className={`flex items-center gap-2 rounded-xl px-4 py-2 text-xs font-bold transition ${
+              className={`flex shrink-0 items-center gap-2 rounded-xl px-3 min-[360px]:px-4 py-2 text-xs font-bold transition ${
                 activeTab === 'repair'
                   ? 'bg-gradient-to-r from-[#344257] to-[#5D6A82] text-white shadow-sm'
                   : 'text-[#47576E] hover:text-[#344257]'
