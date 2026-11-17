@@ -205,6 +205,47 @@ export const DEFAULT_PRICING_RULES = deepFreeze({
       samsunggalaxys26ultra: 12500,
       samsunggalaxys25ultra: 12500,
       samsunggalaxys23ultra: 9520,
+      samsunggalaxys24: 7740, // Samsung Galaxy S24
+      samsunggalaxys24ultra: 11010, // Samsung Galaxy S24 Ultra
+      samsunggalaxys25: 8920, // Samsung Galaxy S25 5G
+      samsunggalaxys25plus: 8930, // Samsung Galaxy S25+
+      samsunggalaxys22: 5950, // Samsung Galaxy S22
+      samsunggalaxys22ultra: 10110, // Samsung Galaxy S22 Ultra 5G
+      samsunggalaxya55: 4520, // Samsung Galaxy A55
+      samsunggalaxya35: 3520, // Samsung Galaxy A35
+      samsunggalaxya54: 3570, // Samsung Galaxy A54
+      samsunggalaxya34: 2980, // Samsung Galaxy A34
+      samsunggalaxyzflip6: 14280, // Samsung Galaxy Z Flip 6
+      samsunggalaxyzfold6: 24630, // Samsung Galaxy Z Fold 6
+      oneplus13: 11310, // OnePlus 13
+      oneplus13r: 7200, // OnePlus 13R
+      oneplus12: 9520, // OnePlus 12
+      oneplus12r: 5950, // OnePlus 12R
+      oneplus11: 6250, // OnePlus 11 5G
+      oneplus11r: 5050, // OnePlus 11R 5G
+      oneplusnord4: 4460, // OnePlus Nord 4 5G
+      oneplusnordce4: 3090, // OnePlus Nord CE 4 5G
+      realme13proplus: 4400, // Realme 13 Pro+ 5G
+      realme12proplus: 4160, // Realme 12 Pro+ 5G
+      realme14pro: 4280, // Realme 14 Pro 5G
+      realmenarzo70pro: 2860, // Realme Narzo 70 Pro 5G
+      xiaomiredminote13proplus: 4160, // Xiaomi Redmi Note 13 Pro+ 5G
+      xiaomiredminote13pro: 3570, // Xiaomi Redmi Note 13 Pro
+      pocof6: 3090, // Poco F6
+      pocox7pro: 3930, // Poco X7 Pro 5G
+      vivov40: 5470, // Vivo V40 5G
+      vivov30: 4880, // Vivo V30 5G
+      vivox100: 9100, // Vivo X100 5G
+      vivoy200: 2980, // Vivo Y200 5G
+      oppof27proplus: 3570, // Oppo F27 Pro+ 5G
+      iqoo12: 4940, // iQOO 12 5G
+      iqoo13: 5360, // iQOO 13 5G
+      iqooneo9pro: 4880, // iQOO Neo 9 Pro 5G
+      iqooz9: 2380, // iQOO Z9 5G
+      googlepixel8: 8330, // Google Pixel 8 5G
+      googlepixel8a: 7140, // Google Pixel 8a
+      nothingphone1: 3570, // Nothing Phone (1)
+      nothingphone2: 4410, // Nothing Phone (2)
     },
   },
   // A Samsung phone from 20,000 up to 60,000 takes this much of the middle screen table.

@@ -13,7 +13,8 @@ import {
 } from '../fundu_phone_quote.mjs';
 
 const FULL = ['Original Box', 'Original Charger', 'Valid Bill'];
-const ONEPLUS_12 = { brand: 'OnePlus', model: '12', storage: '256 GB' };
+// A OnePlus with no crack amount of its own, so it is priced on the tier tables (the OnePlus 12 itself has one: newAndroidScreen.test.js).
+const ONEPLUS_12 = { brand: 'OnePlus', model: 'Nord 3 5G', storage: '256 GB' };
 
 /** A flawless phone older than 11 months with every accessory, on the admin price `price`, the way the server prices it. */
 const offerAt = (phone, price, extra = {}) =>
