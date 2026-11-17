@@ -8,7 +8,7 @@ import {
   calculateHardwareVariantMultiplier,
   FUNDU_POLICY,
   RESALE_BENCHMARKS,
-  SCREEN_STATE_SHARE_MID,
+  appleCrackRupees,
 } from '../fundu_phone_quote.mjs';
 import { createPhoneQuote, getQuoteAudit } from '../server/services/quoteService.js';
 
@@ -107,9 +107,9 @@ describe('Fundu Phone Buyback Quote Engine', () => {
   describe('condition deductions', () => {
     const repairCosts = lookupModelRepairs('Apple', 'iPhone 13', benchmarkPrice);
 
-    test('deducts the middle-tier share of the catalog price for a cracked screen', () => {
+    test("deducts Cashify's own amount for an iPhone 13 for a cracked screen", () => {
       assert.ok(repairCosts.screen > 0);
-      assertWithinRounding(deductionFor({ screen_condition: 'cracked' }), benchmarkPrice * SCREEN_STATE_SHARE_MID.cracked, 'cracked screen');
+      assertWithinRounding(deductionFor({ screen_condition: 'cracked' }), appleCrackRupees('iPhone 13'), 'cracked screen');
     });
 
     test('deducts 2% of the catalog price for a worn iPhone battery', () => {
@@ -169,8 +169,8 @@ describe('Fundu Phone Buyback Quote Engine', () => {
       const fresh = quotePhone({ ...bestCase, screen_condition: 'cracked', age_period: '0_to_3_months' }).offerAmount;
       const old = quotePhone({ ...bestCase, screen_condition: 'cracked', age_period: 'above_11_months' }).offerAmount;
       assert.ok(old < fresh, `${old} should be below ${fresh}`);
-      // Ageing takes 20% off the whole aged value, the screen share included.
-      assertWithinRounding(old, fresh * 0.8, 'ageing on a cracked screen');
+      // Ageing takes 20% off the price; Cashify's amount for the screen is flat, so it stays the same on an old phone.
+      assertWithinRounding(fresh - old, bestOffer * 0.2, 'ageing on a cracked screen');
     });
 
     test('still takes off other hardware faults and missing accessories', () => {
@@ -236,7 +236,7 @@ describe('Fundu Phone Buyback Quote Engine', () => {
     test('never makes a better look worse because of the screen', () => {
       assertWithinRounding(
         bestOffer - offer({ screen_condition: 'cracked', cosmetic_condition: 'flawless' }),
-        benchmarkPrice * SCREEN_STATE_SHARE_MID.cracked,
+        appleCrackRupees('iPhone 13'),
         'cracked screen with a flawless look',
       );
     });
@@ -298,25 +298,25 @@ describe('Fundu Phone Buyback Quote Engine', () => {
       return (flawless - cracked) / flawless;
     };
 
-    test('takes about a fifth off a premium phone, not three quarters', () => {
-      const share = shareLost('iPhone 15 Pro Max', '256 GB');
-      assert.ok(share > 0.20 && share < 0.26, `took ${(share * 100).toFixed(1)}%`);
+    const rupeesLost = (model, storage, extra = {}) => flawlessOffer(model, storage, extra) - flawlessOffer(model, storage, { ...extra, screen_condition: 'cracked' });
+
+    test("takes Cashify's 13,680 off an iPhone 15 Pro Max, a fifth of the price or less, not three quarters", () => {
+      assertWithinRounding(rupeesLost('iPhone 15 Pro Max', '256 GB'), 13680, 'iPhone 15 Pro Max');
+      assert.ok(shareLost('iPhone 15 Pro Max', '256 GB') < 0.26);
     });
 
-    test('takes about a third off a mid-priced phone', () => {
-      const share = shareLost('iPhone 13', '128 GB');
-      assert.ok(share > 0.34 && share < 0.38, `took ${(share * 100).toFixed(1)}%`);
+    test("takes Cashify's 7,440 off an iPhone 13", () => {
+      assertWithinRounding(rupeesLost('iPhone 13', '128 GB'), 7440, 'iPhone 13');
     });
 
-    test('takes the same third off up to the top of the middle tier: an iPhone 16 (Cashify 37.5%)', () => {
-      const share = shareLost('iPhone 16', '128 GB');
-      assert.ok(share > 0.34 && share < 0.38, `took ${(share * 100).toFixed(1)}%`);
+    test("takes Cashify's 15,470 off an iPhone 16, at the top of the middle tier", () => {
+      assertWithinRounding(rupeesLost('iPhone 16', '128 GB'), 15470, 'iPhone 16');
     });
 
-    test('scales with the phone age, so an old phone does not lose a larger share', () => {
-      const fresh = shareLost('iPhone 15 Pro Max', '256 GB');
-      const old = shareLost('iPhone 15 Pro Max', '256 GB', { age_period: 'above_11_months' });
-      assert.ok(Math.abs(fresh - old) < 0.02, `${(fresh * 100).toFixed(1)}% fresh vs ${(old * 100).toFixed(1)}% old`);
+    test('takes the same rupee amount whatever the phone age, as Cashify takes a flat amount', () => {
+      const fresh = rupeesLost('iPhone 15 Pro Max', '256 GB');
+      const old = rupeesLost('iPhone 15 Pro Max', '256 GB', { age_period: 'above_11_months' });
+      assertWithinRounding(fresh, old, `${fresh} fresh vs ${old} old`);
     });
 
     test('does not also lower the look: a cracked screen costs the same whatever look is sent with it', () => {
