@@ -9,8 +9,12 @@ interface BrandScreenSectionProps {
   rules: PricingRules;
   live: PricingRules;
   onChange: (next: PricingRules) => void;
-  /** Called when a per-model amount is edited so the Impact panel can pin this phone to the top. */
-  onPhoneEdited?: (phone: { brand: string; model: string; storage: string; price: number }) => void;
+  /** Called when the admin focuses a per-model amount field so the right-side context panel can quote this phone. */
+  onFocusField?: (field: {
+    phone: { brand: string; model: string; storage: string; price: number };
+    modelKey: string;
+    fieldKind: 'crack' | 'touch';
+  }) => void;
 }
 
 type Show = 'all' | 'own' | 'estimate';
@@ -25,7 +29,7 @@ const startStorage = (model: ModelStorages) => (model.storages.includes('128 GB'
  * and for a screen whose touch does not work. A phone with its own amount (measured on Cashify, or typed in here) is priced on it; any
  * other phone shows what the screen tables give today, in grey, and is priced on that until an amount is typed in.
  */
-export default function BrandScreenSection({ rules, live, onChange, onPhoneEdited }: BrandScreenSectionProps) {
+export default function BrandScreenSection({ rules, live, onChange, onFocusField }: BrandScreenSectionProps) {
   const [brands, setBrands] = useState<BrandModels[] | null>(null);
   const [brand, setBrand] = useState('');
   const [search, setSearch] = useState('');
@@ -58,7 +62,7 @@ export default function BrandScreenSection({ rules, live, onChange, onPhoneEdite
   const shown = rows.filter((row) => row.model.model.toLowerCase().includes(text)
     && (show === 'all' || (show === 'own' ? row.own !== undefined : row.own === undefined)));
 
-  const setAmount = (field: 'crackRupees' | 'touchRupees', key: string, value: number | undefined, model?: ModelStorages) => {
+  const setAmount = (field: 'crackRupees' | 'touchRupees', key: string, value: number | undefined) => {
     const next = { ...rules.androidScreen[field] };
     if (value === undefined) delete next[key];
     else next[key] = value;
@@ -70,9 +74,15 @@ export default function BrandScreenSection({ rules, live, onChange, onPhoneEdite
       androidScreen.touchRupees = touch;
     }
     onChange({ ...rules, androidScreen });
-    if (current && model && onPhoneEdited) {
-      onPhoneEdited({ brand: current.brand, model: model.model, storage: startStorage(model), price: model.price ?? 0 });
-    }
+  };
+
+  const focusPhone = (model: ModelStorages, key: string, fieldKind: 'crack' | 'touch') => {
+    if (!current || !onFocusField) return;
+    onFocusField({
+      phone: { brand: current.brand, model: model.model, storage: startStorage(model), price: model.price ?? 0 },
+      modelKey: key,
+      fieldKind,
+    });
   };
 
   return (
@@ -140,26 +150,30 @@ export default function BrandScreenSection({ rules, live, onChange, onPhoneEdite
                     {own === undefined && estimate === null && <div className="text-[11px] text-ink-400">no admin price</div>}
                   </div>
                   <span className="text-xs tabular-nums text-ink-500">{model.price ? rupees(model.price) : '—'}</span>
-                  <NumberField
-                    label={`${current?.brand} ${model.model} crack amount`}
-                    value={own}
-                    optional
-                    placeholder={estimate !== null ? String(estimate) : 'Crack ₹'}
-                    onChange={(v) => setAmount('crackRupees', key, v, model)}
-                    min={ruleLimits.crackRupees[0]}
-                    max={ruleLimits.crackRupees[1]}
-                    step={STEP}
-                  />
-                  <NumberField
-                    label={`${current?.brand} ${model.model} touch amount`}
-                    value={touch}
-                    optional
-                    placeholder={touchPlaceholder === null ? 'Touch ₹' : String(touchPlaceholder)}
-                    onChange={(v) => (own !== undefined || v === undefined) && setAmount('touchRupees', key, v, model)}
-                    min={ruleLimits.touchRupees[0]}
-                    max={ruleLimits.touchRupees[1]}
-                    step={STEP}
-                  />
+                  <div onFocus={() => focusPhone(model, key, 'crack')}>
+                    <NumberField
+                      label={`${current?.brand} ${model.model} crack amount`}
+                      value={own}
+                      optional
+                      placeholder={estimate !== null ? String(estimate) : 'Crack ₹'}
+                      onChange={(v) => setAmount('crackRupees', key, v)}
+                      min={ruleLimits.crackRupees[0]}
+                      max={ruleLimits.crackRupees[1]}
+                      step={STEP}
+                    />
+                  </div>
+                  <div onFocus={() => focusPhone(model, key, 'touch')}>
+                    <NumberField
+                      label={`${current?.brand} ${model.model} touch amount`}
+                      value={touch}
+                      optional
+                      placeholder={touchPlaceholder === null ? 'Touch ₹' : String(touchPlaceholder)}
+                      onChange={(v) => (own !== undefined || v === undefined) && setAmount('touchRupees', key, v)}
+                      min={ruleLimits.touchRupees[0]}
+                      max={ruleLimits.touchRupees[1]}
+                      step={STEP}
+                    />
+                  </div>
                 </div>
               );
             })}
