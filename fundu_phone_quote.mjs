@@ -2545,6 +2545,14 @@ export function androidCrackRupees(brand, model, rules) {
   return Object.hasOwn(map, key) ? map[key] : undefined;
 }
 
+/** What a cracked, missing or bent back panel takes off this phone, in rupees, or undefined for a model that has no amount of its own. */
+export function backGlassRupees(brand, model, rules) {
+  const map = rules?.backGlass?.rupees;
+  if (!map) return undefined;
+  const key = androidModelKey(brand, model);
+  return Object.hasOwn(map, key) ? map[key] : undefined;
+}
+
 // What the customer is told for each screen state.
 const SCREEN_STATE_LABEL = {
   scratches_minor: 'a few light scratches',
@@ -3201,7 +3209,14 @@ export function quotePhone(input = {}, options = {}) {
     conditionReasons.push(`Screen wear deducted (${SCREEN_STATE_LABEL[screen_condition]})`);
   }
 
-  if (bodyDamageShare > 0) {
+  // A phone with its own back glass amount (measured on Cashify, or typed in by an admin) is priced on it when a broken panel is reported,
+  // whatever its price. A phone with no amount keeps the share-based deduction (bodyDamageShare).
+  const ownBackGlass = !screenIsDeducted && body_condition === 'panel_broken' ? backGlassRupees(brand, model, rules) : undefined;
+  if (ownBackGlass !== undefined) {
+    configuredRepairsTotal += ownBackGlass;
+    internalRepairBreakdown.push({ item: 'back_glass', cost: ownBackGlass });
+    conditionReasons.push(BODY_DAMAGE_REASONS[body_condition]);
+  } else if (bodyDamageShare > 0) {
     const bodyCost = Math.round(expectedResaleProceeds * agingFactor * bodyDamageShare);
     configuredRepairsTotal += bodyCost;
     internalRepairBreakdown.push({ item: 'body', cost: bodyCost });

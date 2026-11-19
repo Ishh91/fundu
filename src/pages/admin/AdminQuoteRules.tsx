@@ -17,6 +17,7 @@ import {
 import AgeSection from '../../components/admin/quoteRules/AgeSection';
 import ScreenSection from '../../components/admin/quoteRules/ScreenSection';
 import BrandScreenSection from '../../components/admin/quoteRules/BrandScreenSection';
+import BrandBackGlassSection from '../../components/admin/quoteRules/BrandBackGlassSection';
 import OtherSection from '../../components/admin/quoteRules/OtherSection';
 import ScreenTablesSection from '../../components/admin/quoteRules/ScreenTablesSection';
 import { AccessoriesSection, BodyDamageSection, FaultsSection } from '../../components/admin/quoteRules/BodyFaultSections';
@@ -163,6 +164,7 @@ export default function AdminQuoteRules() {
       <ScreenSection rules={edited} live={live} onChange={setEdited} />
       <BrandScreenSection rules={edited} live={live} onChange={setEdited} />
       <ScreenTablesSection rules={edited} live={live} onChange={setEdited} />
+      <BrandBackGlassSection rules={edited} live={live} onChange={setEdited} />
       <OtherSection rules={edited} live={live} onChange={setEdited} />
       <BodyDamageSection rules={edited} live={live} onChange={setEdited} />
       <FaultsSection rules={edited} live={live} onChange={setEdited} />
