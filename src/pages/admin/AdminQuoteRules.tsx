@@ -18,8 +18,7 @@ import AgeSection from '../../components/admin/quoteRules/AgeSection';
 import ScreenSection from '../../components/admin/quoteRules/ScreenSection';
 import BrandScreenSection from '../../components/admin/quoteRules/BrandScreenSection';
 import BrandBackGlassSection from '../../components/admin/quoteRules/BrandBackGlassSection';
-import ImpactPanel from '../../components/admin/quoteRules/ImpactPanel';
-import { impactPhoneKey, type ImpactPhone } from '../../lib/quoteImpact';
+import ContextPanel, { type FocusedField } from '../../components/admin/quoteRules/ContextPanel';
 import OtherSection from '../../components/admin/quoteRules/OtherSection';
 import ScreenTablesSection from '../../components/admin/quoteRules/ScreenTablesSection';
 import { AccessoriesSection, BodyDamageSection, FaultsSection } from '../../components/admin/quoteRules/BodyFaultSections';
@@ -27,14 +26,6 @@ import PreviewPanel from '../../components/admin/quoteRules/PreviewPanel';
 
 const formatWhen = (iso: string | null) => (iso ? new Date(iso).toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' }) : '');
 const formatValue = (value: number | undefined) => (value === undefined ? 'none' : String(value));
-
-const MAX_PINNED = 8;
-const DEFAULT_PINNED: ImpactPhone[] = [
-  { brand: 'Apple', model: 'iPhone 15', storage: '128 GB', price: 0 },
-  { brand: 'Samsung', model: 'Galaxy S24', storage: '128 GB', price: 0 },
-  { brand: 'OnePlus', model: '12', storage: '256 GB', price: 0 },
-  { brand: 'Realme', model: 'Narzo 70 Pro', storage: '128 GB', price: 0 },
-];
 
 export default function AdminQuoteRules() {
   const [state, setState] = useState<RulesAdminState | null>(null);
@@ -44,16 +35,9 @@ export default function AdminQuoteRules() {
   const [busy, setBusy] = useState(false);
   const [loadError, setLoadError] = useState('');
   const [message, setMessage] = useState<{ kind: 'ok' | 'error'; text: string; details?: string[] } | null>(null);
-  const [pinned, setPinned] = useState<ImpactPhone[]>(DEFAULT_PINNED);
+  const [focused, setFocused] = useState<FocusedField | null>(null);
 
-  const pinPhone = useCallback((phone: ImpactPhone) => {
-    const key = impactPhoneKey(phone);
-    setPinned((prev) => [phone, ...prev.filter((p) => impactPhoneKey(p) !== key)].slice(0, MAX_PINNED));
-  }, []);
-  const unpinPhone = useCallback((phone: Pick<ImpactPhone, 'brand' | 'model' | 'storage'>) => {
-    const key = impactPhoneKey(phone);
-    setPinned((prev) => prev.filter((p) => impactPhoneKey(p) !== key));
-  }, []);
+  const focusField = useCallback((field: FocusedField) => setFocused(field), []);
 
   const load = useCallback(async (keepEdits = false) => {
     setLoading(true);
@@ -180,17 +164,20 @@ export default function AdminQuoteRules() {
         </div>
       )}
 
-      <ImpactPanel rules={edited} live={live} pinned={pinned} onPin={pinPhone} onUnpin={unpinPhone} />
-
-      <AgeSection rules={edited} live={live} onChange={setEdited} />
-      <ScreenSection rules={edited} live={live} onChange={setEdited} />
-      <BrandScreenSection rules={edited} live={live} onChange={setEdited} onPhoneEdited={pinPhone} />
-      <ScreenTablesSection rules={edited} live={live} onChange={setEdited} />
-      <BrandBackGlassSection rules={edited} live={live} onChange={setEdited} onPhoneEdited={pinPhone} />
-      <OtherSection rules={edited} live={live} onChange={setEdited} />
-      <BodyDamageSection rules={edited} live={live} onChange={setEdited} />
-      <FaultsSection rules={edited} live={live} onChange={setEdited} />
-      <AccessoriesSection rules={edited} live={live} onChange={setEdited} />
+      <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_22rem]">
+        <div className="space-y-5 min-w-0">
+          <AgeSection rules={edited} live={live} onChange={setEdited} />
+          <ScreenSection rules={edited} live={live} onChange={setEdited} />
+          <BrandScreenSection rules={edited} live={live} onChange={setEdited} onFocusField={focusField} />
+          <ScreenTablesSection rules={edited} live={live} onChange={setEdited} />
+          <BrandBackGlassSection rules={edited} live={live} onChange={setEdited} onFocusField={focusField} />
+          <OtherSection rules={edited} live={live} onChange={setEdited} />
+          <BodyDamageSection rules={edited} live={live} onChange={setEdited} />
+          <FaultsSection rules={edited} live={live} onChange={setEdited} />
+          <AccessoriesSection rules={edited} live={live} onChange={setEdited} />
+        </div>
+        <ContextPanel rules={edited} live={live} focused={focused} />
+      </div>
 
       <section className="card p-5 space-y-3" aria-labelledby="changes-vs-live">
         <h3 id="changes-vs-live" className="font-display text-base font-black text-ink-900">What differs from the live rules ({changesVsLive.length})</h3>
