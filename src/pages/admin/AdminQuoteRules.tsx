@@ -131,7 +131,7 @@ export default function AdminQuoteRules() {
 
   return (
     <div className="space-y-5">
-      <div className="card flex flex-wrap items-center gap-3 p-4">
+      <div className="card sticky top-2 z-30 flex flex-wrap items-center gap-3 p-4">
         <div className="flex-1 min-w-[14rem]">
           <div className="flex flex-wrap items-center gap-2">
             <span className="badge bg-emerald-50 text-emerald-700 border border-emerald-200">Live: version {state.published.version || 'built-in'}</span>

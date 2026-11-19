@@ -82,7 +82,7 @@ export default function ContextPanel({ rules, live, focused }: ContextPanelProps
   }, [focused, deferredRules, deferredLive]);
 
   return (
-    <aside className="card lg:sticky lg:top-2 lg:self-start space-y-3 border border-brand-200 bg-brand-50/40 p-4" aria-labelledby="context-panel-heading">
+    <aside className="card lg:sticky lg:top-24 lg:self-start space-y-3 border border-brand-200 bg-brand-50/40 p-4" aria-labelledby="context-panel-heading">
       <h3 id="context-panel-heading" className="font-display text-sm font-black text-ink-900">Live vs draft</h3>
       {!focused || !summary ? (
         <div className="flex items-center gap-2 rounded-xl border border-dashed border-brand-200 bg-white p-3 text-xs text-ink-600">
