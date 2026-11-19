@@ -33,6 +33,7 @@ export interface PricingRules {
     maxShare: number;
   };
   androidScreen: { crackRupees: Record<string, number>; touchRupees: Record<string, number> };
+  backGlass: { rupees: Record<string, number> };
   samsungMidFactor: number;
   screenTables: Record<'low' | 'mid' | 'high', Record<string, number>>;
   bodyDamage: Record<'standard' | 'premiumApple' | 'premiumAndroid', Record<string, number>>;
@@ -99,6 +100,7 @@ export const ruleLimits = RULE_LIMITS as {
   age: Record<string, [number, number]>;
   crackRupees: [number, number];
   touchRupees: [number, number];
+  backGlassRupees: [number, number];
   multiple: [number, number];
   maxShare: [number, number];
   samsungMidFactor: [number, number];
@@ -258,6 +260,8 @@ export function describeRuleChange(path: string): string {
   if (path === 'accessories.bill') return 'Missing valid bill (₹)';
   if (path === 'accessories.lowEndMaxShare') return 'Most missing accessories take off a phone under ₹20,000';
   if (parts[0] === 'androidScreen' && parts[1] === 'crackRupees' && parts[2]) return `Android crack amount: ${parts[2]}`;
+  if (parts[0] === 'androidScreen' && parts[1] === 'touchRupees' && parts[2]) return `Android touch amount: ${parts[2]}`;
+  if (parts[0] === 'backGlass' && parts[1] === 'rupees' && parts[2]) return `Back glass amount: ${parts[2]}`;
   if (parts[0] === 'age' && parts[1] === 'oldAndroid' && parts[2]) return `Old Android age factor: ${parts[2]}`;
   if (parts[0] === 'age' && parts[1] === 'recentIphone' && parts[2]) return `Newest iPhone age factor: ${modelLabelFromKey(parts[2])}`;
   if (parts[0] === 'age') return AGE_LABELS[parts[1]] ?? path;

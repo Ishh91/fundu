@@ -277,6 +277,14 @@ export const DEFAULT_PRICING_RULES = deepFreeze({
     premiumAndroid: { minor_scratches: 0.03, dents_bent: 0.0375, panel_broken: 0.09 },
   },
 
+  // What a cracked, missing or bent back panel takes off an Android phone, in rupees, by brand and model key (androidModelKey). Like
+  // the screen amounts above, it is the model's own amount as Cashify sets it, the same on every storage, and it replaces the body
+  // damage share (bodyDamage.*.panel_broken) when a phone with its own amount is reported with a broken panel. A phone with no amount
+  // here keeps the share-based deduction.
+  backGlass: {
+    rupees: {},
+  },
+
   // What each declared fault takes off.
   faults: {
     // A share of the aged value. Face ID / fingerprint (biometrics) counts on an iPhone and on an Android phone from 60,000 only.
@@ -318,6 +326,7 @@ export const RULE_LIMITS = deepFreeze({
   },
   crackRupees: [500, 50000],
   touchRupees: [500, 80000],
+  backGlassRupees: [100, 20000],
   multiple: [0, 3],
   maxShare: [0.3, 0.9],
   samsungMidFactor: [0.4, 1.2],
@@ -483,6 +492,12 @@ export function validatePricingRules(rules) {
     checkMap(rules.androidScreen.touchRupees, 'Android touch amounts', RULE_LIMITS.touchRupees, errors);
   }
 
+  if (!isPlainObject(rules.backGlass)) {
+    errors.push('The back glass amounts are missing.');
+  } else {
+    checkMap(rules.backGlass.rupees, 'Back glass amounts', RULE_LIMITS.backGlassRupees, errors);
+  }
+
   if (!inRange(rules.samsungMidFactor, RULE_LIMITS.samsungMidFactor)) {
     errors.push(`The Samsung factor must be between ${RULE_LIMITS.samsungMidFactor[0]} and ${RULE_LIMITS.samsungMidFactor[1]}.`);
   }
@@ -563,6 +578,9 @@ export function resolvePricingRules(saved) {
       crackRupees: cleanMap(s.androidScreen?.crackRupees, RULE_LIMITS.crackRupees) ?? { ...d.androidScreen.crackRupees },
       touchRupees: cleanMap(s.androidScreen?.touchRupees, RULE_LIMITS.touchRupees) ?? {},
     },
+    backGlass: {
+      rupees: cleanMap(s.backGlass?.rupees, RULE_LIMITS.backGlassRupees) ?? { ...d.backGlass.rupees },
+    },
     samsungMidFactor: pickNumber(s.samsungMidFactor, RULE_LIMITS.samsungMidFactor, d.samsungMidFactor),
     screenTables: {
       low: resolveStateTable(s.screenTables?.low, d.screenTables.low, RULE_LIMITS.screenShare, STATE_ORDER),
@@ -616,7 +634,7 @@ export function diffPricingRules(before, after) {
 }
 
 const ANDROID_AGE_FIELDS = ['samsungOver11', 'androidOver11', 'oldAndroid'];
-const TOP_LEVEL_GROUPS = ['age', 'appleScreen', 'androidScreen', 'samsungMidFactor', 'screenTables', 'bodyDamage', 'faults', 'accessories'];
+const TOP_LEVEL_GROUPS = ['age', 'appleScreen', 'androidScreen', 'backGlass', 'samsungMidFactor', 'screenTables', 'bodyDamage', 'faults', 'accessories'];
 
 /**
  * Rules saved before a group existed (a Phase 1 set has no screen tables, body damage, faults or accessories) get that group from the
@@ -630,6 +648,8 @@ export function fillMissingGroups(rules) {
   }
   // The Android screen group grew a touch list after it was first saved: a set without one gets an empty one.
   if (isPlainObject(filled.androidScreen) && filled.androidScreen.touchRupees === undefined) filled.androidScreen = { ...filled.androidScreen, touchRupees: {} };
+  // Rules saved before the back glass group existed get an empty one, so a phone with a broken panel keeps the share-based amount.
+  if (isPlainObject(filled.backGlass) && filled.backGlass.rupees === undefined) filled.backGlass = { ...filled.backGlass, rupees: {} };
   // The age group grew after it was first saved: a set without the Android factors gets them from the defaults.
   if (isPlainObject(filled.age)) {
     filled.age = { ...filled.age };
