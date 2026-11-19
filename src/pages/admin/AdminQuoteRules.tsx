@@ -16,7 +16,7 @@ import {
 } from '../../lib/quoteRules';
 import AgeSection from '../../components/admin/quoteRules/AgeSection';
 import ScreenSection from '../../components/admin/quoteRules/ScreenSection';
-import AndroidScreenSection from '../../components/admin/quoteRules/AndroidScreenSection';
+import BrandScreenSection from '../../components/admin/quoteRules/BrandScreenSection';
 import OtherSection from '../../components/admin/quoteRules/OtherSection';
 import ScreenTablesSection from '../../components/admin/quoteRules/ScreenTablesSection';
 import { AccessoriesSection, BodyDamageSection, FaultsSection } from '../../components/admin/quoteRules/BodyFaultSections';
@@ -161,7 +161,7 @@ export default function AdminQuoteRules() {
 
       <AgeSection rules={edited} live={live} onChange={setEdited} />
       <ScreenSection rules={edited} live={live} onChange={setEdited} />
-      <AndroidScreenSection rules={edited} live={live} onChange={setEdited} />
+      <BrandScreenSection rules={edited} live={live} onChange={setEdited} />
       <ScreenTablesSection rules={edited} live={live} onChange={setEdited} />
       <OtherSection rules={edited} live={live} onChange={setEdited} />
       <BodyDamageSection rules={edited} live={live} onChange={setEdited} />

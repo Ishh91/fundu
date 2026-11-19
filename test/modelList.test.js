@@ -21,6 +21,23 @@ describe('storage labels', () => {
   });
 });
 
+describe('the price of a model in the list', () => {
+  const priced = (storage, base_price) => ({ brand: 'Samsung', model: 'Galaxy S24', storage, base_price });
+
+  it('is the price of the 128 GB row when the model has one, else of the smallest storage', () => {
+    assert.equal(modelsOf(buildModelList([priced('256 GB', 40000), priced('128 GB', 34000), priced('512 GB', 50000)]), 'Samsung')[0].price, 34000);
+    assert.equal(modelsOf(buildModelList([priced('512 GB', 50000), priced('256 GB', 40000)]), 'Samsung')[0].price, 40000);
+  });
+
+  it('is the dearest of the rows when one storage is listed twice, and ignores a row with no usable price', () => {
+    assert.equal(modelsOf(buildModelList([priced('128GB', 30000), priced('128 GB', 34000), priced('128 GB', 0), priced('128 GB', null)]), 'Samsung')[0].price, 34000);
+  });
+
+  it('is 0 when no row has a price', () => {
+    assert.equal(modelsOf(buildModelList([priced('128 GB', 0), priced('256 GB', undefined)]), 'Samsung')[0].price, 0);
+  });
+});
+
 describe('the brand and model list for the preview', () => {
   it('groups models under their brand, brands A to Z', () => {
     const list = buildModelList([row('Samsung', 'Galaxy S23', '128 GB'), row('Apple', 'iPhone 13', '128 GB'), row('OnePlus', '12', '256 GB')]);
@@ -30,7 +47,7 @@ describe('the brand and model list for the preview', () => {
 
   it('lists each model once, with every storage it is priced in, smallest first', () => {
     const list = buildModelList([row('Apple', 'iPhone 13', '256 GB'), row('Apple', 'iPhone 13', '128 GB'), row('Apple', 'iPhone 13', '512GB'), row('Apple', 'iPhone 13', '128 GB'), row('Apple', 'iPhone 13', '1 TB')]);
-    assert.deepEqual(modelsOf(list, 'Apple'), [{ model: 'iPhone 13', storages: ['128 GB', '256 GB', '512 GB', '1 TB'] }]);
+    assert.deepEqual(modelsOf(list, 'Apple'), [{ model: 'iPhone 13', storages: ['128 GB', '256 GB', '512 GB', '1 TB'], price: 10000 }]);
   });
 
   it('sorts models the way a person reads them: iPhone 8 before iPhone 11, 12 before 13', () => {
@@ -75,7 +92,7 @@ describe('the brand and model list for the preview', () => {
 
   it('keeps a model that has no storage, with an empty list of storages', () => {
     const list = buildModelList([row('OnePlus', 'Nord 4 5G', null), row('OnePlus', 'Nord 4 5G', 'null')]);
-    assert.deepEqual(modelsOf(list, 'OnePlus'), [{ model: 'Nord 4 5G', storages: [] }]);
+    assert.deepEqual(modelsOf(list, 'OnePlus'), [{ model: 'Nord 4 5G', storages: [], price: 10000 }]);
   });
 
   it('is empty for nothing, and for something that is not a list', () => {
@@ -95,6 +112,6 @@ describe('the brand and model list for the preview', () => {
   it('does not let a brand or model named like an object property break it', () => {
     const list = buildModelList([row('constructor', '__proto__', '128 GB'), row('toString', 'hasOwnProperty', '64 GB')]);
     assert.deepEqual(names(list), ['constructor', 'toString']);
-    assert.deepEqual(modelsOf(list, 'constructor'), [{ model: '__proto__', storages: ['128 GB'] }]);
+    assert.deepEqual(modelsOf(list, 'constructor'), [{ model: '__proto__', storages: ['128 GB'], price: 10000 }]);
   });
 });

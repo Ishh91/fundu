@@ -3123,7 +3123,9 @@ export function quotePhone(input = {}, options = {}) {
   const screenCutFor = (state, agedForShare) => {
     const multiple = rules.appleScreen.multiples[state];
     if (appleCrack !== undefined && multiple !== undefined) {
-      const touchRupees = isAppleDevice ? rules.appleScreen.touchRupees[normalizeModelKey(model)] : undefined;
+      const touchRupees = isAppleDevice
+        ? rules.appleScreen.touchRupees[normalizeModelKey(model)]
+        : rules.androidScreen?.touchRupees?.[androidModelKey(brand, model)];
       const rupees = state === 'touch_fault' && touchRupees !== undefined ? touchRupees : Math.round(appleCrack * multiple);
       return Math.min(rupees, Math.round(agedForShare * rules.appleScreen.maxShare));
     }

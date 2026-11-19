@@ -50,6 +50,26 @@ describe('the cracked screen of an Android measured on Cashify (older than 11 mo
     ['Nothing', 'Phone (2a)', '256 GB', 18870, 4410],
     ['Samsung', 'Galaxy S26 Ultra', '256 GB', 82920, 12500],
     ['Samsung', 'Galaxy S23 ultra', '256 GB', 32280, 9520],
+    // measured on 17 November 2026 in a second batch of the most-asked phones
+    ['Samsung', 'Galaxy S24', '128 GB', 34390, 7740],
+    ['Samsung', 'Galaxy S24 Ultra', '256 GB', 62820, 11010],
+    ['Samsung', 'Galaxy S25 5G', '128 GB', 43140, 8920],
+    ['Samsung', 'Galaxy S22 Ultra 5G', '128 GB', 22000, 10110],
+    ['Samsung', 'Galaxy A55', '128 GB', 17830, 4520],
+    ['Samsung', 'Galaxy Z Flip 6', '256 GB', 39700, 14280],
+    ['Samsung', 'Galaxy Z Fold 6', '256 GB', 66800, 24630],
+    ['OnePlus', '13', '256 GB', 42900, 11310],
+    ['OnePlus', '12', '256 GB', 34480, 9520],
+    ['OnePlus', '11R 5G', '128 GB', 22210, 5050],
+    ['Realme', '14 Pro 5G', '128 GB', 17670, 4280],
+    ['Xiaomi', 'Redmi Note 13 Pro+ 5G', '256 GB', 17790, 4160],
+    ['Poco', 'X7 Pro 5G', '256 GB', 15200, 3930],
+    ['Vivo', 'V40 5G', '128 GB', 21090, 5470],
+    ['Vivo', 'X100 5G', '256 GB', 27960, 9100],
+    ['iQOO', '13 5G', '256 GB', 25180, 5360],
+    ['Google', 'Pixel 8 5G', '128 GB', 26470, 8330],
+    ['Google', 'Pixel 8a', '128 GB', 24350, 7140],
+    ['Nothing', 'Phone (2)', '128 GB', 20920, 4410],
   ];
 
   for (const [brand, model, storage, price, theirs] of measured) {
@@ -128,7 +148,7 @@ describe('an iPhone is not touched by the Android amounts', () => {
 
 describe('the Android screen amounts as editable rules', () => {
   it('start with the measured phones', () => {
-    assert.equal(Object.keys(ANDROID_SCREEN_CRACK_RUPEES).length, 29);
+    assert.equal(Object.keys(ANDROID_SCREEN_CRACK_RUPEES).length, 70);
     assert.equal(DEFAULT_PRICING_RULES.androidScreen.crackRupees.iqoo15, 5950);
     assert.equal(validatePricingRules(DEFAULT_PRICING_RULES).valid, true);
   });
@@ -170,5 +190,40 @@ describe('the Android screen amounts as editable rules', () => {
     const saved = cloneRules(DEFAULT_PRICING_RULES);
     saved.androidScreen.crackRupees = {};
     assert.deepEqual(resolvePricingRules(saved).androidScreen.crackRupees, {});
+  });
+});
+
+describe('the touch amount of an Android phone', () => {
+  it('is 1.68 times its crack amount unless the phone has a touch amount of its own', () => {
+    const rules = cloneRules(DEFAULT_PRICING_RULES);
+    near(cut('iQOO', '15', 40950, '256 GB', 'touch_fault'), 5950 * 1.68, 60, 'no touch amount saved');
+    rules.androidScreen.touchRupees.iqoo15 = 8000;
+    near(cut('iQOO', '15', 40950, '256 GB', 'touch_fault', rules), 8000, 60, 'its own touch amount');
+    near(cut('iQOO', '15', 40950, '256 GB', 'cracked', rules), 5950, 60, 'a crack is not changed by it');
+    near(cut('Nothing', 'Phone 3', 37150, '512 GB', 'touch_fault', rules), 5350 * 1.68, 60, 'another phone is not changed by it');
+  });
+
+  it('is capped at 75% of the aged value, like every screen amount', () => {
+    const rules = cloneRules(DEFAULT_PRICING_RULES);
+    rules.androidScreen.touchRupees.pocom7pro = 80000;
+    assert.ok(cut('Poco', 'M7 Pro 5G', 10090, '128 GB', 'touch_fault', rules) <= Math.round(10090 * 0.73 * 0.75) + 5);
+  });
+
+  it('is refused out of bounds, dropped when read, empty by default, and added to rules saved without one', () => {
+    assert.deepEqual(DEFAULT_PRICING_RULES.androidScreen.touchRupees, {});
+    const bad = cloneRules(DEFAULT_PRICING_RULES);
+    bad.androidScreen.touchRupees.iqoo15 = 100;
+    assert.match(validatePricingRules(bad).errors.join(' '), /Android touch amounts/);
+    assert.equal(resolvePricingRules(bad).androidScreen.touchRupees.iqoo15, undefined);
+
+    const saved = cloneRules(DEFAULT_PRICING_RULES);
+    delete saved.androidScreen.touchRupees;
+    assert.equal(validatePricingRules(saved).valid, false);
+    const filled = fillMissingGroups(saved);
+    assert.equal(validatePricingRules(filled).valid, true);
+    assert.deepEqual(filled.androidScreen.touchRupees, {});
+    assert.equal(filled.androidScreen.crackRupees.iqoo15, 5950, 'the crack amounts are kept');
+    assert.deepEqual(resolvePricingRules(saved).androidScreen.touchRupees, {});
+    assert.equal(saved.androidScreen.touchRupees, undefined, 'the saved object is not changed');
   });
 });

@@ -32,7 +32,7 @@ export interface PricingRules {
     multiples: Record<string, number>;
     maxShare: number;
   };
-  androidScreen: { crackRupees: Record<string, number> };
+  androidScreen: { crackRupees: Record<string, number>; touchRupees: Record<string, number> };
   samsungMidFactor: number;
   screenTables: Record<'low' | 'mid' | 'high', Record<string, number>>;
   bodyDamage: Record<'standard' | 'premiumApple' | 'premiumAndroid', Record<string, number>>;
