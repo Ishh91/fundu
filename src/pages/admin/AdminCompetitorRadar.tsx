@@ -14,7 +14,8 @@ import {
   Building2,
   Download,
 } from 'lucide-react';
-import { formatINR, authHeaders } from '../../lib/db';
+import { formatINR, authHeaders, db } from '../../lib/db';
+import { isModelDeleted } from '../../lib/catalogSync';
 import { API_BASE } from '../../config/apiConfig';
 import { getCleanPhoneImage, BRAND_FRONT_FALLBACKS, getGenericDevicePlaceholder } from '../../lib/phoneImages';
 import { savePriceOverride } from '../../lib/priceSync';
@@ -264,6 +265,24 @@ export default function AdminCompetitorRadar() {
     }
   }, [availableRams, selectedRam]);
 
+  // Models that exist only as sell price rows (added from the Sell Pricing tab or by a catalog script) are not in master_phones or the static
+  // catalogs, so the unified catalog cannot see them. They are loaded here so this list has every model the Sell Pricing tab has.
+  const [sellPriceModels, setSellPriceModels] = useState<Array<{ brand: string; model: string }>>([]);
+  useEffect(() => {
+    let alive = true;
+    (async () => {
+      try {
+        const res = await db.from('sell_price_configs').select('brand, model, is_active').limit(5000);
+        const rows = (res.data || []) as Array<{ brand?: string; model?: string; is_active?: boolean }>;
+        if (!alive) return;
+        setSellPriceModels(rows.filter((row) => row.brand && row.model && row.is_active !== false).map((row) => ({ brand: String(row.brand), model: String(row.model) })));
+      } catch {
+        // the list simply has no sell-price-only models
+      }
+    })();
+    return () => { alive = false; };
+  }, []);
+
   // Dynamic available models for the selected brand synced from Unified Catalog (DB + Static)
   const availableModels = useMemo(() => {
     const brand = selectedBrand;
@@ -284,6 +303,11 @@ export default function AdminCompetitorRadar() {
     const unified = getUnifiedCatalog(brand);
     unified.forEach((m) => {
       rawList.push(m.model);
+    });
+
+    // 4. Sell price rows of this brand that no catalog lists
+    sellPriceModels.forEach((row) => {
+      if (row.brand.toLowerCase().trim() === bLower && !isModelDeleted(row.brand, row.model)) rawList.push(row.model);
     });
 
     // Deduplicate and normalize display names
@@ -309,7 +333,7 @@ export default function AdminCompetitorRadar() {
     });
 
     return cleaned;
-  }, [selectedBrand]);
+  }, [selectedBrand, sellPriceModels]);
 
   // Matching option value for <select>
   const selectedModelOption = useMemo(() => {

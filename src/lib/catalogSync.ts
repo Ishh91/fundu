@@ -272,56 +272,107 @@ export function isPermanentlyBlockedModel(brand?: string, model?: string): boole
   return false;
 }
 
+interface DeletedCheckState {
+  at: number;
+  // The live master_phones cache, parsed once and lower-cased: [brand, model, is_active].
+  phones: Array<[string, string, boolean | undefined]>;
+  overrides: Record<string, unknown> | null;
+  deleted: Set<string>;
+  // brand + model -> answer, for the life of this snapshot.
+  answers: Map<string, boolean>;
+}
+
+// isModelDeleted runs thousands of times while a catalog list is built (the Sell Pricing tab asks it for every model of every source), and
+// it used to JSON.parse the whole master_phones cache and scan it on each call. The three localStorage reads are now parsed once per
+// snapshot, and an answer is remembered per model. A snapshot lives 1 second and is dropped as soon as a delete, restore, price or
+// catalog event fires, so a change still shows up straight away.
+const DELETED_CHECK_TTL_MS = 1000;
+let deletedCheckState: DeletedCheckState | null = null;
+
+export function invalidateDeletedCheck(): void {
+  deletedCheckState = null;
+}
+
+if (typeof window !== 'undefined') {
+  for (const event of ['fundu_model_deleted', 'fundu_model_restored', 'fundu_catalog_synced', 'fundu_price_updated', 'storage']) {
+    window.addEventListener(event, invalidateDeletedCheck);
+  }
+}
+
+function readJson(key: string): unknown {
+  try {
+    const raw = localStorage.getItem(key);
+    return raw ? JSON.parse(raw) : null;
+  } catch {
+    return null;
+  }
+}
+
+function getDeletedCheckState(): DeletedCheckState {
+  const now = Date.now();
+  if (deletedCheckState && now - deletedCheckState.at < DELETED_CHECK_TTL_MS) return deletedCheckState;
+
+  const livePhones = readJson('fundu_live_master_phones_v2');
+  const phones: DeletedCheckState['phones'] = Array.isArray(livePhones)
+    ? livePhones.map((p: { brand?: unknown; model?: unknown; is_active?: boolean }) => [
+        String(p?.brand || '').toLowerCase().trim(),
+        String(p?.model || '').toLowerCase().trim(),
+        p?.is_active,
+      ])
+    : [];
+  const overrides = readJson('fundu_price_overrides_v1');
+
+  deletedCheckState = {
+    at: now,
+    phones,
+    overrides: overrides && typeof overrides === 'object' ? (overrides as Record<string, unknown>) : null,
+    deleted: getDeletedModelKeys(),
+    answers: new Map(),
+  };
+  return deletedCheckState;
+}
+
+function computeModelDeleted(state: DeletedCheckState, brand?: string, model?: string): boolean {
+  // 1. A phone that is actively verified in the live master_phones cache cannot be blocked by stale keys
+  const cleanB = (brand || '').toLowerCase().trim();
+  const cleanM = (model || '').toLowerCase().trim();
+  const match = state.phones.find(([pb, pm]) => (pb === cleanB || cleanB.includes(pb)) && (pm === cleanM || cleanM.includes(pm) || pm.includes(cleanM)));
+  if (match) {
+    if (match[2] === false) return true;
+    if (match[2] === true) return false;
+  }
+
+  // 2. An explicit active price override from the admin also keeps the model
+  if (state.overrides) {
+    const hasActiveOverride = getModelKeyVariants(brand, model).some((v) => {
+      const value = state.overrides?.[v];
+      return typeof value === 'number' && value > 0;
+    });
+    if (hasActiveOverride) return false;
+  }
+
+  if (state.deleted.size === 0) return false;
+  return getModelKeyVariants(brand, model).some((v) => state.deleted.has(v));
+}
+
 /**
  * Checks if a specific model has been deleted or disabled by an admin
  */
 export function isModelDeleted(brand?: string, model?: string): boolean {
   if (!model) return false;
   if (isPermanentlyBlockedModel(brand, model)) return true;
+  // Server side there is no localStorage: nothing is marked deleted.
+  if (typeof window === 'undefined') return false;
 
-  // 1. If phone is actively verified in live master_phones cache with is_active: true, it cannot be blocked by stale keys
-  if (typeof window !== 'undefined') {
-    try {
-      const raw = localStorage.getItem('fundu_live_master_phones_v2');
-      if (raw) {
-        const parsed = JSON.parse(raw);
-        if (Array.isArray(parsed)) {
-          const cleanB = (brand || '').toLowerCase().trim();
-          const cleanM = (model || '').toLowerCase().trim();
-          const match = parsed.find((p: any) => {
-            const pb = (p.brand || '').toLowerCase().trim();
-            const pm = (p.model || '').toLowerCase().trim();
-            return (
-              (pb === cleanB || cleanB.includes(pb)) &&
-              (pm === cleanM || cleanM.includes(pm) || pm.includes(cleanM))
-            );
-          });
-          if (match) {
-            if (match.is_active === false) return true;
-            if (match.is_active === true) return false;
-          }
-        }
-      }
-
-      // 2. Also check if admin has an explicit active price override for this model
-      const rawOverrides = localStorage.getItem('fundu_price_overrides_v1');
-      if (rawOverrides) {
-        const overrides = JSON.parse(rawOverrides);
-        const variants = getModelKeyVariants(brand, model);
-        const hasActiveOverride = variants.some((v) => typeof overrides[v] === 'number' && overrides[v] > 0);
-        if (hasActiveOverride) {
-          return false;
-        }
-      }
-    } catch {}
-  }
-
-  const current = getDeletedModelKeys();
-  if (current.size === 0) return false;
-
-  const variants = getModelKeyVariants(brand, model);
-  return variants.some((v) => current.has(v));
+  const state = getDeletedCheckState();
+  const key = `${brand ?? ''}\u0000${model}`;
+  const known = state.answers.get(key);
+  if (known !== undefined) return known;
+  const answer = computeModelDeleted(state, brand, model);
+  state.answers.set(key, answer);
+  return answer;
 }
+
 
 /**
  * Marks a store product as deleted
