@@ -9,6 +9,8 @@ interface BrandBackGlassSectionProps {
   rules: PricingRules;
   live: PricingRules;
   onChange: (next: PricingRules) => void;
+  /** Called when a per-model amount is edited so the Impact panel can pin this phone to the top. */
+  onPhoneEdited?: (phone: { brand: string; model: string; storage: string; price: number }) => void;
 }
 
 type Show = 'all' | 'own' | 'estimate';
@@ -23,7 +25,7 @@ const startStorage = (model: ModelStorages) => (model.storages.includes('128 GB'
  * missing or bent back panel. A phone with its own amount (measured on Cashify, or typed in here) is priced on it; any other phone
  * shows what the body damage share gives today, in grey, and is priced on that until an amount is typed in.
  */
-export default function BrandBackGlassSection({ rules, live, onChange }: BrandBackGlassSectionProps) {
+export default function BrandBackGlassSection({ rules, live, onChange, onPhoneEdited }: BrandBackGlassSectionProps) {
   const [brands, setBrands] = useState<BrandModels[] | null>(null);
   const [brand, setBrand] = useState('');
   const [search, setSearch] = useState('');
@@ -59,11 +61,14 @@ export default function BrandBackGlassSection({ rules, live, onChange }: BrandBa
   const shown = rows.filter((row) => row.model.model.toLowerCase().includes(text)
     && (show === 'all' || (show === 'own' ? row.own !== undefined : row.own === undefined)));
 
-  const setAmount = (key: string, value: number | undefined) => {
+  const setAmount = (key: string, value: number | undefined, model?: ModelStorages) => {
     const next = { ...rules.backGlass.rupees };
     if (value === undefined) delete next[key];
     else next[key] = value;
     onChange({ ...rules, backGlass: { ...rules.backGlass, rupees: next } });
+    if (current && model && onPhoneEdited) {
+      onPhoneEdited({ brand: current.brand, model: model.model, storage: startStorage(model), price: model.price ?? 0 });
+    }
   };
 
   return (
@@ -132,7 +137,7 @@ export default function BrandBackGlassSection({ rules, live, onChange }: BrandBa
                     value={own}
                     optional
                     placeholder={estimate !== null ? String(estimate) : 'Back glass ₹'}
-                    onChange={(v) => setAmount(key, v)}
+                    onChange={(v) => setAmount(key, v, model)}
                     min={ruleLimits.backGlassRupees[0]}
                     max={ruleLimits.backGlassRupees[1]}
                     step={STEP}
