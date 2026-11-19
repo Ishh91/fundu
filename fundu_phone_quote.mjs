@@ -2778,25 +2778,36 @@ export function calculatePhoneAgingFactor(brand = '', model = '', underWarranty 
   const outOfWarranty = isIphoneLaunchedBefore2023(brand, model) ? age.oldIphone : (recentFactor ?? androidOutOfWarrantyFactor(brand, model, age));
   const normAge = String(agePeriod || '').toLowerCase().trim();
 
+  // The age ramp must be monotone non-increasing: a phone that is 6-11 months old cannot be offered less than the same phone older
+  // than 11 months, otherwise a seller wins by lying about the age. Most phones hit age.m6to11 (0.9078) for 6-11 and age.over11
+  // (0.80) for 11+, so m6to11 > outOfWarranty and the ramp is fine. Some phones have an outOfWarranty factor that is HIGHER than
+  // the generic brackets, because Cashify treats them as "old but still fresh" and pays close to market even past 11 months:
+  //   - every pre-2023 iPhone (age.oldIphone = 0.955);
+  //   - each Android in age.oldAndroid (e.g. OnePlus 10T, Galaxy S21, Galaxy S23 FE at 0.955).
+  // For those phones the 6-11 and 3-6 month factors are floored at outOfWarranty so the ramp stays monotone.
+  const m6to11Factor = Math.max(age.m6to11, outOfWarranty);
+  const m3to6Factor = Math.max(age.m3to6, outOfWarranty);
+
   // Universal Aging brackets for ALL brands & models (Apple & Android):
   // 1. 0 to 3 months: 0% deduction (100% full base price)
   if (normAge === '0_to_3_months' || normAge === 'below_3_months') {
     return age.under3;
   }
-  // 2. 3 to 6 months: 6.55% deduction (0.9345 multiplier)
+  // 2. 3 to 6 months: 6.55% deduction (0.9345 multiplier), floored at the phone's own out-of-warranty factor.
   if (normAge === '3_to_6_months') {
-    return age.m3to6;
+    return m3to6Factor;
   }
-  // 3. 6 to 11 months: 9.22% deduction (0.9078 multiplier)
+  // 3. 6 to 11 months: 9.22% deduction (0.9078 multiplier), floored at the phone's own out-of-warranty factor.
   if (
     normAge === '6_to_9_months' ||
     normAge === '6_to_11_months' ||
     normAge === '3_to_10_months' ||
     normAge === '10_to_12_months'
   ) {
-    return age.m6to11;
+    return m6to11Factor;
   }
-  // 4. Out of warranty (>11 months): 20% deduction (0.80 multiplier)
+  // 4. Out of warranty (>11 months): 20% deduction (0.80 multiplier) for a generic phone; a phone in oldIphone / oldAndroid /
+  //    recentIphone gets its own factor instead (see androidOutOfWarrantyFactor above).
   if (
     normAge === 'above_9_months' ||
     normAge === 'older_than_9_months' ||
