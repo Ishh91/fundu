@@ -2,15 +2,12 @@
  * Google Pixel catalog sync — mirrors the sync_realme_prices / sync_oppo_prices / sync_infinix_prices pattern.
  *
  * Adds (or updates) every Google Pixel model sold in India into:
- *   - server/config/phonesCatalog.json
- *   - src/data/masterModelCatalog.ts
- *   - src/data/indianPhonesCatalog.ts
- *   - src/data/brandSeriesCatalog.ts
+ *   - server/config/phonesCatalog.json (prices of Google rows already there)
  *   - MongoDB `sellpriceconfigs` collection (so the admin Quote Rules panel can edit crack / touch / back-glass amounts for them)
  *   - MongoDB `masterphones` collection
  *
- * BEFORE RUNNING: the prices below are approximate Cashify "market price" estimates for a flawless phone older than 11 months
- * with every accessory. Review each row against https://www.cashify.in and adjust before running. Missing storages: add a row.
+ * Models and prices come from Cashify's own Google pages ("Get Upto" on each variant). That is Cashify's top offer, so check it
+ * against your admin price scale before running.
  *
  * Usage:
  *   node scripts/sync_google_prices.cjs
@@ -22,57 +19,41 @@ const dotenv = require('dotenv');
 
 dotenv.config({ path: path.join(__dirname, '../.env') });
 
-// [name, storage, approx Cashify market price in INR, flawless + above 11 months + with accessories]
+// Every Google model on Cashify (sell-old-mobile-phone/sell-google, 21 models, 32 variants), checked 19 Nov 2026.
+// price = the "Get Upto" amount Cashify shows on each variant page (its top offer, for a near-new flawless phone).
 const googleCatalog = [
-  // Pixel 10 series (2026)
-  { name: 'Google Pixel 10', variant: '128 GB', price: 55000 },
-  { name: 'Google Pixel 10', variant: '256 GB', price: 60000 },
-  { name: 'Google Pixel 10 Pro', variant: '128 GB', price: 72000 },
-  { name: 'Google Pixel 10 Pro', variant: '256 GB', price: 78000 },
-  { name: 'Google Pixel 10 Pro', variant: '512 GB', price: 86000 },
-  { name: 'Google Pixel 10 Pro XL', variant: '256 GB', price: 85000 },
-  { name: 'Google Pixel 10 Pro XL', variant: '512 GB', price: 93000 },
-  { name: 'Google Pixel 10 Pro XL', variant: '1 TB', price: 102000 },
-  { name: 'Google Pixel 10 Pro Fold', variant: '256 GB', price: 125000 },
-  { name: 'Google Pixel 10 Pro Fold', variant: '512 GB', price: 135000 },
-
-  // Pixel 9 series (2024)
-  { name: 'Google Pixel 9', variant: '128 GB', price: 45000 },
-  { name: 'Google Pixel 9', variant: '256 GB', price: 50000 },
-  { name: 'Google Pixel 9 Pro', variant: '128 GB', price: 62000 },
-  { name: 'Google Pixel 9 Pro', variant: '256 GB', price: 68000 },
-  { name: 'Google Pixel 9 Pro XL', variant: '256 GB', price: 72000 },
-  { name: 'Google Pixel 9 Pro XL', variant: '512 GB', price: 80000 },
-  { name: 'Google Pixel 9 Pro Fold', variant: '256 GB', price: 105000 },
-  { name: 'Google Pixel 9a', variant: '128 GB', price: 32000 },
-  { name: 'Google Pixel 9a', variant: '256 GB', price: 36000 },
-
-  // Pixel 8 series (2023)
-  { name: 'Google Pixel 8', variant: '128 GB', price: 32000 },
-  { name: 'Google Pixel 8', variant: '256 GB', price: 36000 },
-  { name: 'Google Pixel 8 Pro', variant: '128 GB', price: 48000 },
-  { name: 'Google Pixel 8 Pro', variant: '256 GB', price: 53000 },
-  { name: 'Google Pixel 8a', variant: '128 GB', price: 25000 },
-  { name: 'Google Pixel 8a', variant: '256 GB', price: 28000 },
-
-  // Pixel 7 series (2022)
-  { name: 'Google Pixel 7', variant: '128 GB', price: 22000 },
-  { name: 'Google Pixel 7', variant: '256 GB', price: 25000 },
-  { name: 'Google Pixel 7 Pro', variant: '128 GB', price: 32000 },
-  { name: 'Google Pixel 7 Pro', variant: '256 GB', price: 36000 },
-  { name: 'Google Pixel 7a', variant: '128 GB', price: 18000 },
-
-  // Pixel 6 series (2021)
-  { name: 'Google Pixel 6', variant: '128 GB', price: 15000 },
-  { name: 'Google Pixel 6 Pro', variant: '128 GB', price: 22000 },
-  { name: 'Google Pixel 6a', variant: '128 GB', price: 13000 },
-
-  // Older still in circulation
-  { name: 'Google Pixel 5', variant: '128 GB', price: 11000 },
-  { name: 'Google Pixel 5a', variant: '128 GB', price: 10000 },
-  { name: 'Google Pixel 4a 5G', variant: '128 GB', price: 8000 },
-  { name: 'Google Pixel 4a', variant: '128 GB', price: 6500 },
-  { name: 'Google Pixel Fold', variant: '256 GB', price: 60000 },
+  { name: 'Google Pixel 4a', variant: '128 GB', price: 4390 },
+  { name: 'Google Pixel 6a', variant: '128 GB', price: 10750 },
+  { name: 'Google Pixel 7', variant: '128 GB', price: 15050 },
+  { name: 'Google Pixel 7', variant: '256 GB', price: 15610 },
+  { name: 'Google Pixel 7 Pro', variant: '128 GB', price: 18670 },
+  { name: 'Google Pixel 7 Pro', variant: '256 GB', price: 19160 },
+  { name: 'Google Pixel 7a', variant: '128 GB', price: 18210 },
+  { name: 'Google Pixel 8', variant: '128 GB', price: 25470 },
+  { name: 'Google Pixel 8', variant: '256 GB', price: 25680 },
+  { name: 'Google Pixel 8 Pro', variant: '128 GB', price: 32640 },
+  { name: 'Google Pixel 8 Pro', variant: '256 GB', price: 33120 },
+  { name: 'Google Pixel 8 Pro', variant: '512 GB', price: 33600 },
+  { name: 'Google Pixel 8a', variant: '128 GB', price: 24500 },
+  { name: 'Google Pixel 8a', variant: '256 GB', price: 25140 },
+  { name: 'Google Pixel 9', variant: '256 GB', price: 38400 },
+  { name: 'Google Pixel 9 Pro', variant: '256 GB', price: 51070 },
+  { name: 'Google Pixel 9 Pro XL', variant: '256 GB', price: 52660 },
+  { name: 'Google Pixel 9 Pro XL', variant: '512 GB', price: 53810 },
+  { name: 'Google Pixel 9 Pro Fold', variant: '256 GB', price: 66000 },
+  { name: 'Google Pixel 9a', variant: '256 GB', price: 28800 },
+  { name: 'Google Pixel 10', variant: '256 GB', price: 47000 },
+  { name: 'Google Pixel 10 Pro', variant: '256 GB', price: 65300 },
+  { name: 'Google Pixel 10 Pro XL', variant: '256 GB', price: 69650 },
+  { name: 'Google Pixel 10 Pro Fold', variant: '256 GB', price: 92750 },
+  { name: 'Google Pixel 10a', variant: '256 GB', price: 34500 },
+  { name: 'Google Pixel 11', variant: '256 GB', price: 60250 },
+  { name: 'Google Pixel 11', variant: '512 GB', price: 66250 },
+  { name: 'Google Pixel 11 Pro', variant: '256 GB', price: 72250 },
+  { name: 'Google Pixel 11 Pro', variant: '512 GB', price: 80250 },
+  { name: 'Google Pixel 11 Pro XL', variant: '256 GB', price: 80250 },
+  { name: 'Google Pixel 11 Pro XL', variant: '512 GB', price: 85250 },
+  { name: 'Google Pixel 11 Pro Fold', variant: '512 GB', price: 101250 },
 ];
 
 function normalizeKey(str) {
