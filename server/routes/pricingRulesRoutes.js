@@ -10,10 +10,14 @@ import { createPhoneQuote } from '../services/quoteService.js';
 
 const MODEL_LIST_CACHE_MS = 60_000;
 
-/** The active sell price rows, as { brand, model, storage, base_price }. Nothing without a database connection, rather than waiting for one. */
-async function loadActiveSellRows() {
+/**
+ * Every sell price row, as { brand, model, storage, base_price }. The admin preview shows every model in the catalog so quote rules
+ * (crack amount, back glass amount) can be typed in for a phone that is not active or has no price yet; the grey estimate column
+ * falls back to "no admin price" for those. Nothing without a database connection, rather than waiting for one.
+ */
+async function loadAllSellRows() {
   if (mongoose.connection.readyState !== 1) return [];
-  return SellPriceConfig.find({ is_active: { $ne: false }, base_price: { $gt: 0 } }).select('brand model storage base_price').lean();
+  return SellPriceConfig.find({}).select('brand model storage base_price').lean();
 }
 
 /** The answers a preview may send; nothing else reaches the quote engine. */
@@ -72,7 +76,7 @@ export function createPricingRulesRouter({
   service = realService,
   quote = createPhoneQuote,
   guard = permissionGuard('sell_pricing'),
-  loadRows = loadActiveSellRows,
+  loadRows = loadAllSellRows,
   now = () => Date.now(),
 } = {}) {
   const router = Router();
