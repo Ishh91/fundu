@@ -63,16 +63,20 @@ export default function ContextPanel({ rules, live, focused }: ContextPanelProps
     const draftValue = readRuleValue(deferredRules, focused);
     const valueDelta = liveValue !== undefined && draftValue !== undefined ? draftValue - liveValue : null;
 
-    const baselineScenario = IMPACT_SCENARIOS.find((s) => s.key === 'flawless') as ImpactScenario;
-    const focusScenarioKey = SCENARIO_FOR_FIELD[focused.fieldKind];
-    const focusScenario = IMPACT_SCENARIOS.find((s) => s.key === focusScenarioKey) ?? baselineScenario;
-
-    const rows = [baselineScenario, focusScenario].map((scenario) => {
-      const liveOffer = quoteImpactOffer(focused.phone, scenario, deferredLive);
-      const draftOffer = quoteImpactOffer(focused.phone, scenario, deferredRules);
-      const delta = liveOffer !== null && draftOffer !== null ? draftOffer - liveOffer : null;
-      return { scenario, liveOffer, draftOffer, delta };
-    });
+    // Always show the four scenarios that matter for screen / back-glass edits: baseline, cracked, touch and panel broken.
+    // The field being edited only changes which value panel sits on top; the offer rows stay the same so the admin sees crack
+    // and touch impact at once (and can tell whether a change leaks into another scenario they did not mean to touch).
+    const focusKey = SCENARIO_FOR_FIELD[focused.fieldKind];
+    const scenarioKeys = ['flawless', 'cracked', 'touch', 'panel'];
+    const rows = scenarioKeys
+      .map((key) => IMPACT_SCENARIOS.find((s) => s.key === key))
+      .filter((s): s is ImpactScenario => Boolean(s))
+      .map((scenario) => {
+        const liveOffer = quoteImpactOffer(focused.phone, scenario, deferredLive);
+        const draftOffer = quoteImpactOffer(focused.phone, scenario, deferredRules);
+        const delta = liveOffer !== null && draftOffer !== null ? draftOffer - liveOffer : null;
+        return { scenario, liveOffer, draftOffer, delta, isFocusRow: scenario.key === focusKey };
+      });
 
     return { liveValue, draftValue, valueDelta, rows };
   }, [focused, deferredRules, deferredLive]);
@@ -104,10 +108,13 @@ export default function ContextPanel({ rules, live, focused }: ContextPanelProps
           <div className="rounded-xl bg-white ring-1 ring-brand-100">
             <div className="border-b border-brand-100 px-3 py-2 text-[11px] font-semibold uppercase tracking-wide text-ink-500">Offer impact</div>
             <ul className="divide-y divide-brand-50 text-sm">
-              {summary.rows.map(({ scenario, liveOffer, draftOffer, delta }) => (
-                <li key={scenario.key} className="grid grid-cols-[1fr_auto] items-center gap-2 px-3 py-2">
+              {summary.rows.map(({ scenario, liveOffer, draftOffer, delta, isFocusRow }) => (
+                <li key={scenario.key} className={`grid grid-cols-[1fr_auto] items-center gap-2 px-3 py-2 ${isFocusRow ? 'bg-brand-50/70' : ''}`}>
                   <div>
-                    <div className="font-medium text-ink-800">{scenario.label}</div>
+                    <div className="flex items-center gap-1.5 font-medium text-ink-800">
+                      {scenario.label}
+                      {isFocusRow && <span className="rounded bg-brand-100 px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wide text-brand-700">this field</span>}
+                    </div>
                     <div className="text-[11px] tabular-nums text-ink-500">Live {liveOffer === null ? '—' : rupees(liveOffer)} → Draft {draftOffer === null ? '—' : rupees(draftOffer)}</div>
                   </div>
                   <DeltaChip delta={delta} />
