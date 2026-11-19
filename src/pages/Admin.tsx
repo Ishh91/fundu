@@ -2210,7 +2210,16 @@ export default function Admin() {
                       updated_at: new Date().toISOString(),
                     }),
                   });
-                  if (!res.ok) throw new Error('Failed to update price in database');
+                  if (!res.ok) {
+                    let reason = '';
+                    try {
+                      const body = await res.json();
+                      reason = body?.error?.message || (typeof body?.error === 'string' ? body.error : '') || body?.message || '';
+                    } catch {
+                      // not JSON: the status below is enough
+                    }
+                    throw new Error(`Failed to update price in database (${res.status}${reason ? `: ${reason}` : ''})`);
+                  }
                   const json = await res.json();
                   const savedDoc = json.data as SellPriceConfig;
 

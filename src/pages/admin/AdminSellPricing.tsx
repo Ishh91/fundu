@@ -768,6 +768,7 @@ export default function AdminSellPricing({
       });
     } catch (err) {
       console.error('[AdminSellPricing] Background price save error:', err);
+      alert(`The price was NOT saved to the database, so customers still see the old one.\n\n${getErrorMessage(err, 'The save failed.')}\n\nTry again, or sign in again if your session has expired.`);
     } finally {
       setPriceSaving(false);
     }
@@ -809,6 +810,7 @@ export default function AdminSellPricing({
       });
     } catch (err) {
       console.error('[AdminSellPricing] Inline background save error:', err);
+      alert(`The price was NOT saved to the database, so customers still see the old one.\n\n${getErrorMessage(err, 'The save failed.')}\n\nTry again, or sign in again if your session has expired.`);
     } finally {
       setInlineSaving(false);
     }
