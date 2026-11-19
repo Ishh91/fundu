@@ -11,13 +11,13 @@ import { createPhoneQuote } from '../services/quoteService.js';
 const MODEL_LIST_CACHE_MS = 60_000;
 
 /**
- * Every sell price row, as { brand, model, storage, base_price }. The admin preview shows every model in the catalog so quote rules
- * (crack amount, back glass amount) can be typed in for a phone that is not active or has no price yet; the grey estimate column
- * falls back to "no admin price" for those. Nothing without a database connection, rather than waiting for one.
+ * Every active sell price row, as { brand, model, storage, base_price }. A row with no price yet is still listed, so quote rules
+ * (crack amount, back glass amount) can be typed in for it; the grey estimate column falls back to "no admin price" for those. Nothing without a database connection, rather than waiting for one.
  */
 async function loadAllSellRows() {
   if (mongoose.connection.readyState !== 1) return [];
-  return SellPriceConfig.find({}).select('brand model storage base_price').lean();
+  // Switched-off rows (an admin-deleted model) stay out; a row with no price yet is still listed.
+  return SellPriceConfig.find({ is_active: { $ne: false } }).select('brand model storage base_price').lean();
 }
 
 /** The answers a preview may send; nothing else reaches the quote engine. */

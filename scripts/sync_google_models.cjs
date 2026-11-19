@@ -2,7 +2,8 @@
  * Makes the Google models in the sell price list match Cashify's Google list (sell-old-mobile-phone/sell-google, 19 Nov 2026).
  *
  *  - A Cashify model that is missing in `sellpriceconfigs` is added (one row per variant).
- *  - A Google model in `sellpriceconfigs` that Cashify does not list is removed.
+ *  - A Google model that Cashify does not list is switched off (is_active: false), which is what the admin "delete model" does: the sell page
+ *    (and the repair lists, which use the same check) stop showing it. Rows are kept, so it can be switched back on.
  *  - Nothing else is touched: no existing price is changed and no image is touched.
  *
  * Dry run by default (reads only, prints the plan). Pass --apply to write.
@@ -44,6 +45,14 @@ const CASHIFY_GOOGLE = [
   ['Pixel 11 Pro Fold', '512 GB', 101250],
 ];
 
+// Google models the frontend catalogs (masterModelCatalog, indianPhonesCatalog, brandSeriesCatalog) list but Cashify does not. They have
+// no row in sellpriceconfigs, so a switched-off row is added for them.
+const FRONTEND_EXTRAS = ['Pixel 2 XL', 'Pixel 3', 'Pixel 3 XL', 'Pixel 3a', 'Pixel 3a XL', 'Pixel 4', 'Pixel 4 XL', 'Pixel 5', 'Pixel 6', 'Pixel 6 Pro', 'Pixel C', 'Pixel Fold'];
+
+// The backend auto-sync (server/config/seedPhones.js) deletes every sellpriceconfigs row that is neither manual_override nor is_locked.
+// The admin's own save sets both, so rows written here set them too, or the next sync would wipe them.
+const ADMIN_ROW = { is_locked: true, manual_override: true };
+
 const modelKey = (model) => String(model || '').toLowerCase().replace(/^google\s+/, '').replace(/\+/g, 'plus').replace(/\s*5g\b/g, '').replace(/[^a-z0-9]/g, '');
 const storageKey = (storage) => String(storage || '').toUpperCase().replace(/\s+/g, '');
 
@@ -56,26 +65,33 @@ async function run() {
   const have = new Set(existing.map((row) => modelKey(row.model)));
 
   const toAdd = CASHIFY_GOOGLE.filter(([model]) => !have.has(modelKey(model)));
-  const toRemove = existing.filter((row) => !wanted.has(modelKey(row.model)));
+  const toRemove = existing.filter((row) => !wanted.has(modelKey(row.model)) && row.is_active !== false);
+  const switchedOff = new Set(existing.filter((row) => row.is_active === false).map((row) => modelKey(row.model)));
+  const extrasToMark = FRONTEND_EXTRAS.filter((model) => !have.has(modelKey(model)) && !switchedOff.has(modelKey(model)));
   const kept = [...have].filter((key) => wanted.has(key)).length;
 
   console.log(`${APPLY ? 'APPLYING' : 'DRY RUN'}: ${existing.length} Google rows in the sell list, ${wanted.size} models on Cashify.`);
   console.log(`\nStay as they are (${kept} models, prices untouched)`);
   console.log(`\nAdd (${new Set(toAdd.map(([m]) => modelKey(m))).size} models, ${toAdd.length} rows):`);
   toAdd.forEach(([model, storage, price]) => console.log(`  + ${model} ${storage}  base_price ${price}`));
-  console.log(`\nRemove (${new Set(toRemove.map((r) => modelKey(r.model))).size} models, ${toRemove.length} rows, not on Cashify):`);
-  toRemove.forEach((row) => console.log(`  - ${row.model} ${row.storage}  base_price ${row.base_price}`));
+  console.log(`\nSwitch off (${toRemove.length} existing rows not on Cashify; the row and its price stay):`);
+  toRemove.forEach((row) => console.log(`  x ${row.model} ${row.storage}`));
+  console.log(`\nHide from the frontend lists (${extrasToMark.length} models that have no row yet):`);
+  extrasToMark.forEach((model) => console.log(`  x ${model}`));
 
   if (APPLY) {
-    if (toRemove.length) await rows.deleteMany({ _id: { $in: toRemove.map((row) => row._id) } });
+    if (toRemove.length) await rows.updateMany({ _id: { $in: toRemove.map((row) => row._id) } }, { $set: { is_active: false, ...ADMIN_ROW, updated_at: new Date() } });
+    for (const model of extrasToMark) {
+      await rows.insertOne({ brand: 'Google', model, storage: '128GB', base_price: 0, is_active: false, ...ADMIN_ROW, created_at: new Date(), updated_at: new Date() });
+    }
     for (const [model, storage, price] of toAdd) {
       await rows.insertOne({
         brand: 'Google', model, storage: storageKey(storage), base_price: price,
         excellent_multiplier: 0.85, good_multiplier: 0.70, fair_multiplier: 0.55, box_bonus: 500, charger_bonus: 400,
-        is_active: true, created_at: new Date(), updated_at: new Date(),
+        is_active: true, ...ADMIN_ROW, created_at: new Date(), updated_at: new Date(),
       });
     }
-    console.log(`\nDone: added ${toAdd.length}, removed ${toRemove.length}.`);
+    console.log(`\nDone: added ${toAdd.length}, switched off ${toRemove.length}, hidden ${extrasToMark.length}.`);
   } else {
     console.log('\nNothing was written. Run again with --apply to do it.');
   }
