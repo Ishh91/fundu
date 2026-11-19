@@ -71,11 +71,17 @@ describe('the age factor of an Android older than 11 months', () => {
   });
 
   it('does not touch a phone younger than 11 months, or an iPhone', () => {
-    for (const [brand, model] of [['Samsung', 'Galaxy S25 Ultra'], ['OnePlus', '13'], ['Samsung', 'Galaxy S21']]) {
+    // Phones without an old-but-fresh override still use the generic younger-than-11-month factors.
+    for (const [brand, model] of [['Samsung', 'Galaxy S25 Ultra'], ['OnePlus', '13']]) {
       assert.equal(calculatePhoneAgingFactor(brand, model, false, '0_to_3_months'), 1.0, model);
       assert.equal(calculatePhoneAgingFactor(brand, model, false, '3_to_6_months'), 0.9345, model);
       assert.equal(calculatePhoneAgingFactor(brand, model, false, '6_to_9_months'), 0.9078, model);
     }
+    // A phone Cashify treats as "old but still fresh" (Galaxy S21 at 0.955) is floored at its own factor so the ramp stays
+    // monotone: a 6-11 month Galaxy S21 cannot be offered less than an 11+ month Galaxy S21.
+    assert.equal(calculatePhoneAgingFactor('Samsung', 'Galaxy S21', false, '0_to_3_months'), 1.0);
+    assert.equal(calculatePhoneAgingFactor('Samsung', 'Galaxy S21', false, '3_to_6_months'), 0.955);
+    assert.equal(calculatePhoneAgingFactor('Samsung', 'Galaxy S21', false, '6_to_9_months'), 0.955);
     assert.equal(calculatePhoneAgingFactor('Apple', 'iPhone 16', false, OLD), 0.80);
     assert.equal(calculatePhoneAgingFactor('Apple', 'iPhone 14', false, OLD), 0.955);
   });

@@ -50,15 +50,26 @@ describe('the age factor of an old iPhone', () => {
     assert.equal(calculatePhoneAgingFactor('OnePlus', '11', false, OLD), 0.73, 'a recent Android');
   });
 
-  it('does not change a younger phone: 0-3 months is 1.00, 3-6 months 0.9345, 6-11 months 0.9078', () => {
+  it('is under 3 months at 1.00, and from 3 months on an iPhone 14 is floored at its own 0.955 so the ramp stays monotone', () => {
+    // The old-iPhone factor (0.955) is above the generic 3-6 and 6-11 brackets (0.9345 / 0.9078). Since a 6-11 month iPhone 14
+    // must not be offered less than an 11+ month iPhone 14, the younger brackets are floored at 0.955 for pre-2023 iPhones.
     assert.equal(calculatePhoneAgingFactor('Apple', 'iPhone 14', false, '0_to_3_months'), 1.0);
-    assert.equal(calculatePhoneAgingFactor('Apple', 'iPhone 14', false, '3_to_6_months'), 0.9345);
-    assert.equal(calculatePhoneAgingFactor('Apple', 'iPhone 14', false, '6_to_9_months'), 0.9078);
+    assert.equal(calculatePhoneAgingFactor('Apple', 'iPhone 14', false, '3_to_6_months'), 0.955);
+    assert.equal(calculatePhoneAgingFactor('Apple', 'iPhone 14', false, '6_to_9_months'), 0.955);
     assert.equal(calculatePhoneAgingFactor('Apple', 'iPhone 14', true, ''), 1.0);
   });
 
-  it('never goes above a younger phone: an old iPhone is below the 6-11 month factor', () => {
-    assert.ok(OLD_PHONE_AGE_FACTOR > 0.9078, 'the old factor is above the 6-11 month one, as Cashify pays an old phone more than a young one');
+  it('never pays an older phone more than a younger one of the same model', () => {
+    const factors = [
+      calculatePhoneAgingFactor('Apple', 'iPhone 14', false, '0_to_3_months'),
+      calculatePhoneAgingFactor('Apple', 'iPhone 14', false, '3_to_6_months'),
+      calculatePhoneAgingFactor('Apple', 'iPhone 14', false, '6_to_9_months'),
+      calculatePhoneAgingFactor('Apple', 'iPhone 14', false, OLD),
+    ];
+    for (let i = 1; i < factors.length; i += 1) {
+      assert.ok(factors[i - 1] >= factors[i], `iPhone 14 factors must be monotone non-increasing: got ${factors.join(' > ')}`);
+    }
+    assert.ok(OLD_PHONE_AGE_FACTOR >= 0.9078, 'the old-iPhone factor is still at least the generic 6-11 month bracket');
   });
 });
 
