@@ -14,6 +14,7 @@ import { connectDB } from './config/db.js';
 import { parseAuth } from './middleware/auth.js';
 import apiRoutes from './routes/index.js';
 import { recordServerError } from './routes/errorRoutes.js';
+import { mobileCache } from './utils/mobileApi.js';
 
 const app = express();
 const PORT = Number(process.env.PORT || 4000);
@@ -94,6 +95,12 @@ async function startServer() {
   app.listen(PORT, () => {
     console.log(`Backend server running on http://localhost:${PORT}`);
   });
+
+  // One line every 10 minutes, so the host's logs show whether memory climbs before a crash ("heap out of memory"). unref: it never keeps the process alive.
+  setInterval(() => {
+    const { heapUsed, rss } = process.memoryUsage();
+    console.log(`[memory] heap ${Math.round(heapUsed / 1048576)} MB, rss ${Math.round(rss / 1048576)} MB, mobile cache ${mobileCache.size} entries`);
+  }, 10 * 60 * 1000).unref();
 }
 
 startServer().catch((err) => {

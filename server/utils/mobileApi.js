@@ -1,4 +1,5 @@
 import { createHttpError } from './error.js';
+import { setBounded } from './boundedCache.js';
 import { INDIAN_MARKET_PHONES_LAST_10_YEARS } from '../config/seedPhones.js';
 
 export const DEFAULT_PHONE_BRANDS = [
@@ -19,8 +20,11 @@ export const getCachedValue = (key, maxAgeMs = 1000 * 60 * 60 * 24) => {
   return entry.value;
 };
 
+// The keys hold what a visitor typed (a search, a model name), so the cache is capped; see setBounded.
+const MAX_MOBILE_CACHE_ENTRIES = 300;
+
 export const setCachedValue = (key, value) => {
-  mobileCache.set(key, { value, createdAt: Date.now() });
+  setBounded(mobileCache, key, { value, createdAt: Date.now() }, MAX_MOBILE_CACHE_ENTRIES);
   return value;
 };
 
