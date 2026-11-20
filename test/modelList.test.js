@@ -115,3 +115,28 @@ describe('the brand and model list for the preview', () => {
     assert.deepEqual(modelsOf(list, 'constructor'), [{ model: '__proto__', storages: ['128 GB'], price: 10000 }]);
   });
 });
+
+describe('a model name with a plus sign', () => {
+  it('is its own model: Pro+ is not Pro, and S23+ is not S23', () => {
+    const list = buildModelList([
+      row('Realme', '12 Pro 5G', '128 GB'), row('Realme', '12 Pro+ 5G', '256 GB'), row('Realme', '13+ 5G', '128 GB'), row('Realme', '13 5G', '128 GB'),
+      row('Samsung', 'Galaxy S23', '128 GB'), row('Samsung', 'Galaxy S23+', '256 GB'),
+    ]);
+    assert.deepEqual(modelsOf(list, 'Realme').map((m) => m.model).sort(), ['12 Pro 5G', '12 Pro+ 5G', '13 5G', '13+ 5G']);
+    assert.deepEqual(modelsOf(list, 'Samsung').map((m) => m.model).sort(), ['Galaxy S23', 'Galaxy S23+']);
+  });
+
+  it('keeps each one with its own storages and price', () => {
+    const list = buildModelList([row('Realme', '12 Pro 5G', '128 GB'), { ...row('Realme', '12 Pro+ 5G', '256 GB'), base_price: 30000 }]);
+    const plus = modelsOf(list, 'Realme').find((m) => m.model === '12 Pro+ 5G');
+    assert.deepEqual(plus.storages, ['256 GB']);
+    assert.equal(plus.price, 30000);
+  });
+
+  it('treats "Pro Plus" and "Pro+" as one model, since the price rows spell it both ways', () => {
+    const list = buildModelList([row('Realme', '12 Pro Plus 5G', '128 GB'), row('Realme', '12 Pro+ 5G', '256 GB')]);
+    const realme = modelsOf(list, 'Realme');
+    assert.equal(realme.length, 1);
+    assert.deepEqual(realme[0].storages, ['128 GB', '256 GB']);
+  });
+});
