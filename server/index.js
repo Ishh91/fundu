@@ -15,6 +15,9 @@ import { parseAuth } from './middleware/auth.js';
 import apiRoutes from './routes/index.js';
 import { recordServerError } from './routes/errorRoutes.js';
 import { mobileCache } from './utils/mobileApi.js';
+import { countRequest, takeTopRoutes } from './utils/requestStats.js';
+import { getRouteCacheSize } from './routes/dbRoutes.js';
+import { getQuoteAuditCount } from './services/quoteService.js';
 
 const app = express();
 const PORT = Number(process.env.PORT || 4000);
@@ -56,6 +59,15 @@ app.use((req, res, next) => {
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
+// Counts requests per route pattern for the [memory] log line below. The pattern is read when the reply is sent, once the router has matched.
+app.use((req, res, next) => {
+  res.on('finish', () => {
+    const table = req.params?.table ? ` [${req.params.table}]` : '';
+    countRequest(`${req.method} ${req.baseUrl || ''}${req.route?.path ?? ''}${table}`);
+  });
+  next();
+});
+
 app.use(parseAuth);
 app.use('/api', apiRoutes);
 
@@ -96,11 +108,16 @@ async function startServer() {
     console.log(`Backend server running on http://localhost:${PORT}`);
   });
 
-  // One line every 10 minutes, so the host's logs show whether memory climbs before a crash ("heap out of memory"). unref: it never keeps the process alive.
+  // One line every 2 minutes (MEMORY_LOG_MS to change), so the host's logs show whether memory climbs before a crash ("heap out of memory"). unref: it never keeps the process alive.
   setInterval(() => {
-    const { heapUsed, rss } = process.memoryUsage();
-    console.log(`[memory] heap ${Math.round(heapUsed / 1048576)} MB, rss ${Math.round(rss / 1048576)} MB, mobile cache ${mobileCache.size} entries`);
-  }, 10 * 60 * 1000).unref();
+    const { heapUsed, rss, external, arrayBuffers } = process.memoryUsage();
+    const { top, total } = takeTopRoutes(5);
+    console.log(
+      `[memory] heap ${Math.round(heapUsed / 1048576)} MB, rss ${Math.round(rss / 1048576)} MB, external ${Math.round(external / 1048576)} MB, buffers ${Math.round(arrayBuffers / 1048576)} MB`
+      + ` | mobile cache ${mobileCache.size}, db route cache ${getRouteCacheSize()}, quote audits ${getQuoteAuditCount()}`
+      + ` | ${total} requests since the last line: ${top.join(', ') || 'none'}`,
+    );
+  }, Number(process.env.MEMORY_LOG_MS) || 2 * 60 * 1000).unref();
 }
 
 startServer().catch((err) => {

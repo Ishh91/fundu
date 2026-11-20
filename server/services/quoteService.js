@@ -212,6 +212,8 @@ export async function createPhoneQuote(input, options = {}) {
 /**
  * Retrieve the internal audit record for a given quoteId
  */
+export const getQuoteAuditCount = () => quoteAuditRegistry.size;
+
 export function getQuoteAudit(quoteId) {
   return quoteAuditRegistry.get(quoteId) || null;
 }

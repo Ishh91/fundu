@@ -20,6 +20,8 @@ const routeCache = new Map();
 const CACHE_TTL_MS = 60 * 1000;
 // A table read can be a whole table (about 2 MB for the phone tables), and the key holds the visitor's own query, so the count is capped.
 const MAX_ROUTE_CACHE_ENTRIES = 100;
+
+export const getRouteCacheSize = () => routeCache.size;
 const PUBLIC_CACHE_TABLES = new Set([
   'products',
   'site_content',
