@@ -116,6 +116,7 @@ export function normalizeCanonicalBrand(brand?: string): string {
   if (b === 'tecno') return 'Tecno';
   if (b === 'infinix') return 'Infinix';
   if (b === 'itel') return 'Itel';
+  if (b === 'ai+' || b === 'ai plus' || b === 'aiplus') return 'Ai+';
   if (!brand) return 'Smartphone';
   return brand.charAt(0).toUpperCase() + brand.slice(1);
 }

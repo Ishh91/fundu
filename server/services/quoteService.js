@@ -1,3 +1,4 @@
+import { escapeRegex } from '../utils/regex.js';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -116,12 +117,12 @@ export async function createPhoneQuote(input, options = {}) {
       const isXiaomi = inputBrandStr.toLowerCase() === 'xiaomi';
       const brandRegex = (isPoco || isXiaomi)
         ? /^(poco|xiaomi)$/i
-        : new RegExp(`^${inputBrandStr}$`, 'i');
+        : new RegExp(`^${escapeRegex(inputBrandStr)}$`, 'i');
 
       const cleanModelName = cleanModel.replace(/^(poco|xiaomi)\s+/i, '').trim();
       const modelEscaped = cleanModel.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
       const cleanEscaped = cleanModelName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-      const modelRegex = new RegExp(`^(${modelEscaped}|${inputBrandStr}\\s+${modelEscaped}|${cleanEscaped}|poco\\s+${cleanEscaped}|xiaomi\\s+${cleanEscaped})$`, 'i');
+      const modelRegex = new RegExp(`^(${modelEscaped}|${escapeRegex(inputBrandStr)}\\s+${modelEscaped}|${cleanEscaped}|poco\\s+${cleanEscaped}|xiaomi\\s+${cleanEscaped})$`, 'i');
 
       let dbConfig = null;
       if (input.storage) {
@@ -161,9 +162,9 @@ export async function createPhoneQuote(input, options = {}) {
     // 2. Check MasterPhone in MongoDB if no SellPriceConfig
     if (!enrichedOptions.catalogPrice) {
       try {
-        const brandRegex = new RegExp(`^${(input.brand || '').trim()}$`, 'i');
+        const brandRegex = new RegExp(`^${escapeRegex((input.brand || '').trim())}$`, 'i');
         const modelEscaped = cleanModel.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-        const modelRegex = new RegExp(`^(${modelEscaped}|${(input.brand || '').trim()}\\s+${modelEscaped})$`, 'i');
+        const modelRegex = new RegExp(`^(${modelEscaped}|${escapeRegex((input.brand || '').trim())}\\s+${modelEscaped})$`, 'i');
         const mp = await MasterPhone.findOne({
           brand: brandRegex,
           model: modelRegex,

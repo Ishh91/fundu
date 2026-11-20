@@ -1,3 +1,4 @@
+import { escapeRegex } from '../utils/regex.js';
 import { Router } from 'express';
 import mongoose from 'mongoose';
 import { SellPriceConfig, MasterPhone } from '../models/index.js';
@@ -642,14 +643,14 @@ router.get('/sell-pricing/config', async (req, res, next) => {
     const isXiaomi = rawBrand.toLowerCase() === 'xiaomi';
     const brandRegex = (isPoco || isXiaomi)
       ? /^(poco|xiaomi)$/i
-      : new RegExp(`^${rawBrand}$`, 'i');
+      : new RegExp(`^${escapeRegex(rawBrand)}$`, 'i');
 
     const cleanModelName = rawModel.replace(/^(poco|xiaomi)\s+/i, '').trim();
     const cleanNo5g = cleanModelName.replace(/\s*5g$/i, '').trim();
     const modelEscaped = rawModel.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     const cleanEscaped = cleanModelName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     const cleanNo5gEscaped = cleanNo5g.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-    const modelRegex = new RegExp(`^(${modelEscaped}|${rawBrand}\\s+${modelEscaped}|${cleanEscaped}|poco\\s+${cleanEscaped}|xiaomi\\s+${cleanEscaped}|${cleanNo5gEscaped}|poco\\s+${cleanNo5gEscaped}|xiaomi\\s+${cleanNo5gEscaped})(?:\\s*5g)?$`, 'i');
+    const modelRegex = new RegExp(`^(${modelEscaped}|${escapeRegex(rawBrand)}\\s+${modelEscaped}|${cleanEscaped}|poco\\s+${cleanEscaped}|xiaomi\\s+${cleanEscaped}|${cleanNo5gEscaped}|poco\\s+${cleanNo5gEscaped}|xiaomi\\s+${cleanNo5gEscaped})(?:\\s*5g)?$`, 'i');
 
     let config = null;
 
@@ -842,14 +843,14 @@ router.post('/sell-pricing/config', async (req, res, next) => {
     const isXiaomi = rawBrand.toLowerCase() === 'xiaomi';
     const brandRegex = (isPoco || isXiaomi)
       ? /^(poco|xiaomi)$/i
-      : new RegExp(`^${rawBrand}$`, 'i');
+      : new RegExp(`^${escapeRegex(rawBrand)}$`, 'i');
 
     const cleanModelName = rawModel.replace(/^(poco|xiaomi)\s+/i, '').trim();
     const cleanNo5g = cleanModelName.replace(/\s*5g$/i, '').trim();
     const modelEscaped = rawModel.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     const cleanEscaped = cleanModelName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     const cleanNo5gEscaped = cleanNo5g.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-    const modelRegex = new RegExp(`^(${modelEscaped}|${rawBrand}\\s+${modelEscaped}|${cleanEscaped}|poco\\s+${cleanEscaped}|xiaomi\\s+${cleanEscaped}|${cleanNo5gEscaped}|poco\\s+${cleanNo5gEscaped}|xiaomi\\s+${cleanNo5gEscaped})(?:\\s*5g)?$`, 'i');
+    const modelRegex = new RegExp(`^(${modelEscaped}|${escapeRegex(rawBrand)}\\s+${modelEscaped}|${cleanEscaped}|poco\\s+${cleanEscaped}|xiaomi\\s+${cleanEscaped}|${cleanNo5gEscaped}|poco\\s+${cleanNo5gEscaped}|xiaomi\\s+${cleanNo5gEscaped})(?:\\s*5g)?$`, 'i');
 
     const cleanStorage = storage
       ? String(storage).trim().replace(/(\d+)\s*(gb|tb)/i, (_, n, u) => `${n} ${u.toUpperCase()}`)
@@ -1071,14 +1072,14 @@ router.get('/sell-pricing/competitor-radar', async (req, res, next) => {
     const isXiaomi = rawBrand.toLowerCase() === 'xiaomi';
     const brandRegex = (isPoco || isXiaomi)
       ? /^(poco|xiaomi)$/i
-      : new RegExp(`^${rawBrand}$`, 'i');
+      : new RegExp(`^${escapeRegex(rawBrand)}$`, 'i');
 
     const cleanModelName = rawModel.replace(/^(poco|xiaomi)\s+/i, '').trim();
     const cleanNo5g = cleanModelName.replace(/\s*5g$/i, '').trim();
     const modelEscaped = rawModel.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     const cleanEscaped = cleanModelName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     const cleanNo5gEscaped = cleanNo5g.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-    const modelRegex = new RegExp(`^(${modelEscaped}|${rawBrand}\\s+${modelEscaped}|${cleanEscaped}|poco\\s+${cleanEscaped}|xiaomi\\s+${cleanEscaped}|${cleanNo5gEscaped}|poco\\s+${cleanNo5gEscaped}|xiaomi\\s+${cleanNo5gEscaped})(?:\\s*5g)?$`, 'i');
+    const modelRegex = new RegExp(`^(${modelEscaped}|${escapeRegex(rawBrand)}\\s+${modelEscaped}|${cleanEscaped}|poco\\s+${cleanEscaped}|xiaomi\\s+${cleanEscaped}|${cleanNo5gEscaped}|poco\\s+${cleanNo5gEscaped}|xiaomi\\s+${cleanNo5gEscaped})(?:\\s*5g)?$`, 'i');
 
     // 1. Fetch Fundu Base Price from MongoDB (Exact storage match first)
     let funduConfig = null;

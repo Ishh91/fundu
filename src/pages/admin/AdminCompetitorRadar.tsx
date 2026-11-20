@@ -115,6 +115,7 @@ const BRANDS = [
   'Tecno',
   'Infinix',
   'Itel',
+  'Ai+',
 ];
 
 const DEFAULT_BRAND_MODELS: Record<string, { model: string; storage: string }> = {
@@ -133,6 +134,7 @@ const DEFAULT_BRAND_MODELS: Record<string, { model: string; storage: string }> =
   Tecno: { model: 'Tecno Camon 30 5G', storage: '256 GB' },
   Infinix: { model: 'Infinix GT 20 Pro 5G', storage: '256 GB' },
   Itel: { model: 'Itel Color Pro 5G', storage: '128 GB' },
+  'Ai+': { model: 'Nova 2 5G', storage: '128 GB' },
 };
 
 function normalizeModelDisplayName(brand: string, rawModel: string): string {

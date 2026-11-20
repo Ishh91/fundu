@@ -1,3 +1,4 @@
+import { escapeRegex } from '../utils/regex.js';
 import mongoose, { Types } from 'mongoose';
 import { getModel, Order, User, VendorLedger, WholesaleOrder, WholesaleInventory, Product, SparePart } from '../models/index.js';
 import { createHttpError } from '../utils/error.js';
@@ -815,7 +816,7 @@ export const upsertTable = async (table, { auth, values, single }) => {
     const payload = preparePayload(table, 'upsert', values, auth);
     const match = {
       product_type: payload.product_type || 'smartphone',
-      brand: new RegExp(`^${payload.brand?.trim()}$`, 'i'),
+      brand: new RegExp(`^${escapeRegex(payload.brand?.trim())}$`, 'i'),
       model: new RegExp(`^${payload.model?.trim()}$`, 'i'),
     };
     const doc = await Model.findOneAndUpdate(match, payload, { new: true, upsert: true, runValidators: false, setDefaultsOnInsert: true });
@@ -832,9 +833,9 @@ export const upsertTable = async (table, { auth, values, single }) => {
     if (rawBrand && rawModel.toLowerCase().startsWith(rawBrand.toLowerCase())) {
       rawModel = rawModel.slice(rawBrand.length).trim();
     }
-    const brandRegex = new RegExp(`^${rawBrand}$`, 'i');
+    const brandRegex = new RegExp(`^${escapeRegex(rawBrand)}$`, 'i');
     const modelEscaped = rawModel.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-    const modelRegex = new RegExp(`^(${modelEscaped}|${rawBrand}\\s+${modelEscaped})$`, 'i');
+    const modelRegex = new RegExp(`^(${modelEscaped}|${escapeRegex(rawBrand)}\\s+${modelEscaped})$`, 'i');
     const match = {
       brand: brandRegex,
       model: modelRegex,
@@ -870,9 +871,9 @@ export const upsertTable = async (table, { auth, values, single }) => {
     if (rawBrand && rawModel.toLowerCase().startsWith(rawBrand.toLowerCase())) {
       rawModel = rawModel.slice(rawBrand.length).trim();
     }
-    const brandRegex = new RegExp(`^${rawBrand}$`, 'i');
+    const brandRegex = new RegExp(`^${escapeRegex(rawBrand)}$`, 'i');
     const modelEscaped = rawModel.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-    const modelRegex = new RegExp(`^(${modelEscaped}|${rawBrand}\\s+${modelEscaped})$`, 'i');
+    const modelRegex = new RegExp(`^(${modelEscaped}|${escapeRegex(rawBrand)}\\s+${modelEscaped})$`, 'i');
     const match = {
       brand: brandRegex,
       model: modelRegex,

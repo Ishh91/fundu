@@ -1,3 +1,4 @@
+import { escapeRegex } from '../utils/regex.js';
 import { mobileApiRequest, getCachedValue, setCachedValue } from '../utils/mobileApi.js';
 import { MasterPhone } from '../models/MasterPhone.js';
 
@@ -23,7 +24,7 @@ export async function resolveDeviceImage(brand, model) {
   try {
     if (MasterPhone.db && MasterPhone.db.readyState === 1) {
       const dbPhone = await MasterPhone.findOne({
-        brand: new RegExp(`^${cleanBrand}$`, 'i'),
+        brand: new RegExp(`^${escapeRegex(cleanBrand)}$`, 'i'),
         model: new RegExp(`^${cleanModel}$`, 'i'),
         image_url: { $exists: true, $ne: null, $ne: '' }
       });
