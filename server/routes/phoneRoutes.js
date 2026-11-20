@@ -8,6 +8,7 @@ import { buildLiveImagesResponse, getLiveImages, invalidateLiveImages } from '..
 import { INDIAN_MARKET_PHONES_LAST_10_YEARS, ensureMasterPhonesSeeded } from '../config/seedPhones.js';
 import { isBlockedPhone } from '../utils/blockedModels.js';
 import { offloadMediaForSave } from '../services/cloudinary.js';
+import { escapeRegex } from '../utils/regex.js';
 import {
   extractStorageOptions,
   extractRamOptions,
@@ -36,7 +37,7 @@ router.get('/search', async (req, res) => {
 
     const filter = { is_active: { $ne: false } };
     if (brand && brand !== 'All') {
-      filter.brand = new RegExp(`^${brand.trim()}$`, 'i');
+      filter.brand = new RegExp(`^${escapeRegex(brand.trim())}$`, 'i');
     }
     if (query && query.trim()) {
       const q = query.trim();
@@ -250,7 +251,7 @@ router.get('/specs', async (req, res) => {
     }
 
     let phone = await MasterPhone.findOne({
-      brand: new RegExp(`^${brand.trim()}$`, 'i'),
+      brand: new RegExp(`^${escapeRegex(brand.trim())}$`, 'i'),
       model: new RegExp(`^${model.trim()}$`, 'i'),
       is_active: { $ne: false },
     });
@@ -456,7 +457,7 @@ router.post('/model-image', requireModelMediaAccess, async (req, res) => {
     const isXiaomi = rawBrand.toLowerCase() === 'xiaomi';
     const brandRegex = (isPoco || isXiaomi)
       ? /^(poco|xiaomi)$/i
-      : new RegExp(`^${rawBrand}$`, 'i');
+      : new RegExp(`^${escapeRegex(rawBrand)}$`, 'i');
 
     const cleanModelName = rawModel.replace(/^(poco|xiaomi)\s+/i, '').trim();
     const cleanNo5g = cleanModelName.replace(/\s*5g$/i, '').trim();
@@ -472,7 +473,7 @@ router.post('/model-image', requireModelMediaAccess, async (req, res) => {
       .map((p) => p.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'))
       .join('\\s*');
 
-    const modelRegex = new RegExp(`^(${modelEscaped}|${rawBrand}\\s+${modelEscaped}|${cleanEscaped}|poco\\s+${cleanEscaped}|xiaomi\\s+${cleanEscaped}|${cleanNo5gEscaped}|poco\\s+${cleanNo5gEscaped}|xiaomi\\s+${cleanNo5gEscaped}|(?:${rawBrand}\\s+)?${flexPattern})(?:\\s*5g)?$`, 'i');
+    const modelRegex = new RegExp(`^(${modelEscaped}|${escapeRegex(rawBrand)}\\s+${modelEscaped}|${cleanEscaped}|poco\\s+${cleanEscaped}|xiaomi\\s+${cleanEscaped}|${cleanNo5gEscaped}|poco\\s+${cleanNo5gEscaped}|xiaomi\\s+${cleanNo5gEscaped}|(?:${escapeRegex(rawBrand)}\\s+)?${flexPattern})(?:\\s*5g)?$`, 'i');
 
     const canonicalBrand = isPoco ? 'Poco' : rawBrand;
 
@@ -570,7 +571,7 @@ router.post('/model-video', requireModelMediaAccess, async (req, res) => {
     const isXiaomi = rawBrand.toLowerCase() === 'xiaomi';
     const brandRegex = (isPoco || isXiaomi)
       ? /^(poco|xiaomi)$/i
-      : new RegExp(`^${rawBrand}$`, 'i');
+      : new RegExp(`^${escapeRegex(rawBrand)}$`, 'i');
 
     const cleanModelName = rawModel.replace(/^(poco|xiaomi)\s+/i, '').trim();
     const cleanNo5g = cleanModelName.replace(/\s*5g$/i, '').trim();
@@ -586,7 +587,7 @@ router.post('/model-video', requireModelMediaAccess, async (req, res) => {
       .map((p) => p.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'))
       .join('\\s*');
 
-    const modelRegex = new RegExp(`^(${modelEscaped}|${rawBrand}\\s+${modelEscaped}|${cleanEscaped}|poco\\s+${cleanEscaped}|xiaomi\\s+${cleanEscaped}|${cleanNo5gEscaped}|poco\\s+${cleanNo5gEscaped}|xiaomi\\s+${cleanNo5gEscaped}|(?:${rawBrand}\\s+)?${flexPattern})(?:\\s*5g)?$`, 'i');
+    const modelRegex = new RegExp(`^(${modelEscaped}|${escapeRegex(rawBrand)}\\s+${modelEscaped}|${cleanEscaped}|poco\\s+${cleanEscaped}|xiaomi\\s+${cleanEscaped}|${cleanNo5gEscaped}|poco\\s+${cleanNo5gEscaped}|xiaomi\\s+${cleanNo5gEscaped}|(?:${escapeRegex(rawBrand)}\\s+)?${flexPattern})(?:\\s*5g)?$`, 'i');
 
     const canonicalBrand = isPoco ? 'Poco' : rawBrand;
 

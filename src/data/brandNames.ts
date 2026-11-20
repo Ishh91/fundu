@@ -18,5 +18,6 @@ export const LOOKUP_BRANDS = [
   'Tecno',
   'Itel',
   'Micromax',
+  'Ai+',
 ];
 

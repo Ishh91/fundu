@@ -109,6 +109,7 @@ const POPULAR_BRANDS = [
   'Infinix',
   'Tecno',
   'Itel',
+  'Ai+',
 ];
 
 export default function AdminSellPricing({
