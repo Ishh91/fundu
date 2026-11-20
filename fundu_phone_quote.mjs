@@ -2948,9 +2948,23 @@ const CALLS_NOT_WORKING_KEY = 'calls_not_working';
 const CALLS_NOT_WORKING_SALVAGE_APPLE = DEFAULT_PRICING_RULES.faults.callsSalvageApple;
 const CALLS_NOT_WORKING_SALVAGE_OTHER = DEFAULT_PRICING_RULES.faults.callsSalvageOther;
 
+// resolvePricingRules builds a new object of about 30 KB. The quote audit keeps the rules a quote was priced with, so a new copy per quote
+// meant every quote held 30 KB for ever (the audit registry never empties): a server taking a few hundred quotes a minute ran out of heap.
+// The server hands every quote the same cached rules object, so the resolved copy is made once per rules object. Nothing writes to it.
+const resolvedRulesByInput = new WeakMap();
+function resolveRulesOnce(saved) {
+  if (!saved || typeof saved !== 'object') return resolvePricingRules(saved);
+  let resolved = resolvedRulesByInput.get(saved);
+  if (!resolved) {
+    resolved = resolvePricingRules(saved);
+    resolvedRulesByInput.set(saved, resolved);
+  }
+  return resolved;
+}
+
 export function quotePhone(input = {}, options = {}) {
   // The editable quote rules (age factors, iPhone screen amounts, Samsung factor). Anything missing or out of bounds is the default.
-  const rules = resolvePricingRules(options.pricingRules);
+  const rules = resolveRulesOnce(options.pricingRules);
   const {
     brand,
     model,

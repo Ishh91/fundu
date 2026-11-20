@@ -17,6 +17,7 @@ import { SellRequest } from '../models/SellRequest.js';
 import { SellPriceConfig } from '../models/SellPriceConfig.js';
 import { MasterPhone } from '../models/MasterPhone.js';
 import { pricingRules } from './pricingRules.js';
+import { setBounded } from '../utils/boundedCache.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -86,6 +87,8 @@ function getCatalogPhone(brand, model) {
 
 // In-memory audit registry (and persistent fallback if DB disconnected)
 const quoteAuditRegistry = new Map();
+// Every customer quote adds an entry and nothing removed one, so the registry grew until the process ran out of memory. It keeps the most recent.
+const MAX_QUOTE_AUDITS = 5000;
 
 /**
  * Service wrapper for creating a validated, audited Fundu phone buyback quote
@@ -196,7 +199,7 @@ export async function createPhoneQuote(input, options = {}) {
 
   // A preview from the admin prices a quote without leaving a record of it.
   if (!options.preview && result.status === 'quoted' && result._internalAudit) {
-    quoteAuditRegistry.set(result.quoteId, result._internalAudit);
+    setBounded(quoteAuditRegistry, result.quoteId, result._internalAudit, MAX_QUOTE_AUDITS);
   }
 
   // Strip _internalAudit for the customer response to keep margins & reserves confidential
