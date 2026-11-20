@@ -20,7 +20,9 @@ const storageSize = (label) => {
 };
 
 const clean = (value) => (typeof value === 'string' ? value.replace(/\s+/g, ' ').trim() : '');
-const keyOf = (value) => value.toLowerCase().replace(/[^a-z0-9]/g, '');
+// A "+" is part of the name: "Realme 12 Pro+" and "Galaxy S23+" are not "12 Pro" and "S23". It becomes "plus" before the rest is dropped, which
+// also makes "12 Pro Plus" and "12 Pro+" the same model (the sell price rows spell it both ways).
+const keyOf = (value) => value.toLowerCase().replace(/\+/g, 'plus').replace(/[^a-z0-9]/g, '');
 const isMixedCase = (text) => text !== text.toLowerCase() && text !== text.toUpperCase();
 
 /** The spelling most rows use; between equals, one that is not all lower or all upper case, then the first alphabetically. */
