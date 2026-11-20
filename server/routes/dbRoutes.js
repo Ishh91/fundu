@@ -11,12 +11,15 @@ import {
 import { invalidateLiveImages } from '../utils/liveImagesCache.js';
 import { offloadMediaForSave } from '../services/cloudinary.js';
 import { BRAND_TABLES, withCleanBrand } from '../utils/brandText.js';
+import { dropExpired, setBounded } from '../utils/boundedCache.js';
 
 const router = Router();
 
 // Fast in-memory cache for public read tables (60s TTL)
 const routeCache = new Map();
 const CACHE_TTL_MS = 60 * 1000;
+// A table read can be a whole table (about 2 MB for the phone tables), and the key holds the visitor's own query, so the count is capped.
+const MAX_ROUTE_CACHE_ENTRIES = 100;
 const PUBLIC_CACHE_TABLES = new Set([
   'products',
   'site_content',
@@ -114,7 +117,8 @@ router.get('/:table', async (req, res, next) => {
 
     if (isPublicCacheable && data) {
       const cacheKey = getCacheKey(table, req.query);
-      routeCache.set(cacheKey, { data, timestamp: Date.now() });
+      dropExpired(routeCache, CACHE_TTL_MS);
+      setBounded(routeCache, cacheKey, { data, timestamp: Date.now() }, MAX_ROUTE_CACHE_ENTRIES);
       res.setHeader('Cache-Control', 'public, max-age=60, s-maxage=120, stale-while-revalidate=300');
       res.setHeader('X-Cache', 'MISS');
     }
